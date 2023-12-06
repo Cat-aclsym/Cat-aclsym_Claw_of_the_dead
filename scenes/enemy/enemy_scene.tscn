@@ -1,0 +1,51 @@
+[gd_scene load_steps=7 format=3 uid="uid://boxm1vcl2axyg"]
+
+[ext_resource type="Texture2D" uid="uid://7b1r0djo4gfb" path="res://assets/enemies/zombie1.png" id="1_6wsd0"]
+[ext_resource type="Script" path="res://scripts/enemy/IEnemy.gd" id="1_s3k61"]
+[ext_resource type="Script" path="res://scripts/enemy/line.gd" id="3_xg3ys"]
+
+[sub_resource type="Curve2D" id="Curve2D_pbltp"]
+bake_interval = 0.01
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, -10.2776, -51.8013, 0, 0, 0, 0, 19.8205, -5.66987, 0, 0, 0, 0, 20.366, 33.275, 0, 0, 0, 0, 3.34936, 55.8013, 0, 0, 0, 0, -20.9449, 31.7224, 0, 0, 0, 0, -43.5788, -9.48076, 0, 0, 0, 0, -33.7942, -40.5333, 0, 0, 0, 0, -14.7776, -59.5955, 0, 0, 0, 0, -1.05513, -69.8276, 0, 0, 0, 0, 8.87307, -68.6314, 0, 0, 0, 0, 13.141, -57.2391, 0, 0, 0, 0, 11.3109, -50.409, 0, 0, 0, 0, 6.88269, -42.0788, 0, 0, 0, 0, 5.91859, -35.7487, 0, 0, 0, 0, 12.5167, -30.3205, 0, 0, 0, 0, 16.4808, -31.4545, 0, 0, 0, 0, 22.1769, -33.5885, 0, 0, 0, 0, 25.275, -34.2224, 0, 0, 0, 0, 33.2391, -28.4282, 0, 0, 0, 0, 34.007, -23.0981, 0, 0, 0, 0, 30.6769, -18.866, 0, 0, 0, 0, 25.8468, -17.232, 0, 0, 0, 0, 24.1506, -8.16987, 0, 0, 0, 0, 31.1147, -4.10769, 0, 0, 0, 0, 35.7128, -2.14359, 0, 0, 0, 0, 44.775, -0.447439, 0, 0, 0, 0, 52.3731, 6.71282, 0, 0, 0, 0, 53.775, 15.141, 0, 0, 0, 0, 47.6147, 24.4711, 0, 0, 0, 0, 38.4545, 28.6051, 0, 0, 0, 0, 32.1244, 27.641, 0, 0, 0, 0, 27.7942, 30.141, 0, 0, 0, 0, 29.1962, 38.5692, 0, 0, 0, 0, 34.5622, 45.8634, 0, 0, 0, 0, 43.2583, 48.9256, 0, 0, 0, 0, 50.3205, 47.1577, 0, 0, 0, 0, 58.1147, 42.6577, 0, 0, 0, 0, 67.0429, 42.1218, 0, 0, 0, 0, 71.5429, 49.916, 0, 0, 0, 0, 67.1147, 58.2461, 0, 0, 0, 0, 60.3205, 64.4782, 0, 0, 0, 0, 51.8923, 65.8801, 0, 0, 0, 0, 42.4641, 65.55, 0, 0, 0, 0, 30.5359, 60.8897, 0, 0, 0, 0, 18.6077, 56.2295, 0, 0, 0, 0, 10.3135, 59.8634, 0, 0, 0, 0, -2.90897, 70.9615, 0, 0, 0, 0, -12.7032, 71.9974, 0, 0, 0, 0, -24.8994, 62.8731, 0, 0, 0, 0, -37.1314, 45.6865, 0, 0, 0, 0, -46.1314, 30.0981, 0, 0, 0, 0, -52.6314, 18.8397, 0, 0, 0, 0, -59.2654, 5.34936, 0, 0, 0, 0, -61.6673, -4.81089, 0, 0, 0, 0, -61.9711, -17.3372, 0, 0, 0, 0, -59.641, -23.3013, 0, 0, 0, 0, -51.9808, -30.0333, 0, 0, 0, 0, -47.5526, -38.3634, 0, 0, 0, 0, -43.3205, -35.0333, 0, 0, 0, 0, -36.4904, -33.2032, 0, 0, 0, 0, -4.60065, -113.969, 0, 0, 0, 0, 47.2199, -64.2128)
+}
+point_count = 62
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_46uiq"]
+radius = 9.0
+height = 34.0
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5w0hc"]
+atlas = ExtResource("1_6wsd0")
+region = Rect2(64, 0, 32, 32)
+
+[node name="EnemyScene" type="Node2D"]
+
+[node name="Path2D" type="Path2D" parent="."]
+rotation = -1.0472
+curve = SubResource("Curve2D_pbltp")
+
+[node name="PathFollow2D" type="PathFollow2D" parent="Path2D"]
+position = Vector2(-10.2776, -51.8013)
+rotation = 0.992706
+rotates = false
+
+[node name="CharacterBody2D" type="CharacterBody2D" parent="Path2D/PathFollow2D"]
+position = Vector2(-34.7099, -63.3658)
+script = ExtResource("1_s3k61")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Path2D/PathFollow2D/CharacterBody2D"]
+position = Vector2(35.6517, 48.836)
+shape = SubResource("CapsuleShape2D_46uiq")
+
+[node name="Sprite2D" type="Sprite2D" parent="Path2D/PathFollow2D/CharacterBody2D"]
+position = Vector2(36.9297, 63.0967)
+texture = SubResource("AtlasTexture_5w0hc")
+offset = Vector2(-0.415359, -14.0224)
+
+[node name="Line2D" type="Line2D" parent="Path2D"]
+width = 2.0
+script = ExtResource("3_xg3ys")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+zoom = Vector2(5.675, 5.675)
