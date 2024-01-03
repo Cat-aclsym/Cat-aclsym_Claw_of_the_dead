@@ -7,7 +7,7 @@ enum ENM_State {
 }
 
 @onready var Sprite = $Sprite2D
-@onready var AnimPlayer = Sprite.get_node("AnimationPlayer")
+@onready var AnimPlayer: AnimationPlayer = Sprite.get_node("AnimationPlayer")
 @onready var Path = get_parent()
 @onready var previous_point: Vector2 = Vector2(Path.position)
 
@@ -15,6 +15,10 @@ var speed: float = 50
 var health: float
 var max_health: float = 100
 var state: ENM_State = ENM_State.FOLLOW_PATH
+var is_dead: bool:
+	get:
+		return health == 0
+var disappearAnimation: String = "FadeOut"
 
 
 func _ready():
@@ -22,6 +26,7 @@ func _ready():
 
 
 func _physics_process(delta):
+	if(is_dead): return
 	match state:
 		ENM_State.FOLLOW_PATH:
 			follow_path(delta)
@@ -31,55 +36,42 @@ func _physics_process(delta):
 			_give_damage_state()
 		_:
 			pass
+			
 	follow_path(delta)
+	_take_damage(1)
+	print(health)
 
 
-func _die():
-	# play death animation, wait for it to finish, then queue_free()
-	#todo: add death animation
-	#AnimPlayer.play("Death")
-	#await AnimPlayer.animation_finished
-	queue_free()
+func _dead_state():
+	# todo: add money to player
+	# todo: play sound
+	# todo: decrease enemy count
+	_disappear() # todo: remove this (debug)
+#	AnimPlayer.play("Death")
+#	AnimPlayer.connect("animation_finished", self, "_on_animation_finished")
 
 
 func _disappear():
-	# play disappear animation with fade and queue free
-	# fade opacity to 0 in 1 second
-	AnimPlayer.play("FadeOut")
-	await AnimPlayer.animation_finished
-	queue_free()
-	pass
+	AnimPlayer.play(disappearAnimation)
 
 
 func _give_damage_state():
 	# when the enemy arrives at the end of the Path
 	_disappear()
-	# queue free
-	# reduce player health
-	# dead animation
+	# todo: reduce player health
 	pass
 
 
 func _take_damage(damage: float):
 	if(health - damage <= 0):
 		health = 0
-		_die()
+		_dead_state()
 	else:
 		health -= damage
-
-func _dead_state():
-	# play death animation, wait for it to finish, then queue_free()
-	# todo: add money
-	# todo: play sound
-	# todo: decrease enemy count
-	$AnimationPlayer.play("Death")
-	await $AnimationPlayer.animation_finished
-	queue_free()
 
 
 func follow_path(delta) -> void:
 	var x_pos_difference = Path.position.x - previous_point.x;
-	var y_pos_difference = Path.position.y - previous_point.y;
 
 	# todo: fix image flip not working sometimes
 	if x_pos_difference > 0:
@@ -94,4 +86,10 @@ func follow_path(delta) -> void:
 		_give_damage_state()
 		return
 	Path.set_progress(Path.get_progress() + (speed * delta))
-	# todo: walk animation
+	#AnimPlayer.play("Walk")
+
+
+func _on_animation_finished(anim_name):
+	print(anim_name)
+	if(anim_name) == disappearAnimation:
+		queue_free()

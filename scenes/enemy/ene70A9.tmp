@@ -78,5 +78,3 @@ script = ExtResource("3_xg3ys")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 zoom = Vector2(5.675, 5.675)
-
-[connection signal="animation_finished" from="Path2D/PathFollow2D/CharacterBody2D/Sprite2D/AnimationPlayer" to="Path2D/PathFollow2D/CharacterBody2D" method="_on_animation_finished"]
