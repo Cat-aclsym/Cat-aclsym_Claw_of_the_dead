@@ -6,6 +6,12 @@ extends Area2D
 
 var direction: Vector2
 
+func _init():
+	pass
+
 func _physics_process(delta):
 	for __ in range(speed*delta):
 		position += direction
+
+func _on_area_entered(area):
+	pass
