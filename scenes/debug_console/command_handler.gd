@@ -1,6 +1,7 @@
 ## File:	debug_console/command_handler.gd
 ## Handler for debug console commands
 ##
+## Author: Benjamin Borello
 ## Created: 06/12/2023
 class_name CommandHandler
 extends Control
@@ -32,7 +33,7 @@ const valid_commands = [
 	},
 ]
 
-
+# Print all available commands with their description and args
 func help() -> String:
 	var out: String = ""
 	
@@ -51,14 +52,17 @@ func help() -> String:
 	return out
 
 
+# Exemple command
 func foo(what, amount) -> String:
 	return "foo command has been call with INT {1} and STR '{0}' args".format([what, amount])
 
 
+# Exit game
 func exit() -> String:
 	get_tree().quit()
 	return ""
 
+# Types enum to str
 func _type_to_string(in_type: Types) -> String:
 	if (in_type == Types.ARG_INT):
 		return "INT"

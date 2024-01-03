@@ -1,7 +1,8 @@
 ## File:	debug_console/debug_console.gd
 ## Debug console. 
-## Take commands and return informations or execute functions 
+## Take commands, return informations and execute functions 
 ##
+## Author: Benjamin Borello
 ## Created: 06/12/2023
 extends Control
 
@@ -12,19 +13,17 @@ var open: bool = false
 @onready var command_handler: CommandHandler = $CommandHandler
 
 
-func _ready() -> void:
-	pass
-
-
 func _process(_delta: float) -> void:
 	_listen_inputs()
 
 
+# Output text to console
 func output_text(text: String) -> void:
 	input.text = ""
 	output.text += "\n{0}".format([text])
-	
-	
+
+
+# Yield error to console
 func output_error(text: String) -> void:
 	input.text = ""
 	output.text += "\n{1}{0}{2}".format([
@@ -34,6 +33,7 @@ func output_error(text: String) -> void:
 	])
 
 
+# Listend for debug console related keybinds
 func _listen_inputs() -> void:
 	if (Input.is_action_just_pressed("toggle_console")):
 		open = !open
@@ -44,6 +44,7 @@ func _listen_inputs() -> void:
 		_process_command(input_text)
 
 
+# Try to execute console command 
 func _process_command(in_text: String) -> void:
 	# Remove all escapes characters from input
 	var text: String = in_text.strip_escapes()
@@ -90,6 +91,7 @@ func _process_command(in_text: String) -> void:
 		output_error("<!> Unknow command !")
 
 
+# Verify if executed command has correct arguments
 func _check_type(in_string: String, in_type: CommandHandler.Types):
 	if (in_type == command_handler.Types.ARG_INT):
 		return in_string.is_valid_int()
@@ -101,6 +103,7 @@ func _check_type(in_string: String, in_type: CommandHandler.Types):
 		return (in_string == "true" or in_string == "false")
 	return false
 
-	
+
+# Update console visibility 
 func _update() -> void:
 	visible = open
