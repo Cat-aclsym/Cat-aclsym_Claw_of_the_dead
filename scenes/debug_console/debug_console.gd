@@ -4,6 +4,7 @@
 ##
 ## Author: Benjamin Borello
 ## Created: 06/12/2023
+class_name DebugConsole 
 extends Control
 
 var open: bool = false
@@ -11,6 +12,10 @@ var open: bool = false
 @onready var output: RichTextLabel = $TextLabel
 @onready var input: TextEdit = $TextEdit
 @onready var command_handler: CommandHandler = $CommandHandler
+
+
+func _ready():
+	Global.debug_console = self
 
 
 func _process(_delta: float) -> void:
