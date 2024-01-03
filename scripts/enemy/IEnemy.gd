@@ -10,6 +10,15 @@ func _ready():
 func _physics_process(delta):
 	follow_path(path, delta)
 
+func _die():
+	# play death animation, wait for it to finish, then queue_free()
+	# todo: add money
+	# todo: play sound
+	# todo: decrease enemy count
+	$AnimationPlayer.play("Death")
+	await $AnimationPlayer.animation_finished
+	queue_free()
+
 func follow_path(path, delta) -> void:
 	if path.get_progress_ratio() >= 1:
 		# path finished

@@ -46,6 +46,8 @@ position = Vector2(36.9297, 63.0967)
 texture = SubResource("AtlasTexture_5w0hc")
 offset = Vector2(-0.415359, -14.0224)
 
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Path2D/PathFollow2D/CharacterBody2D"]
+
 [node name="Line2D" type="Line2D" parent="Path2D"]
 width = 2.0
 script = ExtResource("3_xg3ys")
