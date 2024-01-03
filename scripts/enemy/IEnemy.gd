@@ -11,7 +11,7 @@ enum ENM_State {
 @onready var Path = get_parent()
 @onready var previous_point: Vector2 = Vector2(Path.position)
 
-var speed: float = 100
+var speed: float = 50
 var health: float
 var max_health: float = 100
 var state: ENM_State = ENM_State.FOLLOW_PATH
@@ -32,13 +32,6 @@ func _physics_process(delta):
 		_:
 			pass
 	follow_path(delta)
-
-
-func _dead_state():
-	# todo: add money
-	# todo: play sound
-	# todo: decrease enemy count
-	_die()
 
 
 func _die():
@@ -74,7 +67,7 @@ func _take_damage(damage: float):
 	else:
 		health -= damage
 
-func _die():
+func _dead_state():
 	# play death animation, wait for it to finish, then queue_free()
 	# todo: add money
 	# todo: play sound
@@ -85,16 +78,14 @@ func _die():
 
 
 func follow_path(delta) -> void:
-	# todo: add image flip depending on previous point
 	var x_pos_difference = Path.position.x - previous_point.x;
 	var y_pos_difference = Path.position.y - previous_point.y;
 
 	# todo: fix image flip not working sometimes
-	if absf(x_pos_difference) > absf(y_pos_difference):
-		if x_pos_difference > 0:
-			Sprite.flip_h = false
-		else:
-			Sprite.flip_h = true
+	if x_pos_difference > 0:
+		Sprite.flip_h = false
+	elif x_pos_difference < 0:
+		Sprite.flip_h = true
 
 	previous_point = Vector2(Path.position);
 
