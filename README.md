@@ -4,7 +4,7 @@ A Tower Defense game in zombie apocalypse theme. You play with cats, and you hav
 
 # Requirements :
 
-	- Godot 4.2
+	- Godot 4.2.1
 
 ## GitHub
 
