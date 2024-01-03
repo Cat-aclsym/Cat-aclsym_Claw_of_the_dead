@@ -1,3 +1,8 @@
-[gd_scene format=3 uid="uid://dexuq7koxhuau"]
+[gd_scene load_steps=2 format=3 uid="uid://dexuq7koxhuau"]
+
+[ext_resource type="PackedScene" uid="uid://be8c7p1ka4dmm" path="res://scenes/debug_console/debug_console.tscn" id="1_526ec"]
 
 [node name="Main" type="Node2D"]
+
+[node name="DebugConsole" parent="." instance=ExtResource("1_526ec")]
+visible = false
