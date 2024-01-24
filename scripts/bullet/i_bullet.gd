@@ -4,14 +4,18 @@ extends Area2D
 @export var speed: int
 @export var damage: int
 
-var direction: Vector2
+@export var direction: Vector2
+@export var target: Vector2
+
 
 func _init():
 	pass
 
 func _physics_process(delta):
-	for __ in range(speed*delta):
-		position += direction
+	position += direction * speed * delta
+	
+	if global_position.distance_to(target) < 10:
+		queue_free()
 
 func _on_area_entered(area):
 	pass
