@@ -7,14 +7,14 @@ var paths: Array[Path2D] = []
 
 
 func _ready() -> void:
-	_loadAllPaths()
+	_load_all_paths()
 
 
-func getPaths() -> Array[Path2D]:
+func get_paths() -> Array[Path2D]:
 	return paths
 
 
-func _loadAllPaths() -> void:
+func _load_all_paths() -> void:
 	var tmp: Array[Node] = Paths.get_children()
 	
 	for c in tmp:
