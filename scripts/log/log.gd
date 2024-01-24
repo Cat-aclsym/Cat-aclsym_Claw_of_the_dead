@@ -17,6 +17,8 @@ static func info(args: Variant) -> void:
 		_format_args( args )
 	])
 	
+	if Global.debug_console:
+		Global.debug_console.output_text( output )
 	print( output )
 
 
@@ -26,6 +28,8 @@ static func warning(args: Variant) -> void:
 		_format_args( args )
 	])
 	
+	if Global.debug_console:
+		Global.debug_console.output_text( output )
 	print( output )
 
 	
@@ -35,6 +39,8 @@ static func error(args: Variant) -> void:
 		_format_args( args )
 	])
 	
+	if Global.debug_console:
+		Global.debug_console.output_text( output )
 	print( output )
 
 
@@ -44,6 +50,8 @@ static func debug(args: Variant) -> void:
 		_format_args( args )
 	])
 	
+	if Global.debug_console:
+		Global.debug_console.output_text( output )
 	print( output )
 
 

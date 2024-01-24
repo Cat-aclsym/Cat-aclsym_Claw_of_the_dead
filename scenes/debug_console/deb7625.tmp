@@ -1,0 +1,52 @@
+[gd_scene load_steps=5 format=3 uid="uid://be8c7p1ka4dmm"]
+
+[ext_resource type="Script" path="res://scenes/debug_console/debug_console.gd" id="1_5jk4e"]
+[ext_resource type="Script" path="res://scenes/debug_console/command_handler.gd" id="2_2h81y"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7wjpw"]
+content_margin_left = 8.0
+bg_color = Color(0.231373, 0.231373, 0.231373, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_color = Color(0.894118, 0.752941, 0.101961, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3v0jc"]
+content_margin_left = 8.0
+bg_color = Color(0.231373, 0.231373, 0.231373, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.894118, 0.752941, 0.101961, 1)
+
+[node name="DebugConsole" type="Control"]
+modulate = Color(1, 1, 1, 0.784314)
+top_level = true
+layout_mode = 3
+anchors_preset = 0
+offset_right = 1280.0
+offset_bottom = 296.0
+script = ExtResource("1_5jk4e")
+
+[node name="CommandHandler" type="Control" parent="."]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("2_2h81y")
+
+[node name="TextLabel" type="RichTextLabel" parent="."]
+layout_mode = 0
+offset_right = 1280.0
+offset_bottom = 256.0
+theme_override_styles/normal = SubResource("StyleBoxFlat_7wjpw")
+bbcode_enabled = true
+scroll_following = true
+
+[node name="TextEdit" type="TextEdit" parent="."]
+layout_mode = 0
+offset_top = 256.0
+offset_right = 1280.0
+offset_bottom = 288.0
+theme_override_styles/normal = SubResource("StyleBoxFlat_3v0jc")
+placeholder_text = "Command..."

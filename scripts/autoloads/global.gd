@@ -8,3 +8,5 @@
 ## <!> Always checks var != null
 extends Node
 
+
+var debug_console: DebugConsole = null
