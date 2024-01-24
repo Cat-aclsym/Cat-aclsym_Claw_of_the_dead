@@ -1,3 +1,7 @@
-[gd_scene format=3 uid="uid://dexuq7koxhuau"]
+[gd_scene load_steps=2 format=3 uid="uid://dexuq7koxhuau"]
+
+[ext_resource type="PackedScene" uid="uid://ejukcnw87ab7" path="res://scenes/cannon/test_cannon.tscn" id="1_hqk8p"]
 
 [node name="Main" type="Node2D"]
+
+[node name="TestCannon" parent="." instance=ExtResource("1_hqk8p")]

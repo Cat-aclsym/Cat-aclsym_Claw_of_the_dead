@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=3 uid="uid://cwshc2phtb05e"]
+
+[ext_resource type="Script" path="res://scripts/cannon/i_cannon.gd" id="1_f2cd5"]
+
+[node name="ICannon" type="Node2D"]
+script = ExtResource("1_f2cd5")
+
+[node name="FireRateTimer" type="Timer" parent="."]
+
+[node name="Polygon2D" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(0, -32, -32, 0, 0, 32, 32, 0)
