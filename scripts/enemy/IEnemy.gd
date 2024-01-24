@@ -14,8 +14,8 @@ enum ENM_State {
 var speed: float = 30
 var health: float
 var max_health: float = 100
-var state: ENM_State = ENM_State.FOLLOW_PATH
 var type: String = 'default'
+var state: ENM_State = ENM_State.FOLLOW_PATH
 var path: PathFollow2D = null
 var previous_point: Vector2
 var is_dead: bool:
@@ -104,7 +104,6 @@ func follow_path(delta) -> void:
 		AnimPlayer.play(walkUpAnimation)
 	elif y_pos_difference < 0.:
 		AnimPlayer.play(walkDownAnimation)
-
 
 
 func _on_animation_player_animation_finished(anim_name):

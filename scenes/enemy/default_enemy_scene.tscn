@@ -106,6 +106,7 @@ skew = -0.00247645
 shape = SubResource("CapsuleShape2D_46uiq")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(0, 2)
 texture = SubResource("AtlasTexture_e7r48")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Sprite2D"]
