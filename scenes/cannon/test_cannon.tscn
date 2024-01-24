@@ -9,6 +9,9 @@ radius = 814.199
 [node name="TestCannon" instance=ExtResource("1_smvl2")]
 BulletScene = ExtResource("2_miu16")
 
+[node name="FireRateTimer" parent="." index="0"]
+one_shot = true
+
 [node name="CollisionShape2D" parent="Area2D" index="0"]
 shape = SubResource("CircleShape2D_fe02m")
 

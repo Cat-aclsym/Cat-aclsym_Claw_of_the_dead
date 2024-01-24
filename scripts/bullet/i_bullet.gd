@@ -12,10 +12,12 @@ func _init():
 	pass
 
 
-func _physics_process(delta):
+func _physics_process(delta: float):
 	position += direction * speed * delta
 
-	if global_position.distance_to(target) < 10:
+	if global_position.distance_to(target) < 100:
+		print("Target: ", target)
+		print("Global Position: ", global_position)
 		queue_free()
 
 
