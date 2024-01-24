@@ -6,6 +6,8 @@ extends Node2D
 @export var fire_rate: float
 @export var BulletScene: PackedScene = null
 
+@onready var fire_rate_timer := $FireRateTimer as Timer
+
 var enemy_array: Array[IEnemy]
 
 func upgrade():
@@ -27,6 +29,7 @@ func fire():
 	bullet_instance.rotation = bullet_instance.direction.angle()
 	bullet_instance.target = enemy_position
 	add_child(bullet_instance)
+	fire_rate_timer.start()
 	
 	
 		
@@ -54,7 +57,8 @@ func fire():
 		#Log.debug(bullet_instance.global_position)
 
 func _process(delta):
-	fire()
+	if fire_rate_timer.is_stopped():
+		fire()
 
 func _on_area_2d_body_entered(body):
 	if body is IEnemy:
