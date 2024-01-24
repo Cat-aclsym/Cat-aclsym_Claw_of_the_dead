@@ -1,4 +1,4 @@
-[gd_scene load_steps=3 format=3 uid="uid://cax2gd3swoin0"]
+[gd_scene load_steps=3 format=3 uid="uid://y26a0w8ybpo5"]
 
 [ext_resource type="PackedScene" uid="uid://dqcjwachbfj5x" path="res://scenes/bullet/i_bullet.tscn" id="1_vp3tv"]
 
@@ -6,7 +6,7 @@
 size = Vector2(16, 16)
 
 [node name="TestBullet" instance=ExtResource("1_vp3tv")]
-speed = 2500
+speed = 1000
 
 [node name="CollisionShape2D" parent="." index="1"]
 shape = SubResource("RectangleShape2D_1si3y")
