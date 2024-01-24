@@ -34,16 +34,16 @@ layer_0/tile_data = PackedInt32Array(2228208, 131073, 9, 2293744, 131073, 9, 235
 [node name="Paths" parent="." index="1"]
 metadata/_edit_lock_ = true
 
-[node name="Path2D" type="Path2D" parent="Paths" index="0"]
+[node name="Path2DA1" type="Path2D" parent="Paths" index="0"]
 curve = SubResource("Curve2D_kcq2n")
 
-[node name="Path2D2" type="Path2D" parent="Paths" index="1"]
+[node name="Path2DA2" type="Path2D" parent="Paths" index="1"]
 curve = SubResource("Curve2D_fugbs")
 
-[node name="Path2D3" type="Path2D" parent="Paths" index="2"]
+[node name="Path2DB1" type="Path2D" parent="Paths" index="2"]
 curve = SubResource("Curve2D_u7j3k")
 
-[node name="Path2D4" type="Path2D" parent="Paths" index="3"]
+[node name="Path2DB2" type="Path2D" parent="Paths" index="3"]
 curve = SubResource("Curve2D_4wu0t")
 
 [node name="Camera2D" type="Camera2D" parent="." index="2"]
