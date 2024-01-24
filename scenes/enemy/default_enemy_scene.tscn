@@ -1,0 +1,88 @@
+[gd_scene load_steps=9 format=3 uid="uid://boxm1vcl2axyg"]
+
+[ext_resource type="Script" path="res://scripts/enemy/IEnemy.gd" id="1_qq3nr"]
+[ext_resource type="Texture2D" uid="uid://7b1r0djo4gfb" path="res://assets/enemies/zombie1.png" id="2_184i1"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_46uiq"]
+radius = 9.0
+height = 34.0
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_e7r48"]
+atlas = ExtResource("2_184i1")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="Animation" id="Animation_3r1bq"]
+resource_name = "FadeOut"
+length = 2.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0.1, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_aehud"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:texture:region")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Rect2(64, 0, 32, 32)]
+}
+
+[sub_resource type="Animation" id="Animation_b2u2g"]
+resource_name = "walk_right"
+length = 0.9
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:texture:region")
+tracks/0/interp = 0
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(),
+"transitions": PackedFloat32Array(),
+"update": 0,
+"values": []
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_bg7u8"]
+_data = {
+"FadeOut": SubResource("Animation_3r1bq"),
+"RESET": SubResource("Animation_aehud"),
+"walk_right": SubResource("Animation_b2u2g")
+}
+
+[node name="DefaultEnemyScene" type="CharacterBody2D"]
+position = Vector2(0, -17)
+script = ExtResource("1_qq3nr")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+scale = Vector2(0.999194, 0.998106)
+skew = -0.00247645
+shape = SubResource("CapsuleShape2D_46uiq")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(0.999194, 0.998106)
+skew = -0.00247645
+texture = SubResource("AtlasTexture_e7r48")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Sprite2D"]
+libraries = {
+"": SubResource("AnimationLibrary_bg7u8")
+}
+
+[connection signal="animation_finished" from="Sprite2D/AnimationPlayer" to="." method="_on_animation_player_animation_finished"]

@@ -1,3 +1,5 @@
+class_name IEnemy
+
 extends CharacterBody2D
 
 enum ENM_State {
@@ -8,13 +10,14 @@ enum ENM_State {
 
 @onready var Sprite = $Sprite2D
 @onready var AnimPlayer: AnimationPlayer = Sprite.get_node("AnimationPlayer")
-@onready var Path = get_parent()
-@onready var previous_point: Vector2 = Vector2(Path.position)
 
 var speed: float = 50
 var health: float
 var max_health: float = 100
 var state: ENM_State = ENM_State.FOLLOW_PATH
+var type: String = 'default'
+var path: PathFollow2D = null
+var previous_point: Vector2
 var is_dead: bool:
 	get:
 		return health == 0
@@ -38,7 +41,7 @@ func _physics_process(delta):
 			pass
 			
 	follow_path(delta)
-	_take_damage(1)
+	#_take_damage(1)
 	print(health)
 
 
@@ -71,7 +74,7 @@ func _take_damage(damage: float):
 
 
 func follow_path(delta) -> void:
-	var x_pos_difference = Path.position.x - previous_point.x;
+	var x_pos_difference = path.position.x - previous_point.x;
 
 	# todo: fix image flip not working sometimes
 	if x_pos_difference > 0:
@@ -79,17 +82,16 @@ func follow_path(delta) -> void:
 	elif x_pos_difference < 0:
 		Sprite.flip_h = true
 
-	previous_point = Vector2(Path.position);
+	previous_point = Vector2(path.position);
 
-	if Path.get_progress_ratio() >= 1:
+	if path.get_progress_ratio() >= 1:
 		# Path finished
 		_give_damage_state()
 		return
-	Path.set_progress(Path.get_progress() + (speed * delta))
+	path.set_progress(path.get_progress() + (speed * delta))
 	#AnimPlayer.play("Walk")
+	
 
-
-func _on_animation_finished(anim_name):
-	print(anim_name)
+func _on_animation_player_animation_finished(anim_name):
 	if(anim_name) == disappearAnimation:
 		queue_free()
