@@ -13,13 +13,24 @@ func upgrade():
 
 func fire():
 	if Input.is_action_just_pressed("fire"):
+		if BulletScene == null: return
+		var mouse_position: Vector2 = get_global_mouse_position()
 		var bullet_instance: IBullet = BulletScene.instantiate()
-		bullet_instance.position = position
-		bullet_instance.direction = (get_viewport().get_mouse_position() - position).normalized()
+		bullet_instance.direction = (mouse_position - global_position).normalized()
 		bullet_instance.rotation = bullet_instance.direction.angle()
-		bullet_instance.target = get_viewport().get_mouse_position()
-		add_child(bullet)
+		bullet_instance.target = mouse_position
+		add_child(bullet_instance)
+		
+		bullet_instance.global_position = global_position
+		
+		Log.debug("global_position:")
+		Log.debug(global_position)
+		
+		Log.debug("mouse_position")
+		Log.debug(mouse_position)
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
+		Log.debug("bullet_instance.global_position")
+		Log.debug(bullet_instance.global_position)
+
 func _process(delta):
 	fire()

@@ -6,3 +6,6 @@
 script = ExtResource("1_f2cd5")
 
 [node name="FireRateTimer" type="Timer" parent="."]
+
+[node name="Polygon2D" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(0, -32, -32, 0, 0, 32, 32, 0)
