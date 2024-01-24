@@ -1,7 +1,16 @@
-[gd_scene load_steps=3 format=3 uid="uid://ejukcnw87ab7"]
+[gd_scene load_steps=4 format=3 uid="uid://c6wljnc80qudp"]
 
 [ext_resource type="PackedScene" uid="uid://cwshc2phtb05e" path="res://scenes/cannon/i_cannon.tscn" id="1_smvl2"]
-[ext_resource type="PackedScene" uid="uid://y26a0w8ybpo5" path="res://scenes/bullet/test_bullet.tscn" id="2_miu16"]
+[ext_resource type="PackedScene" uid="uid://cax2gd3swoin0" path="res://scenes/bullet/test_bullet.tscn" id="2_miu16"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_fe02m"]
+radius = 814.199
 
 [node name="TestCannon" instance=ExtResource("1_smvl2")]
 BulletScene = ExtResource("2_miu16")
+
+[node name="CollisionShape2D" parent="Area2D" index="0"]
+shape = SubResource("CircleShape2D_fe02m")
+
+[connection signal="body_entered" from="Area2D" to="." method="_on_area_2d_body_entered"]
+[connection signal="body_exited" from="Area2D" to="." method="_on_area_2d_body_exited"]

@@ -11,7 +11,7 @@ extends Area2D
 func _init():
 	pass
 
-func _physics_process(delta):
+func _physics_process(delta: float):
 	position += direction * speed * delta
 	
 	if global_position.distance_to(target) < 10:
