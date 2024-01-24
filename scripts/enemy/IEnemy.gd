@@ -1,12 +1,21 @@
 class_name IEnemy
 extends CharacterBody2D
 
-@onready var path_follow = get_parent()
+@onready var path = get_parent()
 
-var speed = 40
+var speed = 100
 
 func _ready():
 	pass
 	
 func _physics_process(delta):
-		path_follow.set_progress(path_follow.get_progress() +(speed * delta))
+	follow_path(path, delta)
+
+func follow_path(path, delta) -> void:
+	if path.get_progress_ratio() >= 1:
+		# path finished
+		# _hit_state()
+		self.queue_free() # destroy enemy
+		return
+	path.set_progress(path.get_progress() +(speed * delta))
+	# todo: walk animation

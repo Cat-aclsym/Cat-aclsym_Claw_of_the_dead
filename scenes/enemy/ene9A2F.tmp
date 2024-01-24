@@ -4,11 +4,12 @@
 [ext_resource type="Script" path="res://scripts/enemy/IEnemy.gd" id="1_s3k61"]
 [ext_resource type="Script" path="res://scripts/enemy/line.gd" id="3_xg3ys"]
 
-[sub_resource type="Curve2D" id="Curve2D_j7lt3"]
+[sub_resource type="Curve2D" id="Curve2D_pbltp"]
+bake_interval = 0.01
 _data = {
-"points": PackedVector2Array(0, 0, 0, 0, 45.4616, -41.2582, 0, 0, 0, 0, 99.3992, 66.165, 0, 0, 0, 0, 35.4831, 113.459, 0, 0, 0, 0, -34.8445, 113.648, 0, 0, 0, 0, -81.7725, 48.3658, 0, 0, 0, 0, -90.1408, -76.129, 0, 0, 0, 0, -19.7606, -120.227, 0, 0, 0, 0, 48.0597, -42.7582, 0, 0, 0, 0, 105.631, 72.9592, 0, 0, 0, 0, 29.5548, 119.191, 0, 0, 0, 0, -35.9426, 117.746, 0, 0, 0, 0, -87.8347, 51.8658, 0, 0, 0, 0, -100.203, -79.5573, 0, 0, 0, 0, -22.8946, -127.655, 0, 0, 0, 0, 51.2559, -49.2223)
+"points": PackedVector2Array(0, 0, 0, 0, -10.2776, -51.8013, 0, 0, 0, 0, 19.8205, -5.66987, 0, 0, 0, 0, 20.366, 33.275, 0, 0, 0, 0, 3.34936, 55.8013, 0, 0, 0, 0, -20.9449, 31.7224, 0, 0, 0, 0, -43.5788, -9.48076, 0, 0, 0, 0, -33.7942, -40.5333)
 }
-point_count = 15
+point_count = 7
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_46uiq"]
 radius = 9.0
@@ -27,7 +28,7 @@ scale = Vector2(0.997298, 1)
 curve = SubResource("Curve2D_pbltp")
 
 [node name="PathFollow2D" type="PathFollow2D" parent="Path2D"]
-position = Vector2(45.4616, -41.2582)
+position = Vector2(-10.2776, -51.8013)
 rotation = 0.992706
 rotates = false
 loop = false
@@ -48,3 +49,6 @@ offset = Vector2(-0.415359, -14.0224)
 [node name="Line2D" type="Line2D" parent="Path2D"]
 width = 2.0
 script = ExtResource("3_xg3ys")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+zoom = Vector2(5.675, 5.675)
