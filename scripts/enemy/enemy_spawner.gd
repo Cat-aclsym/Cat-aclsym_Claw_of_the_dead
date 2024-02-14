@@ -1,7 +1,7 @@
 class_name IEnemySpawner
 extends Node2D
 	
-static func spawn_enemy(path: PathFollow2D, enemy: IEnemy):
+static func spawn_enemy(path: Path2D, enemy: IEnemy):
 	var pathfollow := PathFollow2D.new()
 	pathfollow.loop = false
 	pathfollow.rotates = false

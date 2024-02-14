@@ -1,7 +1,7 @@
 [gd_scene load_steps=7 format=3 uid="uid://buj5yatu3iyt"]
 
 [ext_resource type="PackedScene" uid="uid://crdosg1fmycsi" path="res://scenes/map/i_map.tscn" id="1_4widc"]
-[ext_resource type="PackedScene" uid="uid://gjwpxstirgig" path="res://scenes/enemy/enemy_factory.tscn" id="2_xoi43"]
+[ext_resource type="PackedScene" uid="uid://dpubvklrddcxm" path="res://scenes/enemy/enemy_spawner.tscn" id="2_xoi43"]
 
 [sub_resource type="Curve2D" id="Curve2D_kcq2n"]
 _data = {
