@@ -1,6 +1,10 @@
-[gd_scene format=3 uid="uid://064cnqw4xlus"]
+[gd_scene load_steps=2 format=3 uid="uid://064cnqw4xlus"]
+
+[ext_resource type="Script" path="res://scripts/tower/i_tower.gd" id="1_4edlv"]
 
 [node name="ITower" type="Node2D"]
+script = ExtResource("1_4edlv")
+upgrade = Array[Resource("res://scripts/upgrade/i_upgrade.gd")]([null])
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 

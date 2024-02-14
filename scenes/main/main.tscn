@@ -1,13 +1,14 @@
 [gd_scene load_steps=3 format=3 uid="uid://dexuq7koxhuau"]
 
-[ext_resource type="PackedScene" uid="uid://c6wljnc80qudp" path="res://scenes/cannon/test_cannon.tscn" id="1_hqk8p"]
-[ext_resource type="PackedScene" uid="uid://dpubvklrddcxm" path="res://scenes/enemy/enemy_scene_test.tscn" id="2_5tg6w"]
+[ext_resource type="PackedScene" uid="uid://cq705nqdp8fnw" path="res://scenes/tower/test_tower.tscn" id="2_0jorc"]
+[ext_resource type="PackedScene" path="res://scenes/enemy/enemy_scene_test.tscn" id="2_5tg6w"]
 
 [node name="Main" type="Node2D"]
-
-[node name="TestCannon" parent="." instance=ExtResource("1_hqk8p")]
 
 [node name="Camera2D" type="Camera2D" parent="."]
 
 [node name="EnemySceneTest" parent="." instance=ExtResource("2_5tg6w")]
 scale = Vector2(4, 4)
+
+[node name="TestTower" parent="." instance=ExtResource("2_0jorc")]
+upgrade = Array[PackedScene]([])

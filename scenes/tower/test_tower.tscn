@@ -1,0 +1,61 @@
+[gd_scene load_steps=8 format=3 uid="uid://cq705nqdp8fnw"]
+
+[ext_resource type="PackedScene" uid="uid://064cnqw4xlus" path="res://scenes/tower/i_tower.tscn" id="1_1ihb2"]
+[ext_resource type="PackedScene" uid="uid://c6wljnc80qudp" path="res://scenes/cannon/test_cannon.tscn" id="2_gb86n"]
+[ext_resource type="Texture2D" uid="uid://dl4v1uuiyxm8r" path="res://assets/towers/tower_2_LVL_1.png" id="3_hsdl0"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_g7olo"]
+atlas = ExtResource("3_hsdl0")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="Animation" id="Animation_wnfqe"]
+resource_name = "idle"
+length = 1.1
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:texture:region")
+tracks/0/interp = 0
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [Rect2(0, 0, 64, 64), Rect2(64, 0, 64, 64), Rect2(128, 0, 64, 64), Rect2(192, 0, 64, 64), Rect2(256, 0, 64, 64), Rect2(320, 0, 64, 64), Rect2(384, 0, 64, 64), Rect2(448, 0, 64, 64), Rect2(512, 0, 64, 64), Rect2(576, 0, 64, 64), Rect2(640, 0, 64, 64)]
+}
+
+[sub_resource type="Animation" id="Animation_i58hl"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:texture:region")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Rect2(64, 0, 64, 64)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_va1jy"]
+_data = {
+"RESET": SubResource("Animation_i58hl"),
+"idle": SubResource("Animation_wnfqe")
+}
+
+[node name="TestTower" instance=ExtResource("1_1ihb2")]
+upgrade = Array[PackedScene]([])
+cannon = ExtResource("2_gb86n")
+
+[node name="Sprite2D" parent="." index="0"]
+scale = Vector2(3, 3)
+texture = SubResource("AtlasTexture_g7olo")
+
+[node name="AnimationPlayer" parent="Sprite2D" index="0"]
+libraries = {
+"": SubResource("AnimationLibrary_va1jy")
+}
+autoplay = "idle"

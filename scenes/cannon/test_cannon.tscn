@@ -11,6 +11,21 @@ radius = 814.199
 atlas = ExtResource("3_uqrqn")
 region = Rect2(0, 0, 64, 64)
 
+[sub_resource type="Animation" id="Animation_eedyf"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:texture:region")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Rect2(0, 0, 64, 64)]
+}
+
 [sub_resource type="Animation" id="Animation_ieu25"]
 resource_name = "idle"
 length = 1.1
@@ -26,21 +41,6 @@ tracks/0/keys = {
 "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
 "update": 0,
 "values": [Rect2(0, 0, 64, 64), Rect2(0, 0, 64, 64), Rect2(128, 0, 64, 64), Rect2(192, 0, 64, 64), Rect2(256, 0, 64, 64), Rect2(320, 0, 64, 64), Rect2(384, 0, 64, 64), Rect2(448, 0, 64, 64), Rect2(512, 0, 64, 64), Rect2(576, 0, 64, 64), Rect2(640, 0, 64, 64)]
-}
-
-[sub_resource type="Animation" id="Animation_eedyf"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".:texture:region")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Rect2(0, 0, 64, 64)]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_w27ry"]
@@ -59,6 +59,7 @@ one_shot = true
 shape = SubResource("CircleShape2D_fe02m")
 
 [node name="Sprite2D" type="Sprite2D" parent="." index="2"]
+visible = false
 scale = Vector2(3, 3)
 texture = SubResource("AtlasTexture_wpv86")
 
