@@ -44,7 +44,7 @@ var path_points_size: int
 # core
 func _ready():
 	health = max_health
-	path_points_size = path.curve.get_baked_points().size()
+	path_points_size = path.curve.point_count
 	_get_path_direction()
 	AnimPlayer.connect("animation_finished", _on_animation_player_animation_finished)
 
@@ -89,13 +89,17 @@ func _get_path_direction():
 			direction = ENM_Direction.DOWN_LEFT
 		elif y_pos_difference > 0.:
 			direction = ENM_Direction.UP_LEFT
+	print(get_parent().name, ": ", direction)
 
 
 func _update_direction():
-	print(current_point_id)
-	print(path_follow.position, path.curve.get_point_position(current_point_id+1))
+	#print("size: ", path_points_size, " current_point_id: ", current_point_id)
+	if current_point_id == path_points_size - 2:
+		return
+	#print(current_point_id)
+	#print(path_follow.position, path.curve.get_point_position(current_point_id+1))
 	if round(path_follow.position) == round(path.curve.get_point_position(current_point_id+1)) && path.curve.get_closest_point(path_follow.position) != path.curve.get_point_position(current_point_id):
-		print("changed direction")
+		print(get_parent().name, " changed direction ", current_point_id)
 		current_point_id += 1
 		_get_path_direction()
 
@@ -111,17 +115,22 @@ func follow_path(delta: float) -> void:
 
 
 func _walk():
+	print("_walk")
 	match direction:
 		ENM_Direction.UP_RIGHT:
+			print("up_right")
 			Sprite.flip_h = false
 			AnimPlayer.play(walk_up_animation)
 		ENM_Direction.UP_LEFT:
+			print("up_left")
 			Sprite.flip_h = true
 			AnimPlayer.play(walk_up_animation)
 		ENM_Direction.DOWN_RIGHT:
+			print("down_right")
 			Sprite.flip_h = false
 			AnimPlayer.play(walk_down_animation)
 		ENM_Direction.DOWN_LEFT:
+			print("down_left")
 			Sprite.flip_h = true
 			AnimPlayer.play(walk_down_animation)
 		_:
