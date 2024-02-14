@@ -79,17 +79,16 @@ func _get_path_direction():
 	var x_pos_difference: float = path.curve.get_point_position(current_point_id).x - path.curve.get_point_position(current_point_id+1).x;
 	var y_pos_difference: float = path.curve.get_point_position(current_point_id).y - path.curve.get_point_position(current_point_id+1).y;
 
-	# todo: fix image flip not working sometimes
-	if x_pos_difference > 0.:
+	if x_pos_difference < 0.:
 		if y_pos_difference < 0.:
-			direction = ENM_Direction.DOWN_RIGHT  # Moving right down
+			direction = ENM_Direction.DOWN_RIGHT
 		elif y_pos_difference > 0.:
-			direction = ENM_Direction.UP_RIGHT  # Moving right up
-	elif x_pos_difference < 0.:
+			direction = ENM_Direction.UP_RIGHT
+	elif x_pos_difference > 0.:
 		if y_pos_difference < 0.:
-			direction = ENM_Direction.DOWN_LEFT  # Moving left down
+			direction = ENM_Direction.DOWN_LEFT
 		elif y_pos_difference > 0.:
-			direction = ENM_Direction.UP_LEFT  # Moving left up
+			direction = ENM_Direction.UP_LEFT
 
 
 func _update_direction():
@@ -97,8 +96,8 @@ func _update_direction():
 	print(path_follow.position, path.curve.get_point_position(current_point_id+1))
 	if round(path_follow.position) == round(path.curve.get_point_position(current_point_id+1)) && path.curve.get_closest_point(path_follow.position) != path.curve.get_point_position(current_point_id):
 		print("changed direction")
-		_get_path_direction()
 		current_point_id += 1
+		_get_path_direction()
 
 
 func follow_path(delta: float) -> void:
