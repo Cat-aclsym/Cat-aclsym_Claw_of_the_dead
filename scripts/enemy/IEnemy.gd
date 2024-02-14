@@ -8,17 +8,17 @@ enum ENM_State {
 	GIVE_DAMAGE
 }
 
-@onready var Sprite = $Sprite2D
+@onready var Sprite: Sprite2D = $Sprite2D
 @onready var AnimPlayer: AnimationPlayer = Sprite.get_node("AnimationPlayer")
 
-var speed: float = 30
-var health: float
-var max_health: float = 100
-var type: String = 'default'
-var state: ENM_State = ENM_State.FOLLOW_PATH
-var path: PathFollow2D = null
-var previous_point: Vector2
-var is_dead: bool:
+@export var speed: float = 30
+@export var health: float
+@export var max_health: float = 100
+@export var type: String = 'default'
+@export var state: ENM_State = ENM_State.FOLLOW_PATH
+@export var path: PathFollow2D = null
+@export var previous_point: Vector2
+@export var is_dead: bool:
 	get:
 		return health == 0
 var disappearAnimation: String = "FadeOut"
@@ -28,9 +28,10 @@ var walkDownAnimation: String = "walk_down"
 
 func _ready():
 	health = max_health
+	AnimPlayer.connect("animation_finished", _on_animation_player_animation_finished)
 
 
-func _physics_process(delta):
+func _physics_process(delta: float) -> void:
 	if(is_dead): return
 	match state:
 		ENM_State.FOLLOW_PATH:
@@ -47,7 +48,7 @@ func _physics_process(delta):
 	#print(health)
 
 
-func _dead_state():
+func _dead_state() -> void:
 	# todo: add money to player
 	# todo: play sound
 	# todo: decrease enemy count
@@ -56,18 +57,18 @@ func _dead_state():
 #	AnimPlayer.connect("animation_finished", self, "_on_animation_finished")
 
 
-func _disappear():
+func _disappear() -> void:
 	AnimPlayer.play(disappearAnimation)
 
 
-func _give_damage_state():
+func _give_damage_state() -> void:
 	# when the enemy arrives at the end of the Path
 	_disappear()
 	# todo: reduce player health
 	pass
 
 
-func _take_damage(damage: float):
+func _take_damage(damage: float) -> void:
 	if(health - damage <= 0):
 		health = 0
 		_dead_state()
@@ -75,17 +76,17 @@ func _take_damage(damage: float):
 		health -= damage
 
 func check_next_point() -> bool:
-	var points = path.curve.get_baked_points()
-	var current_position = path.position
+	var points: Array = path.curve.get_baked_points()
+	var current_position: Vector2 = path.position
 
 	if current_position == points[path.get_closest_point_index() + 1]:
 		return true
 	else:
 		return false
 
-func follow_path(delta) -> void:
-	var x_pos_difference = path.position.x - previous_point.x;
-	var y_pos_difference = path.position.y - previous_point.y;
+func follow_path(delta: float) -> void:
+	var x_pos_difference: float = path.position.x - previous_point.x;
+	var y_pos_difference: float = path.position.y - previous_point.y;
 	
 	# todo: fix image flip not working sometimes
 	if x_pos_difference > 0.:
@@ -106,6 +107,7 @@ func follow_path(delta) -> void:
 		AnimPlayer.play(walkDownAnimation)
 
 
-func _on_animation_player_animation_finished(anim_name):
+func _on_animation_player_animation_finished(anim_name: String) -> void:
 	if(anim_name) == disappearAnimation:
 		queue_free()
+		get_parent().queue_free()
