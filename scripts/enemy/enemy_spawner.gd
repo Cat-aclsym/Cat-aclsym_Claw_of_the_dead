@@ -7,6 +7,7 @@ static func spawn_enemy(path: Path2D, enemy: IEnemy):
 	pathfollow.rotates = false
 	path.add_child(pathfollow)
 
-	enemy.path = pathfollow
+	enemy.path = path
+	enemy.path_follow = pathfollow
 
 	pathfollow.add_child(enemy)

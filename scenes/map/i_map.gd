@@ -8,6 +8,10 @@ var paths: Array[Path2D] = []
 
 func _ready() -> void:
 	_load_all_paths()
+	var enemy: IEnemy = enemy1.instantiate()
+	var path: Path2D = $Paths/Path2DA1
+
+	IEnemySpawner.spawn_enemy(path, enemy)
 
 
 func get_paths() -> Array[Path2D]:
@@ -23,7 +27,8 @@ func _load_all_paths() -> void:
 		
 
 func _on_timer_timeout():
-	var enemy: IEnemy = enemy1.instantiate()
-	var path: Path2D = $Paths/Path2DA1
-
-	IEnemySpawner.spawn_enemy(path, enemy)
+	#var enemy: IEnemy = enemy1.instantiate()
+	#var path: Path2D = $Paths/Path2DA1
+#
+	#IEnemySpawner.spawn_enemy(path, enemy)
+	pass
