@@ -19,11 +19,22 @@ var disappear_animation: String = "FadeOut"
 var walk_up_animation: String = "walk_up"
 var walk_down_animation: String = "walk_down"
 
+<<<<<<< HEAD
 var health: float
 var state: ENM_State = ENM_State.FOLLOW_PATH
 var path: PathFollow2D = null
 var previous_point: Vector2
 var is_dead: bool:
+=======
+@export var speed: float = 300
+@export var health: float
+@export var max_health: float = 100
+@export var state: ENM_State = ENM_State.FOLLOW_PATH
+@export var type: String = 'default'
+@export var path: PathFollow2D = null
+@export var previous_point: Vector2
+@export var is_dead: bool:
+>>>>>>> 6709243 (pour anta)
 	get:
 		return health == 0
 
@@ -33,6 +44,10 @@ var is_dead: bool:
 # core
 func _ready():
 	health = max_health
+<<<<<<< HEAD
+=======
+	
+>>>>>>> 6709243 (pour anta)
 	AnimPlayer.connect("animation_finished", _on_animation_player_animation_finished)
 
 
@@ -104,6 +119,7 @@ func _dead_state() -> void:
 #	AnimPlayer.play("Death")
 #	AnimPlayer.connect("animation_finished", self, "_on_animation_finished")
 
+<<<<<<< HEAD
 
 func _disappear() -> void:
 	AnimPlayer.play(disappear_animation)
@@ -119,4 +135,8 @@ func _give_damage_state() -> void:
 func _on_animation_player_animation_finished(anim_name: String) -> void:
 	if(anim_name) == disappear_animation:
 		queue_free()
+=======
+func _on_animation_player_animation_finished(anim_name):
+	if(anim_name) == disappearAnimation:
+>>>>>>> 6709243 (pour anta)
 		get_parent().queue_free()

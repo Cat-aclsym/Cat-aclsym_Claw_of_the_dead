@@ -1,6 +1,7 @@
-[gd_scene load_steps=6 format=3 uid="uid://buj5yatu3iyt"]
+[gd_scene load_steps=7 format=3 uid="uid://buj5yatu3iyt"]
 
 [ext_resource type="PackedScene" uid="uid://crdosg1fmycsi" path="res://scenes/map/i_map.tscn" id="1_4widc"]
+[ext_resource type="PackedScene" uid="uid://gjwpxstirgig" path="res://scenes/enemy/enemy_factory.tscn" id="2_xoi43"]
 
 [sub_resource type="Curve2D" id="Curve2D_kcq2n"]
 _data = {
@@ -49,3 +50,10 @@ curve = SubResource("Curve2D_4wu0t")
 [node name="Camera2D" type="Camera2D" parent="." index="2"]
 position = Vector2(672, 400)
 zoom = Vector2(1.6, 1.6)
+
+[node name="EnemyFactory" parent="." index="3" instance=ExtResource("2_xoi43")]
+
+[node name="Timer" type="Timer" parent="." index="4"]
+autostart = true
+
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
