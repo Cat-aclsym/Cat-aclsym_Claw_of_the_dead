@@ -46,7 +46,6 @@ func _ready():
 	health = max_health
 	path_points_size = path.curve.get_baked_points().size()
 	_get_path_direction()
-	current_point_id += 1
 	AnimPlayer.connect("animation_finished", _on_animation_player_animation_finished)
 
 
@@ -96,7 +95,7 @@ func _get_path_direction():
 func _update_direction():
 	print(current_point_id)
 	print(path_follow.position, path.curve.get_point_position(current_point_id+1))
-	if path_follow.position == path.curve.get_point_position(current_point_id+1):
+	if round(path_follow.position) == round(path.curve.get_point_position(current_point_id+1)) && path.curve.get_closest_point(path_follow.position) != path.curve.get_point_position(current_point_id):
 		print("changed direction")
 		_get_path_direction()
 		current_point_id += 1
