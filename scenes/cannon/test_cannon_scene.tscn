@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://scripts/cannon/test_cannon_scene.gd" id="1_ycxy6"]
 [ext_resource type="PackedScene" uid="uid://cwshc2phtb05e" path="res://scenes/cannon/i_cannon.tscn" id="2_vbhgu"]
-[ext_resource type="PackedScene" uid="uid://y26a0w8ybpo5" path="res://scenes/bullet/test_bullet.tscn" id="3_uf8ir"]
+[ext_resource type="PackedScene" uid="uid://cax2gd3swoin0" path="res://scenes/bullet/test_bullet.tscn" id="3_uf8ir"]
 
 [node name="TestCannonScene" type="Node2D"]
 script = ExtResource("1_ycxy6")

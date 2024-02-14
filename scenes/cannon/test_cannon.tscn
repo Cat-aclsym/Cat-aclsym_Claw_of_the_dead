@@ -1,10 +1,53 @@
-[gd_scene load_steps=4 format=3 uid="uid://c6wljnc80qudp"]
+[gd_scene load_steps=9 format=3 uid="uid://c6wljnc80qudp"]
 
 [ext_resource type="PackedScene" uid="uid://cwshc2phtb05e" path="res://scenes/cannon/i_cannon.tscn" id="1_smvl2"]
 [ext_resource type="PackedScene" uid="uid://cax2gd3swoin0" path="res://scenes/bullet/test_bullet.tscn" id="2_miu16"]
+[ext_resource type="Texture2D" uid="uid://dl4v1uuiyxm8r" path="res://assets/towers/tower_2_LVL_1.png" id="3_uqrqn"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_fe02m"]
 radius = 814.199
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wpv86"]
+atlas = ExtResource("3_uqrqn")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="Animation" id="Animation_ieu25"]
+resource_name = "idle"
+length = 1.1
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:texture:region")
+tracks/0/interp = 0
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [Rect2(0, 0, 64, 64), Rect2(0, 0, 64, 64), Rect2(128, 0, 64, 64), Rect2(192, 0, 64, 64), Rect2(256, 0, 64, 64), Rect2(320, 0, 64, 64), Rect2(384, 0, 64, 64), Rect2(448, 0, 64, 64), Rect2(512, 0, 64, 64), Rect2(576, 0, 64, 64), Rect2(640, 0, 64, 64)]
+}
+
+[sub_resource type="Animation" id="Animation_eedyf"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:texture:region")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Rect2(0, 0, 64, 64)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_w27ry"]
+_data = {
+"RESET": SubResource("Animation_eedyf"),
+"idle": SubResource("Animation_ieu25")
+}
 
 [node name="TestCannon" instance=ExtResource("1_smvl2")]
 BulletScene = ExtResource("2_miu16")
@@ -14,6 +57,16 @@ one_shot = true
 
 [node name="CollisionShape2D" parent="Area2D" index="0"]
 shape = SubResource("CircleShape2D_fe02m")
+
+[node name="Sprite2D" type="Sprite2D" parent="." index="2"]
+scale = Vector2(3, 3)
+texture = SubResource("AtlasTexture_wpv86")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Sprite2D" index="0"]
+libraries = {
+"": SubResource("AnimationLibrary_w27ry")
+}
+autoplay = "idle"
 
 [connection signal="body_entered" from="Area2D" to="." method="_on_area_2d_body_entered"]
 [connection signal="body_exited" from="Area2D" to="." method="_on_area_2d_body_exited"]
