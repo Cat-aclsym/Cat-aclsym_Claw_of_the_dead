@@ -1,6 +1,4 @@
-class_name IEnemy
-
-extends CharacterBody2D
+class_name IEnemy extends CharacterBody2D
 
 enum ENM_State {
 	FOLLOW_PATH,
@@ -8,24 +6,31 @@ enum ENM_State {
 	GIVE_DAMAGE
 }
 
+enum ENM_Type {
+	DEFAULT,
+	BIG_DADDY,
+}
+
+@export var speed: float = 30
+@export var max_health: float = 100
+@export var type: ENM_Type = ENM_Type.DEFAULT
+		
+var disappear_animation: String = "FadeOut"
+var walk_up_animation: String = "walk_up"
+var walk_down_animation: String = "walk_down"
+
+var health: float
+var state: ENM_State = ENM_State.FOLLOW_PATH
+var path: PathFollow2D = null
+var previous_point: Vector2
+var is_dead: bool:
+	get:
+		return health == 0
+
 @onready var Sprite: Sprite2D = $Sprite2D
 @onready var AnimPlayer: AnimationPlayer = Sprite.get_node("AnimationPlayer")
 
-@export var speed: float = 30
-@export var health: float
-@export var max_health: float = 100
-@export var type: String = 'default'
-@export var state: ENM_State = ENM_State.FOLLOW_PATH
-@export var path: PathFollow2D = null
-@export var previous_point: Vector2
-@export var is_dead: bool:
-	get:
-		return health == 0
-var disappearAnimation: String = "FadeOut"
-var walkUpAnimation: String = "walk_up"
-var walkDownAnimation: String = "walk_down"
-
-
+# core
 func _ready():
 	health = max_health
 	AnimPlayer.connect("animation_finished", _on_animation_player_animation_finished)
@@ -48,32 +53,14 @@ func _physics_process(delta: float) -> void:
 	#print(health)
 
 
-func _dead_state() -> void:
-	# todo: add money to player
-	# todo: play sound
-	# todo: decrease enemy count
-	_disappear() # todo: remove this (debug)
-#	AnimPlayer.play("Death")
-#	AnimPlayer.connect("animation_finished", self, "_on_animation_finished")
-
-
-func _disappear() -> void:
-	AnimPlayer.play(disappearAnimation)
-
-
-func _give_damage_state() -> void:
-	# when the enemy arrives at the end of the Path
-	_disappear()
-	# todo: reduce player health
-	pass
-
-
-func _take_damage(damage: float) -> void:
+# functionnal
+func take_damage(damage: float) -> void:
 	if(health - damage <= 0):
 		health = 0
 		_dead_state()
 	else:
 		health -= damage
+
 
 func check_next_point() -> bool:
 	var points: Array = path.curve.get_baked_points()
@@ -83,6 +70,7 @@ func check_next_point() -> bool:
 		return true
 	else:
 		return false
+
 
 func follow_path(delta: float) -> void:
 	var x_pos_difference: float = path.position.x - previous_point.x;
@@ -102,12 +90,33 @@ func follow_path(delta: float) -> void:
 		return
 	path.set_progress(path.get_progress() + (speed * delta))
 	if y_pos_difference > 0.:
-		AnimPlayer.play(walkUpAnimation)
+		AnimPlayer.play(walk_up_animation)
 	elif y_pos_difference < 0.:
-		AnimPlayer.play(walkDownAnimation)
+		AnimPlayer.play(walk_down_animation)
 
 
+# internal
+func _dead_state() -> void:
+	# todo: add money to player
+	# todo: play sound
+	# todo: decrease enemy count
+	_disappear() # todo: remove this (debug)
+#	AnimPlayer.play("Death")
+#	AnimPlayer.connect("animation_finished", self, "_on_animation_finished")
+
+
+func _disappear() -> void:
+	AnimPlayer.play(disappear_animation)
+
+
+func _give_damage_state() -> void:
+	# when the enemy arrives at the end of the Path
+	_disappear()
+	# todo: reduce player health
+
+
+# signals
 func _on_animation_player_animation_finished(anim_name: String) -> void:
-	if(anim_name) == disappearAnimation:
+	if(anim_name) == disappear_animation:
 		queue_free()
 		get_parent().queue_free()

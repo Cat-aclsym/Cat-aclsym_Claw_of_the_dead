@@ -1,9 +1,0 @@
-[gd_scene load_steps=3 format=3 uid="uid://de5qoblfvy8oq"]
-
-[ext_resource type="PackedScene" uid="uid://tmlcshxut7kv" path="res://scenes/enemy/default_enemy_scene.tscn" id="1_viqht"]
-[ext_resource type="Script" path="res://scripts/enemy/mini_enemy.gd" id="2_08lmx"]
-
-[node name="MiniEnemyScene" instance=ExtResource("1_viqht")]
-position = Vector2(0, -15)
-scale = Vector2(0.5, 0.5)
-script = ExtResource("2_08lmx")
