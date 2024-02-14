@@ -1,75 +1,34 @@
 class_name IMap 
 extends Node2D
-signal win
-signal loose
 
+var enemy1: PackedScene = preload("res://scenes/enemy/ienemy_scene.tscn")
 
 var paths: Array[Path2D] = []
+@onready var Paths: Node2D = $Paths
 
-var current_wave: int = -1
-var waves_count: int = 0
-var waves: Array[Wave] = []
-
-@onready var waves_timer: Timer = $WavesTimer
-
-
-# core
 func _ready() -> void:
-	_load_paths()
-	_load_waves()
-	_start_next_wave()
+	_load_all_paths()
+	var enemy: IEnemy = enemy1.instantiate()
+	var path: Path2D = $Paths/Path2DA1
+
+	IEnemySpawner.spawn_enemy(path, enemy)
 
 
-# functionnal 
 func get_paths() -> Array[Path2D]:
 	return paths
 
 
-# internal
-func _start_next_wave() -> void:
-	current_wave += 1
+func _load_all_paths() -> void:
+	var tmp: Array[Node] = Paths.get_children()
 	
-	if (current_wave == waves_count):
-		Log.debug("You win!")
-		win.emit()
-		return
-	
-	waves[current_wave].start_wave()
+	for c in tmp:
+		assert(c is Path2D, "You are an idiot")
+		paths.append(c as Path2D)
+		
 
-
-func _load_paths() -> void:
-	var children: Array[Node] = $Paths.get_children()
-	
-	for child in children:
-		if (child is Path2D):
-			paths.append(child as Path2D)
-
-
-func _load_waves() -> void:
-	var children: Array = $Waves.get_children()
-	var i: int = 0
-	
-	for child in children:
-		if (child is Wave):
-			i += 1
-			child.name = "Wave_{0}".format([i])
-			
-			child.connect(
-				"wave_end",
-				 func (delay: float):
-					waves_timer.wait_time = delay
-					waves_timer.start()
-			)
-			
-			child.set_paths(paths)
-			waves.append(child as Wave)
-	
-	waves_count = waves.size()
-	
-	if (waves_count == 0):
-		Log.warning("{0} don't have waves".format([name]))
-	
-
-# signals
-func _on_waves_timer_timeout() -> void:
-	_start_next_wave()
+func _on_timer_timeout():
+	#var enemy: IEnemy = enemy1.instantiate()
+	#var path: Path2D = $Paths/Path2DA1
+#
+	#IEnemySpawner.spawn_enemy(path, enemy)
+	pass
