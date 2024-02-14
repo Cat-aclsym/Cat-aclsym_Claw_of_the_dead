@@ -1,0 +1,18 @@
+[gd_scene load_steps=3 format=3 uid="uid://7a3coyl5og1a"]
+
+[ext_resource type="PackedScene" uid="uid://c4m4v70cudic" path="res://scenes/pause_menu/pause_menu.tscn" id="1_1svi5"]
+[ext_resource type="Script" path="res://scenes/hud/hud.gd" id="1_b6y43"]
+
+[node name="HUD" type="CanvasLayer"]
+script = ExtResource("1_b6y43")
+
+[node name="MenuPause" parent="." instance=ExtResource("1_1svi5")]
+visible = false
+
+[node name="PauseButton" type="Button" parent="."]
+process_mode = 3
+offset_right = 8.0
+offset_bottom = 8.0
+text = "pause "
+
+[connection signal="pressed" from="PauseButton" to="." method="_on_pause_button_pressed"]

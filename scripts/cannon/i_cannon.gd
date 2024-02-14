@@ -34,3 +34,7 @@ func fire():
 
 func _process(delta):
 	fire()
+
+
+func _on_menu_button_pressed():
+	pass # Replace with function body.
