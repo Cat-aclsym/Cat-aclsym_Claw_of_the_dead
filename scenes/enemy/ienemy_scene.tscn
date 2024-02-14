@@ -1,6 +1,6 @@
 [gd_scene load_steps=10 format=3 uid="uid://tmlcshxut7kv"]
 
-[ext_resource type="Script" path="res://scripts/enemy/IEnemy.gd" id="1_qq3nr"]
+[ext_resource type="Script" path="res://scripts/enemy/ienemy.gd" id="1_qq3nr"]
 [ext_resource type="Texture2D" uid="uid://bxdnrk66pdccd" path="res://assets/enemies/default_zombie.png" id="2_6ldc8"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_46uiq"]
@@ -13,7 +13,7 @@ region = Rect2(64, 0, 64, 64)
 
 [sub_resource type="Animation" id="Animation_3r1bq"]
 resource_name = "FadeOut"
-length = 2.0
+length = 1.0
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -96,7 +96,7 @@ _data = {
 "walk_up": SubResource("Animation_g8xh1")
 }
 
-[node name="DefaultEnemyScene" type="CharacterBody2D"]
+[node name="IEnemy" type="CharacterBody2D"]
 position = Vector2(0, -29)
 script = ExtResource("1_qq3nr")
 

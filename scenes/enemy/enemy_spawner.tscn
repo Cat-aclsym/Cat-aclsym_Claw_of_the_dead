@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://dpubvklrddcxm"]
 
-[ext_resource type="Script" path="res://scripts/enemy/IEnemySpawner.gd" id="1_x81yy"]
-[ext_resource type="Script" path="res://scripts/enemy/line.gd" id="3_xg3ys"]
+[ext_resource type="Script" path="res://scripts/enemy/enemy_spawner.gd" id="1_12umm"]
+[ext_resource type="Script" path="res://scripts/enemy/line.gd" id="2_nk7e8"]
 
 [sub_resource type="Curve2D" id="Curve2D_pbltp"]
 bake_interval = 0.01
@@ -10,8 +10,8 @@ _data = {
 }
 point_count = 20
 
-[node name="EnemySceneTest" type="Node2D"]
-script = ExtResource("1_x81yy")
+[node name="EnemySpawner" type="Node2D"]
+script = ExtResource("1_12umm")
 
 [node name="Path2D" type="Path2D" parent="."]
 position = Vector2(-1, -2)
@@ -27,7 +27,7 @@ loop = false
 
 [node name="Line2D" type="Line2D" parent="Path2D"]
 width = 2.0
-script = ExtResource("3_xg3ys")
+script = ExtResource("2_nk7e8")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 zoom = Vector2(5.675, 5.675)
