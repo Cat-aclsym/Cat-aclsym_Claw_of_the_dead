@@ -1,5 +1,9 @@
 class_name IEnemy extends CharacterBody2D
 
+const ANIM_FADE_OUT: String = "fade_out"
+const ANIM_WALK_UP: String = "walk_up"
+const ANIM_WALK_DOWN: String = "walk_down"
+
 enum ENM_State {
 	FOLLOW_PATH,
 	DEAD,
@@ -22,10 +26,6 @@ enum ENM_Type {
 @export var max_health: float = 100
 @export var type: ENM_Type = ENM_Type.DEFAULT
 
-var disappear_animation: String = "FadeOut"
-var walk_up_animation: String = "walk_up"
-var walk_down_animation: String = "walk_down"
-
 var health: float
 var state: ENM_State = ENM_State.FOLLOW_PATH
 var path_follow: PathFollow2D = null
@@ -38,7 +38,7 @@ var current_point_id: int = 0
 var path_points_size: int
 
 @onready var Sprite: Sprite2D = $Sprite2D
-@onready var AnimPlayer: AnimationPlayer = Sprite.get_node("AnimationPlayer")
+@onready var AnimPlayer: AnimationPlayer = $AnimationPlayer
 
 
 # core
@@ -61,10 +61,6 @@ func _physics_process(delta: float) -> void:
 		_:
 			pass
 
-	follow_path(delta)
-	#_take_damage(1)
-	#print(health)
-
 
 # functionnal
 func take_damage(damage: float) -> void:
@@ -75,10 +71,21 @@ func take_damage(damage: float) -> void:
 		health -= damage
 
 
-func _get_path_direction():
-	var x_pos_difference: float = path.curve.get_point_position(current_point_id).x - path.curve.get_point_position(current_point_id+1).x;
-	var y_pos_difference: float = path.curve.get_point_position(current_point_id).y - path.curve.get_point_position(current_point_id+1).y;
+func follow_path(delta: float) -> void:
+	if path_follow.get_progress_ratio() >= 1: # Path finished
+		_give_damage_state()
+		return
+	
+	path_follow.set_progress(path_follow.get_progress() + (speed * delta))
+	_update_direction()
+	_walk()
 
+
+# internal
+func _get_path_direction():
+	var x_pos_difference: float = path.curve.get_point_position(current_point_id).x - path.curve.get_point_position(current_point_id + 1).x;
+	var y_pos_difference: float = path.curve.get_point_position(current_point_id).y - path.curve.get_point_position(current_point_id + 1).y;
+	
 	if x_pos_difference < 0.:
 		if y_pos_difference < 0.:
 			direction = ENM_Direction.DOWN_RIGHT
@@ -89,66 +96,48 @@ func _get_path_direction():
 			direction = ENM_Direction.DOWN_LEFT
 		elif y_pos_difference > 0.:
 			direction = ENM_Direction.UP_LEFT
-	print(get_parent().name, ": ", direction)
 
 
 func _update_direction():
-	#print("size: ", path_points_size, " current_point_id: ", current_point_id)
 	if current_point_id == path_points_size - 2:
 		return
-	#print(current_point_id)
-	#print(path_follow.position, path.curve.get_point_position(current_point_id+1))
-	if round(path_follow.position) == round(path.curve.get_point_position(current_point_id+1)) && path.curve.get_closest_point(path_follow.position) != path.curve.get_point_position(current_point_id):
-		print(get_parent().name, " changed direction ", current_point_id)
+		
+	if (
+		round(path_follow.position) == round(path.curve.get_point_position(current_point_id+1)) 
+		&& path.curve.get_closest_point(path_follow.position) != path.curve.get_point_position(current_point_id)
+	):
+		#Log.debug("{0}::_update_direction() parent = {1} changed direction = {2}".format([name, get_parent().name, direction]))
 		current_point_id += 1
 		_get_path_direction()
-
-
-func follow_path(delta: float) -> void:
-	if path_follow.get_progress_ratio() >= 1:
-		# Path finished
-		_give_damage_state()
-		return
-	path_follow.set_progress(path_follow.get_progress() + (speed * delta))
-	_update_direction()
-	_walk()
-
+		
 
 func _walk():
-	print("_walk")
 	match direction:
 		ENM_Direction.UP_RIGHT:
-			print("up_right")
 			Sprite.flip_h = false
-			AnimPlayer.play(walk_up_animation)
+			AnimPlayer.play(ANIM_WALK_UP)
 		ENM_Direction.UP_LEFT:
-			print("up_left")
 			Sprite.flip_h = true
-			AnimPlayer.play(walk_up_animation)
+			AnimPlayer.play(ANIM_WALK_UP)
 		ENM_Direction.DOWN_RIGHT:
-			print("down_right")
 			Sprite.flip_h = false
-			AnimPlayer.play(walk_down_animation)
+			AnimPlayer.play(ANIM_WALK_DOWN)
 		ENM_Direction.DOWN_LEFT:
-			print("down_left")
 			Sprite.flip_h = true
-			AnimPlayer.play(walk_down_animation)
+			AnimPlayer.play(ANIM_WALK_DOWN)
 		_:
-			pass
+			Log.warning("{0}::_walk() direction does not match ENM_Direction enum".format([name]))
 
 
-# internal
+func _disappear() -> void:
+	AnimPlayer.play(ANIM_FADE_OUT)
+
+
 func _dead_state() -> void:
 	# todo: add money to player
 	# todo: play sound
 	# todo: decrease enemy count
 	_disappear() # todo: remove this (debug)
-#	AnimPlayer.play("Death")
-#	AnimPlayer.connect("animation_finished", self, "_on_animation_finished")
-
-
-func _disappear() -> void:
-	AnimPlayer.play(disappear_animation)
 
 
 func _give_damage_state() -> void:
@@ -159,6 +148,6 @@ func _give_damage_state() -> void:
 
 # signals
 func _on_animation_player_animation_finished(anim_name: String) -> void:
-	if(anim_name) == disappear_animation:
+	if (anim_name == ANIM_FADE_OUT):
 		queue_free()
 		get_parent().queue_free()
