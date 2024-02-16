@@ -5,7 +5,3 @@
 
 [node name="LevelDebug" instance=ExtResource("1_hf23y")]
 map_scene = ExtResource("2_r7ndl")
-
-[node name="LevelMetadata" parent="." index="0"]
-id = -2
-level_name = "MaximeObryHaters"

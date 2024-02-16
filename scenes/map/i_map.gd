@@ -6,6 +6,7 @@ var enemy1: PackedScene = preload("res://scenes/enemy/ienemy_scene.tscn")
 var paths: Array[Path2D] = []
 @onready var Paths: Node2D = $Paths
 
+
 func _ready() -> void:
 	_load_all_paths()
 

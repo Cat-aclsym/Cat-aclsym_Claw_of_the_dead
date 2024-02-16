@@ -1,7 +1,9 @@
 [gd_scene load_steps=2 format=3 uid="uid://dexuq7koxhuau"]
 
-[ext_resource type="PackedScene" uid="uid://ejukcnw87ab7" path="res://scenes/cannon/test_cannon.tscn" id="1_hqk8p"]
+[ext_resource type="PackedScene" uid="uid://dgac5kcibwtmg" path="res://scenes/menus/levels_menu/levels_menu.tscn" id="1_kl6gs"]
 
 [node name="Main" type="Node2D"]
 
-[node name="TestCannon" parent="." instance=ExtResource("1_hqk8p")]
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="LevelsMenu" parent="CanvasLayer" instance=ExtResource("1_kl6gs")]
