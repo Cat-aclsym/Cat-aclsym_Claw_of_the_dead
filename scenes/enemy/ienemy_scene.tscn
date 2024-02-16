@@ -1,83 +1,22 @@
 [gd_scene load_steps=10 format=3 uid="uid://tmlcshxut7kv"]
 
 [ext_resource type="Script" path="res://scripts/enemy/ienemy.gd" id="1_qq3nr"]
-[ext_resource type="Texture2D" uid="uid://bxdnrk66pdccd" path="res://assets/enemies/default_zombie.png" id="2_6ldc8"]
 
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_46uiq"]
-radius = 9.0
-height = 34.0
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_tp60s"]
+load_path = "res://.godot/imported/default_zombie.png-5050bca98bc51b950cb05a5ced05d157.ctex"
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_e7r48"]
-atlas = ExtResource("2_6ldc8")
+[sub_resource type="AtlasTexture" id="AtlasTexture_6gv71"]
+atlas = SubResource("CompressedTexture2D_tp60s")
 region = Rect2(64, 0, 64, 64)
 
-[sub_resource type="Animation" id="Animation_3r1bq"]
-resource_name = "FadeOut"
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".:modulate")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0.1, 1),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
-}
-
-[sub_resource type="Animation" id="Animation_aehud"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".:texture:region")
-tracks/0/interp = 0
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Rect2(64, 0, 64, 64)]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath(".:texture")
-tracks/1/interp = 0
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [SubResource("AtlasTexture_e7r48")]
-}
-
-[sub_resource type="Animation" id="Animation_b2u2g"]
-resource_name = "walk_right"
+[sub_resource type="Animation" id="Animation_jh3bl"]
+resource_name = "walk_up"
 length = 1.6
 loop_mode = 1
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath(".:texture:region")
-tracks/0/interp = 0
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.2, 0.4, 0.6, 0.8, 1, 1.2, 1.4),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
-"update": 0,
-"values": [Rect2(0, 0, 64, 64), Rect2(64, 0, 64, 64), Rect2(128, 0, 64, 64), Rect2(192, 0, 64, 64), Rect2(0, 64, 64, 64), Rect2(64, 64, 64, 64), Rect2(128, 64, 64, 64), Rect2(192, 64, 64, 64)]
-}
-
-[sub_resource type="Animation" id="Animation_g8xh1"]
-resource_name = "walk_down"
-length = 1.6
-loop_mode = 1
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".:texture:region")
+tracks/0/path = NodePath("Sprite2D:texture:region")
 tracks/0/interp = 0
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -87,27 +26,93 @@ tracks/0/keys = {
 "values": [Rect2(0, 128, 64, 64), Rect2(64, 128, 64, 64), Rect2(128, 128, 64, 64), Rect2(192, 128, 64, 64), Rect2(0, 192, 64, 64), Rect2(64, 192, 64, 64), Rect2(128, 192, 64, 64), Rect2(192, 192, 64, 64)]
 }
 
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_bg7u8"]
-_data = {
-"FadeOut": SubResource("Animation_3r1bq"),
-"RESET": SubResource("Animation_aehud"),
-"walk_down": SubResource("Animation_b2u2g"),
-"walk_up": SubResource("Animation_g8xh1")
+[sub_resource type="Animation" id="Animation_dcrc5"]
+resource_name = "walk_down"
+length = 1.6
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:texture:region")
+tracks/0/interp = 0
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.2, 0.4, 0.6, 0.8, 1, 1.2, 1.4),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [Rect2(0, 0, 64, 64), Rect2(64, 0, 64, 64), Rect2(128, 0, 64, 64), Rect2(192, 0, 64, 64), Rect2(0, 64, 64, 64), Rect2(64, 64, 64, 64), Rect2(128, 64, 64, 64), Rect2(192, 64, 64, 64)]
 }
+
+[sub_resource type="Animation" id="Animation_i8ufp"]
+resource_name = "fade_out"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_bg28e"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sprite2D:texture:region")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Rect2(64, 0, 64, 64)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_jl7ul"]
+_data = {
+"RESET": SubResource("Animation_bg28e"),
+"fade_out": SubResource("Animation_i8ufp"),
+"walk_down": SubResource("Animation_dcrc5"),
+"walk_up": SubResource("Animation_jh3bl")
+}
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_46uiq"]
+radius = 9.0
+height = 34.0
 
 [node name="IEnemy" type="CharacterBody2D"]
 position = Vector2(0, -29)
 script = ExtResource("1_qq3nr")
+speed = 100.0
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = SubResource("AtlasTexture_6gv71")
+region_rect = Rect2(0, 0, 64, 64)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_jl7ul")
+}
+autoplay = "walk_down"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 scale = Vector2(1.7, 1.7)
 skew = -0.00247645
 shape = SubResource("CapsuleShape2D_46uiq")
-
-[node name="Sprite2D" type="Sprite2D" parent="."]
-texture = SubResource("AtlasTexture_e7r48")
-
-[node name="AnimationPlayer" type="AnimationPlayer" parent="Sprite2D"]
-libraries = {
-"": SubResource("AnimationLibrary_bg7u8")
-}

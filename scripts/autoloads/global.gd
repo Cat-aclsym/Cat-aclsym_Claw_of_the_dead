@@ -10,3 +10,7 @@ extends Node
 
 
 var debug_console: DebugConsole = null
+
+
+func _ready() -> void:
+	process_mode = Node.PROCESS_MODE_ALWAYS
