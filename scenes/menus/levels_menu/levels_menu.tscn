@@ -13,15 +13,14 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_11ws4")
 
-[node name="Label" type="Label" parent="."]
+[node name="TitleLabel" type="Label" parent="."]
 layout_mode = 0
 offset_left = 584.0
 offset_top = 168.0
 offset_right = 690.0
 offset_bottom = 191.0
-text = "Choose level :"
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
+[node name="LevelSelectVBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 0
 offset_left = 256.0
 offset_top = 256.0
@@ -29,31 +28,28 @@ offset_right = 1024.0
 offset_bottom = 704.0
 theme_override_constants/separation = 32
 
-[node name="Button" type="Button" parent="VBoxContainer"]
+[node name="LevelButton1" type="Button" parent="LevelSelectVBoxContainer"]
 layout_mode = 2
-text = "LEVEL 1"
 
-[node name="LevelMetadata" parent="VBoxContainer/Button" instance=ExtResource("2_rui86")]
+[node name="LevelMetadata" parent="LevelSelectVBoxContainer/LevelButton1" instance=ExtResource("2_rui86")]
 id = 1
-level_name = "Tutoriel"
+level_name = "FIRST.LEVEL.NAME"
 level_scene = ExtResource("3_w1fyg")
 
-[node name="Button2" type="Button" parent="VBoxContainer"]
+[node name="LevelButton2" type="Button" parent="LevelSelectVBoxContainer"]
 layout_mode = 2
-text = "LEVEL 2"
 
-[node name="LevelMetadata2" parent="VBoxContainer/Button2" instance=ExtResource("2_rui86")]
+[node name="LevelMetadata2" parent="LevelSelectVBoxContainer/LevelButton2" instance=ExtResource("2_rui86")]
 position = Vector2(0, -63)
 id = 2
-level_name = "Premier niveau"
+level_name = "SECOND.LEVEL.NAME"
 level_scene = ExtResource("3_w1fyg")
 
-[node name="Button3" type="Button" parent="VBoxContainer"]
+[node name="LevelButton3" type="Button" parent="LevelSelectVBoxContainer"]
 layout_mode = 2
-text = "LEVEL 3"
 
-[node name="LevelMetadata3" parent="VBoxContainer/Button3" instance=ExtResource("2_rui86")]
+[node name="LevelMetadata3" parent="LevelSelectVBoxContainer/LevelButton3" instance=ExtResource("2_rui86")]
 position = Vector2(0, -126)
 id = 3
-level_name = "Deuxieme niveau"
+level_name = "THIRD.LEVEL.NAME"
 level_scene = ExtResource("3_w1fyg")

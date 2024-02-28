@@ -64,7 +64,7 @@ alignment = 1
 layout_mode = 2
 theme = SubResource("Theme_affv6")
 theme_override_font_sizes/font_size = 80
-text = "Pause"
+text = "PAUSE.TITLE"
 horizontal_alignment = 1
 vertical_alignment = 1
 

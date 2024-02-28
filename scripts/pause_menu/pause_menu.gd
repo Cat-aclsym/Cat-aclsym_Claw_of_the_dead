@@ -24,9 +24,6 @@ var state: String = "mute"
 func _ready():
 	pass
 
-# Called when the node is added to the scene tree for the first time.
-func _on_pressed(button):
-	print(button.name, " was pressed")
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta):
