@@ -38,6 +38,14 @@ console_push={
 ]
 }
 
+[internationalization]
+
+locale/translations=PackedStringArray("res://assets/translations/translations.en.translation", "res://assets/translations/translations.fr.translation")
+pseudolocalization/use_pseudolocalization=true
+pseudolocalization/replace_with_accents=false
+pseudolocalization/prefix=""
+pseudolocalization/suffix=""
+
 [rendering]
 
 textures/canvas_textures/default_texture_filter=0

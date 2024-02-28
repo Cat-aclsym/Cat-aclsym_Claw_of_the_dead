@@ -1,0 +1,9 @@
+[gd_resource type="Theme" load_steps=3 format=3 uid="uid://dr31fy67cgji3"]
+
+[ext_resource type="FontFile" uid="uid://ddo3rokwsadq0" path="res://assets/resources/fonts/DotGothic16-Regular.ttf" id="1_wrjw4"]
+[ext_resource type="FontFile" uid="uid://dpjd0ata0w2de" path="res://assets/resources/fonts/Karla-VariableFont_wght.ttf" id="2_opgil"]
+
+[resource]
+default_font = ExtResource("2_opgil")
+Fonts/fonts/text = ExtResource("1_wrjw4")
+Fonts/fonts/title = ExtResource("2_opgil")
