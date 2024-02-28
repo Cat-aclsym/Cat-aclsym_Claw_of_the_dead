@@ -2,7 +2,7 @@ extends Control
 
 var buttons: Dictionary = {}
 
-@onready var container: VBoxContainer = $VBoxContainer
+@onready var container: VBoxContainer = $LevelSelectVBoxContainer
 
 # core
 func _ready() -> void:
@@ -17,7 +17,7 @@ func _initialize() -> void:
 		buttons[button] = button.get_child(0)
 	
 	for bt in buttons:
-		bt.text = "{0} - {1}".format([buttons[bt].id, buttons[bt].level_name])
+		bt.text = "{0} - {1}".format([buttons[bt].id, tr(buttons[bt].level_name)])
 		bt.connect("pressed", 
 		func():
 			assert(buttons[bt].level_scene != null, "Level scene is null.")
