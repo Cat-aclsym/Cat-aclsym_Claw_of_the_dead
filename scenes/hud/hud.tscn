@@ -1,7 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://7a3coyl5og1a"]
+[gd_scene load_steps=5 format=3 uid="uid://7a3coyl5og1a"]
 
 [ext_resource type="PackedScene" uid="uid://c4m4v70cudic" path="res://scenes/pause_menu/pause_menu.tscn" id="1_1svi5"]
 [ext_resource type="Script" path="res://scenes/hud/hud.gd" id="1_b6y43"]
+[ext_resource type="PackedScene" uid="uid://be8c7p1ka4dmm" path="res://scenes/debug_console/debug_console.tscn" id="2_fkxxx"]
+[ext_resource type="PackedScene" uid="uid://dgac5kcibwtmg" path="res://scenes/menus/levels_menu/levels_menu.tscn" id="4_4jsl7"]
 
 [node name="HUD" type="CanvasLayer"]
 script = ExtResource("1_b6y43")
@@ -11,8 +13,13 @@ visible = false
 
 [node name="PauseButton" type="Button" parent="."]
 process_mode = 3
-offset_right = 8.0
-offset_bottom = 8.0
+offset_right = 59.0
+offset_bottom = 31.0
 text = "pause "
+
+[node name="LevelsMenu" parent="." instance=ExtResource("4_4jsl7")]
+
+[node name="DebugConsole" parent="." instance=ExtResource("2_fkxxx")]
+visible = false
 
 [connection signal="pressed" from="PauseButton" to="." method="_on_pause_button_pressed"]

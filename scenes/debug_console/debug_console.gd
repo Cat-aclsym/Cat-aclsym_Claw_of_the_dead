@@ -56,7 +56,7 @@ func _process_command(in_text: String) -> void:
 	if (text.length() == 0): return
 	
 	# Print output
-	output_text(">>> {0}".format([text]))
+	output_text("> {0}".format([text]))
 	
 	# Extracts tokens from input
 	var tokens := Array(text.split(" "))

@@ -1,7 +1,11 @@
-[gd_scene load_steps=5 format=3 uid="uid://be8c7p1ka4dmm"]
+[gd_scene load_steps=9 format=3 uid="uid://be8c7p1ka4dmm"]
 
 [ext_resource type="Script" path="res://scenes/debug_console/debug_console.gd" id="1_5jk4e"]
 [ext_resource type="Script" path="res://scenes/debug_console/command_handler.gd" id="2_2h81y"]
+[ext_resource type="FontFile" uid="uid://dsrl1wp5kyekk" path="res://assets/fonts/ubuntu/Ubuntu-Regular.ttf" id="3_oeb44"]
+[ext_resource type="FontFile" uid="uid://dy4imxxyud3w6" path="res://assets/fonts/ubuntu/Ubuntu-Bold.ttf" id="4_mf412"]
+[ext_resource type="FontFile" uid="uid://cx5r0713yy88d" path="res://assets/fonts/ubuntu/Ubuntu-Italic.ttf" id="5_aq8y8"]
+[ext_resource type="FontFile" uid="uid://bq2548kin4ab5" path="res://assets/fonts/ubuntu/Ubuntu-BoldItalic.ttf" id="6_g6l5m"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7wjpw"]
 content_margin_left = 8.0
@@ -38,15 +42,22 @@ script = ExtResource("2_2h81y")
 [node name="TextLabel" type="RichTextLabel" parent="."]
 layout_mode = 0
 offset_right = 1280.0
-offset_bottom = 256.0
+offset_bottom = 690.0
+theme_override_fonts/normal_font = ExtResource("3_oeb44")
+theme_override_fonts/bold_font = ExtResource("4_mf412")
+theme_override_fonts/italics_font = ExtResource("5_aq8y8")
+theme_override_fonts/bold_italics_font = ExtResource("6_g6l5m")
+theme_override_font_sizes/normal_font_size = 14
 theme_override_styles/normal = SubResource("StyleBoxFlat_7wjpw")
 bbcode_enabled = true
 scroll_following = true
 
 [node name="TextEdit" type="TextEdit" parent="."]
 layout_mode = 0
-offset_top = 256.0
+offset_top = 689.0
 offset_right = 1280.0
-offset_bottom = 288.0
+offset_bottom = 719.0
+theme_override_fonts/font = ExtResource("3_oeb44")
+theme_override_font_sizes/font_size = 14
 theme_override_styles/normal = SubResource("StyleBoxFlat_3v0jc")
 placeholder_text = "Command..."

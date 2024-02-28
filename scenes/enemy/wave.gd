@@ -34,7 +34,7 @@ func _ready() -> void:
 
 # functionnal
 func start_wave() -> void:
-	Log.debug("{0} wave start".format([name]))
+	Log.info("{0} start".format([name]))
 	if (!is_ready):
 		return
 	
@@ -50,7 +50,6 @@ func set_paths(in_paths: Array[Path2D]) -> void:
 # internal
 func _start_next_group() -> void:
 	current_group += 1
-	Log.debug("{0} group {1} start".format([name, current_group]))
 	
 	if (current_group == groups_count):
 		# wait for last enemy to dies
@@ -72,7 +71,6 @@ func _load_groups() -> void:
 			enemies_total_count += child.enemies.size()
 	
 	groups_count = groups.size()
-	Log.info("{0} has {1} enemies to spawn".format([name, enemies_total_count]))
 	
 	if (groups_count == 0):
 		Log.warning("{0} don't have group to spawn".format([name]))
