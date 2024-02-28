@@ -1,4 +1,5 @@
 class_name IEnemy extends CharacterBody2D
+signal die
 
 enum ENM_State {
 	FOLLOW_PATH,
@@ -27,6 +28,8 @@ var is_dead: bool:
 	get:
 		return health == 0
 
+var is_already_dead: bool = false
+
 @onready var Sprite: Sprite2D = $Sprite2D
 @onready var AnimPlayer: AnimationPlayer = Sprite.get_node("AnimationPlayer")
 
@@ -46,7 +49,7 @@ func _physics_process(delta: float) -> void:
 		ENM_State.GIVE_DAMAGE:
 			_give_damage_state()
 		_:
-			pass
+			Log.warning("{0} unknown ENM_State : {1}".format([name, state]))
 			
 	follow_path(delta)
 	#_take_damage(1)
@@ -106,7 +109,12 @@ func _dead_state() -> void:
 
 
 func _disappear() -> void:
+	if (is_already_dead): 
+		return
+	
+	die.emit()
 	AnimPlayer.play(disappear_animation)
+	is_already_dead = true
 
 
 func _give_damage_state() -> void:

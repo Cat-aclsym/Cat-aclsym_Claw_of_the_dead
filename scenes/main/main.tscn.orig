@@ -1,12 +1,20 @@
 [gd_scene load_steps=3 format=3 uid="uid://dexuq7koxhuau"]
 
-[ext_resource type="PackedScene" uid="uid://dgac5kcibwtmg" path="res://scenes/menus/levels_menu/levels_menu.tscn" id="1_kl6gs"]
+<<<<<<< HEAD
 [ext_resource type="PackedScene" uid="uid://ejukcnw87ab7" path="res://scenes/cannon/test_cannon.tscn" id="1_hqk8p"]
 [ext_resource type="PackedScene" uid="uid://7a3coyl5og1a" path="res://scenes/hud/hud.tscn" id="1_mgqbu"]
 
 [node name="Main" type="Node2D"]
 
 [node name="HUD" parent="." instance=ExtResource("1_mgqbu")]
+
+[node name="TestCannon" parent="." instance=ExtResource("1_hqk8p")]
+=======
+[ext_resource type="PackedScene" uid="uid://dgac5kcibwtmg" path="res://scenes/menus/levels_menu/levels_menu.tscn" id="1_kl6gs"]
+
+[node name="Main" type="Node2D"]
+
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
 [node name="LevelsMenu" parent="CanvasLayer" instance=ExtResource("1_kl6gs")]
+>>>>>>> feature/level-system

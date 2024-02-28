@@ -17,8 +17,11 @@ config/features=PackedStringArray("4.2", "Forward Plus")
 [autoload]
 
 Global="*res://scripts/autoloads/global.gd"
+<<<<<<< HEAD
 SoundManager="*res://scripts/autoloads/sound_manager.gd"
+=======
 ScenesLoader="*res://scripts/autoloads/scenes_loader.gd"
+>>>>>>> feature/level-system
 
 [display]
 

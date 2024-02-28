@@ -6,12 +6,12 @@ var currentWave: int = 1
 
 @export var map_scene: PackedScene = null
 
-@onready var Metadata: LevelMetadata = $LevelMetadata
+@onready var Metadata: LevelMetadata = null
 
-
-func _ready() -> void:
-	Log.info("Loading level [{0}] {1}".format([Metadata.id, Metadata.level_name]))
-	
+# functionnal
+func initialize(meta: LevelMetadata) -> void:
+	Metadata = meta
+	Log.info("Level initializing [{0}] : {1}".format([Metadata.id, Metadata.level_name]))
 	_load_map()
 
 
@@ -27,8 +27,9 @@ func loose() -> void:
 	pass
 
 
+# internal
 func _load_map() -> void:
-	Log.info("Loading map...")
+	Log.info("Loading map ...")
 	if !map_scene:
 		Log.error("An IMap must be provided to create a level!")
 		return
