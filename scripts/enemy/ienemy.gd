@@ -61,7 +61,6 @@ func _physics_process(delta: float) -> void:
 		ENM_State.GIVE_DAMAGE:
 			_give_damage_state()
 		_:
-			pass
 			Log.warning("{0} unknown ENM_State : {1}".format([name, state]))
 
 
