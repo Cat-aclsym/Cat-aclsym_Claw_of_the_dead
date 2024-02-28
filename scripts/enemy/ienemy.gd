@@ -1,4 +1,5 @@
 class_name IEnemy extends CharacterBody2D
+signal die
 
 const ANIM_FADE_OUT: String = "fade_out"
 const ANIM_WALK_UP: String = "walk_up"
@@ -34,6 +35,7 @@ var direction: ENM_Direction = ENM_Direction.UP_RIGHT
 var is_dead: bool:
 	get:
 		return health == 0
+var is_already_dead: bool = false
 var current_point_id: int = 0
 var path_points_size: int
 
@@ -60,6 +62,7 @@ func _physics_process(delta: float) -> void:
 			_give_damage_state()
 		_:
 			pass
+			Log.warning("{0} unknown ENM_State : {1}".format([name, state]))
 
 
 # functionnal
@@ -130,14 +133,19 @@ func _walk():
 
 
 func _disappear() -> void:
+	if (is_already_dead):
+		return
+
+	die.emit()
 	AnimPlayer.play(ANIM_FADE_OUT)
+	is_already_dead = true
 
 
 func _dead_state() -> void:
 	# todo: add money to player
 	# todo: play sound
 	# todo: decrease enemy count
-	_disappear() # todo: remove this (debug)
+	_disappear()
 
 
 func _give_damage_state() -> void:
