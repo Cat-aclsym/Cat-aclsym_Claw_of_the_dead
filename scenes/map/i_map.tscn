@@ -9,3 +9,10 @@ script = ExtResource("1_vhs3p")
 [node name="TileMapDebug" parent="." instance=ExtResource("2_g4v36")]
 
 [node name="Paths" type="Node2D" parent="."]
+
+[node name="Waves" type="Node" parent="."]
+
+[node name="WavesTimer" type="Timer" parent="."]
+one_shot = true
+
+[connection signal="timeout" from="WavesTimer" to="." method="_on_waves_timer_timeout"]

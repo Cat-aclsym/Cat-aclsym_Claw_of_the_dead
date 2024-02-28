@@ -1,7 +1,8 @@
-[gd_scene load_steps=7 format=3 uid="uid://buj5yatu3iyt"]
+[gd_scene load_steps=8 format=3 uid="uid://buj5yatu3iyt"]
 
 [ext_resource type="PackedScene" uid="uid://crdosg1fmycsi" path="res://scenes/map/i_map.tscn" id="1_4widc"]
-[ext_resource type="PackedScene" uid="uid://dpubvklrddcxm" path="res://scenes/enemy/enemy_spawner.tscn" id="2_xoi43"]
+[ext_resource type="PackedScene" uid="uid://liu470588hxg" path="res://scenes/enemy/enemy_group.tscn" id="2_t1gv5"]
+[ext_resource type="PackedScene" uid="uid://x8pmpbb600mv" path="res://scenes/enemy/wave.tscn" id="3_hf8jk"]
 
 [sub_resource type="Curve2D" id="Curve2D_kcq2n"]
 _data = {
@@ -47,13 +48,35 @@ curve = SubResource("Curve2D_u7j3k")
 [node name="Path2DB2" type="Path2D" parent="Paths" index="3"]
 curve = SubResource("Curve2D_4wu0t")
 
-[node name="Camera2D" type="Camera2D" parent="." index="2"]
+[node name="Wave1" parent="Waves" index="0" instance=ExtResource("3_hf8jk")]
+
+[node name="EnemyGroup" parent="Waves/Wave1" index="1" instance=ExtResource("2_t1gv5")]
+enemies = Array[int]([1])
+in_delay = 0.5
+out_delay = 1.0
+
+[node name="EnemyGroup2" parent="Waves/Wave1" index="2" instance=ExtResource("2_t1gv5")]
+enemies = Array[int]([1, 1])
+in_delay = 0.5
+out_delay = 1.0
+
+[node name="EnemyGroup3" parent="Waves/Wave1" index="3" instance=ExtResource("2_t1gv5")]
+enemies = Array[int]([1, 1, 1])
+in_delay = 0.5
+out_delay = 1.0
+
+[node name="Wave2" parent="Waves" index="1" instance=ExtResource("3_hf8jk")]
+
+[node name="EnemyGroup" parent="Waves/Wave2" index="1" instance=ExtResource("2_t1gv5")]
+enemies = Array[int]([2])
+in_delay = 0.5
+out_delay = 1.0
+
+[node name="EnemyGroup2" parent="Waves/Wave2" index="2" instance=ExtResource("2_t1gv5")]
+enemies = Array[int]([2, 2])
+in_delay = 0.5
+out_delay = 1.0
+
+[node name="Camera2D" type="Camera2D" parent="." index="3"]
 position = Vector2(672, 400)
 zoom = Vector2(1.6, 1.6)
-
-[node name="EnemyFactory" parent="." index="3" instance=ExtResource("2_xoi43")]
-
-[node name="Timer" type="Timer" parent="." index="4"]
-autostart = true
-
-[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
