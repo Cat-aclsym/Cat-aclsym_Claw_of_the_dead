@@ -17,6 +17,7 @@ config/features=PackedStringArray("4.2", "Forward Plus")
 [autoload]
 
 Global="*res://scripts/autoloads/global.gd"
+ScenesLoader="*res://scripts/autoloads/scenes_loader.gd"
 
 [display]
 
