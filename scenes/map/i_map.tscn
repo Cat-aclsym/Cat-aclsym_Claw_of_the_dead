@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://crdosg1fmycsi"]
 
-[ext_resource type="Script" path="res://scenes/map/i_map.gd" id="1_vhs3p"]
+[ext_resource type="Script" path="res://scripts/map/i_map.gd" id="1_vhs3p"]
 [ext_resource type="PackedScene" uid="uid://cvxtqnnr7606b" path="res://scenes/map/tile_map_debug.tscn" id="2_g4v36"]
 
 [node name="IMap" type="Node2D"]
