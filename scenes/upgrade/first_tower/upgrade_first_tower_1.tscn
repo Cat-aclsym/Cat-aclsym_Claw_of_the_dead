@@ -21,6 +21,10 @@ bulletStats = {
 "piercing": 0.0,
 "speed": 0.0
 }
+cannonStats = {
+"fire_rate": 0.0,
+"range": 10.0
+}
 towerStats = {
 "level": 2
 }

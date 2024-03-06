@@ -1,9 +1,9 @@
-[gd_scene load_steps=9 format=3 uid="uid://cq705nqdp8fnw"]
+[gd_scene load_steps=10 format=3 uid="uid://cq705nqdp8fnw"]
 
 [ext_resource type="PackedScene" uid="uid://064cnqw4xlus" path="res://scenes/tower/i_tower.tscn" id="1_1ihb2"]
 [ext_resource type="PackedScene" uid="uid://6kxfyy7tk2pu" path="res://scenes/upgrade/first_tower/upgrade_first_tower_1.tscn" id="2_306gj"]
-[ext_resource type="PackedScene" uid="uid://c6wljnc80qudp" path="res://scenes/cannon/test_cannon.tscn" id="2_gb86n"]
 [ext_resource type="Texture2D" uid="uid://dl4v1uuiyxm8r" path="res://assets/towers/tower_2_LVL_1.png" id="3_hsdl0"]
+[ext_resource type="PackedScene" uid="uid://cax2gd3swoin0" path="res://scenes/bullet/test_bullet.tscn" id="3_itt37"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_g7olo"]
 atlas = ExtResource("3_hsdl0")
@@ -47,9 +47,16 @@ _data = {
 "idle": SubResource("Animation_wnfqe")
 }
 
-[node name="TestTower" instance=ExtResource("1_1ihb2")]
+[sub_resource type="CircleShape2D" id="CircleShape2D_jmpep"]
+radius = 314.23
+
+[node name="FirstTower" instance=ExtResource("1_1ihb2")]
+cost = 50
 upgrade = Array[PackedScene]([ExtResource("2_306gj")])
-cannon = ExtResource("2_gb86n")
+level = 1
+shoot_range = 250.0
+fire_rate = 1.0
+BulletScene = ExtResource("3_itt37")
 
 [node name="Sprite2D" parent="." index="0"]
 scale = Vector2(3, 3)
@@ -60,3 +67,9 @@ libraries = {
 "": SubResource("AnimationLibrary_va1jy")
 }
 autoplay = "idle"
+
+[node name="CollisionShape2D" parent="Area2D" index="0"]
+shape = SubResource("CircleShape2D_jmpep")
+
+[connection signal="body_entered" from="Area2D" to="." method="_on_area_2d_body_entered"]
+[connection signal="body_exited" from="Area2D" to="." method="_on_area_2d_body_exited"]

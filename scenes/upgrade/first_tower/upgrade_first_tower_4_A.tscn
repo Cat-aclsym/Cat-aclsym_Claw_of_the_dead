@@ -10,4 +10,7 @@ change = {
 "tower": true,
 "tower_stat": true
 }
+towerStats = {
+"level": 4
+}
 price = 200

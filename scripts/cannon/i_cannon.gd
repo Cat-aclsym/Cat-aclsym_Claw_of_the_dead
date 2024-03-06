@@ -2,7 +2,6 @@ class_name ICannon
 extends Node2D
 
 
-@export var bullet: IBullet
 @export var range: float
 @export var fire_rate: float
 @export var BulletScene: PackedScene = null
@@ -10,7 +9,6 @@ extends Node2D
 @onready var fire_rate_timer := $FireRateTimer as Timer
 
 var enemy_array: Array[IEnemy]
-
 
 func upgrade():
 	pass # IUpgrade dans argument

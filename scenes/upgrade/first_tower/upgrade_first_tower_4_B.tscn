@@ -22,7 +22,7 @@ bulletStats = {
 "speed": 0.0
 }
 cannonStats = {
-"fire_rate": 0.0,
+"fire_rate": 0.2,
 "range": 25.0
 }
 towerStats = {
