@@ -20,7 +20,7 @@ func _ready() -> void:
 
 
 func _process(_delta: float) -> void:
-	pass
-	#	CoinsRichTextLabel.text = tr(default_coins_text % Stats.coins)
-	#	HealthRichTextLabel.text = tr(default_health_text % Stats.health)
+	CoinsRichTextLabel.text = tr(default_coins_text) % Stats.coins
+	HealthRichTextLabel.text = tr(default_health_text) % Stats.health
 	#	WavesRichTextLabel.text = tr(default_waves_text % [Stats.waves])
+	pass
