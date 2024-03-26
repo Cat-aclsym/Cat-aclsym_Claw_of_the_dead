@@ -4,7 +4,7 @@
 ## Created: 06/03/2024
 
 class_name IngameMenu
-extends Node
+extends Control
 
 
 @onready var CoinsRichTextLabel: RichTextLabel = $VBoxContainer/CoinsRichTextLabel
@@ -16,11 +16,14 @@ extends Node
 
 
 func _ready() -> void:
-	print(default_coins_text)
+	hide()
 
 
 func _process(_delta: float) -> void:
-	CoinsRichTextLabel.text = tr(default_coins_text) % Stats.coins
-	HealthRichTextLabel.text = tr(default_health_text) % Stats.health
-	#	WavesRichTextLabel.text = tr(default_waves_text % [Stats.waves])
+	if (ILevel.current_level == null): return
+	if (!visible): show()
+
+	CoinsRichTextLabel.text = tr(default_coins_text) % ILevel.current_level.coins
+	HealthRichTextLabel.text = tr(default_health_text) % ILevel.current_level.health
+	WavesRichTextLabel.text = tr(default_waves_text) % ILevel.current_level.currentWave
 	pass
