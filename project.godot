@@ -20,7 +20,6 @@ Global="*res://scripts/autoloads/global.gd"
 SoundManager="*res://scripts/autoloads/sound_manager.gd"
 ScenesLoader="*res://scripts/autoloads/scenes_loader.gd"
 DialogueManager="*res://addons/dialogue_manager/dialogue_manager.gd"
-Stats="*res://scripts/autoloads/stats.gd"
 
 [dialogue_manager]
 
