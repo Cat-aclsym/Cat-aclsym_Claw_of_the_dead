@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://comglet8s7g5i"
-path="res://.godot/imported/tower_2_LVL_1.png-43f98bd9392da838d4a399b3fafac55e.ctex"
+uid="uid://b5n33i3ft0jco"
+path="res://.godot/imported/poison_animation.png-bfba7851f7c9284a2523cb2c50efe71c.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/towers/tower_2_LVL_1.png"
-dest_files=["res://.godot/imported/tower_2_LVL_1.png-43f98bd9392da838d4a399b3fafac55e.ctex"]
+source_file="res://assets/enemies/poison_animation.png"
+dest_files=["res://.godot/imported/poison_animation.png-bfba7851f7c9284a2523cb2c50efe71c.ctex"]
 
 [params]
 
