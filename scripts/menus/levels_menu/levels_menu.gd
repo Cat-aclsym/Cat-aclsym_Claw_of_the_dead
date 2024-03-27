@@ -19,7 +19,7 @@ func _initialize() -> void:
 	for bt in buttons:
 		bt.text = "{0} - {1}".format([buttons[bt].id, tr(buttons[bt].level_name)])
 		bt.connect("pressed",
-			func():
+		func():
 			assert(buttons[bt].level_scene != null, "Level scene is null.")
 			visible = false
 
