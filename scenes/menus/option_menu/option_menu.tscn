@@ -1,0 +1,137 @@
+[gd_scene load_steps=15 format=3 uid="uid://doml7biiq8g2o"]
+
+[ext_resource type="Script" path="res://scripts/menus/option_menu/option_menu.gd" id="1_rumc7"]
+[ext_resource type="Texture2D" uid="uid://n0cj2ueirxhp" path="res://assets/icone_menu/close.png" id="2_gf4xi"]
+[ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="3_mxk3u"]
+[ext_resource type="Texture2D" uid="uid://dtofxsy5uvekx" path="res://assets/icone_menu/noteDeMusique.png" id="4_aknr8"]
+[ext_resource type="Texture2D" uid="uid://46ywfvlxmd8c" path="res://assets/icone_menu/noteDeMusiqueCroix.png" id="5_cj54h"]
+[ext_resource type="Texture2D" uid="uid://85rtiiwobpg1" path="res://assets/icone_menu/speaker.png" id="6_wxed5"]
+[ext_resource type="Texture2D" uid="uid://cbskr3qu6rty8" path="res://assets/icone_menu/speakerCroix.png" id="7_85amr"]
+[ext_resource type="Texture2D" uid="uid://dyriwem0lllq3" path="res://assets/icone_menu/drapeau.png" id="8_axi5g"]
+[ext_resource type="Texture2D" uid="uid://u4plaj2bk8le" path="res://assets/icone_menu/instagram.png" id="9_k8x1j"]
+[ext_resource type="Texture2D" uid="uid://yufc7mw0mh26" path="res://assets/icone_menu/XTwitter.png" id="10_mt8vk"]
+[ext_resource type="Texture2D" uid="uid://cxcx1ba17c608" path="res://assets/icone_menu/discord.png" id="11_8h6r0"]
+[ext_resource type="Texture2D" uid="uid://b6vj2vgajqh52" path="res://assets/icone_menu/trompette.png" id="12_0xi06"]
+[ext_resource type="Texture2D" uid="uid://bkh8v7rijrny5" path="res://assets/icone_menu/bouclier.png" id="13_pdx5e"]
+[ext_resource type="Texture2D" uid="uid://c8o3a1eeg2l7s" path="res://assets/icone_menu/lettre.png" id="14_wmrhp"]
+
+[node name="OptionMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_rumc7")
+
+[node name="MenuCenterContainer" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -350.0
+offset_top = -360.0
+offset_right = 350.0
+offset_bottom = 360.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="BackgroundColorRect" type="ColorRect" parent="MenuCenterContainer"]
+custom_minimum_size = Vector2(700, 625)
+layout_mode = 2
+color = Color(0, 0, 0, 0.321569)
+
+[node name="CloseButtonMarginContainer" type="MarginContainer" parent="MenuCenterContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 626
+theme_override_constants/margin_bottom = 550
+
+[node name="CloseTextureButton" type="TextureButton" parent="MenuCenterContainer/CloseButtonMarginContainer"]
+layout_mode = 2
+texture_normal = ExtResource("2_gf4xi")
+
+[node name="MenuRowVBoxContainer" type="VBoxContainer" parent="MenuCenterContainer"]
+layout_mode = 2
+theme_override_constants/separation = 25
+alignment = 1
+
+[node name="ParametersRichTextLabel" type="RichTextLabel" parent="MenuCenterContainer/MenuRowVBoxContainer"]
+layout_mode = 2
+theme = ExtResource("3_mxk3u")
+text = "PARAMETERS.TEXT.LABEL"
+fit_content = true
+
+[node name="ParametersHBoxContainer" type="HBoxContainer" parent="MenuCenterContainer/MenuRowVBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 100
+
+[node name="MusicTextureButton" type="TextureButton" parent="MenuCenterContainer/MenuRowVBoxContainer/ParametersHBoxContainer"]
+layout_mode = 2
+texture_normal = ExtResource("4_aknr8")
+texture_pressed = ExtResource("5_cj54h")
+
+[node name="SoundTextureButton" type="TextureButton" parent="MenuCenterContainer/MenuRowVBoxContainer/ParametersHBoxContainer"]
+layout_mode = 2
+texture_normal = ExtResource("6_wxed5")
+texture_pressed = ExtResource("7_85amr")
+
+[node name="LanguageTextureButton" type="TextureButton" parent="MenuCenterContainer/MenuRowVBoxContainer/ParametersHBoxContainer"]
+layout_mode = 2
+texture_normal = ExtResource("8_axi5g")
+
+[node name="SocialsRichTextLabel" type="RichTextLabel" parent="MenuCenterContainer/MenuRowVBoxContainer"]
+layout_mode = 2
+theme = ExtResource("3_mxk3u")
+text = "SOCIALS.TEXT.LABEL"
+fit_content = true
+
+[node name="SocialsHBoxContainer" type="HBoxContainer" parent="MenuCenterContainer/MenuRowVBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 100
+
+[node name="InstagramTextureButton" type="TextureButton" parent="MenuCenterContainer/MenuRowVBoxContainer/SocialsHBoxContainer"]
+layout_mode = 2
+texture_normal = ExtResource("9_k8x1j")
+
+[node name="XTextureButton" type="TextureButton" parent="MenuCenterContainer/MenuRowVBoxContainer/SocialsHBoxContainer"]
+layout_mode = 2
+texture_normal = ExtResource("10_mt8vk")
+
+[node name="DiscordTextureButton" type="TextureButton" parent="MenuCenterContainer/MenuRowVBoxContainer/SocialsHBoxContainer"]
+layout_mode = 2
+texture_normal = ExtResource("11_8h6r0")
+
+[node name="MiscRichTextLabel" type="RichTextLabel" parent="MenuCenterContainer/MenuRowVBoxContainer"]
+layout_mode = 2
+theme = ExtResource("3_mxk3u")
+text = "MISC.TEXT.LABEL"
+fit_content = true
+
+[node name="MiscHBoxContainer" type="HBoxContainer" parent="MenuCenterContainer/MenuRowVBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 100
+
+[node name="UpdateTextureButton" type="TextureButton" parent="MenuCenterContainer/MenuRowVBoxContainer/MiscHBoxContainer"]
+layout_mode = 2
+texture_normal = ExtResource("12_0xi06")
+
+[node name="RgpdTextureButton" type="TextureButton" parent="MenuCenterContainer/MenuRowVBoxContainer/MiscHBoxContainer"]
+layout_mode = 2
+texture_normal = ExtResource("13_pdx5e")
+
+[node name="ContactTextureButton" type="TextureButton" parent="MenuCenterContainer/MenuRowVBoxContainer/MiscHBoxContainer"]
+layout_mode = 2
+texture_normal = ExtResource("14_wmrhp")
+
+[connection signal="pressed" from="MenuCenterContainer/CloseButtonMarginContainer/CloseTextureButton" to="." method="_on_close_texture_button_pressed"]
+[connection signal="pressed" from="MenuCenterContainer/MenuRowVBoxContainer/ParametersHBoxContainer/MusicTextureButton" to="." method="_on_music_texture_button_pressed"]
+[connection signal="pressed" from="MenuCenterContainer/MenuRowVBoxContainer/ParametersHBoxContainer/SoundTextureButton" to="." method="_on_sound_texture_button_pressed"]
+[connection signal="pressed" from="MenuCenterContainer/MenuRowVBoxContainer/ParametersHBoxContainer/LanguageTextureButton" to="." method="_on_language_texture_button_pressed"]
+[connection signal="pressed" from="MenuCenterContainer/MenuRowVBoxContainer/SocialsHBoxContainer/InstagramTextureButton" to="." method="_on_instagram_texture_button_pressed"]
+[connection signal="pressed" from="MenuCenterContainer/MenuRowVBoxContainer/SocialsHBoxContainer/XTextureButton" to="." method="_on_x_texture_button_pressed"]
+[connection signal="pressed" from="MenuCenterContainer/MenuRowVBoxContainer/SocialsHBoxContainer/DiscordTextureButton" to="." method="_on_discord_texture_button_pressed"]
+[connection signal="pressed" from="MenuCenterContainer/MenuRowVBoxContainer/MiscHBoxContainer/UpdateTextureButton" to="." method="_on_update_texture_button_pressed"]
+[connection signal="pressed" from="MenuCenterContainer/MenuRowVBoxContainer/MiscHBoxContainer/RgpdTextureButton" to="." method="_on_rgpd_texture_button_pressed"]
+[connection signal="pressed" from="MenuCenterContainer/MenuRowVBoxContainer/MiscHBoxContainer/ContactTextureButton" to="." method="_on_contact_texture_button_pressed"]

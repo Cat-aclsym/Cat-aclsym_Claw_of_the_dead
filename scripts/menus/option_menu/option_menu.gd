@@ -1,3 +1,11 @@
+## File: option_menu.gd
+##Option menu of the game
+##From this menu we can access parameters, socials, and miscellaneous things
+##
+##Author: Matéo Perrot--Nasi
+##Created: 28/02/2024
+##
+class_name OptionMenu
 extends Control
 
 var musicTextureButton: TextureButton
@@ -7,14 +15,9 @@ var actualTexture: Texture2D
 
 
 # Called when the node enters the scene tree for the first time.
-func _ready():
+func _ready() -> void:
 	musicTextureButton = $ScreenBoxContainer/MenuCenterContainer/MenuRowVBoxContainer/ParametersHBoxContainer/MusicTextureButton
 	soundTextureButton = $ScreenBoxContainer/MenuCenterContainer/MenuRowVBoxContainer/ParametersHBoxContainer/SoundTextureButton
-
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
-	pass
 
 
 func _on_music_texture_button_pressed():

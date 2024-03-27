@@ -8,6 +8,7 @@ var completed: bool = false
 @export var level_scene: PackedScene = null
 
 
+# core
 func _ready() -> void:
 	if (get_parent() is ILevel):
 		return
