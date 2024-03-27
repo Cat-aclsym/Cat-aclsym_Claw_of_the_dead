@@ -23,6 +23,11 @@ enum ENM_Type {
 	BIG_DADDY,
 }
 
+var DAMAGE = {
+	"default" = {"color": Color(0.7, 0.5, 0.5, 1)},
+	"poison" = {"color": Color(0.7, 0.5, 0.7, 1)}
+}
+
 @export var speed: float = 30
 @export var max_health: float = 100
 @export var type: ENM_Type = ENM_Type.DEFAULT
@@ -76,9 +81,16 @@ func _physics_process(delta: float) -> void:
 #		_add_poison_effect(poison_damage, poison_total_execution, poison_interval)
 #		Log.info("Adding poison")
 
+func _damage_effect(color: Color):
+	var old_modulate = Sprite.modulate
+	Sprite.modulate = color
+	await get_tree().create_timer(0.1).timeout
+	Sprite.modulate = old_modulate
 
 # functionnal
 func take_damage(damage: float) -> void:
+	if is_already_dead: return
+	_damage_effect(DAMAGE["poison"]["color"])
 	if(health - damage <= 0):
 		health = 0
 		state = ENM_State.DEAD
