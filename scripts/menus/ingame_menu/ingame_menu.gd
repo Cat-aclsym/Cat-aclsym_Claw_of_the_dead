@@ -25,5 +25,6 @@ func _process(_delta: float) -> void:
 
 	CoinsRichTextLabel.text = tr(default_coins_text) % ILevel.current_level.coins
 	HealthRichTextLabel.text = tr(default_health_text) % ILevel.current_level.health
-	WavesRichTextLabel.text = tr(default_waves_text) % ILevel.current_level.currentWave
+	var current_wave := ILevel.current_level.Map.current_wave + 1
+	WavesRichTextLabel.text = tr(default_waves_text) % current_wave
 	pass

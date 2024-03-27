@@ -3,14 +3,14 @@ extends Node2D
 
 var coins: int = 0
 var health: int = 10
-var currentWave: int = 1
-var waves: Array[String] = []
 
 @export var map_scene: PackedScene = null
 
+@onready var Map: IMap = null
 @onready var Metadata: LevelMetadata = null
 
 static var current_level: ILevel = null
+
 
 # functionnal
 func initialize(meta: LevelMetadata) -> void:
@@ -40,3 +40,4 @@ func _load_map() -> void:
 
 	var map: IMap = map_scene.instantiate()
 	add_child(map)
+	Map = map
