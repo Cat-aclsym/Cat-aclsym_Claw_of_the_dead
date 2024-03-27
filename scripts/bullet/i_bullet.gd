@@ -21,5 +21,8 @@ func _physics_process(delta: float):
 		queue_free()
 
 
-func _on_area_entered(area):
-	pass
+func _on_body_entered(body):
+	if body is IEnemy:
+		print("zadazd")
+		body._take_damage(damage)
+		queue_free()
