@@ -53,6 +53,7 @@ var poison_timer_execution_count: int = 0
 
 @onready var Sprite: Sprite2D = $Sprite2D
 @onready var AnimPlayer: AnimationPlayer = $AnimationPlayer
+@onready var poison_particles: GPUParticles2D = $GPUParticles2D
 
 
 # core
@@ -76,6 +77,9 @@ func _physics_process(delta: float) -> void:
 			_give_damage_state()
 		_:
 			Log.warning("{0} unknown ENM_State : {1}".format([name, state]))
+			
+func _poison_animation():
+	pass
 
 func _damage_effect(color: Color):
 	var old_modulate = Sprite.modulate
