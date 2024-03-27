@@ -1,0 +1,36 @@
+[gd_scene load_steps=3 format=3 uid="uid://bo3ene0u4ofrj"]
+
+[ext_resource type="Script" path="res://scenes/menus/in_game_menu/in_game_menu.gd" id="1_kelc4"]
+[ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="2_jel3x"]
+
+[node name="InGameMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_kelc4")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="HealthLabel" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+theme = ExtResource("2_jel3x")
+theme_override_font_sizes/font_size = 32
+text = "xxx HP"
+
+[node name="MoneyLabel" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+theme = ExtResource("2_jel3x")
+theme_override_font_sizes/font_size = 32
+text = "xxx $"
+
+[node name="BuildButton" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+theme = ExtResource("2_jel3x")
+theme_override_font_sizes/font_size = 16
+text = "BUILD"
