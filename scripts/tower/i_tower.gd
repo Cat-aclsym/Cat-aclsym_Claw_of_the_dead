@@ -100,3 +100,8 @@ func _get_last_target():
 
 func _get_random_target():
 	pass
+
+
+func _on_area_2d_area_exited(area: Area2D) -> void:
+	if area is IBullet && area in get_children():
+		area.queue_free()

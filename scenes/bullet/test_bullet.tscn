@@ -6,11 +6,10 @@
 
 [node name="TestBullet" instance=ExtResource("1_vp3tv")]
 speed = 2500
+damage = 50
 
 [node name="CollisionShape2D" parent="." index="1"]
 shape = SubResource("RectangleShape2D_qj200")
 
 [node name="Polygon2D" type="Polygon2D" parent="." index="2"]
 polygon = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
-
-[connection signal="body_entered" from="." to="." method="_on_body_entered"]
