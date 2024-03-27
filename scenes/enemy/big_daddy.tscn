@@ -1,6 +1,6 @@
-[gd_scene load_steps=2 format=3 uid="uid://dkcpg16ie8deh"]
+[gd_scene load_steps=2 format=3 uid="uid://dygm2bwdl5fo0"]
 
-[ext_resource type="PackedScene" uid="uid://tmlcshxut7kv" path="res://scenes/enemy/ienemy_scene.tscn" id="1_o4ric"]
+[ext_resource type="PackedScene" path="res://scenes/enemy/ienemy_scene.tscn" id="1_o4ric"]
 
 [node name="BigDaddy" instance=ExtResource("1_o4ric")]
 position = Vector2(0, -40)

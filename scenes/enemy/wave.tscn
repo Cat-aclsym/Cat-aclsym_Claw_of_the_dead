@@ -1,4 +1,4 @@
-[gd_scene load_steps=2 format=3 uid="uid://x8pmpbb600mv"]
+[gd_scene load_steps=2 format=3 uid="uid://ce6ydtoqy6h55"]
 
 [ext_resource type="Script" path="res://scenes/enemy/wave.gd" id="1_by6jb"]
 

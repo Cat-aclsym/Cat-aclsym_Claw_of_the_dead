@@ -1,12 +1,12 @@
-## File:	pause_menu.gd.
+## File: pause_menu.gd.
 ##
-## Author:	Laurie Jeham-Masselot
+## Author: Laurie Jeham-Masselot
 ## Created: 24/01/2024
 ##
 ## Methods for pausing screen when the player is on Game
 ## Pause/Restart/Home and sounds options conf
 
-class_name PauseMenu
+class_name MenuPause
 extends Control
 
 #Button
