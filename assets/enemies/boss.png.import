@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bggy3ygaq6c4t"
-path="res://.godot/imported/poison_animation.png-bfba7851f7c9284a2523cb2c50efe71c.ctex"
+uid="uid://bw7i3sbdnk3s3"
+path="res://.godot/imported/boss.png-e082db91d6fa1618aacdf6fe050837a1.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/enemies/poison_animation.png"
-dest_files=["res://.godot/imported/poison_animation.png-bfba7851f7c9284a2523cb2c50efe71c.ctex"]
+source_file="res://assets/enemies/boss.png"
+dest_files=["res://.godot/imported/boss.png-e082db91d6fa1618aacdf6fe050837a1.ctex"]
 
 [params]
 

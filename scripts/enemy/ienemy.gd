@@ -135,7 +135,6 @@ func _update_direction():
 		round(path_follow.position) == round(path.curve.get_point_position(current_point_id+1)) 
 		&& path.curve.get_closest_point(path_follow.position) != path.curve.get_point_position(current_point_id)
 	):
-		#Log.debug("{0}::_update_direction() parent = {1} changed direction = {2}".format([name, get_parent().name, direction]))
 		current_point_id += 1
 		_get_path_direction()
 		
@@ -169,10 +168,11 @@ func _disappear() -> void:
 
 
 func _dead_state() -> void:
-	print("_dead_state")
-	# todo: add money to player
+	if ILevel.current_level == null:
+		Log.error("Current level is null, aborting.")
+		return
+	ILevel.current_level.coins += 10
 	# todo: play sound
-	# todo: decrease enemy count
 	_disappear()
 	is_dead = true
 
@@ -180,7 +180,14 @@ func _dead_state() -> void:
 func _give_damage_state() -> void:
 	# when the enemy arrives at the end of the Path
 	_disappear()
-	# todo: reduce player health
+	if ILevel.current_level == null:
+		Log.error("Current level is null, aborting.")
+		return
+	# if boss insta death
+	if type == ENM_Type.BIG_DADDY:
+		ILevel.current_level.health = 0
+	else:
+		ILevel.current_level.health -= ceil(health/2)
 
 
 func add_poison_effect(damage: float, total_execution: int, interval: float) -> void:
