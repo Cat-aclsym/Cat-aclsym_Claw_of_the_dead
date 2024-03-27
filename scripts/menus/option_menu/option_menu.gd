@@ -8,22 +8,17 @@
 class_name OptionMenu
 extends Control
 
-var musicTextureButton: TextureButton
-var soundTextureButton: TextureButton
+@onready var musicTextureButton: TextureButton = $MenuCenterContainer/MenuRowVBoxContainer/ParametersHBoxContainer/MusicTextureButton
+@onready var soundTextureButton: TextureButton = $MenuCenterContainer/MenuRowVBoxContainer/ParametersHBoxContainer/SoundTextureButton
 
 var actualTexture: Texture2D
-
-
-# Called when the node enters the scene tree for the first time.
-func _ready() -> void:
-	musicTextureButton = $ScreenBoxContainer/MenuCenterContainer/MenuRowVBoxContainer/ParametersHBoxContainer/MusicTextureButton
-	soundTextureButton = $ScreenBoxContainer/MenuCenterContainer/MenuRowVBoxContainer/ParametersHBoxContainer/SoundTextureButton
 
 
 func _on_music_texture_button_pressed():
 	actualTexture = musicTextureButton.get_texture_normal()
 	musicTextureButton.set_texture_normal(musicTextureButton.get_texture_pressed())
 	musicTextureButton.set_texture_pressed(actualTexture)
+
 
 func _on_sound_texture_button_pressed():
 	actualTexture = soundTextureButton.get_texture_normal()

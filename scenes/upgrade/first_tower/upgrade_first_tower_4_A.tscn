@@ -1,0 +1,16 @@
+[gd_scene load_steps=2 format=3 uid="uid://p3xbvq3bgson"]
+
+[ext_resource type="PackedScene" uid="uid://ta5ev4qh6unn" path="res://scenes/upgrade/i_upgrade.tscn" id="1_kn51o"]
+
+[node name="UpgradeFirstTower4A" instance=ExtResource("1_kn51o")]
+change = {
+"bullet_stat": false,
+"cannon": true,
+"cannon_stat": false,
+"tower": true,
+"tower_stat": true
+}
+towerStats = {
+"level": 4
+}
+price = 200

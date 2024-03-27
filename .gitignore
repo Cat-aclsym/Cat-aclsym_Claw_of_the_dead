@@ -2,3 +2,4 @@
 .godot/
 .idea
 *.tmp
+*.translation
