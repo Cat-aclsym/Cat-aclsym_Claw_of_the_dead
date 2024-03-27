@@ -1,0 +1,27 @@
+[gd_scene load_steps=2 format=3 uid="uid://un15njtifck2"]
+
+[ext_resource type="PackedScene" uid="uid://ta5ev4qh6unn" path="res://scenes/upgrade/i_upgrade.tscn" id="1_7xrbu"]
+
+[node name="UpgradeSecondTower1" instance=ExtResource("1_7xrbu")]
+change = {
+"bullet_stat": true,
+"cannon": false,
+"cannon_stat": true,
+"tower": false,
+"tower_stat": true
+}
+bulletStats = {
+"aoe_range": 0.0,
+"damage": 5.0,
+"damage_multiplier": 0.0,
+"dot_damage": 0.0,
+"dot_duration": 0.0,
+"dot_tick": 0.0,
+"pierce_reduction": 0.0,
+"piercing": 0.0,
+"speed": 1.0
+}
+towerStats = {
+"level": 2
+}
+price = 150
