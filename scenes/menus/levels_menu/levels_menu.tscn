@@ -1,0 +1,55 @@
+[gd_scene load_steps=4 format=3 uid="uid://dgac5kcibwtmg"]
+
+[ext_resource type="Script" path="res://scripts/menus/levels_menu/levels_menu.gd" id="1_11ws4"]
+[ext_resource type="PackedScene" uid="uid://s70rc0a3unkr" path="res://scenes/level/level_metadata.tscn" id="2_rui86"]
+[ext_resource type="PackedScene" uid="uid://8gta0ub172x3" path="res://scenes/level/levels/level_debug.tscn" id="3_w1fyg"]
+
+[node name="LevelsMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_11ws4")
+
+[node name="TitleLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 584.0
+offset_top = 168.0
+offset_right = 690.0
+offset_bottom = 191.0
+
+[node name="LevelSelectVBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 256.0
+offset_top = 256.0
+offset_right = 1024.0
+offset_bottom = 704.0
+theme_override_constants/separation = 32
+
+[node name="LevelButton1" type="Button" parent="LevelSelectVBoxContainer"]
+layout_mode = 2
+
+[node name="LevelMetadata" parent="LevelSelectVBoxContainer/LevelButton1" instance=ExtResource("2_rui86")]
+id = 1
+level_name = "FIRST.LEVEL.NAME"
+level_scene = ExtResource("3_w1fyg")
+
+[node name="LevelButton2" type="Button" parent="LevelSelectVBoxContainer"]
+layout_mode = 2
+
+[node name="LevelMetadata2" parent="LevelSelectVBoxContainer/LevelButton2" instance=ExtResource("2_rui86")]
+position = Vector2(0, -63)
+id = 2
+level_name = "SECOND.LEVEL.NAME"
+level_scene = ExtResource("3_w1fyg")
+
+[node name="LevelButton3" type="Button" parent="LevelSelectVBoxContainer"]
+layout_mode = 2
+
+[node name="LevelMetadata3" parent="LevelSelectVBoxContainer/LevelButton3" instance=ExtResource("2_rui86")]
+position = Vector2(0, -126)
+id = 3
+level_name = "THIRD.LEVEL.NAME"
+level_scene = ExtResource("3_w1fyg")

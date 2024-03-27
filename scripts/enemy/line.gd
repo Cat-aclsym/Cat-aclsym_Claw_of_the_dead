@@ -4,6 +4,5 @@ extends Line2D
 
 func _ready():
 	if path:
-		var points = path.curve.get_baked_points()
-		#print(points)
-		self.set_points(points)
+		var p = path.curve.get_baked_points()
+		self.set_points(p)
