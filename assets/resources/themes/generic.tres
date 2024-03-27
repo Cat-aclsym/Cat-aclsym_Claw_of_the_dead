@@ -5,5 +5,6 @@
 
 [resource]
 default_font = ExtResource("2_opgil")
+default_font_size = 30
 Fonts/fonts/text = ExtResource("1_wrjw4")
 Fonts/fonts/title = ExtResource("2_opgil")
