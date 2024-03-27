@@ -21,7 +21,6 @@ offset_right = 59.0
 offset_bottom = 31.0
 text = "PAUSE.TITLE"
 
-[node name="IngameMenu" parent="." instance=ExtResource("5_robaj")]
 
 [node name="LevelsMenu" parent="." instance=ExtResource("4_4jsl7")]
 visible = false

@@ -1,5 +1,5 @@
 [gd_scene load_steps=2 format=3 uid="uid://dhmd4je3q8jb6"]
 
-[ext_resource type="PackedScene" path="res://scenes/enemy/ienemy_scene.tscn" id="1_kuj8y"]
+[ext_resource type="PackedScene" uid="uid://dkmc4jeps3875" path="res://scenes/enemy/ienemy_scene.tscn" id="1_kuj8y"]
 
 [node name="MonZombie" instance=ExtResource("1_kuj8y")]
