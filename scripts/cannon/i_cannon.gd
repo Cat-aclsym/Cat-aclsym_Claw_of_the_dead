@@ -41,9 +41,20 @@ func _on_menu_button_pressed():
 
 
 func serialize() -> Dictionary:
+	var bullets_data = [] # Liste pour stocker les données sérialisées des balles
+	for child in get_children():
+		if child is IBullet: # Vérifie si l'enfant est une instance de IBullet
+			var bullet_data = {
+				"direction": {"x": child.direction.x, "y": child.direction.y},
+				"speed": child.speed,
+				"damage": child.damage,
+				"target": {"x": child.target.x, "y": child.target.y},
+				"position": {"x": child.global_position.x, "y": child.global_position.y}
+			}
+			bullets_data.append(bullet_data)
 	return {
-		"type": "ICannon",
-		"bullet": bullet.get_class(), # ou une propriété spécifique de bullet pour la sérialisation
+		"type": get_class(),
+		"bullet": bullets_data, # ou une propriété spécifique de bullet pour la sérialisation
 		"range": range,
 		"fire_rate": fire_rate,
 		"BulletScene": BulletScene if BulletScene == null else BulletScene.get_path(),

@@ -22,7 +22,7 @@ func _on_area_entered(area):
 
 func serialize() -> Dictionary:
 	return {
-		"type": "IBullet",
+		"type": get_class(),
 		"speed": speed,
 		"damage": damage,
 		"direction": direction,
