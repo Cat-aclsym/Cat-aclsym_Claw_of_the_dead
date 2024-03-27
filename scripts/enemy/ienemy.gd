@@ -120,3 +120,18 @@ func _on_animation_player_animation_finished(anim_name: String) -> void:
 	if(anim_name) == disappear_animation:
 		queue_free()
 		get_parent().queue_free()
+		
+		
+		
+func serialize() -> Dictionary:
+	return {
+		"type": "IEnemy",
+		"speed": speed,	
+		"max_health": max_health,
+		"health":health,
+		"path": path,
+		"state": state,
+		"current_animation": AnimPlayer.current_animation,
+		"position": {"x": global_position.x, "y": global_position.y}, # sauvegarder la position si nécessaire
+		# Ajoutez d'autres propriétés si nécessaire
+	}

@@ -10,3 +10,10 @@ static func spawn_enemy(path: Path2D, enemy: IEnemy):
 	enemy.path = pathfollow
 
 	pathfollow.add_child(enemy)
+
+func serialize() -> Dictionary:
+	return {
+		"type": "IEnemySpawner",
+		"position": {"x": global_position.x, "y": global_position.y}, # sauvegarder la position si nécessaire
+		# Ajoutez d'autres propriétés si nécessaire
+	}

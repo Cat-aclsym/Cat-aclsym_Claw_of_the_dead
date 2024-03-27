@@ -38,3 +38,15 @@ func _process(delta):
 
 func _on_menu_button_pressed():
 	pass # Replace with function body.
+
+
+func serialize() -> Dictionary:
+	return {
+		"type": "ICannon",
+		"bullet": bullet.get_class(), # ou une propriété spécifique de bullet pour la sérialisation
+		"range": range,
+		"fire_rate": fire_rate,
+		"BulletScene": BulletScene if BulletScene == null else BulletScene.get_path(),
+		"position": {"x": global_position.x, "y": global_position.y}, # sauvegarder la position si nécessaire
+		# Ajoutez d'autres propriétés si nécessaire
+	}
