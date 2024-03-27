@@ -5,7 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://be8c7p1ka4dmm" path="res://scenes/debug_console/debug_console.tscn" id="2_fkxxx"]
 [ext_resource type="PackedScene" uid="uid://dgac5kcibwtmg" path="res://scenes/menus/levels_menu/levels_menu.tscn" id="4_4jsl7"]
 [ext_resource type="PackedScene" uid="uid://doml7biiq8g2o" path="res://scenes/menus/option_menu/option_menu.tscn" id="5_ojjfi"]
-[ext_resource type="PackedScene" uid="uid://cqfsr6yjn6hm8" path="res://scenes/menus/home_screen/home_menu.tscn" id="6_ijios"]
+[ext_resource type="PackedScene" uid="uid://cqfsr6yjn6hm8" path="res://scenes/menus/home_menu/home_menu.tscn" id="6_ijios"]
 
 [node name="HUD" type="CanvasLayer"]
 script = ExtResource("1_b6y43")
