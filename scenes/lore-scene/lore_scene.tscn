@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://dorm7rw4qqq4c"]
+
+[ext_resource type="Script" path="res://scenes/lore-scene/lore_scene.gd" id="1_y4s0n"]
+
+[node name="Lore-scene" type="Node2D"]
+script = ExtResource("1_y4s0n")

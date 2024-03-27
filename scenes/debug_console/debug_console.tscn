@@ -1,7 +1,7 @@
 [gd_scene load_steps=9 format=3 uid="uid://be8c7p1ka4dmm"]
 
-[ext_resource type="Script" path="res://scenes/debug_console/debug_console.gd" id="1_5jk4e"]
-[ext_resource type="Script" path="res://scenes/debug_console/command_handler.gd" id="2_2h81y"]
+[ext_resource type="Script" path="res://scripts/debug_console/debug_console.gd" id="1_5jk4e"]
+[ext_resource type="Script" path="res://scripts/debug_console/command_handler.gd" id="2_2h81y"]
 [ext_resource type="FontFile" uid="uid://dsrl1wp5kyekk" path="res://assets/fonts/ubuntu/Ubuntu-Regular.ttf" id="3_oeb44"]
 [ext_resource type="FontFile" uid="uid://dy4imxxyud3w6" path="res://assets/fonts/ubuntu/Ubuntu-Bold.ttf" id="4_mf412"]
 [ext_resource type="FontFile" uid="uid://cx5r0713yy88d" path="res://assets/fonts/ubuntu/Ubuntu-Italic.ttf" id="5_aq8y8"]
