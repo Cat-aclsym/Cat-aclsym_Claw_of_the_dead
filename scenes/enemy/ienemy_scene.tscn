@@ -1,7 +1,9 @@
-[gd_scene load_steps=14 format=3 uid="uid://tmlcshxut7kv"]
+[gd_scene load_steps=16 format=3 uid="uid://tmlcshxut7kv"]
 
 [ext_resource type="Script" path="res://scripts/enemy/ienemy.gd" id="1_qq3nr"]
 [ext_resource type="Texture2D" uid="uid://bggy3ygaq6c4t" path="res://assets/enemies/poison_animation.png" id="2_loo7p"]
+[ext_resource type="Script" path="res://scripts/enemy/PopupLocation.gd" id="3_fxg08"]
+[ext_resource type="PackedScene" uid="uid://jv7q286fh1vn" path="res://scenes/enemy/popup_score.tscn" id="4_f1mdo"]
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_tp60s"]
 load_path = "res://.godot/imported/default_zombie.png-5050bca98bc51b950cb05a5ced05d157.ctex"
@@ -170,3 +172,8 @@ material = SubResource("CanvasItemMaterial_tc12e")
 amount = 4
 process_material = SubResource("ParticleProcessMaterial_aqjwg")
 texture = ExtResource("2_loo7p")
+
+[node name="PopupLocation" type="Marker2D" parent="."]
+position = Vector2(0, -38)
+script = ExtResource("3_fxg08")
+damage_node = ExtResource("4_f1mdo")

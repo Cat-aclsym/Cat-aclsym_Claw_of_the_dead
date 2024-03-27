@@ -54,6 +54,7 @@ var poison_timer_execution_count: int = 0
 @onready var Sprite: Sprite2D = $Sprite2D
 @onready var AnimPlayer: AnimationPlayer = $AnimationPlayer
 @onready var poison_particles: GPUParticles2D = $GPUParticles2D
+@onready var PopupLocation: PopupLocation = $PopupLocation
 
 
 # core
@@ -179,7 +180,9 @@ func _dead_state() -> void:
 	if ILevel.current_level == null:
 		Log.error("Current level is null, aborting.")
 		return
-	ILevel.current_level.coins += 10
+	var money_reward: int = 10
+	ILevel.current_level.coins += money_reward
+	PopupLocation.popup("+" + str(money_reward) + "$")	
 	# todo: play sound
 	_disappear()
 	is_dead = true
@@ -191,6 +194,7 @@ func _give_damage_state() -> void:
 	if ILevel.current_level == null:
 		Log.error("Current level is null, aborting.")
 		return
+		
 	# if boss insta death
 	if type == ENM_Type.BIG_DADDY:
 		ILevel.current_level.health = 0
