@@ -61,8 +61,8 @@ func _ready():
 	path_points_size = path.curve.point_count
 	_get_path_direction()
 	AnimPlayer.connect("animation_finished", _on_animation_player_animation_finished)
-	_add_poison_effect(10, 15, 0.5)
-	_add_poison_effect(100, 10, 0.5)
+	add_poison_effect(10, 15, 0.5)
+	add_poison_effect(100, 10, 0.5)
 
 
 func _physics_process(delta: float) -> void:
@@ -76,10 +76,6 @@ func _physics_process(delta: float) -> void:
 			_give_damage_state()
 		_:
 			Log.warning("{0} unknown ENM_State : {1}".format([name, state]))
-#	if poisoned and not poison_trigger:
-#		poison_trigger = true
-#		_add_poison_effect(poison_damage, poison_total_execution, poison_interval)
-#		Log.info("Adding poison")
 
 func _damage_effect(color: Color):
 	var old_modulate = Sprite.modulate
@@ -88,9 +84,9 @@ func _damage_effect(color: Color):
 	Sprite.modulate = old_modulate
 
 # functionnal
-func take_damage(damage: float) -> void:
+func take_damage(damage: float, damage_type: String) -> void:
 	if is_already_dead: return
-	_damage_effect(DAMAGE["poison"]["color"])
+	_damage_effect(DAMAGE[damage_type]["color"])
 	if(health - damage <= 0):
 		health = 0
 		state = ENM_State.DEAD
@@ -183,7 +179,7 @@ func _give_damage_state() -> void:
 	# todo: reduce player health
 
 
-func _add_poison_effect(damage: float, total_execution: int, interval: float) -> void:
+func add_poison_effect(damage: float, total_execution: int, interval: float) -> void:
 	# add a timer to the active_poison_timers array
 	var poison_timer: Timer = Timer.new()
 	add_child(poison_timer)
@@ -194,6 +190,7 @@ func _add_poison_effect(damage: float, total_execution: int, interval: float) ->
 	Log.info(active_poison_timers)
 	# connect the timer to the _on_poison_timer_timeout function
 	poison_timer.timeout.connect(func(): _on_poison_timer_timeout(poison_timer))
+
 
 # signals
 func _on_poison_timer_timeout(timer: Timer):
@@ -226,7 +223,7 @@ func _on_poison_timer_timeout(timer: Timer):
 	# check if the timer is the highest
 	if timer_index == highest_timer_index:
 		# apply the poison damage
-		take_damage(active_poison_timers[highest_timer_index]["damage"])
+		take_damage(active_poison_timers[highest_timer_index]["damage"], "poison")
 		# check if the poison has reached its total_execution
 		Log.debug(active_poison_timers[highest_timer_index])
 		if active_poison_timers[highest_timer_index]["current_execution"] >= active_poison_timers[highest_timer_index]["total_execution"]:
