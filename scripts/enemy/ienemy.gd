@@ -68,6 +68,7 @@ func _ready():
 
 func _physics_process(delta: float) -> void:
 	if(is_already_dead): return
+
 	match state:
 		ENM_State.FOLLOW_PATH:
 			follow_path(delta)
@@ -77,6 +78,13 @@ func _physics_process(delta: float) -> void:
 			_give_damage_state()
 		_:
 			Log.warning("{0} unknown ENM_State : {1}".format([name, state]))
+
+	# handle poison particles
+	if active_poison_timers.size() == 0:
+		poison_particles.emitting = false
+	else:
+		poison_particles.emitting = true
+
 			
 func _poison_animation():
 	pass
