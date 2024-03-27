@@ -1,12 +1,12 @@
 [gd_scene load_steps=10 format=3 uid="uid://cq705nqdp8fnw"]
 
-[ext_resource type="PackedScene" uid="uid://064cnqw4xlus" path="res://scenes/tower/i_tower.tscn" id="1_1ihb2"]
-[ext_resource type="PackedScene" uid="uid://6kxfyy7tk2pu" path="res://scenes/upgrade/first_tower/upgrade_first_tower_1.tscn" id="2_306gj"]
-[ext_resource type="Texture2D" uid="uid://dl4v1uuiyxm8r" path="res://assets/towers/tower_2_LVL_1.png" id="3_hsdl0"]
-[ext_resource type="PackedScene" uid="uid://cax2gd3swoin0" path="res://scenes/bullet/test_bullet.tscn" id="3_itt37"]
+[ext_resource type="PackedScene" uid="uid://064cnqw4xlus" path="res://scenes/tower/i_tower.tscn" id="1_ecq02"]
+[ext_resource type="PackedScene" uid="uid://6kxfyy7tk2pu" path="res://scenes/upgrade/first_tower/upgrade_first_tower_1.tscn" id="2_okbr1"]
+[ext_resource type="PackedScene" uid="uid://cax2gd3swoin0" path="res://scenes/bullet/test_bullet.tscn" id="3_g8gbc"]
+[ext_resource type="Texture2D" uid="uid://dl4v1uuiyxm8r" path="res://assets/towers/tower_2_LVL_1.png" id="4_egwlw"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_g7olo"]
-atlas = ExtResource("3_hsdl0")
+atlas = ExtResource("4_egwlw")
 region = Rect2(64, 0, 64, 64)
 
 [sub_resource type="Animation" id="Animation_i58hl"]
@@ -50,13 +50,13 @@ _data = {
 [sub_resource type="CircleShape2D" id="CircleShape2D_jmpep"]
 radius = 314.23
 
-[node name="FirstTower" instance=ExtResource("1_1ihb2")]
+[node name="FirstTower" instance=ExtResource("1_ecq02")]
 cost = 50
-upgrade = Array[PackedScene]([ExtResource("2_306gj")])
+upgrade = Array[PackedScene]([ExtResource("2_okbr1")])
 level = 1
 shoot_range = 250.0
 fire_rate = 1.0
-BulletScene = ExtResource("3_itt37")
+BulletScene = ExtResource("3_g8gbc")
 
 [node name="Sprite2D" parent="." index="0"]
 scale = Vector2(3, 3)

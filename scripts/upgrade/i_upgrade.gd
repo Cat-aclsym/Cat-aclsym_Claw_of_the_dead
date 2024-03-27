@@ -3,9 +3,7 @@ extends Node2D
 
 @export var change: Dictionary = {
 									 "bullet_stat": false,
-									 "cannon_stat": false,
 									 "tower_stat": false,
-									 "cannon": false,
 									 "tower": false
 								 }
 
@@ -21,13 +19,10 @@ extends Node2D
 										  "dot_tick": 0.0,
 									  } # {stat: float}
 
-@export var cannonStats: Dictionary = {
-										  "range": 0.0,
-										  "fire_rate": 0.0,
-									  } # {stat: float
-
 @export var towerStats: Dictionary = {
 										 "level": 0,
+										 "shoot_range": 0.0,
+										 "fire_rate": 0.0,
 									 } # {stat: float}
 
 @export var cannon: PackedScene # if a new cannon is needed
