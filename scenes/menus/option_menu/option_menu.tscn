@@ -1,7 +1,7 @@
 [gd_scene load_steps=16 format=3 uid="uid://doml7biiq8g2o"]
 
 [ext_resource type="Script" path="res://scripts/menus/option_menu/option_menu.gd" id="1_rumc7"]
-[ext_resource type="Texture2D" uid="uid://c8b8irfugbxdj" path="res://assets/background/Fond Menu 02.svg" id="2_hu6uv"]
+[ext_resource type="Texture2D" uid="uid://c8b8irfugbxdj" path="res://assets/backgrounds/Fond Menu 02.svg" id="2_pr80k"]
 [ext_resource type="Texture2D" uid="uid://cj3134gnhq33s" path="res://assets/icons/Bouton close@2x.png" id="2_vd677"]
 [ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="3_mxk3u"]
 [ext_resource type="Texture2D" uid="uid://b1tevrke0h3pb" path="res://assets/icons/Bouton Musique@2x.png" id="4_jywym"]
@@ -44,7 +44,7 @@ grow_vertical = 2
 [node name="BackgroundTextureRect" type="TextureRect" parent="MenuCenterContainer"]
 custom_minimum_size = Vector2(1000, 700)
 layout_mode = 2
-texture = ExtResource("2_hu6uv")
+texture = ExtResource("2_pr80k")
 expand_mode = 1
 
 [node name="MarginContainer" type="MarginContainer" parent="MenuCenterContainer"]

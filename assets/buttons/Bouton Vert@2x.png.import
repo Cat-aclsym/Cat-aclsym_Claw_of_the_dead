@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bel17gs3ijyb1"
-path="res://.godot/imported/Fond Menu 02@2x.png-e22e839f49d339c52e0280e3e376b1c9.ctex"
+uid="uid://cdaralngqjlvk"
+path="res://.godot/imported/Bouton Vert@2x.png-2d3bfe8d5ef96741708736b6b80272c0.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/background/Fond Menu 02@2x.png"
-dest_files=["res://.godot/imported/Fond Menu 02@2x.png-e22e839f49d339c52e0280e3e376b1c9.ctex"]
+source_file="res://assets/buttons/Bouton Vert@2x.png"
+dest_files=["res://.godot/imported/Bouton Vert@2x.png-2d3bfe8d5ef96741708736b6b80272c0.ctex"]
 
 [params]
 

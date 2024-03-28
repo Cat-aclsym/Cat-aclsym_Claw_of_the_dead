@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c8b8irfugbxdj"
-path="res://.godot/imported/Fond Menu 02.svg-5437283688c34084d8156fdbf18620d0.ctex"
+uid="uid://nsf3nkto3p0t"
+path="res://.godot/imported/Bouton Vert.svg-6621bc5a6b9880262ae6d0d8c961e976.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/background/Fond Menu 02.svg"
-dest_files=["res://.godot/imported/Fond Menu 02.svg-5437283688c34084d8156fdbf18620d0.ctex"]
+source_file="res://assets/buttons/Bouton Vert.svg"
+dest_files=["res://.godot/imported/Bouton Vert.svg-6621bc5a6b9880262ae6d0d8c961e976.ctex"]
 
 [params]
 

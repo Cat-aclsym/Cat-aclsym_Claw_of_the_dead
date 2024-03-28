@@ -2,7 +2,7 @@ extends Control
 
 var buttons: Dictionary = {}
 
-@onready var container: VBoxContainer = $LevelSelectVBoxContainer
+@onready var container: VBoxContainer = $CenterContainer/LevelSelectVBoxContainer
 
 
 # core
@@ -14,11 +14,13 @@ func _ready() -> void: _initialize()
 # internal
 func _initialize() -> void:
 	for button in container.get_children():
-		buttons[button] = button.get_child(0)
+		if not button is TextureButton:
+			continue
+		buttons[button.get_child(0)] = button.get_child(1)
 
 	for bt in buttons:
 		bt.text = "{0} - {1}".format([buttons[bt].id, tr(buttons[bt].level_name)])
-		bt.connect("pressed",
+		bt.get_parent().connect("pressed",
 		func():
 			assert(buttons[bt].level_scene != null, "Level scene is null.")
 			visible = false
