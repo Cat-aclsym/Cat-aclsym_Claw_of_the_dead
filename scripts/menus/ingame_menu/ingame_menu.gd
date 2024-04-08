@@ -25,7 +25,7 @@ func _process(_delta: float) -> void:
 	if (!visible): show()
 
 	CoinsRichTextLabel.text = tr(default_coins_text) % ILevel.current_level.coins
-	HealthRichTextLabel.text = tr(default_health_text) % str(ILevel.current_level.health) + "/10"
+	HealthRichTextLabel.text = tr(default_health_text) % (str(ILevel.current_level.health) + "/10")
 	HealthTextureProgressBar.value = ILevel.current_level.health
 	var current_wave := ILevel.current_level.Map.current_wave + 1
 	WavesRichTextLabel.text = tr(default_waves_text) % current_wave

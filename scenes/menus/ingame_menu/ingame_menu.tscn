@@ -10,7 +10,7 @@
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_il7hw"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_vyss8"]
-content_margin_left = 50.0
+content_margin_left = 70.0
 content_margin_bottom = 5.0
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_eixyd"]
