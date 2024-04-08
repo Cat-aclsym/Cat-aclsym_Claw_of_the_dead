@@ -7,10 +7,10 @@ class_name IngameMenu
 extends Control
 
 
-@onready var CoinsRichTextLabel: RichTextLabel = $MarginContainer/VBoxContainer/CoinsRichTextLabel
+@onready var CoinsRichTextLabel: RichTextLabel = $MarginContainer/VBoxContainer/HBoxContainer/CoinsPanelContainer/CoinsRichTextLabel
 @onready var HealthRichTextLabel: RichTextLabel = $MarginContainer/VBoxContainer/HealthBoxContainer/MarginContainer/HealthRichTextLabel
 @onready var HealthTextureProgressBar: TextureProgressBar = $MarginContainer/VBoxContainer/HealthBoxContainer/HealthTextureProgressBar
-@onready var WavesRichTextLabel: RichTextLabel = $MarginContainer/VBoxContainer/WavesRichTextLabel
+@onready var WavesRichTextLabel: RichTextLabel = $MarginContainer/VBoxContainer/HBoxContainer/WavesPanelContainer/WavesRichTextLabel
 @onready var default_coins_text := CoinsRichTextLabel.text
 @onready var default_health_text := HealthRichTextLabel.text
 @onready var default_waves_text := WavesRichTextLabel.text

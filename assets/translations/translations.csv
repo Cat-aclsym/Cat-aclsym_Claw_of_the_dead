@@ -9,6 +9,6 @@ SECOND.LEVEL.NAME,Second level,Deuxième niveau
 THIRD.LEVEL.NAME,Third level,Troisième niveau
 HOME.PLAY.BUTTON,PLAY,JOUER
 HOME.PARAMETER.BUTTON,PARAMETER,PARAMÈTRES
-INGAMEHUD.COINS.LABEL,%s,%s
+INGAMEHUD.COINS.LABEL,[center]%s[/center],[center]%s[/center]
 INGAMEHUD.HEALTH.LABEL,[center]%s[/center],[center]%s[/center]
-INGAMEHUD.WAVES.LABEL,%s,%s
+INGAMEHUD.WAVES.LABEL,[center]%s[/center],[center]%s[/center]
