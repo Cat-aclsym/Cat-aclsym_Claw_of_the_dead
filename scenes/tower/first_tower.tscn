@@ -69,6 +69,9 @@ libraries = {
 autoplay = "idle"
 
 [node name="CollisionShape2D" parent="Area2D" index="0"]
+position = Vector2(0, 20)
+rotation = 0.680678
+skew = 0.261799
 shape = SubResource("CircleShape2D_jmpep")
 
 [connection signal="area_exited" from="Area2D" to="." method="_on_area_2d_area_exited"]
