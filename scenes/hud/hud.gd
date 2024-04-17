@@ -4,6 +4,7 @@ class_name HUD extends CanvasLayer
 @onready var menu_pause: MenuPause = $MenuPause
 @onready var levels_menu = $LevelsMenu
 @onready var in_game_menu = $InGameMenu
+@onready var in_game_menu_le_vrai = $IngameMenu
 
 
 # core
