@@ -84,7 +84,7 @@ func _enemy_dies() -> void:
 		Log.info("{0} end".format([name]))
 		wave_end.emit(delay)
 		
-
+	
 func _on_timer_timeout() -> void:
 	if (!is_ready):
 		return
@@ -100,3 +100,22 @@ func _on_timer_timeout() -> void:
 	var enemy: IEnemy = ScenesLoader.get_enemy_scene(enemies_to_spawn[current_enemy]).instantiate()
 	enemy.connect("die", _enemy_dies)
 	IEnemySpawner.spawn_enemy(paths[randi() % paths.size()], enemy)
+	
+	
+func serialize() -> Dictionary:
+	var enemies_group = [] # Crée un tableau vide pour stocker les données des ennemis
+
+	for child in get_children(): # Suppose une fonction qui retourne tous les ennemis
+		var enemie_group = { # Sérialise les propriétés de chaque ennemi
+			"enemies" : child.enemies_data,
+			 
+		}
+		enemies_group.append(enemie_group)
+	return {
+		"group" : enemies_group,
+		
+		
+		
+		
+	}
+	

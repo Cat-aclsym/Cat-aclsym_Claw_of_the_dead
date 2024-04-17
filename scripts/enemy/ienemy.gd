@@ -276,4 +276,4 @@ func serialize() -> Dictionary:
 		"current_animation": AnimPlayer.current_animation,
 		"position": {"x": global_position.x, "y": global_position.y}, # sauvegarder la position si nécessaire
 		# Ajoutez d'autres propriétés si nécessaire
-	}
+	}	

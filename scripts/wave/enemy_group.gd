@@ -15,3 +15,26 @@ class_name EnemyGroup extends Node
 ## @experimental
 @export var modifiers: Dictionary = {} # TODO
 
+func serialize() -> Dictionary:
+	var enemies_data = [] # Crée un tableau vide pour stocker les données des ennemis
+
+	for child in get_children(): # Suppose une fonction qui retourne tous les ennemis
+		var enemy_data = { # Sérialise les propriétés de chaque ennemi
+			"type": child.get_class(),
+			"speed": child.speed,
+			"max_health": child.max_health,
+			"health": child.health,
+			"path": child.path,
+			"state": child.state,
+			"current_animation": child.AnimPlayer.current_animation,
+			"position": {"x": child.global_position.x, "y": child.global_position.y},
+			# Ajoutez d'autres propriétés si nécessaire
+		}
+		enemies_data.append(enemy_data)
+	return {
+		"enemies" : enemies_data,
+		
+		
+		
+		
+	}

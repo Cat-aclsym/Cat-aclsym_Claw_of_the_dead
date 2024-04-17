@@ -100,3 +100,30 @@ func _get_last_target():
 
 func _get_random_target():
 	pass
+
+func serialize() -> Dictionary:
+	var bullets_data = [] # Liste pour stocker les données sérialisées des balles
+	for child in get_children():
+		if child is IBullet: # Vérifie si l'enfant est une instance de IBullet
+			var bullet_data = {
+				"direction": {"x": child.direction.x, "y": child.direction.y},
+				"speed": child.speed,
+				"damage": child.damage,
+				"target": {"x": child.target.x, "y": child.target.y},
+				"position": {"x": child.global_position.x, "y": child.global_position.y}
+			}
+			bullets_data.append(bullet_data)
+	return {
+		"type": get_class(),
+		"cost":cost,
+		"level":level,
+		"sell_price":sell_price,
+		"bullet": bullets_data, 
+		"range": shoot_range,
+		"target_type": target_type,
+		"fire_rate": fire_rate,
+		"state": state,
+		"BulletScene": BulletScene if BulletScene == null else BulletScene.get_path(),
+		"position": {"x": global_position.x, "y": global_position.y}, # sauvegarder la position si nécessaire
+		# Ajoutez d'autres propriétés si nécessaire
+	}
