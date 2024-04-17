@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://b5630xr4v607r"]
+[gd_scene load_steps=13 format=3 uid="uid://b5630xr4v607r"]
 
 [ext_resource type="Script" path="res://scripts/menus/ingame_menu/ingame_menu.gd" id="1_rwo5b"]
 [ext_resource type="Texture2D" uid="uid://tl0lutmd6hq7" path="res://assets/huds/Barre de vie - Jauge@2x.png" id="2_sqak8"]
@@ -6,6 +6,7 @@
 [ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="4_lp5e5"]
 [ext_resource type="Texture2D" uid="uid://dg0hpeoeleiff" path="res://assets/huds/Coins@2x.png" id="5_pplug"]
 [ext_resource type="Texture2D" uid="uid://bcga3gamtf11v" path="res://assets/huds/Waves@2x.png" id="6_bwcu0"]
+[ext_resource type="Script" path="res://scenes/menus/ingame_menu/NewWaveCountLabel.gd" id="7_kr1e5"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_il7hw"]
 
@@ -26,6 +27,10 @@ content_margin_top = 105.0
 content_margin_right = 20.0
 content_margin_bottom = 15.0
 texture = ExtResource("6_bwcu0")
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_0ju0r"]
+content_margin_top = 32.0
+content_margin_right = 32.0
 
 [node name="IngameMenu" type="Control"]
 layout_mode = 3
@@ -118,3 +123,17 @@ bbcode_enabled = true
 text = "INGAMEHUD.WAVES.LABEL"
 scroll_active = false
 autowrap_mode = 0
+
+[node name="NewWaveCountLabel" type="Label" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -159.0
+offset_bottom = 23.0
+grow_horizontal = 0
+theme = ExtResource("4_lp5e5")
+theme_override_styles/normal = SubResource("StyleBoxEmpty_0ju0r")
+text = "New wave in XX.XX s"
+script = ExtResource("7_kr1e5")

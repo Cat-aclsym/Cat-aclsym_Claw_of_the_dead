@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://scripts/wave/wave.gd" id="1_by6jb"]
 
-[node name="Wave" type="Node"]
+[node name="Wave" type="Node" groups=["grp_wave"]]
 script = ExtResource("1_by6jb")
 
 [node name="Timer" type="Timer" parent="."]
