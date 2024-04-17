@@ -50,6 +50,7 @@ var poison_timer_execution_count: int = 0
 @onready var AnimPlayer: AnimationPlayer = $AnimationPlayer
 @onready var poison_particles: GPUParticles2D = $GPUParticles2D
 @onready var PopupLocation: PopupLocation = $PopupLocation
+@onready var old_modulate = Sprite.modulate
 
 
 # core
@@ -81,15 +82,12 @@ func _physics_process(delta: float) -> void:
 	else:
 		poison_particles.emitting = true
 
-			
-func _poison_animation():
-	pass
 
 func _damage_effect(color: Color):
-	var old_modulate = Sprite.modulate
 	Sprite.modulate = color
 	await get_tree().create_timer(0.1).timeout
 	Sprite.modulate = old_modulate
+
 
 # functionnal
 func take_damage(damage: float, damage_type: String) -> void:
