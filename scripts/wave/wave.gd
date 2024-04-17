@@ -30,6 +30,11 @@ var dead_enemies: int = 0
 # core
 func _ready() -> void:
 	_load_groups()
+	
+	connect(
+		"wave_end",
+		 Global.hud.in_game_menu_le_vrai.NewWaveCountLabel.start
+	)
 
 
 # functionnal

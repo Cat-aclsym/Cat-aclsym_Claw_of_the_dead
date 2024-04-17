@@ -57,6 +57,7 @@ curve = SubResource("Curve2D_u7j3k")
 curve = SubResource("Curve2D_4wu0t")
 
 [node name="Wave1" parent="Waves" index="0" instance=ExtResource("3_hf8jk")]
+delay = 5.0
 
 [node name="EnemyGroup" parent="Waves/Wave1" index="1" instance=ExtResource("2_t1gv5")]
 enemies = Array[int]([1])
@@ -74,6 +75,7 @@ in_delay = 0.5
 out_delay = 1.0
 
 [node name="Wave2" parent="Waves" index="1" instance=ExtResource("3_hf8jk")]
+delay = 5.0
 
 [node name="EnemyGroup" parent="Waves/Wave2" index="1" instance=ExtResource("2_t1gv5")]
 enemies = Array[int]([2])
@@ -91,3 +93,12 @@ zoom = Vector2(1.6, 1.6)
 
 [node name="FirstTower" parent="." index="5" instance=ExtResource("4_ej3rp")]
 position = Vector2(529, 350)
+
+[node name="FirstTower2" parent="." index="6" instance=ExtResource("4_ej3rp")]
+position = Vector2(704, 470)
+
+[node name="FirstTower3" parent="." index="7" instance=ExtResource("4_ej3rp")]
+position = Vector2(736, 456)
+
+[node name="FirstTower4" parent="." index="8" instance=ExtResource("4_ej3rp")]
+position = Vector2(640, 360)
