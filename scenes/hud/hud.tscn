@@ -29,11 +29,11 @@ visible = false
 
 [node name="HomeMenu" parent="." instance=ExtResource("6_ijios")]
 
-[node name="DebugConsole" parent="." instance=ExtResource("2_fkxxx")]
-visible = false
-
 [node name="IngameMenu" parent="." instance=ExtResource("7_gd3cm")]
 size_flags_horizontal = 4
 size_flags_vertical = 4
+
+[node name="DebugConsole" parent="." instance=ExtResource("2_fkxxx")]
+visible = false
 
 [connection signal="pressed" from="PauseButton" to="." method="_on_pause_button_pressed"]
