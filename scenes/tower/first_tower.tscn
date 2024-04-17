@@ -55,7 +55,7 @@ position = Vector2(0, -16)
 cost = 50
 upgrade = Array[PackedScene]([ExtResource("2_okbr1")])
 level = 1
-shoot_range = 150.0
+shoot_range = 75.0
 fire_rate = 1.0
 BulletScene = ExtResource("3_g8gbc")
 
@@ -69,8 +69,9 @@ libraries = {
 autoplay = "idle"
 
 [node name="CollisionShape2D" parent="Area2D" index="0"]
-rotation = 0.392699
-skew = 0.785398
+position = Vector2(4.76837e-07, 16)
+rotation = 0.567232
+skew = 0.436332
 shape = SubResource("CircleShape2D_jmpep")
 
 [connection signal="area_exited" from="Area2D" to="." method="_on_area_2d_area_exited"]

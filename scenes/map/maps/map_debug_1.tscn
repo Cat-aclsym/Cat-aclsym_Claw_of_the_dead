@@ -83,4 +83,4 @@ position = Vector2(672, 400)
 zoom = Vector2(1.6, 1.6)
 
 [node name="FirstTower" parent="." index="5" instance=ExtResource("4_ej3rp")]
-position = Vector2(617, 295)
+position = Vector2(529, 350)
