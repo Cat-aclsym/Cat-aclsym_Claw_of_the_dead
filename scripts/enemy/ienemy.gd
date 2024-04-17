@@ -21,6 +21,7 @@ enum ENM_Direction {
 enum ENM_Type {
 	DEFAULT,
 	BIG_DADDY,
+	FAT
 }
 
 var DAMAGE = {
@@ -182,7 +183,7 @@ func _give_damage_state() -> void:
 		return
 		
 	# if boss insta death
-	if type == ENM_Type.BIG_DADDY:
+	if type == ENM_Type.BIG_DADDY or type == ENM_Type.FAT:
 		ILevel.current_level.health = 0
 	else:
 		ILevel.current_level.health -= ceil(health/2)

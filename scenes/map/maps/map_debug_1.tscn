@@ -60,17 +60,17 @@ curve = SubResource("Curve2D_4wu0t")
 delay = 5.0
 
 [node name="EnemyGroup" parent="Waves/Wave1" index="1" instance=ExtResource("2_t1gv5")]
-enemies = Array[int]([1])
+enemies = Array[int]([0, 0, 0])
 in_delay = 0.5
 out_delay = 1.0
 
 [node name="EnemyGroup2" parent="Waves/Wave1" index="2" instance=ExtResource("2_t1gv5")]
-enemies = Array[int]([1, 1])
+enemies = Array[int]([0, 0])
 in_delay = 0.5
 out_delay = 1.0
 
 [node name="EnemyGroup3" parent="Waves/Wave1" index="3" instance=ExtResource("2_t1gv5")]
-enemies = Array[int]([1, 1, 1])
+enemies = Array[int]([0, 0, 0])
 in_delay = 0.5
 out_delay = 1.0
 
@@ -78,12 +78,12 @@ out_delay = 1.0
 delay = 5.0
 
 [node name="EnemyGroup" parent="Waves/Wave2" index="1" instance=ExtResource("2_t1gv5")]
-enemies = Array[int]([2])
+enemies = Array[int]([1, 0, 1])
 in_delay = 0.5
 out_delay = 1.0
 
 [node name="EnemyGroup2" parent="Waves/Wave2" index="2" instance=ExtResource("2_t1gv5")]
-enemies = Array[int]([2, 2])
+enemies = Array[int]([1, 2])
 in_delay = 0.5
 out_delay = 1.0
 

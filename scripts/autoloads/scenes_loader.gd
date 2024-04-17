@@ -2,8 +2,8 @@ extends Node
 
 enum EnemyID {
 	DEFAULT,
-	ENEMY_1,
 	BIG_DADDY,
+	FAT,
 }
 
 # modify with correct tower name
@@ -15,8 +15,9 @@ enum TowerID {
 
 
 var enemies: Dictionary = {
-	EnemyID.ENEMY_1: preload("res://scenes/enemy/ienemy_scene.tscn"),
+	EnemyID.DEFAULT: preload("res://scenes/enemy/default_zombie.tscn"),
 	EnemyID.BIG_DADDY: preload("res://scenes/enemy/big_daddy.tscn"),
+	EnemyID.FAT: preload("res://scenes/enemy/fat.tscn"),
 }
 
 
