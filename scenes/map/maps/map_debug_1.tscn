@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://buj5yatu3iyt"]
+[gd_scene load_steps=9 format=3 uid="uid://buj5yatu3iyt"]
 
 [ext_resource type="PackedScene" uid="uid://crdosg1fmycsi" path="res://scenes/map/i_map.tscn" id="1_4widc"]
 [ext_resource type="PackedScene" uid="uid://dowhoig8uluo6" path="res://scenes/wave/enemy_group.tscn" id="2_t1gv5"]
@@ -89,5 +89,5 @@ out_delay = 1.0
 position = Vector2(672, 400)
 zoom = Vector2(1.6, 1.6)
 
-[node name="FirstTower" parent="." index="6" instance=ExtResource("4_ej3rp")]
-position = Vector2(617, 295)
+[node name="FirstTower" parent="." index="5" instance=ExtResource("4_ej3rp")]
+position = Vector2(529, 350)

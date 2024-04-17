@@ -17,3 +17,7 @@ func _on_play_button_pressed():
 
 func _on_parameter_button_pressed():
 	add_child(option_menu.instantiate())
+
+
+func _on_quit_button_pressed():
+	pass # Replace with function body.

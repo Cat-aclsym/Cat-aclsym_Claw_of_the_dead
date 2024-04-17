@@ -46,6 +46,8 @@ theme_override_constants/separation = 80
 [node name="TitleLabel" type="Label" parent="CenterContainer/LevelSelectVBoxContainer"]
 layout_mode = 2
 theme = ExtResource("2_06gmn")
+theme_override_fonts/font = ExtResource("5_pr2k8")
+theme_override_font_sizes/font_size = 40
 text = "LEVEL.MENU.TITLE"
 horizontal_alignment = 1
 
@@ -72,7 +74,11 @@ offset_bottom = 22.0
 grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("2_06gmn")
-theme_override_fonts/font = ExtResource("5_pr2k8")
+theme_override_colors/font_color = Color(0.137255, 0.215686, 0.223529, 1)
+theme_override_colors/font_outline_color = Color(0.137255, 0.215686, 0.223529, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 35
+uppercase = true
 
 [node name="LevelMetadata1" parent="CenterContainer/LevelSelectVBoxContainer/LevelTextureButton1" instance=ExtResource("2_rui86")]
 id = 1
@@ -102,7 +108,11 @@ offset_bottom = 22.0
 grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("2_06gmn")
-theme_override_fonts/font = ExtResource("5_pr2k8")
+theme_override_colors/font_color = Color(0.137255, 0.215686, 0.223529, 1)
+theme_override_colors/font_outline_color = Color(0.137255, 0.215686, 0.223529, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 35
+uppercase = true
 
 [node name="LevelMetadata2" parent="CenterContainer/LevelSelectVBoxContainer/LevelTextureButton2" instance=ExtResource("2_rui86")]
 position = Vector2(0, -63)
@@ -133,7 +143,11 @@ offset_bottom = 22.0
 grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("2_06gmn")
-theme_override_fonts/font = ExtResource("5_pr2k8")
+theme_override_colors/font_color = Color(0.137255, 0.215686, 0.223529, 1)
+theme_override_colors/font_outline_color = Color(0.137255, 0.215686, 0.223529, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 35
+uppercase = true
 
 [node name="LevelMetadata3" parent="CenterContainer/LevelSelectVBoxContainer/LevelTextureButton3" instance=ExtResource("2_rui86")]
 position = Vector2(0, -126)

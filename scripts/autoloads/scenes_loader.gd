@@ -6,9 +6,22 @@ enum EnemyID {
 	BIG_DADDY,
 }
 
+# modify with correct tower name
+enum TowerID {
+	TOWER_1,
+	TOWER_2,
+	TOWER_3,
+}
+
+
 var enemies: Dictionary = {
 	EnemyID.ENEMY_1: preload("res://scenes/enemy/ienemy_scene.tscn"),
 	EnemyID.BIG_DADDY: preload("res://scenes/enemy/big_daddy.tscn"),
+}
+
+
+var towers: Dictionary = {
+	TOWER_1 = preload("res://scenes/tower/first_tower.tscn")
 }
 
 
