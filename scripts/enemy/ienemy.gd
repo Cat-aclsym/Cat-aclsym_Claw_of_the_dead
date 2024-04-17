@@ -59,8 +59,6 @@ func _ready():
 	path_points_size = path.curve.point_count
 	_get_path_direction()
 	AnimPlayer.connect("animation_finished", _on_animation_player_animation_finished)
-	add_poison_effect(10, 15, 0.5)
-	add_poison_effect(100, 10, 0.5)
 
 
 func _physics_process(delta: float) -> void:
