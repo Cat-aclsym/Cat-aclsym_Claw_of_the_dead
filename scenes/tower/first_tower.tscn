@@ -51,15 +51,15 @@ _data = {
 radius = 314.23
 
 [node name="FirstTower" instance=ExtResource("1_ecq02")]
+position = Vector2(0, -16)
 cost = 50
 upgrade = Array[PackedScene]([ExtResource("2_okbr1")])
 level = 1
-shoot_range = 5000.0
+shoot_range = 150.0
 fire_rate = 1.0
 BulletScene = ExtResource("3_g8gbc")
 
 [node name="Sprite2D" parent="." index="0"]
-scale = Vector2(3, 3)
 texture = SubResource("AtlasTexture_g7olo")
 
 [node name="AnimationPlayer" parent="Sprite2D" index="0"]
@@ -69,9 +69,8 @@ libraries = {
 autoplay = "idle"
 
 [node name="CollisionShape2D" parent="Area2D" index="0"]
-position = Vector2(0, 20)
-rotation = 0.680678
-skew = 0.261799
+rotation = 0.392699
+skew = 0.785398
 shape = SubResource("CircleShape2D_jmpep")
 
 [connection signal="area_exited" from="Area2D" to="." method="_on_area_2d_area_exited"]
