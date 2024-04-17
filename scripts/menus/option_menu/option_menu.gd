@@ -8,8 +8,8 @@
 class_name OptionMenu
 extends Control
 
-@onready var musicTextureButton: TextureButton = $MenuCenterContainer/MenuRowVBoxContainer/ParametersHBoxContainer/MusicTextureButton
-@onready var soundTextureButton: TextureButton = $MenuCenterContainer/MenuRowVBoxContainer/ParametersHBoxContainer/SoundTextureButton
+@onready var musicTextureButton: TextureButton = $MenuCenterContainer/MenuHBoxContainer/MenuRowVBoxContainer/ParametersHBoxContainer/MusicTextureButton
+@onready var soundTextureButton: TextureButton = $MenuCenterContainer/MenuHBoxContainer/MenuRowVBoxContainer/ParametersHBoxContainer/SoundTextureButton
 
 var actualTexture: Texture2D
 
