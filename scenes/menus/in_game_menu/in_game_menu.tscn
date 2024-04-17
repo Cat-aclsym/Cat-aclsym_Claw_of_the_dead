@@ -41,6 +41,7 @@ theme_override_font_sizes/font_size = 16
 text = "BUILD"
 
 [node name="PanelContainer" type="PanelContainer" parent="."]
+visible = false
 layout_mode = 1
 anchors_preset = 12
 anchor_top = 1.0
@@ -77,3 +78,5 @@ texture = SubResource("AtlasTexture_oa8os")
 layout_mode = 2
 theme = ExtResource("2_jel3x")
 text = "BUY"
+
+[connection signal="pressed" from="VBoxContainer/BuildButton" to="." method="_on_build_button_pressed"]

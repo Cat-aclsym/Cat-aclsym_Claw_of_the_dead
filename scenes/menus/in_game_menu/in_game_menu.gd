@@ -4,6 +4,8 @@ var _is_ready: bool = false
 
 @onready var hp_label: Label = $VBoxContainer/HealthLabel
 @onready var money_label: Label = $VBoxContainer/MoneyLabel
+@onready var construction_menu: PanelContainer = $PanelContainer
+
 
 # core
 
@@ -32,3 +34,7 @@ func _update() -> void:
 	hp_label.text = "{0} HP".format([ILevel.current_level.health])
 	money_label.text = "{0} $".format([ILevel.current_level.coins])
 	
+
+# signals
+func _on_build_button_pressed() -> void:
+	construction_menu.visible = !construction_menu.visible

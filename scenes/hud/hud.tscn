@@ -35,7 +35,7 @@ visible = false
 [node name="DebugConsole" parent="." instance=ExtResource("2_fkxxx")]
 visible = false
 
-[node name="PauseButton" type="Button" parent="."]
+[node name="PauseButton2" type="Button" parent="."]
 process_mode = 3
 visible = false
 offset_right = 104.0
