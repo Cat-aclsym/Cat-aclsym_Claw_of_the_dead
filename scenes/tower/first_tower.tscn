@@ -51,8 +51,8 @@ _data = {
 radius = 314.23
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_7wfw0"]
-radius = 76.0
-height = 184.0
+radius = 24.0
+height = 64.0
 
 [node name="FirstTower" instance=ExtResource("1_ecq02")]
 position = Vector2(0, -16)

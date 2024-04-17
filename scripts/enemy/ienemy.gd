@@ -54,6 +54,7 @@ var poison_timer_execution_count: int = 0
 @onready var poison_particles: GPUParticles2D = $GPUParticles2D
 @onready var PopupScoreSpawner: PopupSpawner = $PopupScoreSpawner
 @onready var old_modulate = Sprite.modulate
+@onready var collision_shape_2d := $CollisionShape2D as CollisionShape2D
 
 
 # core
@@ -179,6 +180,8 @@ func _dead_state() -> void:
 	PopupScoreSpawner.score("+" + str(money_reward) + "$")
 	_disappear()
 	is_dead = true
+	# disable the collision shape
+	collision_shape_2d.disabled = true
 
 
 func _give_damage_state() -> void:
