@@ -1,14 +1,14 @@
-keys,en,fr
+﻿keys,en,fr
 PARAMETERS.TEXT.LABEL,Game parameters,Paramètres de jeux
 SOCIALS.TEXT.LABEL,Socials,Réseaux sociaux
 MISC.TEXT.LABEL,Misc.,Divers
 PAUSE.TITLE,Pause,Pause
-LEVEL.MENU.TITLE,Choose level :,Choisissez un niveau :
-FIRST.LEVEL.NAME,Tutorial,Tutoriel
-SECOND.LEVEL.NAME,First level,Premier niveau
-THIRD.LEVEL.NAME,Second level,Deuxième niveau
+LEVEL.MENU.TITLE,Choose level:,Choisissez un niveau :
+FIRST.LEVEL.NAME,First level,Premier niveau
+SECOND.LEVEL.NAME,Second level,Deuxième niveau
+THIRD.LEVEL.NAME,Third level,Troisième niveau
 HOME.PLAY.BUTTON,PLAY,JOUER
 HOME.PARAMETER.BUTTON,PARAMETER,PARAMÈTRES
-INGAMEHUD.COINS.LABEL,%s,%s
-INGAMEHUD.HEALTH.LABEL,%s,%s
-INGAMEHUD.WAVES.LABEL,%s,%s
+INGAMEHUD.COINS.LABEL,[center][b]%s[/b][/center],[center][b]%s[/b][/center]
+INGAMEHUD.HEALTH.LABEL,[center][b]%s[/b][/center],[center][b]%s[/b][/center]
+INGAMEHUD.WAVES.LABEL,[center][b]%s[/b][/center],[center][b]%s[/b][/center]

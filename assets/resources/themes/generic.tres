@@ -1,9 +1,18 @@
-[gd_resource type="Theme" load_steps=3 format=3 uid="uid://dr31fy67cgji3"]
+[gd_resource type="Theme" load_steps=4 format=3 uid="uid://dr31fy67cgji3"]
 
 [ext_resource type="FontFile" uid="uid://ddo3rokwsadq0" path="res://assets/resources/fonts/DotGothic16-Regular.ttf" id="1_wrjw4"]
 [ext_resource type="FontFile" uid="uid://dpjd0ata0w2de" path="res://assets/resources/fonts/Karla-VariableFont_wght.ttf" id="2_opgil"]
 
+[sub_resource type="FontVariation" id="FontVariation_8jm70"]
+base_font = ExtResource("2_opgil")
+variation_embolden = 0.75
+
 [resource]
 default_font = ExtResource("2_opgil")
+default_font_size = 30
 Fonts/fonts/text = ExtResource("1_wrjw4")
 Fonts/fonts/title = ExtResource("2_opgil")
+RichTextLabel/colors/default_color = Color(0.137255, 0.215686, 0.223529, 1)
+RichTextLabel/font_sizes/bold_font_size = 24
+RichTextLabel/font_sizes/normal_font_size = 24
+RichTextLabel/fonts/bold_font = SubResource("FontVariation_8jm70")

@@ -1,8 +1,14 @@
-[gd_scene load_steps=4 format=3 uid="uid://dgac5kcibwtmg"]
+[gd_scene load_steps=10 format=3 uid="uid://dgac5kcibwtmg"]
 
 [ext_resource type="Script" path="res://scripts/menus/levels_menu/levels_menu.gd" id="1_11ws4"]
+[ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="2_06gmn"]
 [ext_resource type="PackedScene" uid="uid://s70rc0a3unkr" path="res://scenes/level/level_metadata.tscn" id="2_rui86"]
+[ext_resource type="Texture2D" uid="uid://bel17gs3ijyb1" path="res://assets/backgrounds/Fond Menu 02@2x.png" id="2_vmar8"]
 [ext_resource type="PackedScene" uid="uid://8gta0ub172x3" path="res://scenes/level/levels/level_debug.tscn" id="3_w1fyg"]
+[ext_resource type="Texture2D" uid="uid://b1yesvpwmntau" path="res://assets/buttons/Bouton orange@2x.png" id="4_jlru3"]
+[ext_resource type="FontFile" uid="uid://ddo3rokwsadq0" path="res://assets/resources/fonts/DotGothic16-Regular.ttf" id="5_pr2k8"]
+[ext_resource type="Texture2D" uid="uid://dbhkk633ispub" path="res://assets/buttons/Bouton Bleu@2x.png" id="8_p8wai"]
+[ext_resource type="Texture2D" uid="uid://cdaralngqjlvk" path="res://assets/buttons/Bouton Vert@2x.png" id="9_yrxaf"]
 
 [node name="LevelsMenu" type="Control"]
 layout_mode = 3
@@ -13,42 +19,123 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_11ws4")
 
-[node name="TitleLabel" type="Label" parent="."]
-layout_mode = 0
-offset_left = 584.0
-offset_top = 168.0
-offset_right = 690.0
-offset_bottom = 191.0
+[node name="CenterContainer" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -44.0
+offset_right = -12.0
+offset_bottom = 44.0
+grow_horizontal = 2
+grow_vertical = 2
 
-[node name="LevelSelectVBoxContainer" type="VBoxContainer" parent="."]
-layout_mode = 0
-offset_left = 256.0
-offset_top = 256.0
-offset_right = 1024.0
-offset_bottom = 704.0
-theme_override_constants/separation = 32
-
-[node name="LevelButton1" type="Button" parent="LevelSelectVBoxContainer"]
+[node name="TextureRect" type="TextureRect" parent="CenterContainer"]
+custom_minimum_size = Vector2(1280, 761)
 layout_mode = 2
+texture = ExtResource("2_vmar8")
+expand_mode = 1
 
-[node name="LevelMetadata" parent="LevelSelectVBoxContainer/LevelButton1" instance=ExtResource("2_rui86")]
+[node name="LevelSelectVBoxContainer" type="VBoxContainer" parent="CenterContainer"]
+layout_mode = 2
+theme_override_constants/separation = 80
+
+[node name="TitleLabel" type="Label" parent="CenterContainer/LevelSelectVBoxContainer"]
+layout_mode = 2
+theme = ExtResource("2_06gmn")
+text = "LEVEL.MENU.TITLE"
+horizontal_alignment = 1
+
+[node name="LevelTextureButton1" type="TextureButton" parent="CenterContainer/LevelSelectVBoxContainer"]
+custom_minimum_size = Vector2(379.5, 120)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture_normal = ExtResource("4_jlru3")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="LevelLabel1" type="Label" parent="CenterContainer/LevelSelectVBoxContainer/LevelTextureButton1"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -0.5
+offset_top = -22.0
+offset_right = 0.5
+offset_bottom = 22.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("2_06gmn")
+theme_override_fonts/font = ExtResource("5_pr2k8")
+
+[node name="LevelMetadata1" parent="CenterContainer/LevelSelectVBoxContainer/LevelTextureButton1" instance=ExtResource("2_rui86")]
 id = 1
 level_name = "FIRST.LEVEL.NAME"
 level_scene = ExtResource("3_w1fyg")
 
-[node name="LevelButton2" type="Button" parent="LevelSelectVBoxContainer"]
+[node name="LevelTextureButton2" type="TextureButton" parent="CenterContainer/LevelSelectVBoxContainer"]
+custom_minimum_size = Vector2(379.5, 120)
 layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture_normal = ExtResource("8_p8wai")
+ignore_texture_size = true
+stretch_mode = 0
 
-[node name="LevelMetadata2" parent="LevelSelectVBoxContainer/LevelButton2" instance=ExtResource("2_rui86")]
+[node name="LevelLabel2" type="Label" parent="CenterContainer/LevelSelectVBoxContainer/LevelTextureButton2"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -0.5
+offset_top = -22.0
+offset_right = 0.5
+offset_bottom = 22.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("2_06gmn")
+theme_override_fonts/font = ExtResource("5_pr2k8")
+
+[node name="LevelMetadata2" parent="CenterContainer/LevelSelectVBoxContainer/LevelTextureButton2" instance=ExtResource("2_rui86")]
 position = Vector2(0, -63)
 id = 2
 level_name = "SECOND.LEVEL.NAME"
 level_scene = ExtResource("3_w1fyg")
 
-[node name="LevelButton3" type="Button" parent="LevelSelectVBoxContainer"]
+[node name="LevelTextureButton3" type="TextureButton" parent="CenterContainer/LevelSelectVBoxContainer"]
+custom_minimum_size = Vector2(379.5, 120)
 layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture_normal = ExtResource("9_yrxaf")
+ignore_texture_size = true
+stretch_mode = 0
 
-[node name="LevelMetadata3" parent="LevelSelectVBoxContainer/LevelButton3" instance=ExtResource("2_rui86")]
+[node name="LevelLabel3" type="Label" parent="CenterContainer/LevelSelectVBoxContainer/LevelTextureButton3"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -0.5
+offset_top = -22.0
+offset_right = 0.5
+offset_bottom = 22.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("2_06gmn")
+theme_override_fonts/font = ExtResource("5_pr2k8")
+
+[node name="LevelMetadata3" parent="CenterContainer/LevelSelectVBoxContainer/LevelTextureButton3" instance=ExtResource("2_rui86")]
 position = Vector2(0, -126)
 id = 3
 level_name = "THIRD.LEVEL.NAME"
