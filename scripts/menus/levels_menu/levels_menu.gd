@@ -6,7 +6,8 @@ var buttons: Dictionary = {}
 
 
 # core
-func _ready() -> void: _initialize()
+func _ready() -> void: 
+	_initialize()
 
 
 # functionnal
@@ -29,6 +30,8 @@ func _initialize() -> void:
 			get_tree().get_root().add_child(level)
 			level.initialize(buttons[bt])
 			ILevel.current_level = level
+			
+			Global.hud.start_level()
 		)
 
 		# signals

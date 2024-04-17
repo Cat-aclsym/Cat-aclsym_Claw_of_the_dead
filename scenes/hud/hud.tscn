@@ -5,11 +5,19 @@
 [ext_resource type="PackedScene" uid="uid://be8c7p1ka4dmm" path="res://scenes/debug_console/debug_console.tscn" id="2_fkxxx"]
 [ext_resource type="PackedScene" uid="uid://dgac5kcibwtmg" path="res://scenes/menus/levels_menu/levels_menu.tscn" id="4_4jsl7"]
 [ext_resource type="PackedScene" uid="uid://doml7biiq8g2o" path="res://scenes/menus/option_menu/option_menu.tscn" id="5_ojjfi"]
+<<<<<<< HEAD
 [ext_resource type="PackedScene" uid="uid://cqfsr6yjn6hm8" path="res://scenes/menus/home_menu/home_menu.tscn" id="6_ijios"]
 [ext_resource type="PackedScene" uid="uid://b5630xr4v607r" path="res://scenes/menus/ingame_menu/ingame_menu.tscn" id="7_gd3cm"]
+=======
+[ext_resource type="PackedScene" uid="uid://cqfsr6yjn6hm8" path="res://scenes/menus/home_screen/home_menu.tscn" id="6_ijios"]
+[ext_resource type="PackedScene" uid="uid://bo3ene0u4ofrj" path="res://scenes/menus/in_game_menu/in_game_menu.tscn" id="7_ev4cy"]
+>>>>>>> feature/construction-menu
 
 [node name="HUD" type="CanvasLayer"]
 script = ExtResource("1_b6y43")
+
+[node name="InGameMenu" parent="." instance=ExtResource("7_ev4cy")]
+visible = false
 
 [node name="MenuPause" parent="." instance=ExtResource("1_1svi5")]
 visible = false
@@ -35,5 +43,12 @@ size_flags_vertical = 4
 
 [node name="DebugConsole" parent="." instance=ExtResource("2_fkxxx")]
 visible = false
+
+[node name="PauseButton2" type="Button" parent="."]
+process_mode = 3
+visible = false
+offset_right = 104.0
+offset_bottom = 31.0
+text = "PAUSE.TITLE"
 
 [connection signal="pressed" from="PauseButton" to="." method="_on_pause_button_pressed"]
