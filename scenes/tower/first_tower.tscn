@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://cq705nqdp8fnw"]
+[gd_scene load_steps=11 format=3 uid="uid://cq705nqdp8fnw"]
 
 [ext_resource type="PackedScene" uid="uid://064cnqw4xlus" path="res://scenes/tower/i_tower.tscn" id="1_ecq02"]
 [ext_resource type="PackedScene" uid="uid://6kxfyy7tk2pu" path="res://scenes/upgrade/first_tower/upgrade_first_tower_1.tscn" id="2_okbr1"]
@@ -50,12 +50,16 @@ _data = {
 [sub_resource type="CircleShape2D" id="CircleShape2D_jmpep"]
 radius = 314.23
 
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_7wfw0"]
+radius = 76.0
+height = 184.0
+
 [node name="FirstTower" instance=ExtResource("1_ecq02")]
 position = Vector2(0, -16)
 cost = 50
 upgrade = Array[PackedScene]([ExtResource("2_okbr1")])
 level = 1
-shoot_range = 75.0
+shoot_range = 100.0
 fire_rate = 1.0
 BulletScene = ExtResource("3_g8gbc")
 
@@ -74,6 +78,17 @@ rotation = 0.567232
 skew = 0.436332
 shape = SubResource("CircleShape2D_jmpep")
 
+[node name="Polygon2D" parent="." index="3"]
+visible = true
+scale = Vector2(1e-05, 1e-05)
+
+[node name="Line2D" type="Line2D" parent="Polygon2D" index="0"]
+
+[node name="CollisionShape2D" parent="TowerHoverBox" index="0"]
+shape = SubResource("CapsuleShape2D_7wfw0")
+
 [connection signal="area_exited" from="Area2D" to="." method="_on_area_2d_area_exited"]
 [connection signal="body_entered" from="Area2D" to="." method="_on_area_2d_body_entered"]
 [connection signal="body_exited" from="Area2D" to="." method="_on_area_2d_body_exited"]
+[connection signal="mouse_entered" from="TowerHoverBox" to="." method="_on_tower_hover_box_mouse_entered"]
+[connection signal="mouse_exited" from="TowerHoverBox" to="." method="_on_tower_hover_box_mouse_exited"]

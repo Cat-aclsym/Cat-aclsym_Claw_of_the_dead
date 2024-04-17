@@ -15,3 +15,11 @@ script = ExtResource("1_4edlv")
 
 [node name="FireRateTimer" type="Timer" parent="."]
 one_shot = true
+
+[node name="Polygon2D" type="Polygon2D" parent="."]
+visible = false
+polygon = PackedVector2Array(-13, -37, 108, -111, 3, 46, -53, 0)
+
+[node name="TowerHoverBox" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TowerHoverBox"]
