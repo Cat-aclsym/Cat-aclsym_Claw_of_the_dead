@@ -7,8 +7,8 @@ LEVEL.MENU.TITLE,Choose level:,Choisissez un niveau :
 FIRST.LEVEL.NAME,First level,Premier niveau
 SECOND.LEVEL.NAME,Second level,Deuxième niveau
 THIRD.LEVEL.NAME,Third level,Troisième niveau
-HOME.PLAY.BUTTON,PLAY,JOUER
-HOME.PARAMETER.BUTTON,PARAMETER,PARAMÈTRES
-INGAMEHUD.COINS.LABEL,[center][b]%s[/b][/center],[center][b]%s[/b][/center]
-INGAMEHUD.HEALTH.LABEL,[center][b]%s[/b][/center],[center][b]%s[/b][/center]
-INGAMEHUD.WAVES.LABEL,[center][b]%s[/b][/center],[center][b]%s[/b][/center]
+HOME.PLAY.BUTTON,Play,Jouer
+HOME.PARAMETER.BUTTON,Parameters,Paramètres
+INGAMEHUD.COINS.LABEL,%s,%s
+INGAMEHUD.HEALTH.LABEL,%s,%s
+INGAMEHUD.WAVES.LABEL,%s,%s

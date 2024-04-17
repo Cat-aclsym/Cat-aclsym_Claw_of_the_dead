@@ -16,3 +16,4 @@ RichTextLabel/colors/default_color = Color(0.137255, 0.215686, 0.223529, 1)
 RichTextLabel/font_sizes/bold_font_size = 24
 RichTextLabel/font_sizes/normal_font_size = 24
 RichTextLabel/fonts/bold_font = SubResource("FontVariation_8jm70")
+
