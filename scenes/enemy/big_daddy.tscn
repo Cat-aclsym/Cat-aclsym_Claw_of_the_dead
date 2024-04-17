@@ -8,7 +8,7 @@ atlas = ExtResource("2_7wiam")
 region = Rect2(64, 0, 64, 64)
 
 [node name="BigDaddy" instance=ExtResource("1_o4ric")]
-scale = Vector2(1.49, 1.49)
+scale = Vector2(0.72, 0.72)
 speed = 10.0
 max_health = 400.0
 type = 1

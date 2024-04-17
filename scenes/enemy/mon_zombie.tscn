@@ -3,3 +3,5 @@
 [ext_resource type="PackedScene" uid="uid://tmlcshxut7kv" path="res://scenes/enemy/ienemy_scene.tscn" id="1_kuj8y"]
 
 [node name="MonZombie" instance=ExtResource("1_kuj8y")]
+position = Vector2(0, -16)
+scale = Vector2(0.6, 0.6)
