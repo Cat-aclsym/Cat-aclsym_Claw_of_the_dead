@@ -1,9 +1,9 @@
-[gd_scene load_steps=7 format=3 uid="uid://buj5yatu3iyt"]
+[gd_scene load_steps=9 format=3 uid="uid://buj5yatu3iyt"]
 
 [ext_resource type="PackedScene" uid="uid://crdosg1fmycsi" path="res://scenes/map/i_map.tscn" id="1_4widc"]
 [ext_resource type="PackedScene" uid="uid://dowhoig8uluo6" path="res://scenes/wave/enemy_group.tscn" id="2_t1gv5"]
-[ext_resource type="PackedScene" uid="uid://ce6ydtoqy6h55" path="res://scenes/wave/wave.tscn" id="3_hf8jk"]
 [ext_resource type="Script" path="res://scripts/camera/camera_zoom.gd" id="2_yqywt"]
+[ext_resource type="PackedScene" uid="uid://ce6ydtoqy6h55" path="res://scenes/wave/wave.tscn" id="3_hf8jk"]
 
 [sub_resource type="Curve2D" id="Curve2D_kcq2n"]
 _data = {
