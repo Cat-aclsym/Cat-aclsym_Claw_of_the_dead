@@ -1,5 +1,7 @@
 class_name IEnemy extends CharacterBody2D
 signal die
+signal camera_effect(effect: String)
+
 
 const ANIM_FADE_OUT: String = "fade_out"
 const ANIM_WALK_UP: String = "walk_up"
@@ -56,6 +58,10 @@ var poison_timer_execution_count: int = 0
 
 # core
 func _ready():
+	if type == ENM_Type.FAT:
+		connect("camera_effect", Global.camera.handle_effect)
+		camera_effect.emit('shake')
+		
 	health = max_health
 	path_points_size = path.curve.point_count
 	_get_path_direction()

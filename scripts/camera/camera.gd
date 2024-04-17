@@ -2,13 +2,25 @@ extends Camera2D
 
 @export var zoom_speed: float = 0.1
 @export var pan_speed: float = 1.0
+@export var random_strength: float = 30.0
+@export var shake_fade: float = 5.0
 
 var touch_points: Dictionary = {}
 var start_distance: int
 var start_zoom: Vector2
+var rng: RandomNumberGenerator = RandomNumberGenerator.new()
+var shake_strength: float = 0.0
+
+
+func _ready():
+	Global.camera = self
 
 
 func _process(delta: float) -> void:
+	if shake_strength > 0:
+		shake_strength = lerp(shake_strength, 0.0, shake_fade * delta)
+		offset = Vector2(rng.randf_range(-shake_strength, shake_strength), rng.randf_range(-shake_strength, shake_strength))
+	
 	if Input.is_action_just_pressed("scroll_up"):
 		zoom /= 0.9
 		limit_zoom(zoom)
@@ -62,3 +74,17 @@ func limit_zoom(new_zoom: Vector2) -> void:
 		zoom.x = 10
 	if new_zoom.y > 10.0:
 		zoom.y = 10
+
+
+func handle_effect(effect: String) -> void:
+	
+	Log.debug("hqndle effect")
+	Log.debug(effect)
+	match effect:
+		"shake":
+			shake_camera()
+		_:
+			pass
+
+func shake_camera() -> void:
+	shake_strength = random_strength
