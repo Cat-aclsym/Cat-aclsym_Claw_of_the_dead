@@ -13,19 +13,14 @@ func _init():
 
 
 func _exit_tree():
-	Log.debug("{0} _exit_tree()".format([name]))
+	#Log.debug("{0} _exit_tree()".format([name]))
+	pass
 
 func _physics_process(delta: float):
 	position += direction * speed * delta
 
 func _on_body_entered(body):
 	if body is IEnemy:
-		Log.debug(body)
 		body.take_damage(damage, "default")
 		queue_free()
-		
-	#if body is IEnemy:
-		#print("zadazd")
-		#body._take_damage(damage)
-		#queue_free()
 	
