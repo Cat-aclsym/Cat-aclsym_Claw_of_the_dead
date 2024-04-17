@@ -49,7 +49,7 @@ var poison_timer_execution_count: int = 0
 @onready var Sprite: Sprite2D = $Sprite2D
 @onready var AnimPlayer: AnimationPlayer = $AnimationPlayer
 @onready var poison_particles: GPUParticles2D = $GPUParticles2D
-@onready var PopupLocation: PopupLocation = $PopupLocation
+@onready var PopupScoreSpawner: PopupSpawner = $PopupScoreSpawner
 
 
 # core
@@ -173,7 +173,7 @@ func _dead_state() -> void:
 		return
 	var money_reward: int = 10
 	ILevel.current_level.coins += money_reward
-	PopupLocation.popup("+" + str(money_reward) + "$")	
+	PopupScoreSpawner.score("+" + str(money_reward) + "$")
 	_disappear()
 	is_dead = true
 

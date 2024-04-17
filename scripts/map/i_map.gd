@@ -11,6 +11,7 @@ var waves_count: int = 0
 var waves: Array[Wave] = []
 
 @onready var waves_timer: Timer = $WavesTimer
+@onready var PopupWaveSpawner: PopupSpawner = $PopupWaveSpawner
 
 
 # core
@@ -35,6 +36,7 @@ func _start_next_wave() -> void:
 		return
 
 	waves[current_wave].start_wave()
+	PopupWaveSpawner.wave("Wave {0}".format([current_wave + 1]))
 
 
 func _load_paths() -> void:
