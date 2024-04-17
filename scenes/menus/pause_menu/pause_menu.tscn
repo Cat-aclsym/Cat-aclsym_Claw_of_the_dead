@@ -1,16 +1,16 @@
-[gd_scene load_steps=11 format=3 uid="uid://c4m4v70cudic"]
+[gd_scene load_steps=12 format=3 uid="uid://c4m4v70cudic"]
 
 [ext_resource type="Script" path="res://scripts/menus/pause_menu/pause_menu.gd" id="1_i4s0k"]
-[ext_resource type="Texture2D" uid="uid://iqgx7y4sgmsn" path="res://assets/iconsMenu/musicicon.png" id="2_dcalm"]
-[ext_resource type="Texture2D" uid="uid://cmpfd2oy8lnws" path="res://assets/iconsMenu/muet.png" id="3_ijr06"]
-[ext_resource type="Texture2D" uid="uid://cfgsjm6bwxk7s" path="res://assets/iconsMenu/soundicon.png" id="4_qivaf"]
-[ext_resource type="Texture2D" uid="uid://2rv6y7bfgtp0" path="res://assets/iconsMenu/silencieux.png" id="5_mff2m"]
-[ext_resource type="Texture2D" uid="uid://bfa4ypwja7vmy" path="res://assets/iconsMenu/bugicon.png" id="6_ppgek"]
-[ext_resource type="Texture2D" uid="uid://5vleu6f36k8o" path="res://assets/iconsMenu/retour.png" id="7_l1qte"]
-[ext_resource type="Texture2D" uid="uid://bdx6stmjhvcfs" path="res://assets/iconsMenu/play.png" id="8_u7cjd"]
-[ext_resource type="Texture2D" uid="uid://dhghe1mkpacho" path="res://assets/iconsMenu/menuicon.png" id="9_6g6jf"]
-
-[sub_resource type="Theme" id="Theme_affv6"]
+[ext_resource type="Texture2D" uid="uid://dvpho72p15imv" path="res://assets/icons_menu/Fond Menu 01.svg" id="2_rbaqu"]
+[ext_resource type="Texture2D" uid="uid://cmpfd2oy8lnws" path="res://assets/icons_menu/muet.png" id="3_ijr06"]
+[ext_resource type="Texture2D" uid="uid://diiao353y4c25" path="res://assets/icons_menu/Bouton Musique.svg" id="3_pw6b4"]
+[ext_resource type="Texture2D" uid="uid://c3gd1ylbpyvqs" path="res://assets/icons_menu/Bouton Sons.svg" id="5_dghcc"]
+[ext_resource type="Texture2D" uid="uid://2rv6y7bfgtp0" path="res://assets/icons_menu/silencieux.png" id="5_mff2m"]
+[ext_resource type="Texture2D" uid="uid://bddoj8pvy55r5" path="res://assets/icons_menu/Bouton orange.svg" id="7_y18pb"]
+[ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="8_a82ot"]
+[ext_resource type="Texture2D" uid="uid://bcc4e623kl87b" path="res://assets/icons_menu/Bouton Replay.svg" id="9_sbawl"]
+[ext_resource type="Texture2D" uid="uid://c6duol44e0uuk" path="res://assets/icons_menu/Bouton Play 2.svg" id="10_06y4j"]
+[ext_resource type="Texture2D" uid="uid://cjgbe6nmghaxw" path="res://assets/icons_menu/Bouton Menu Home.svg" id="11_5q36b"]
 
 [node name="MenuPause" type="Control"]
 layout_mode = 3
@@ -19,7 +19,13 @@ offset_right = 1280.0
 offset_bottom = 720.0
 script = ExtResource("1_i4s0k")
 
-[node name="TopLeftIcon" type="HBoxContainer" parent="."]
+[node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 0
+offset_right = 1280.0
+offset_bottom = 720.0
+texture = ExtResource("2_rbaqu")
+
+[node name="TopLeftIcon" type="HBoxContainer" parent="TextureRect"]
 layout_mode = 1
 offset_left = 57.0
 offset_top = 35.0
@@ -27,75 +33,82 @@ offset_right = 207.0
 offset_bottom = 73.0
 theme_override_constants/separation = 19
 
-[node name="MusicButton" type="TextureButton" parent="TopLeftIcon"]
+[node name="MusicButton" type="TextureButton" parent="TextureRect/TopLeftIcon"]
 custom_minimum_size = Vector2(30, 30)
 layout_mode = 2
 toggle_mode = true
-texture_normal = ExtResource("2_dcalm")
+texture_normal = ExtResource("3_pw6b4")
 texture_pressed = ExtResource("3_ijr06")
 stretch_mode = 0
 
-[node name="SoundButton" type="TextureButton" parent="TopLeftIcon"]
+[node name="SoundButton" type="TextureButton" parent="TextureRect/TopLeftIcon"]
 custom_minimum_size = Vector2(30, 30)
 layout_mode = 2
 toggle_mode = true
-texture_normal = ExtResource("4_qivaf")
+texture_normal = ExtResource("5_dghcc")
 texture_pressed = ExtResource("5_mff2m")
 stretch_mode = 0
 
-[node name="BugReport" type="TextureButton" parent="TopLeftIcon"]
+[node name="BugReport" type="TextureButton" parent="TextureRect/TopLeftIcon"]
 custom_minimum_size = Vector2(30, 30)
 layout_mode = 2
-texture_normal = ExtResource("6_ppgek")
+texture_normal = ExtResource("7_y18pb")
 stretch_mode = 0
 
-[node name="CenterContainer" type="CenterContainer" parent="."]
-layout_mode = 0
-offset_left = 493.0
-offset_top = 271.0
-offset_right = 813.0
-offset_bottom = 465.0
+[node name="CenterContainer" type="CenterContainer" parent="TextureRect"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -237.0
+offset_top = -99.5
+offset_right = 237.0
+offset_bottom = 99.5
+grow_horizontal = 2
+grow_vertical = 2
 
-[node name="MainLayout" type="VBoxContainer" parent="CenterContainer"]
+[node name="MainLayout" type="VBoxContainer" parent="TextureRect/CenterContainer"]
 layout_mode = 2
 alignment = 1
 
-[node name="TitlePauseMenu" type="Label" parent="CenterContainer/MainLayout"]
+[node name="TitlePauseMenu" type="Label" parent="TextureRect/CenterContainer/MainLayout"]
 layout_mode = 2
-theme = SubResource("Theme_affv6")
+theme = ExtResource("8_a82ot")
 theme_override_font_sizes/font_size = 80
 text = "PAUSE.TITLE"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="ButtonLayer" type="HBoxContainer" parent="CenterContainer/MainLayout"]
+[node name="ButtonLayer" type="HBoxContainer" parent="TextureRect/CenterContainer/MainLayout"]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 theme_override_constants/separation = 40
 
-[node name="RestartButton" type="TextureButton" parent="CenterContainer/MainLayout/ButtonLayer"]
+[node name="RestartButton" type="TextureButton" parent="TextureRect/CenterContainer/MainLayout/ButtonLayer"]
 custom_minimum_size = Vector2(80, 80)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
-texture_normal = ExtResource("7_l1qte")
+texture_normal = ExtResource("9_sbawl")
 stretch_mode = 4
 
-[node name="PlayButton" type="TextureButton" parent="CenterContainer/MainLayout/ButtonLayer"]
+[node name="PlayButton" type="TextureButton" parent="TextureRect/CenterContainer/MainLayout/ButtonLayer"]
 custom_minimum_size = Vector2(80, 80)
 layout_mode = 2
-texture_normal = ExtResource("8_u7cjd")
+texture_normal = ExtResource("10_06y4j")
 stretch_mode = 0
 
-[node name="HomeButton" type="TextureButton" parent="CenterContainer/MainLayout/ButtonLayer"]
+[node name="HomeButton" type="TextureButton" parent="TextureRect/CenterContainer/MainLayout/ButtonLayer"]
 custom_minimum_size = Vector2(80, 80)
 layout_mode = 2
-texture_normal = ExtResource("9_6g6jf")
+texture_normal = ExtResource("11_5q36b")
 stretch_mode = 0
 
-[connection signal="pressed" from="TopLeftIcon/MusicButton" to="." method="_on_music_button_pressed"]
-[connection signal="pressed" from="TopLeftIcon/SoundButton" to="." method="_on_sound_button_pressed"]
-[connection signal="pressed" from="CenterContainer/MainLayout/ButtonLayer/RestartButton" to="." method="_on_restart_button_pressed"]
-[connection signal="pressed" from="CenterContainer/MainLayout/ButtonLayer/PlayButton" to="." method="_on_play_button_pressed"]
-[connection signal="pressed" from="CenterContainer/MainLayout/ButtonLayer/HomeButton" to="." method="_on_home_button_pressed"]
+[connection signal="pressed" from="TextureRect/TopLeftIcon/MusicButton" to="." method="_on_music_button_pressed"]
+[connection signal="pressed" from="TextureRect/TopLeftIcon/SoundButton" to="." method="_on_sound_button_pressed"]
+[connection signal="pressed" from="TextureRect/CenterContainer/MainLayout/ButtonLayer/RestartButton" to="." method="_on_restart_button_pressed"]
+[connection signal="pressed" from="TextureRect/CenterContainer/MainLayout/ButtonLayer/PlayButton" to="." method="_on_play_button_pressed"]
+[connection signal="pressed" from="TextureRect/CenterContainer/MainLayout/ButtonLayer/HomeButton" to="." method="_on_home_button_pressed"]

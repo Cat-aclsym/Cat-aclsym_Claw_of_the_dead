@@ -1,19 +1,19 @@
 [gd_scene load_steps=15 format=3 uid="uid://doml7biiq8g2o"]
 
 [ext_resource type="Script" path="res://scripts/menus/option_menu/option_menu.gd" id="1_rumc7"]
-[ext_resource type="Texture2D" uid="uid://n0cj2ueirxhp" path="res://assets/icone_menu/close.png" id="2_gf4xi"]
+[ext_resource type="Texture2D" uid="uid://n0cj2ueirxhp" path="res://assets/icons_menu/close.png" id="2_u6rke"]
 [ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="3_mxk3u"]
-[ext_resource type="Texture2D" uid="uid://dtofxsy5uvekx" path="res://assets/icone_menu/noteDeMusique.png" id="4_aknr8"]
-[ext_resource type="Texture2D" uid="uid://46ywfvlxmd8c" path="res://assets/icone_menu/noteDeMusiqueCroix.png" id="5_cj54h"]
-[ext_resource type="Texture2D" uid="uid://85rtiiwobpg1" path="res://assets/icone_menu/speaker.png" id="6_wxed5"]
-[ext_resource type="Texture2D" uid="uid://cbskr3qu6rty8" path="res://assets/icone_menu/speakerCroix.png" id="7_85amr"]
-[ext_resource type="Texture2D" uid="uid://dyriwem0lllq3" path="res://assets/icone_menu/drapeau.png" id="8_axi5g"]
-[ext_resource type="Texture2D" uid="uid://u4plaj2bk8le" path="res://assets/icone_menu/instagram.png" id="9_k8x1j"]
-[ext_resource type="Texture2D" uid="uid://yufc7mw0mh26" path="res://assets/icone_menu/XTwitter.png" id="10_mt8vk"]
-[ext_resource type="Texture2D" uid="uid://cxcx1ba17c608" path="res://assets/icone_menu/discord.png" id="11_8h6r0"]
-[ext_resource type="Texture2D" uid="uid://b6vj2vgajqh52" path="res://assets/icone_menu/trompette.png" id="12_0xi06"]
-[ext_resource type="Texture2D" uid="uid://bkh8v7rijrny5" path="res://assets/icone_menu/bouclier.png" id="13_pdx5e"]
-[ext_resource type="Texture2D" uid="uid://c8o3a1eeg2l7s" path="res://assets/icone_menu/lettre.png" id="14_wmrhp"]
+[ext_resource type="Texture2D" uid="uid://dtofxsy5uvekx" path="res://assets/icons_menu/noteDeMusique.png" id="4_d6dla"]
+[ext_resource type="Texture2D" uid="uid://46ywfvlxmd8c" path="res://assets/icons_menu/noteDeMusiqueCroix.png" id="5_0xkef"]
+[ext_resource type="Texture2D" uid="uid://85rtiiwobpg1" path="res://assets/icons_menu/speaker.png" id="6_lsgln"]
+[ext_resource type="Texture2D" uid="uid://cbskr3qu6rty8" path="res://assets/icons_menu/speakerCroix.png" id="7_1y3x0"]
+[ext_resource type="Texture2D" uid="uid://dyriwem0lllq3" path="res://assets/icons_menu/drapeau.png" id="8_tv7l3"]
+[ext_resource type="Texture2D" uid="uid://u4plaj2bk8le" path="res://assets/icons_menu/instagram.png" id="9_ih320"]
+[ext_resource type="Texture2D" uid="uid://yufc7mw0mh26" path="res://assets/icons_menu/XTwitter.png" id="10_0ugat"]
+[ext_resource type="Texture2D" uid="uid://cxcx1ba17c608" path="res://assets/icons_menu/discord.png" id="11_0sbj4"]
+[ext_resource type="Texture2D" uid="uid://b6vj2vgajqh52" path="res://assets/icons_menu/trompette.png" id="12_otxbe"]
+[ext_resource type="Texture2D" uid="uid://bkh8v7rijrny5" path="res://assets/icons_menu/bouclier.png" id="13_usf2c"]
+[ext_resource type="Texture2D" uid="uid://c8o3a1eeg2l7s" path="res://assets/icons_menu/lettre.png" id="14_vw5p1"]
 
 [node name="OptionMenu" type="Control"]
 layout_mode = 3
@@ -50,7 +50,7 @@ theme_override_constants/margin_bottom = 550
 
 [node name="CloseTextureButton" type="TextureButton" parent="MenuCenterContainer/CloseButtonMarginContainer"]
 layout_mode = 2
-texture_normal = ExtResource("2_gf4xi")
+texture_normal = ExtResource("2_u6rke")
 
 [node name="MenuRowVBoxContainer" type="VBoxContainer" parent="MenuCenterContainer"]
 layout_mode = 2
@@ -69,17 +69,17 @@ theme_override_constants/separation = 100
 
 [node name="MusicTextureButton" type="TextureButton" parent="MenuCenterContainer/MenuRowVBoxContainer/ParametersHBoxContainer"]
 layout_mode = 2
-texture_normal = ExtResource("4_aknr8")
-texture_pressed = ExtResource("5_cj54h")
+texture_normal = ExtResource("4_d6dla")
+texture_pressed = ExtResource("5_0xkef")
 
 [node name="SoundTextureButton" type="TextureButton" parent="MenuCenterContainer/MenuRowVBoxContainer/ParametersHBoxContainer"]
 layout_mode = 2
-texture_normal = ExtResource("6_wxed5")
-texture_pressed = ExtResource("7_85amr")
+texture_normal = ExtResource("6_lsgln")
+texture_pressed = ExtResource("7_1y3x0")
 
 [node name="LanguageTextureButton" type="TextureButton" parent="MenuCenterContainer/MenuRowVBoxContainer/ParametersHBoxContainer"]
 layout_mode = 2
-texture_normal = ExtResource("8_axi5g")
+texture_normal = ExtResource("8_tv7l3")
 
 [node name="SocialsRichTextLabel" type="RichTextLabel" parent="MenuCenterContainer/MenuRowVBoxContainer"]
 layout_mode = 2
@@ -93,15 +93,15 @@ theme_override_constants/separation = 100
 
 [node name="InstagramTextureButton" type="TextureButton" parent="MenuCenterContainer/MenuRowVBoxContainer/SocialsHBoxContainer"]
 layout_mode = 2
-texture_normal = ExtResource("9_k8x1j")
+texture_normal = ExtResource("9_ih320")
 
 [node name="XTextureButton" type="TextureButton" parent="MenuCenterContainer/MenuRowVBoxContainer/SocialsHBoxContainer"]
 layout_mode = 2
-texture_normal = ExtResource("10_mt8vk")
+texture_normal = ExtResource("10_0ugat")
 
 [node name="DiscordTextureButton" type="TextureButton" parent="MenuCenterContainer/MenuRowVBoxContainer/SocialsHBoxContainer"]
 layout_mode = 2
-texture_normal = ExtResource("11_8h6r0")
+texture_normal = ExtResource("11_0sbj4")
 
 [node name="MiscRichTextLabel" type="RichTextLabel" parent="MenuCenterContainer/MenuRowVBoxContainer"]
 layout_mode = 2
@@ -115,15 +115,15 @@ theme_override_constants/separation = 100
 
 [node name="UpdateTextureButton" type="TextureButton" parent="MenuCenterContainer/MenuRowVBoxContainer/MiscHBoxContainer"]
 layout_mode = 2
-texture_normal = ExtResource("12_0xi06")
+texture_normal = ExtResource("12_otxbe")
 
 [node name="RgpdTextureButton" type="TextureButton" parent="MenuCenterContainer/MenuRowVBoxContainer/MiscHBoxContainer"]
 layout_mode = 2
-texture_normal = ExtResource("13_pdx5e")
+texture_normal = ExtResource("13_usf2c")
 
 [node name="ContactTextureButton" type="TextureButton" parent="MenuCenterContainer/MenuRowVBoxContainer/MiscHBoxContainer"]
 layout_mode = 2
-texture_normal = ExtResource("14_wmrhp")
+texture_normal = ExtResource("14_vw5p1")
 
 [connection signal="pressed" from="MenuCenterContainer/CloseButtonMarginContainer/CloseTextureButton" to="." method="_on_close_texture_button_pressed"]
 [connection signal="pressed" from="MenuCenterContainer/MenuRowVBoxContainer/ParametersHBoxContainer/MusicTextureButton" to="." method="_on_music_texture_button_pressed"]

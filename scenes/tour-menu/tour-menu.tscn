@@ -1,0 +1,119 @@
+[gd_scene load_steps=10 format=3 uid="uid://biwytg7t2rioh"]
+
+[ext_resource type="Script" path="res://scripts/tour-menu/tour-menu.gd" id="1_20dt5"]
+[ext_resource type="Texture2D" uid="uid://dmvwkbr5dl0io" path="res://assets/tower_ui/socle-ui.png" id="2_7sanb"]
+[ext_resource type="Texture2D" uid="uid://dq3apdomk15k0" path="res://assets/tower_ui/Bouton Delete Grisé.svg" id="3_qoomx"]
+[ext_resource type="Texture2D" uid="uid://dv6i1tilimumy" path="res://assets/tower_ui/Bouton Delete Vert.svg" id="4_mi01q"]
+[ext_resource type="Texture2D" uid="uid://2nebms2kmp1f" path="res://assets/tower_ui/Bouton Armes Grisé.svg" id="5_kqm4q"]
+[ext_resource type="Texture2D" uid="uid://cqjg72nqg7h28" path="res://assets/tower_ui/Bouton Armes Vert.svg" id="6_3bbjl"]
+[ext_resource type="Texture2D" uid="uid://dkdej0t18mh01" path="res://assets/tower_ui/Bouton Déplacement Grisé.svg" id="7_gvuf2"]
+[ext_resource type="Texture2D" uid="uid://8ywpy3lwv3ew" path="res://assets/tower_ui/Bouton Déplacement Vert.svg" id="8_qw47v"]
+[ext_resource type="Texture2D" uid="uid://d0rhqe13n3fqk" path="res://assets/tower_ui/Bouton close.svg" id="9_rd1bc"]
+
+[node name="Tour-menu" type="TabBar"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -1028.0
+offset_bottom = -468.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_20dt5")
+
+[node name="ButtonContainer" type="HBoxContainer" parent="."]
+custom_minimum_size = Vector2(252, 252)
+layout_mode = 1
+offset_right = 252.0
+offset_bottom = 250.0
+theme_override_constants/separation = 30
+alignment = 1
+
+[node name="TextureRect" type="TextureRect" parent="ButtonContainer"]
+custom_minimum_size = Vector2(180, 180)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture = ExtResource("2_7sanb")
+expand_mode = 1
+flip_h = true
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ButtonContainer/TextureRect"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.506
+anchor_top = 1.0
+anchor_right = 0.506
+anchor_bottom = 1.0
+offset_left = -127.08
+offset_top = -43.0
+offset_right = 124.92
+offset_bottom = 22.0
+alignment = 1
+
+[node name="ButtonSupress" type="TextureButton" parent="ButtonContainer/TextureRect/VBoxContainer"]
+custom_minimum_size = Vector2(60, 60)
+layout_mode = 2
+size_flags_horizontal = 4
+texture_normal = ExtResource("3_qoomx")
+texture_pressed = ExtResource("4_mi01q")
+texture_hover = ExtResource("4_mi01q")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="HBoxContainer" type="HBoxContainer" parent="ButtonContainer/TextureRect"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -110.0
+offset_top = 24.0
+offset_right = 110.0
+offset_bottom = 89.0
+grow_horizontal = 2
+theme_override_constants/separation = 100
+
+[node name="ButtonUpgrade" type="TextureButton" parent="ButtonContainer/TextureRect/HBoxContainer"]
+clip_contents = true
+custom_minimum_size = Vector2(60, 60)
+layout_mode = 2
+texture_normal = ExtResource("5_kqm4q")
+texture_pressed = ExtResource("6_3bbjl")
+texture_hover = ExtResource("6_3bbjl")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="ButtonModify" type="TextureButton" parent="ButtonContainer/TextureRect/HBoxContainer"]
+custom_minimum_size = Vector2(60, 50)
+layout_mode = 2
+texture_normal = ExtResource("7_gvuf2")
+texture_pressed = ExtResource("8_qw47v")
+texture_hover = ExtResource("8_qw47v")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="QuitButton" type="VBoxContainer" parent="ButtonContainer/TextureRect"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.506
+anchor_top = 1.0
+anchor_right = 0.506
+anchor_bottom = 1.0
+offset_left = -127.08
+offset_top = -106.0
+offset_right = 124.92
+offset_bottom = -76.0
+alignment = 1
+
+[node name="Quit" type="TextureButton" parent="ButtonContainer/TextureRect/QuitButton"]
+clip_contents = true
+custom_minimum_size = Vector2(20, 20)
+layout_mode = 2
+size_flags_horizontal = 4
+texture_normal = ExtResource("9_rd1bc")
+texture_pressed = ExtResource("4_mi01q")
+texture_hover = ExtResource("4_mi01q")
+ignore_texture_size = true
+stretch_mode = 0
+
+[connection signal="pressed" from="ButtonContainer/TextureRect/HBoxContainer/ButtonUpgrade" to="." method="_on_button_upgrade_pressed"]
+[connection signal="pressed" from="ButtonContainer/TextureRect/QuitButton/Quit" to="." method="_on_quit_pressed"]

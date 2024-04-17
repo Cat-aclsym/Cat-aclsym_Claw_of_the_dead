@@ -13,8 +13,8 @@ extends Control
 
 var state: String = "mute"
 
-@onready var restartButton: TextureButton = $CenterContainer/MainLayout/ButtonLayer/RestartButton
-@onready var playButton: TextureButton = $CenterContainer/MainLayout/ButtonLayer/PlayButton
+@onready var restartButton: TextureButton = $TextureRect/CenterContainer/MainLayout/ButtonLayer/RestartButton
+@onready var playButton: TextureButton = $TextureRect/CenterContainer/MainLayout/ButtonLayer/PlayButton
 @onready var homeButton: TextureButton = $CenterContainer/MainLayout/ButtonLayer/HomeButton
 @onready var musicButton : TextureButton = $TopLeftIcon/MusicButton
 @onready var soundButton : TextureButton = $TopLeftIcon/SoundButton
