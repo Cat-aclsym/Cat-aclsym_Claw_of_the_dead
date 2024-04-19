@@ -1,8 +1,8 @@
 [gd_scene load_steps=6 format=3 uid="uid://cqfsr6yjn6hm8"]
 
 [ext_resource type="Script" path="res://scripts/menus/home_menu/home_menu.gd" id="1_dvove"]
-[ext_resource type="Texture2D" uid="uid://dgkfjtjxbue6k" path="res://assets/icons/LogoTypoCouleurs.png" id="2_m75t7"]
 [ext_resource type="Texture2D" uid="uid://dbhkk633ispub" path="res://assets/buttons/Bouton Bleu@2x.png" id="3_0g4o3"]
+[ext_resource type="Texture2D" uid="uid://cbqakaoutl7n7" path="res://assets/icons/img.png" id="3_jc3u0"]
 [ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="4_ay1j5"]
 [ext_resource type="Texture2D" uid="uid://cdaralngqjlvk" path="res://assets/buttons/Bouton Vert@2x.png" id="5_db01i"]
 
@@ -59,7 +59,7 @@ layout_mode = 2
 texture_filter = 6
 layout_mode = 2
 size_flags_horizontal = 3
-texture = ExtResource("2_m75t7")
+texture = ExtResource("3_jc3u0")
 expand_mode = 3
 stretch_mode = 5
 
