@@ -18,5 +18,10 @@ func _on_play_button_pressed():
 
 func _on_parameter_button_pressed():
 	gui_margin_container.visible = false
-	add_child(option_menu.instantiate())
+	var option_menu_child: Node = option_menu.instantiate()
+	add_child(option_menu_child)
+	option_menu_child.menu_option_close.connect(_on_menu_option_close)
 
+
+func _on_menu_option_close():
+	gui_margin_container.visible = true
