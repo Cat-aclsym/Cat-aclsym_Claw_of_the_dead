@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://cqfsr6yjn6hm8"]
+[gd_scene load_steps=6 format=3 uid="uid://cqfsr6yjn6hm8"]
 
 [ext_resource type="Script" path="res://scripts/menus/home_menu/home_menu.gd" id="1_dvove"]
 [ext_resource type="Texture2D" uid="uid://dgkfjtjxbue6k" path="res://assets/icons/LogoTypoCouleurs.png" id="2_m75t7"]
-[ext_resource type="Texture2D" uid="uid://8jgt7cndpogr" path="res://assets/buttons/Bouton Play@2x.png" id="3_bpth5"]
-[ext_resource type="Texture2D" uid="uid://d1jifvddyufpi" path="res://assets/buttons/Bouton Options@2x.png" id="4_5pg7b"]
+[ext_resource type="Texture2D" uid="uid://dbhkk633ispub" path="res://assets/buttons/Bouton Bleu@2x.png" id="3_0g4o3"]
+[ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="4_ay1j5"]
+[ext_resource type="Texture2D" uid="uid://cdaralngqjlvk" path="res://assets/buttons/Bouton Vert@2x.png" id="5_db01i"]
 
 [node name="HomeMenu" type="Control"]
 layout_mode = 3
@@ -22,48 +23,100 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+expand_mode = 1
 
-[node name="HBoxContainer" type="HBoxContainer" parent="."]
-layout_mode = 0
-offset_right = 1924.0
-offset_bottom = 1080.0
-theme_override_constants/separation = 0
+[node name="CopyrightLabel" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -23.0
+grow_horizontal = 2
+grow_vertical = 0
+size_flags_vertical = 8
+theme = ExtResource("4_ay1j5")
+theme_override_font_sizes/font_size = 10
+text = "© [2024] Test. A7 Studio. Tous droits réservés. Marque déposée."
+vertical_alignment = 2
 
-[node name="LogoTextureRect" type="TextureRect" parent="HBoxContainer"]
-texture_filter = 6
-clip_contents = true
-custom_minimum_size = Vector2(960, 1080)
+[node name="GuiMarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="GuiHBoxContainer" type="HBoxContainer" parent="GuiMarginContainer"]
 layout_mode = 2
+
+[node name="LogoTextureRect" type="TextureRect" parent="GuiMarginContainer/GuiHBoxContainer"]
+texture_filter = 6
+layout_mode = 2
+size_flags_horizontal = 3
 texture = ExtResource("2_m75t7")
-stretch_mode = 4
+expand_mode = 3
+stretch_mode = 5
 
-[node name="CenterContainer" type="CenterContainer" parent="HBoxContainer"]
-clip_contents = true
-custom_minimum_size = Vector2(960, 0)
+[node name="HomeScreenVBoxContainer" type="VBoxContainer" parent="GuiMarginContainer/GuiHBoxContainer"]
 layout_mode = 2
+size_flags_horizontal = 3
 
-[node name="HomeScreenVBoxContainer" type="VBoxContainer" parent="HBoxContainer/CenterContainer"]
-layout_mode = 2
-theme_override_constants/separation = 100
-alignment = 1
-
-[node name="PlayButton" type="TextureButton" parent="HBoxContainer/CenterContainer/HomeScreenVBoxContainer"]
+[node name="PlayButton" type="TextureButton" parent="GuiMarginContainer/GuiHBoxContainer/HomeScreenVBoxContainer"]
 texture_filter = 6
-custom_minimum_size = Vector2(759, 240)
 layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-texture_normal = ExtResource("3_bpth5")
-stretch_mode = 4
+size_flags_vertical = 3
+size_flags_stretch_ratio = 2.5
+texture_normal = ExtResource("3_0g4o3")
+ignore_texture_size = true
+stretch_mode = 5
 
-[node name="ParameterButton" type="TextureButton" parent="HBoxContainer/CenterContainer/HomeScreenVBoxContainer"]
+[node name="PlayLabel" type="Label" parent="GuiMarginContainer/GuiHBoxContainer/HomeScreenVBoxContainer/PlayButton"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("4_ay1j5")
+theme_override_colors/font_color = Color(0.137255, 0.215686, 0.223529, 1)
+theme_override_colors/font_outline_color = Color(0.137255, 0.215686, 0.223529, 1)
+theme_override_constants/outline_size = 9
+theme_override_font_sizes/font_size = 65
+text = "HOME.PLAY.BUTTON"
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true
+
+[node name="SettingsButton" type="TextureButton" parent="GuiMarginContainer/GuiHBoxContainer/HomeScreenVBoxContainer"]
 texture_filter = 6
-custom_minimum_size = Vector2(632.5, 200)
 layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-texture_normal = ExtResource("4_5pg7b")
-stretch_mode = 4
+size_flags_vertical = 3
+texture_normal = ExtResource("5_db01i")
+ignore_texture_size = true
+stretch_mode = 5
 
-[connection signal="pressed" from="HBoxContainer/CenterContainer/HomeScreenVBoxContainer/PlayButton" to="." method="_on_play_button_pressed"]
-[connection signal="pressed" from="HBoxContainer/CenterContainer/HomeScreenVBoxContainer/ParameterButton" to="." method="_on_parameter_button_pressed"]
+[node name="SettingsLabel" type="Label" parent="GuiMarginContainer/GuiHBoxContainer/HomeScreenVBoxContainer/SettingsButton"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("4_ay1j5")
+theme_override_colors/font_color = Color(0.137255, 0.215686, 0.223529, 1)
+theme_override_colors/font_outline_color = Color(0.137255, 0.215686, 0.223529, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 35
+text = "HOME.PARAMETER.BUTTON"
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true
+
+[connection signal="pressed" from="GuiMarginContainer/GuiHBoxContainer/HomeScreenVBoxContainer/PlayButton" to="." method="_on_play_button_pressed"]
+[connection signal="pressed" from="GuiMarginContainer/GuiHBoxContainer/HomeScreenVBoxContainer/SettingsButton" to="." method="_on_parameter_button_pressed"]
