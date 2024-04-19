@@ -69,7 +69,7 @@ size_flags_horizontal = 0
 theme = ExtResource("3_mxk3u")
 theme_override_fonts/font = ExtResource("5_o6v5m")
 theme_override_font_sizes/font_size = 20
-text = "PARAMETERS.TEXT.LABEL"
+text = "SETTINGS.TEXT.LABEL"
 
 [node name="AspectRatioContainer" type="AspectRatioContainer" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/TopLineHBoxContainer"]
 layout_mode = 2

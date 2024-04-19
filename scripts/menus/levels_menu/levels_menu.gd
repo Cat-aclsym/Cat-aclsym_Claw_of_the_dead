@@ -2,8 +2,7 @@ extends Control
 
 var buttons: Dictionary = {}
 
-@onready var container: VBoxContainer = $CenterContainer/LevelSelectVBoxContainer
-
+@onready var container: VBoxContainer = $GuiMarginContainer/MenuMarginContainer/LevelSelectVBoxContainer
 
 # core
 func _ready() -> void: 
@@ -14,10 +13,10 @@ func _ready() -> void:
 
 # internal
 func _initialize() -> void:
-	for button in container.get_children():
-		if not button is TextureButton:
+	for node in container.get_children():
+		if not node is AspectRatioContainer:
 			continue
-		buttons[button.get_child(0)] = button.get_child(1)
+		buttons[node.get_child(0).get_child(0)] = node.get_child(0).get_child(1)
 
 	for bt in buttons:
 		bt.text = "{0}".format([tr(buttons[bt].level_name)])
