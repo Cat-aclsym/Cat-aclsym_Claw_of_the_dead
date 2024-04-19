@@ -37,7 +37,7 @@ grow_vertical = 0
 size_flags_vertical = 8
 theme = ExtResource("4_ay1j5")
 theme_override_font_sizes/font_size = 10
-text = "© [2024] Test. A7 Studio. Tous droits réservés. Marque déposée."
+text = "HOME.COPYRIGHT"
 vertical_alignment = 2
 
 [node name="GuiMarginContainer" type="MarginContainer" parent="."]
@@ -113,7 +113,7 @@ theme_override_colors/font_color = Color(0.137255, 0.215686, 0.223529, 1)
 theme_override_colors/font_outline_color = Color(0.137255, 0.215686, 0.223529, 1)
 theme_override_constants/outline_size = 6
 theme_override_font_sizes/font_size = 35
-text = "HOME.PARAMETER.BUTTON"
+text = "HOME.SETTINGS.BUTTON"
 horizontal_alignment = 1
 vertical_alignment = 1
 uppercase = true
