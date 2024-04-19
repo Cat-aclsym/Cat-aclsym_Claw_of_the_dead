@@ -1,5 +1,5 @@
 ﻿keys,en,fr
-PARAMETERS.TEXT.LABEL,Game parameters,Paramètres de jeux
+SETTINGS.TEXT.LABEL,Settings,Paramètres
 SOCIALS.TEXT.LABEL,Socials,Réseaux sociaux
 MISC.TEXT.LABEL,Misc.,Divers
 PAUSE.TITLE,Pause,Pause
@@ -8,7 +8,8 @@ FIRST.LEVEL.NAME,First level,Premier niveau
 SECOND.LEVEL.NAME,Second level,Deuxième niveau
 THIRD.LEVEL.NAME,Third level,Troisième niveau
 HOME.PLAY.BUTTON,Play,Jouer
-HOME.PARAMETER.BUTTON,Parameters,Paramètres
+HOME.SETTINGS.BUTTON,Settings,Paramètres
 INGAMEHUD.COINS.LABEL,%s,%s
 INGAMEHUD.HEALTH.LABEL,%s,%s
 INGAMEHUD.WAVES.LABEL,%s,%s
+HOME.COPYRIGHT,© [2024] A7 Studio. All rights reserved. Trademark.,© [2024] A7 Studio. Tous droits réservés. Marque déposée.
