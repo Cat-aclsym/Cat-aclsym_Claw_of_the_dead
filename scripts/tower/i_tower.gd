@@ -270,6 +270,7 @@ func _check_y_position() -> void:
 	## Get the y position of the tower
 	var y_position: int = global_position.y
 	## Set the z index of the tower based on the y position
+	polygon_2d.z_index -= y_position
 	if y_position < 0:
 		z_index = 0
 	else:
