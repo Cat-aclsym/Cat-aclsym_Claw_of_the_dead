@@ -51,8 +51,7 @@ _data = {
 radius = 314.23
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_7wfw0"]
-radius = 24.0
-height = 64.0
+height = 36.0
 
 [node name="FirstTower" instance=ExtResource("1_ecq02")]
 position = Vector2(0, -16)
@@ -85,6 +84,8 @@ scale = Vector2(1e-05, 1e-05)
 [node name="Line2D" type="Line2D" parent="Polygon2D" index="0"]
 
 [node name="CollisionShape2D" parent="TowerHoverBox" index="0"]
+position = Vector2(0, 16)
+rotation = 1.5708
 shape = SubResource("CapsuleShape2D_7wfw0")
 
 [connection signal="area_exited" from="Area2D" to="." method="_on_area_2d_area_exited"]
