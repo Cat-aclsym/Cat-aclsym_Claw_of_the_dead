@@ -6,6 +6,7 @@ signal wave_end(delay: float)
 ## e.g : [code]{"damage": +15}[/code]
 ## @experimental
 @export var global_modifiers: Dictionary = {}
+@export var last_wave: bool = false
 
 ## Delay in second before next wave
 @export_range(0.1, 10.0) var delay: float = 0.1

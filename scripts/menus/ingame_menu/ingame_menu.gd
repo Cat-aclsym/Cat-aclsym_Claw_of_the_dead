@@ -21,6 +21,8 @@ func _ready() -> void:
 	hide()
 
 
+# TODO : replace _process by `stats_updated` signal
+# TODO : add timer
 func _process(_delta: float) -> void:
 	if (ILevel.current_level == null): return
 	if (!visible): show()

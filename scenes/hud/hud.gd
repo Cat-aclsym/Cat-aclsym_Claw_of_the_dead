@@ -5,6 +5,7 @@ class_name HUD extends CanvasLayer
 @onready var levels_menu = $LevelsMenu
 @onready var in_game_menu = $InGameMenu
 @onready var in_game_menu_le_vrai = $IngameMenu
+@onready var level_end_menu = $LevelEndMenu
 
 
 # core
@@ -15,14 +16,19 @@ func _ready() -> void:
 # functionnal
 func start_level() -> void:
 	Log.info("HUD : Loading level interface")
+	Stats.reset()
 	in_game_menu.visible = true
 	in_game_menu.load_ui()
+	level_end_menu.visible = false
 	
 	
 func end_level() -> void:
 	Log.info("HUD : Unloading level interface")
 	in_game_menu.visible = false
 	in_game_menu.unload_ui()
+	
+	level_end_menu.visible = true
+	level_end_menu.update()
 
 
 # signals

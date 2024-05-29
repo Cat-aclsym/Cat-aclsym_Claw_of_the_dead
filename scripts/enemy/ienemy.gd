@@ -94,6 +94,7 @@ func take_damage(damage: float, damage_type: String) -> void:
 	if(health - damage <= 0):
 		health = 0
 		state = ENM_State.DEAD
+		Stats.kill_count += 1
 	else:
 		health -= damage
 

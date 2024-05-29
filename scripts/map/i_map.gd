@@ -1,5 +1,6 @@
 class_name IMap 
 extends Node2D
+signal map_end
 signal win
 signal loose
 
@@ -59,6 +60,9 @@ func _load_waves() -> void:
 			child.connect(
 				"wave_end",
 				 func (delay: float):
+					if child.last_wave:
+						map_end.emit()
+						return
 					waves_timer.wait_time = delay
 					waves_timer.start()
 			)

@@ -2,30 +2,38 @@ class_name ILevel
 extends Node2D
 signal stats_updated
 
+
+@export var map_scene: PackedScene = null
+@export var max_health: int = 10
+
 var coins: int = 0:
 	set(val):
 		coins = val
 		stats_updated.emit()
-		
-var health: int = 10:
+
+var health: int = max_health:
 	set(val):
 		health = val
+		if health > max_health:
+			health = max_health
+		if health <= 0:
+			Log.debug("LOOOOOOOOOOOOOOOOOSER!")
 		stats_updated.emit()
-
-@export var map_scene: PackedScene = null
 
 @onready var Map: IMap = null
 @onready var Metadata: LevelMetadata = null
 
-static var current_level: ILevel = null
-
+static var current_level: ILevel = null:
+	set(value):
+		current_level = value
+		Stats.current_level = value
 
 # functionnal
 func initialize(meta: LevelMetadata) -> void:
 	Metadata = meta
 	Log.info("Level initializing [{0}] : {1}".format([Metadata.id, Metadata.level_name]))
 	_load_map()
-
+	
 
 func startNewWave() -> void:
 	pass
