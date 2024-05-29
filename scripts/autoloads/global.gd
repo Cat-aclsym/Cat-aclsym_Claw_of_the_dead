@@ -12,6 +12,7 @@ extends Node
 var debug_console: DebugConsole = null
 var hud = null
 var camera = null
+var cursor = null
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS

@@ -37,7 +37,7 @@ var enemy_array: Array[IEnemy]  ## An array of IEnemy nodes representing the ene
 var target: IEnemy ## The target of the tower.
 var color: String  = "#FFFFFF" ## The color of the tower range.
 var selected: bool = false ## A boolean representing if the tower is selected or not.
-
+var deactivate: bool = false
 
 ## Function called when the node enters the scene tree for the first time.
 func _ready():
@@ -57,6 +57,8 @@ func _ready():
 ## Function called every frame. Delta is the time since the last frame.
 ## @param _delta float - The time since the last frame.
 func _process(_delta: float) -> void:
+	if deactivate: return
+
 	## If the fire rate timer is stopped, call the fire function
 	if fire_rate_timer.is_stopped():
 		fire()

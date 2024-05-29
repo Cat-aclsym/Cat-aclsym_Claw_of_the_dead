@@ -8,6 +8,9 @@ var _is_ready: bool = false
 
 
 # core
+func _process(delta: float) -> void:
+	if Global.cursor:
+		$Label.text = "cursor state = {0}".format([Global.cursor._state])
 
 # functionnal
 func load_ui() -> void:
@@ -34,7 +37,16 @@ func _update() -> void:
 	hp_label.text = "{0} HP".format([ILevel.current_level.health])
 	money_label.text = "{0} $".format([ILevel.current_level.coins])
 	
+	for tower_card in $PanelContainer/HBoxContainer.get_children():
+		tower_card.update()
+	
 
 # signals
 func _on_build_button_pressed() -> void:
 	construction_menu.visible = !construction_menu.visible
+
+	if !construction_menu.visible:
+		return
+	
+	for tower_card in $PanelContainer/HBoxContainer.get_children():
+		tower_card.update()
