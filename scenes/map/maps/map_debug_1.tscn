@@ -95,13 +95,17 @@ zoom = Vector2(1.6, 1.6)
 script = ExtResource("6_yjlcw")
 
 [node name="FirstTower" parent="." index="5" instance=ExtResource("4_ej3rp")]
+visible = false
 position = Vector2(529, 350)
 
 [node name="FirstTower2" parent="." index="6" instance=ExtResource("4_ej3rp")]
+visible = false
 position = Vector2(704, 470)
 
 [node name="FirstTower3" parent="." index="7" instance=ExtResource("4_ej3rp")]
+visible = false
 position = Vector2(736, 456)
 
 [node name="FirstTower4" parent="." index="8" instance=ExtResource("4_ej3rp")]
+visible = false
 position = Vector2(640, 360)

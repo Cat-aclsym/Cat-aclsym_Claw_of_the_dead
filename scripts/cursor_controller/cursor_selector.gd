@@ -92,11 +92,10 @@ func _state_build(tower: ITower = null) -> void:
 	
 	# display cursor
 	cursor.visible = true
-	cursor.position = get_global_mouse_position()
-	var p: Vector2 = cursor.position
-	var s := Vector2(32, 32)
-	p = floor(p / s) * s + (s / 2)
-	cursor.position = p
+	var a = tm_ref.local_to_map(get_global_mouse_position())
+	var b = tm_ref.map_to_local(a)
+	b -= Vector2(0, 8)
+	cursor.position = b
 	
 	# make tower ghost follow cursor
 	_tower.position = cursor.position - Vector2(0, 16)
