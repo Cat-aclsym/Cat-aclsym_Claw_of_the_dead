@@ -75,18 +75,23 @@ func _create_range_polygon(radius: float, precision: int) -> void:
 	var angle = 2 * PI * i / precision
 	var x: float = radius * cos(angle)
 	var y: float = radius * sin(angle)
+
 	points.append(Vector2(x, y))
+
 	## Set the points, rotation, skew, position, and color of the range polygon
 	polygon_2d.polygon = points
 	polygon_2d.rotation = collision_shape_2d.rotation
 	polygon_2d.skew = collision_shape_2d.skew
 	polygon_2d.position = collision_shape_2d.position
 	polygon_2d.color = Color(color, 0.3)
+
 	## Set the z-index of the range polygon to 1, making it appear below other nodes
 	sprite_2d.z_index = 1
+
 	## Add the first value of points to the end of the array to close the outline
 	points.append(Vector2(points[0]))
 	outline.points = points
+
 	## Set the width and color of the outline
 	outline.width = 3
 	outline.default_color = Color(1, 1, 1, 1)

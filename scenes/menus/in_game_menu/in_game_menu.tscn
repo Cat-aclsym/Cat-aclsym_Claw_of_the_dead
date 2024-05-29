@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://scenes/menus/in_game_menu/in_game_menu.gd" id="1_kelc4"]
 [ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="2_jel3x"]
-[ext_resource type="PackedScene" uid="uid://h0drgd3amf85" path="res://scenes/menus/in_game_menu/towe_card.tscn" id="3_mkldi"]
+[ext_resource type="PackedScene" path="res://scenes/menus/in_game_menu/towe_card.tscn" id="3_mkldi"]
 [ext_resource type="PackedScene" uid="uid://cq705nqdp8fnw" path="res://scenes/tower/first_tower.tscn" id="4_ro8fv"]
 
 [node name="InGameMenu" type="Control"]

@@ -7,17 +7,12 @@ var _is_ready: bool = false
 @onready var construction_menu: PanelContainer = $PanelContainer
 
 
-# core
-func _process(delta: float) -> void:
-	if Global.cursor:
-		$Label.text = "cursor state = {0}".format([Global.cursor._state])
-
 # functionnal
 func load_ui() -> void:
 	if ILevel.current_level == null:
 		Log.error("Cannot load ingame ui, ILevel.current_level = null")
 		return
-		
+
 	_is_ready = true
 	ILevel.current_level.connect("stats_updated", _update)
 	_update()
@@ -33,13 +28,13 @@ func _update() -> void:
 	if !_is_ready:
 		Log.error("Can update ingame ui if it is not ready!")
 		return
-	
+
 	hp_label.text = "{0} HP".format([ILevel.current_level.health])
 	money_label.text = "{0} $".format([ILevel.current_level.coins])
-	
+
 	for tower_card in $PanelContainer/HBoxContainer.get_children():
 		tower_card.update()
-	
+
 
 # signals
 func _on_build_button_pressed() -> void:
@@ -47,6 +42,6 @@ func _on_build_button_pressed() -> void:
 
 	if !construction_menu.visible:
 		return
-	
+
 	for tower_card in $PanelContainer/HBoxContainer.get_children():
 		tower_card.update()
