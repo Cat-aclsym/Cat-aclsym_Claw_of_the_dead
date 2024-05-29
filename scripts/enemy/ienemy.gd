@@ -1,18 +1,28 @@
-class_name IEnemy extends CharacterBody2D
+class_name IEnemy
+extends CharacterBody2D
+
+## Signal emitted when the enemy dies.
+## @signal die
 signal die
+
+## Signal emitted for camera effects.
+## @signal camera_effect(effect: String)
 signal camera_effect(effect: String)
 
 
+## Constants for animation names.
 const ANIM_FADE_OUT: String = "fade_out"
 const ANIM_WALK_UP: String = "walk_up"
 const ANIM_WALK_DOWN: String = "walk_down"
 
+## Enum for enemy states.
 enum ENM_State {
 	FOLLOW_PATH,
 	DEAD,
 	GIVE_DAMAGE
 }
 
+## Enum for movement directions.
 enum ENM_Direction {
 	UP_RIGHT,
 	UP_LEFT,
@@ -20,19 +30,24 @@ enum ENM_Direction {
 	DOWN_LEFT
 }
 
+## Enum for enemy types.
 enum ENM_Type {
 	DEFAULT,
 	BIG_DADDY,
 	FAT
 }
 
+## Damage types and their properties.
 var DAMAGE = {
 	"default" = {"color": Color(0.7, 0.5, 0.5, 1)},
 	"poison" = {"color": Color(0.7, 0.5, 0.7, 1)}
 }
 
+## Enemy speed.
 @export var speed: float = 30
+## Maximum health of the enemy.
 @export var max_health: float = 100
+## Type of the enemy.
 @export var type: ENM_Type = ENM_Type.DEFAULT
 
 var health: float
@@ -40,9 +55,12 @@ var state: ENM_State = ENM_State.FOLLOW_PATH
 var path_follow: PathFollow2D = null
 var path: Path2D = null
 var direction: ENM_Direction = ENM_Direction.UP_RIGHT
+
+## Indicates if the enemy is dead.
 var is_dead: bool:
 	get:
 		return health == 0
+
 var is_already_dead: bool = false
 var current_point_id: int = 0
 var path_points_size: int
@@ -57,18 +75,20 @@ var poison_timer_execution_count: int = 0
 @onready var collision_shape_2d := $CollisionShape2D as CollisionShape2D
 
 
-# core
+## Called when the node is added to the scene.
 func _ready():
 	if type == ENM_Type.FAT:
 		connect("camera_effect", Global.camera.handle_effect)
 		camera_effect.emit('shake')
-		
+
 	health = max_health
 	path_points_size = path.curve.point_count
 	_get_path_direction()
 	AnimPlayer.connect("animation_finished", _on_animation_player_animation_finished)
 
 
+## Called every physics frame.
+## @param float delta - The time since the last frame.
 func _physics_process(delta: float) -> void:
 	if(is_already_dead): return
 
@@ -82,20 +102,24 @@ func _physics_process(delta: float) -> void:
 		_:
 			Log.warning("{0} unknown ENM_State : {1}".format([name, state]))
 
-	# handle poison particles
+	## handle poison particles
 	if active_poison_timers.size() == 0:
 		poison_particles.emitting = false
 	else:
 		poison_particles.emitting = true
 
 
+## Applies a damage effect to the enemy.
+## @param Color color - The color to apply as the damage effect.
 func _damage_effect(color: Color):
 	Sprite.modulate = color
 	await get_tree().create_timer(0.1).timeout
 	Sprite.modulate = old_modulate
 
 
-# functionnal
+## Handles the enemy taking damage.
+## @param float damage - The amount of damage to take.
+## @param String damage_type - The type of damage being taken.
 func take_damage(damage: float, damage_type: String) -> void:
 	if is_already_dead: return
 	_damage_effect(DAMAGE[damage_type]["color"])
@@ -106,21 +130,23 @@ func take_damage(damage: float, damage_type: String) -> void:
 		health -= damage
 
 
+## Makes the enemy follow the path.
+## @param float delta - The time since the last frame.
 func follow_path(delta: float) -> void:
-	if path_follow.get_progress_ratio() >= 1: # Path finished
+	if path_follow.get_progress_ratio() >= 1: ## Path finished
 		state = ENM_State.GIVE_DAMAGE
 		return
-	
+
 	path_follow.set_progress(path_follow.get_progress() + (speed * delta))
 	_update_direction()
 	_walk()
 
 
-# internal
+## Gets the direction of the path.
 func _get_path_direction():
-	var x_pos_difference: float = path.curve.get_point_position(current_point_id).x - path.curve.get_point_position(current_point_id + 1).x;
-	var y_pos_difference: float = path.curve.get_point_position(current_point_id).y - path.curve.get_point_position(current_point_id + 1).y;
-	
+	var x_pos_difference: float = path.curve.get_point_position(current_point_id).x - path.curve.get_point_position(current_point_id + 1).x
+	var y_pos_difference: float = path.curve.get_point_position(current_point_id).y - path.curve.get_point_position(current_point_id + 1).y
+
 	if x_pos_difference < 0.:
 		if y_pos_difference < 0.:
 			direction = ENM_Direction.DOWN_RIGHT
@@ -133,18 +159,20 @@ func _get_path_direction():
 			direction = ENM_Direction.UP_LEFT
 
 
+## Updates the direction of the enemy.
 func _update_direction():
 	if current_point_id == path_points_size - 2:
 		return
-		
+
 	if (
-		round(path_follow.position) == round(path.curve.get_point_position(current_point_id+1)) 
+		round(path_follow.position) == round(path.curve.get_point_position(current_point_id + 1))
 		&& path.curve.get_closest_point(path_follow.position) != path.curve.get_point_position(current_point_id)
 	):
 		current_point_id += 1
 		_get_path_direction()
-		
 
+
+## Makes the enemy walk in the current direction.
 func _walk():
 	match direction:
 		ENM_Direction.UP_RIGHT:
@@ -163,6 +191,7 @@ func _walk():
 			Log.warning("{0}::_walk() direction does not match ENM_Direction enum".format([name]))
 
 
+## Makes the enemy disappear.
 func _disappear() -> void:
 	if (is_already_dead):
 		return
@@ -171,6 +200,7 @@ func _disappear() -> void:
 	is_already_dead = true
 
 
+## Handles the dead state of the enemy.
 func _dead_state() -> void:
 	if ILevel.current_level == null:
 		Log.error("Current level is null, aborting.")
@@ -180,39 +210,45 @@ func _dead_state() -> void:
 	PopupScoreSpawner.score("+" + str(money_reward) + "$")
 	_disappear()
 	is_dead = true
-	# disable the collision shape
+	## disable the collision shape
 	collision_shape_2d.disabled = true
 
 
+## Handles the give damage state of the enemy.
 func _give_damage_state() -> void:
-	# when the enemy arrives at the end of the Path
+	## when the enemy arrives at the end of the Path
 	_disappear()
 	if ILevel.current_level == null:
 		Log.error("Current level is null, aborting.")
 		return
-		
-	# if boss insta death
+
+	## if boss insta death
 	if type == ENM_Type.BIG_DADDY or type == ENM_Type.FAT:
 		ILevel.current_level.health = 0
 	else:
-		ILevel.current_level.health -= ceil(health/2)
+		ILevel.current_level.health -= ceil(health / 2)
 
 
+## Adds a poison effect to the enemy.
+## @param float damage - The amount of damage per interval.
+## @param int total_execution - The total number of times the effect is executed.
+## @param float interval - The time interval between each execution.
 func add_poison_effect(damage: float, total_execution: int, interval: float) -> void:
-	# add a timer to the active_poison_timers array
+	## add a timer to the active_poison_timers array
 	var poison_timer: Timer = Timer.new()
 	add_child(poison_timer)
 	poison_timer.set_wait_time(interval)
 	poison_timer.set_one_shot(false)
 	poison_timer.start()
 	active_poison_timers.append({"timer": poison_timer, "damage": damage, "total_execution": total_execution, "interval": interval, "current_execution": 0})
-	# connect the timer to the _on_poison_timer_timeout function
+	## connect the timer to the _on_poison_timer_timeout function
 	poison_timer.timeout.connect(func(): _on_poison_timer_timeout(poison_timer))
 
 
-# signals
+## Called when a poison timer times out.
+## @param Timer timer - The timer that timed out.
 func _on_poison_timer_timeout(timer: Timer):
-	# get the timer that called the function
+	## get the timer that called the function
 	var timer_index: int = -1
 	for i in range(active_poison_timers.size()):
 		if active_poison_timers[i]["timer"] == timer:
@@ -220,7 +256,7 @@ func _on_poison_timer_timeout(timer: Timer):
 			break
 	active_poison_timers[timer_index]["current_execution"] += 1
 
-	# track the highest timer in active_poison_timers based on the ratio of damage/interval
+	## track the highest timer in active_poison_timers based on the ratio of damage/interval
 	var highest_timer_ratio: float = 0
 	var highest_timer_index: int = 0
 	var highest_timer: Timer = null
@@ -230,24 +266,26 @@ func _on_poison_timer_timeout(timer: Timer):
 			highest_timer_ratio = ratio
 			highest_timer_index = i
 			highest_timer = active_poison_timers[i]["timer"]
-			
-	# check if the timer is the highest
+
+	## check if the timer is the highest
 	if timer_index == highest_timer_index:
-		# apply the poison damage
+		## apply the poison damage
 		take_damage(active_poison_timers[highest_timer_index]["damage"], "poison")
-		# check if the poison has reached its total_execution
+		## check if the poison has reached its total_execution
 		if active_poison_timers[highest_timer_index]["current_execution"] >= active_poison_timers[highest_timer_index]["total_execution"]:
-			# remove the timer from the active_poison_timers array
+			## remove the timer from the active_poison_timers array
 			active_poison_timers.remove_at(timer_index)
-			# stop the timer
+			## stop the timer
 			timer.stop()
-			# remove the timer from the scene
+			## remove the timer from the scene
 			timer.queue_free()
 		else:
-			# start the next execution
+			## start the next execution
 			timer.start()
 
 
+## Called when an animation finishes playing.
+## @param String anim_name - The name of the finished animation.
 func _on_animation_player_animation_finished(anim_name: String) -> void:
 	if (anim_name == ANIM_FADE_OUT):
 		queue_free()

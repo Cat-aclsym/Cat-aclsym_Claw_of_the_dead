@@ -77,9 +77,6 @@ func limit_zoom(new_zoom: Vector2) -> void:
 
 
 func handle_effect(effect: String) -> void:
-	
-	Log.debug("hqndle effect")
-	Log.debug(effect)
 	match effect:
 		"shake":
 			shake_camera()
