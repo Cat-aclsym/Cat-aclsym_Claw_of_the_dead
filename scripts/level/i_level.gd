@@ -1,8 +1,16 @@
 class_name ILevel
 extends Node2D
+signal stats_updated
 
-var coins: int = 0
-var health: int = 10
+var coins: int = 0:
+	set(val):
+		coins = val
+		stats_updated.emit()
+		
+var health: int = 10:
+	set(val):
+		health = val
+		stats_updated.emit()
 
 @export var map_scene: PackedScene = null
 

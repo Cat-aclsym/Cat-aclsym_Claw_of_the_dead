@@ -43,17 +43,14 @@ var is_dead: bool:
 var is_already_dead: bool = false
 var current_point_id: int = 0
 var path_points_size: int
-#var poisoned: bool = false
-#var poison_trigger: bool = false  # avoid loop
 var active_poison_timers: Array = []
-#var poison_damage: float = 20  # default damage
-#var poison_total_execution: int = 10  # default duration
-#var poison_interval: float = 0.5  # default interval
 var poison_timer_execution_count: int = 0
 
 @onready var Sprite: Sprite2D = $Sprite2D
 @onready var AnimPlayer: AnimationPlayer = $AnimationPlayer
 @onready var poison_particles: GPUParticles2D = $GPUParticles2D
+@onready var PopupScoreSpawner: PopupSpawner = $PopupScoreSpawner
+@onready var old_modulate = Sprite.modulate
 
 
 # core
@@ -62,8 +59,6 @@ func _ready():
 	path_points_size = path.curve.point_count
 	_get_path_direction()
 	AnimPlayer.connect("animation_finished", _on_animation_player_animation_finished)
-	add_poison_effect(10, 15, 0.5)
-	add_poison_effect(100, 10, 0.5)
 
 
 func _physics_process(delta: float) -> void:
@@ -85,15 +80,12 @@ func _physics_process(delta: float) -> void:
 	else:
 		poison_particles.emitting = true
 
-			
-func _poison_animation():
-	pass
 
 func _damage_effect(color: Color):
-	var old_modulate = Sprite.modulate
 	Sprite.modulate = color
 	await get_tree().create_timer(0.1).timeout
 	Sprite.modulate = old_modulate
+
 
 # functionnal
 func take_damage(damage: float, damage_type: String) -> void:
@@ -102,10 +94,8 @@ func take_damage(damage: float, damage_type: String) -> void:
 	if(health - damage <= 0):
 		health = 0
 		state = ENM_State.DEAD
-		Log.info("Enemy is dead.")
 	else:
 		health -= damage
-		Log.info("-{0} damage : {1} hp".format(([damage, health])))
 
 
 func follow_path(delta: float) -> void:
@@ -168,8 +158,6 @@ func _walk():
 func _disappear() -> void:
 	if (is_already_dead):
 		return
-
-	Log.debug("{0}::_disappear()".format([name]))
 	die.emit()
 	AnimPlayer.play(ANIM_FADE_OUT)
 	is_already_dead = true
@@ -179,8 +167,9 @@ func _dead_state() -> void:
 	if ILevel.current_level == null:
 		Log.error("Current level is null, aborting.")
 		return
-	ILevel.current_level.coins += 10
-	# todo: play sound
+	var money_reward: int = 10
+	ILevel.current_level.coins += money_reward
+	PopupScoreSpawner.score("+" + str(money_reward) + "$")
 	_disappear()
 	is_dead = true
 
@@ -191,6 +180,7 @@ func _give_damage_state() -> void:
 	if ILevel.current_level == null:
 		Log.error("Current level is null, aborting.")
 		return
+		
 	# if boss insta death
 	if type == ENM_Type.BIG_DADDY:
 		ILevel.current_level.health = 0
@@ -206,7 +196,6 @@ func add_poison_effect(damage: float, total_execution: int, interval: float) -> 
 	poison_timer.set_one_shot(false)
 	poison_timer.start()
 	active_poison_timers.append({"timer": poison_timer, "damage": damage, "total_execution": total_execution, "interval": interval, "current_execution": 0})
-	Log.info(active_poison_timers)
 	# connect the timer to the _on_poison_timer_timeout function
 	poison_timer.timeout.connect(func(): _on_poison_timer_timeout(poison_timer))
 
@@ -214,17 +203,12 @@ func add_poison_effect(damage: float, total_execution: int, interval: float) -> 
 # signals
 func _on_poison_timer_timeout(timer: Timer):
 	# get the timer that called the function
-	Log.info("{0} Poison timer timeout".format([name]))
-	Log.debug("timer : {0}".format([timer]))
-
 	var timer_index: int = -1
 	for i in range(active_poison_timers.size()):
 		if active_poison_timers[i]["timer"] == timer:
 			timer_index = i
 			break
-	Log.debug("timer_index : {0}".format([timer_index]))
 	active_poison_timers[timer_index]["current_execution"] += 1
-	Log.debug(active_poison_timers[timer_index])
 
 	# track the highest timer in active_poison_timers based on the ratio of damage/interval
 	var highest_timer_ratio: float = 0
@@ -237,14 +221,11 @@ func _on_poison_timer_timeout(timer: Timer):
 			highest_timer_index = i
 			highest_timer = active_poison_timers[i]["timer"]
 			
-	Log.debug("{0} highest_timer_ratio : {1}".format([highest_timer, highest_timer_ratio]))
-	Log.debug("{0} highest_timer_index : {1}".format([highest_timer, highest_timer_index]))
 	# check if the timer is the highest
 	if timer_index == highest_timer_index:
 		# apply the poison damage
 		take_damage(active_poison_timers[highest_timer_index]["damage"], "poison")
 		# check if the poison has reached its total_execution
-		Log.debug(active_poison_timers[highest_timer_index])
 		if active_poison_timers[highest_timer_index]["current_execution"] >= active_poison_timers[highest_timer_index]["total_execution"]:
 			# remove the timer from the active_poison_timers array
 			active_poison_timers.remove_at(timer_index)
@@ -252,7 +233,6 @@ func _on_poison_timer_timeout(timer: Timer):
 			timer.stop()
 			# remove the timer from the scene
 			timer.queue_free()
-			Log.info("Timer deleted")
 		else:
 			# start the next execution
 			timer.start()

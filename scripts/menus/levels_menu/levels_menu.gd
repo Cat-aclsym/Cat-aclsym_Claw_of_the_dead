@@ -2,11 +2,12 @@ extends Control
 
 var buttons: Dictionary = {}
 
-@onready var container: VBoxContainer = $LevelSelectVBoxContainer
+@onready var container: VBoxContainer = $CenterContainer/LevelSelectVBoxContainer
 
 
 # core
-func _ready() -> void: _initialize()
+func _ready() -> void: 
+	_initialize()
 
 
 # functionnal
@@ -14,11 +15,13 @@ func _ready() -> void: _initialize()
 # internal
 func _initialize() -> void:
 	for button in container.get_children():
-		buttons[button] = button.get_child(0)
+		if not button is TextureButton:
+			continue
+		buttons[button.get_child(0)] = button.get_child(1)
 
 	for bt in buttons:
-		bt.text = "{0} - {1}".format([buttons[bt].id, tr(buttons[bt].level_name)])
-		bt.connect("pressed",
+		bt.text = "{0}".format([tr(buttons[bt].level_name)])
+		bt.get_parent().connect("pressed",
 		func():
 			assert(buttons[bt].level_scene != null, "Level scene is null.")
 			visible = false
@@ -27,6 +30,8 @@ func _initialize() -> void:
 			get_tree().get_root().add_child(level)
 			level.initialize(buttons[bt])
 			ILevel.current_level = level
+			
+			Global.hud.start_level()
 		)
 
 		# signals

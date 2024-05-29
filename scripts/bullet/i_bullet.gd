@@ -12,17 +12,15 @@ func _init():
 	pass
 
 
+func _exit_tree():
+	#Log.debug("{0} _exit_tree()".format([name]))
+	pass
+
 func _physics_process(delta: float):
 	position += direction * speed * delta
 
-	if global_position.distance_to(target) < 100:
-		#print("Target: ", target)
-		#print("Global Position: ", global_position)
-		queue_free()
-
-
 func _on_body_entered(body):
 	if body is IEnemy:
-		print("zadazd")
-		body._take_damage(damage)
+		body.take_damage(damage, "default")
 		queue_free()
+	

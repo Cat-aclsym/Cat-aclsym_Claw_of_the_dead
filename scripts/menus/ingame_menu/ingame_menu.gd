@@ -7,9 +7,11 @@ class_name IngameMenu
 extends Control
 
 
-@onready var CoinsRichTextLabel: RichTextLabel = $VBoxContainer/CoinsRichTextLabel
-@onready var HealthRichTextLabel: RichTextLabel = $VBoxContainer/HealthRichTextLabel
-@onready var WavesRichTextLabel: RichTextLabel = $VBoxContainer/WavesRichTextLabel
+@onready var CoinsRichTextLabel: RichTextLabel = $MarginContainer/VBoxContainer/HBoxContainer/CoinsPanelContainer/CoinsRichTextLabel
+@onready var HealthRichTextLabel: RichTextLabel = $MarginContainer/VBoxContainer/HealthBoxContainer/MarginContainer/HealthRichTextLabel
+@onready var HealthTextureProgressBar: TextureProgressBar = $MarginContainer/VBoxContainer/HealthBoxContainer/HealthTextureProgressBar
+@onready var WavesRichTextLabel: RichTextLabel = $MarginContainer/VBoxContainer/HBoxContainer/WavesPanelContainer/WavesRichTextLabel
+@onready var NewWaveCountLabel: Label = $NewWaveCountLabel
 @onready var default_coins_text := CoinsRichTextLabel.text
 @onready var default_health_text := HealthRichTextLabel.text
 @onready var default_waves_text := WavesRichTextLabel.text
@@ -24,7 +26,7 @@ func _process(_delta: float) -> void:
 	if (!visible): show()
 
 	CoinsRichTextLabel.text = tr(default_coins_text) % ILevel.current_level.coins
-	HealthRichTextLabel.text = tr(default_health_text) % ILevel.current_level.health
+	HealthRichTextLabel.text = tr(default_health_text) % (str(ILevel.current_level.health) + "/10")
+	HealthTextureProgressBar.value = ILevel.current_level.health
 	var current_wave := ILevel.current_level.Map.current_wave + 1
 	WavesRichTextLabel.text = tr(default_waves_text) % current_wave
-	pass

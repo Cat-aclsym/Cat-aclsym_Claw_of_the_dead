@@ -1,16 +1,19 @@
-[gd_scene load_steps=3 format=3 uid="uid://cax2gd3swoin0"]
+[gd_scene load_steps=4 format=3 uid="uid://cax2gd3swoin0"]
 
 [ext_resource type="PackedScene" uid="uid://dqcjwachbfj5x" path="res://scenes/bullet/i_bullet.tscn" id="1_vp3tv"]
+[ext_resource type="Texture2D" uid="uid://dgsyufigxe0jk" path="res://assets/bullet/arrow.png" id="2_cbbwr"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_qj200"]
+size = Vector2(21, 6)
 
 [node name="TestBullet" instance=ExtResource("1_vp3tv")]
-speed = 2500
+speed = 250
+damage = 50
+
+[node name="Sprite2D" parent="." index="0"]
+rotation = 0.785398
+texture = ExtResource("2_cbbwr")
 
 [node name="CollisionShape2D" parent="." index="1"]
+position = Vector2(0.5, 0)
 shape = SubResource("RectangleShape2D_qj200")
-
-[node name="Polygon2D" type="Polygon2D" parent="." index="2"]
-polygon = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
-
-[connection signal="body_entered" from="." to="." method="_on_body_entered"]
