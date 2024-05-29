@@ -35,9 +35,10 @@ var target_type: TargetType ## The type of target the tower will shoot at.
 var state: TowerState ## The state of the tower.
 var enemy_array: Array[IEnemy]  ## An array of IEnemy nodes representing the enemies in the range of the tower.
 var target: IEnemy ## The target of the tower.
-var color: String  = "#FFFFFF" ## The color of the tower range.
+var color: String = "#FFFFFF" ## The color of the tower range.
 var selected: bool = false ## A boolean representing if the tower is selected or not.
 var deactivate: bool = false
+
 
 ## Function called when the node enters the scene tree for the first time.
 func _ready():
@@ -71,10 +72,10 @@ func _create_range_polygon(radius: float, precision: int) -> void:
 	## Create an array of Vector2 points for the range polygon
 	var points: Array[Vector2] = []
 	for i in range(precision):
-		var angle    = 2 * PI * i / precision
-		var x: float = radius * cos(angle)
-		var y: float = radius * sin(angle)
-		points.append(Vector2(x, y))
+	var angle = 2 * PI * i / precision
+	var x: float = radius * cos(angle)
+	var y: float = radius * sin(angle)
+	points.append(Vector2(x, y))
 	## Set the points, rotation, skew, position, and color of the range polygon
 	polygon_2d.polygon = points
 	polygon_2d.rotation = collision_shape_2d.rotation
@@ -130,7 +131,7 @@ func fire() -> void:
 			_get_random_target()
 
 	## Get the global position of the target and instantiate a bullet
-	var enemy_position: Vector2  = target.global_position
+	var enemy_position: Vector2 = target.global_position
 	var bullet_instance: IBullet = BulletScene.instantiate()
 
 	## Set the direction, rotation, and target of the bullet
@@ -231,6 +232,7 @@ func _on_tower_hover_box_mouse_entered():
 		await get_tree().create_timer(0.01).timeout
 		size += 0.1
 		_color_variation()
+
 
 ## Function to interpolate between two values.
 func _color_variation() -> void:
