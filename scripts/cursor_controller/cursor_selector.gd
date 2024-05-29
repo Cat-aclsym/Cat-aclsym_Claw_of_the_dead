@@ -1,5 +1,17 @@
 extends Node2D
 
+# TODO :
+# state machine : idle / build / upgrade
+# fix offset
+# placement tour
+	# apparition tour
+	# modification argent
+	# trigger que si placement ok
+	# griser tour si placement pas ok
+# BONUS :
+# menu amelioration
+# amelioration
+# destruction (vente)
 
 @onready var cursor = $cursor
 
