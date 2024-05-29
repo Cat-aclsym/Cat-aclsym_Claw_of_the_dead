@@ -108,8 +108,7 @@ func _state_build(tower: ITower = null) -> void:
 		
 	# handle inputs
 	if Input.is_action_just_pressed("lmb"):
-		_is_buildable(_tower.position)
-		#_build()
+		_build()
 	if Input.is_action_just_pressed("rmb"):
 		_cancel_build()
 	
