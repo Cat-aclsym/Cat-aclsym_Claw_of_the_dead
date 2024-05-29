@@ -3,10 +3,10 @@
 [ext_resource type="PackedScene" uid="uid://064cnqw4xlus" path="res://scenes/tower/i_tower.tscn" id="1_ecq02"]
 [ext_resource type="PackedScene" uid="uid://6kxfyy7tk2pu" path="res://scenes/upgrade/first_tower/upgrade_first_tower_1.tscn" id="2_okbr1"]
 [ext_resource type="PackedScene" uid="uid://cax2gd3swoin0" path="res://scenes/bullet/test_bullet.tscn" id="3_g8gbc"]
-[ext_resource type="Texture2D" uid="uid://comglet8s7g5i" path="res://assets/towers/tower_2_LVL_1.png" id="4_egwlw"]
+[ext_resource type="Texture2D" uid="uid://d4gs327we3e1d" path="res://assets/towers/tower_2_lvl1.png" id="4_ftq1a"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_g7olo"]
-atlas = ExtResource("4_egwlw")
+atlas = ExtResource("4_ftq1a")
 region = Rect2(64, 0, 64, 64)
 
 [sub_resource type="Animation" id="Animation_i58hl"]
