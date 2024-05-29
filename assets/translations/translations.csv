@@ -13,3 +13,5 @@ INGAMEHUD.COINS.LABEL,%s,%s
 INGAMEHUD.HEALTH.LABEL,%s,%s
 INGAMEHUD.WAVES.LABEL,%s,%s
 HOME.COPYRIGHT,© [2024] A7 Studio. All rights reserved. Trademark.,© [2024] A7 Studio. Tous droits réservés. Marque déposée.
+ENDGAME.MENU.TITLE,You Win!,Vous avez gagné !
+ENDGAME.MENU.RESTART,Restart,Recommencer
