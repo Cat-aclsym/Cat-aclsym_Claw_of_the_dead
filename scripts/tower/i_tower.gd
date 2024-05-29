@@ -72,11 +72,11 @@ func _create_range_polygon(radius: float, precision: int) -> void:
 	## Create an array of Vector2 points for the range polygon
 	var points: Array[Vector2] = []
 	for i in range(precision):
-	var angle = 2 * PI * i / precision
-	var x: float = radius * cos(angle)
-	var y: float = radius * sin(angle)
+		var angle = 2 * PI * i / precision
+		var x: float = radius * cos(angle)
+		var y: float = radius * sin(angle)
 
-	points.append(Vector2(x, y))
+		points.append(Vector2(x, y))
 
 	## Set the points, rotation, skew, position, and color of the range polygon
 	polygon_2d.polygon = points

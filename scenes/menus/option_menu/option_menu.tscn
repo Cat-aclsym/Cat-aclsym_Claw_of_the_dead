@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://doml7biiq8g2o"]
+[gd_scene load_steps=18 format=3 uid="uid://doml7biiq8g2o"]
 
 [ext_resource type="Script" path="res://scripts/menus/option_menu/option_menu.gd" id="1_rumc7"]
 [ext_resource type="Texture2D" uid="uid://bel17gs3ijyb1" path="res://assets/backgrounds/Fond Menu 02@2x.png" id="2_clod3"]
@@ -9,9 +9,10 @@
 [ext_resource type="FontFile" uid="uid://ddo3rokwsadq0" path="res://assets/resources/fonts/DotGothic16-Regular.ttf" id="5_o6v5m"]
 [ext_resource type="Texture2D" uid="uid://d03x6kldjjybo" path="res://assets/icons/Bouton Sons@2x.png" id="6_168q2"]
 [ext_resource type="Texture2D" uid="uid://cbskr3qu6rty8" path="res://assets/icons/speakerCroix.png" id="7_gtwn2"]
-[ext_resource type="Texture2D" uid="uid://boj6u1yossbmy" path="res://assets/icons/Bouton Langue@2x.png" id="8_iii62"]
+[ext_resource type="Texture2D" uid="uid://dq2j3cnac1e5v" path="res://assets/icons/Bouton Langue@2x.png" id="8_iii62"]
 [ext_resource type="Texture2D" uid="uid://btf6mt36qkci8" path="res://assets/icons/Bouton Insta@2x.png" id="9_vb5lp"]
 [ext_resource type="Texture2D" uid="uid://deg1h1e2vrdlv" path="res://assets/icons/Bouton X@2x.png" id="10_droxh"]
+[ext_resource type="Texture2D" uid="uid://d2pvckhpu5f7m" path="res://assets/icons/Francais.png" id="11_3w6fj"]
 [ext_resource type="Texture2D" uid="uid://bveg7cn5eocfq" path="res://assets/icons/Bouton Discord@2x.png" id="11_ioidm"]
 [ext_resource type="Texture2D" uid="uid://bqaq0yuqwbuxg" path="res://assets/icons/Bouton Annonces@2x.png" id="12_esjhy"]
 [ext_resource type="Texture2D" uid="uid://bldo4ujivtl3m" path="res://assets/icons/Bouton Confidentialité@2x.png" id="13_gyr4v"]
@@ -120,7 +121,8 @@ size_flags_horizontal = 3
 [node name="LanguageTextureButton" type="TextureButton" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/SettingsHBoxContainer/LanguageAspectRatioContainer"]
 texture_filter = 6
 layout_mode = 2
-texture_normal = ExtResource("8_iii62")
+texture_normal = ExtResource("11_3w6fj")
+texture_pressed = ExtResource("8_iii62")
 ignore_texture_size = true
 stretch_mode = 5
 

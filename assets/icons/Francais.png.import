@@ -2,20 +2,20 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bgt8dqghsg77m"
-path="res://.godot/imported/Bouton Langue.svg-91375f2659d401c5f5f91aa6e6813c9d.ctex"
+uid="uid://d2pvckhpu5f7m"
+path="res://.godot/imported/Francais.png-675f108b005b7579f6f1f3b918e56a50.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/icons/Bouton Langue.svg"
-dest_files=["res://.godot/imported/Bouton Langue.svg-91375f2659d401c5f5f91aa6e6813c9d.ctex"]
+source_file="res://assets/icons/Francais.png"
+dest_files=["res://.godot/imported/Francais.png-675f108b005b7579f6f1f3b918e56a50.ctex"]
 
 [params]
 
-compress/mode=3
+compress/mode=0
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/hdr_compression=1
@@ -32,6 +32,3 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
-svg/scale=1.0
-editor/scale_with_editor_scale=false
-editor/convert_colors_with_editor_theme=false
