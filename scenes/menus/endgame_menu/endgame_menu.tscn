@@ -1,0 +1,88 @@
+[gd_scene load_steps=5 format=3 uid="uid://c884aa33lxhkv"]
+
+[ext_resource type="Texture2D" uid="uid://bel17gs3ijyb1" path="res://assets/backgrounds/Fond Menu 02@2x.png" id="2_28i8v"]
+[ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="3_5i8w3"]
+[ext_resource type="FontFile" uid="uid://ddo3rokwsadq0" path="res://assets/resources/fonts/DotGothic16-Regular.ttf" id="4_k5ymv"]
+[ext_resource type="Texture2D" uid="uid://cdaralngqjlvk" path="res://assets/buttons/Bouton Vert@2x.png" id="9_fb65d"]
+
+[node name="EndgameMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="GuiMarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 60
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 60
+theme_override_constants/margin_bottom = 20
+
+[node name="BackgroundTextureRect" type="TextureRect" parent="GuiMarginContainer"]
+layout_mode = 2
+texture = ExtResource("2_28i8v")
+expand_mode = 1
+
+[node name="MenuMarginContainer" type="MarginContainer" parent="GuiMarginContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 15
+
+[node name="EndgameVBoxContainer" type="VBoxContainer" parent="GuiMarginContainer/MenuMarginContainer"]
+layout_mode = 2
+
+[node name="TitleLabel" type="Label" parent="GuiMarginContainer/MenuMarginContainer/EndgameVBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme = ExtResource("3_5i8w3")
+theme_override_fonts/font = ExtResource("4_k5ymv")
+theme_override_font_sizes/font_size = 40
+text = "ENDGAME.MENU.TITLE"
+horizontal_alignment = 1
+
+[node name="EndgameAspectRatioContainer1" type="AspectRatioContainer" parent="GuiMarginContainer/MenuMarginContainer/EndgameVBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+ratio = 2.0
+
+[node name="EndgameAspectRatioContainer2" type="AspectRatioContainer" parent="GuiMarginContainer/MenuMarginContainer/EndgameVBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+ratio = 2.0
+
+[node name="EndgameTextureButton" type="TextureButton" parent="GuiMarginContainer/MenuMarginContainer/EndgameVBoxContainer/EndgameAspectRatioContainer2"]
+layout_mode = 2
+texture_normal = ExtResource("9_fb65d")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="EndgameLabel" type="Label" parent="GuiMarginContainer/MenuMarginContainer/EndgameVBoxContainer/EndgameAspectRatioContainer2/EndgameTextureButton"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -0.5
+offset_top = -9.0
+offset_right = 0.5
+offset_bottom = 9.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("3_5i8w3")
+theme_override_colors/font_color = Color(0.137255, 0.215686, 0.223529, 1)
+theme_override_colors/font_outline_color = Color(0.137255, 0.215686, 0.223529, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 14
+text = "ENDGAME.MENU.RESTART"
+vertical_alignment = 1
+uppercase = true
