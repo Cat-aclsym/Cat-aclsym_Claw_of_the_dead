@@ -3,6 +3,7 @@ extends Node2D
 signal win
 signal loose
 
+@export var tilemap: TileMap
 
 var paths: Array[Path2D] = []
 
@@ -20,6 +21,8 @@ func _ready() -> void:
 	_load_paths()
 	_load_waves()
 	_start_next_wave()
+	
+	Global.cursor.tm_ref = tilemap
 
 
 # functionnal

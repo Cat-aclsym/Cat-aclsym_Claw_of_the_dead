@@ -32,7 +32,8 @@ _data = {
 }
 point_count = 6
 
-[node name="MapDebug1" instance=ExtResource("1_4widc")]
+[node name="MapDebug1" node_paths=PackedStringArray("tilemap") instance=ExtResource("1_4widc")]
+tilemap = NodePath("TileMapDebug")
 
 [node name="PopupWaveSpawner" type="Marker2D" parent="." index="0"]
 position = Vector2(672, 400)

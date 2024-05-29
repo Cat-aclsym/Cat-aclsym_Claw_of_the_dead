@@ -2,7 +2,7 @@ class_name ILevel
 extends Node2D
 signal stats_updated
 
-var coins: int = 0:
+var coins: int = 50:
 	set(val):
 		coins = val
 		stats_updated.emit()
@@ -49,3 +49,5 @@ func _load_map() -> void:
 	var map: IMap = map_scene.instantiate()
 	add_child(map)
 	Map = map
+	
+	Global.cursor.map_ref = map

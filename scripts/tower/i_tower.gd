@@ -35,6 +35,8 @@ var enemy_array: Array[IEnemy]
 var target: IEnemy
 var color = "#FFFFFF"
 var selected = false
+var deactivate: bool = false
+
 
 func _ready():
 	state = TowerState.BUILDING
@@ -46,6 +48,8 @@ func _ready():
 
 
 func _process(_delta: float) -> void:
+	if deactivate: return
+	
 	if fire_rate_timer.is_stopped():
 		fire()
 
