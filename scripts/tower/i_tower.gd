@@ -51,6 +51,7 @@ func _ready():
 	hover_box.z_index = 3
 	## Create the range polygon for the tower with the given shooting range and precision
 	_create_range_polygon(shoot_range, 50)
+	_check_y_position()
 
 
 ## Function called every frame. Delta is the time since the last frame.
@@ -262,3 +263,14 @@ func _on_tower_hover_box_mouse_exited():
 		polygon_2d.scale = lerp(polygon_2d.scale, Vector2(0, 0), size)
 		await get_tree().create_timer(0.01).timeout
 		size += 0.1
+
+
+## Function to check the z position of the tower and adapt the z index of the tower.
+func _check_y_position() -> void:
+	## Get the y position of the tower
+	var y_position: int = global_position.y
+	## Set the z index of the tower based on the y position
+	if y_position < 0:
+		z_index = 0
+	else:
+		z_index = y_position
