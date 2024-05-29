@@ -72,6 +72,8 @@ func _ready():
 func _physics_process(delta: float) -> void:
 	if(is_already_dead): return
 
+	_check_y_position()
+
 	match state:
 		ENM_State.FOLLOW_PATH:
 			follow_path(delta)
@@ -252,3 +254,13 @@ func _on_animation_player_animation_finished(anim_name: String) -> void:
 	if (anim_name == ANIM_FADE_OUT):
 		queue_free()
 		get_parent().queue_free()
+
+		## Function to check the z position of the tower and adapt the z index of the tower.
+func _check_y_position() -> void:
+	## Get the y position of the tower
+	var y_position: int = global_position.y
+	## Set the z index of the tower based on the y position
+	if y_position < 0:
+		z_index = 0
+	else:
+		z_index = y_position

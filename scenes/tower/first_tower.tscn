@@ -3,10 +3,10 @@
 [ext_resource type="PackedScene" uid="uid://064cnqw4xlus" path="res://scenes/tower/i_tower.tscn" id="1_ecq02"]
 [ext_resource type="PackedScene" uid="uid://6kxfyy7tk2pu" path="res://scenes/upgrade/first_tower/upgrade_first_tower_1.tscn" id="2_okbr1"]
 [ext_resource type="PackedScene" uid="uid://cax2gd3swoin0" path="res://scenes/bullet/test_bullet.tscn" id="3_g8gbc"]
-[ext_resource type="Texture2D" uid="uid://comglet8s7g5i" path="res://assets/towers/tower_2_LVL_1.png" id="4_egwlw"]
+[ext_resource type="Texture2D" uid="uid://d4gs327we3e1d" path="res://assets/towers/tower_2_lvl1.png" id="4_ftq1a"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_g7olo"]
-atlas = ExtResource("4_egwlw")
+atlas = ExtResource("4_ftq1a")
 region = Rect2(64, 0, 64, 64)
 
 [sub_resource type="Animation" id="Animation_i58hl"]
@@ -51,8 +51,7 @@ _data = {
 radius = 314.23
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_7wfw0"]
-radius = 24.0
-height = 64.0
+height = 36.0
 
 [node name="FirstTower" instance=ExtResource("1_ecq02")]
 position = Vector2(0, -16)
@@ -85,6 +84,8 @@ scale = Vector2(1e-05, 1e-05)
 [node name="Line2D" type="Line2D" parent="Polygon2D" index="0"]
 
 [node name="CollisionShape2D" parent="TowerHoverBox" index="0"]
+position = Vector2(0, 16)
+rotation = 1.5708
 shape = SubResource("CapsuleShape2D_7wfw0")
 
 [connection signal="area_exited" from="Area2D" to="." method="_on_area_2d_area_exited"]
