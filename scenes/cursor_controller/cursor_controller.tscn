@@ -3,13 +3,13 @@
 [ext_resource type="Script" path="res://scripts/cursor_controller/cursor_selector.gd" id="1_3aclw"]
 [ext_resource type="Texture2D" uid="uid://dn7sa2jf2kvor" path="res://assets/grid_placement/moving_arrow.png" id="2_8yjt0"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_uwgu8"]
-atlas = ExtResource("2_8yjt0")
-region = Rect2(0, 0, 64, 64)
-
 [sub_resource type="AtlasTexture" id="AtlasTexture_xhnpy"]
 atlas = ExtResource("2_8yjt0")
 region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uwgu8"]
+atlas = ExtResource("2_8yjt0")
+region = Rect2(0, 0, 64, 64)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_hojar"]
 atlas = ExtResource("2_8yjt0")
@@ -23,10 +23,10 @@ region = Rect2(192, 0, 64, 64)
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_uwgu8")
+"texture": SubResource("AtlasTexture_xhnpy")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_xhnpy")
+"texture": SubResource("AtlasTexture_uwgu8")
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_hojar")
@@ -44,4 +44,5 @@ script = ExtResource("1_3aclw")
 
 [node name="cursor" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_o400i")
-frame_progress = 0.490789
+autoplay = "default"
+offset = Vector2(0, -3)

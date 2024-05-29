@@ -12,9 +12,6 @@
 [node name="HUD" type="CanvasLayer"]
 script = ExtResource("1_b6y43")
 
-[node name="InGameMenu" parent="." instance=ExtResource("7_ev4cy")]
-visible = false
-
 [node name="MenuPause" parent="." instance=ExtResource("1_1svi5")]
 visible = false
 
@@ -38,6 +35,9 @@ size_flags_horizontal = 4
 size_flags_vertical = 4
 
 [node name="DebugConsole" parent="." instance=ExtResource("2_fkxxx")]
+visible = false
+
+[node name="InGameMenu" parent="." instance=ExtResource("7_ev4cy")]
 visible = false
 
 [node name="PauseButton2" type="Button" parent="."]

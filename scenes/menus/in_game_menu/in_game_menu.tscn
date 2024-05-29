@@ -41,7 +41,6 @@ theme_override_font_sizes/font_size = 16
 text = "BUILD"
 
 [node name="PanelContainer" type="PanelContainer" parent="."]
-visible = false
 layout_mode = 1
 anchors_preset = 12
 anchor_top = 1.0
@@ -67,16 +66,19 @@ layout_mode = 2
 layout_mode = 2
 theme = ExtResource("2_jel3x")
 theme_override_font_sizes/font_size = 12
-text = "Name"
+text = "tour 1"
 horizontal_alignment = 1
 
 [node name="TextureRect" type="TextureRect" parent="PanelContainer/HBoxContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
+size_flags_horizontal = 4
 texture = SubResource("AtlasTexture_oa8os")
+stretch_mode = 2
 
 [node name="Button" type="Button" parent="PanelContainer/HBoxContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme = ExtResource("2_jel3x")
-text = "BUY"
+theme_override_font_sizes/font_size = 16
+text = "BUY 25$"
 
 [connection signal="pressed" from="VBoxContainer/BuildButton" to="." method="_on_build_button_pressed"]
