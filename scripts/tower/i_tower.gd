@@ -221,7 +221,7 @@ func _on_tower_hover_box_mouse_entered():
 	## Set the selected boolean to true
 	selected = true
 	## Set the size of the range polygon to 0
-	var size: int = 0
+	var size: float = 0
 	## Loop to interpolate the size of the range polygon to 1
 	while size < 1:
 		polygon_2d.scale = lerp(polygon_2d.scale, Vector2(1, 1), size)
@@ -235,7 +235,7 @@ func _color_variation() -> void:
 	if !selected:
 		return
 	## Set the initial lerp state to 1
-	var lerp_state: int = 1
+	var lerp_state: float = 1
 	## Loop to interpolate the color of the range polygon
 	while lerp_state > 0:
 		polygon_2d.color = lerp(Color(color, 0.3), Color(color, 0), 1-lerp_state)
@@ -256,7 +256,7 @@ func _on_tower_hover_box_mouse_exited():
 	## Set the selected boolean to false
 	selected = false
 	## Set the size of the range polygon to 0
-	var size: int = 0
+	var size: float = 0
 	## Loop to interpolate the size of the range polygon to 0 to hide the range polygon
 	while size < 1:
 		polygon_2d.scale = lerp(polygon_2d.scale, Vector2(0, 0), size)
