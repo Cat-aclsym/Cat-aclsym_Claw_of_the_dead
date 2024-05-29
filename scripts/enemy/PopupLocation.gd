@@ -19,7 +19,6 @@ func score(text: String):
 
 
 func wave(text: String):
-	print("caca boudin gros pipi")
 	var wave_popup: Node2D = popup_node.instantiate()
 	var label: Label = wave_popup.get_node("WaveMarker/TextureRect/Label")
 	wave_popup.position = global_position

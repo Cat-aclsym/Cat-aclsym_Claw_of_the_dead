@@ -1,5 +1,7 @@
 class_name IEnemy extends CharacterBody2D
 signal die
+signal camera_effect(effect: String)
+
 
 const ANIM_FADE_OUT: String = "fade_out"
 const ANIM_WALK_UP: String = "walk_up"
@@ -21,6 +23,7 @@ enum ENM_Direction {
 enum ENM_Type {
 	DEFAULT,
 	BIG_DADDY,
+	FAT
 }
 
 var DAMAGE = {
@@ -51,10 +54,15 @@ var poison_timer_execution_count: int = 0
 @onready var poison_particles: GPUParticles2D = $GPUParticles2D
 @onready var PopupScoreSpawner: PopupSpawner = $PopupScoreSpawner
 @onready var old_modulate = Sprite.modulate
+@onready var collision_shape_2d := $CollisionShape2D as CollisionShape2D
 
 
 # core
 func _ready():
+	if type == ENM_Type.FAT:
+		connect("camera_effect", Global.camera.handle_effect)
+		camera_effect.emit('shake')
+		
 	health = max_health
 	path_points_size = path.curve.point_count
 	_get_path_direction()
@@ -172,6 +180,8 @@ func _dead_state() -> void:
 	PopupScoreSpawner.score("+" + str(money_reward) + "$")
 	_disappear()
 	is_dead = true
+	# disable the collision shape
+	collision_shape_2d.disabled = true
 
 
 func _give_damage_state() -> void:
@@ -182,7 +192,7 @@ func _give_damage_state() -> void:
 		return
 		
 	# if boss insta death
-	if type == ENM_Type.BIG_DADDY:
+	if type == ENM_Type.BIG_DADDY or type == ENM_Type.FAT:
 		ILevel.current_level.health = 0
 	else:
 		ILevel.current_level.health -= ceil(health/2)

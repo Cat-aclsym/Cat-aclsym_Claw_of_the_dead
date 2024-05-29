@@ -12,6 +12,7 @@ var waves: Array[Wave] = []
 
 @onready var waves_timer: Timer = $WavesTimer
 @onready var PopupWaveSpawner: PopupSpawner = $PopupWaveSpawner
+@onready var camera: Camera2D = $Camera2D
 
 
 # core

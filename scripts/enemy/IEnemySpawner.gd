@@ -1,6 +1,5 @@
 extends Node2D
 
-
 var default_zombie_scene: PackedScene = preload("res://scenes/enemy/default_enemy_scene.tscn")
 var zombie_types: Array               = ['default']
 

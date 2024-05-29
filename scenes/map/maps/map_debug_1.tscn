@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://buj5yatu3iyt"]
+[gd_scene load_steps=12 format=3 uid="uid://buj5yatu3iyt"]
 
 [ext_resource type="PackedScene" uid="uid://crdosg1fmycsi" path="res://scenes/map/i_map.tscn" id="1_4widc"]
 [ext_resource type="PackedScene" uid="uid://dowhoig8uluo6" path="res://scenes/wave/enemy_group.tscn" id="2_t1gv5"]
@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://cq705nqdp8fnw" path="res://scenes/tower/first_tower.tscn" id="4_ej3rp"]
 [ext_resource type="Script" path="res://scripts/enemy/PopupLocation.gd" id="5_kdg7m"]
 [ext_resource type="PackedScene" uid="uid://cqe6sjyhnpfci" path="res://scenes/popup/popup_wave.tscn" id="6_owqas"]
+[ext_resource type="Script" path="res://scripts/camera/camera.gd" id="6_yjlcw"]
 
 [sub_resource type="Curve2D" id="Curve2D_kcq2n"]
 _data = {
@@ -60,17 +61,17 @@ curve = SubResource("Curve2D_4wu0t")
 delay = 5.0
 
 [node name="EnemyGroup" parent="Waves/Wave1" index="1" instance=ExtResource("2_t1gv5")]
-enemies = Array[int]([1])
+enemies = Array[int]([0, 0, 0])
 in_delay = 0.5
 out_delay = 1.0
 
 [node name="EnemyGroup2" parent="Waves/Wave1" index="2" instance=ExtResource("2_t1gv5")]
-enemies = Array[int]([1, 1])
+enemies = Array[int]([0, 0])
 in_delay = 0.5
 out_delay = 1.0
 
 [node name="EnemyGroup3" parent="Waves/Wave1" index="3" instance=ExtResource("2_t1gv5")]
-enemies = Array[int]([1, 1, 1])
+enemies = Array[int]([0, 0, 0])
 in_delay = 0.5
 out_delay = 1.0
 
@@ -78,18 +79,19 @@ out_delay = 1.0
 delay = 5.0
 
 [node name="EnemyGroup" parent="Waves/Wave2" index="1" instance=ExtResource("2_t1gv5")]
-enemies = Array[int]([2])
+enemies = Array[int]([1, 0, 1])
 in_delay = 0.5
 out_delay = 1.0
 
 [node name="EnemyGroup2" parent="Waves/Wave2" index="2" instance=ExtResource("2_t1gv5")]
-enemies = Array[int]([2, 2])
+enemies = Array[int]([1, 2])
 in_delay = 0.5
 out_delay = 1.0
 
 [node name="Camera2D" type="Camera2D" parent="." index="4"]
 position = Vector2(672, 400)
 zoom = Vector2(1.6, 1.6)
+script = ExtResource("6_yjlcw")
 
 [node name="FirstTower" parent="." index="5" instance=ExtResource("4_ej3rp")]
 position = Vector2(529, 350)

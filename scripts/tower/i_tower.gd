@@ -32,6 +32,7 @@ enum TowerState {
 var target_type: TargetType
 var state: TowerState
 var enemy_array: Array[IEnemy]
+var target: IEnemy
 var color = "#FFFFFF"
 var selected = false
 
@@ -87,8 +88,24 @@ func fire() -> void:
 		return
 	if BulletScene == null:
 		return
-
-	var enemy_position: Vector2  = enemy_array[0].global_position
+	
+	
+	
+	match target_type:
+		TargetType.FIRST:
+			_get_first_target()
+		TargetType.LAST:
+			_get_last_target()
+		TargetType.STRONGEST:
+			_get_strongest_target()
+		TargetType.WEAKEST:
+			_get_weakest_target()
+		TargetType.RANDOM:
+			_get_random_target()
+		
+	print(target)
+	
+	var enemy_position: Vector2  = target.global_position
 	var bullet_instance: IBullet = BulletScene.instantiate()
 
 	bullet_instance.direction = global_position.direction_to(enemy_position)
@@ -115,23 +132,38 @@ func _choose_target():
 
 
 func _get_strongest_target():
-	pass
+	var strongest = enemy_array[0]
+	var strongest_health = enemy_array[0].health
+	for enemies in enemy_array:
+		if enemies.health > strongest_health:
+			strongest = enemies
+			strongest_health = enemies.health
+	target = strongest
 
 
 func _get_weakest_target():
-	pass
+	var weakest = enemy_array[0]
+	var weakest_health = enemy_array[0].health
+	for enemies in enemy_array:
+		if enemies.health < weakest_health:
+			weakest = enemies
+			weakest_health = enemies.health
+	target = weakest
 
 
 func _get_first_target():
-	pass
+	target = enemy_array[0]
 
 
 func _get_last_target():
-	pass
+	target = enemy_array[-1]
 
 
 func _get_random_target():
-	pass
+	var rng = RandomNumberGenerator.new()
+	rng.randomize()
+	var num = rng.randi_range(0, len(enemy_array)-1)
+	target = enemy_array[num]
 
 
 func _on_area_2d_area_exited(area: Area2D) -> void:

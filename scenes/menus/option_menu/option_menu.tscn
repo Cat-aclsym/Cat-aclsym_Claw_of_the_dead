@@ -1,11 +1,12 @@
-[gd_scene load_steps=16 format=3 uid="uid://doml7biiq8g2o"]
+[gd_scene load_steps=17 format=3 uid="uid://doml7biiq8g2o"]
 
 [ext_resource type="Script" path="res://scripts/menus/option_menu/option_menu.gd" id="1_rumc7"]
-[ext_resource type="Texture2D" uid="uid://c8b8irfugbxdj" path="res://assets/backgrounds/Fond Menu 02.svg" id="2_pr80k"]
+[ext_resource type="Texture2D" uid="uid://bel17gs3ijyb1" path="res://assets/backgrounds/Fond Menu 02@2x.png" id="2_clod3"]
 [ext_resource type="Texture2D" uid="uid://cj3134gnhq33s" path="res://assets/icons/Bouton close@2x.png" id="2_vd677"]
 [ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="3_mxk3u"]
 [ext_resource type="Texture2D" uid="uid://b1tevrke0h3pb" path="res://assets/icons/Bouton Musique@2x.png" id="4_jywym"]
 [ext_resource type="Texture2D" uid="uid://46ywfvlxmd8c" path="res://assets/icons/noteDeMusiqueCroix.png" id="5_an6v6"]
+[ext_resource type="FontFile" uid="uid://ddo3rokwsadq0" path="res://assets/resources/fonts/DotGothic16-Regular.ttf" id="5_o6v5m"]
 [ext_resource type="Texture2D" uid="uid://d03x6kldjjybo" path="res://assets/icons/Bouton Sons@2x.png" id="6_168q2"]
 [ext_resource type="Texture2D" uid="uid://cbskr3qu6rty8" path="res://assets/icons/speakerCroix.png" id="7_gtwn2"]
 [ext_resource type="Texture2D" uid="uid://boj6u1yossbmy" path="res://assets/icons/Bouton Langue@2x.png" id="8_iii62"]
@@ -24,165 +25,207 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+scale = Vector2(1.0025, 0.99999)
 script = ExtResource("1_rumc7")
 
-[node name="MenuCenterContainer" type="CenterContainer" parent="."]
-texture_filter = 6
+[node name="GuiMarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -500.0
-offset_top = -350.0
-offset_right = 500.0
-offset_bottom = 350.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_constants/margin_left = 60
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 60
+theme_override_constants/margin_bottom = 20
 
-[node name="BackgroundTextureRect" type="TextureRect" parent="MenuCenterContainer"]
-custom_minimum_size = Vector2(1000, 700)
+[node name="BackgroundTextureRect" type="TextureRect" parent="GuiMarginContainer"]
 layout_mode = 2
-texture = ExtResource("2_pr80k")
+texture = ExtResource("2_clod3")
 expand_mode = 1
 
-[node name="MarginContainer" type="MarginContainer" parent="MenuCenterContainer"]
+[node name="MenuMarginContainer" type="MarginContainer" parent="GuiMarginContainer"]
 layout_mode = 2
-theme_override_constants/margin_left = 880
-theme_override_constants/margin_bottom = 550
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 15
 
-[node name="CloseTextureButton" type="TextureButton" parent="MenuCenterContainer/MarginContainer"]
-custom_minimum_size = Vector2(94, 94)
+[node name="MenuRowVBoxContainer" type="VBoxContainer" parent="GuiMarginContainer/MenuMarginContainer"]
 layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-texture_normal = ExtResource("2_vd677")
-stretch_mode = 0
-
-[node name="MenuRowVBoxContainer" type="VBoxContainer" parent="MenuCenterContainer"]
-layout_mode = 2
-theme_override_constants/separation = 25
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 12.0
 alignment = 1
 
-[node name="ParametersRichTextLabel" type="RichTextLabel" parent="MenuCenterContainer/MenuRowVBoxContainer"]
+[node name="TopLineHBoxContainer" type="HBoxContainer" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer"]
 layout_mode = 2
+
+[node name="SettingsLabel" type="Label" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/TopLineHBoxContainer"]
+texture_filter = 5
+layout_mode = 2
+size_flags_horizontal = 0
 theme = ExtResource("3_mxk3u")
-text = "PARAMETERS.TEXT.LABEL"
-fit_content = true
+theme_override_fonts/font = ExtResource("5_o6v5m")
+theme_override_font_sizes/font_size = 20
+text = "SETTINGS.TEXT.LABEL"
 
-[node name="ParametersHBoxContainer" type="HBoxContainer" parent="MenuCenterContainer/MenuRowVBoxContainer"]
+[node name="AspectRatioContainer" type="AspectRatioContainer" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/TopLineHBoxContainer"]
 layout_mode = 2
-theme_override_constants/separation = 100
+size_flags_horizontal = 3
+size_flags_vertical = 3
+alignment_horizontal = 2
+alignment_vertical = 2
 
-[node name="MusicTextureButton" type="TextureButton" parent="MenuCenterContainer/MenuRowVBoxContainer/ParametersHBoxContainer"]
-custom_minimum_size = Vector2(150, 127.5)
+[node name="CloseTextureButton" type="TextureButton" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/TopLineHBoxContainer/AspectRatioContainer"]
+texture_filter = 6
 layout_mode = 2
-size_flags_horizontal = 6
-size_flags_vertical = 4
+texture_normal = ExtResource("2_vd677")
+ignore_texture_size = true
+stretch_mode = 4
+
+[node name="SettingsHBoxContainer" type="HBoxContainer" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="MusicAspectRatioContainer" type="AspectRatioContainer" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/SettingsHBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="MusicTextureButton" type="TextureButton" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/SettingsHBoxContainer/MusicAspectRatioContainer"]
+texture_filter = 6
+layout_mode = 2
 texture_normal = ExtResource("4_jywym")
 texture_pressed = ExtResource("5_an6v6")
 ignore_texture_size = true
-stretch_mode = 0
+stretch_mode = 5
 
-[node name="SoundTextureButton" type="TextureButton" parent="MenuCenterContainer/MenuRowVBoxContainer/ParametersHBoxContainer"]
-custom_minimum_size = Vector2(150, 127.5)
+[node name="SoundAspectRatioContainer" type="AspectRatioContainer" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/SettingsHBoxContainer"]
 layout_mode = 2
-size_flags_horizontal = 6
-size_flags_vertical = 4
+size_flags_horizontal = 3
+
+[node name="SoundTextureButton" type="TextureButton" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/SettingsHBoxContainer/SoundAspectRatioContainer"]
+texture_filter = 6
+layout_mode = 2
 texture_normal = ExtResource("6_168q2")
 texture_pressed = ExtResource("7_gtwn2")
 ignore_texture_size = true
-stretch_mode = 0
+stretch_mode = 5
 
-[node name="LanguageTextureButton" type="TextureButton" parent="MenuCenterContainer/MenuRowVBoxContainer/ParametersHBoxContainer"]
-custom_minimum_size = Vector2(150, 127.5)
+[node name="LanguageAspectRatioContainer" type="AspectRatioContainer" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/SettingsHBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="LanguageTextureButton" type="TextureButton" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/SettingsHBoxContainer/LanguageAspectRatioContainer"]
+texture_filter = 6
 layout_mode = 2
 texture_normal = ExtResource("8_iii62")
 ignore_texture_size = true
-stretch_mode = 0
+stretch_mode = 5
 
-[node name="SocialsRichTextLabel" type="RichTextLabel" parent="MenuCenterContainer/MenuRowVBoxContainer"]
+[node name="SocialsLabel" type="Label" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer"]
+texture_filter = 5
 layout_mode = 2
 theme = ExtResource("3_mxk3u")
+theme_override_fonts/font = ExtResource("5_o6v5m")
+theme_override_font_sizes/font_size = 20
 text = "SOCIALS.TEXT.LABEL"
-fit_content = true
 
-[node name="SocialsHBoxContainer" type="HBoxContainer" parent="MenuCenterContainer/MenuRowVBoxContainer"]
+[node name="SocialsHBoxContainer" type="HBoxContainer" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer"]
 layout_mode = 2
-theme_override_constants/separation = 100
+size_flags_vertical = 3
 
-[node name="InstagramTextureButton" type="TextureButton" parent="MenuCenterContainer/MenuRowVBoxContainer/SocialsHBoxContainer"]
-custom_minimum_size = Vector2(150, 127.5)
+[node name="InstagramAspectRatioContainer2" type="AspectRatioContainer" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/SocialsHBoxContainer"]
 layout_mode = 2
-size_flags_horizontal = 6
-size_flags_vertical = 4
+size_flags_horizontal = 3
+
+[node name="InstagramTextureButton" type="TextureButton" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/SocialsHBoxContainer/InstagramAspectRatioContainer2"]
+texture_filter = 6
+layout_mode = 2
 texture_normal = ExtResource("9_vb5lp")
 ignore_texture_size = true
-stretch_mode = 0
+stretch_mode = 5
 
-[node name="XTextureButton" type="TextureButton" parent="MenuCenterContainer/MenuRowVBoxContainer/SocialsHBoxContainer"]
-custom_minimum_size = Vector2(150, 127.5)
+[node name="XAspectRatioContainer" type="AspectRatioContainer" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/SocialsHBoxContainer"]
 layout_mode = 2
-size_flags_horizontal = 6
-size_flags_vertical = 4
+size_flags_horizontal = 3
+
+[node name="XTextureButton" type="TextureButton" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/SocialsHBoxContainer/XAspectRatioContainer"]
+texture_filter = 6
+layout_mode = 2
+size_flags_horizontal = 3
 texture_normal = ExtResource("10_droxh")
 ignore_texture_size = true
-stretch_mode = 0
+stretch_mode = 5
 
-[node name="DiscordTextureButton" type="TextureButton" parent="MenuCenterContainer/MenuRowVBoxContainer/SocialsHBoxContainer"]
-custom_minimum_size = Vector2(150, 127.5)
+[node name="DiscordAspectRatioContainer" type="AspectRatioContainer" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/SocialsHBoxContainer"]
 layout_mode = 2
-size_flags_horizontal = 6
-size_flags_vertical = 4
+size_flags_horizontal = 3
+
+[node name="DiscordTextureButton" type="TextureButton" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/SocialsHBoxContainer/DiscordAspectRatioContainer"]
+texture_filter = 6
+layout_mode = 2
+size_flags_horizontal = 3
 texture_normal = ExtResource("11_ioidm")
 ignore_texture_size = true
-stretch_mode = 0
+stretch_mode = 5
 
-[node name="MiscRichTextLabel" type="RichTextLabel" parent="MenuCenterContainer/MenuRowVBoxContainer"]
+[node name="MiscLabel" type="Label" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer"]
+texture_filter = 5
 layout_mode = 2
 theme = ExtResource("3_mxk3u")
+theme_override_fonts/font = ExtResource("5_o6v5m")
+theme_override_font_sizes/font_size = 20
 text = "MISC.TEXT.LABEL"
-fit_content = true
 
-[node name="MiscHBoxContainer" type="HBoxContainer" parent="MenuCenterContainer/MenuRowVBoxContainer"]
+[node name="MiscHBoxContainer" type="HBoxContainer" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer"]
 layout_mode = 2
-theme_override_constants/separation = 100
+size_flags_vertical = 3
 
-[node name="UpdateTextureButton" type="TextureButton" parent="MenuCenterContainer/MenuRowVBoxContainer/MiscHBoxContainer"]
-custom_minimum_size = Vector2(150, 127.5)
+[node name="UpdateAspectRatioContainer" type="AspectRatioContainer" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/MiscHBoxContainer"]
 layout_mode = 2
-size_flags_horizontal = 6
-size_flags_vertical = 4
+size_flags_horizontal = 3
+
+[node name="UpdateTextureButton" type="TextureButton" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/MiscHBoxContainer/UpdateAspectRatioContainer"]
+texture_filter = 6
+layout_mode = 2
+size_flags_horizontal = 3
 texture_normal = ExtResource("12_esjhy")
 ignore_texture_size = true
-stretch_mode = 0
+stretch_mode = 5
 
-[node name="RgpdTextureButton" type="TextureButton" parent="MenuCenterContainer/MenuRowVBoxContainer/MiscHBoxContainer"]
-custom_minimum_size = Vector2(150, 127.5)
+[node name="RgpdAspectRatioContainer2" type="AspectRatioContainer" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/MiscHBoxContainer"]
 layout_mode = 2
-size_flags_horizontal = 6
-size_flags_vertical = 4
+size_flags_horizontal = 3
+
+[node name="RgpdTextureButton" type="TextureButton" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/MiscHBoxContainer/RgpdAspectRatioContainer2"]
+texture_filter = 6
+layout_mode = 2
+size_flags_horizontal = 3
 texture_normal = ExtResource("13_gyr4v")
 ignore_texture_size = true
-stretch_mode = 0
+stretch_mode = 5
 
-[node name="ContactTextureButton" type="TextureButton" parent="MenuCenterContainer/MenuRowVBoxContainer/MiscHBoxContainer"]
-custom_minimum_size = Vector2(150, 127.5)
+[node name="ContactAspectRatioContainer3" type="AspectRatioContainer" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/MiscHBoxContainer"]
 layout_mode = 2
-size_flags_horizontal = 6
-size_flags_vertical = 4
+size_flags_horizontal = 3
+
+[node name="ContactTextureButton" type="TextureButton" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/MiscHBoxContainer/ContactAspectRatioContainer3"]
+texture_filter = 6
+layout_mode = 2
+size_flags_horizontal = 3
 texture_normal = ExtResource("14_ib5pc")
 ignore_texture_size = true
-stretch_mode = 0
+stretch_mode = 5
 
-[connection signal="pressed" from="MenuCenterContainer/MarginContainer/CloseTextureButton" to="." method="_on_close_texture_button_pressed"]
-[connection signal="pressed" from="MenuCenterContainer/MenuRowVBoxContainer/ParametersHBoxContainer/MusicTextureButton" to="." method="_on_music_texture_button_pressed"]
-[connection signal="pressed" from="MenuCenterContainer/MenuRowVBoxContainer/ParametersHBoxContainer/SoundTextureButton" to="." method="_on_sound_texture_button_pressed"]
-[connection signal="pressed" from="MenuCenterContainer/MenuRowVBoxContainer/ParametersHBoxContainer/LanguageTextureButton" to="." method="_on_language_texture_button_pressed"]
-[connection signal="pressed" from="MenuCenterContainer/MenuRowVBoxContainer/SocialsHBoxContainer/InstagramTextureButton" to="." method="_on_instagram_texture_button_pressed"]
-[connection signal="pressed" from="MenuCenterContainer/MenuRowVBoxContainer/SocialsHBoxContainer/XTextureButton" to="." method="_on_x_texture_button_pressed"]
-[connection signal="pressed" from="MenuCenterContainer/MenuRowVBoxContainer/SocialsHBoxContainer/DiscordTextureButton" to="." method="_on_discord_texture_button_pressed"]
-[connection signal="pressed" from="MenuCenterContainer/MenuRowVBoxContainer/MiscHBoxContainer/UpdateTextureButton" to="." method="_on_update_texture_button_pressed"]
-[connection signal="pressed" from="MenuCenterContainer/MenuRowVBoxContainer/MiscHBoxContainer/RgpdTextureButton" to="." method="_on_rgpd_texture_button_pressed"]
-[connection signal="pressed" from="MenuCenterContainer/MenuRowVBoxContainer/MiscHBoxContainer/ContactTextureButton" to="." method="_on_contact_texture_button_pressed"]
+[connection signal="pressed" from="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/TopLineHBoxContainer/AspectRatioContainer/CloseTextureButton" to="." method="_on_close_texture_button_pressed"]
+[connection signal="pressed" from="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/SettingsHBoxContainer/MusicAspectRatioContainer/MusicTextureButton" to="." method="_on_music_texture_button_pressed"]
+[connection signal="pressed" from="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/SettingsHBoxContainer/SoundAspectRatioContainer/SoundTextureButton" to="." method="_on_sound_texture_button_pressed"]
+[connection signal="pressed" from="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/SettingsHBoxContainer/LanguageAspectRatioContainer/LanguageTextureButton" to="." method="_on_language_texture_button_pressed"]
+[connection signal="pressed" from="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/SocialsHBoxContainer/InstagramAspectRatioContainer2/InstagramTextureButton" to="." method="_on_instagram_texture_button_pressed"]
+[connection signal="pressed" from="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/SocialsHBoxContainer/XAspectRatioContainer/XTextureButton" to="." method="_on_x_texture_button_pressed"]
+[connection signal="pressed" from="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/SocialsHBoxContainer/DiscordAspectRatioContainer/DiscordTextureButton" to="." method="_on_discord_texture_button_pressed"]
+[connection signal="pressed" from="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/MiscHBoxContainer/UpdateAspectRatioContainer/UpdateTextureButton" to="." method="_on_update_texture_button_pressed"]
+[connection signal="pressed" from="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/MiscHBoxContainer/RgpdAspectRatioContainer2/RgpdTextureButton" to="." method="_on_rgpd_texture_button_pressed"]
+[connection signal="pressed" from="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/MiscHBoxContainer/ContactAspectRatioContainer3/ContactTextureButton" to="." method="_on_contact_texture_button_pressed"]
