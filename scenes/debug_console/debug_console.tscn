@@ -28,9 +28,11 @@ border_color = Color(0.894118, 0.752941, 0.101961, 1)
 modulate = Color(1, 1, 1, 0.784314)
 top_level = true
 layout_mode = 3
-anchors_preset = 0
-offset_right = 1280.0
-offset_bottom = 296.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 script = ExtResource("1_5jk4e")
 
 [node name="CommandHandler" type="Control" parent="."]
@@ -40,9 +42,13 @@ offset_bottom = 40.0
 script = ExtResource("2_2h81y")
 
 [node name="TextLabel" type="RichTextLabel" parent="."]
-layout_mode = 0
-offset_right = 1280.0
-offset_bottom = 690.0
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_bottom = -24.0
+grow_horizontal = 2
+grow_vertical = 2
 theme_override_fonts/normal_font = ExtResource("3_oeb44")
 theme_override_fonts/bold_font = ExtResource("4_mf412")
 theme_override_fonts/italics_font = ExtResource("5_aq8y8")
@@ -53,10 +59,14 @@ bbcode_enabled = true
 scroll_following = true
 
 [node name="TextEdit" type="TextEdit" parent="."]
-layout_mode = 0
-offset_top = 689.0
-offset_right = 1280.0
-offset_bottom = 719.0
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -24.0
+grow_horizontal = 2
+grow_vertical = 0
 theme_override_fonts/font = ExtResource("3_oeb44")
 theme_override_font_sizes/font_size = 14
 theme_override_styles/normal = SubResource("StyleBoxFlat_3v0jc")
