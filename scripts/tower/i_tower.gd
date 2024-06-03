@@ -52,13 +52,16 @@ func _ready():
 	hover_box.z_index = 3
 	## Create the range polygon for the tower with the given shooting range and precision
 	_create_range_polygon(shoot_range, 50)
-	_check_y_position()
+	_update_z_index()
 
 
 ## Function called every frame. Delta is the time since the last frame.
 ## @param _delta float - The time since the last frame.
 func _process(_delta: float) -> void:
-	if deactivate: return
+	if deactivate: # TODO : replace 'deactivate' by something more relavent 
+		# tower is deactivate only when fixed to cursors
+		_update_z_index()
+		return
 
 	## If the fire rate timer is stopped, call the fire function
 	if fire_rate_timer.is_stopped():
@@ -275,12 +278,7 @@ func _on_tower_hover_box_mouse_exited():
 
 
 ## Function to check the z position of the tower and adapt the z index of the tower.
-func _check_y_position() -> void:
-	## Get the y position of the tower
-	var y_position: int = global_position.y
-	## Set the z index of the tower based on the y position
-	polygon_2d.z_index -= y_position
-	if y_position < 0:
-		z_index = 0
-	else:
-		z_index = y_position
+func _update_z_index() -> void:
+	var y_position := int(global_position.y)
+	#polygon_2d.z_index -= y_position # NOTE : why ? chat gpt ?
+	z_index = y_position if y_position else 0

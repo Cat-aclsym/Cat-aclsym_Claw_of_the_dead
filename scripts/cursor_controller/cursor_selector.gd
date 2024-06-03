@@ -37,7 +37,7 @@ func _ready() -> void:
 	Global.cursor = self
 
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	_handle_state()
 
 
@@ -142,7 +142,7 @@ func _is_buildable(pos: Vector2) -> bool:
 	if ILevel.current_level.coins < _tower.cost:
 		return false
 		
-	var atlas_coords: Vector2 = tm_ref.get_cell_atlas_coords(0, tm_ref.local_to_map(pos))
-	Log.debug("atlas coords = {0}; buildable = {1}".format([atlas_coords, true]))	
+	#var atlas_coords: Vector2 = tm_ref.get_cell_atlas_coords(0, tm_ref.local_to_map(pos))
+	#Log.debug("atlas coords = {0}; buildable = {1}".format([atlas_coords, true]))	
 		
 	return true

@@ -6,7 +6,7 @@ extends Camera2D
 @export var shake_fade: float = 5.0
 
 var touch_points: Dictionary = {}
-var start_distance: int
+var start_distance: float
 var start_zoom: Vector2
 var rng: RandomNumberGenerator = RandomNumberGenerator.new()
 var shake_strength: float = 0.0
@@ -59,9 +59,9 @@ func handle_drag(event: InputEventScreenDrag) -> void:
 
 	elif touch_points.size() == 2:
 		var touch_point_positions: Array[Vector2] = touch_points.values()
-		var current_distance: int = touch_point_positions[0].distance_to(touch_point_positions[1])
+		var current_distance: float = touch_point_positions[0].distance_to(touch_point_positions[1])
 		
-		var zoom_factor = start_distance / current_distance
+		var zoom_factor: float = start_distance / current_distance
 		zoom = start_zoom / zoom_factor
 		limit_zoom(zoom)
 			

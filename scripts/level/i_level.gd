@@ -2,7 +2,7 @@ class_name ILevel
 extends Node2D
 signal stats_updated
 
-var coins: int = 50:
+var coins: int = 50000000000:
 	set(val):
 		coins = val
 		stats_updated.emit()

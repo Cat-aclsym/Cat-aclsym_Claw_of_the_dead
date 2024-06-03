@@ -72,7 +72,7 @@ func _ready():
 func _physics_process(delta: float) -> void:
 	if(is_already_dead): return
 
-	_check_y_position()
+	_update_z_index()
 
 	match state:
 		ENM_State.FOLLOW_PATH:
@@ -116,6 +116,18 @@ func follow_path(delta: float) -> void:
 	path_follow.set_progress(path_follow.get_progress() + (speed * delta))
 	_update_direction()
 	_walk()
+
+
+func add_poison_effect(damage: float, total_execution: int, interval: float) -> void:
+	# add a timer to the active_poison_timers array
+	var poison_timer: Timer = Timer.new()
+	add_child(poison_timer)
+	poison_timer.set_wait_time(interval)
+	poison_timer.set_one_shot(false)
+	poison_timer.start()
+	active_poison_timers.append({"timer": poison_timer, "damage": damage, "total_execution": total_execution, "interval": interval, "current_execution": 0})
+	# connect the timer to the _on_poison_timer_timeout function
+	poison_timer.timeout.connect(func(): _on_poison_timer_timeout(poison_timer))
 
 
 # internal
@@ -200,16 +212,10 @@ func _give_damage_state() -> void:
 		ILevel.current_level.health -= ceil(health/2)
 
 
-func add_poison_effect(damage: float, total_execution: int, interval: float) -> void:
-	# add a timer to the active_poison_timers array
-	var poison_timer: Timer = Timer.new()
-	add_child(poison_timer)
-	poison_timer.set_wait_time(interval)
-	poison_timer.set_one_shot(false)
-	poison_timer.start()
-	active_poison_timers.append({"timer": poison_timer, "damage": damage, "total_execution": total_execution, "interval": interval, "current_execution": 0})
-	# connect the timer to the _on_poison_timer_timeout function
-	poison_timer.timeout.connect(func(): _on_poison_timer_timeout(poison_timer))
+## Function to check the z position of the tower and adapt the z index of the tower.
+func _update_z_index() -> void:
+	var y_position: int = int(global_position.y)
+	z_index = y_position if y_position else 0
 
 
 # signals
@@ -225,13 +231,13 @@ func _on_poison_timer_timeout(timer: Timer):
 	# track the highest timer in active_poison_timers based on the ratio of damage/interval
 	var highest_timer_ratio: float = 0
 	var highest_timer_index: int = 0
-	var highest_timer: Timer = null
+	var _highest_timer: Timer = null
 	for i in range(active_poison_timers.size()):
 		var ratio: float = (active_poison_timers[i]["damage"] * active_poison_timers[i]["total_execution"]) / (active_poison_timers[i]["total_execution"] * active_poison_timers[i]["interval"])
 		if ratio > highest_timer_ratio:
 			highest_timer_ratio = ratio
 			highest_timer_index = i
-			highest_timer = active_poison_timers[i]["timer"]
+			_highest_timer = active_poison_timers[i]["timer"]
 			
 	# check if the timer is the highest
 	if timer_index == highest_timer_index:
@@ -255,12 +261,3 @@ func _on_animation_player_animation_finished(anim_name: String) -> void:
 		queue_free()
 		get_parent().queue_free()
 
-		## Function to check the z position of the tower and adapt the z index of the tower.
-func _check_y_position() -> void:
-	## Get the y position of the tower
-	var y_position: int = global_position.y
-	## Set the z index of the tower based on the y position
-	if y_position < 0:
-		z_index = 0
-	else:
-		z_index = y_position
