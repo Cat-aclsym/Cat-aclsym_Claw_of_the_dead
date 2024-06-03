@@ -3,7 +3,7 @@ extends Label
 var _to: int = -1
 
 # core
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	if _to == -1: return
 	_update()
 
