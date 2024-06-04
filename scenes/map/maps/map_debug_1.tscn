@@ -91,4 +91,12 @@ out_delay = 1.0
 [node name="Camera2D" type="Camera2D" parent="." index="4"]
 position = Vector2(672, 400)
 zoom = Vector2(1.6, 1.6)
+limit_left = -250
+limit_top = -250
+limit_right = 1500
+limit_bottom = 1000
+position_smoothing_enabled = true
+position_smoothing_speed = 8.0
+editor_draw_limits = true
+editor_draw_drag_margin = true
 script = ExtResource("6_yjlcw")
