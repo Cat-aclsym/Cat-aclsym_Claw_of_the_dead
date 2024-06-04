@@ -11,7 +11,7 @@ extends Node
 
 var debug_console: DebugConsole = null
 var hud = null
-var camera = null
+var camera: Camera = null
 var cursor = null
 
 func _ready() -> void:
