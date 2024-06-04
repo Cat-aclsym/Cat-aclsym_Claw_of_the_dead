@@ -10,9 +10,10 @@ config_version=5
 
 [application]
 
-config/name="Cat-aclsym_Claw_of_the_dead"
+config/name="Cat'aclsym"
 run/main_scene="res://scenes/main/main.tscn"
 config/features=PackedStringArray("4.2", "Forward Plus")
+config/icon="res://assets/icons/LogoChatVertClairFondFonce-100.jpg"
 
 [autoload]
 
@@ -20,6 +21,10 @@ Global="*res://scripts/autoloads/global.gd"
 SoundManager="*res://scripts/autoloads/sound_manager.gd"
 ScenesLoader="*res://scripts/autoloads/scenes_loader.gd"
 DialogueManager="*res://addons/dialogue_manager/dialogue_manager.gd"
+
+[debug]
+
+settings/stdout/print_fps=true
 
 [dialogue_manager]
 
@@ -94,3 +99,4 @@ pseudolocalization/suffix=""
 [rendering]
 
 textures/canvas_textures/default_texture_filter=0
+textures/vram_compression/import_etc2_astc=true
