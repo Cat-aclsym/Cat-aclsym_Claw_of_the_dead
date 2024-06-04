@@ -5,6 +5,8 @@ extends Camera2D
 @export var pan_speed: float = 1.0
 @export var random_strength: float = 30.0
 @export var shake_fade: float = 5.0
+@export var min_zoom: float = 0.5
+@export var max_zoom: float = 10.0
 
 var touch_points: Dictionary = {}
 var start_distance: float
@@ -44,13 +46,12 @@ func handle_touch(event: InputEventScreenTouch) -> void:
 	else:
 		touch_points.erase(event.index)
 
-		if touch_points.size() == 2:
-			var touch_point_positions: Array = touch_points.values()
-			start_distance = touch_point_positions[0].distance_to(touch_point_positions[1])
-
-			start_zoom = zoom
-		elif touch_points.size() < 2:
-			start_distance = 0
+	if touch_points.size() == 2:
+		var touch_point_positions: Array = touch_points.values()
+		start_distance = touch_point_positions[0].distance_to(touch_point_positions[1])
+		start_zoom = zoom
+	elif touch_points.size() < 2:
+		start_distance = 0
 
 
 func handle_drag(event: InputEventScreenDrag) -> void:
@@ -62,6 +63,7 @@ func handle_drag(event: InputEventScreenDrag) -> void:
 	elif touch_points.size() == 2:
 		var touch_point_positions: Array = touch_points.values()
 		var current_distance: float = touch_point_positions[0].distance_to(touch_point_positions[1])
+
 		var zoom_factor: float = start_distance / current_distance
 		zoom = start_zoom / zoom_factor
 		clamp_zoom()
@@ -69,11 +71,11 @@ func handle_drag(event: InputEventScreenDrag) -> void:
 
 ## Clamp zoom to [0.1, 10.0]
 func clamp_zoom() -> void:
-	zoom = zoom.clamp(Vector2(0.1, 0.1), Vector2(10.0, 10.0))
+	zoom = zoom.clamp(Vector2(min_zoom, min_zoom), Vector2(max_zoom, max_zoom))
 
 
 func handle_effect(effect: String) -> void:
-	Log.debug("Playing '{0}' camera effect" % effect)
+	Log.debug("Playing '%s' camera effect" % effect)
 	match effect:
 		"shake":
 			shake_camera()
