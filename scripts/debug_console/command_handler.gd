@@ -31,6 +31,11 @@ const valid_commands = [
 		"description" : "Exit the program.",
 		"args": []
 	},
+	{
+		"command": "set_money",
+		"description" : "Change current amount of money",
+		"args": [Types.ARG_INT]
+	},
 ]
 
 # Print all available commands with their description and args
@@ -61,6 +66,14 @@ func foo(what, amount) -> String:
 func exit() -> String:
 	get_tree().quit()
 	return ""
+	
+	
+func set_money(amount) -> String:
+	if not ILevel.current_level:
+		return "You must be in a level to use this method"
+		
+	ILevel.current_level.coins = int(amount)
+	return "money =  {0}".format([amount])
 
 # Types enum to str
 func _type_to_string(in_type: Types) -> String:

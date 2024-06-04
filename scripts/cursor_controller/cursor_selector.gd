@@ -42,7 +42,6 @@ func _process(_delta: float) -> void:
 
 
 func change_state(new_state: CURSOR_STATE, args: Array = []) -> void:
-	Log.debug("Try changing state from '{0}' to '{1}'".format([_state, new_state]))
 	match new_state:
 		CURSOR_STATE.IDLE:
 			_state = new_state
@@ -50,7 +49,7 @@ func change_state(new_state: CURSOR_STATE, args: Array = []) -> void:
 			_state = new_state
 		CURSOR_STATE.BUILD:
 			if _state != CURSOR_STATE.IDLE:
-				Log.debug("State change fail")
+				Log.warning("Cannot change cursor state from BUILD to IDLE")
 				return 
 			assert(args.size() == 1)
 			assert(args[0] is ITower)
@@ -61,7 +60,7 @@ func change_state(new_state: CURSOR_STATE, args: Array = []) -> void:
 		
 		CURSOR_STATE.UPGRADE:
 			if _state != CURSOR_STATE.IDLE:
-				Log.debug("State change fail")
+				Log.warning("Cannot change cursor state from UPGRADE to IDLE")
 				return 
 			trigger_state_upgrade.emit()
 			_state = new_state
@@ -77,7 +76,6 @@ func _handle_state() -> void:
 			_state_upgrade()
 
 
-
 func _state_idle() -> void:
 	pass
 
@@ -88,7 +86,6 @@ func _state_build(tower: ITower = null) -> void:
 		_tower = tower.duplicate()
 		_tower.deactivate = true
 		add_child(_tower)
-		Log.debug("New tower")
 	
 	# display cursor
 	cursor.visible = true

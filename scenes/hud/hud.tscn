@@ -34,9 +34,6 @@ visible = false
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
-[node name="DebugConsole" parent="." instance=ExtResource("2_fkxxx")]
-visible = false
-
 [node name="InGameMenu" parent="." instance=ExtResource("7_ev4cy")]
 visible = false
 
@@ -46,5 +43,8 @@ visible = false
 offset_right = 104.0
 offset_bottom = 31.0
 text = "PAUSE.TITLE"
+
+[node name="DebugConsole" parent="." instance=ExtResource("2_fkxxx")]
+visible = false
 
 [connection signal="pressed" from="PauseButton" to="." method="_on_pause_button_pressed"]
