@@ -40,6 +40,7 @@ var selected: bool = false ## A boolean representing if the tower is selected or
 var deactivate: bool = false
 
 
+# core
 ## Function called when the node enters the scene tree for the first time.
 func _ready():
 	## Set the initial state of the tower to BUILDING
@@ -67,55 +68,7 @@ func _process(_delta: float) -> void:
 	if fire_rate_timer.is_stopped():
 		fire()
 
-
-## Function to create the range polygon for the tower when the tower is selected.
-## @param radius float - The radius of the range polygon.
-## @param precision int - The number of points in the range polygon.
-func _create_range_polygon(radius: float, precision: int) -> void:
-	## Create an array of Vector2 points for the range polygon
-	var points: Array[Vector2] = []
-	for i in range(precision):
-		var angle = 2 * PI * i / precision
-		var x: float = radius * cos(angle)
-		var y: float = radius * sin(angle)
-
-		points.append(Vector2(x, y))
-
-	## Set the points, rotation, skew, position, and color of the range polygon
-	polygon_2d.polygon = points
-	polygon_2d.rotation = collision_shape_2d.rotation
-	polygon_2d.skew = collision_shape_2d.skew
-	polygon_2d.position = collision_shape_2d.position
-	polygon_2d.color = Color(color, 0.3)
-
-	## Set the z-index of the range polygon to 1, making it appear below other nodes
-	sprite_2d.z_index = 1
-
-	## Add the first value of points to the end of the array to close the outline
-	points.append(Vector2(points[0]))
-	outline.points = points
-
-	## Set the width and color of the outline
-	outline.width = 3
-	outline.default_color = Color(1, 1, 1, 1)
-
-
-## Function to detect when an enemy enters the range of the tower.
-## @param body Object - The object that entered the range of the tower.
-func _on_area_2d_body_entered(body) -> void:
-	## If the object is an IEnemy, add it to the enemy array
-	if body is IEnemy:
-		enemy_array.append(body)
-
-
-## Function to detect when an enemy exits the range of the tower.
-## @param body Object - The object that exited the range of the tower.
-func _on_area_2d_body_exited(body) -> void:
-	## If the object is an IEnemy, remove it from the enemy array
-	if body is IEnemy:
-		enemy_array.erase(body)
-
-
+# functionnal
 ## Function to fire a bullet at the target.
 func fire() -> void:
 	## If there are no enemies in the enemy array or the BulletScene is null, return
@@ -166,6 +119,39 @@ func sell_tower():
 
 func _choose_target():
 	pass
+
+
+# internal
+## Function to create the range polygon for the tower when the tower is selected.
+## @param radius float - The radius of the range polygon.
+## @param precision int - The number of points in the range polygon.
+func _create_range_polygon(radius: float, precision: int) -> void:
+	## Create an array of Vector2 points for the range polygon
+	var points: Array[Vector2] = []
+	for i in range(precision):
+		var angle = 2 * PI * i / precision
+		var x: float = radius * cos(angle)
+		var y: float = radius * sin(angle)
+
+		points.append(Vector2(x, y))
+
+	## Set the points, rotation, skew, position, and color of the range polygon
+	polygon_2d.polygon = points
+	polygon_2d.rotation = collision_shape_2d.rotation
+	polygon_2d.skew = collision_shape_2d.skew
+	polygon_2d.position = collision_shape_2d.position
+	polygon_2d.color = Color(color, 0.3)
+
+	## Set the z-index of the range polygon to 1, making it appear below other nodes
+	sprite_2d.z_index = 1
+
+	## Add the first value of points to the end of the array to close the outline
+	points.append(Vector2(points[0]))
+	outline.points = points
+
+	## Set the width and color of the outline
+	outline.width = 3
+	outline.default_color = Color(1, 1, 1, 1)
 
 
 ##  Function to get the strongest enemy in the enemy array.
@@ -221,28 +207,6 @@ func _get_random_target():
 
 
 ## Function to interpolate between two values.
-## @param a float - The first value.
-func _on_area_2d_area_exited(area: Area2D) -> void:
-	## If the area is an IBullet and is in the range of the tower, queue free the area
-	if area is IBullet && area in get_children():
-		area.queue_free()
-
-
-## Function to interpolate between two values.
-func _on_tower_hover_box_mouse_entered():
-	## Set the selected boolean to true
-	selected = true
-	## Set the size of the range polygon to 0
-	var size: float = 0
-	## Loop to interpolate the size of the range polygon to 1
-	while size < 1:
-		polygon_2d.scale = lerp(polygon_2d.scale, Vector2(1, 1), size)
-		await get_tree().create_timer(0.01).timeout
-		size += 0.1
-		_color_variation()
-
-
-## Function to interpolate between two values.
 func _color_variation() -> void:
 	## Check if the tower is selected
 	if !selected:
@@ -264,6 +228,52 @@ func _color_variation() -> void:
 	_color_variation()
 
 
+## Function to check the z position of the tower and adapt the z index of the tower.
+func _update_z_index() -> void:
+	var y_position := int(global_position.y)
+	z_index = y_position if y_position else 0
+	polygon_2d.z_index = z_index
+
+
+# signal
+## Function to detect when an enemy enters the range of the tower.
+## @param body Object - The object that entered the range of the tower.
+func _on_area_2d_body_entered(body) -> void:
+	## If the object is an IEnemy, add it to the enemy array
+	if body is IEnemy:
+		enemy_array.append(body)
+
+
+## Function to detect when an enemy exits the range of the tower.
+## @param body Object - The object that exited the range of the tower.
+func _on_area_2d_body_exited(body) -> void:
+	## If the object is an IEnemy, remove it from the enemy array
+	if body is IEnemy:
+		enemy_array.erase(body)
+
+
+## Function to interpolate between two values.
+## @param a float - The first value.
+func _on_area_2d_area_exited(area: Area2D) -> void:
+	## If the area is an IBullet and is in the range of the tower, queue free the area
+	if area is IBullet && area in get_children():
+		area.queue_free()
+
+
+## Function to interpolate between two values.
+func _on_tower_hover_box_mouse_entered():
+	## Set the selected boolean to true
+	selected = true
+	## Set the size of the range polygon to 0
+	var size: float = 0
+	## Loop to interpolate the size of the range polygon to 1
+	while size < 1:
+		polygon_2d.scale = lerp(polygon_2d.scale, Vector2(1, 1), size)
+		await get_tree().create_timer(0.01).timeout
+		size += 0.1
+		_color_variation()
+
+
 ## Function to stop the color variation when the mouse exits the hover box.
 func _on_tower_hover_box_mouse_exited():
 	## Set the selected boolean to false
@@ -275,10 +285,3 @@ func _on_tower_hover_box_mouse_exited():
 		polygon_2d.scale = lerp(polygon_2d.scale, Vector2(0, 0), size)
 		await get_tree().create_timer(0.01).timeout
 		size += 0.1
-
-
-## Function to check the z position of the tower and adapt the z index of the tower.
-func _update_z_index() -> void:
-	var y_position := int(global_position.y)
-	#polygon_2d.z_index -= y_position # NOTE : why ? chat gpt ?
-	z_index = y_position if y_position else 0
