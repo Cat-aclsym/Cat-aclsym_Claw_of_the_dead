@@ -3,3 +3,6 @@
 .idea
 *.tmp
 *.translation
+
+# Exports
+exports/
