@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://cq705nqdp8fnw" path="res://scenes/tower/first_tower.tscn" id="4_ro8fv"]
 
 [node name="InGameMenu" type="Control"]
+visible = false
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0

@@ -4,6 +4,7 @@
 [ext_resource type="FontFile" uid="uid://dpjd0ata0w2de" path="res://assets/resources/fonts/Karla-VariableFont_wght.ttf" id="2_opgil"]
 
 [resource]
+default_base_scale = 1.0
 default_font = ExtResource("2_opgil")
 default_font_size = 30
 Fonts/colors/color = Color(0.137255, 0.215686, 0.223529, 1)

@@ -36,7 +36,7 @@ grow_horizontal = 2
 grow_vertical = 0
 size_flags_vertical = 8
 theme = ExtResource("4_ay1j5")
-theme_override_font_sizes/font_size = 10
+theme_override_font_sizes/font_size = 15
 text = "HOME.COPYRIGHT"
 vertical_alignment = 2
 
@@ -67,16 +67,22 @@ stretch_mode = 5
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="PlayButton" type="TextureButton" parent="GuiMarginContainer/GuiHBoxContainer/HomeScreenVBoxContainer"]
-texture_filter = 6
+[node name="PlayMarginContainer" type="MarginContainer" parent="GuiMarginContainer/GuiHBoxContainer/HomeScreenVBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 2.5
+theme_override_constants/margin_top = 40
+theme_override_constants/margin_bottom = 40
+
+[node name="PlayButton" type="TextureButton" parent="GuiMarginContainer/GuiHBoxContainer/HomeScreenVBoxContainer/PlayMarginContainer"]
+texture_filter = 6
+layout_mode = 2
+size_flags_vertical = 3
 texture_normal = ExtResource("3_0g4o3")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="PlayLabel" type="Label" parent="GuiMarginContainer/GuiHBoxContainer/HomeScreenVBoxContainer/PlayButton"]
+[node name="PlayLabel" type="Label" parent="GuiMarginContainer/GuiHBoxContainer/HomeScreenVBoxContainer/PlayMarginContainer/PlayButton"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -93,7 +99,13 @@ horizontal_alignment = 1
 vertical_alignment = 1
 uppercase = true
 
-[node name="SettingsButton" type="TextureButton" parent="GuiMarginContainer/GuiHBoxContainer/HomeScreenVBoxContainer"]
+[node name="SettingsMarginContainer" type="MarginContainer" parent="GuiMarginContainer/GuiHBoxContainer/HomeScreenVBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/margin_left = 30
+theme_override_constants/margin_right = 30
+
+[node name="SettingsButton" type="TextureButton" parent="GuiMarginContainer/GuiHBoxContainer/HomeScreenVBoxContainer/SettingsMarginContainer"]
 texture_filter = 6
 layout_mode = 2
 size_flags_vertical = 3
@@ -101,7 +113,7 @@ texture_normal = ExtResource("5_db01i")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="SettingsLabel" type="Label" parent="GuiMarginContainer/GuiHBoxContainer/HomeScreenVBoxContainer/SettingsButton"]
+[node name="SettingsLabel" type="Label" parent="GuiMarginContainer/GuiHBoxContainer/HomeScreenVBoxContainer/SettingsMarginContainer/SettingsButton"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -118,5 +130,5 @@ horizontal_alignment = 1
 vertical_alignment = 1
 uppercase = true
 
-[connection signal="pressed" from="GuiMarginContainer/GuiHBoxContainer/HomeScreenVBoxContainer/PlayButton" to="." method="_on_play_button_pressed"]
-[connection signal="pressed" from="GuiMarginContainer/GuiHBoxContainer/HomeScreenVBoxContainer/SettingsButton" to="." method="_on_parameter_button_pressed"]
+[connection signal="pressed" from="GuiMarginContainer/GuiHBoxContainer/HomeScreenVBoxContainer/PlayMarginContainer/PlayButton" to="." method="_on_play_button_pressed"]
+[connection signal="pressed" from="GuiMarginContainer/GuiHBoxContainer/HomeScreenVBoxContainer/SettingsMarginContainer/SettingsButton" to="." method="_on_parameter_button_pressed"]

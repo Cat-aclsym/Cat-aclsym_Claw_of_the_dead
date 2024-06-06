@@ -26,40 +26,41 @@ mouse_filter = 2
 script = ExtResource("1_rwo5b")
 
 [node name="HUDMarginContainer" type="MarginContainer" parent="."]
+custom_minimum_size = Vector2(0, 135)
 layout_mode = 1
-offset_right = 200.0
-offset_bottom = 100.0
-theme_override_constants/margin_left = 10
+anchors_preset = -1
+anchor_right = 0.3
+anchor_bottom = 0.3
+size_flags_horizontal = 3
+theme_override_constants/margin_left = 5
 theme_override_constants/margin_top = 10
 
 [node name="HUDVBoxContainer" type="VBoxContainer" parent="HUDMarginContainer"]
 layout_mode = 2
+theme_override_constants/separation = 10
 
 [node name="HeartTextureRect" type="TextureRect" parent="HUDMarginContainer/HUDVBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
-size_flags_stretch_ratio = 0.8
 texture = ExtResource("6_utioc")
 expand_mode = 3
 stretch_mode = 4
 
 [node name="HealthMarginContainer" type="MarginContainer" parent="HUDMarginContainer/HUDVBoxContainer/HeartTextureRect"]
 layout_mode = 1
-anchors_preset = 15
+anchors_preset = -1
+anchor_top = 0.2
 anchor_right = 1.0
-anchor_bottom = 1.0
+anchor_bottom = 0.8
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/margin_left = 21
-theme_override_constants/margin_right = 30
-theme_override_constants/margin_bottom = 8
+theme_override_constants/margin_left = 30
 
 [node name="HealthTextureProgressBar" type="TextureProgressBar" parent="HUDMarginContainer/HUDVBoxContainer/HeartTextureRect/HealthMarginContainer"]
 z_index = -1
 z_as_relative = false
 texture_filter = 6
 layout_mode = 2
-size_flags_vertical = 3
 max_value = 10.0
 rounded = true
 nine_patch_stretch = true
@@ -73,56 +74,56 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/margin_right = -5
-theme_override_constants/margin_bottom = -3
 
 [node name="ShadowHealthTextureRect" type="TextureRect" parent="HUDMarginContainer/HUDVBoxContainer/HeartTextureRect/HealthMarginContainer/HealthTextureProgressBar/ShadowHealthMarginContainer"]
 z_index = -2
 z_as_relative = false
 layout_mode = 2
 texture = ExtResource("2_vf2yj")
-expand_mode = 3
+expand_mode = 2
 
 [node name="HealthLabel" type="Label" parent="HUDMarginContainer/HUDVBoxContainer/HeartTextureRect/HealthMarginContainer/HealthTextureProgressBar"]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-grow_horizontal = 2
-grow_vertical = 2
-size_flags_horizontal = 4
-theme = ExtResource("4_lp5e5")
-theme_override_font_sizes/font_size = 20
-text = "INGAMEHUD.HEALTH.LABEL"
-
-[node name="CoinsWavesMarginContainer" type="MarginContainer" parent="HUDMarginContainer/HUDVBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-theme_override_constants/margin_bottom = -15
-
-[node name="CoinsWavesHBoxContainer" type="HBoxContainer" parent="HUDMarginContainer/HUDVBoxContainer/CoinsWavesMarginContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-theme_override_constants/separation = -75
-
-[node name="CoinsTextureRect" type="TextureRect" parent="HUDMarginContainer/HUDVBoxContainer/CoinsWavesMarginContainer/CoinsWavesHBoxContainer"]
-texture_filter = 6
-layout_mode = 2
-size_flags_horizontal = 2
-texture = ExtResource("5_pplug")
-expand_mode = 3
-stretch_mode = 4
-
-[node name="CoinsLabel" type="Label" parent="HUDMarginContainer/HUDVBoxContainer/CoinsWavesMarginContainer/CoinsWavesHBoxContainer/CoinsTextureRect"]
-texture_filter = 1
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+size_flags_horizontal = 4
+theme = ExtResource("4_lp5e5")
+theme_override_font_sizes/font_size = 25
+text = "INGAMEHUD.HEALTH.LABEL"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CoinsWavesMarginContainer" type="MarginContainer" parent="HUDMarginContainer/HUDVBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="CoinsWavesHBoxContainer" type="HBoxContainer" parent="HUDMarginContainer/HUDVBoxContainer/CoinsWavesMarginContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 10
+
+[node name="CoinsTextureRect" type="TextureRect" parent="HUDMarginContainer/HUDVBoxContainer/CoinsWavesMarginContainer/CoinsWavesHBoxContainer"]
+texture_filter = 6
+layout_mode = 2
+texture = ExtResource("5_pplug")
+expand_mode = 3
+stretch_mode = 4
+
+[node name="MarginContainer" type="MarginContainer" parent="HUDMarginContainer/HUDVBoxContainer/CoinsWavesMarginContainer/CoinsWavesHBoxContainer/CoinsTextureRect"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="CoinsLabel" type="Label" parent="HUDMarginContainer/HUDVBoxContainer/CoinsWavesMarginContainer/CoinsWavesHBoxContainer/CoinsTextureRect/MarginContainer"]
+texture_filter = 1
+layout_mode = 2
+size_flags_vertical = 1
 theme = ExtResource("4_lp5e5")
 theme_override_fonts/font = ExtResource("6_144fq")
 theme_override_font_sizes/font_size = 17
@@ -133,18 +134,21 @@ vertical_alignment = 2
 [node name="WavesTextureRect" type="TextureRect" parent="HUDMarginContainer/HUDVBoxContainer/CoinsWavesMarginContainer/CoinsWavesHBoxContainer"]
 texture_filter = 6
 layout_mode = 2
-size_flags_horizontal = 2
 texture = ExtResource("6_bwcu0")
 expand_mode = 3
 stretch_mode = 4
 
-[node name="WavesLabel" type="Label" parent="HUDMarginContainer/HUDVBoxContainer/CoinsWavesMarginContainer/CoinsWavesHBoxContainer/WavesTextureRect"]
+[node name="MarginContainer" type="MarginContainer" parent="HUDMarginContainer/HUDVBoxContainer/CoinsWavesMarginContainer/CoinsWavesHBoxContainer/WavesTextureRect"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="WavesLabel" type="Label" parent="HUDMarginContainer/HUDVBoxContainer/CoinsWavesMarginContainer/CoinsWavesHBoxContainer/WavesTextureRect/MarginContainer"]
+layout_mode = 2
+size_flags_vertical = 1
 theme = ExtResource("4_lp5e5")
 theme_override_fonts/font = ExtResource("6_144fq")
 theme_override_font_sizes/font_size = 17

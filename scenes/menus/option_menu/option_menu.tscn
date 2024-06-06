@@ -26,20 +26,17 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-scale = Vector2(1.0025, 0.99999)
 script = ExtResource("1_rumc7")
 
 [node name="GuiMarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
+anchors_preset = -1
+anchor_left = 0.05
+anchor_top = 0.05
+anchor_right = 0.95
+anchor_bottom = 0.95
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/margin_left = 60
-theme_override_constants/margin_top = 20
-theme_override_constants/margin_right = 60
-theme_override_constants/margin_bottom = 20
 
 [node name="BackgroundTextureRect" type="TextureRect" parent="GuiMarginContainer"]
 layout_mode = 2
@@ -57,7 +54,6 @@ theme_override_constants/margin_bottom = 15
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-size_flags_stretch_ratio = 12.0
 alignment = 1
 
 [node name="TopLineHBoxContainer" type="HBoxContainer" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer"]
@@ -66,10 +62,9 @@ layout_mode = 2
 [node name="SettingsLabel" type="Label" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/TopLineHBoxContainer"]
 texture_filter = 5
 layout_mode = 2
-size_flags_horizontal = 0
 theme = ExtResource("3_mxk3u")
 theme_override_fonts/font = ExtResource("5_o6v5m")
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 25
 text = "SETTINGS.TEXT.LABEL"
 
 [node name="AspectRatioContainer" type="AspectRatioContainer" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/TopLineHBoxContainer"]
@@ -131,7 +126,7 @@ texture_filter = 5
 layout_mode = 2
 theme = ExtResource("3_mxk3u")
 theme_override_fonts/font = ExtResource("5_o6v5m")
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 25
 text = "SOCIALS.TEXT.LABEL"
 
 [node name="SocialsHBoxContainer" type="HBoxContainer" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer"]
@@ -178,7 +173,7 @@ texture_filter = 5
 layout_mode = 2
 theme = ExtResource("3_mxk3u")
 theme_override_fonts/font = ExtResource("5_o6v5m")
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 25
 text = "MISC.TEXT.LABEL"
 
 [node name="MiscHBoxContainer" type="HBoxContainer" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer"]
