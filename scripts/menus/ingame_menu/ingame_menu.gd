@@ -7,10 +7,10 @@ class_name IngameMenu
 extends Control
 
 
-@onready var CoinsRichTextLabel: Label = $HUDMarginContainer/HUDVBoxContainer/CoinsWavesMarginContainer/CoinsWavesHBoxContainer/CoinsTextureRect/CoinsLabel
+@onready var CoinsRichTextLabel: Label = $HUDMarginContainer/HUDVBoxContainer/CoinsWavesMarginContainer/CoinsWavesHBoxContainer/CoinsTextureRect/MarginContainer/CoinsLabel
 @onready var HealthRichTextLabel: Label = $HUDMarginContainer/HUDVBoxContainer/HeartTextureRect/HealthMarginContainer/HealthTextureProgressBar/HealthLabel
 @onready var HealthTextureProgressBar: TextureProgressBar = $HUDMarginContainer/HUDVBoxContainer/HeartTextureRect/HealthMarginContainer/HealthTextureProgressBar
-@onready var WavesRichTextLabel: Label = $HUDMarginContainer/HUDVBoxContainer/CoinsWavesMarginContainer/CoinsWavesHBoxContainer/WavesTextureRect/WavesLabel
+@onready var WavesRichTextLabel: Label = $HUDMarginContainer/HUDVBoxContainer/CoinsWavesMarginContainer/CoinsWavesHBoxContainer/WavesTextureRect/MarginContainer/WavesLabel
 @onready var NewWaveCountLabel: Label = $NewWaveCountLabel
 @onready var default_coins_text := CoinsRichTextLabel.text
 @onready var default_health_text := HealthRichTextLabel.text
@@ -22,6 +22,8 @@ func _ready() -> void:
 
 
 func _process(_delta: float) -> void:
+	
+	
 	if (ILevel.current_level == null): return
 	if (!visible): show()
 

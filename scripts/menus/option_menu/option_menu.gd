@@ -55,11 +55,11 @@ func _on_discord_texture_button_pressed():
 
 
 func _on_update_texture_button_pressed():
-	pass # Replace with function body.
+	pass
 
 
 func _on_rgpd_texture_button_pressed():
-	pass # Replace with function body.
+	pass
 
 
 func _on_contact_texture_button_pressed():
@@ -69,3 +69,5 @@ func _on_contact_texture_button_pressed():
 func _on_close_texture_button_pressed():
 	menu_option_close.emit()
 	queue_free()
+
+
