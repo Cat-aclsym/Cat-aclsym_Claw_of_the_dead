@@ -5,7 +5,7 @@ var buttons: Dictionary = {}
 @onready var container: VBoxContainer = $GuiMarginContainer/MenuMarginContainer/LevelSelectVBoxContainer
 
 # core
-func _ready() -> void: 
+func _ready() -> void:
 	_initialize()
 
 
@@ -29,8 +29,6 @@ func _initialize() -> void:
 			get_tree().get_root().add_child(level)
 			level.initialize(buttons[bt])
 			ILevel.current_level = level
-			
+
 			Global.hud.start_level()
 		)
-
-		# signals
