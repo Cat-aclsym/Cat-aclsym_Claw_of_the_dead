@@ -35,7 +35,6 @@ size_flags_horizontal = 4
 size_flags_vertical = 4
 
 [node name="InGameMenu" parent="." instance=ExtResource("7_ev4cy")]
-visible = false
 
 [node name="PauseButton2" type="Button" parent="."]
 process_mode = 3

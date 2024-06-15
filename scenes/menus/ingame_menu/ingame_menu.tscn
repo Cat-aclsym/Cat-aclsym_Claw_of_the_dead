@@ -16,6 +16,7 @@ content_margin_top = 32.0
 content_margin_right = 32.0
 
 [node name="IngameMenu" type="Control"]
+texture_filter = 6
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -31,6 +32,8 @@ layout_mode = 1
 anchors_preset = -1
 anchor_right = 0.3
 anchor_bottom = 0.3
+offset_right = 30.4
+offset_bottom = 25.6
 size_flags_horizontal = 3
 theme_override_constants/margin_left = 5
 theme_override_constants/margin_top = 10
@@ -38,6 +41,7 @@ theme_override_constants/margin_top = 10
 [node name="HUDVBoxContainer" type="VBoxContainer" parent="HUDMarginContainer"]
 layout_mode = 2
 theme_override_constants/separation = 10
+alignment = 2
 
 [node name="HeartTextureRect" type="TextureRect" parent="HUDMarginContainer/HUDVBoxContainer"]
 layout_mode = 2
@@ -56,37 +60,51 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/margin_left = 30
 
-[node name="HealthTextureProgressBar" type="TextureProgressBar" parent="HUDMarginContainer/HUDVBoxContainer/HeartTextureRect/HealthMarginContainer"]
+[node name="BottomHealthTextureRect" type="TextureRect" parent="HUDMarginContainer/HUDVBoxContainer/HeartTextureRect/HealthMarginContainer"]
 z_index = -1
 z_as_relative = false
-texture_filter = 6
 layout_mode = 2
-max_value = 10.0
-rounded = true
-nine_patch_stretch = true
-texture_under = ExtResource("3_mun0q")
-texture_progress = ExtResource("3_ngf6a")
+texture = ExtResource("3_mun0q")
+expand_mode = 2
 
-[node name="ShadowHealthMarginContainer" type="MarginContainer" parent="HUDMarginContainer/HUDVBoxContainer/HeartTextureRect/HealthMarginContainer/HealthTextureProgressBar"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+[node name="ShaodHealthMarginContainer" type="MarginContainer" parent="HUDMarginContainer/HUDVBoxContainer/HeartTextureRect/HealthMarginContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = -5
+theme_override_constants/margin_bottom = -10
 
-[node name="ShadowHealthTextureRect" type="TextureRect" parent="HUDMarginContainer/HUDVBoxContainer/HeartTextureRect/HealthMarginContainer/HealthTextureProgressBar/ShadowHealthMarginContainer"]
+[node name="ShadowHealthTextureRect" type="TextureRect" parent="HUDMarginContainer/HUDVBoxContainer/HeartTextureRect/HealthMarginContainer/ShaodHealthMarginContainer"]
 z_index = -2
 z_as_relative = false
 layout_mode = 2
 texture = ExtResource("2_vf2yj")
 expand_mode = 2
 
-[node name="HealthLabel" type="Label" parent="HUDMarginContainer/HUDVBoxContainer/HeartTextureRect/HealthMarginContainer/HealthTextureProgressBar"]
+[node name="MarginContainer" type="MarginContainer" parent="HUDMarginContainer/HUDVBoxContainer/HeartTextureRect/HealthMarginContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 8
+
+[node name="HealthTextureProgressBar" type="TextureProgressBar" parent="HUDMarginContainer/HUDVBoxContainer/HeartTextureRect/HealthMarginContainer/MarginContainer"]
+z_index = -1
+z_as_relative = false
+layout_mode = 2
+max_value = 10.0
+value = 9.0
+rounded = true
+nine_patch_stretch = true
+texture_progress = ExtResource("3_ngf6a")
+
+[node name="HealthLabel" type="Label" parent="HUDMarginContainer/HUDVBoxContainer/HeartTextureRect/HealthMarginContainer/MarginContainer/HealthTextureProgressBar"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_top = 5.0
+offset_bottom = 5.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 4
