@@ -68,4 +68,3 @@ func _on_contact_texture_button_pressed():
 
 func _on_close_texture_button_pressed():
 	menu_close.emit()
-	queue_free()
