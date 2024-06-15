@@ -33,7 +33,7 @@ func _ready() -> void:
 
 	connect(
 		"wave_end",
-		 Global.hud.in_game_menu_le_vrai.NewWaveCountLabel.start
+		 Global.hud.in_game_menu.NewWaveCountLabel.start
 	)
 
 
