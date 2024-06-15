@@ -1,8 +1,11 @@
+class_name LevelsMenu
 extends Control
 
-var buttons: Dictionary = {}
+signal menu_close
+signal level_selected
 
 @onready var container: VBoxContainer = $GuiMarginContainer/MenuMarginContainer/LevelSelectVBoxContainer
+var buttons: Dictionary = {}
 
 # core
 func _ready() -> void:
@@ -31,4 +34,5 @@ func _initialize() -> void:
 			ILevel.current_level = level
 
 			Global.hud.start_level()
+			emit_signal("level_selected")
 		)

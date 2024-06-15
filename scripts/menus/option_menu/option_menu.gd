@@ -8,7 +8,7 @@
 class_name OptionMenu
 extends Control
 
-signal menu_option_close
+signal menu_close
 
 @onready var musicTextureButton: TextureButton = $GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/SettingsHBoxContainer/MusicAspectRatioContainer/MusicTextureButton
 @onready var soundTextureButton: TextureButton = $GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/SettingsHBoxContainer/SoundAspectRatioContainer/SoundTextureButton
@@ -67,7 +67,5 @@ func _on_contact_texture_button_pressed():
 
 
 func _on_close_texture_button_pressed():
-	menu_option_close.emit()
+	menu_close.emit()
 	queue_free()
-
-

@@ -30,7 +30,7 @@ var dead_enemies: int = 0
 # core
 func _ready() -> void:
 	_load_groups()
-	
+
 	connect(
 		"wave_end",
 		 Global.hud.in_game_menu_le_vrai.NewWaveCountLabel.start
@@ -42,10 +42,10 @@ func start_wave() -> void:
 	Log.info("{0} start".format([name]))
 	if (!is_ready):
 		return
-	
+
 	wave_start.emit()
 	_start_next_group()
-	
+
 
 func set_paths(in_paths: Array[Path2D]) -> void:
 	paths = in_paths
@@ -55,28 +55,28 @@ func set_paths(in_paths: Array[Path2D]) -> void:
 # internal
 func _start_next_group() -> void:
 	current_group += 1
-	
+
 	if (current_group == groups_count):
 		# wait for last enemy to dies
 		return
-	
+
 	current_enemy = -1
 	enemies_to_spawn = groups[current_group].enemies
-	
+
 	timer.wait_time = groups[current_group].in_delay
 	timer.start()
-	
+
 
 func _load_groups() -> void:
 	var children: Array = get_children()
-	
+
 	for child in children:
 		if (child is EnemyGroup):
 			groups.append(child as EnemyGroup)
 			enemies_total_count += child.enemies.size()
-	
+
 	groups_count = groups.size()
-	
+
 	if (groups_count == 0):
 		Log.warning("{0} don't have group to spawn".format([name]))
 
@@ -84,24 +84,24 @@ func _load_groups() -> void:
 # signals
 func _enemy_dies() -> void:
 	dead_enemies += 1
-	
+
 	if (dead_enemies == enemies_total_count):
 		Log.info("{0} end".format([name]))
 		wave_end.emit(delay)
-		
+
 
 func _on_timer_timeout() -> void:
 	if (!is_ready):
 		return
-		
+
 	current_enemy += 1
-	
+
 	if (current_enemy == enemies_to_spawn.size()):
 		# TODO : wait group.out_delay seconds before start next group
 		timer.stop()
 		_start_next_group()
 		return
-	
+
 	var enemy: IEnemy = ScenesLoader.get_enemy_scene(enemies_to_spawn[current_enemy]).instantiate()
 	enemy.connect("die", _enemy_dies)
 	IEnemySpawner.spawn_enemy(paths[randi() % paths.size()], enemy)

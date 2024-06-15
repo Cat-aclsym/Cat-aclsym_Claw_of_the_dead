@@ -12,16 +12,23 @@ extends Control
 @onready var levels_menu: PackedScene = preload("res://scenes/menus/levels_menu/levels_menu.tscn")
 @onready var gui_margin_container: MarginContainer = $GuiMarginContainer
 
+var option_menu_instance: OptionMenu
+var levels_menu_instance: LevelsMenu
+
 func _on_play_button_pressed():
-	get_tree().get_root().add_child(levels_menu.instantiate())
-	queue_free()
+	gui_margin_container.visible = false
+	levels_menu_instance = levels_menu.instantiate()
+	add_child(levels_menu_instance)
+	levels_menu_instance.menu_close.connect(_on_menu_close.bind(self))
+	levels_menu_instance.level_selected.connect(_on_menu_close.bind(self))
 
 func _on_parameter_button_pressed():
 	gui_margin_container.visible = false
-	var option_menu_child: Node = option_menu.instantiate()
-	add_child(option_menu_child)
-	option_menu_child.menu_option_close.connect(_on_menu_option_close)
+	option_menu_instance = option_menu.instantiate()
+	add_child(option_menu_instance)
+	option_menu_instance.menu_close.connect(_on_menu_close.bind(self))
 
 
-func _on_menu_option_close():
+func _on_menu_close(menu: Control):
 	gui_margin_container.visible = true
+	menu.queue_free()

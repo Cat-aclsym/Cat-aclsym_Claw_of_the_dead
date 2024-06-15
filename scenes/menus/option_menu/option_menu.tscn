@@ -1,14 +1,13 @@
-[gd_scene load_steps=18 format=3 uid="uid://doml7biiq8g2o"]
+[gd_scene load_steps=17 format=3 uid="uid://doml7biiq8g2o"]
 
 [ext_resource type="Script" path="res://scripts/menus/option_menu/option_menu.gd" id="1_rumc7"]
 [ext_resource type="Texture2D" uid="uid://bel17gs3ijyb1" path="res://assets/backgrounds/Fond Menu 02@2x.png" id="2_clod3"]
 [ext_resource type="Texture2D" uid="uid://cj3134gnhq33s" path="res://assets/icons/Bouton close@2x.png" id="2_vd677"]
 [ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="3_mxk3u"]
 [ext_resource type="Texture2D" uid="uid://b1tevrke0h3pb" path="res://assets/icons/Bouton Musique@2x.png" id="4_jywym"]
-[ext_resource type="Texture2D" uid="uid://46ywfvlxmd8c" path="res://assets/icons/noteDeMusiqueCroix.png" id="5_an6v6"]
-[ext_resource type="FontFile" uid="uid://ddo3rokwsadq0" path="res://assets/resources/fonts/DotGothic16-Regular.ttf" id="5_o6v5m"]
+[ext_resource type="Texture2D" uid="uid://dmr84ptkf8v6" path="res://assets/icons/NoMusic.png" id="6_2o3v8"]
 [ext_resource type="Texture2D" uid="uid://d03x6kldjjybo" path="res://assets/icons/Bouton Sons@2x.png" id="6_168q2"]
-[ext_resource type="Texture2D" uid="uid://cbskr3qu6rty8" path="res://assets/icons/speakerCroix.png" id="7_gtwn2"]
+[ext_resource type="Texture2D" uid="uid://dscxwuiuolg74" path="res://assets/icons/NoSound.png" id="8_0pr6m"]
 [ext_resource type="Texture2D" uid="uid://dq2j3cnac1e5v" path="res://assets/icons/Bouton Langue@2x.png" id="8_iii62"]
 [ext_resource type="Texture2D" uid="uid://btf6mt36qkci8" path="res://assets/icons/Bouton Insta@2x.png" id="9_vb5lp"]
 [ext_resource type="Texture2D" uid="uid://deg1h1e2vrdlv" path="res://assets/icons/Bouton X@2x.png" id="10_droxh"]
@@ -46,9 +45,9 @@ expand_mode = 1
 [node name="MenuMarginContainer" type="MarginContainer" parent="GuiMarginContainer"]
 layout_mode = 2
 theme_override_constants/margin_left = 20
-theme_override_constants/margin_top = 10
+theme_override_constants/margin_top = 20
 theme_override_constants/margin_right = 5
-theme_override_constants/margin_bottom = 15
+theme_override_constants/margin_bottom = 20
 
 [node name="MenuRowVBoxContainer" type="VBoxContainer" parent="GuiMarginContainer/MenuMarginContainer"]
 layout_mode = 2
@@ -63,8 +62,8 @@ layout_mode = 2
 texture_filter = 5
 layout_mode = 2
 theme = ExtResource("3_mxk3u")
-theme_override_fonts/font = ExtResource("5_o6v5m")
-theme_override_font_sizes/font_size = 25
+theme_type_variation = &"HeaderMedium"
+theme_override_font_sizes/font_size = 28
 text = "SETTINGS.TEXT.LABEL"
 
 [node name="AspectRatioContainer" type="AspectRatioContainer" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/TopLineHBoxContainer"]
@@ -93,7 +92,7 @@ size_flags_horizontal = 3
 texture_filter = 6
 layout_mode = 2
 texture_normal = ExtResource("4_jywym")
-texture_pressed = ExtResource("5_an6v6")
+texture_pressed = ExtResource("6_2o3v8")
 ignore_texture_size = true
 stretch_mode = 5
 
@@ -105,7 +104,7 @@ size_flags_horizontal = 3
 texture_filter = 6
 layout_mode = 2
 texture_normal = ExtResource("6_168q2")
-texture_pressed = ExtResource("7_gtwn2")
+texture_pressed = ExtResource("8_0pr6m")
 ignore_texture_size = true
 stretch_mode = 5
 
@@ -125,8 +124,8 @@ stretch_mode = 5
 texture_filter = 5
 layout_mode = 2
 theme = ExtResource("3_mxk3u")
-theme_override_fonts/font = ExtResource("5_o6v5m")
-theme_override_font_sizes/font_size = 25
+theme_type_variation = &"HeaderMedium"
+theme_override_font_sizes/font_size = 28
 text = "SOCIALS.TEXT.LABEL"
 
 [node name="SocialsHBoxContainer" type="HBoxContainer" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer"]
@@ -172,8 +171,8 @@ stretch_mode = 5
 texture_filter = 5
 layout_mode = 2
 theme = ExtResource("3_mxk3u")
-theme_override_fonts/font = ExtResource("5_o6v5m")
-theme_override_font_sizes/font_size = 25
+theme_type_variation = &"HeaderMedium"
+theme_override_font_sizes/font_size = 28
 text = "MISC.TEXT.LABEL"
 
 [node name="MiscHBoxContainer" type="HBoxContainer" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer"]
@@ -185,9 +184,11 @@ layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="UpdateTextureButton" type="TextureButton" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/MiscHBoxContainer/UpdateAspectRatioContainer"]
+modulate = Color(1, 1, 1, 0.313726)
 texture_filter = 6
 layout_mode = 2
 size_flags_horizontal = 3
+disabled = true
 texture_normal = ExtResource("12_esjhy")
 ignore_texture_size = true
 stretch_mode = 5
@@ -197,9 +198,11 @@ layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="RgpdTextureButton" type="TextureButton" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/MiscHBoxContainer/RgpdAspectRatioContainer2"]
+modulate = Color(1, 1, 1, 0.313726)
 texture_filter = 6
 layout_mode = 2
 size_flags_horizontal = 3
+disabled = true
 texture_normal = ExtResource("13_gyr4v")
 ignore_texture_size = true
 stretch_mode = 5

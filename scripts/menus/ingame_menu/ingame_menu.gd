@@ -22,8 +22,6 @@ func _ready() -> void:
 
 
 func _process(_delta: float) -> void:
-
-
 	if (ILevel.current_level == null): return
 	if (!visible): show()
 
