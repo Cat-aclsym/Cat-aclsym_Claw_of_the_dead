@@ -66,14 +66,14 @@ layout_mode = 2
 texture = ExtResource("3_mun0q")
 expand_mode = 2
 
-[node name="ShaodHealthMarginContainer" type="MarginContainer" parent="HUDMarginContainer/HUDVBoxContainer/HeartTextureRect/HealthMarginContainer"]
+[node name="ShadowHealthMarginContainer" type="MarginContainer" parent="HUDMarginContainer/HUDVBoxContainer/HeartTextureRect/HealthMarginContainer"]
 layout_mode = 2
 theme_override_constants/margin_left = 5
 theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = -5
 theme_override_constants/margin_bottom = -10
 
-[node name="ShadowHealthTextureRect" type="TextureRect" parent="HUDMarginContainer/HUDVBoxContainer/HeartTextureRect/HealthMarginContainer/ShaodHealthMarginContainer"]
+[node name="ShadowHealthTextureRect" type="TextureRect" parent="HUDMarginContainer/HUDVBoxContainer/HeartTextureRect/HealthMarginContainer/ShadowHealthMarginContainer"]
 z_index = -2
 z_as_relative = false
 layout_mode = 2
