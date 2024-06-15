@@ -41,6 +41,10 @@ window/stretch/aspect="keep_height"
 
 enabled=PackedStringArray("res://addons/dialogue_manager/plugin.cfg")
 
+[gui]
+
+theme/custom="res://assets/resources/themes/generic.tres"
+
 [input]
 
 fire={
