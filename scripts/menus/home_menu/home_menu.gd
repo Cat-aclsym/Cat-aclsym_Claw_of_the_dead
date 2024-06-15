@@ -20,7 +20,11 @@ func _on_play_button_pressed():
 	levels_menu_instance = levels_menu.instantiate()
 	add_child(levels_menu_instance)
 	levels_menu_instance.menu_close.connect(_on_menu_close.bind(levels_menu_instance))
-	levels_menu_instance.level_selected.connect(_on_menu_close.bind(levels_menu_instance))
+	levels_menu_instance.level_selected.connect(
+	func() -> void:
+		_on_menu_close(levels_menu_instance)
+		visible = false
+	)
 
 func _on_parameter_button_pressed():
 	gui_margin_container.visible = false
