@@ -16,8 +16,9 @@ extends Control
 @onready var default_health_text := HealthRichTextLabel.text
 @onready var default_waves_text := WavesRichTextLabel.text
 
+@onready var ConstructionAnimationPlayer: AnimationPlayer = $AnimationPlayer
 @onready var ConstructionMenu: PanelContainer = $VBoxContainer/PanelContainer
-@onready var TowerList: HBoxContainer = $VBoxContainer/PanelContainer/HBoxContainer
+@onready var TowerList: HBoxContainer = $VBoxContainer/PanelContainer/MarginContainer/HBoxContainer
 
 var _is_ready: bool = false
 
@@ -25,6 +26,11 @@ var _is_ready: bool = false
 func _ready() -> void:
 	hide()
 
+	ConstructionAnimationPlayer.animation_finished.connect(
+	func(_name: String) -> void:
+		if _name == "RESET" and ConstructionMenu.visible:
+			ConstructionMenu.visible = false
+	)
 
 func _process(_delta: float) -> void:
 	if (!_is_ready): return
@@ -47,9 +53,13 @@ func _update() -> void:
 
 # signals
 func _on_build_button_pressed() -> void:
-	ConstructionMenu.visible = !ConstructionMenu.visible
-
-	if !ConstructionMenu.visible:
+	if ConstructionMenu.visible:
+		Log.info("Hiding construction menu")
+		ConstructionAnimationPlayer.play("RESET")
+	else:
+		Log.info("Showing construction menu")
+		ConstructionAnimationPlayer.play("show_tower_list")
+		ConstructionMenu.visible = true
 		return
 
 	for tower_card in TowerList.get_children():

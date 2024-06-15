@@ -1,13 +1,15 @@
-class_name TowerCard extends MarginContainer
+class_name TowerCard
+extends MarginContainer
 
 @export var tower: PackedScene = null
 
 var _tower: ITower = null
-var _cost: int 
+var _cost: int
 
 @onready var title_label: Label = $VBoxContainer/Label
 @onready var texture: TextureRect = $VBoxContainer/TextureRect
-@onready var build_button: Button = $VBoxContainer/Button
+@onready var build_button: TextureButton = $VBoxContainer/Button
+@onready var text_price: Label = $VBoxContainer/Button/Label
 
 
 func _ready() -> void:
@@ -16,7 +18,7 @@ func _ready() -> void:
 
 
 func update() -> void:
-	build_button.text = "BUY {0}$".format([_cost])
+	text_price.text = "BUY {0}$".format([_cost])
 	build_button.disabled = ILevel.current_level.coins < _cost
 
 

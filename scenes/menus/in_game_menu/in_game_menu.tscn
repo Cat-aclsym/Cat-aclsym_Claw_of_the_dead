@@ -1,20 +1,87 @@
-[gd_scene load_steps=13 format=3 uid="uid://b5630xr4v607r"]
+[gd_scene load_steps=19 format=3 uid="uid://b5630xr4v607r"]
 
 [ext_resource type="Script" path="res://scripts/menus/in_game_menu/in_game_menu.gd" id="1_cuep3"]
 [ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="2_jel3x"]
 [ext_resource type="Texture2D" uid="uid://cml3pcp3ixa0k" path="res://assets/huds/Coeur.png" id="2_neukb"]
 [ext_resource type="Texture2D" uid="uid://bcvoasbjyvuy5" path="res://assets/huds/Barre de vie.png" id="3_g6v8d"]
-[ext_resource type="PackedScene" path="res://scenes/menus/in_game_menu/towe_card.tscn" id="3_mkldi"]
+[ext_resource type="PackedScene" uid="uid://h0drgd3amf85" path="res://scenes/menus/in_game_menu/tower_card.tscn" id="3_mkldi"]
 [ext_resource type="Texture2D" uid="uid://d33ngfvvwv501" path="res://assets/huds/Barre de vie ombre.png" id="4_4h2ri"]
 [ext_resource type="PackedScene" uid="uid://cq705nqdp8fnw" path="res://scenes/tower/first_tower.tscn" id="4_ro8fv"]
 [ext_resource type="Texture2D" uid="uid://cf3qgahrw8xo1" path="res://assets/huds/Vie@2x.png" id="5_hukgj"]
 [ext_resource type="Texture2D" uid="uid://dg0hpeoeleiff" path="res://assets/huds/Coins@2x.png" id="7_1sk4j"]
 [ext_resource type="Texture2D" uid="uid://bcga3gamtf11v" path="res://assets/huds/Waves@2x.png" id="8_ewojn"]
 [ext_resource type="Script" path="res://scripts/menus/in_game_menu/new_wave_count.gd" id="9_o6rym"]
+[ext_resource type="Texture2D" uid="uid://1mu5cdhd5hw8" path="res://assets/icons/build_button.png" id="10_sc2vu"]
+[ext_resource type="Texture2D" uid="uid://bel17gs3ijyb1" path="res://assets/backgrounds/Fond Menu 02@2x.png" id="11_p2vl4"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_0ju0r"]
 content_margin_top = 32.0
 content_margin_right = 32.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_f3r3y"]
+texture = ExtResource("11_p2vl4")
+texture_margin_top = 31.0
+expand_margin_left = 25.0
+expand_margin_right = 25.0
+expand_margin_bottom = 25.0
+modulate_color = Color(1, 1, 1, 0.784314)
+
+[sub_resource type="Animation" id="Animation_fpn5b"]
+length = 0.5
+tracks/0/type = "bezier"
+tracks/0/imported = false
+tracks/0/enabled = false
+tracks/0/path = NodePath("VBoxContainer:position:x")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0, 0, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 0.5)
+}
+tracks/1/type = "bezier"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("VBoxContainer:position:y")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(392, -0.25, 0, 0.25, 0, 555, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 0.5)
+}
+
+[sub_resource type="Animation" id="Animation_wc0kk"]
+resource_name = "show_tower_list"
+length = 0.5
+tracks/0/type = "bezier"
+tracks/0/imported = false
+tracks/0/enabled = false
+tracks/0/path = NodePath("VBoxContainer:position:x")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0, 0, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 0.5)
+}
+tracks/1/type = "bezier"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("VBoxContainer:position:y")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(555, -0.25, 0, 0.25, 0, 392, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 0.5)
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_omyie"]
+_data = {
+"RESET": SubResource("Animation_fpn5b"),
+"show_tower_list": SubResource("Animation_wc0kk")
+}
 
 [node name="InGameMenu" type="Control"]
 texture_filter = 6
@@ -36,8 +103,8 @@ anchor_bottom = 0.3
 offset_right = 30.4
 offset_bottom = 25.6
 size_flags_horizontal = 3
-theme_override_constants/margin_left = 5
-theme_override_constants/margin_top = 10
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 15
 
 [node name="HUDVBoxContainer" type="VBoxContainer" parent="HUDMarginContainer"]
 layout_mode = 2
@@ -206,25 +273,52 @@ anchors_preset = 12
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_top = -256.0
 grow_horizontal = 2
 grow_vertical = 0
+theme_override_constants/separation = -5
 
-[node name="BuildButton" type="Button" parent="VBoxContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 0
+size_flags_vertical = 8
+theme_override_constants/margin_left = 20
+
+[node name="BuildButton" type="TextureButton" parent="VBoxContainer/MarginContainer"]
+custom_minimum_size = Vector2(110, 90)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 8
 theme = ExtResource("2_jel3x")
-theme_override_font_sizes/font_size = 16
-text = "BUILD"
+toggle_mode = true
+texture_normal = ExtResource("10_sc2vu")
+ignore_texture_size = true
+stretch_mode = 4
 
 [node name="PanelContainer" type="PanelContainer" parent="VBoxContainer"]
-visible = false
+layout_mode = 2
+theme = ExtResource("2_jel3x")
+theme_override_styles/panel = SubResource("StyleBoxTexture_f3r3y")
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/PanelContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 30
+theme_override_constants/margin_top = 0
+theme_override_constants/margin_right = 30
+theme_override_constants/margin_bottom = 0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/PanelContainer/MarginContainer"]
 layout_mode = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/PanelContainer"]
-layout_mode = 2
-
-[node name="TowerCard" parent="VBoxContainer/PanelContainer/HBoxContainer" instance=ExtResource("3_mkldi")]
+[node name="TowerCard" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer" instance=ExtResource("3_mkldi")]
+texture_filter = 1
 layout_mode = 2
 tower = ExtResource("4_ro8fv")
 
-[connection signal="pressed" from="VBoxContainer/BuildButton" to="." method="_on_build_button_pressed"]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_omyie")
+}
+autoplay = "show_tower_list"
+
+[connection signal="pressed" from="VBoxContainer/MarginContainer/BuildButton" to="." method="_on_build_button_pressed"]
