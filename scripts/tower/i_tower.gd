@@ -59,7 +59,7 @@ func _ready():
 ## Function called every frame. Delta is the time since the last frame.
 ## @param _delta float - The time since the last frame.
 func _process(_delta: float) -> void:
-	if deactivate: # TODO : replace 'deactivate' by something more relavent 
+	if deactivate: # TODO : replace 'deactivate' by something more relavent
 		# tower is deactivate only when fixed to cursors
 		_update_z_index()
 		return

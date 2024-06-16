@@ -33,15 +33,34 @@ var _state: CURSOR_STATE = CURSOR_STATE.IDLE
 var _tower: ITower = null
 
 @onready var cursor: AnimatedSprite2D = $cursor
+@onready var PlaceHUD: CanvasLayer = $PlaceHUD
+@onready var PlaceHUDContent: BoxContainer = $PlaceHUD/HBoxContainer
 
 
 func _ready() -> void:
 	Global.cursor = self
 	visible = false
+	PlaceHUD.visible = false
 
 
 func _process(_delta: float) -> void:
 	_handle_state()
+
+
+func _input(event: InputEvent) -> void:
+	if _state == CURSOR_STATE.IDLE: return
+	elif event is InputEventScreenTouch:
+		if event.pressed:
+			_set_cursor_position(event.position)
+	elif event is InputEventMouseButton:
+		if event.button_index == MouseButton.MOUSE_BUTTON_WHEEL_UP:
+			_set_cursor_position()
+		elif event.button_index == MouseButton.MOUSE_BUTTON_WHEEL_DOWN:
+			_set_cursor_position()
+		if event.button_index == MouseButton.MOUSE_BUTTON_LEFT:
+			_set_cursor_position()
+		elif event.button_index == MouseButton.MOUSE_BUTTON_RIGHT:
+			_cancel_build()
 
 
 func change_state(new_state: CURSOR_STATE, args: Array = []) -> void:
@@ -81,8 +100,17 @@ func _handle_state() -> void:
 			_state_upgrade()
 
 
-func _state_idle() -> void:
-	pass
+func _set_cursor_position(position: Vector2 = get_global_mouse_position()) -> void:
+	var a: Vector2i = tm_ref.local_to_map(position)
+	var b: Vector2 = tm_ref.map_to_local(a)
+	b -= Vector2(0, 8)
+	cursor.position = b
+	cursor.visible = true
+	PlaceHUD.visible = true
+
+	PlaceHUD.offset = get_global_transform_with_canvas() * b
+	PlaceHUD.offset.x -= PlaceHUDContent.size.x / 2
+	PlaceHUD.offset.y += PlaceHUDContent.size.y / 2
 
 
 func _state_build(tower: ITower = null) -> void:
@@ -91,13 +119,8 @@ func _state_build(tower: ITower = null) -> void:
 		_tower = tower.duplicate()
 		_tower.deactivate = true
 		add_child(_tower)
-
-	# display cursor
-	cursor.visible = true
-	var a: Vector2i = tm_ref.local_to_map(get_global_mouse_position())
-	var b: Vector2 = tm_ref.map_to_local(a)
-	b -= Vector2(0, 8)
-	cursor.position = b
+		# Avoid placing tower same frame as the tower is selected
+		await get_tree().create_timer(0.1).timeout
 
 	# make tower ghost follow cursor
 	_tower.position = cursor.position - Vector2(0, 16)
@@ -108,11 +131,16 @@ func _state_build(tower: ITower = null) -> void:
 	else:
 		_tower.modulate = COLOR_KO
 
-	# handle inputs
-	if Input.is_action_just_pressed("lmb"):
-		_build()
-	if Input.is_action_just_pressed("rmb"):
-		_cancel_build()
+# handle inputs
+	if Input.is_action_just_pressed("place_tower"):
+		_set_cursor_position()
+#		_build()
+#	if Input.is_action_just_pressed("rmb"):
+#		_cancel_build()
+
+
+func _state_idle() -> void:
+	pass
 
 
 func _state_upgrade() -> void:
@@ -121,6 +149,7 @@ func _state_upgrade() -> void:
 
 func _cancel_build() -> void:
 	cursor.visible = false
+	PlaceHUD.visible = false
 	_tower.queue_free()
 	_tower = null
 	change_state(CURSOR_STATE.IDLE)
@@ -148,3 +177,11 @@ func _is_buildable(pos: Vector2) -> bool:
 	#Log.debug("atlas coords = {0}; buildable = {1}".format([atlas_coords, true]))
 
 	return true
+
+
+func _on_place_button_pressed() -> void:
+	_build()
+
+
+func _on_cancel_place_button_pressed() -> void:
+	_cancel_build()

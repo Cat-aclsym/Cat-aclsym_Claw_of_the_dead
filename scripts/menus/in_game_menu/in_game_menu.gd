@@ -97,3 +97,10 @@ func _on_pause_button_pressed():
 		Global.paused = true
 		var pause_menu_instance: PauseMenu = pause_menu.instantiate()
 		Global.hud.add_child(pause_menu_instance)
+
+
+func _on_place_button_pressed():
+	pass
+
+func _on_cancel_place_button_pressed():
+	pass

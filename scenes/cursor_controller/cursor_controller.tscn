@@ -1,7 +1,10 @@
-[gd_scene load_steps=8 format=3 uid="uid://ddcvda2tcbdq8"]
+[gd_scene load_steps=11 format=3 uid="uid://ddcvda2tcbdq8"]
 
 [ext_resource type="Script" path="res://scripts/cursor_controller/cursor_controller.gd" id="1_3aclw"]
 [ext_resource type="Texture2D" uid="uid://dn7sa2jf2kvor" path="res://assets/grid_placement/moving_arrow.png" id="2_8yjt0"]
+[ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="3_bj1wi"]
+[ext_resource type="Texture2D" uid="uid://1mu5cdhd5hw8" path="res://assets/icons/build_button.png" id="4_updrk"]
+[ext_resource type="Texture2D" uid="uid://nr3ul4jgyad0" path="res://assets/icons/Bouton Annuler.png" id="5_4oww3"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_xhnpy"]
 atlas = ExtResource("2_8yjt0")
@@ -46,3 +49,39 @@ script = ExtResource("1_3aclw")
 sprite_frames = SubResource("SpriteFrames_o400i")
 autoplay = "default"
 offset = Vector2(0, -3)
+
+[node name="PlaceHUD" type="CanvasLayer" parent="."]
+layer = 3
+
+[node name="HBoxContainer" type="HBoxContainer" parent="PlaceHUD"]
+offset_right = 180.0
+offset_bottom = 70.0
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="PlaceButton" type="TextureButton" parent="PlaceHUD/HBoxContainer"]
+custom_minimum_size = Vector2(80, 70)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 8
+theme = ExtResource("3_bj1wi")
+toggle_mode = true
+texture_normal = ExtResource("4_updrk")
+ignore_texture_size = true
+stretch_mode = 4
+
+[node name="CancelPlaceButton" type="TextureButton" parent="PlaceHUD/HBoxContainer"]
+custom_minimum_size = Vector2(80, 70)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 8
+theme = ExtResource("3_bj1wi")
+toggle_mode = true
+texture_normal = ExtResource("5_4oww3")
+ignore_texture_size = true
+stretch_mode = 4
+
+[connection signal="pressed" from="PlaceHUD/HBoxContainer/PlaceButton" to="." method="_on_place_button_pressed"]
+[connection signal="pressed" from="PlaceHUD/HBoxContainer/CancelPlaceButton" to="." method="_on_cancel_place_button_pressed"]
