@@ -17,6 +17,7 @@ extends Control
 @onready var default_waves_text := WavesRichTextLabel.text
 
 @onready var ConstructionAnimationPlayer: AnimationPlayer = $AnimationPlayer
+@onready var ConstructionWrapper: VBoxContainer = $VBoxContainer
 @onready var ConstructionMenu: PanelContainer = $VBoxContainer/PanelContainer
 @onready var TowerList: HBoxContainer = $VBoxContainer/PanelContainer/MarginContainer/HBoxContainer
 
@@ -35,8 +36,8 @@ func _ready() -> void:
 	)
 
 func _process(_delta: float) -> void:
-	if (!_is_ready): return
-	if (!visible): show()
+	if not _is_ready: return
+	if not visible: show()
 
 	CoinsRichTextLabel.text = tr(default_coins_text) % ILevel.current_level.coins
 	HealthRichTextLabel.text = tr(default_health_text) % (str(ILevel.current_level.health) + "/10")
@@ -75,8 +76,12 @@ func load_ui() -> void:
 
 	_is_ready = true
 	visible = true
-	ILevel.current_level.connect("stats_updated", _update)
+	ILevel.current_level.stats_updated.connect(_update)
 	_update()
+
+	## Fix, the construction wrapper is not at the bottom of the screen but should be
+	var construction_wrapper_y: float = get_viewport_rect().size.y - (ConstructionWrapper.size.y + 5)
+	ConstructionWrapper.position.y = construction_wrapper_y
 
 
 func unload_ui() -> void:

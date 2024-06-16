@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://b5630xr4v607r"]
+[gd_scene load_steps=20 format=3 uid="uid://b5630xr4v607r"]
 
 [ext_resource type="Script" path="res://scripts/menus/in_game_menu/in_game_menu.gd" id="1_cuep3"]
 [ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="2_jel3x"]
@@ -14,6 +14,7 @@
 [ext_resource type="Script" path="res://scripts/menus/in_game_menu/new_wave_count.gd" id="9_o6rym"]
 [ext_resource type="Texture2D" uid="uid://1mu5cdhd5hw8" path="res://assets/icons/build_button.png" id="10_sc2vu"]
 [ext_resource type="Texture2D" uid="uid://bel17gs3ijyb1" path="res://assets/backgrounds/Fond Menu 02@2x.png" id="11_p2vl4"]
+[ext_resource type="Texture2D" uid="uid://nr3ul4jgyad0" path="res://assets/icons/Bouton Annuler.png" id="12_7moo4"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_f3r3y"]
 texture = ExtResource("11_p2vl4")
@@ -295,6 +296,7 @@ anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_top = -256.0
+offset_bottom = -166.0
 grow_horizontal = 2
 grow_vertical = 0
 theme_override_constants/separation = -5
@@ -313,10 +315,12 @@ size_flags_vertical = 8
 theme = ExtResource("2_jel3x")
 toggle_mode = true
 texture_normal = ExtResource("10_sc2vu")
+texture_pressed = ExtResource("12_7moo4")
 ignore_texture_size = true
 stretch_mode = 4
 
 [node name="PanelContainer" type="PanelContainer" parent="VBoxContainer"]
+visible = false
 layout_mode = 2
 theme = ExtResource("2_jel3x")
 theme_override_styles/panel = SubResource("StyleBoxTexture_f3r3y")
