@@ -20,6 +20,8 @@ extends Control
 @onready var ConstructionMenu: PanelContainer = $VBoxContainer/PanelContainer
 @onready var TowerList: HBoxContainer = $VBoxContainer/PanelContainer/MarginContainer/HBoxContainer
 
+const pause_menu: PackedScene = preload("res://scenes/menus/pause_menu/pause_menu.tscn")
+
 var _is_ready: bool = false
 
 
@@ -81,3 +83,12 @@ func unload_ui() -> void:
 	_is_ready = false
 	visible = false
 	ILevel.current_level.disconnect("stats_updated", _update)
+
+
+func _on_pause_button_pressed():
+	print("Pause button pressed")
+
+	if not Global.paused:
+		Global.paused = true
+		var pause_menu_instance: PauseMenu = pause_menu.instantiate()
+		Global.hud.add_child(pause_menu_instance)

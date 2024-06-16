@@ -6,7 +6,7 @@ var coins: int = 50000000000:
 	set(val):
 		coins = val
 		stats_updated.emit()
-		
+
 var health: int = 10:
 	set(val):
 		health = val
@@ -22,7 +22,7 @@ static var current_level: ILevel = null
 
 # functionnal
 func initialize(meta: LevelMetadata) -> void:
-	Metadata = meta
+	Metadata = meta.duplicate()
 	Log.info("Level initializing [{0}] : {1}".format([Metadata.id, Metadata.level_name]))
 	_load_map()
 
@@ -49,5 +49,5 @@ func _load_map() -> void:
 	var map: IMap = map_scene.instantiate()
 	add_child(map)
 	Map = map
-	
+
 	Global.cursor.map_ref = map

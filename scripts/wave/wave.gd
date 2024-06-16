@@ -37,11 +37,14 @@ func _ready() -> void:
 	)
 
 
+func _process(_delta: float) -> void:
+	timer.set_paused(Global.paused)
+
+
 # functionnal
 func start_wave() -> void:
 	Log.info("{0} start".format([name]))
-	if (!is_ready):
-		return
+	if !is_ready: return
 
 	wave_start.emit()
 	_start_next_group()
@@ -91,8 +94,7 @@ func _enemy_dies() -> void:
 
 
 func _on_timer_timeout() -> void:
-	if (!is_ready):
-		return
+	if !is_ready: return
 
 	current_enemy += 1
 

@@ -9,10 +9,11 @@
 extends Node
 
 
-var debug_console: DebugConsole = null
-var hud = null
 var camera: Camera = null
-var cursor = null
+var cursor: CursorController = null
+var debug_console: DebugConsole = null
+var hud: HUD = null
+var paused: bool = false
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS

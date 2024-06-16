@@ -62,7 +62,7 @@ func _ready():
 	if type == ENM_Type.FAT:
 		connect("camera_effect", Global.camera.handle_effect)
 		camera_effect.emit('shake')
-		
+
 	health = max_health
 	path_points_size = path.curve.point_count
 	_get_path_direction()
@@ -70,7 +70,8 @@ func _ready():
 
 
 func _physics_process(delta: float) -> void:
-	if(is_already_dead): return
+	if is_already_dead: return
+	if Global.paused: return
 
 	_update_z_index()
 
@@ -112,7 +113,7 @@ func follow_path(delta: float) -> void:
 	if path_follow.get_progress_ratio() >= 1: # Path finished
 		state = ENM_State.GIVE_DAMAGE
 		return
-	
+
 	path_follow.set_progress(path_follow.get_progress() + (speed * delta))
 	_update_direction()
 	_walk()
@@ -134,7 +135,7 @@ func add_poison_effect(damage: float, total_execution: int, interval: float) -> 
 func _get_path_direction():
 	var x_pos_difference: float = path.curve.get_point_position(current_point_id).x - path.curve.get_point_position(current_point_id + 1).x;
 	var y_pos_difference: float = path.curve.get_point_position(current_point_id).y - path.curve.get_point_position(current_point_id + 1).y;
-	
+
 	if x_pos_difference < 0.:
 		if y_pos_difference < 0.:
 			direction = ENM_Direction.DOWN_RIGHT
@@ -150,14 +151,14 @@ func _get_path_direction():
 func _update_direction():
 	if current_point_id == path_points_size - 2:
 		return
-		
+
 	if (
-		round(path_follow.position) == round(path.curve.get_point_position(current_point_id+1)) 
+		round(path_follow.position) == round(path.curve.get_point_position(current_point_id+1))
 		&& path.curve.get_closest_point(path_follow.position) != path.curve.get_point_position(current_point_id)
 	):
 		current_point_id += 1
 		_get_path_direction()
-		
+
 
 func _walk():
 	match direction:
@@ -204,7 +205,7 @@ func _give_damage_state() -> void:
 	if ILevel.current_level == null:
 		Log.error("Current level is null, aborting.")
 		return
-		
+
 	# if boss insta death
 	if type == ENM_Type.BIG_DADDY or type == ENM_Type.FAT:
 		ILevel.current_level.health = 0
@@ -238,7 +239,7 @@ func _on_poison_timer_timeout(timer: Timer):
 			highest_timer_ratio = ratio
 			highest_timer_index = i
 			_highest_timer = active_poison_timers[i]["timer"]
-			
+
 	# check if the timer is the highest
 	if timer_index == highest_timer_index:
 		# apply the poison damage
@@ -260,4 +261,3 @@ func _on_animation_player_animation_finished(anim_name: String) -> void:
 	if (anim_name == ANIM_FADE_OUT):
 		queue_free()
 		get_parent().queue_free()
-

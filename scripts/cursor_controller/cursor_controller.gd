@@ -1,4 +1,6 @@
+class_name CursorController
 extends Node2D
+
 signal trigger_state_idle
 signal trigger_state_build
 signal trigger_state_upgrade
