@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://dgac5kcibwtmg"]
+[gd_scene load_steps=12 format=3 uid="uid://dgac5kcibwtmg"]
 
 [ext_resource type="Script" path="res://scripts/menus/levels_menu/levels_menu.gd" id="1_11ws4"]
 [ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="2_06gmn"]
@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://s70rc0a3unkr" path="res://scenes/level/level_metadata.tscn" id="2_rui86"]
 [ext_resource type="PackedScene" uid="uid://8gta0ub172x3" path="res://scenes/level/levels/level_debug.tscn" id="3_w1fyg"]
 [ext_resource type="Texture2D" uid="uid://b1yesvpwmntau" path="res://assets/buttons/Bouton orange@2x.png" id="4_jlru3"]
+[ext_resource type="PackedScene" uid="uid://de3tnk1y83r8n" path="res://scenes/level/levels/level_1.tscn" id="6_3cqii"]
 [ext_resource type="Texture2D" uid="uid://dbhkk633ispub" path="res://assets/buttons/Bouton Bleu@2x.png" id="8_p8wai"]
 [ext_resource type="Texture2D" uid="uid://cdaralngqjlvk" path="res://assets/buttons/Bouton Vert@2x.png" id="9_yrxaf"]
 
@@ -118,7 +119,7 @@ uppercase = true
 [node name="LevelMetadata1" parent="GuiMarginContainer/MenuMarginContainer/LevelSelectVBoxContainer/LevelAspectRatioContainer1/LevelTextureButton1" instance=ExtResource("2_rui86")]
 id = 1
 level_name = "FIRST.LEVEL.NAME"
-level_scene = ExtResource("3_w1fyg")
+level_scene = ExtResource("6_3cqii")
 
 [node name="LevelAspectRatioContainer2" type="AspectRatioContainer" parent="GuiMarginContainer/MenuMarginContainer/LevelSelectVBoxContainer"]
 layout_mode = 2
