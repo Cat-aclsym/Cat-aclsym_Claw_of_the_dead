@@ -24,7 +24,7 @@ const UP_OFFSET := Vector2i(-1, -1)
 const RIGHT_OFFSET := Vector2i(0, -1)
 const LEFT_OFFSET := Vector2i(-1, 0)
 const VALID_TILES := [
-	Vector2i.ZERO
+	Vector2i(0, 1)
 ]
 
 enum CURSOR_STATE {
@@ -199,6 +199,9 @@ func _is_buildable(pos: Vector2) -> bool:
 	
 	for p in tm_pos:
 		if not tm_ref.get_cell_atlas_coords(0, p) in VALID_TILES or p in _invalid_cells:
+			return false
+		
+		if tm_ref.get_cell_atlas_coords(1, p) != Vector2i(-1, -1):
 			return false
 
 	return true
