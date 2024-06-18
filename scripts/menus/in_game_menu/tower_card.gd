@@ -6,6 +6,7 @@ extends MarginContainer
 var _tower: ITower = null
 var _cost: int
 
+@onready var container: VBoxContainer = $VBoxContainer
 @onready var title_label: Label = $VBoxContainer/Label
 @onready var texture: TextureRect = $VBoxContainer/TextureRect
 @onready var build_button: TextureButton = $VBoxContainer/Button
@@ -24,3 +25,4 @@ func update() -> void:
 
 func _on_button_pressed() -> void:
 	Global.cursor.change_state(Global.cursor.CURSOR_STATE.BUILD, [_tower])
+	Global.ig_menu.toggle_build_menu()

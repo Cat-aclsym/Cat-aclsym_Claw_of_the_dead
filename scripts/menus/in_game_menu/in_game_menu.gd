@@ -15,6 +15,7 @@ extends Control
 @onready var default_coins_text := CoinsRichTextLabel.text
 @onready var default_health_text := HealthRichTextLabel.text
 @onready var default_waves_text := WavesRichTextLabel.text
+@onready var build_button: TextureButton = $VBoxContainer/MarginContainer/BuildButton
 
 @onready var ConstructionAnimationPlayer: AnimationPlayer = $AnimationPlayer
 @onready var ConstructionWrapper: VBoxContainer = $VBoxContainer
@@ -27,6 +28,7 @@ var _is_ready: bool = false
 
 
 func _ready() -> void:
+	Global.ig_menu = self
 	hide()
 
 	ConstructionAnimationPlayer.animation_finished.connect(
@@ -48,16 +50,11 @@ func _process(_delta: float) -> void:
 	WavesRichTextLabel.text = tr(default_waves_text) % current_wave
 
 
-# internal
-func _update() -> void:
-	if !_is_ready: return
-
-	for tower_card in TowerList.get_children():
-		tower_card.update()
-
-
-# signals
-func _on_build_button_pressed() -> void:
+# functionnal
+func toggle_build_menu(toggle_bt: bool = true) -> void:
+	if toggle_bt:
+		build_button.button_pressed = !build_button.button_pressed
+		
 	if ConstructionMenu.visible:
 		Log.info("Hiding construction menu")
 		ConstructionAnimationPlayer.play("RESET")
@@ -69,6 +66,19 @@ func _on_build_button_pressed() -> void:
 
 	for tower_card in TowerList.get_children():
 		tower_card.update()
+
+
+# internal
+func _update() -> void:
+	if !_is_ready: return
+
+	for tower_card in TowerList.get_children():
+		tower_card.update()
+
+
+# signals
+func _on_build_button_pressed() -> void:
+	toggle_build_menu(false)
 
 # functionnal
 func load_ui() -> void:
@@ -93,8 +103,6 @@ func unload_ui() -> void:
 
 
 func _on_pause_button_pressed():
-	print("Pause button pressed")
-
 	if not Global.paused:
 		Global.paused = true
 		var pause_menu_instance: PauseMenu = pause_menu.instantiate()

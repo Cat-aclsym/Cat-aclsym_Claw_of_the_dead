@@ -11,6 +11,7 @@ extends Node
 # WARNING : set to true before compiling for phone
 var PC_DEBUG: bool = true
 
+var ig_menu = null
 var camera: Camera = null
 var cursor: CursorController = null
 var debug_console: DebugConsole = null
