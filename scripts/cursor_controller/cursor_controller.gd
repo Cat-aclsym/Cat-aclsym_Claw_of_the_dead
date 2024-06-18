@@ -20,6 +20,12 @@ signal trigger_state_upgrade
 
 const COLOR_OK := Color(1, 1, 1, 0.5)
 const COLOR_KO := Color(1, 0.5, 0.5, 0.5)
+const UP_OFFSET := Vector2i(-1, -1)
+const RIGHT_OFFSET := Vector2i(0, -1)
+const LEFT_OFFSET := Vector2i(-1, 0)
+const VALID_TILES := [
+	Vector2i.ZERO
+]
 
 enum CURSOR_STATE {
 	IDLE,
@@ -31,38 +37,27 @@ var map_ref: IMap = null
 var tm_ref: TileMap = null
 var _state: CURSOR_STATE = CURSOR_STATE.IDLE
 var _tower: ITower = null
+var _is_mouse_available: bool = true
+var _invalid_cells: Array = []
 
 @onready var cursor: AnimatedSprite2D = $cursor
-@onready var PlaceHUD: CanvasLayer = $PlaceHUD
+@onready var PlaceHUD: Control = $PlaceHUD
 @onready var PlaceHUDContent: BoxContainer = $PlaceHUD/HBoxContainer
 
 
+# core
 func _ready() -> void:
 	Global.cursor = self
 	visible = false
 	PlaceHUD.visible = false
 
 
-func _process(_delta: float) -> void:
-	_handle_state()
-
-
 func _input(event: InputEvent) -> void:
-	if _state == CURSOR_STATE.IDLE: return
-	elif event is InputEventScreenTouch:
-		if event.pressed:
-			_set_cursor_position(event.position)
-	elif event is InputEventMouseButton:
-		if event.button_index == MouseButton.MOUSE_BUTTON_WHEEL_UP:
-			_set_cursor_position()
-		elif event.button_index == MouseButton.MOUSE_BUTTON_WHEEL_DOWN:
-			_set_cursor_position()
-		if event.button_index == MouseButton.MOUSE_BUTTON_LEFT:
-			_set_cursor_position()
-		elif event.button_index == MouseButton.MOUSE_BUTTON_RIGHT:
-			_cancel_build()
+	if _state == CURSOR_STATE.BUILD:
+		_state_build_input(event)
 
 
+# functionnal
 func change_state(new_state: CURSOR_STATE, args: Array = []) -> void:
 	match new_state:
 		CURSOR_STATE.IDLE:
@@ -88,6 +83,13 @@ func change_state(new_state: CURSOR_STATE, args: Array = []) -> void:
 			trigger_state_upgrade.emit()
 			_state = new_state
 			visible = true
+	
+	_update()
+
+
+# internal
+func _update() -> void:
+	_handle_state()
 
 
 func _handle_state() -> void:
@@ -100,17 +102,17 @@ func _handle_state() -> void:
 			_state_upgrade()
 
 
-func _set_cursor_position(position: Vector2 = get_global_mouse_position()) -> void:
-	var a: Vector2i = tm_ref.local_to_map(position)
+func _set_cursor_position(pos: Vector2 = get_global_mouse_position()) -> void:
+	var a: Vector2i = tm_ref.local_to_map(pos)
 	var b: Vector2 = tm_ref.map_to_local(a)
 	b -= Vector2(0, 8)
 	cursor.position = b
 	cursor.visible = true
 	PlaceHUD.visible = true
 
-	PlaceHUD.offset = get_global_transform_with_canvas() * b
-	PlaceHUD.offset.x -= PlaceHUDContent.size.x / 2
-	PlaceHUD.offset.y += PlaceHUDContent.size.y / 2
+	PlaceHUD.position = b
+	PlaceHUD.position.x -= PlaceHUDContent.size.x * PlaceHUD.scale.x / 2
+	PlaceHUD.position.y += PlaceHUDContent.size.y * PlaceHUD.scale.y / 2
 
 
 func _state_build(tower: ITower = null) -> void:
@@ -120,23 +122,29 @@ func _state_build(tower: ITower = null) -> void:
 		_tower.deactivate = true
 		add_child(_tower)
 		# Avoid placing tower same frame as the tower is selected
-		await get_tree().create_timer(0.1).timeout
+		#await get_tree().create_timer(0.1).timeout
 
 	# make tower ghost follow cursor
 	_tower.position = cursor.position - Vector2(0, 16)
 
 	# change tower ghost color depending of placement
-	if _is_buildable(_tower.position):
-		_tower.modulate = COLOR_OK
-	else:
-		_tower.modulate = COLOR_KO
+	_tower.modulate = COLOR_OK if _is_buildable(_tower.position) else COLOR_KO
 
-# handle inputs
-	if Input.is_action_just_pressed("place_tower"):
-		_set_cursor_position()
-#		_build()
-#	if Input.is_action_just_pressed("rmb"):
-#		_cancel_build()
+
+func _state_build_input(event: InputEvent) -> void:
+	if event is InputEventScreenTouch and not Global.PC_DEBUG:
+		if event.pressed:
+			_set_cursor_position(event.position)
+			_update()
+	# debug
+	elif event is InputEventMouseButton and Global.PC_DEBUG:
+		if not _is_mouse_available:
+			return
+		if event.is_pressed() and event.button_index == MouseButton.MOUSE_BUTTON_LEFT:
+			_set_cursor_position()
+			_update()
+		elif event.button_index == MouseButton.MOUSE_BUTTON_RIGHT:
+			_cancel_build()
 
 
 func _state_idle() -> void:
@@ -165,6 +173,15 @@ func _build() -> void:
 	map_ref.add_child(new_tower)
 
 	ILevel.current_level.coins -= _tower.cost
+	
+	var tm_pos: Array = [
+		tm_ref.local_to_map(new_tower.position),
+		tm_ref.local_to_map(new_tower.position) - UP_OFFSET,
+		tm_ref.local_to_map(new_tower.position) - RIGHT_OFFSET,
+		tm_ref.local_to_map(new_tower.position) - LEFT_OFFSET,
+	]
+	for p in tm_pos:
+		_invalid_cells.append(p)
 
 	_cancel_build()
 
@@ -172,16 +189,33 @@ func _build() -> void:
 func _is_buildable(pos: Vector2) -> bool:
 	if ILevel.current_level.coins < _tower.cost:
 		return false
-
-	#var atlas_coords: Vector2 = tm_ref.get_cell_atlas_coords(0, tm_ref.local_to_map(pos))
-	#Log.debug("atlas coords = {0}; buildable = {1}".format([atlas_coords, true]))
+	
+	var tm_pos: Array = [
+		tm_ref.local_to_map(pos),
+		tm_ref.local_to_map(pos) - UP_OFFSET,
+		tm_ref.local_to_map(pos) - RIGHT_OFFSET,
+		tm_ref.local_to_map(pos) - LEFT_OFFSET,
+	]
+	
+	for p in tm_pos:
+		if not tm_ref.get_cell_atlas_coords(0, p) in VALID_TILES or p in _invalid_cells:
+			return false
 
 	return true
 
 
+# signals
 func _on_place_button_pressed() -> void:
 	_build()
 
 
 func _on_cancel_place_button_pressed() -> void:
 	_cancel_build()
+
+
+func _on_button_mouse_entered() -> void:
+	_is_mouse_available = false
+
+
+func _on_button_mouse_exited() -> void:
+	_is_mouse_available = true

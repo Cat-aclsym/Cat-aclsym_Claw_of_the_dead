@@ -34,6 +34,8 @@ func _ready() -> void:
 		if _name == "RESET" and ConstructionMenu.visible:
 			ConstructionMenu.visible = false
 	)
+	ConstructionMenu.visible = true
+	
 
 func _process(_delta: float) -> void:
 	if not _is_ready: return

@@ -296,8 +296,8 @@ anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_top = 392.0
-offset_right = 3456.0
-offset_bottom = 482.0
+offset_right = 1152.0
+offset_bottom = 648.0
 grow_horizontal = 2
 grow_vertical = 0
 theme_override_constants/separation = -5
@@ -315,13 +315,12 @@ size_flags_horizontal = 0
 size_flags_vertical = 8
 theme = ExtResource("2_jel3x")
 toggle_mode = true
-texture_normal = ExtResource("10_sc2vu")
-texture_pressed = ExtResource("12_7moo4")
+texture_normal = ExtResource("12_7moo4")
+texture_pressed = ExtResource("10_sc2vu")
 ignore_texture_size = true
 stretch_mode = 4
 
 [node name="PanelContainer" type="PanelContainer" parent="VBoxContainer"]
-visible = false
 layout_mode = 2
 theme = ExtResource("2_jel3x")
 theme_override_styles/panel = SubResource("StyleBoxTexture_f3r3y")

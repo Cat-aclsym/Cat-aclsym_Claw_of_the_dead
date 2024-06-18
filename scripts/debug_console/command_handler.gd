@@ -36,6 +36,11 @@ const valid_commands = [
 		"description" : "Change current amount of money",
 		"args": [Types.ARG_INT]
 	},
+	{
+		"command": "set_res",
+		"description" : "Change current viewport resolution",
+		"args": [Types.ARG_INT, Types.ARG_INT]
+	},
 ]
 
 # Print all available commands with their description and args
@@ -74,6 +79,12 @@ func set_money(amount) -> String:
 		
 	ILevel.current_level.coins = int(amount)
 	return "money =  {0}".format([amount])
+
+func set_res(width, height) -> String:
+	get_viewport().size = Vector2i(int(width), int(height))
+	ProjectSettings.set_setting("display/window/size/width", int(width))
+	ProjectSettings.set_setting("display/window/size/height", int(height))
+	return "new res = ({0}, {1})".format([width, height])
 
 # Types enum to str
 func _type_to_string(in_type: Types) -> String:

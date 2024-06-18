@@ -22,10 +22,6 @@ SoundManager="*res://scripts/autoloads/sound_manager.gd"
 ScenesLoader="*res://scripts/autoloads/scenes_loader.gd"
 DialogueManager="*res://addons/dialogue_manager/dialogue_manager.gd"
 
-[debug]
-
-settings/stdout/print_fps=true
-
 [dialogue_manager]
 
 general/balloon_path="res://dialogue_baloon/balloon.tscn"
