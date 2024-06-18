@@ -1,4 +1,4 @@
-class_name IMap 
+class_name IMap
 extends Node2D
 signal win
 signal loose
@@ -8,7 +8,6 @@ signal loose
 var paths: Array[Path2D] = []
 
 var current_wave: int = -1
-var waves_count: int = 0
 var waves: Array[Wave] = []
 
 @onready var waves_timer: Timer = $WavesTimer
@@ -21,8 +20,11 @@ func _ready() -> void:
 	_load_paths()
 	_load_waves()
 	_start_next_wave()
-	
+
 	Global.cursor.tm_ref = tilemap
+
+	for wave in waves:
+		wave.wave_end.connect(func(_delay: float): _start_next_wave())
 
 
 # functionnal
@@ -34,7 +36,7 @@ func get_paths() -> Array[Path2D]:
 func _start_next_wave() -> void:
 	current_wave += 1
 
-	if (current_wave == waves_count):
+	if current_wave == waves.size():
 		Log.debug("You win!")
 		win.emit()
 		return
@@ -70,9 +72,7 @@ func _load_waves() -> void:
 			child.set_paths(paths)
 			waves.append(child as Wave)
 
-	waves_count = waves.size()
-
-	if (waves_count == 0):
+	if waves.is_empty():
 		Log.warning("{0} don't have waves".format([name]))
 
 

@@ -155,12 +155,12 @@ func _update_direction() -> void:
 		#return
 
 	if (
-round(path_follow.position) == round(path.curve.get_point_position(current_point_id + 1)) &&
-path.curve.get_closest_point(path_follow.position) != path.curve.get_point_position(current_point_id)
+		round(path_follow.position) == round(path.curve.get_point_position(current_point_id + 1)) &&
+		path.curve.get_closest_point(path_follow.position) != path.curve.get_point_position(current_point_id)
 	):
 		current_point_id += 1
-		
-	_set_path_direction()
+
+		_set_path_direction()
 
 
 func _walk():
@@ -194,7 +194,7 @@ func _dead_state() -> void:
 		return
 	var money_reward: int = 10
 	ILevel.current_level.coins += money_reward
-	PopupScoreSpawner.score("+{0}$" % money_reward)
+	PopupScoreSpawner.score("+%s$" % [int(money_reward)])
 	_disappear()
 	# disable the collision shape
 	CollisionShape.set_deferred("disabled", true)
