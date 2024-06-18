@@ -1,7 +1,8 @@
-class_name IEnemy extends CharacterBody2D
+class_name IEnemy
+extends CharacterBody2D
+
 signal die
 signal camera_effect(effect: String)
-
 
 const ANIM_FADE_OUT: String = "fade_out"
 const ANIM_WALK_UP: String = "walk_up"
@@ -26,47 +27,45 @@ enum ENM_Type {
 	FAT
 }
 
-var DAMAGE = {
-	"default" = {"color": Color(0.7, 0.5, 0.5, 1)},
-	"poison" = {"color": Color(0.7, 0.5, 0.7, 1)}
+
+var DAMAGE: Dictionary = {
+	"default": {"color": Color(0.7, 0.5, 0.5, 1)},
+	"poison": {"color": Color(0.7, 0.5, 0.7, 1)}
 }
 
 @export var speed: float = 30
 @export var max_health: float = 100
 @export var type: ENM_Type = ENM_Type.DEFAULT
 
-var health: float
-var state: ENM_State = ENM_State.FOLLOW_PATH
-var path_follow: PathFollow2D = null
-var path: Path2D = null
-var direction: ENM_Direction = ENM_Direction.UP_RIGHT
-var is_dead: bool:
-	get:
-		return health == 0
-var is_already_dead: bool = false
-var current_point_id: int = 0
-var path_points_size: int
-var active_poison_timers: Array = []
-var poison_timer_execution_count: int = 0
 
-@onready var Sprite: Sprite2D = $Sprite2D
+var active_poison_timers: Array = []
+var current_point_id: int = 0
+var direction: ENM_Direction = ENM_Direction.UP_RIGHT
+var health: float
+var is_already_dead: bool = false
+var path: Path2D = null
+var path_follow: PathFollow2D = null
+var poison_timer_execution_count: int = 0
+var state: ENM_State = ENM_State.FOLLOW_PATH
+
 @onready var AnimPlayer: AnimationPlayer = $AnimationPlayer
-@onready var poison_particles: GPUParticles2D = $GPUParticles2D
+@onready var CollisionShape: CollisionShape2D = $CollisionShape2D
+@onready var PoisionParticles: GPUParticles2D = $GPUParticles2D
 @onready var PopupScoreSpawner: PopupSpawner = $PopupScoreSpawner
-@onready var old_modulate = Sprite.modulate
-@onready var collision_shape_2d := $CollisionShape2D as CollisionShape2D
+@onready var Sprite: Sprite2D = $Sprite2D
+@onready var old_modulate: Color = Sprite.modulate
+@onready var path_points_size: int = path.curve.point_count
 
 
 # core
 func _ready():
 	if type == ENM_Type.FAT:
-		connect("camera_effect", Global.camera.handle_effect)
+		camera_effect.connect(Global.camera.handle_effect)
 		camera_effect.emit('shake')
 
 	health = max_health
-	path_points_size = path.curve.point_count
-	_get_path_direction()
-	AnimPlayer.connect("animation_finished", _on_animation_player_animation_finished)
+	_set_path_direction()
+	AnimPlayer.animation_changed.connect(_on_animation_player_animation_finished)
 
 
 func _physics_process(delta: float) -> void:
@@ -86,10 +85,7 @@ func _physics_process(delta: float) -> void:
 			Log.warning("{0} unknown ENM_State : {1}".format([name, state]))
 
 	# handle poison particles
-	if active_poison_timers.size() == 0:
-		poison_particles.emitting = false
-	else:
-		poison_particles.emitting = true
+	PoisionParticles.emitting = not active_poison_timers.is_empty()
 
 
 func _damage_effect(color: Color):
@@ -102,7 +98,7 @@ func _damage_effect(color: Color):
 func take_damage(damage: float, damage_type: String) -> void:
 	if is_already_dead: return
 	_damage_effect(DAMAGE[damage_type]["color"])
-	if(health - damage <= 0):
+	if health - damage <= 0:
 		health = 0
 		state = ENM_State.DEAD
 	else:
@@ -132,32 +128,38 @@ func add_poison_effect(damage: float, total_execution: int, interval: float) -> 
 
 
 # internal
-func _get_path_direction():
+func _set_path_direction() -> void:
 	var x_pos_difference: float = path.curve.get_point_position(current_point_id).x - path.curve.get_point_position(current_point_id + 1).x;
 	var y_pos_difference: float = path.curve.get_point_position(current_point_id).y - path.curve.get_point_position(current_point_id + 1).y;
 
-	if x_pos_difference < 0.:
-		if y_pos_difference < 0.:
+	var is_going_up: bool = y_pos_difference > 0
+	var is_going_down: bool = y_pos_difference < 0
+	var is_going_right: bool = x_pos_difference < 0
+	var is_going_left: bool = x_pos_difference > 0
+
+	if is_going_right:
+		if is_going_down:
 			direction = ENM_Direction.DOWN_RIGHT
-		elif y_pos_difference > 0.:
+		elif is_going_up:
 			direction = ENM_Direction.UP_RIGHT
-	elif x_pos_difference > 0.:
-		if y_pos_difference < 0.:
+	elif is_going_left:
+		if is_going_down:
 			direction = ENM_Direction.DOWN_LEFT
-		elif y_pos_difference > 0.:
+		elif is_going_up:
 			direction = ENM_Direction.UP_LEFT
 
 
-func _update_direction():
+
+func _update_direction() -> void:
 	if current_point_id == path_points_size - 2:
 		return
 
 	if (
-		round(path_follow.position) == round(path.curve.get_point_position(current_point_id+1))
-		&& path.curve.get_closest_point(path_follow.position) != path.curve.get_point_position(current_point_id)
+round(path_follow.position) == round(path.curve.get_point_position(current_point_id + 1)) &&
+path.curve.get_closest_point(path_follow.position) != path.curve.get_point_position(current_point_id)
 	):
 		current_point_id += 1
-		_get_path_direction()
+	_set_path_direction()
 
 
 func _walk():
@@ -179,8 +181,7 @@ func _walk():
 
 
 func _disappear() -> void:
-	if (is_already_dead):
-		return
+	if is_already_dead: return
 	die.emit()
 	AnimPlayer.play(ANIM_FADE_OUT)
 	is_already_dead = true
@@ -192,11 +193,10 @@ func _dead_state() -> void:
 		return
 	var money_reward: int = 10
 	ILevel.current_level.coins += money_reward
-	PopupScoreSpawner.score("+" + str(money_reward) + "$")
+	PopupScoreSpawner.score("+{0}$" % money_reward)
 	_disappear()
-	is_dead = true
 	# disable the collision shape
-	collision_shape_2d.disabled = true
+	CollisionShape.set_deferred("disabled", true)
 
 
 func _give_damage_state() -> void:
@@ -258,6 +258,6 @@ func _on_poison_timer_timeout(timer: Timer):
 
 
 func _on_animation_player_animation_finished(anim_name: String) -> void:
-	if (anim_name == ANIM_FADE_OUT):
+	if anim_name == ANIM_FADE_OUT:
 		queue_free()
 		get_parent().queue_free()
