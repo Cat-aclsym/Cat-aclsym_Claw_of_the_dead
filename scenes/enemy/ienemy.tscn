@@ -160,7 +160,7 @@ region_rect = Rect2(0, 0, 64, 64)
 libraries = {
 "": SubResource("AnimationLibrary_jl7ul")
 }
-autoplay = "walk_down"
+autoplay = "RESET"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 scale = Vector2(1.7, 1.7)

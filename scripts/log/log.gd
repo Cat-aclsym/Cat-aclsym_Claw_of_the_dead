@@ -5,8 +5,8 @@
 ## Created: 15/11/2023
 class_name Log extends Node
 
-const LOG_LEVEL_INFO := "[INFO]  "
-const LOG_LEVEL_WARN := "[WARN]  "
+const LOG_LEVEL_INFO := "[INFO ]  "
+const LOG_LEVEL_WARN := "[WARN ]  "
 const LOG_LEVEL_ERROR := "[ERROR] "
 const LOG_LEVEL_DEBUG := "[DEBUG] "
 

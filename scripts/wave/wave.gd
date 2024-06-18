@@ -100,6 +100,9 @@ func _on_timer_timeout() -> void:
 		_start_next_group()
 		return
 
+	if current_enemy >= enemies_to_spawn.size():
+		return
+		
 	var enemy: IEnemy = ScenesLoader.get_enemy_scene(enemies_to_spawn[current_enemy]).instantiate()
 	enemy.die.connect(_enemy_dies)
 	EnemySpawner.spawn_enemy(paths[randi() % paths.size()], enemy)
