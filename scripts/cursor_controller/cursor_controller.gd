@@ -39,6 +39,7 @@ var _state: CURSOR_STATE = CURSOR_STATE.IDLE
 var _tower: ITower = null
 var _is_mouse_available: bool = true
 var _invalid_cells: Array = []
+var _last_pos := Vector2.ZERO
 
 @onready var cursor: AnimatedSprite2D = $cursor
 @onready var PlaceHUD: Control = $PlaceHUD
@@ -113,6 +114,11 @@ func _set_cursor_position(pos: Vector2 = get_global_mouse_position()) -> void:
 	PlaceHUD.position = b
 	PlaceHUD.position.x -= PlaceHUDContent.size.x * PlaceHUD.scale.x / 2
 	PlaceHUD.position.y += PlaceHUDContent.size.y * PlaceHUD.scale.y / 2
+	
+	if _last_pos == b:
+		_build()
+	else:
+		_last_pos = b
 
 
 func _state_build(tower: ITower = null) -> void:
@@ -161,6 +167,7 @@ func _cancel_build() -> void:
 	_tower.queue_free()
 	_tower = null
 	change_state(CURSOR_STATE.IDLE)
+	_last_pos = Vector2.ZERO
 
 
 func _build() -> void:
