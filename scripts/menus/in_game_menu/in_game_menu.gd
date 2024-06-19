@@ -37,14 +37,14 @@ func _ready() -> void:
 			ConstructionMenu.visible = false
 	)
 	ConstructionMenu.visible = true
-	
+
 
 func _process(_delta: float) -> void:
 	if not _is_ready: return
 	if not visible: show()
 
 	CoinsRichTextLabel.text = tr(default_coins_text) % ILevel.current_level.coins
-	HealthRichTextLabel.text = tr(default_health_text) % (str(ILevel.current_level.health) + "/10")
+	HealthRichTextLabel.text = tr(default_health_text) % (str(ILevel.current_level.health) + "/20")
 	HealthTextureProgressBar.value = ILevel.current_level.health
 	var current_wave := ILevel.current_level.Map.current_wave + 1
 	WavesRichTextLabel.text = tr(default_waves_text) % current_wave
@@ -54,7 +54,7 @@ func _process(_delta: float) -> void:
 func toggle_build_menu(toggle_bt: bool = true) -> void:
 	if toggle_bt:
 		build_button.button_pressed = !build_button.button_pressed
-		
+
 	if ConstructionMenu.visible:
 		Log.info("Hiding construction menu")
 		ConstructionAnimationPlayer.play("RESET")

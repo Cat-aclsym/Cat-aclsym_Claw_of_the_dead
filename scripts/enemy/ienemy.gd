@@ -34,7 +34,7 @@ var DAMAGE: Dictionary = {
 }
 
 @export var speed: float = 30
-@export var max_health: float = 100
+@export var max_health: float = 20
 @export var type: ENM_Type = ENM_Type.DEFAULT
 
 
