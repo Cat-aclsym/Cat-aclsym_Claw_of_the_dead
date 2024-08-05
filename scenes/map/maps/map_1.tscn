@@ -237,3 +237,6 @@ out_delay = 10.0
 enemies = Array[int]([2])
 in_delay = 2.0
 out_delay = 10.0
+
+[node name="Controller" parent="." index="7"]
+z_index = 4000
