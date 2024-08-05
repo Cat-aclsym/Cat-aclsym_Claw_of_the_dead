@@ -11,7 +11,7 @@ region = Rect2(64, 0, 64, 64)
 position = Vector2(0, -22)
 scale = Vector2(0.8, 0.8)
 speed = 10.0
-max_health = 1100.0
+max_health = 320.0
 type = 1
 
 [node name="Sprite2D" parent="." index="0"]
