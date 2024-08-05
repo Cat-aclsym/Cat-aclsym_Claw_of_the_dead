@@ -8,9 +8,6 @@
 ## <!> Always checks var != null
 extends Node
 
-# WARNING : set to true before compiling for phone
-var PC_DEBUG: bool = true
-
 var ig_menu = null
 var camera: Camera = null
 var cursor: CursorController = null
