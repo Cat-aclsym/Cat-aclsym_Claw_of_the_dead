@@ -37,9 +37,10 @@ var map_ref: IMap = null
 var tm_ref: TileMap = null
 var _state: CURSOR_STATE = CURSOR_STATE.IDLE
 var _tower: ITower = null
-var _is_mouse_available: bool = true
+var _is_move_tower_available: bool = true
 var _invalid_cells: Array = []
-var _last_pos := Vector2.ZERO
+var _is_dragging: bool = false
+var _is_holding_click: bool = false
 
 @onready var cursor: AnimatedSprite2D = $cursor
 @onready var PlaceHUD: Control = $PlaceHUD
@@ -84,7 +85,7 @@ func change_state(new_state: CURSOR_STATE, args: Array = []) -> void:
 			trigger_state_upgrade.emit()
 			_state = new_state
 			visible = true
-	
+
 	_update()
 
 
@@ -112,13 +113,6 @@ func _set_cursor_position(pos: Vector2 = get_global_mouse_position()) -> void:
 	PlaceHUD.visible = true
 
 	PlaceHUD.position = b
-	PlaceHUD.position.x -= PlaceHUDContent.size.x * PlaceHUD.scale.x / 2
-	PlaceHUD.position.y += PlaceHUDContent.size.y * PlaceHUD.scale.y / 2
-	
-	if _last_pos == b:
-		_build()
-	else:
-		_last_pos = b
 
 
 func _state_build(tower: ITower = null) -> void:
@@ -128,7 +122,7 @@ func _state_build(tower: ITower = null) -> void:
 		_tower.deactivate = true
 		add_child(_tower)
 		# Avoid placing tower same frame as the tower is selected
-		#await get_tree().create_timer(0.1).timeout
+		await get_tree().create_timer(0.1).timeout
 
 	# make tower ghost follow cursor
 	_tower.position = cursor.position - Vector2(0, 16)
@@ -138,15 +132,38 @@ func _state_build(tower: ITower = null) -> void:
 
 
 func _state_build_input(event: InputEvent) -> void:
-	if event is InputEventScreenTouch and not Global.PC_DEBUG:
-		if event.pressed:
-			_set_cursor_position(event.position)
+	if event is InputEventScreenDrag or event is InputEventMouseMotion:
+		# Check if the drag is long enough to be considered a drag
+		if _is_holding_click:
+			if not _is_dragging:
+				_is_dragging = true
+
+	if event is InputEventScreenTouch and OS.has_feature("mobile"):
+		if event.is_released() and _is_move_tower_available:
+			_is_holding_click = false
+
+			if _is_dragging:
+				_is_dragging = false
+				return
+
+			# Fix event position
+			var pos: Vector2 = tm_ref.get_global_transform_with_canvas().affine_inverse() * event.position
+			_set_cursor_position(pos)
 			_update()
 	# debug
-	elif event is InputEventMouseButton and Global.PC_DEBUG:
-		if not _is_mouse_available:
+	elif event is InputEventMouseButton and not OS.has_feature("mobile"):
+		if not _is_move_tower_available:
 			return
+
 		if event.is_pressed() and event.button_index == MouseButton.MOUSE_BUTTON_LEFT:
+			_is_holding_click = true
+
+		if event.is_released() and event.button_index == MouseButton.MOUSE_BUTTON_LEFT:
+			_is_holding_click = false
+			if _is_dragging:
+				_is_dragging = false
+				return
+
 			_set_cursor_position()
 			_update()
 		elif event.button_index == MouseButton.MOUSE_BUTTON_RIGHT:
@@ -167,12 +184,13 @@ func _cancel_build() -> void:
 	_tower.queue_free()
 	_tower = null
 	change_state(CURSOR_STATE.IDLE)
-	_last_pos = Vector2.ZERO
 
 
 func _build() -> void:
 	if !_is_buildable(_tower.position):
 		return
+
+	_is_move_tower_available = false
 
 	var new_tower: ITower = _tower.duplicate()
 	new_tower.deactivate = false
@@ -180,7 +198,7 @@ func _build() -> void:
 	map_ref.add_child(new_tower)
 
 	ILevel.current_level.coins -= _tower.cost
-	
+
 	var tm_pos: Array = [
 		tm_ref.local_to_map(new_tower.position),
 		tm_ref.local_to_map(new_tower.position) - UP_OFFSET,
@@ -191,23 +209,24 @@ func _build() -> void:
 		_invalid_cells.append(p)
 
 	_cancel_build()
+	_is_move_tower_available = true
 
 
 func _is_buildable(pos: Vector2) -> bool:
 	if ILevel.current_level.coins < _tower.cost:
 		return false
-	
+
 	var tm_pos: Array = [
 		tm_ref.local_to_map(pos),
 		tm_ref.local_to_map(pos) - UP_OFFSET,
 		tm_ref.local_to_map(pos) - RIGHT_OFFSET,
 		tm_ref.local_to_map(pos) - LEFT_OFFSET,
 	]
-	
+
 	for p in tm_pos:
 		if not tm_ref.get_cell_atlas_coords(0, p) in VALID_TILES or p in _invalid_cells:
 			return false
-		
+
 		if tm_ref.get_cell_atlas_coords(1, p) != Vector2i(-1, -1):
 			return false
 
@@ -224,8 +243,8 @@ func _on_cancel_place_button_pressed() -> void:
 
 
 func _on_button_mouse_entered() -> void:
-	_is_mouse_available = false
+	_is_move_tower_available = false
 
 
 func _on_button_mouse_exited() -> void:
-	_is_mouse_available = true
+	_is_move_tower_available = true
