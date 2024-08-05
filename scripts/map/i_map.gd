@@ -19,12 +19,9 @@ var waves: Array[Wave] = []
 func _ready() -> void:
 	_load_paths()
 	_load_waves()
-	_start_next_wave()
+	_start_wave(current_wave + 1)
 
 	Global.cursor.tm_ref = tilemap
-
-	for wave in waves:
-		wave.wave_end.connect(func(_delay: float): _start_next_wave())
 
 
 # functionnal
@@ -33,16 +30,16 @@ func get_paths() -> Array[Path2D]:
 
 
 # internal
-func _start_next_wave() -> void:
-	current_wave += 1
-
-	if current_wave == waves.size():
+func _start_wave(index: int) -> void:
+	if index == waves.size():
 		Log.debug("You win!")
 		win.emit()
+		waves_timer.stop()
 		return
 
-	waves[current_wave].start_wave()
-	PopupWaveSpawner.wave("Wave {0}".format([current_wave + 1]))
+	waves[index].start_wave()
+	PopupWaveSpawner.wave("Wave %s" % [index + 1])
+	current_wave = index
 
 
 func _load_paths() -> void:
@@ -62,8 +59,7 @@ func _load_waves() -> void:
 			i += 1
 			child.name = "Wave_{0}".format([i])
 
-			child.connect(
-				"wave_end",
+			child.wave_end.connect(
 				 func (delay: float):
 					waves_timer.wait_time = delay
 					waves_timer.start()
@@ -78,4 +74,4 @@ func _load_waves() -> void:
 
 # signals
 func _on_waves_timer_timeout() -> void:
-	_start_next_wave()
+	_start_wave(current_wave + 1)
