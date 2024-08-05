@@ -106,7 +106,7 @@ func take_damage(damage: float, damage_type: String) -> void:
 
 
 func follow_path(delta: float) -> void:
-	if path_follow.get_progress_ratio() >= 1: # Path finished
+	if path_follow.get_progress_ratio() >= 1:  ## Path is finished
 		state = ENM_State.GIVE_DAMAGE
 		return
 
@@ -151,15 +151,14 @@ func _set_path_direction() -> void:
 
 
 func _update_direction() -> void:
-	#if current_point_id == path_points_size - 2:
-		#return
+	if current_point_id == path_points_size - 2:
+		return
 
 	if (
 		round(path_follow.position) == round(path.curve.get_point_position(current_point_id + 1)) &&
 		path.curve.get_closest_point(path_follow.position) != path.curve.get_point_position(current_point_id)
 	):
 		current_point_id += 1
-
 		_set_path_direction()
 
 
