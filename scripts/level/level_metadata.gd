@@ -14,7 +14,7 @@ func _ready() -> void:
 		return
 
 	if (level_scene == null):
-		Log.warning("LevelMetada [{0}] don't have level scene".format([id]))
+		Log.trace(Log.Level.WARN, "LevelMetada [{0}] don't have level scene".format([id]))
 		return
 
 	assert(level_scene.instantiate() is ILevel, "LevelMetadata: Provided level scene isn't a ILevel node.")

@@ -68,7 +68,7 @@ func change_state(new_state: CURSOR_STATE, args: Array = []) -> void:
 			visible = false
 		CURSOR_STATE.BUILD:
 			if _state != CURSOR_STATE.IDLE:
-				Log.warning("Cannot change cursor state from BUILD to IDLE")
+				Log.trace(Log.Level.WARN, "Cannot change cursor state from BUILD to IDLE")
 				return
 			assert(args.size() == 1)
 			assert(args[0] is ITower)
@@ -80,7 +80,7 @@ func change_state(new_state: CURSOR_STATE, args: Array = []) -> void:
 
 		CURSOR_STATE.UPGRADE:
 			if _state != CURSOR_STATE.IDLE:
-				Log.warning("Cannot change cursor state from UPGRADE to IDLE")
+				Log.trace(Log.Level.WARN, "Cannot change cursor state from UPGRADE to IDLE")
 				return
 			trigger_state_upgrade.emit()
 			_state = new_state

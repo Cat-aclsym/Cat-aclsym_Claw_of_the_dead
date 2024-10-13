@@ -32,7 +32,7 @@ func get_paths() -> Array[Path2D]:
 # internal
 func _start_wave(index: int) -> void:
 	if index == waves.size():
-		Log.debug("You win!")
+		Log.trace(Log.Level.DEBUG, "You WIN !!!")
 		win.emit()
 		waves_timer.stop()
 		return
@@ -69,7 +69,7 @@ func _load_waves() -> void:
 			waves.append(child as Wave)
 
 	if waves.is_empty():
-		Log.warning("{0} don't have waves".format([name]))
+		Log.trace(Log.Level.WARN, "{%s don't have waves" % name)
 
 
 # signals

@@ -82,7 +82,7 @@ func _physics_process(delta: float) -> void:
 		ENM_State.GIVE_DAMAGE:
 			_give_damage_state()
 		_:
-			Log.warning("{0} unknown ENM_State : {1}".format([name, state]))
+			Log.trace(Log.Level.WARN, "{0} unknown ENM_State : {1}".format([name, state]))
 
 	# handle poison particles
 	PoisionParticles.emitting = not active_poison_timers.is_empty()
@@ -177,7 +177,7 @@ func _walk():
 			Sprite.flip_h = true
 			AnimPlayer.play(ANIM_WALK_DOWN)
 		_:
-			Log.warning("{0}::_walk() direction does not match ENM_Direction enum".format([name]))
+			Log.trace(Log.Level.WARN, "{0}::_walk() direction does not match ENM_Direction enum".format([name]))
 
 
 func _disappear() -> void:
@@ -189,7 +189,7 @@ func _disappear() -> void:
 
 func _dead_state() -> void:
 	if ILevel.current_level == null:
-		Log.error("Current level is null, aborting.")
+		Log.trace(Log.Level.ERROR, "Current level is null, aborting.")
 		return
 	var money_reward: int = 10
 	ILevel.current_level.coins += money_reward
@@ -203,7 +203,7 @@ func _give_damage_state() -> void:
 	# when the enemy arrives at the end of the Path
 	_disappear()
 	if ILevel.current_level == null:
-		Log.error("Current level is null, aborting.")
+		Log.trace(Log.Level.ERROR, "Current level is null, aborting.")
 		return
 
 	# if boss insta death

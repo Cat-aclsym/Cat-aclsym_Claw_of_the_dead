@@ -56,10 +56,10 @@ func toggle_build_menu(toggle_bt: bool = true) -> void:
 		build_button.button_pressed = !build_button.button_pressed
 
 	if ConstructionMenu.visible:
-		Log.info("Hiding construction menu")
+		Log.trace(Log.Level.INFO, "Hiding construction menu")
 		ConstructionAnimationPlayer.play("RESET")
 	else:
-		Log.info("Showing construction menu")
+		Log.trace(Log.Level.INFO, "Showing construction menu")
 		ConstructionAnimationPlayer.play("show_tower_list")
 		ConstructionMenu.visible = true
 		return
@@ -83,7 +83,7 @@ func _on_build_button_pressed() -> void:
 # functionnal
 func load_ui() -> void:
 	if ILevel.current_level == null:
-		Log.error("Cannot load ingame ui, ILevel.current_level = null")
+		Log.trace(Log.Level.ERROR, "Cannot load ingame ui, ILevel.current_level = null")
 		return
 
 	_is_ready = true

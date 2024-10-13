@@ -79,7 +79,7 @@ func clamp_zoom() -> void:
 
 
 func handle_effect(effect: String) -> void:
-	Log.debug("Playing '%s' camera effect" % effect)
+	Log.trace(Log.Level.DEBUG, "Playing '%s' camera effect" % effect)
 	match effect:
 		"shake":
 			shake_camera()

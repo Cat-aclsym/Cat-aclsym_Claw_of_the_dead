@@ -36,7 +36,7 @@ func _process(_delta: float) -> void:
 
 # functionnal
 func start_wave() -> void:
-	Log.info("{0} start".format([name]))
+	Log.trace(Log.Level.INFO, "{0} start".format([name]))
 	if !is_ready: return
 
 	wave_start.emit()
@@ -72,7 +72,7 @@ func _load_groups() -> void:
 			enemies_total_count += child.enemies.size()
 
 	if groups.is_empty():
-		Log.warning("{0} don't have group to spawn".format([name]))
+		Log.trace(Log.Level.WARN, "%s don't have group to spawn" % name)
 
 
 # signals
@@ -80,7 +80,7 @@ func _enemy_dies() -> void:
 	dead_enemies += 1
 
 	if dead_enemies == enemies_total_count:
-		Log.info("%s end" % name)
+		Log.trace(Log.Level.INFO, "%s end" % name)
 		wave_end.emit(delay)
 
 

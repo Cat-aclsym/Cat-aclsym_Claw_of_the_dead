@@ -23,7 +23,7 @@ static var current_level: ILevel = null
 # functionnal
 func initialize(meta: LevelMetadata) -> void:
 	Metadata = meta.duplicate()
-	Log.info("Level initializing [{0}] : {1}".format([Metadata.id, Metadata.level_name]))
+	Log.trace(Log.Level.INFO, "Level initializing [{0}] : {1}".format([Metadata.id, Metadata.level_name]))
 	_load_map()
 
 
@@ -41,9 +41,9 @@ func loose() -> void:
 
 # internal
 func _load_map() -> void:
-	Log.info("Loading map ...")
+	Log.trace(Log.Level.INFO, "Loading map ...")
 	if !map_scene:
-		Log.error("An IMap must be provided to create a level!")
+		Log.trace(Log.Level.ERROR, "An IMap must be provided to create a level!")
 		return
 
 	var map: IMap = map_scene.instantiate()

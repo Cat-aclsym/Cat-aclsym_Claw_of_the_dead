@@ -13,7 +13,7 @@ func _init():
 
 
 func _exit_tree():
-	#Log.debug("{0} _exit_tree()".format([name]))
+	# Log.trace(Log.Level.DEBUG, "%s _exit_tree()" % name)
 	pass
 
 func _physics_process(delta: float):

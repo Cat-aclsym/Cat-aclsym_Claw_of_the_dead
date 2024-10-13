@@ -1,61 +1,52 @@
-## File:	log/log.gd
-## Basic logger
-## No one use print function anymore
-##
-## Created: 15/11/2023
 class_name Log extends Node
 
-const LOG_LEVEL_INFO := "[INFO ]  "
-const LOG_LEVEL_WARN := "[WARN ]  "
-const LOG_LEVEL_ERROR := "[ERROR] "
-const LOG_LEVEL_DEBUG := "[DEBUG] "
+enum Level {
+	DEBUG = 0,
+	INFO,
+	WARN,
+	ERROR,
+	FATAL
+}
+
+const PREFIXS: Dictionary = {
+	Level.DEBUG: "[DEBUG]",
+	Level.INFO: "[ INFO]",
+	Level.WARN: "[ WARN]",
+	Level.ERROR: "[ERROR]",
+	Level.FATAL: "[FATAL]"
+}
 
 
-static func info(args: Variant) -> void:
-	var output := "{0} {1}".format([
-		_log_prefix( LOG_LEVEL_INFO ),
-		_format_args( args )
+static func trace(level: Log.Level, args: Variant) -> void:
+	var stack: Dictionary = get_stack()[1]
+	
+	var prefix_1: String = "{0}::{1}@{2}".format([
+		stack["source"],
+		stack["line"],
+		stack["function"],
 	])
 	
-	if Global.debug_console:
-		Global.debug_console.output_text( output )
-	print( output )
-
-
-static func warning(args: Variant) -> void:
-	var output := "{0} {1}".format([
-		_log_prefix( LOG_LEVEL_WARN ),
-		_format_args( args )
+	var time: Dictionary = Time.get_time_dict_from_system()
+	var milliseconds: int = Time.get_ticks_msec() % 1000
+	var prefix_2 := "{0} {1}:{2}:{3}.{4}".format([
+		PREFIXS[level],
+		time["hour"],
+		time["minute"],
+		time["second"],
+		milliseconds
 	])
 	
-	if Global.debug_console:
-		Global.debug_console.output_text( output )
-	print( output )
-
+	var text: String = _format_args(args)
 	
-static func error(args: Variant) -> void:
-	var output := "{0} {1}".format([
-		_log_prefix( LOG_LEVEL_ERROR ),
-		_format_args( args )
+	var output: String = "{1} - {0} - {2}".format([
+		prefix_1,
+		prefix_2,
+		text
 	])
 	
-	if Global.debug_console:
-		Global.debug_console.output_text( output )
-	print( output )
+	print(output)
 
 
-static func debug(args: Variant) -> void:
-	var output := "{0} {1}".format([
-		_log_prefix( LOG_LEVEL_DEBUG ),
-		_format_args( args )
-	])
-	
-	if Global.debug_console:
-		Global.debug_console.output_text( output )
-	print( output )
-
-
-# Format log args to string
 static func _format_args(args: Variant) -> String:
 	var output := ""
 	
@@ -67,19 +58,5 @@ static func _format_args(args: Variant) -> String:
 	else:	
 		if ( args is String ): output += args
 		else : output += str( args )
-	
-	return output
-
-
-# Prepare prefix for log message
-static func _log_prefix(log_level: String) -> String:	
-	var time: Dictionary = Time.get_time_dict_from_system()
-	
-	var output := "{0} {1}:{2}:{3}\t".format([
-		log_level,
-		time["hour"],
-		time["minute"],
-		time["second"],
-	])
 	
 	return output

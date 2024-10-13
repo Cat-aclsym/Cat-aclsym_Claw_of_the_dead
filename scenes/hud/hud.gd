@@ -12,12 +12,12 @@ func _ready() -> void:
 
 # functionnal
 func start_level() -> void:
-	Log.info("HUD : Loading level interface")
+	Log.trace(Log.Level.INFO, "HUD : Loading level interface")
 	in_game_menu.load_ui()
 
 
 func end_level() -> void:
-	Log.info("HUD : Unloading level interface")
+	Log.trace(Log.Level.INFO, "HUD : Unloading level interface")
 	in_game_menu.unload_ui()
 
 
