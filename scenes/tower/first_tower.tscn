@@ -61,7 +61,7 @@ upgrade = Array[PackedScene]([ExtResource("2_okbr1")])
 level = 1
 shoot_range = 100.0
 fire_rate = 1.0
-BulletScene = ExtResource("3_g8gbc")
+bullet_scene = ExtResource("3_g8gbc")
 
 [node name="Sprite2D" parent="." index="0"]
 texture = SubResource("AtlasTexture_g7olo")

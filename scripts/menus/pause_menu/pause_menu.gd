@@ -10,14 +10,24 @@ class_name PauseMenu
 extends Control
 
 
-@onready var RestartButton: TextureButton = $MarginContainer/PanelContainer/CenterContainer/VBoxContainer/ButtonLayer/RestartButton
-@onready var PlayButton: TextureButton = $MarginContainer/PanelContainer/CenterContainer/VBoxContainer/ButtonLayer/PlayButton
-@onready var HomeButton: TextureButton = $MarginContainer/PanelContainer/CenterContainer/VBoxContainer/ButtonLayer/HomeButton
-@onready var MusicButton: TextureButton = $MarginContainer/PanelContainer/CenterContainer/VBoxContainer/TopLeftIcon/MusicButton
-@onready var SoundButton: TextureButton = $MarginContainer/PanelContainer/CenterContainer/VBoxContainer/TopLeftIcon/SoundButton
-@onready var QuitButton: TextureButton = $MarginContainer/PanelContainer/MarginContainer/AspectRatioContainer/CloseTextureButton
+@onready var restart_button: TextureButton = $MarginContainer/PanelContainer/CenterContainer/VBoxContainer/ButtonLayer/RestartButton
+@onready var play_button: TextureButton = $MarginContainer/PanelContainer/CenterContainer/VBoxContainer/ButtonLayer/PlayButton
+@onready var home_button: TextureButton = $MarginContainer/PanelContainer/CenterContainer/VBoxContainer/ButtonLayer/HomeButton
+@onready var music_button: TextureButton = $MarginContainer/PanelContainer/CenterContainer/VBoxContainer/TopLeftIcon/MusicButton
+@onready var sound_button: TextureButton = $MarginContainer/PanelContainer/CenterContainer/VBoxContainer/TopLeftIcon/SoundButton
+@onready var quit_button: TextureButton = $MarginContainer/PanelContainer/MarginContainer/AspectRatioContainer/CloseTextureButton
 
 
+# core
+
+
+# public
+
+
+# private
+
+
+# signal
 ## Go back to the main menu
 func _on_home_button_pressed():
 	get_tree().change_scene_to_file("res://scenes/main/main.tscn")
@@ -58,3 +68,10 @@ func _on_play_button_pressed():
 func _on_close_texture_button_pressed():
 	Global.paused = false
 	queue_free()
+
+
+# event
+
+
+# setget
+

@@ -15,6 +15,7 @@ var rng: RandomNumberGenerator = RandomNumberGenerator.new()
 var shake_strength: float = 0.0
 
 
+# core
 func _ready():
 	Global.camera = self
 
@@ -43,6 +44,8 @@ func _input(event: InputEvent) -> void:
 	elif event is InputEventScreenDrag:
 		handle_drag(event)
 
+
+# public
 
 func handle_touch(event: InputEventScreenTouch) -> void:
 	if event.pressed:
@@ -89,3 +92,16 @@ func handle_effect(effect: String) -> void:
 
 func shake_camera() -> void:
 	shake_strength = random_strength
+
+
+# private
+
+
+# signal
+
+
+# event
+
+
+# setget
+

@@ -10,36 +10,46 @@ extends Control
 
 signal menu_close
 
-@onready var musicTextureButton: TextureButton = $GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/SettingsHBoxContainer/MusicAspectRatioContainer/MusicTextureButton
-@onready var soundTextureButton: TextureButton = $GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/SettingsHBoxContainer/SoundAspectRatioContainer/SoundTextureButton
-@onready var languageTextureButton: TextureButton = $GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/SettingsHBoxContainer/LanguageAspectRatioContainer/LanguageTextureButton
+@onready var music_texture_button: TextureButton = $GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/SettingsHBoxContainer/MusicAspectRatioContainer/MusicTextureButton
+@onready var sound_texture_button: TextureButton = $GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/SettingsHBoxContainer/SoundAspectRatioContainer/SoundTextureButton
+@onready var language_texture_button: TextureButton = $GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/SettingsHBoxContainer/LanguageAspectRatioContainer/LanguageTextureButton
 
 var actualTexture: Texture2D
 
 
+# core
+
+
+# public
+
+
+# private
+
+
+# signal
 func _on_music_texture_button_pressed():
-	actualTexture = musicTextureButton.get_texture_normal()
-	musicTextureButton.set_texture_normal(musicTextureButton.get_texture_pressed())
-	musicTextureButton.set_texture_pressed(actualTexture)
+	actualTexture = music_texture_button.get_texture_normal()
+	music_texture_button.set_texture_normal(music_texture_button.get_texture_pressed())
+	music_texture_button.set_texture_pressed(actualTexture)
 
 
 func _on_sound_texture_button_pressed():
-	actualTexture = soundTextureButton.get_texture_normal()
-	soundTextureButton.set_texture_normal(soundTextureButton.get_texture_pressed())
-	soundTextureButton.set_texture_pressed(actualTexture)
+	actualTexture = sound_texture_button.get_texture_normal()
+	sound_texture_button.set_texture_normal(sound_texture_button.get_texture_pressed())
+	sound_texture_button.set_texture_pressed(actualTexture)
 
 
 func _on_language_texture_button_pressed():
 	if TranslationServer.get_locale() == "en":
 		TranslationServer.set_locale("fr")
-		actualTexture = languageTextureButton.get_texture_normal()
-		languageTextureButton.set_texture_normal(languageTextureButton.get_texture_pressed())
-		languageTextureButton.set_texture_pressed(actualTexture)
+		actualTexture = language_texture_button.get_texture_normal()
+		language_texture_button.set_texture_normal(language_texture_button.get_texture_pressed())
+		language_texture_button.set_texture_pressed(actualTexture)
 	else:
 		TranslationServer.set_locale("en")
-		actualTexture = languageTextureButton.get_texture_normal()
-		languageTextureButton.set_texture_normal(languageTextureButton.get_texture_pressed())
-		languageTextureButton.set_texture_pressed(actualTexture)
+		actualTexture = language_texture_button.get_texture_normal()
+		language_texture_button.set_texture_normal(language_texture_button.get_texture_pressed())
+		language_texture_button.set_texture_pressed(actualTexture)
 
 
 func _on_instagram_texture_button_pressed():
@@ -68,3 +78,11 @@ func _on_contact_texture_button_pressed():
 
 func _on_close_texture_button_pressed():
 	menu_close.emit()
+
+
+# event
+
+
+# setget
+
+

@@ -15,3 +15,22 @@ class_name EnemyGroup extends Node
 ## @experimental
 @export var modifiers: Dictionary = {} # TODO
 
+
+
+# core
+
+
+# public
+
+
+# private
+
+
+# signal
+
+
+# event
+
+
+# setget
+

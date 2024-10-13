@@ -2,19 +2,21 @@ extends Label
 
 var _to: int = -1
 
+
 # core
 func _process(_delta: float) -> void:
 	if _to == -1: return
 	_update()
 
 
-# functionnal
+# public
 func start(delay: float) -> void:
 	_to = floor(Time.get_unix_time_from_system() + delay)
 	visible = true
 	_update()
 	
-# internal
+
+# private
 func _update() -> void:
 	if Time.get_unix_time_from_system() > _to:
 		_to = -1
@@ -29,3 +31,13 @@ func _update() -> void:
 	var ms: int = floor((time_remaining - sec) * 10)
 
 	text = "New wave in {0}.{1}s".format([sec, ms])
+
+
+# signal
+
+
+# event
+
+
+# setget
+

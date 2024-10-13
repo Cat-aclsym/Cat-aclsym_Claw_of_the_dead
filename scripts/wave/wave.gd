@@ -34,7 +34,7 @@ func _process(_delta: float) -> void:
 	timer.set_paused(Global.paused)
 
 
-# functionnal
+# public
 func start_wave() -> void:
 	Log.trace(Log.Level.INFO, "{0} start".format([name]))
 	if !is_ready: return
@@ -48,7 +48,7 @@ func set_paths(in_paths: Array[Path2D]) -> void:
 	is_ready = true
 
 
-# internal
+# private
 func _start_next_group() -> void:
 	current_group += 1
 
@@ -75,7 +75,7 @@ func _load_groups() -> void:
 		Log.trace(Log.Level.WARN, "%s don't have group to spawn" % name)
 
 
-# signals
+# signal
 func _enemy_dies() -> void:
 	dead_enemies += 1
 
@@ -98,3 +98,9 @@ func _on_timer_timeout() -> void:
 	var enemy: IEnemy = ScenesLoader.get_enemy_scene(enemies_to_spawn[current_enemy]).instantiate()
 	enemy.die.connect(_enemy_dies)
 	EnemySpawner.spawn_enemy(paths[randi() % paths.size()], enemy)
+
+
+# event
+
+
+# setget

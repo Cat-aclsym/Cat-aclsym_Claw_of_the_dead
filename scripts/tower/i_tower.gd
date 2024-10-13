@@ -3,7 +3,6 @@ extends Node2D
 ## Interface for the tower
 
 
-
 enum TargetType { ## Enum for the type of target the tower will shoot at
 	FIRST, ## Shoots at the first enemy that enters the range
 	LAST, ## Shoots at the last enemy that enters the range
@@ -21,20 +20,20 @@ enum TowerState { ## Enum for the state of the tower
 @export var level: int ## The current level of the tower.
 @export var shoot_range: float ## The range of the tower.
 @export var fire_rate: float ## The fire rate of the tower.
-@export var BulletScene: PackedScene = null ## A PackedScene representing the bullet that the tower fires.
+@export var bullet_scene: PackedScene = null ## A PackedScene representing the bullet that the tower fires.
 
-@onready var fire_rate_timer := $FireRateTimer as Timer ## Timer for controlling the fire rate of the tower.
-@onready var area_2d := $Area2D as Area2D ## Area2D node for the tower.
-@onready var collision_shape_2d := $Area2D/CollisionShape2D as CollisionShape2D ## CollisionShape2D node for the tower.
-@onready var polygon_2d := $Polygon2D as Polygon2D ## Polygon2D node for the tower.
-@onready var sprite_2d := $Sprite2D as Sprite2D ## Sprite2D node for the tower.
-@onready var hover_box := $TowerHoverBox/CollisionShape2D as CollisionShape2D ## CollisionShape2D node for the hover box of the tower.
-@onready var outline := $Polygon2D/Line2D as Line2D ## Line2D node for the outline of the tower.
+@onready var fire_rate_timer: Timer = $FireRateTimer ## Timer for controlling the fire rate of the tower.
+@onready var area_2d: Area2D = $Area2D ## Area2D node for the tower.
+@onready var collision_shape_2d: CollisionShape2D = $Area2D/CollisionShape2D ## CollisionShape2D node for the tower.
+@onready var polygon_2d: Polygon2D = $Polygon2D ## Polygon2D node for the tower.
+@onready var sprite_2d: Sprite2D = $Sprite2D ## Sprite2D node for the tower.
+@onready var hover_box: CollisionShape2D = $TowerHoverBox/CollisionShape2D ## CollisionShape2D node for the hover box of the tower.
+@onready var outline: Line2D = $Polygon2D/Line2D ## Line2D node for the outline of the tower.
 
 var target_type: TargetType ## The type of target the tower will shoot at.
 var state: TowerState ## The state of the tower.
 var enemy_array: Array[IEnemy]  ## An array of IEnemy nodes representing the enemies in the range of the tower.
-var target: IEnemy ## The target of the tower.
+var target: IEnemy
 var color: String = "#FFFFFF" ## The color of the tower range.
 var selected: bool = false ## A boolean representing if the tower is selected or not.
 var deactivate: bool = false
@@ -68,14 +67,15 @@ func _process(_delta: float) -> void:
 	if fire_rate_timer.is_stopped():
 		fire()
 
-# functionnal
+# public
 ## Function to fire a bullet at the target.
 func fire() -> void:
-	## If there are no enemies in the enemy array or the BulletScene is null, return
-	if !len(enemy_array):
+	## If there are no enemies in the enemy array or the bullet_scene is null, return
+	if not len(enemy_array):
 		return
-	## Security check for BulletScene
-	if BulletScene == null:
+	## Security check for bullet_scene
+	if bullet_scene == null:
+		Log.trace(Log.Level.ERROR, "Missing bullet scene")
 		return
 
 	## Switch statement to determine the target based on the target type
@@ -91,9 +91,16 @@ func fire() -> void:
 		TargetType.RANDOM:
 			_get_random_target()
 
+	if not target:
+		Log.trace(Log.Level.WARN, "Failed to retrieve target")
+		return
+	
+	Log.trace(Log.Level.DEBUG, "Target = %s" % target.name)
+	
+
 	## Get the global position of the target and instantiate a bullet
 	var enemy_position: Vector2 = target.global_position
-	var bullet_instance: IBullet = BulletScene.instantiate()
+	var bullet_instance: IBullet = bullet_scene.instantiate()
 
 	## Set the direction, rotation, and target of the bullet
 	bullet_instance.direction = global_position.direction_to(enemy_position)
@@ -121,7 +128,7 @@ func _choose_target():
 	pass
 
 
-# internal
+# private
 ## Function to create the range polygon for the tower when the tower is selected.
 ## @param radius float - The radius of the range polygon.
 ## @param precision int - The number of points in the range polygon.
@@ -285,3 +292,10 @@ func _on_tower_hover_box_mouse_exited():
 		polygon_2d.scale = lerp(polygon_2d.scale, Vector2(0, 0), size)
 		await get_tree().create_timer(0.01).timeout
 		size += 0.1
+
+
+# event
+
+
+# setget
+

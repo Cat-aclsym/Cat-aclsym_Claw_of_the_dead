@@ -18,3 +18,19 @@ func _ready() -> void:
 		return
 
 	assert(level_scene.instantiate() is ILevel, "LevelMetadata: Provided level scene isn't a ILevel node.")
+
+
+# public
+
+
+# private
+
+
+# signal
+
+
+# event
+
+
+# setget
+

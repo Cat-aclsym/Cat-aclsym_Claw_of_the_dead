@@ -12,9 +12,10 @@ func _ready() -> void:
 	_initialize()
 
 
-# functionnal
+# public
 
-# internal
+
+# private
 func _initialize() -> void:
 	for node in container.get_children():
 		if not node is AspectRatioContainer:
@@ -36,3 +37,13 @@ func _initialize() -> void:
 			Global.hud.start_level()
 			emit_signal("level_selected")
 		)
+
+
+# signal
+
+
+# event
+
+
+# setget
+

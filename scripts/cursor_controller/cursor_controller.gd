@@ -5,29 +5,16 @@ signal trigger_state_idle
 signal trigger_state_build
 signal trigger_state_upgrade
 
-# TODO :
-# state machine : idle / build / upgrade OK
-# fix offset ~~
-# placement tour
-	# apparition tour OK
-	# modification argent OK
-	# trigger que si placement ok ~~
-	# griser tour si placement ko ~~
-# BONUS :
-# menu amelioration
-# amelioration
-# destruction (vente)
-
 const COLOR_OK := Color(1, 1, 1, 0.5)
 const COLOR_KO := Color(1, 0.5, 0.5, 0.5)
 const UP_OFFSET := Vector2i(-1, -1)
 const RIGHT_OFFSET := Vector2i(0, -1)
 const LEFT_OFFSET := Vector2i(-1, 0)
-const VALID_TILES := [
+const VALID_TILES: Array[Vector2i] = [
 	Vector2i(0, 1)
 ]
 
-enum CURSOR_STATE {
+enum CursorState {
 	IDLE,
 	BUILD,
 	UPGRADE
@@ -35,7 +22,8 @@ enum CURSOR_STATE {
 
 var map_ref: IMap = null
 var tm_ref: TileMap = null
-var _state: CURSOR_STATE = CURSOR_STATE.IDLE
+
+var _state: CursorState = CursorState.IDLE
 var _tower: ITower = null
 var _is_move_tower_available: bool = true
 var _invalid_cells: Array = []
@@ -43,31 +31,31 @@ var _is_dragging: bool = false
 var _is_holding_click: bool = false
 
 @onready var cursor: AnimatedSprite2D = $cursor
-@onready var PlaceHUD: Control = $PlaceHUD
-@onready var PlaceHUDContent: BoxContainer = $PlaceHUD/HBoxContainer
+@onready var place_hud: Control = $PlaceHUD
+@onready var place_hud_content: BoxContainer = $PlaceHUD/HBoxContainer
 
 
 # core
 func _ready() -> void:
 	Global.cursor = self
 	visible = false
-	PlaceHUD.visible = false
+	place_hud.visible = false
 
 
 func _input(event: InputEvent) -> void:
-	if _state == CURSOR_STATE.BUILD:
+	if _state == CursorState.BUILD:
 		_state_build_input(event)
 
 
-# functionnal
-func change_state(new_state: CURSOR_STATE, args: Array = []) -> void:
+# public
+func change_state(new_state: CursorState, args: Array = []) -> void:
 	match new_state:
-		CURSOR_STATE.IDLE:
+		CursorState.IDLE:
 			trigger_state_idle.emit()
 			_state = new_state
 			visible = false
-		CURSOR_STATE.BUILD:
-			if _state != CURSOR_STATE.IDLE:
+		CursorState.BUILD:
+			if _state != CursorState.IDLE:
 				Log.trace(Log.Level.WARN, "Cannot change cursor state from BUILD to IDLE")
 				return
 			assert(args.size() == 1)
@@ -78,8 +66,8 @@ func change_state(new_state: CURSOR_STATE, args: Array = []) -> void:
 			visible = true
 			_state_build(args[0] as ITower)
 
-		CURSOR_STATE.UPGRADE:
-			if _state != CURSOR_STATE.IDLE:
+		CursorState.UPGRADE:
+			if _state != CursorState.IDLE:
 				Log.trace(Log.Level.WARN, "Cannot change cursor state from UPGRADE to IDLE")
 				return
 			trigger_state_upgrade.emit()
@@ -89,18 +77,18 @@ func change_state(new_state: CURSOR_STATE, args: Array = []) -> void:
 	_update()
 
 
-# internal
+# private
 func _update() -> void:
 	_handle_state()
 
 
 func _handle_state() -> void:
 	match _state:
-		CURSOR_STATE.IDLE:
+		CursorState.IDLE:
 			_state_idle()
-		CURSOR_STATE.BUILD:
+		CursorState.BUILD:
 			_state_build()
-		CURSOR_STATE.UPGRADE:
+		CursorState.UPGRADE:
 			_state_upgrade()
 
 
@@ -110,9 +98,9 @@ func _set_cursor_position(pos: Vector2 = get_global_mouse_position()) -> void:
 	b -= Vector2(0, 8)
 	cursor.position = b
 	cursor.visible = true
-	PlaceHUD.visible = true
+	place_hud.visible = true
 
-	PlaceHUD.position = b
+	place_hud.position = b
 
 
 func _state_build(tower: ITower = null) -> void:
@@ -180,10 +168,10 @@ func _state_upgrade() -> void:
 
 func _cancel_build() -> void:
 	cursor.visible = false
-	PlaceHUD.visible = false
+	place_hud.visible = false
 	_tower.queue_free()
 	_tower = null
-	change_state(CURSOR_STATE.IDLE)
+	change_state(CursorState.IDLE)
 
 
 func _build() -> void:
@@ -248,3 +236,10 @@ func _on_button_mouse_entered() -> void:
 
 func _on_button_mouse_exited() -> void:
 	_is_move_tower_available = true
+
+
+# event
+
+
+# setget
+

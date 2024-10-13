@@ -11,7 +11,7 @@ var current_wave: int = -1
 var waves: Array[Wave] = []
 
 @onready var waves_timer: Timer = $WavesTimer
-@onready var PopupWaveSpawner: PopupSpawner = $PopupWaveSpawner
+@onready var popup_wave_spawner: PopupSpawner = $PopupWaveSpawner
 @onready var camera: Camera2D = $Camera2D
 
 
@@ -24,12 +24,12 @@ func _ready() -> void:
 	Global.cursor.tm_ref = tilemap
 
 
-# functionnal
+# public
 func get_paths() -> Array[Path2D]:
 	return paths
 
 
-# internal
+# private
 func _start_wave(index: int) -> void:
 	if index == waves.size():
 		Log.trace(Log.Level.DEBUG, "You WIN !!!")
@@ -38,7 +38,7 @@ func _start_wave(index: int) -> void:
 		return
 
 	waves[index].start_wave()
-	PopupWaveSpawner.wave("Wave %s" % [index + 1])
+	popup_wave_spawner.wave("Wave %s" % [index + 1])
 	current_wave = index
 
 
@@ -72,6 +72,13 @@ func _load_waves() -> void:
 		Log.trace(Log.Level.WARN, "{%s don't have waves" % name)
 
 
-# signals
+# signal
 func _on_waves_timer_timeout() -> void:
 	_start_wave(current_wave + 1)
+
+
+# event
+
+
+# setget
+

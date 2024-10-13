@@ -4,6 +4,11 @@ extends Marker2D
 
 @export var popup_node: PackedScene
 
+
+# core
+
+
+# public
 func score(text: String):
 	var damage_popup: Node2D = popup_node.instantiate()
 	var label: Label = damage_popup.get_node("FloatingNumbers/Label")
@@ -27,3 +32,16 @@ func wave(text: String):
 
 	label.text = text
 	wave_popup.z_index = 4096
+
+
+# private
+
+
+# signal
+
+
+# event
+
+
+# setget
+

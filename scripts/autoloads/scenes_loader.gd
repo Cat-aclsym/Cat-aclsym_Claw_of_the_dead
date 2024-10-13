@@ -26,9 +26,25 @@ var towers: Dictionary = {
 }
 
 
+# core
+
+
+# public
 func get_enemy_scene(id: EnemyID) -> PackedScene:
 	if (!enemies.has(id)):
 		Log.trace(Log.Level.ERROR, "{0} try to access unknown enemy with id = {1}".format([name, id]))
 		return null
 		
 	return enemies[id]
+
+# private
+
+
+# signal
+
+
+# event
+
+
+# setget
+

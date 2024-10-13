@@ -3,6 +3,11 @@ extends Node
 
 var groups: Dictionary = {}
 
+
+# core
+
+
+# public
 func register(group: String, sound: Node) -> void:
 	if groups.has(group):
 		groups[group].append(sound)
@@ -18,3 +23,16 @@ func change_volume(group: String, vol: float) -> void:
 
 	for s in groups[group]:
 		s.set_volume(vol)
+		
+
+# private
+
+
+# signal
+
+
+# event
+
+
+# setget
+

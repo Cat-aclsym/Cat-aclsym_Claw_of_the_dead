@@ -8,20 +8,20 @@ const ANIM_FADE_OUT: String = "fade_out"
 const ANIM_WALK_UP: String = "walk_up"
 const ANIM_WALK_DOWN: String = "walk_down"
 
-enum ENM_State {
+enum EnemyState {
 	FOLLOW_PATH,
 	DEAD,
 	GIVE_DAMAGE
 }
 
-enum ENM_Direction {
+enum EnemyDirection {
 	UP_RIGHT,
 	UP_LEFT,
 	DOWN_RIGHT,
 	DOWN_LEFT
 }
 
-enum ENM_Type {
+enum EnemyType {
 	DEFAULT,
 	BIG_DADDY,
 	FAT
@@ -35,37 +35,37 @@ var DAMAGE: Dictionary = {
 
 @export var speed: float = 30
 @export var max_health: float = 20
-@export var type: ENM_Type = ENM_Type.DEFAULT
+@export var type: EnemyType = EnemyType.DEFAULT
 
 
 var active_poison_timers: Array = []
 var current_point_id: int = 0
-var direction: ENM_Direction = ENM_Direction.UP_RIGHT
+var direction: EnemyDirection = EnemyDirection.UP_RIGHT
 var health: float
 var is_already_dead: bool = false
 var path: Path2D = null
 var path_follow: PathFollow2D = null
 var poison_timer_execution_count: int = 0
-var state: ENM_State = ENM_State.FOLLOW_PATH
+var state: EnemyState = EnemyState.FOLLOW_PATH
 
-@onready var AnimPlayer: AnimationPlayer = $AnimationPlayer
-@onready var CollisionShape: CollisionShape2D = $CollisionShape2D
-@onready var PoisionParticles: GPUParticles2D = $GPUParticles2D
-@onready var PopupScoreSpawner: PopupSpawner = $PopupScoreSpawner
-@onready var Sprite: Sprite2D = $Sprite2D
-@onready var old_modulate: Color = Sprite.modulate
+@onready var anim_player: AnimationPlayer = $AnimationPlayer
+@onready var collision_shape: CollisionShape2D = $CollisionShape2D
+@onready var poison_particle: GPUParticles2D = $GPUParticles2D
+@onready var popup_score_spawner: PopupSpawner = $PopupScoreSpawner
+@onready var sprite: Sprite2D = $Sprite2D
+@onready var old_modulate: Color = sprite.modulate
 @onready var path_points_size: int = path.curve.point_count
 
 
 # core
 func _ready():
-	if type == ENM_Type.FAT:
+	if type == EnemyType.FAT:
 		camera_effect.connect(Global.camera.handle_effect)
 		camera_effect.emit('shake')
 
 	health = max_health
 	_set_path_direction()
-	AnimPlayer.animation_changed.connect(_on_animation_player_animation_finished)
+	anim_player.animation_changed.connect(_on_animation_player_animation_finished)
 
 
 func _physics_process(delta: float) -> void:
@@ -75,39 +75,33 @@ func _physics_process(delta: float) -> void:
 	_update_z_index()
 
 	match state:
-		ENM_State.FOLLOW_PATH:
+		EnemyState.FOLLOW_PATH:
 			follow_path(delta)
-		ENM_State.DEAD:
+		EnemyState.DEAD:
 			_dead_state()
-		ENM_State.GIVE_DAMAGE:
+		EnemyState.GIVE_DAMAGE:
 			_give_damage_state()
 		_:
-			Log.trace(Log.Level.WARN, "{0} unknown ENM_State : {1}".format([name, state]))
+			Log.trace(Log.Level.WARN, "{0} unknown EnemyState : {1}".format([name, state]))
 
 	# handle poison particles
-	PoisionParticles.emitting = not active_poison_timers.is_empty()
+	poison_particle.emitting = not active_poison_timers.is_empty()
 
 
-func _damage_effect(color: Color):
-	Sprite.modulate = color
-	await get_tree().create_timer(0.1).timeout
-	Sprite.modulate = old_modulate
-
-
-# functionnal
+# public
 func take_damage(damage: float, damage_type: String) -> void:
 	if is_already_dead: return
 	_damage_effect(DAMAGE[damage_type]["color"])
 	if health - damage <= 0:
 		health = 0
-		state = ENM_State.DEAD
+		state = EnemyState.DEAD
 	else:
 		health -= damage
 
 
 func follow_path(delta: float) -> void:
 	if path_follow.get_progress_ratio() >= 1:  ## Path is finished
-		state = ENM_State.GIVE_DAMAGE
+		state = EnemyState.GIVE_DAMAGE
 		return
 
 	path_follow.set_progress(path_follow.get_progress() + (speed * delta))
@@ -127,7 +121,13 @@ func add_poison_effect(damage: float, total_execution: int, interval: float) -> 
 	poison_timer.timeout.connect(func(): _on_poison_timer_timeout(poison_timer))
 
 
-# internal
+# private
+func _damage_effect(color: Color):
+	sprite.modulate = color
+	await get_tree().create_timer(0.1).timeout
+	sprite.modulate = old_modulate
+
+
 func _set_path_direction() -> void:
 	var x_pos_difference: float = path.curve.get_point_position(current_point_id).x - path.curve.get_point_position(current_point_id + 1).x;
 	var y_pos_difference: float = path.curve.get_point_position(current_point_id).y - path.curve.get_point_position(current_point_id + 1).y;
@@ -139,14 +139,14 @@ func _set_path_direction() -> void:
 
 	if is_going_right:
 		if is_going_down:
-			direction = ENM_Direction.DOWN_RIGHT
+			direction = EnemyDirection.DOWN_RIGHT
 		elif is_going_up:
-			direction = ENM_Direction.UP_RIGHT
+			direction = EnemyDirection.UP_RIGHT
 	elif is_going_left:
 		if is_going_down:
-			direction = ENM_Direction.DOWN_LEFT
+			direction = EnemyDirection.DOWN_LEFT
 		elif is_going_up:
-			direction = ENM_Direction.UP_LEFT
+			direction = EnemyDirection.UP_LEFT
 
 
 
@@ -164,26 +164,26 @@ func _update_direction() -> void:
 
 func _walk():
 	match direction:
-		ENM_Direction.UP_RIGHT:
-			Sprite.flip_h = false
-			AnimPlayer.play(ANIM_WALK_UP)
-		ENM_Direction.UP_LEFT:
-			Sprite.flip_h = true
-			AnimPlayer.play(ANIM_WALK_UP)
-		ENM_Direction.DOWN_RIGHT:
-			Sprite.flip_h = false
-			AnimPlayer.play(ANIM_WALK_DOWN)
-		ENM_Direction.DOWN_LEFT:
-			Sprite.flip_h = true
-			AnimPlayer.play(ANIM_WALK_DOWN)
+		EnemyDirection.UP_RIGHT:
+			sprite.flip_h = false
+			anim_player.play(ANIM_WALK_UP)
+		EnemyDirection.UP_LEFT:
+			sprite.flip_h = true
+			anim_player.play(ANIM_WALK_UP)
+		EnemyDirection.DOWN_RIGHT:
+			sprite.flip_h = false
+			anim_player.play(ANIM_WALK_DOWN)
+		EnemyDirection.DOWN_LEFT:
+			sprite.flip_h = true
+			anim_player.play(ANIM_WALK_DOWN)
 		_:
-			Log.trace(Log.Level.WARN, "{0}::_walk() direction does not match ENM_Direction enum".format([name]))
+			Log.trace(Log.Level.WARN, "{0}::_walk() direction does not match EnemyDirection enum".format([name]))
 
 
 func _disappear() -> void:
 	if is_already_dead: return
 	die.emit()
-	AnimPlayer.play(ANIM_FADE_OUT)
+	anim_player.play(ANIM_FADE_OUT)
 	is_already_dead = true
 
 
@@ -193,10 +193,10 @@ func _dead_state() -> void:
 		return
 	var money_reward: int = 10
 	ILevel.current_level.coins += money_reward
-	PopupScoreSpawner.score("+%s$" % [int(money_reward)])
+	popup_score_spawner.score("+%s$" % [int(money_reward)])
 	_disappear()
 	# disable the collision shape
-	CollisionShape.set_deferred("disabled", true)
+	collision_shape.set_deferred("disabled", true)
 
 
 func _give_damage_state() -> void:
@@ -207,7 +207,7 @@ func _give_damage_state() -> void:
 		return
 
 	# if boss insta death
-	if type == ENM_Type.BIG_DADDY or type == ENM_Type.FAT:
+	if type == EnemyType.BIG_DADDY or type == EnemyType.FAT:
 		ILevel.current_level.health = 0
 	else:
 		ILevel.current_level.health -= ceil(health/2)

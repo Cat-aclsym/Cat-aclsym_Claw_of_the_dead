@@ -15,6 +15,18 @@ extends Control
 var option_menu_instance: OptionMenu
 var levels_menu_instance: LevelsMenu
 
+
+
+# core
+
+
+# public
+
+
+# private
+
+
+# signal
 func _on_play_button_pressed():
 	gui_margin_container.visible = false
 	levels_menu_instance = levels_menu.instantiate()
@@ -36,3 +48,11 @@ func _on_parameter_button_pressed():
 func _on_menu_close(menu: Control):
 	gui_margin_container.visible = true
 	menu.queue_free()
+
+
+
+# event
+
+
+# setget
+

@@ -15,5 +15,21 @@ var debug_console: DebugConsole = null
 var hud: HUD = null
 var paused: bool = false
 
+# core
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
+
+# public
+
+
+# private
+
+
+# signal
+
+
+# event
+
+
+# setget
+

@@ -13,16 +13,28 @@ var _cost: int
 @onready var text_price: Label = $VBoxContainer/Button/Label
 
 
+# core
 func _ready() -> void:
 	_tower = tower.instantiate()
 	_cost = _tower.cost
 
 
+# public
 func update() -> void:
 	text_price.text = "BUY {0}$".format([_cost])
 	build_button.disabled = ILevel.current_level.coins < _cost
 
 
+# private
+
+
+# signal
 func _on_button_pressed() -> void:
-	Global.cursor.change_state(Global.cursor.CURSOR_STATE.BUILD, [_tower])
+	Global.cursor.change_state(Global.cursor.CursorState.BUILD, [_tower])
 	Global.ig_menu.toggle_build_menu()
+
+
+# event
+
+
+# setget

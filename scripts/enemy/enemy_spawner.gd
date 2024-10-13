@@ -7,6 +7,10 @@ static var i: int = 0:
 		return i - 1
 
 
+# core
+
+
+# public
 static func spawn_enemy(path: Path2D, enemy: IEnemy):
 	var pathfollow := PathFollow2D.new()
 	pathfollow.loop = false
@@ -21,4 +25,16 @@ static func spawn_enemy(path: Path2D, enemy: IEnemy):
 	pathfollow.add_child(enemy)
 
 	# fix same animation on multiple instance :
-	enemy.Sprite.texture = enemy.Sprite.texture.duplicate()
+	enemy.sprite.texture = enemy.sprite.texture.duplicate()
+
+
+# private
+
+
+# signal
+
+
+# event
+
+
+# setget
