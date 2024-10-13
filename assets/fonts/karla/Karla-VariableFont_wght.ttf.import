@@ -2,19 +2,20 @@
 
 importer="font_data_dynamic"
 type="FontFile"
-uid="uid://ddo3rokwsadq0"
-path="res://.godot/imported/DotGothic16-Regular.ttf-49b14ccc28867d48f724df5291ba4988.fontdata"
+uid="uid://dpjd0ata0w2de"
+path="res://.godot/imported/Karla-VariableFont_wght.ttf-5eb049bb1ed4c864d5906629f5d267a8.fontdata"
 
 [deps]
 
-source_file="res://assets/resources/fonts/DotGothic16-Regular.ttf"
-dest_files=["res://.godot/imported/DotGothic16-Regular.ttf-49b14ccc28867d48f724df5291ba4988.fontdata"]
+source_file="res://assets/fonts/karla/Karla-VariableFont_wght.ttf"
+dest_files=["res://.godot/imported/Karla-VariableFont_wght.ttf-5eb049bb1ed4c864d5906629f5d267a8.fontdata"]
 
 [params]
 
 Rendering=null
 antialiasing=1
 generate_mipmaps=false
+disable_embedded_bitmaps=true
 multichannel_signed_distance_field=false
 msdf_pixel_range=8
 msdf_size=48

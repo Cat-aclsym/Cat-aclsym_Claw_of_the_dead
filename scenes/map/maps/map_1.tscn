@@ -1,7 +1,7 @@
 [gd_scene load_steps=9 format=3 uid="uid://oc6r5kow8d7i"]
 
 [ext_resource type="PackedScene" uid="uid://crdosg1fmycsi" path="res://scenes/map/i_map.tscn" id="1_18xh2"]
-[ext_resource type="Script" path="res://scripts/enemy/PopupLocation.gd" id="2_ue4yl"]
+[ext_resource type="Script" path="res://scripts/popup/popup_spawner.gd" id="2_ue4yl"]
 [ext_resource type="PackedScene" uid="uid://cqe6sjyhnpfci" path="res://scenes/popup/popup_wave.tscn" id="3_nqi3c"]
 [ext_resource type="PackedScene" uid="uid://ce6ydtoqy6h55" path="res://scenes/wave/wave.tscn" id="4_hpdff"]
 [ext_resource type="PackedScene" uid="uid://dowhoig8uluo6" path="res://scenes/wave/enemy_group.tscn" id="5_tp84h"]

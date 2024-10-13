@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://scripts/enemy/ienemy.gd" id="1_ppg1n"]
 [ext_resource type="Texture2D" uid="uid://bggy3ygaq6c4t" path="res://assets/enemies/poison_animation.png" id="2_tjt82"]
-[ext_resource type="Script" path="res://scripts/enemy/PopupLocation.gd" id="3_6sxxp"]
+[ext_resource type="Script" path="res://scripts/popup/popup_spawner.gd" id="3_6sxxp"]
 [ext_resource type="PackedScene" uid="uid://jv7q286fh1vn" path="res://scenes/popup/popup_score.tscn" id="4_7dtc1"]
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_tp60s"]

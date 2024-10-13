@@ -3,7 +3,7 @@
 [ext_resource type="PackedScene" uid="uid://crdosg1fmycsi" path="res://scenes/map/i_map.tscn" id="1_4widc"]
 [ext_resource type="PackedScene" uid="uid://dowhoig8uluo6" path="res://scenes/wave/enemy_group.tscn" id="2_t1gv5"]
 [ext_resource type="PackedScene" uid="uid://ce6ydtoqy6h55" path="res://scenes/wave/wave.tscn" id="3_hf8jk"]
-[ext_resource type="Script" path="res://scripts/enemy/PopupLocation.gd" id="5_kdg7m"]
+[ext_resource type="Script" path="res://scripts/popup/popup_spawner.gd" id="5_kdg7m"]
 [ext_resource type="PackedScene" uid="uid://cqe6sjyhnpfci" path="res://scenes/popup/popup_wave.tscn" id="6_owqas"]
 [ext_resource type="Script" path="res://scripts/camera/camera.gd" id="6_yjlcw"]
 
