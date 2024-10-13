@@ -95,9 +95,6 @@ func fire() -> void:
 		Log.trace(Log.Level.WARN, "Failed to retrieve target")
 		return
 	
-	Log.trace(Log.Level.DEBUG, "Target = %s" % target.name)
-	
-
 	## Get the global position of the target and instantiate a bullet
 	var enemy_position: Vector2 = target.global_position
 	var bullet_instance: IBullet = bullet_scene.instantiate()

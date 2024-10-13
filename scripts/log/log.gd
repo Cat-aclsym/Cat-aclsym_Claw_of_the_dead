@@ -16,8 +16,14 @@ const PREFIXS: Dictionary = {
 	Level.FATAL: "[FATAL]"
 }
 
+# core
 
+
+# public
 static func trace(level: Log.Level, args: Variant) -> void:
+	if level == Level.DEBUG and not Global.debug:
+		return
+
 	var stack: Dictionary = get_stack()[1]
 	
 	var prefix_1: String = "{0}::{1}@{2}".format([
@@ -47,6 +53,8 @@ static func trace(level: Log.Level, args: Variant) -> void:
 	print(output)
 
 
+
+# private
 static func _format_args(args: Variant) -> String:
 	var output := ""
 	
@@ -60,3 +68,12 @@ static func _format_args(args: Variant) -> String:
 		else : output += str( args )
 	
 	return output
+
+
+# signal
+
+
+# event
+
+
+# setget
