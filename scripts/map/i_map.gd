@@ -69,7 +69,7 @@ func _load_waves() -> void:
 			waves.append(child as Wave)
 
 	if waves.is_empty():
-		Log.trace(Log.Level.WARN, "{%s don't have waves" % name)
+		Log.trace(Log.Level.WARN, "%s don't have waves" % name)
 
 
 # signal
