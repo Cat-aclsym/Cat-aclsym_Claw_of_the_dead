@@ -20,7 +20,7 @@ func _initialize() -> void:
 	for node in container.get_children():
 		if not node is AspectRatioContainer:
 			continue
-		buttons[node.get_child(0).get_child(0)] = node.get_child(0).get_child(1)
+		buttons[node.get_child(0).get_child(0)] = node.get_child(0).get_child(1) # yo wtf ?
 
 	for bt in buttons:
 		bt.text = "{0}".format([tr(buttons[bt].level_name)])

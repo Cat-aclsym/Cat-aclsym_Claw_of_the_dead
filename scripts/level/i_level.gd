@@ -8,8 +8,8 @@ var health: int = 20: set =  _set_health
 
 @export var map_scene: PackedScene = null
 
-@onready var Map: IMap = null
-@onready var Metadata: LevelMetadata = null
+var map: IMap = null
+var metadata: LevelMetadata = null
 
 static var current_level: ILevel = null
 
@@ -19,12 +19,12 @@ static var current_level: ILevel = null
 
 # public
 func initialize(meta: LevelMetadata) -> void:
-	Metadata = meta.duplicate()
-	Log.trace(Log.Level.INFO, "Level initializing [{0}] : {1}".format([Metadata.id, Metadata.level_name]))
+	metadata = meta.duplicate()
+	Log.trace(Log.Level.INFO, "Level initializing [{0}] : {1}".format([metadata.id, metadata.level_name]))
 	_load_map()
 
 
-func startNewWave() -> void:
+func start_new_wave() -> void:
 	pass
 
 
@@ -43,9 +43,9 @@ func _load_map() -> void:
 		Log.trace(Log.Level.ERROR, "An IMap must be provided to create a level!")
 		return
 
-	var map: IMap = map_scene.instantiate()
-	add_child(map)
-	Map = map
+	var new_map: IMap = map_scene.instantiate()
+	add_child(new_map)
+	map = new_map
 
 	Global.cursor.map_ref = map
 
