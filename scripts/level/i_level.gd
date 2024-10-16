@@ -1,18 +1,18 @@
 class_name ILevel
 extends Node2D
+
 signal stats_updated
-
-var coins: int = 75: set = _set_coins
-var health: int = 20: set =  _set_health
-
-
-@export var map_scene: PackedScene = null
-
-var map: IMap = null
-var metadata: LevelMetadata = null
 
 static var current_level: ILevel = null
 
+@export var map_scene: PackedScene = null
+
+var coins: int = 75:
+	set = _set_coins
+var health: int = 20:
+	set =  _set_health
+var map: IMap = null
+var metadata: LevelMetadata = null
 
 # core
 
@@ -39,7 +39,7 @@ func loose() -> void:
 # private
 func _load_map() -> void:
 	Log.trace(Log.Level.INFO, "Loading map ...")
-	if !map_scene:
+	if not map_scene:
 		Log.trace(Log.Level.ERROR, "An IMap must be provided to create a level!")
 		return
 
@@ -50,13 +50,6 @@ func _load_map() -> void:
 	Global.cursor.map_ref = map
 
 
-# signal
-
-
-# event
-
-
-# setget
 func _set_coins(new_value):
 	coins = new_value
 	stats_updated.emit()
@@ -66,3 +59,10 @@ func _set_health(new_value):
 	health = new_value
 	stats_updated.emit()
 
+# signal
+
+
+# event
+
+
+# setget

@@ -9,10 +9,10 @@ var completed: bool = false
 
 # core
 func _ready() -> void:
-	if (get_parent() is ILevel):
+	if get_parent() is ILevel:
 		return
 
-	if (level_scene == null):
+	if level_scene == null:
 		Log.trace(Log.Level.WARN, "LevelMetada [{0}] don't have level scene".format([id]))
 		return
 
@@ -32,4 +32,3 @@ func _ready() -> void:
 
 
 # setget
-

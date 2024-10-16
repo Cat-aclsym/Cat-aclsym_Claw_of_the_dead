@@ -1,13 +1,13 @@
 class_name IMap
 extends Node2D
+
 signal win
 signal loose
 
 @export var tilemap: TileMap
 
-var paths: Array[Path2D] = []
-
 var current_wave: int = -1
+var paths: Array[Path2D] = []
 var waves: Array[Wave] = []
 
 @onready var waves_timer: Timer = $WavesTimer
@@ -25,8 +25,6 @@ func _ready() -> void:
 
 
 # public
-func get_paths() -> Array[Path2D]:
-	return paths
 
 
 # private
@@ -81,4 +79,3 @@ func _on_waves_timer_timeout() -> void:
 
 
 # setget
-
