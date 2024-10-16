@@ -107,7 +107,7 @@ func _state_build(tower: ITower = null) -> void:
 	# add tower ghost
 	if tower:
 		_tower = tower.duplicate()
-		_tower.deactivate = true
+		_tower.state = ITower.TowerState.BUILDING
 		add_child(_tower)
 		# Avoid placing tower same frame as the tower is selected
 		await get_tree().create_timer(0.1).timeout
@@ -181,7 +181,7 @@ func _build() -> void:
 	_is_move_tower_available = false
 
 	var new_tower: ITower = _tower.duplicate()
-	new_tower.deactivate = false
+	new_tower.state = ITower.TowerState.ACTIVE
 	new_tower.modulate = Color(1, 1, 1, 1)
 	map_ref.add_child(new_tower)
 

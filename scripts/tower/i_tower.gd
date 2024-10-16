@@ -10,10 +10,13 @@ enum TargetType { ## Enum for the type of target the tower will shoot at
 	WEAKEST, ## Shoots at the enemy with the least health
 	RANDOM ## Shoots at a random enemy
 }
+
 enum TowerState { ## Enum for the state of the tower
 	BUILDING, ## The tower is being built
-	UPGRADE ## The tower is being upgraded
+	UPGRADING, ## The tower is being upgraded
+	ACTIVE, ## The tower is placed and active
 }
+
 @export var cost: int ## The cost of the tower.
 @export var sell_price: int ## The sell price of the tower.
 @export var upgrade: Array[PackedScene] ## An array of PackedScenes representing the upgrades available for the tower.
@@ -30,20 +33,17 @@ enum TowerState { ## Enum for the state of the tower
 @onready var hover_box: CollisionShape2D = $TowerHoverBox/CollisionShape2D ## CollisionShape2D node for the hover box of the tower.
 @onready var outline: Line2D = $Polygon2D/Line2D ## Line2D node for the outline of the tower.
 
-var target_type: TargetType ## The type of target the tower will shoot at.
-var state: TowerState ## The state of the tower.
-var enemy_array: Array[IEnemy]  ## An array of IEnemy nodes representing the enemies in the range of the tower.
-var target: IEnemy
 var color: String = "#FFFFFF" ## The color of the tower range.
+var enemy_array: Array[IEnemy]  ## An array of IEnemy nodes representing the enemies in the range of the tower.
 var selected: bool = false ## A boolean representing if the tower is selected or not.
-var deactivate: bool = false
+var state: TowerState = TowerState.ACTIVE ## The state of the tower.
+var target: IEnemy ## The target of the tower.
+var target_type: TargetType ## The type of target the tower will shoot at.
 
 
 # core
 ## Function called when the node enters the scene tree for the first time.
 func _ready():
-	## Set the initial state of the tower to BUILDING
-	state = TowerState.BUILDING
 	## Set the initial target type of the tower to FIRST
 	target_type = TargetType.FIRST
 	## Set the radius of the tower's collision shape to the tower's shooting range
@@ -58,8 +58,7 @@ func _ready():
 ## Function called every frame. Delta is the time since the last frame.
 ## @param _delta float - The time since the last frame.
 func _process(_delta: float) -> void:
-	if deactivate: # TODO : replace 'deactivate' by something more relavent
-		# tower is deactivate only when fixed to cursors
+	if state == TowerState.BUILDING:
 		_update_z_index()
 		return
 
@@ -94,7 +93,7 @@ func fire() -> void:
 	if not target:
 		Log.trace(Log.Level.WARN, "Failed to retrieve target")
 		return
-	
+
 	## Get the global position of the target and instantiate a bullet
 	var enemy_position: Vector2 = target.global_position
 	var bullet_instance: IBullet = bullet_scene.instantiate()
@@ -295,4 +294,3 @@ func _on_tower_hover_box_mouse_exited():
 
 
 # setget
-
