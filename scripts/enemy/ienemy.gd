@@ -4,10 +4,6 @@ extends CharacterBody2D
 signal die
 signal camera_effect(effect: String)
 
-const ANIM_FADE_OUT := "fade_out"
-const ANIM_WALK_UP := "walk_up"
-const ANIM_WALK_DOWN := "walk_down"
-
 enum EnemyState {
 	DEAD,
 	FOLLOW_PATH,
@@ -27,10 +23,18 @@ enum EnemyType {
 	FAT,
 }
 
+enum DamageType {
+	DEFAULT,
+	POISON,
+}
+
+const ANIM_FADE_OUT := "fade_out"
+const ANIM_WALK_UP := "walk_up"
+const ANIM_WALK_DOWN := "walk_down"
 
 const DAMAGES: Dictionary = {
-	"default": {"color": Color(0.7, 0.5, 0.5, 1)},
-	"poison": {"color": Color(0.7, 0.5, 0.7, 1)}
+	DamageType.DEFAULT: {"color": Color(0.7, 0.5, 0.5, 1)},
+	DamageType.POISON: {"color": Color(0.7, 0.5, 0.7, 1)}
 }
 
 @export var speed: float = 30
@@ -88,7 +92,7 @@ func _physics_process(delta: float) -> void:
 
 
 # public
-func take_damage(damage: float, damage_type: String) -> void:
+func take_damage(damage: float, damage_type: DamageType) -> void:
 	if is_already_dead: return
 	_damage_effect(DAMAGES[damage_type]["color"])
 	if health - damage <= 0:
@@ -245,7 +249,7 @@ func _on_poison_timer_timeout(timer: Timer):
 	# check if the timer is the highest
 	if timer_index == highest_timer_index:
 		# apply the poison damage
-		take_damage(active_poison_timers[highest_timer_index]["damage"], "poison")
+		take_damage(active_poison_timers[highest_timer_index]["damage"], DamageType.POISON)
 		# check if the poison has reached its total_execution
 		if active_poison_timers[highest_timer_index]["current_execution"] >= active_poison_timers[highest_timer_index]["total_execution"]:
 			# remove the timer from the active_poison_timers array

@@ -25,7 +25,7 @@ func _physics_process(delta: float) -> void:
 # signal
 func _on_body_entered(body):
 	if body is IEnemy:
-		body.take_damage(damage, "default")
+		body.take_damage(damage, IEnemy.DamageType.DEFAULT)
 		queue_free()
 
 

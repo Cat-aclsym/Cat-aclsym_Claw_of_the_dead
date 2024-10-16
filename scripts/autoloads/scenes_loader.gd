@@ -14,14 +14,14 @@ enum TowerID {
 }
 
 
-const enemies: Dictionary = {
+const ENEMIES: Dictionary = {
 	EnemyID.DEFAULT: preload("res://scenes/enemy/default_zombie.tscn"),
 	EnemyID.BIG_DADDY: preload("res://scenes/enemy/big_daddy.tscn"),
 	EnemyID.FAT: preload("res://scenes/enemy/fat.tscn"),
 }
 
 
-const towers: Dictionary = {
+const TOWERS: Dictionary = {
 	TOWER_1 = preload("res://scenes/tower/first_tower.tscn")
 }
 
@@ -31,11 +31,11 @@ const towers: Dictionary = {
 
 # public
 func get_enemy_scene(id: EnemyID) -> PackedScene:
-	if (!enemies.has(id)):
+	if not ENEMIES.has(id):
 		Log.trace(Log.Level.ERROR, "{0} try to access unknown enemy with id = {1}".format([name, id]))
 		return null
 
-	return enemies[id]
+	return ENEMIES[id]
 
 # private
 
