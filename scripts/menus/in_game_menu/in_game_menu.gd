@@ -30,7 +30,7 @@ var _is_ready: bool = false
 
 # core
 func _ready() -> void:
-	Global.ig_menu = self
+	Global.in_game_menu = self
 	hide()
 
 	construction_anim_player.animation_finished.connect(
