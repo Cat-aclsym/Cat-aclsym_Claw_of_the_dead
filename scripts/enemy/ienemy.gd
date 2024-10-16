@@ -65,7 +65,6 @@ func _ready():
 
 	health = max_health
 	_set_path_direction()
-	anim_player.animation_changed.connect(_on_animation_player_animation_finished)
 
 
 func _physics_process(delta: float) -> void:
@@ -195,8 +194,12 @@ func _dead_state() -> void:
 	ILevel.current_level.coins += money_reward
 	popup_score_spawner.score("+%s$" % [int(money_reward)])
 	_disappear()
-	# disable the collision shape
 	collision_shape.set_deferred("disabled", true)
+
+	# wait for the animation to finish
+	await anim_player.animation_finished
+	queue_free()
+	path_follow.queue_free()
 
 
 func _give_damage_state() -> void:
@@ -255,9 +258,3 @@ func _on_poison_timer_timeout(timer: Timer):
 		else:
 			# start the next execution
 			timer.start()
-
-
-func _on_animation_player_animation_finished(anim_name: String) -> void:
-	if anim_name == ANIM_FADE_OUT:
-		queue_free()
-		get_parent().queue_free()
