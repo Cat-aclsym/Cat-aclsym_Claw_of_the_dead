@@ -47,7 +47,7 @@ func _process(_delta: float) -> void:
 	coins_rich_text_label.text = tr(default_coins_text) % ILevel.current_level.coins
 	health_rich_text_label.text = tr(default_health_text) % (str(ILevel.current_level.health) + "/20")
 	health_texture_progress_bar.value = ILevel.current_level.health
-	var current_wave: int = ILevel.current_level.Map.current_wave + 1
+	var current_wave: int = ILevel.current_level.map.current_wave + 1
 	waves_rich_text_label.text = tr(default_waves_text) % current_wave
 
 
@@ -119,4 +119,3 @@ func _on_cancel_place_button_pressed():
 
 
 # setget
-
