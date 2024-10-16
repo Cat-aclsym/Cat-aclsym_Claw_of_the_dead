@@ -9,17 +9,18 @@ extends Control
 
 @onready var coins_rich_text_label: Label = $HUDMarginContainer/HUDVBoxContainer/CoinsWavesMarginContainer/CoinsWavesHBoxContainer/CoinsTextureRect/MarginContainer/CoinsLabel
 @onready var health_rich_text_label: Label = $HUDMarginContainer/HUDVBoxContainer/HeartTextureRect/HealthMarginContainer/MarginContainer/HealthTextureProgressBar/HealthLabel
-@onready var health_texture_progress_bar: TextureProgressBar = $HUDMarginContainer/HUDVBoxContainer/HeartTextureRect/HealthMarginContainer/MarginContainer/HealthTextureProgressBar
 @onready var waves_rich_text_label: Label = $HUDMarginContainer/HUDVBoxContainer/CoinsWavesMarginContainer/CoinsWavesHBoxContainer/WavesTextureRect/MarginContainer/WavesLabel
-@onready var new_wave_count_label: Label = $NewWaveCountLabel
 @onready var default_coins_text: String = coins_rich_text_label.text
 @onready var default_health_text: String = health_rich_text_label.text
 @onready var default_waves_text: String = waves_rich_text_label.text
-@onready var build_button: TextureButton = $VBoxContainer/MarginContainer/BuildButton
+
+@onready var health_texture_progress_bar: TextureProgressBar = $HUDMarginContainer/HUDVBoxContainer/HeartTextureRect/HealthMarginContainer/MarginContainer/HealthTextureProgressBar
+@onready var new_wave_count_label: Label = $NewWaveCountLabel
 
 @onready var construction_anim_player: AnimationPlayer = $AnimationPlayer
 @onready var construction_wrapper: VBoxContainer = $VBoxContainer
 @onready var construction_menu: PanelContainer = $VBoxContainer/PanelContainer
+@onready var build_button: TextureButton = $VBoxContainer/MarginContainer/BuildButton
 @onready var tower_list: HBoxContainer = $VBoxContainer/PanelContainer/MarginContainer/HBoxContainer
 
 const pause_menu: PackedScene = preload("res://scenes/menus/pause_menu/pause_menu.tscn")

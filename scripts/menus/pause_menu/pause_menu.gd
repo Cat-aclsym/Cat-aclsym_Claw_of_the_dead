@@ -38,8 +38,8 @@ func _on_home_button_pressed():
 ## Restart the game
 func _on_restart_button_pressed():
 	# Copy current level
-	var current_level: ILevel = ILevel.current_level
-	var level_metadata: LevelMetadata = current_level.Metadata.duplicate()
+	var current_level := ILevel.current_level
+	var level_metadata: LevelMetadata = current_level.metadata.duplicate()
 	var level_scene: PackedScene = load(current_level.get_scene_file_path())
 
 	# Clear the current level
@@ -74,4 +74,3 @@ func _on_close_texture_button_pressed():
 
 
 # setget
-

@@ -5,17 +5,15 @@
 ##Author: Matéo Perrot--Nasi
 ##Created: 24/01/2024
 ##
-class_name HomeScreen
+class_name HomeMenu
 extends Control
 
-@onready var option_menu: PackedScene =  preload("res://scenes/menus/option_menu/option_menu.tscn")
-@onready var levels_menu: PackedScene = preload("res://scenes/menus/levels_menu/levels_menu.tscn")
 @onready var gui_margin_container: MarginContainer = $GuiMarginContainer
+@onready var levels_menu: PackedScene = preload("res://scenes/menus/levels_menu/levels_menu.tscn")
+@onready var option_menu: PackedScene =  preload("res://scenes/menus/option_menu/option_menu.tscn")
 
-var option_menu_instance: OptionMenu
 var levels_menu_instance: LevelsMenu
-
-
+var option_menu_instance: OptionMenu
 
 # core
 
@@ -29,6 +27,7 @@ var levels_menu_instance: LevelsMenu
 # signal
 func _on_play_button_pressed():
 	gui_margin_container.visible = false
+
 	levels_menu_instance = levels_menu.instantiate()
 	add_child(levels_menu_instance)
 	levels_menu_instance.menu_close.connect(_on_menu_close.bind(levels_menu_instance))
@@ -50,9 +49,7 @@ func _on_menu_close(menu: Control):
 	menu.queue_free()
 
 
-
 # event
 
 
 # setget
-

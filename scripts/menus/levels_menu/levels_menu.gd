@@ -20,18 +20,22 @@ func _initialize() -> void:
 	for node in container.get_children():
 		if not node is AspectRatioContainer:
 			continue
-		buttons[node.get_child(0).get_child(0)] = node.get_child(0).get_child(1) # yo wtf ?
+		var button: TextureButton = node.get_child(0)
+		var level_label: Label = button.get_child(0)
+		var level_metadata: LevelMetadata = button.get_child(1)
+		buttons[level_label] = level_metadata
 
 	for bt in buttons:
-		bt.text = "{0}".format([tr(buttons[bt].level_name)])
+		var metadata: LevelMetadata = buttons[bt]
+		bt.text = "{0}".format([tr(metadata.level_name)])
 		bt.get_parent().connect("pressed",
 		func():
-			assert(buttons[bt].level_scene != null, "Level scene is null.")
+			assert(metadata.level_scene != null, "Level scene is null.")
 			visible = false
 
-			var level: ILevel = buttons[bt].level_scene.instantiate()
+			var level: ILevel = metadata.level_scene.instantiate()
 			get_tree().get_root().add_child(level)
-			level.initialize(buttons[bt])
+			level.initialize(metadata)
 			ILevel.current_level = level
 
 			Global.hud.start_level()
@@ -46,4 +50,3 @@ func _initialize() -> void:
 
 
 # setget
-
