@@ -58,6 +58,9 @@ func _ready():
 ## Function called every frame. Delta is the time since the last frame.
 ## @param _delta float - The time since the last frame.
 func _process(_delta: float) -> void:
+	if Global.paused:
+		return
+
 	if state == TowerState.BUILDING:
 		_update_z_index()
 		return

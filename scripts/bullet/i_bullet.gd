@@ -9,7 +9,10 @@ extends Area2D
 
 
 # core
-func _physics_process(delta: float):
+func _physics_process(delta: float) -> void:
+	if Global.paused:
+		return
+
 	position += direction * speed * delta
 
 
@@ -30,4 +33,3 @@ func _on_body_entered(body):
 
 
 # setget
-
