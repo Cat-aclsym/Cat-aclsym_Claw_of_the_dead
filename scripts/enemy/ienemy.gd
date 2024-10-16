@@ -9,22 +9,22 @@ const ANIM_WALK_UP := "walk_up"
 const ANIM_WALK_DOWN := "walk_down"
 
 enum EnemyState {
-	FOLLOW_PATH,
 	DEAD,
-	GIVE_DAMAGE
+	FOLLOW_PATH,
+	PATH_FINISHED,
 }
 
 enum EnemyDirection {
-	UP_RIGHT,
-	UP_LEFT,
+	DOWN_LEFT,
 	DOWN_RIGHT,
-	DOWN_LEFT
+	UP_LEFT,
+	UP_RIGHT,
 }
 
 enum EnemyType {
-	DEFAULT,
 	BIG_DADDY,
-	FAT
+	DEFAULT,
+	FAT,
 }
 
 
@@ -78,8 +78,8 @@ func _physics_process(delta: float) -> void:
 			follow_path(delta)
 		EnemyState.DEAD:
 			_dead_state()
-		EnemyState.GIVE_DAMAGE:
-			_give_damage_state()
+		EnemyState.PATH_FINISHED:
+			_path_finished_state()
 		_:
 			Log.trace(Log.Level.WARN, "{0} unknown EnemyState : {1}".format([name, state]))
 
@@ -100,7 +100,7 @@ func take_damage(damage: float, damage_type: String) -> void:
 
 func follow_path(delta: float) -> void:
 	if path_follow.get_progress_ratio() >= 1:  ## Path is finished
-		state = EnemyState.GIVE_DAMAGE
+		state = EnemyState.PATH_FINISHED
 		return
 
 	path_follow.set_progress(path_follow.get_progress() + (speed * delta))
@@ -148,7 +148,6 @@ func _set_path_direction() -> void:
 			direction = EnemyDirection.UP_LEFT
 
 
-
 func _update_direction() -> void:
 	if current_point_id == path_points_size - 2:
 		return
@@ -184,6 +183,12 @@ func _disappear() -> void:
 	die.emit()
 	anim_player.play(ANIM_FADE_OUT)
 	is_already_dead = true
+	collision_shape.set_deferred("disabled", true)
+
+	# wait for the animation to finish
+	await anim_player.animation_finished
+	queue_free()
+	path_follow.queue_free()
 
 
 func _dead_state() -> void:
@@ -194,15 +199,9 @@ func _dead_state() -> void:
 	ILevel.current_level.coins += money_reward
 	popup_score_spawner.score("+%s$" % [int(money_reward)])
 	_disappear()
-	collision_shape.set_deferred("disabled", true)
-
-	# wait for the animation to finish
-	await anim_player.animation_finished
-	queue_free()
-	path_follow.queue_free()
 
 
-func _give_damage_state() -> void:
+func _path_finished_state() -> void:
 	# when the enemy arrives at the end of the Path
 	_disappear()
 	if ILevel.current_level == null:
