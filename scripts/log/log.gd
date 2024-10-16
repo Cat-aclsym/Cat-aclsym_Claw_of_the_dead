@@ -31,13 +31,18 @@ static func trace(level: Log.Level, args: Variant) -> void:
 	if level == Level.DEBUG and not Global.debug:
 		return
 
-	var stack: Dictionary = get_stack()[1]
+	var prefix_1: String = ""
 
-	var prefix_1 := "{0}::{1}@{2}".format([
-		stack["source"],
-		stack["line"],
-		stack["function"],
-	])
+	var stack: Array[Dictionary] = get_stack()
+	# Stack can be empty when the game is not running from Godot engine
+	if not stack.is_empty():
+		var execution_line := stack[1]
+
+		prefix_1 = "{0}::{1}@{2}".format([
+			execution_line["source"],
+			execution_line["line"],
+			execution_line["function"],
+		])
 
 	var time: Dictionary = Time.get_time_dict_from_system()
 	var milliseconds: int = Time.get_ticks_msec() % 1000
