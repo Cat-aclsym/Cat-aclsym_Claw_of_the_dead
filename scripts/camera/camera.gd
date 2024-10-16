@@ -11,7 +11,7 @@ extends Camera2D
 var touch_points: Dictionary = {}
 var start_distance: float
 var start_zoom: Vector2
-var rng: RandomNumberGenerator = RandomNumberGenerator.new()
+var rng := RandomNumberGenerator.new()
 var shake_strength: float = 0.0
 
 
@@ -104,4 +104,3 @@ func shake_camera() -> void:
 
 
 # setget
-
