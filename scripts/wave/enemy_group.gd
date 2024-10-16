@@ -1,4 +1,5 @@
-class_name EnemyGroup extends Node
+class_name EnemyGroup
+extends Node
 
 
 ## List of enemies to spawn
@@ -33,4 +34,3 @@ class_name EnemyGroup extends Node
 
 
 # setget
-

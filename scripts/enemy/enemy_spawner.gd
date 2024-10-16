@@ -1,10 +1,10 @@
 class_name EnemySpawner
 extends Node2D
 
-static var i: int = 0:
+static var _instance_count: int = 0:
 	get:
-		i += 1
-		return i - 1
+		_instance_count += 1
+		return _instance_count - 1
 
 
 # core
@@ -18,7 +18,7 @@ static func spawn_enemy(path: Path2D, enemy: IEnemy):
 
 	path.add_child(pathfollow)
 
-	enemy.name = "ENEMY_{0}".format([i])
+	enemy.name = "ENEMY_{0}".format([_instance_count])
 	enemy.path = path
 	enemy.path_follow = pathfollow
 

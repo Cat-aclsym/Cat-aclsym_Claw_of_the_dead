@@ -37,7 +37,7 @@ func _process(_delta: float) -> void:
 # public
 func start_wave() -> void:
 	Log.trace(Log.Level.INFO, "{0} start".format([name]))
-	if !is_ready: return
+	if not is_ready: return
 
 	wave_start.emit()
 	_start_next_group()
@@ -85,7 +85,7 @@ func _enemy_dies() -> void:
 
 
 func _on_timer_timeout() -> void:
-	if !is_ready: return
+	if not is_ready: return
 
 	current_enemy += 1
 

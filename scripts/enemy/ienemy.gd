@@ -4,9 +4,9 @@ extends CharacterBody2D
 signal die
 signal camera_effect(effect: String)
 
-const ANIM_FADE_OUT: String = "fade_out"
-const ANIM_WALK_UP: String = "walk_up"
-const ANIM_WALK_DOWN: String = "walk_down"
+const ANIM_FADE_OUT := "fade_out"
+const ANIM_WALK_UP := "walk_up"
+const ANIM_WALK_DOWN := "walk_down"
 
 enum EnemyState {
 	FOLLOW_PATH,
@@ -28,7 +28,7 @@ enum EnemyType {
 }
 
 
-var DAMAGE: Dictionary = {
+const DAMAGES: Dictionary = {
 	"default": {"color": Color(0.7, 0.5, 0.5, 1)},
 	"poison": {"color": Color(0.7, 0.5, 0.7, 1)}
 }
@@ -91,7 +91,7 @@ func _physics_process(delta: float) -> void:
 # public
 func take_damage(damage: float, damage_type: String) -> void:
 	if is_already_dead: return
-	_damage_effect(DAMAGE[damage_type]["color"])
+	_damage_effect(DAMAGES[damage_type]["color"])
 	if health - damage <= 0:
 		health = 0
 		state = EnemyState.DEAD
@@ -111,7 +111,7 @@ func follow_path(delta: float) -> void:
 
 func add_poison_effect(damage: float, total_execution: int, interval: float) -> void:
 	# add a timer to the active_poison_timers array
-	var poison_timer: Timer = Timer.new()
+	var poison_timer := Timer.new()
 	add_child(poison_timer)
 	poison_timer.set_wait_time(interval)
 	poison_timer.set_one_shot(false)
@@ -132,10 +132,10 @@ func _set_path_direction() -> void:
 	var x_pos_difference: float = path.curve.get_point_position(current_point_id).x - path.curve.get_point_position(current_point_id + 1).x;
 	var y_pos_difference: float = path.curve.get_point_position(current_point_id).y - path.curve.get_point_position(current_point_id + 1).y;
 
-	var is_going_up: bool = y_pos_difference > 0
-	var is_going_down: bool = y_pos_difference < 0
-	var is_going_right: bool = x_pos_difference < 0
-	var is_going_left: bool = x_pos_difference > 0
+	var is_going_up := y_pos_difference > 0
+	var is_going_down := y_pos_difference < 0
+	var is_going_right := x_pos_difference < 0
+	var is_going_left := x_pos_difference > 0
 
 	if is_going_right:
 		if is_going_down:
