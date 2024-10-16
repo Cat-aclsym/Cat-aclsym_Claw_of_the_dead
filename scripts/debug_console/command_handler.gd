@@ -15,7 +15,7 @@ enum Types {
 }
 
 
-const valid_commands = [
+const valid_commands: Array[Dictionary] = [
 	{
 		"command": "help",
 		"description" : "Display list of all commands and their description.",
@@ -46,24 +46,24 @@ const valid_commands = [
 # Print all available commands with their description and args
 func help() -> String:
 	var out: String = ""
-	
+
 	var first := true
 	for command in valid_commands:
 		if (!first):
 			out += "\n"
 		out += "\t- {0} ".format([command["command"]])
-		
+
 		for arg in command["args"]:
 			out += "{0} ".format([_type_to_string(arg)])
-			
+
 		out += "\n\t\t {0}".format([command["description"]])
 		first = false
-			
+
 	return out
 
 
 # Exemple command
-func foo(what, amount) -> String:
+func foo(what: String, amount: String) -> String:
 	return "foo command has been call with INT {1} and STR '{0}' args".format([what, amount])
 
 
@@ -71,20 +71,22 @@ func foo(what, amount) -> String:
 func exit() -> String:
 	get_tree().quit()
 	return ""
-	
-	
-func set_money(amount) -> String:
+
+
+func set_money(amount: String) -> String:
 	if not ILevel.current_level:
 		return "You must be in a level to use this method"
-		
+
 	ILevel.current_level.coins = int(amount)
 	return "money =  {0}".format([amount])
 
-func set_res(width, height) -> String:
-	get_viewport().size = Vector2i(int(width), int(height))
+
+func set_res(width: String, height: String) -> String:
+	get_viewport().get_window().size = Vector2i(int(width), int(height))
 	ProjectSettings.set_setting("display/window/size/width", int(width))
 	ProjectSettings.set_setting("display/window/size/height", int(height))
 	return "new res = ({0}, {1})".format([width, height])
+
 
 # Types enum to str
 func _type_to_string(in_type: Types) -> String:
@@ -96,5 +98,5 @@ func _type_to_string(in_type: Types) -> String:
 		return "STR"
 	if (in_type == Types.ARG_BOOL):
 		return "BOOL"
-		
+
 	return "fuck"
