@@ -202,7 +202,7 @@ func _get_last_target():
 ## Function to get a random enemy in the enemy array.
 func _get_random_target():
 	## Create a RandomNumberGenerator and set the seed to the current time
-	var rng: RandomNumberGenerator = RandomNumberGenerator.new()
+	var rng := RandomNumberGenerator.new()
 	rng.randomize()
 	## Generate a random number between 0 and the length of the enemy array
 	var num: int = rng.randi_range(0, len(enemy_array)-1)
@@ -212,7 +212,7 @@ func _get_random_target():
 ## Function to interpolate between two values.
 func _color_variation() -> void:
 	## Check if the tower is selected
-	if !selected:
+	if not selected:
 		return
 	## Set the initial lerp state to 1
 	var lerp_state: float = 1
