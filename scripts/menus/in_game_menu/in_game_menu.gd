@@ -1,3 +1,4 @@
+## © [2024] A7 Studio. All rights reserved. Trademark.
 ## File: menus/ingame_menu/ingame_menu.gd
 ## The class for defining the behavior of the in-game menu and its components.
 ##

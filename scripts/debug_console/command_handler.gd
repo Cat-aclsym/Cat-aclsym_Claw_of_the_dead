@@ -1,3 +1,4 @@
+## © [2024] A7 Studio. All rights reserved. Trademark.
 ## File:	debug_console/command_handler.gd
 ## Handler for debug console commands
 ##

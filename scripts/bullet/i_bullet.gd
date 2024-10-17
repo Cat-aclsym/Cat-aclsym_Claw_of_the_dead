@@ -1,3 +1,4 @@
+## © [2024] A7 Studio. All rights reserved. Trademark.
 class_name IBullet
 extends Area2D
 

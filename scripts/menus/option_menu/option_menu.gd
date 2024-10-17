@@ -1,3 +1,4 @@
+## © [2024] A7 Studio. All rights reserved. Trademark.
 ## File: option_menu.gd
 ##Option menu of the game
 ##From this menu we can access parameters, socials, and miscellaneous things

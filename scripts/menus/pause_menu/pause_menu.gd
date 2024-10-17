@@ -1,3 +1,4 @@
+## © [2024] A7 Studio. All rights reserved. Trademark.
 ## File: pause_menu.gd.
 ##
 ## Author: Laurie Jeham-Masselot

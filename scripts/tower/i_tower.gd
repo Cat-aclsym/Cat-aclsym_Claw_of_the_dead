@@ -1,3 +1,4 @@
+## © [2024] A7 Studio. All rights reserved. Trademark.
 class_name ITower
 extends Node2D
 ## Interface for the tower

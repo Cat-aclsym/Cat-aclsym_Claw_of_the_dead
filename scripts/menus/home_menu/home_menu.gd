@@ -1,3 +1,4 @@
+## © [2024] A7 Studio. All rights reserved. Trademark.
 ## File: home_menu.gd
 ##Home screen for the game
 ##It launch the levels selection menu or the option menu

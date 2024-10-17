@@ -1,3 +1,4 @@
+## © [2024] A7 Studio. All rights reserved. Trademark.
 ## File:	debug_console/debug_console.gd
 ## Debug console.
 ## Take commands, return informations and execute functions
