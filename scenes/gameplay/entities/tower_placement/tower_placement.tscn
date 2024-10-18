@@ -1,0 +1,94 @@
+[gd_scene load_steps=11 format=3 uid="uid://ddcvda2tcbdq8"]
+
+[ext_resource type="Script" path="res://scenes/gameplay/entities/tower_placement/tower_placement.gd" id="1_3aclw"]
+[ext_resource type="Texture2D" uid="uid://dn7sa2jf2kvor" path="res://assets/environment/grid_placement/moving_arrow.png" id="2_8yjt0"]
+[ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="3_bj1wi"]
+[ext_resource type="Texture2D" uid="uid://1mu5cdhd5hw8" path="res://assets/ui/icons/build_button.png" id="4_updrk"]
+[ext_resource type="Texture2D" uid="uid://nr3ul4jgyad0" path="res://assets/ui/icons/Bouton Annuler.png" id="5_4oww3"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xhnpy"]
+atlas = ExtResource("2_8yjt0")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uwgu8"]
+atlas = ExtResource("2_8yjt0")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hojar"]
+atlas = ExtResource("2_8yjt0")
+region = Rect2(128, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ajtjg"]
+atlas = ExtResource("2_8yjt0")
+region = Rect2(192, 0, 64, 64)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_o400i"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xhnpy")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_uwgu8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hojar")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ajtjg")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[node name="Controller" type="Node2D"]
+script = ExtResource("1_3aclw")
+
+[node name="cursor" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_o400i")
+autoplay = "default"
+offset = Vector2(0, -3)
+
+[node name="PlaceHUD" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+scale = Vector2(0.5, 0.5)
+
+[node name="HBoxContainer" type="HBoxContainer" parent="PlaceHUD"]
+layout_mode = 0
+offset_left = -84.0
+offset_top = 54.0
+offset_right = 84.0
+offset_bottom = 124.0
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="PlaceButton" type="TextureButton" parent="PlaceHUD/HBoxContainer"]
+custom_minimum_size = Vector2(80, 70)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 8
+theme = ExtResource("3_bj1wi")
+texture_normal = ExtResource("4_updrk")
+ignore_texture_size = true
+stretch_mode = 4
+
+[node name="CancelPlaceButton" type="TextureButton" parent="PlaceHUD/HBoxContainer"]
+custom_minimum_size = Vector2(80, 70)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 8
+theme = ExtResource("3_bj1wi")
+texture_normal = ExtResource("5_4oww3")
+ignore_texture_size = true
+stretch_mode = 4
+
+[connection signal="mouse_entered" from="PlaceHUD/HBoxContainer/PlaceButton" to="." method="_on_button_mouse_entered"]
+[connection signal="mouse_exited" from="PlaceHUD/HBoxContainer/PlaceButton" to="." method="_on_button_mouse_exited"]
+[connection signal="pressed" from="PlaceHUD/HBoxContainer/PlaceButton" to="." method="_on_place_button_pressed"]
+[connection signal="mouse_entered" from="PlaceHUD/HBoxContainer/CancelPlaceButton" to="." method="_on_button_mouse_entered"]
+[connection signal="mouse_exited" from="PlaceHUD/HBoxContainer/CancelPlaceButton" to="." method="_on_button_mouse_exited"]
+[connection signal="pressed" from="PlaceHUD/HBoxContainer/CancelPlaceButton" to="." method="_on_cancel_place_button_pressed"]

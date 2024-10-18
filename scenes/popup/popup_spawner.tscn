@@ -1,6 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://b76p6ee6fomr4"]
-
-[ext_resource type="Script" path="res://scripts/popup/popup_spawner.gd" id="1_npcdt"]
-
-[node name="PopupSpawner" type="Marker2D"]
-script = ExtResource("1_npcdt")

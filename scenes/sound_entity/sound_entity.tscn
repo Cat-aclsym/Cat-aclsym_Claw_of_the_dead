@@ -1,6 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://dchsj822mydsp"]
-
-[ext_resource type="Script" path="res://scripts/sound_entity/sound_entity.gd" id="1_gawuj"]
-
-[node name="SoundEntity" type="AudioStreamPlayer"]
-script = ExtResource("1_gawuj")

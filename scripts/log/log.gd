@@ -66,6 +66,18 @@ static func trace(level: Log.Level, args: Variant) -> void:
 	_publish_message(output)
 
 
+static func save_message(message: String) -> void:
+	if log_filepath:
+		 # Open the file in append mode (WRITE_READ mode)
+		var file := FileAccess.open(log_filepath, FileAccess.READ_WRITE)
+
+		# Move the file cursor to the end of the file
+		if file:
+			file.seek_end()
+			file.store_string(message + "\n")  # Append the string followed by a newline
+			file.close()
+
+
 # private
 static func _format_args(args: Variant) -> String:
 	var output := ""
@@ -88,15 +100,7 @@ static func _publish_message(message: String) -> void:
 		Global.debug_console.output_text(message)
 
 	# file output
-	if log_filepath:
-		 # Open the file in append mode (WRITE_READ mode)
-		var file := FileAccess.open(log_filepath, FileAccess.READ_WRITE)
-
-		# Move the file cursor to the end of the file
-		if file:
-			file.seek_end()
-			file.store_string(message + "\n")  # Append the string followed by a newline
-			file.close()
+	save_message(message)
 
 
 static func _create_log_file() -> void:

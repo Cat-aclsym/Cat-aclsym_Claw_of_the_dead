@@ -1,7 +1,0 @@
-[gd_scene load_steps=3 format=3 uid="uid://de3tnk1y83r8n"]
-
-[ext_resource type="PackedScene" uid="uid://df2663whp8p7v" path="res://scenes/level/i_level.tscn" id="1_ymvm1"]
-[ext_resource type="PackedScene" uid="uid://oc6r5kow8d7i" path="res://scenes/map/maps/map_1.tscn" id="2_kysqm"]
-
-[node name="ILevel" instance=ExtResource("1_ymvm1")]
-map_scene = ExtResource("2_kysqm")

@@ -11,9 +11,9 @@ config_version=5
 [application]
 
 config/name="Cat'aclsym"
-run/main_scene="res://scenes/main/main.tscn"
+run/main_scene="res://scenes/main.tscn"
 config/features=PackedStringArray("4.3", "Forward Plus")
-config/icon="res://assets/icons/LogoChatVertClairFondFonce-100.jpg"
+config/icon="res://assets/ui/icons/LogoChatVertClairFondFonce-100.jpg"
 
 [autoload]
 
@@ -26,7 +26,7 @@ DialogueManager="*res://addons/dialogue_manager/dialogue_manager.gd"
 
 general/balloon_path="res://dialogue_baloon/balloon.tscn"
 general/states=["Global"]
-general/custom_test_scene_path="res://scenes/lore-scene/lore_scene.tscn"
+general/custom_test_scene_path="res://scenes/narrative/lore_scene/lore_scene.tscn"
 
 [display]
 
@@ -82,7 +82,7 @@ pointing/emulate_touch_from_mouse=true
 [internationalization]
 
 locale/translations=PackedStringArray("res://assets/translations/translations.en.translation", "res://assets/translations/translations.fr.translation")
-locale/translations_pot_files=PackedStringArray("res://scenes/lore-scene/main.dialogue")
+locale/translations_pot_files=PackedStringArray("res://scenes/narrative/lore_scene/main.dialogue")
 pseudolocalization/use_pseudolocalization=true
 pseudolocalization/replace_with_accents=false
 pseudolocalization/prefix=""

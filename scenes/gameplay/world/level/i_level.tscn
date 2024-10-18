@@ -1,0 +1,32 @@
+[gd_scene load_steps=4 format=3 uid="uid://df2663whp8p7v"]
+
+[ext_resource type="Script" path="res://scenes/gameplay/world/level/i_level.gd" id="1_hgrcn"]
+
+[sub_resource type="Gradient" id="Gradient_x7k6x"]
+interpolation_mode = 2
+interpolation_color_space = 2
+offsets = PackedFloat32Array(0.134694, 0.84898, 1)
+colors = PackedColorArray(0.333019, 0.537535, 1, 1, 0.826361, 0.98973, 1, 1, 0.937829, 0.996533, 1, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_w6oet"]
+gradient = SubResource("Gradient_x7k6x")
+width = 512
+height = 512
+use_hdr = true
+fill_to = Vector2(0, 1)
+
+[node name="ILevel" type="Node2D"]
+script = ExtResource("1_hgrcn")
+
+[node name="ParallaxBackground" type="ParallaxBackground" parent="."]
+follow_viewport_enabled = true
+scroll_ignore_camera_zoom = true
+
+[node name="ParallaxLayer" type="ParallaxLayer" parent="ParallaxBackground"]
+
+[node name="Sprite2D" type="Sprite2D" parent="ParallaxBackground/ParallaxLayer"]
+modulate = Color(0.627451, 0.694118, 0.505882, 1)
+texture_filter = 6
+position = Vector2(576, 324)
+scale = Vector2(15, 5)
+texture = SubResource("GradientTexture2D_w6oet")

@@ -1,7 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://dhmd4je3q8jb6"]
-
-[ext_resource type="PackedScene" uid="uid://tmlcshxut7kv" path="res://scenes/enemy/ienemy.tscn" id="1_rsmel"]
-
-[node name="DefaultZombie" instance=ExtResource("1_rsmel")]
-position = Vector2(0, -16)
-scale = Vector2(0.6, 0.6)

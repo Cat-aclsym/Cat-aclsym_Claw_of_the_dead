@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3 uid="uid://ce6ydtoqy6h55"]
+
+[ext_resource type="Script" path="res://scenes/gameplay/world/wave/wave.gd" id="1_by6jb"]
+
+[node name="Wave" type="Node" groups=["grp_wave"]]
+script = ExtResource("1_by6jb")
+
+[node name="Timer" type="Timer" parent="."]
+
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]

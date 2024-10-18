@@ -16,14 +16,14 @@ enum TowerID {
 
 
 const ENEMIES: Dictionary = {
-	EnemyID.DEFAULT: preload("res://scenes/enemy/default_zombie.tscn"),
-	EnemyID.BIG_DADDY: preload("res://scenes/enemy/big_daddy.tscn"),
-	EnemyID.FAT: preload("res://scenes/enemy/fat.tscn"),
+	EnemyID.DEFAULT: preload("res://scenes/gameplay/entities/enemy/enemies/default_zombie.tscn"),
+	EnemyID.BIG_DADDY: preload("res://scenes/gameplay/entities/enemy/enemies/big_daddy.tscn"),
+	EnemyID.FAT: preload("res://scenes/gameplay/entities/enemy/enemies/fat.tscn"),
 }
 
 
 const TOWERS: Dictionary = {
-	TOWER_1 = preload("res://scenes/tower/first_tower.tscn")
+	TOWER_1 = preload("res://scenes/gameplay/entities/tower/towers/first_tower.tscn")
 }
 
 

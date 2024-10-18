@@ -1,0 +1,7 @@
+[gd_scene load_steps=3 format=3 uid="uid://8gta0ub172x3"]
+
+[ext_resource type="PackedScene" uid="uid://df2663whp8p7v" path="res://scenes/gameplay/world/level/i_level.tscn" id="1_hf23y"]
+[ext_resource type="PackedScene" uid="uid://buj5yatu3iyt" path="res://scenes/gameplay/world/map/maps/map_debug_1.tscn" id="2_r7ndl"]
+
+[node name="LevelDebug" instance=ExtResource("1_hf23y")]
+map_scene = ExtResource("2_r7ndl")

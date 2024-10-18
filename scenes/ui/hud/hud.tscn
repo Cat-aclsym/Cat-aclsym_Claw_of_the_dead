@@ -1,0 +1,38 @@
+[gd_scene load_steps=6 format=3 uid="uid://7a3coyl5og1a"]
+
+[ext_resource type="PackedScene" uid="uid://c4m4v70cudic" path="res://scenes/ui/menus/pause/pause.tscn" id="1_1svi5"]
+[ext_resource type="Script" path="res://scenes/ui/hud/hud.gd" id="1_b6y43"]
+[ext_resource type="PackedScene" uid="uid://be8c7p1ka4dmm" path="res://scenes/utilities/debug_console/debug_console.tscn" id="2_fkxxx"]
+[ext_resource type="PackedScene" uid="uid://cqfsr6yjn6hm8" path="res://scenes/ui/menus/home/home.tscn" id="6_ijios"]
+[ext_resource type="PackedScene" uid="uid://b5630xr4v607r" path="res://scenes/ui/menus/in_game/in_game.tscn" id="7_gd3cm"]
+
+[node name="HUD" type="CanvasLayer"]
+script = ExtResource("1_b6y43")
+
+[node name="MenuPause" parent="." instance=ExtResource("1_1svi5")]
+visible = false
+
+[node name="PauseButton" type="Button" parent="."]
+process_mode = 3
+visible = false
+offset_right = 59.0
+offset_bottom = 31.0
+text = "PAUSE.TITLE"
+
+[node name="HomeMenu" parent="." instance=ExtResource("6_ijios")]
+
+[node name="IngameMenu" parent="." instance=ExtResource("7_gd3cm")]
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="PauseButton2" type="Button" parent="."]
+process_mode = 3
+visible = false
+offset_right = 104.0
+offset_bottom = 31.0
+text = "PAUSE.TITLE"
+
+[node name="DebugConsole" parent="." instance=ExtResource("2_fkxxx")]
+visible = false
+
+[connection signal="pressed" from="PauseButton" to="." method="_on_pause_button_pressed"]
