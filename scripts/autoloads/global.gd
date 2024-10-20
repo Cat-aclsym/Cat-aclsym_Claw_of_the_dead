@@ -14,9 +14,8 @@ extends Node
 ## cant be modified through code
 var camera: Camera = null
 var cursor: CursorController = null
-var debug_console: DebugConsole = null
-var debug: bool = true:
-	set = _set_debug
+var console: Console = null
+var debug: bool = true: set = _set_debug
 var hud: HUD = null
 var in_game_menu: IngameMenu = null
 var paused: bool = false

@@ -96,8 +96,8 @@ static func _publish_message(message: String) -> void:
 	print(message)
 
 	# debug console output
-	if Global.debug_console:
-		Global.debug_console.output_text(message)
+	if Global.console:
+		Global.console.push_text(message)
 
 	# file output
 	save_message(message)
