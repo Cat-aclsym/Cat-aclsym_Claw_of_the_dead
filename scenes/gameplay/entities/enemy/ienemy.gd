@@ -66,7 +66,7 @@ var state: EnemyState = EnemyState.FOLLOW_PATH
 func _ready():
 	if type == EnemyType.FAT:
 		camera_effect.connect(Global.camera.handle_effect)
-		camera_effect.emit('shake')
+		camera_effect.emit('shake') # replace with a method call (e.g Global.camera.apply_effect(Camera.Effect.SHAKE))
 
 	health = max_health
 	_set_path_direction()

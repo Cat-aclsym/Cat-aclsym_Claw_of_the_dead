@@ -14,18 +14,18 @@ const TO: String = "to"
 ## 	{SignalUtil.WHO: self, SignalUtil.WHAT: "body_entered", SignalUtil.TO: _on_body_entered}
 ## ]
 static func connects(signals: Array[Dictionary]) -> void:
-    for s in signals:
-        assert(WHO in s.keys())
-        assert(WHAT in s.keys())
-        assert(TO in s.keys())
+	for s in signals:
+		assert(WHO in s.keys())
+		assert(WHAT in s.keys())
+		assert(TO in s.keys())
 
-        s[WHO].connect(s[WHAT], s[TO])
+		s[WHO].connect(s[WHAT], s[TO])
 
-        Log.trace(Log.Level.DEBUG, "Connecting {node}.{signal} to {callback}".format({
-            "node": s[WHO],
-            "signal": s[WHAT],
-            "callback": s[TO]
-        }));
+		Log.trace(Log.Level.DEBUG, "Connecting signal {node}.{signal} to {callback}".format({
+			"node": s[WHO],
+			"signal": s[WHAT],
+			"callback": s[TO]
+		}));
 
 # private
 
@@ -37,4 +37,3 @@ static func connects(signals: Array[Dictionary]) -> void:
 
 
 # setget
-

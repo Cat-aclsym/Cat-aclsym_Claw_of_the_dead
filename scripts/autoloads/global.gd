@@ -11,7 +11,7 @@ extends Node
 
 var hud: HUD = null: get = _get_hud
 var camera: Camera = null: get = _get_camera
-var cursor: CursorController = null: get = _get_cursor
+var cursor: TowerPlacement = null: get = _get_cursor
 var console: Console = null: get = _get_console
 var in_game_menu: IngameMenu = null: get = _get_in_game_menu
 
@@ -65,7 +65,7 @@ func _get_camera() -> Camera:
 	if _initialized: assert(camera, "Camera is null")
 	return camera
 
-func _get_cursor() -> CursorController:
+func _get_cursor() -> TowerPlacement:
 	if _initialized: assert(cursor, "Cursor is null")
 	return cursor
 

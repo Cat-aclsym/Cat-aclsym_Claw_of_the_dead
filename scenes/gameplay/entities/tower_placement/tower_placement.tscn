@@ -42,7 +42,7 @@ animations = [{
 "speed": 5.0
 }]
 
-[node name="Controller" type="Node2D"]
+[node name="TowerPlacement" type="Node2D"]
 script = ExtResource("1_3aclw")
 
 [node name="cursor" type="AnimatedSprite2D" parent="."]
@@ -85,10 +85,3 @@ theme = ExtResource("3_bj1wi")
 texture_normal = ExtResource("5_4oww3")
 ignore_texture_size = true
 stretch_mode = 4
-
-[connection signal="mouse_entered" from="PlaceHUD/HBoxContainer/PlaceButton" to="." method="_on_button_mouse_entered"]
-[connection signal="mouse_exited" from="PlaceHUD/HBoxContainer/PlaceButton" to="." method="_on_button_mouse_exited"]
-[connection signal="pressed" from="PlaceHUD/HBoxContainer/PlaceButton" to="." method="_on_place_button_pressed"]
-[connection signal="mouse_entered" from="PlaceHUD/HBoxContainer/CancelPlaceButton" to="." method="_on_button_mouse_entered"]
-[connection signal="mouse_exited" from="PlaceHUD/HBoxContainer/CancelPlaceButton" to="." method="_on_button_mouse_exited"]
-[connection signal="pressed" from="PlaceHUD/HBoxContainer/CancelPlaceButton" to="." method="_on_cancel_place_button_pressed"]

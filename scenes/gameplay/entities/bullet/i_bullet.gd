@@ -8,7 +8,7 @@ extends Area2D
 @export var direction: Vector2
 @export var target: Vector2
 
-var signals: Array[Dictionary] = [
+@onready var signals: Array[Dictionary] = [
 	{SignalUtil.WHO: self, SignalUtil.WHAT: "body_entered", SignalUtil.TO: _on_body_entered}
 ]
 

@@ -1,5 +1,5 @@
 ## © [2024] A7 Studio. All rights reserved. Trademark.
-class_name CursorController
+class_name TowerPlacement
 extends Node2D
 
 signal trigger_state_idle
@@ -34,6 +34,16 @@ var _is_holding_click: bool = false
 @onready var cursor: AnimatedSprite2D = $cursor
 @onready var place_hud: Control = $PlaceHUD
 @onready var place_hud_content: BoxContainer = $PlaceHUD/HBoxContainer
+@onready var place_button: TextureButton = $PlaceHUD/HBoxContainer/PlaceButton
+@onready var cancel_place_button: TextureButton = $PlaceHUD/HBoxContainer/CancelPlaceButton
+@onready var signals: Array[Dictionary] = [
+	{SignalUtil.WHO: place_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_place_button_pressed},
+	{SignalUtil.WHO: place_button, SignalUtil.WHAT: "mouse_entered", SignalUtil.TO: _on_button_mouse_entered},
+	{SignalUtil.WHO: place_button, SignalUtil.WHAT: "mouse_exited", SignalUtil.TO: _on_button_mouse_exited},
+	{SignalUtil.WHO: cancel_place_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_cancel_place_button_pressed},
+	{SignalUtil.WHO: cancel_place_button, SignalUtil.WHAT: "mouse_entered", SignalUtil.TO: _on_button_mouse_entered},
+	{SignalUtil.WHO: cancel_place_button, SignalUtil.WHAT: "mouse_exited", SignalUtil.TO: _on_button_mouse_exited},
+]
 
 
 # core
@@ -41,6 +51,7 @@ func _ready() -> void:
 	Global.cursor = self
 	visible = false
 	place_hud.visible = false
+	SignalUtil.connects(signals)
 
 
 func _input(event: InputEvent) -> void:
