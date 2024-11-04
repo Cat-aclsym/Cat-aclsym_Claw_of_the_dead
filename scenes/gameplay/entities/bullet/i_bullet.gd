@@ -8,8 +8,16 @@ extends Area2D
 @export var direction: Vector2
 @export var target: Vector2
 
+var signals: Array[Dictionary] = [
+	{SignalUtil.WHO: self, SignalUtil.WHAT: "body_entered", SignalUtil.TO: _on_body_entered}
+]
+
 
 # core
+func _ready() -> void:
+	SignalUtil.connects(signals)
+
+
 func _physics_process(delta: float) -> void:
 	if Global.paused:
 		return
