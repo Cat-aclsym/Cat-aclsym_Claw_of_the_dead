@@ -40,7 +40,7 @@ func _ready() -> void:
 # signal
 ## Go back to the main menu
 func _on_home_button_pressed():
-	get_tree().change_scene_to_file("res://scenes/main/main.tscn")
+	get_tree().change_scene_to_file("res://scenes/main.tscn")
 	ILevel.current_level.queue_free()
 	Global.paused = false
 
