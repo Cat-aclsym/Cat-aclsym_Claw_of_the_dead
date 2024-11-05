@@ -21,5 +21,3 @@ tilemap = NodePath("TileMapPlains")
 one_shot = true
 
 [node name="Controller" parent="." instance=ExtResource("3_ndsux")]
-
-[connection signal="timeout" from="WavesTimer" to="." method="_on_waves_timer_timeout"]

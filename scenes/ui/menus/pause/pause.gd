@@ -18,8 +18,17 @@ extends Control
 @onready var sound_button: TextureButton = $MarginContainer/PanelContainer/CenterContainer/VBoxContainer/TopLeftIcon/SoundButton
 @onready var quit_button: TextureButton = $MarginContainer/PanelContainer/MarginContainer/AspectRatioContainer/CloseTextureButton
 
+@onready var signals: Array[Dictionary] = [
+	{SignalUtil.WHO: home_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_home_button_pressed},
+	{SignalUtil.WHO: restart_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_restart_button_pressed},
+	{SignalUtil.WHO: play_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_play_button_pressed},
+	{SignalUtil.WHO: quit_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_close_texture_button_pressed},
+]
+
 
 # core
+func _ready() -> void:
+	SignalUtil.connects(signals)
 
 
 # public

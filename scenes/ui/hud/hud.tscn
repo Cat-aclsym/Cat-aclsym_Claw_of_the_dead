@@ -9,6 +9,10 @@
 [node name="HUD" type="CanvasLayer"]
 script = ExtResource("1_b6y43")
 
+[node name="Console" parent="." instance=ExtResource("5_g5c75")]
+visible = false
+z_index = 4096
+
 [node name="MenuPause" parent="." instance=ExtResource("1_1svi5")]
 visible = false
 
@@ -31,8 +35,3 @@ visible = false
 offset_right = 104.0
 offset_bottom = 31.0
 text = "PAUSE.TITLE"
-
-[node name="Console" parent="." instance=ExtResource("5_g5c75")]
-visible = false
-
-[connection signal="pressed" from="PauseButton" to="." method="_on_pause_button_pressed"]

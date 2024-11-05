@@ -128,8 +128,3 @@ texture_normal = ExtResource("4_xujui")
 texture_pressed = ExtResource("5_hmrwh")
 ignore_texture_size = true
 stretch_mode = 5
-
-[connection signal="pressed" from="MarginContainer/PanelContainer/MarginContainer/AspectRatioContainer/CloseTextureButton" to="." method="_on_close_texture_button_pressed"]
-[connection signal="pressed" from="MarginContainer/PanelContainer/CenterContainer/VBoxContainer/ButtonLayer/RestartButton" to="." method="_on_restart_button_pressed"]
-[connection signal="pressed" from="MarginContainer/PanelContainer/CenterContainer/VBoxContainer/ButtonLayer/PlayButton" to="." method="_on_play_button_pressed"]
-[connection signal="pressed" from="MarginContainer/PanelContainer/CenterContainer/VBoxContainer/ButtonLayer/HomeButton" to="." method="_on_home_button_pressed"]

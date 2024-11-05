@@ -15,6 +15,9 @@ var waves: Array[Wave] = []
 @onready var popup_wave_spawner: PopupSpawner = $PopupWaveSpawner
 @onready var camera: Camera2D = $Camera2D
 
+@onready var signals: Array[Dictionary] = [
+	{SignalUtil.WHO: waves_timer, SignalUtil.WHAT: "timeout", SignalUtil.TO: _on_waves_timer_timeout},
+]
 
 # core
 func _ready() -> void:
@@ -23,6 +26,8 @@ func _ready() -> void:
 	_start_wave(current_wave + 1)
 
 	Global.cursor.tm_ref = tilemap
+
+	SignalUtil.connects(signals)
 
 
 # public

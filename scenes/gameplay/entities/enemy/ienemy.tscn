@@ -6,7 +6,6 @@
 [ext_resource type="PackedScene" uid="uid://jv7q286fh1vn" path="res://scenes/ui/popup/popup_score.tscn" id="4_7dtc1"]
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_tp60s"]
-load_path = "res://.godot/imported/default_zombie.png-5050bca98bc51b950cb05a5ced05d157.ctex"
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_6gv71"]
 atlas = SubResource("CompressedTexture2D_tp60s")

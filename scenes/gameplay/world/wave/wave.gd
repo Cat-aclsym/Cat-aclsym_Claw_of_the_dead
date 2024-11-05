@@ -25,10 +25,16 @@ var paths: Array[Path2D] = []
 
 @onready var timer: Timer = $Timer
 
+@onready var signals: Array[Dictionary] = [
+	{SignalUtil.WHO: timer, SignalUtil.WHAT: "timeout", SignalUtil.TO: _on_timer_timeout},
+]
+
 
 # core
 func _ready() -> void:
 	_load_groups()
+
+	SignalUtil.connects(signals)
 
 
 func _process(_delta: float) -> void:
@@ -77,14 +83,6 @@ func _load_groups() -> void:
 
 
 # signal
-func _enemy_dies() -> void:
-	dead_enemies += 1
-
-	if dead_enemies == enemies_total_count:
-		Log.trace(Log.Level.INFO, "%s end" % name)
-		wave_end.emit(delay)
-
-
 func _on_timer_timeout() -> void:
 	if not is_ready: return
 
@@ -97,8 +95,16 @@ func _on_timer_timeout() -> void:
 		return
 
 	var enemy: IEnemy = ScenesLoader.get_enemy_scene(enemies_to_spawn[current_enemy]).instantiate()
-	enemy.die.connect(_enemy_dies)
-	EnemySpawner.spawn_enemy(paths[randi() % paths.size()], enemy)
+	EnemySpawner.spawn_enemy(paths.pick_random(), enemy)
+	SignalUtil.connects([{SignalUtil.WHO: enemy, SignalUtil.WHAT: "die", SignalUtil.TO: _on_ienemy_die}])
+
+
+func _on_ienemy_die() -> void:
+	dead_enemies += 1
+
+	if dead_enemies == enemies_total_count:
+		Log.trace(Log.Level.INFO, "%s end" % name)
+		wave_end.emit(delay)
 
 
 # event
