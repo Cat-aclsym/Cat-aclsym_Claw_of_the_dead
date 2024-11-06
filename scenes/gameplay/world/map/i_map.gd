@@ -63,11 +63,10 @@ func _load_waves() -> void:
 			i += 1
 			child.name = "Wave_{0}".format([i])
 
-			child.wave_end.connect(
-				 func (delay: float):
-					waves_timer.wait_time = delay
-					waves_timer.start()
-			)
+			var callback = func (delay: float):
+				waves_timer.wait_time = delay
+				waves_timer.start()
+			SignalUtil.connects([{SignalUtil.WHO: child, SignalUtil.WHAT: "wave_end", SignalUtil.TO: callback}])
 
 			child.set_paths(paths)
 			waves.append(child as Wave)

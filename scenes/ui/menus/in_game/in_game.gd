@@ -77,7 +77,7 @@ func load_ui() -> void:
 
 	_is_ready = true
 	visible = true
-	ILevel.current_level.stats_updated.connect(_update)
+	SignalUtil.connects([{SignalUtil.WHO: ILevel.current_level, SignalUtil.WHAT: "stats_updated", SignalUtil.TO: _update}])
 	_update()
 
 	## Fix, the construction wrapper is not at the bottom of the screen but should be
