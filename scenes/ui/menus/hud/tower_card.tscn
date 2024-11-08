@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=3 uid="uid://h0drgd3amf85"]
 
 [ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="1_pcje7"]
-[ext_resource type="Script" path="res://scenes/ui/menus/in_game/tower_card.gd" id="1_wa45g"]
+[ext_resource type="Script" path="res://scenes/ui/menus/hud/tower_card.gd" id="1_wa45g"]
 [ext_resource type="Texture2D" uid="uid://4rvu7u60f3mg" path="res://assets/gameplay/towers/tower2_LVL_2.png" id="2_xy8o1"]
 [ext_resource type="Texture2D" uid="uid://nsf3nkto3p0t" path="res://assets/ui/buttons/Bouton Vert.svg" id="4_tu8sq"]
 

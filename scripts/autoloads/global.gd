@@ -9,11 +9,11 @@
 ## <!> Always checks var != null
 extends Node
 
-var hud: HUD = null: get = _get_hud
+var ui: UI = null: get = _get_ui
 var camera: Camera = null: get = _get_camera
 var cursor: TowerPlacement = null: get = _get_cursor
 var console: Console = null: get = _get_console
-var in_game_menu: IngameMenu = null: get = _get_in_game_menu
+var hud: HUD = null: get = _get_hud
 
 var paused: bool = false
 
@@ -29,7 +29,7 @@ var _initialized: bool = false: set = _set_initialized
 # core
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
-	
+
 	Log.init()
 
 	_initialized = true
@@ -73,10 +73,10 @@ func _get_console() -> Console:
 	if _initialized: assert(console, "Console is null")
 	return console
 
+func _get_ui() -> UI:
+	if _initialized: assert(ui, "UI is null")
+	return ui
+
 func _get_hud() -> HUD:
 	if _initialized: assert(hud, "HUD is null")
 	return hud
-
-func _get_in_game_menu() -> IngameMenu:
-	if _initialized: assert(in_game_menu, "In game menu is null")
-	return in_game_menu

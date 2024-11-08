@@ -1,30 +1,29 @@
-class_name HUD
+class_name UI
 extends CanvasLayer
 
 @onready var menu_pause: PauseMenu = $MenuPause
-@onready var in_game_menu: IngameMenu = $IngameMenu
+@onready var hud: HUD = $HUD
 @onready var pause_button: Button = $PauseButton
 
 @onready var signals: Array[Dictionary] = [
 	{SignalUtil.WHO: pause_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_pause_button_pressed},
 ]
 
-
 # core
 func _ready() -> void:
-	Global.hud = self
+	Global.ui = self
 	SignalUtil.connects(signals)
 
 
 # functionnal
 func start_level() -> void:
 	Log.trace(Log.Level.INFO, "HUD : Loading level interface")
-	in_game_menu.load_ui()
+	hud.load_ui()
 
 
 func end_level() -> void:
 	Log.trace(Log.Level.INFO, "HUD : Unloading level interface")
-	in_game_menu.unload_ui()
+	hud.unload_ui()
 
 
 # signals

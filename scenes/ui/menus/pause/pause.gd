@@ -61,7 +61,7 @@ func _on_restart_button_pressed():
 	get_tree().get_root().add_child(new_level)
 	new_level.initialize(level_metadata)
 	ILevel.current_level = new_level
-	Global.hud.start_level()
+	Global.ui.start_level()
 
 	# Close the menu
 	Global.paused = false

@@ -39,7 +39,7 @@ func _initialize() -> void:
 			level.initialize(metadata)
 			ILevel.current_level = level
 
-			Global.hud.start_level()
+			Global.ui.start_level()
 			emit_signal("level_selected")
 		)
 

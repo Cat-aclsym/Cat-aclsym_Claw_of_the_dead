@@ -4,7 +4,7 @@
 ##
 ## Created: 06/03/2024
 
-class_name IngameMenu
+class_name HUD
 extends Control
 
 
@@ -31,7 +31,7 @@ var _is_ready: bool = false
 
 # core
 func _ready() -> void:
-	Global.in_game_menu = self
+	Global.hud = self
 	hide()
 
 	construction_anim_player.animation_finished.connect(
@@ -108,7 +108,7 @@ func _on_pause_button_pressed():
 	if not Global.paused:
 		Global.paused = true
 		var pause_menu_instance: PauseMenu = pause_menu.instantiate()
-		Global.hud.add_child(pause_menu_instance)
+		Global.ui.add_child(pause_menu_instance)
 
 
 func _on_place_button_pressed():
