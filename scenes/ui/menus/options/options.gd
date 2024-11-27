@@ -2,7 +2,7 @@
 ##
 ## Manages the game's options menu interface and functionality.
 ## Handles settings for music, sound, language, and social media links.
-class_name OptionMenu
+class_name Options
 extends Control
 
 # signals

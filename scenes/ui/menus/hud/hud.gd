@@ -130,5 +130,5 @@ func _on_build_button_pressed() -> void:
 func _on_pause_button_pressed() -> void:
 	if not Global.paused:
 		Global.paused = true
-		var pause_menu_instance: PauseMenu = PAUSE_MENU.instantiate()
+		var pause_menu_instance: Pause = PAUSE_MENU.instantiate()
 		Global.ui.add_child(pause_menu_instance)

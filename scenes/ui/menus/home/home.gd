@@ -2,11 +2,11 @@
 ##
 ## Manages the home screen interface and menu navigation.
 ## Handles level selection and options menu access.
-class_name HomeMenu
+class_name Home
 extends Control
 
-var _levels_menu_instance: LevelsMenu
-var _option_menu_instance: OptionMenu
+var _levels_menu_instance: LevelSelection
+var _option_menu_instance: Options
 
 @onready var gui_margin_container: MarginContainer = $GuiMarginContainer
 @onready var play_button: TextureButton = $GuiMarginContainer/GuiHBoxContainer/HomeScreenVBoxContainer/PlayMarginContainer/PlayButton
