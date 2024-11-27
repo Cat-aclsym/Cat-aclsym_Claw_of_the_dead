@@ -63,13 +63,15 @@ var path_follow: PathFollow2D = null
 var poison_timer_execution_count: int = 0
 var state: EnemyState = EnemyState.FOLLOW_PATH
 
+## Must be placed first as it is used in other onready variables
+@onready var sprite: Sprite2D = $Sprite2D
+
 @onready var anim_player: AnimationPlayer = $AnimationPlayer
 @onready var collision_shape: CollisionShape2D = $CollisionShape2D
 @onready var old_modulate: Color = sprite.modulate
 @onready var path_points_size: int = path.curve.point_count
 @onready var poison_particle: GPUParticles2D = $GPUParticles2D
 @onready var popup_score_spawner: PopupSpawner = $PopupScoreSpawner
-@onready var sprite: Sprite2D = $Sprite2D
 
 # core
 func _ready() -> void:
@@ -245,8 +247,8 @@ func _on_poison_timer_timeout(timer: Timer) -> void:
 	var timer_index: int = -1
 	for i in range(active_poison_timers.size()):
 		if active_poison_timers[i]["timer"] == timer:
-				timer_index = i
-				break
+			timer_index = i
+			break
 
 	active_poison_timers[timer_index]["current_execution"] += 1
 
