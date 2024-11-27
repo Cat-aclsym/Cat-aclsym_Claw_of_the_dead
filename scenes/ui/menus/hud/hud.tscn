@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://b5630xr4v607r"]
+[gd_scene load_steps=22 format=3 uid="uid://b5630xr4v607r"]
 
 [ext_resource type="Script" path="res://scenes/ui/menus/hud/hud.gd" id="1_cuep3"]
 [ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="2_jel3x"]
@@ -15,6 +15,8 @@
 [ext_resource type="Texture2D" uid="uid://1mu5cdhd5hw8" path="res://assets/ui/icons/build_button.png" id="10_sc2vu"]
 [ext_resource type="Texture2D" uid="uid://bel17gs3ijyb1" path="res://assets/environment/backgrounds/Fond Menu 02@2x.png" id="11_p2vl4"]
 [ext_resource type="Texture2D" uid="uid://nr3ul4jgyad0" path="res://assets/ui/icons/Bouton Annuler.png" id="12_7moo4"]
+[ext_resource type="PackedScene" uid="uid://cekitu5ltqrp7" path="res://scenes/gameplay/entities/trap/slow_trap.tscn" id="16_cj1op"]
+[ext_resource type="PackedScene" uid="uid://cwtbkovmt1c8u" path="res://scenes/ui/menus/hud/trap_card.tscn" id="16_udl6i"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_f3r3y"]
 texture = ExtResource("11_p2vl4")
@@ -295,7 +297,7 @@ anchors_preset = 12
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = -256.0
+offset_top = -263.0
 offset_bottom = 3.0
 grow_horizontal = 2
 grow_vertical = 0
@@ -338,6 +340,12 @@ layout_mode = 2
 texture_filter = 1
 layout_mode = 2
 tower = ExtResource("4_ro8fv")
+tower_name = "Tower 1"
+tower_cost = 50
+
+[node name="TrapCard" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer" instance=ExtResource("16_udl6i")]
+layout_mode = 2
+trap = ExtResource("16_cj1op")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {

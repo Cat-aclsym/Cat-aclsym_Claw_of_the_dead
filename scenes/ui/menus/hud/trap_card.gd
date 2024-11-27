@@ -1,18 +1,18 @@
 ## © [2024] A7 Studio. All rights reserved. Trademark.
 ##
-## Manages a tower card UI element in the HUD.
-## Handles tower selection, cost display, and building functionality.
-class_name TowerCard
+## Manages a trap card UI element in the HUD.
+## Handles trap selection, cost display, and building functionality.
+class_name TrapCard
 extends MarginContainer
 
 signal pressed
 
-## The tower scene to instantiate when building.
-@export var tower: PackedScene = null
-@export var tower_name: String = ""
-@export var tower_cost: int = 0
+## The trap scene to instantiate when building.
+@export var trap: PackedScene = null
+@export var trap_name: String = ""
+@export var trap_cost: int = 0
 
-var _tower: ITower = null
+var _trap: ITrap = null
 var _cost: int
 
 ## The container node for the card elements.
@@ -24,24 +24,24 @@ var _cost: int
 
 # core
 func _ready() -> void:
-	assert(tower != null, "tower scene not assigned")
+	assert(trap != null, "trap scene not assigned")
 	assert(container != null, "container node not found")
 	assert(title_label != null, "title_label node not found")
 	assert(texture != null, "texture node not found")
 	assert(build_button != null, "build_button node not found")
 	assert(text_price != null, "text_price node not found")
 
-	_cost = tower_cost
+	_cost = trap_cost
 
-	if tower:
-		var instance = tower.instantiate()
-		_tower = instance
-		$VBoxContainer/Label.text = tower_name
+	if trap:
+		var instance = trap.instantiate()
+		_trap = instance
+		$VBoxContainer/Label.text = trap_name
 		$VBoxContainer/Button/Label.text = str(instance.cost) + "$"
 		instance.queue_free()
 
 # public
-## Updates the tower card display with current cost and availability.
+## Updates the trap card display with current cost and availability.
 ## [br]Disables the build button if player doesn't have enough coins.
 func update() -> void:
 	text_price.text = "BUY {0}$".format([_cost])
@@ -54,6 +54,6 @@ func _on_button_pressed() -> void:
 	pressed.emit()
 	if Global.hud:
 		if Global.cursor:
-			var instance = tower.instantiate()
+			var instance = trap.instantiate()
 			Global.cursor.change_state(TowerPlacement.CursorState.BUILD, [instance])
-		Global.hud.toggle_build_menu()
+		Global.hud.toggle_build_menu() 

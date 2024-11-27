@@ -23,6 +23,11 @@ const LEFT_OFFSET := Vector2i(-1, 0)
 const VALID_TILES: Array[Vector2i] = [
 	Vector2i(0, 1)
 ]
+const TRAP_VALID_TILES: Array[Vector2i] = [
+	Vector2i(0, 2),
+	Vector2i(1, 2),
+	Vector2i(2, 2),
+]
 
 ## States for the tower placement cursor
 enum CursorState {
@@ -41,7 +46,7 @@ var _is_dragging: bool = false
 var _is_holding_click: bool = false
 var _is_move_tower_available: bool = true
 var _state: CursorState = CursorState.IDLE
-var _tower: ITower = null
+var _tower: Node2D = null
 
 @onready var cancel_place_button: TextureButton = $PlaceHUD/HBoxContainer/CancelPlaceButton
 @onready var cursor: AnimatedSprite2D = $cursor
@@ -84,12 +89,12 @@ func change_state(new_state: CursorState, args: Array = []) -> void:
 				Log.trace(Log.Level.WARN, "Cannot change cursor state from BUILD to IDLE")
 				return
 			assert(args.size() == 1)
-			assert(args[0] is ITower)
+			assert(args[0] is ITower or args[0] is ITrap)
 
 			trigger_state_build.emit()
 			_state = new_state
 			visible = true
-			_state_build(args[0] as ITower)
+			_state_build(args[0])
 
 		CursorState.UPGRADE:
 			if _state != CursorState.IDLE:
@@ -125,10 +130,12 @@ func _set_cursor_position(pos: Vector2 = get_global_mouse_position()) -> void:
 	place_hud.position = local_pos
 
 ## Handles the build state logic, such as tower placement and validation
-func _state_build(tower: ITower = null) -> void:
+func _state_build(tower: Node2D = null) -> void:
 	if tower:
 		_tower = tower.duplicate()
 		_tower.state = ITower.TowerState.BUILDING
+	elif _tower is ITrap:
+		_tower.state = ITrap.TrapState.BUILDING
 		add_child(_tower)
 		await get_tree().create_timer(0.1).timeout
 
@@ -189,19 +196,26 @@ func _build() -> void:
 
 	_is_move_tower_available = false
 
-	var new_tower: ITower = _tower.duplicate()
-	new_tower.state = ITower.TowerState.ACTIVE
-	new_tower.modulate = Color(1, 1, 1, 1)
-	map_ref.add_child(new_tower)
+	var new_entity = _tower.duplicate()
+	if new_entity is ITower:
+		new_entity.state = ITower.TowerState.ACTIVE
+	elif new_entity is ITrap:
+		new_entity.state = ITrap.TrapState.ACTIVE
+	new_entity.modulate = Color(1, 1, 1, 1)
+	map_ref.add_child(new_entity)
 
 	ILevel.current_level.coins -= _tower.cost
 
-	var tm_pos: Array[Vector2i] = [
-		tm_ref.local_to_map(new_tower.position),
-		tm_ref.local_to_map(new_tower.position) - UP_OFFSET,
-		tm_ref.local_to_map(new_tower.position) - RIGHT_OFFSET,
-		tm_ref.local_to_map(new_tower.position) - LEFT_OFFSET,
-	]
+	var tm_pos: Array[Vector2i]
+	if new_entity is ITower:
+		tm_pos = [
+			tm_ref.local_to_map(new_entity.position),
+			tm_ref.local_to_map(new_entity.position) - UP_OFFSET,
+			tm_ref.local_to_map(new_entity.position) - RIGHT_OFFSET,
+			tm_ref.local_to_map(new_entity.position) - LEFT_OFFSET,
+		]
+	else:  # ITrap
+		tm_pos = [tm_ref.local_to_map(new_entity.position)]
 
 	for p in tm_pos:
 		_invalid_cells.append(p)
@@ -210,6 +224,11 @@ func _build() -> void:
 	_is_move_tower_available = true
 
 func _is_buildable(pos: Vector2) -> bool:
+	if _tower is ITrap:
+		return _is_trap_buildable(pos)
+	return _is_tower_buildable(pos)
+
+func _is_tower_buildable(pos: Vector2) -> bool:
 	if ILevel.current_level.coins < _tower.cost:
 		return false
 
@@ -226,6 +245,21 @@ func _is_buildable(pos: Vector2) -> bool:
 
 		if tm_ref.get_cell_atlas_coords(1, p) != Vector2i(-1, -1):
 			return false
+
+	return true
+
+func _is_trap_buildable(pos: Vector2) -> bool:
+	if ILevel.current_level.coins < _tower.cost:
+		return false
+
+	var tm_pos := tm_ref.local_to_map(pos)
+	
+	# Vérifie si la tuile est une tuile de chemin (layer 1)
+	if not tm_ref.get_cell_atlas_coords(0, tm_pos) in TRAP_VALID_TILES:
+		return false
+		
+	if tm_pos in _invalid_cells:
+		return false
 
 	return true
 
