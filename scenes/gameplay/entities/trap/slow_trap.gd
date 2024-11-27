@@ -2,7 +2,7 @@
 ##
 ## A trap that slows down enemies.
 class_name SlowTrap
-extends "res://scenes/gameplay/entities/trap/i_trap.gd"
+extends ITrap
 
 ## The slow effect percentage (0.5 = 50% slower)
 @export var slow_amount: float = 0.9

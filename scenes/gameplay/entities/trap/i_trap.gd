@@ -18,6 +18,12 @@ enum TrapState {
 @onready var collision_shape_2d: CollisionShape2D = $Area2D/CollisionShape2D
 @onready var sprite_2d: Sprite2D = $Sprite2D
 
+## Signal connections to be established in _ready
+@onready var signals: Array[Dictionary] = [
+	{SignalUtil.WHO: area_2d, SignalUtil.WHAT: "body_entered", SignalUtil.TO: _on_area_2d_body_entered},
+    {SignalUtil.WHO: area_2d, SignalUtil.WHAT: "body_exited", SignalUtil.TO: _on_area_2d_body_exited}
+]
+
 ## The state of the trap
 var state: TrapState = TrapState.ACTIVE
 
@@ -25,6 +31,8 @@ var state: TrapState = TrapState.ACTIVE
 func _ready():
     collision_shape_2d.shape.size = Vector2(64, 64) # Adjust size as needed
     _update_z_index()
+
+	SignalUtil.connects(signals)
 
 func _process(_delta: float) -> void:
     if Global.paused:
