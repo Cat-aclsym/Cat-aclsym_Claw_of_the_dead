@@ -18,6 +18,10 @@ var _cost: int
 @onready var build_button: TextureButton = $VBoxContainer/Button
 @onready var text_price: Label = $VBoxContainer/Button/Label
 
+@onready var signals: Array[Dictionary] = [
+	{SignalUtil.WHO: build_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_button_pressed},
+]
+
 # core
 func _ready() -> void:
 	assert(tower != null, "tower scene not assigned")
@@ -29,6 +33,7 @@ func _ready() -> void:
 
 	_tower = tower.instantiate()
 	_cost = _tower.cost
+	SignalUtil.connects(signals)
 
 # public
 ## Updates the tower card display with current cost and availability.

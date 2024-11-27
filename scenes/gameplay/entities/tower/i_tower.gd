@@ -21,6 +21,11 @@ enum TowerState {
 	ACTIVE, ## The tower is placed and active
 }
 
+## Enum for the type of the tower
+enum TowerType {
+	TOWER_1, ## The first tower
+}
+
 ## The bullet scene to be instantiated by the tower
 @export var bullet_scene: PackedScene = null
 
