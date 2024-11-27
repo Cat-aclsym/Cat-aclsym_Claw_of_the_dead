@@ -1,0 +1,41 @@
+[gd_resource type="Theme" load_steps=2 format=3 uid="uid://dr31fy67cgji3"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_v5n3m"]
+texture_margin_left = 40.0
+texture_margin_top = 31.0
+texture_margin_right = 6.0
+texture_margin_bottom = 37.0
+axis_stretch_horizontal = 2
+axis_stretch_vertical = 2
+
+[resource]
+default_base_scale = 1.0
+default_font_size = 30
+Fonts/colors/color = Color(0.137255, 0.215686, 0.223529, 1)
+Fonts/fonts/text = null
+Fonts/fonts/title = null
+HeaderLarge/base_type = &"Label"
+HeaderLarge/colors/font_color = Color(1, 1, 1, 1)
+HeaderLarge/colors/font_outline_color = Color(1, 1, 1, 1)
+HeaderLarge/constants/line_spacing = 0
+HeaderLarge/constants/outline_size = 2
+HeaderLarge/font_sizes/font_size = 28
+HeaderLarge/fonts/font = null
+HeaderMedium/base_type = &"Label"
+HeaderMedium/colors/font_color = Color(1, 1, 1, 1)
+HeaderMedium/colors/font_outline_color = Color(1, 1, 1, 1)
+HeaderMedium/constants/line_spacing = 0
+HeaderMedium/constants/outline_size = 0
+HeaderMedium/font_sizes/font_size = 24
+HeaderMedium/fonts/font = null
+PanelContainer/styles/panel = SubResource("StyleBoxTexture_v5n3m")
+UILabel/base_type = &"Label"
+UILabel/colors/font_color = Color(0.137255, 0.215686, 0.223529, 1)
+UILabel/colors/font_outline_color = Color(0.137255, 0.215686, 0.223529, 1)
+UILabel/colors/font_shadow_color = Color(0, 0, 0, 1)
+UILabel/constants/line_spacing = 0
+UILabel/constants/outline_size = 2
+UILabel/constants/shadow_offset_x = 0
+UILabel/constants/shadow_offset_y = 0
+UILabel/constants/shadow_outline_size = 0
+UILabel/font_sizes/font_size = 16

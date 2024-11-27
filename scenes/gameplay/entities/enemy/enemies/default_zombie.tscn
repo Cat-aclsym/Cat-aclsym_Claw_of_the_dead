@@ -1,0 +1,18 @@
+[gd_scene load_steps=4 format=3 uid="uid://dhmd4je3q8jb6"]
+
+[ext_resource type="PackedScene" uid="uid://tmlcshxut7kv" path="res://i_enemy.tscn" id="1_rsmel"]
+[ext_resource type="Texture2D" uid="uid://bdexx72ck5ean" path="res://assets/gameplay/enemies/default_zombie.png" id="2_c35mq"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4pra6"]
+atlas = ExtResource("2_c35mq")
+region = Rect2(64, 0, 64, 64)
+
+[node name="DefaultZombie" instance=ExtResource("1_rsmel")]
+position = Vector2(0, -16)
+scale = Vector2(0.6, 0.6)
+
+[node name="Sprite2D" parent="." index="0"]
+texture = SubResource("AtlasTexture_4pra6")
+
+[node name="GPUParticles2D" parent="." index="3"]
+visible = false

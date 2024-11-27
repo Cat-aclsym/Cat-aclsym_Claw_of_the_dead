@@ -1,2 +1,12 @@
 # Godot 4+ specific ignores
 .godot/
+.idea
+*.tmp
+*.translation
+
+# Exports
+exports/
+
+.vscode/
+
+log/
