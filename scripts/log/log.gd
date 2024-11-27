@@ -1,14 +1,28 @@
-## © [2024] A7 Studio. All rights reserved. Trademark.
-class_name Log extends Node
+## © 2024 A7 Studio. All rights reserved. Trademark.
+##
+## A utility class for logging messages with different severity levels.
+## Provides functionality for logging to console, file, and debug console if available.
+##
+## Usage example:
+## [codeblock]
+## Log.init()  # Initialize the logging system
+## Log.trace(Log.Level.INFO, "Game started!")
+## Log.trace(Log.Level.ERROR, ["Failed to load resource: ", resource_path])
+## [/codeblock]
+class_name Log
+extends Node
 
+## Enumeration of available log levels in ascending order of severity.
 enum Level {
-	DEBUG = 0,
-	INFO,
-	WARN,
-	ERROR,
-	FATAL
+	DEBUG = 0, ## Detailed debugging information
+	INFO, ## General information about program execution
+	WARN, ## Warnings about potential issues
+	ERROR, ## Errors that don't stop program execution
+	FATAL, ## Critical errors that may stop program execution
 }
 
+## Prefix strings for each log level to improve log readability.
+## These prefixes are added to the beginning of each log message.
 const PREFIXS: Dictionary = {
 	Level.DEBUG: "[DEBUG]",
 	Level.INFO: "[ INFO]",
@@ -17,28 +31,46 @@ const PREFIXS: Dictionary = {
 	Level.FATAL: "[FATAL]"
 }
 
-static var log_filepath: String = ""
+## Path to the current log file.
+## [br]
+## The path is generated using the current timestamp when [method Log.init] is called.
+static var _log_filepath: String = ""
 
-# core
-
-
-# public
+## Initializes the logging system by creating a new log file.
+## [br]
+## This method should be called once when the game starts. It creates a new log file
+## in the [code]res://log[/code] directory with a timestamp-based filename.
+## [br][br]
+## The log file format is: [code]YYYY_MM_DD-HH_mm.log[/code]
 static func init() -> void:
 	_create_log_file()
 	Log.trace(Log.Level.INFO, "Logger initialized!")
 
-
+## Logs a message with the specified severity level.
+## [br]
+## The message format includes:
+## - Timestamp with millisecond precision
+## - Log level prefix ([code]PREFIXS[/code])
+## - Source file, line number, and function name
+## - The actual message
+## [br][br]
+## @param level The severity level from [enum Level]
+## @param args A single message or array of messages to log
+## [br]
+## Example:
+## [codeblock]
+## Log.trace(Log.Level.ERROR, ["Failed to load: ", file_path])
+## [/codeblock]
 static func trace(level: Log.Level, args: Variant) -> void:
 	if level == Level.DEBUG and not Global.debug:
 		return
 
 	var prefix_1: String = ""
-
 	var stack: Array[Dictionary] = get_stack()
+	
 	# Stack can be empty when the game is not running from Godot engine
 	if not stack.is_empty():
 		var execution_line := stack[1]
-
 		prefix_1 = "{0}::{1}@{2}".format([
 			execution_line["source"],
 			execution_line["line"],
@@ -56,7 +88,6 @@ static func trace(level: Log.Level, args: Variant) -> void:
 	])
 
 	var text: String = _format_args(args)
-
 	var output := "{1} - {0} - {2}".format([
 		prefix_1,
 		prefix_2,
@@ -65,20 +96,30 @@ static func trace(level: Log.Level, args: Variant) -> void:
 
 	_publish_message(output)
 
-
+## Saves a message to the log file.
+## [br]
+## If the log file cannot be opened or doesn't exist, the message is silently dropped.
+## [br][br]
+## @param message The message to append to the log file
 static func save_message(message: String) -> void:
-	if log_filepath:
-		 # Open the file in append mode (WRITE_READ mode)
-		var file := FileAccess.open(log_filepath, FileAccess.READ_WRITE)
+	if _log_filepath.is_empty():
+		return
+		
+	var file := FileAccess.open(_log_filepath, FileAccess.READ_WRITE)
+	if not file:
+		return
 
-		# Move the file cursor to the end of the file
-		if file:
-			file.seek_end()
-			file.store_string(message + "\n")  # Append the string followed by a newline
-			file.close()
+	file.seek_end()
+	file.store_string(message + "\n")
+	file.close()
 
-
-# private
+## Formats the input arguments into a single string.
+## [br]
+## If [param args] is not an array, it is converted to a single-element array.
+## Each element is converted to a string and separated by spaces.
+## [br][br]
+## @param args A single value or array of values to format
+## @return The formatted string with all arguments concatenated
 static func _format_args(args: Variant) -> String:
 	var output := ""
 	if not args is Array:
@@ -90,21 +131,29 @@ static func _format_args(args: Variant) -> String:
 
 	return output
 
-
+## Publishes a message to all configured outputs.
+## [br]
+## The message is sent to:
+## - Terminal (using [method print])
+## - Debug console (if [member Global.console] exists)
+## - Log file (using [method save_message])
+## [br][br]
+## @param message The formatted message to publish
 static func _publish_message(message: String) -> void:
-	# terminal output
 	print(message)
 
-	# debug console output
 	if Global.console:
 		Global.console.push_text(message)
 
-	# file output
 	save_message(message)
 
-
+## Creates a new log file with the current timestamp.
+## [br]
+## The file is created in the [code]res://log[/code] directory.
+## If the directory doesn't exist, it will be created.
+## [br][br]
+## The log filename format is: [code]YYYY_MM_DD-HH_mm.log[/code]
 static func _create_log_file() -> void:
-	# Use DirAccess to ensure the directory exists
 	var dir := DirAccess.open("res://log")
 	if not dir:
 		dir = DirAccess.open("res://")
@@ -113,10 +162,7 @@ static func _create_log_file() -> void:
 			Log.trace(Log.Level.ERROR, "Failed to create log directory: %s" % err)
 			return
 
-	# Get the current date and time
 	var current_time := Time.get_datetime_dict_from_system()
-
-	# Format the name as YYYY_MM_DD-HH_mm
 	var file_name := "%d_%02d_%02d-%02d_%02d.log" % [
 		current_time["year"],
 		current_time["month"],
@@ -125,24 +171,18 @@ static func _create_log_file() -> void:
 		current_time["minute"]
 	]
 
-	# Construct the file path
-	log_filepath = "res://log/" + file_name
+	_log_filepath = "res://log/" + file_name
 
-	# Use FileAccess to create the log file
-	var file := FileAccess.open(log_filepath, FileAccess.WRITE)
+	var file := FileAccess.open(_log_filepath, FileAccess.WRITE)
 	if file:
-		file.store_string(">>> Log created on %d/%02d/%02d at %02d:%02d\n" % [current_time.year, current_time.month, current_time.day, current_time.hour, current_time.minute])
+		file.store_string(">>> Log created on %d/%02d/%02d at %02d:%02d\n" % [
+			current_time["year"],
+			current_time["month"],
+			current_time["day"],
+			current_time["hour"],
+			current_time["minute"]
+		])
 		file.close()
 	else:
 		Log.trace(Log.Level.ERROR, "Failed to create log file.")
-		log_filepath = ""
-
-
-
-# signal
-
-
-# event
-
-
-# setget
+		_log_filepath = ""

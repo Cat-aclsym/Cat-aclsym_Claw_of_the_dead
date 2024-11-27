@@ -1,31 +1,28 @@
 ## © [2024] A7 Studio. All rights reserved. Trademark.
+##
+## Factory for creating tower instances.
 class_name TowerFactory
 extends Node2D
 
-@export var tower: PackedScene ## Tower scene to instantiate
-
+## The tower scene to be instantiated
+@export var tower: PackedScene
 
 # core
-## Called when the node enters the scene tree for the first time.
-func _ready():
-	## Create a new instance of the tower scene
-	var tower_instance: ITower = tower.instantiate()
-	## Set the position of the tower instance to the position of the TowerFactory node
-	tower_instance.position = Vector2(0, 0)
-	## Add the tower instance as a child of the TowerFactory node
-	add_child(tower_instance)
-
-
-# public
-
+## Called when the node enters the scene tree.
+## Creates and positions a new tower instance.
+func _ready() -> void:
+	var tower_instance := _create_tower()
+	_setup_tower(tower_instance)
 
 # private
+## Creates a new instance of the tower.
+## Returns: The newly created tower instance.
+func _create_tower() -> ITower:
+	assert(tower != null, "Tower scene must be set")
+	return tower.instantiate() as ITower
 
-
-# signal
-
-
-# event
-
-
-# setget
+## Sets up the initial tower position and adds it to the scene.
+## [param tower_instance] The tower instance to setup.
+func _setup_tower(tower_instance: ITower) -> void:
+	tower_instance.position = Vector2.ZERO
+	add_child(tower_instance)

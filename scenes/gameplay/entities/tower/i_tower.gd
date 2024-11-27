@@ -1,10 +1,12 @@
 ## © [2024] A7 Studio. All rights reserved. Trademark.
+##
+## Interface for a tower.
 class_name ITower
 extends Node2D
-## Interface for the tower
 
 
-enum TargetType { ## Enum for the type of target the tower will shoot at
+## Enum for the type of target the tower will shoot at
+enum TargetType {
 	FIRST, ## Shoots at the first enemy that enters the range
 	LAST, ## Shoots at the last enemy that enters the range
 	STRONGEST, ## Shoots at the enemy with the most health
@@ -12,38 +14,77 @@ enum TargetType { ## Enum for the type of target the tower will shoot at
 	RANDOM ## Shoots at a random enemy
 }
 
-enum TowerState { ## Enum for the state of the tower
+## Enum for the state of the tower
+enum TowerState {
 	BUILDING, ## The tower is being built
 	UPGRADING, ## The tower is being upgraded
 	ACTIVE, ## The tower is placed and active
 }
 
-@export var cost: int ## The cost of the tower.
-@export var sell_price: int ## The sell price of the tower.
-@export var upgrade: Array[PackedScene] ## An array of PackedScenes representing the upgrades available for the tower.
-@export var level: int ## The current level of the tower.
-@export var shoot_range: float ## The range of the tower.
-@export var fire_rate: float ## The fire rate of the tower.
-@export var bullet_scene: PackedScene = null ## A PackedScene representing the bullet that the tower fires.
+## The bullet scene to be instantiated by the tower
+@export var bullet_scene: PackedScene = null
 
-@onready var fire_rate_timer: Timer = $FireRateTimer ## Timer for controlling the fire rate of the tower.
-@onready var area_2d: Area2D = $Area2D ## Area2D node for the tower.
-@onready var collision_shape_2d: CollisionShape2D = $Area2D/CollisionShape2D ## CollisionShape2D node for the tower.
-@onready var polygon_2d: Polygon2D = $Polygon2D ## Polygon2D node for the tower.
-@onready var sprite_2d: Sprite2D = $Sprite2D ## Sprite2D node for the tower.
-@onready var hover_box: CollisionShape2D = $TowerHoverBox/CollisionShape2D ## CollisionShape2D node for the hover box of the tower.
-@onready var outline: Line2D = $Polygon2D/Line2D ## Line2D node for the outline of the tower.
+## The cost of the tower
+@export var cost: int
 
-var color: String = "#FFFFFF" ## The color of the tower range.
-var enemy_array: Array[IEnemy]  ## An array of IEnemy nodes representing the enemies in the range of the tower.
-var selected: bool = false ## A boolean representing if the tower is selected or not.
-var state: TowerState = TowerState.ACTIVE ## The state of the tower.
-var target: IEnemy ## The target of the tower.
-var target_type: TargetType ## The type of target the tower will shoot at.
+## The fire rate of the tower
+@export var fire_rate: float
+
+## The level of the tower
+@export var level: int
+
+## The sell price of the tower
+@export var sell_price: int
+
+## The shooting range of the tower
+@export var shoot_range: float
+
+## The upgrade array to store upgrades that are applied in the tower
+@export var upgrade: Array[PackedScene]
+
+
+## The area 2D node for the tower to detect enemies in range
+@onready var area_2d: Area2D = $Area2D
+
+## The collision shape 2D node for the tower
+@onready var collision_shape_2d: CollisionShape2D = $Area2D/CollisionShape2D
+
+## The timer for the fire rate of the tower to shoot bullets
+@onready var fire_rate_timer: Timer = $FireRateTimer
+
+## The collision shape 2D node for the tower hover box
+@onready var hover_box: CollisionShape2D = $TowerHoverBox/CollisionShape2D
+
+## The line 2D node for the outline of the range polygon
+@onready var outline: Line2D = $Polygon2D/Line2D
+
+## The polygon 2D node for the range of the tower to detect enemies
+@onready var polygon_2d: Polygon2D = $Polygon2D
+
+## The sprite 2D node for the tower to display the tower model
+@onready var sprite_2d: Sprite2D = $Sprite2D
+
+
+## The color of the range polygon
+var color: String = "#FFFFFF"
+
+## The enemy array to store enemies in the range of the tower
+var enemy_array: Array[IEnemy]
+
+## Is the tower is selected
+var selected: bool = false
+
+## The state of the tower
+var state: TowerState = TowerState.ACTIVE
+
+## The target of the tower
+var target: IEnemy
+
+## The type of target the tower will shoot at
+var target_type: TargetType
 
 
 # core
-## Function called when the node enters the scene tree for the first time.
 func _ready():
 	## Set the initial target type of the tower to FIRST
 	target_type = TargetType.FIRST
@@ -56,8 +97,6 @@ func _ready():
 	_update_z_index()
 
 
-## Function called every frame. Delta is the time since the last frame.
-## @param _delta float - The time since the last frame.
 func _process(_delta: float) -> void:
 	if Global.paused:
 		return
@@ -130,8 +169,8 @@ func _choose_target():
 
 # private
 ## Function to create the range polygon for the tower when the tower is selected.
-## @param radius float - The radius of the range polygon.
-## @param precision int - The number of points in the range polygon.
+## [param radius] - The radius of the range polygon.
+## [param precision] - The number of points in the range polygon.
 func _create_range_polygon(radius: float, precision: int) -> void:
 	## Create an array of Vector2 points for the range polygon
 	var points: Array[Vector2] = []
@@ -161,7 +200,7 @@ func _create_range_polygon(radius: float, precision: int) -> void:
 	outline.default_color = Color(1, 1, 1, 1)
 
 
-##  Function to get the strongest enemy in the enemy array.
+## Function to get the strongest enemy in the enemy array.
 func _get_strongest_target():
 	## Set the initial strongest enemy to the first enemy in the enemy array
 	var strongest: IEnemy = enemy_array[0]
@@ -292,9 +331,3 @@ func _on_tower_hover_box_mouse_exited():
 		polygon_2d.scale = lerp(polygon_2d.scale, Vector2(0, 0), size)
 		await get_tree().create_timer(0.01).timeout
 		size += 0.1
-
-
-# event
-
-
-# setget

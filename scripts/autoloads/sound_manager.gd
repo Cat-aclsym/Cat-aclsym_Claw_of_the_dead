@@ -1,10 +1,12 @@
 ## © [2024] A7 Studio. All rights reserved. Trademark.
+##
+## Manages sound nodes and groups for volume control.
 extends Node
 
-# Private Variables
+## The dictionary of sound groups and their associated nodes.
 var _groups: Dictionary = {}
 
-# Public Functions
+# public
 ## Registers a sound node to a specific group
 func register(group: String, sound: Node) -> void:
 	assert(sound != null, "Sound node cannot be null")
@@ -13,7 +15,7 @@ func register(group: String, sound: Node) -> void:
 	else:
 		_groups[group] = [sound]
 
-## Removes a sound node from a specific group
+## Removes a sound node from a specific group if it exists
 func remove(group: String, sound: Node) -> void:
 	assert(sound != null, "Sound node cannot be null")
 	if _groups.has(group) and sound in _groups[group]:

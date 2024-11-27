@@ -1,16 +1,11 @@
 ## © [2024] A7 Studio. All rights reserved. Trademark.
-## File: pause_menu.gd.
 ##
-## Author: Laurie Jeham-Masselot
-## Created: 24/01/2024
-##
-## Methods for pausing screen when the player is on Game
-## Pause/Restart/Home and sounds options conf
-
+## Manages the pause menu functionality and UI interactions.
+## Handles game pause, restart, and navigation controls.
 class_name PauseMenu
 extends Control
 
-
+# Onready Variables
 @onready var restart_button: TextureButton = $MarginContainer/PanelContainer/CenterContainer/VBoxContainer/ButtonLayer/RestartButton
 @onready var play_button: TextureButton = $MarginContainer/PanelContainer/CenterContainer/VBoxContainer/ButtonLayer/PlayButton
 @onready var home_button: TextureButton = $MarginContainer/PanelContainer/CenterContainer/VBoxContainer/ButtonLayer/HomeButton
@@ -25,62 +20,47 @@ extends Control
 	{SignalUtil.WHO: quit_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_close_texture_button_pressed},
 ]
 
-
 # core
 func _ready() -> void:
+	assert(home_button != null, "home_button node not found")
+	assert(restart_button != null, "restart_button node not found")
+	assert(play_button != null, "play_button node not found")
+	assert(quit_button != null, "quit_button node not found")
 	SignalUtil.connects(signals)
 
-
-# public
-
-
 # private
-
-
-# signal
-## Go back to the main menu
-func _on_home_button_pressed():
+## Returns to the main menu and cleans up the current level.
+func _on_home_button_pressed() -> void:
 	get_tree().change_scene_to_file("res://scenes/main.tscn")
 	ILevel.current_level.queue_free()
 	Global.paused = false
 
-
-## Restart the game
-func _on_restart_button_pressed():
-	# Copy current level
+## Restarts the current level with fresh state.
+## [br]Creates a new instance of the current level and initializes it.
+func _on_restart_button_pressed() -> void:
 	var current_level := ILevel.current_level
 	var level_metadata: LevelMetadata = current_level.metadata.duplicate()
 	var level_scene: PackedScene = load(current_level.get_scene_file_path())
 
-	# Clear the current level
 	current_level.queue_free()
 	await current_level.tree_exited
 
-	# Create a new level from the copied one
 	var new_level: ILevel = level_scene.instantiate()
 	get_tree().get_root().add_child(new_level)
 	new_level.initialize(level_metadata)
 	ILevel.current_level = new_level
 	Global.ui.start_level()
 
-	# Close the menu
 	Global.paused = false
 	queue_free()
 
-
-## Resume the game
-func _on_play_button_pressed():
+# signals
+## Resumes the game by unpausing and closing the menu.
+func _on_play_button_pressed() -> void:
 	Global.paused = false
 	queue_free()
 
-
-## Close the menu
-func _on_close_texture_button_pressed():
+## Closes the pause menu and resumes the game.
+func _on_close_texture_button_pressed() -> void:
 	Global.paused = false
 	queue_free()
-
-
-# event
-
-
-# setget

@@ -1,5 +1,7 @@
 ## © [2024] A7 Studio. All rights reserved. Trademark.
-## Exit game.
+##
+## Exits the game by closing the application window.
+## This command immediately terminates the game process and performs cleanup.
 extends ICommand
 
 
@@ -14,6 +16,6 @@ func description() -> String:
 
 # private
 func _execute(console: Console, _args: Array) -> int:
-	console.get_tree().quit() # close game
-	queue_free() # force current command memory clean just in case, could be useless
+	console.get_tree().quit()
+	queue_free()
 	return ERR_UNKNOWN_BEHAVIOR

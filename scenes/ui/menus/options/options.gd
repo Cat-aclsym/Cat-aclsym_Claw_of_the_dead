@@ -1,89 +1,78 @@
 ## © [2024] A7 Studio. All rights reserved. Trademark.
-## File: option_menu.gd
-##Option menu of the game
-##From this menu we can access parameters, socials, and miscellaneous things
 ##
-##Author: Matéo Perrot--Nasi
-##Created: 28/02/2024
-##
+## Manages the game's options menu interface and functionality.
+## Handles settings for music, sound, language, and social media links.
 class_name OptionMenu
 extends Control
 
+# signals
 signal menu_close
 
+# private variables
+var _actual_texture: Texture2D
+
+# Onready Variables
 @onready var music_texture_button: TextureButton = $GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/SettingsHBoxContainer/MusicAspectRatioContainer/MusicTextureButton
 @onready var sound_texture_button: TextureButton = $GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/SettingsHBoxContainer/SoundAspectRatioContainer/SoundTextureButton
 @onready var language_texture_button: TextureButton = $GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/SettingsHBoxContainer/LanguageAspectRatioContainer/LanguageTextureButton
 
-var actualTexture: Texture2D
-
-
 # core
-
-
-# public
-
+func _ready() -> void:
+	assert(music_texture_button != null, "music_texture_button node not found")
+	assert(sound_texture_button != null, "sound_texture_button node not found")
+	assert(language_texture_button != null, "language_texture_button node not found")
 
 # private
-
-
-# signal
-func _on_music_texture_button_pressed():
-	actualTexture = music_texture_button.get_texture_normal()
+## Toggles the music state and updates the button texture.
+func _on_music_texture_button_pressed() -> void:
+	_actual_texture = music_texture_button.get_texture_normal()
 	music_texture_button.set_texture_normal(music_texture_button.get_texture_pressed())
-	music_texture_button.set_texture_pressed(actualTexture)
+	music_texture_button.set_texture_pressed(_actual_texture)
 
-
-func _on_sound_texture_button_pressed():
-	actualTexture = sound_texture_button.get_texture_normal()
+## Toggles the sound state and updates the button texture.
+func _on_sound_texture_button_pressed() -> void:
+	_actual_texture = sound_texture_button.get_texture_normal()
 	sound_texture_button.set_texture_normal(sound_texture_button.get_texture_pressed())
-	sound_texture_button.set_texture_pressed(actualTexture)
+	sound_texture_button.set_texture_pressed(_actual_texture)
 
-
-func _on_language_texture_button_pressed():
+## Toggles between English and French languages.
+## [br]Updates the button texture to reflect the current language.
+func _on_language_texture_button_pressed() -> void:
 	if TranslationServer.get_locale() == "en":
 		TranslationServer.set_locale("fr")
-		actualTexture = language_texture_button.get_texture_normal()
+		_actual_texture = language_texture_button.get_texture_normal()
 		language_texture_button.set_texture_normal(language_texture_button.get_texture_pressed())
-		language_texture_button.set_texture_pressed(actualTexture)
+		language_texture_button.set_texture_pressed(_actual_texture)
 	else:
 		TranslationServer.set_locale("en")
-		actualTexture = language_texture_button.get_texture_normal()
+		_actual_texture = language_texture_button.get_texture_normal()
 		language_texture_button.set_texture_normal(language_texture_button.get_texture_pressed())
-		language_texture_button.set_texture_pressed(actualTexture)
+		language_texture_button.set_texture_pressed(_actual_texture)
 
-
-func _on_instagram_texture_button_pressed():
+## Opens the Instagram social media link.
+func _on_instagram_texture_button_pressed() -> void:
 	OS.shell_open("https://www.instagram.com/a7studio.cataclysm/")
 
-
-func _on_x_texture_button_pressed():
+## Opens the X (Twitter) social media link.
+func _on_x_texture_button_pressed() -> void:
 	OS.shell_open("https://twitter.com/a7studio_off")
 
-
-func _on_discord_texture_button_pressed():
+## Opens the Discord community link.
+func _on_discord_texture_button_pressed() -> void:
 	OS.shell_open("https://discord.gg/xf5zEn3NtJ")
 
-
-func _on_update_texture_button_pressed():
+## Placeholder for update functionality.
+func _on_update_texture_button_pressed() -> void:
 	pass
 
-
-func _on_rgpd_texture_button_pressed():
+## Placeholder for RGPD functionality.
+func _on_rgpd_texture_button_pressed() -> void:
 	pass
 
-
-func _on_contact_texture_button_pressed():
+## Opens the contact email link.
+func _on_contact_texture_button_pressed() -> void:
 	OS.shell_open("mailto:A7studio.contact@gmail.com")
 
-
-func _on_close_texture_button_pressed():
+## Emits the menu close signal.
+func _on_close_texture_button_pressed() -> void:
 	menu_close.emit()
-
-
-# event
-
-
-# setget
-
-

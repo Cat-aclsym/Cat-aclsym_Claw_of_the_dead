@@ -1,5 +1,7 @@
 ## © [2024] A7 Studio. All rights reserved. Trademark.
-## Change font size of console.
+##
+## Changes the font size of the console interface.
+## Updates all text elements in the console with the specified font size.
 extends ICommand
 
 
@@ -19,6 +21,7 @@ func expected_args_types() -> Array[ICommand.Types]:
 # private
 func _execute(console: Console, args: Array) -> int:
 	var new_size: int = int(args[0])
+	assert(new_size > 0, "Font size must be positive")
 
 	console.input.add_theme_font_size_override("font_size", new_size)
 	console.output.add_theme_font_size_override("bold_italics_font_size", new_size)

@@ -1,22 +1,28 @@
 ## © [2024] A7 Studio. All rights reserved. Trademark.
+##
+## Manages the level selection menu interface and functionality.
+## Handles level loading and initialization of level metadata.
 class_name LevelsMenu
 extends Control
 
+# signals
 signal menu_close
 signal level_selected
 
+## Dictionary containing level selection buttons and their metadata.
+var _buttons: Dictionary = {}
+
+## Contains the level selection buttons and metadata.
 @onready var container: VBoxContainer = $GuiMarginContainer/MenuMarginContainer/LevelSelectVBoxContainer
-var buttons: Dictionary = {}
 
 # core
 func _ready() -> void:
+	assert(container != null, "container node not found")
 	_initialize()
 
-
-# public
-
-
 # private
+## Initializes the level selection menu by setting up level buttons and their metadata.
+## [br]Connects button signals to handle level loading when selected.
 func _initialize() -> void:
 	for node in container.get_children():
 		if not node is AspectRatioContainer:
@@ -24,13 +30,13 @@ func _initialize() -> void:
 		var button: TextureButton = node.get_child(0)
 		var level_label: Label = button.get_child(0)
 		var level_metadata: LevelMetadata = button.get_child(1)
-		buttons[level_label] = level_metadata
+		_buttons[level_label] = level_metadata
 
-	for bt in buttons:
-		var metadata: LevelMetadata = buttons[bt]
+	for bt in _buttons:
+		var metadata: LevelMetadata = _buttons[bt]
 		bt.text = "{0}".format([tr(metadata.level_name)])
 		bt.get_parent().connect("pressed",
-		func():
+		func() -> void:
 			assert(metadata.level_scene != null, "Level scene is null.")
 			visible = false
 
@@ -40,14 +46,5 @@ func _initialize() -> void:
 			ILevel.current_level = level
 
 			Global.ui.start_level()
-			emit_signal("level_selected")
+			level_selected.emit()
 		)
-
-
-# signal
-
-
-# event
-
-
-# setget

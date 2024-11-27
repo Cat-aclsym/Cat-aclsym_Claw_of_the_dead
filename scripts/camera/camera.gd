@@ -1,10 +1,9 @@
 ## © [2024] A7 Studio. All rights reserved. Trademark.
-## File: camera/camera.gd
+##
 ## Handles camera movement, zoom and effects
 class_name Camera
 extends Camera2D
 
-# Exported Variables
 @export var zoom_speed: float = 0.1
 @export var pan_speed: float = 1.0
 @export var random_strength: float = 30.0
@@ -12,14 +11,13 @@ extends Camera2D
 @export var min_zoom: float = 0.5
 @export var max_zoom: float = 10.0
 
-# Private Variables
 var _touch_points: Dictionary = {}
 var _start_distance: float
 var _start_zoom: Vector2
 var _rng := RandomNumberGenerator.new()
 var _shake_strength: float = 0.0
 
-# Built-in Functions
+# core
 func _ready() -> void:
     Global.camera = self
 
@@ -39,7 +37,15 @@ func _input(event: InputEvent) -> void:
     elif event is InputEventScreenDrag:
         handle_drag(event)
 
-# Public Functions
+# public
+## Clamps zoom between min and max values
+func clamp_zoom() -> void:
+    zoom = zoom.clamp(Vector2(min_zoom, min_zoom), Vector2(max_zoom, max_zoom))
+
+## Initiates a camera shake effect
+func shake_camera() -> void:
+    _shake_strength = random_strength
+
 ## Handles touch input events
 func handle_touch(event: InputEventScreenTouch) -> void:
     if event.pressed:
@@ -72,7 +78,8 @@ func handle_effect(effect: String) -> void:
         _:
             pass
 
-# Private Functions
+# private
+## Processes the camera shake effect
 func _process_shake(delta: float) -> void:
     if _shake_strength > 0:
         _shake_strength = lerp(_shake_strength, 0.0, shake_fade * delta)
@@ -81,6 +88,7 @@ func _process_shake(delta: float) -> void:
             _rng.randf_range(-_shake_strength, _shake_strength)
         )
 
+## Handles zoom input events
 func _process_zoom() -> void:
     if Input.is_action_just_pressed("scroll_up"):
         zoom /= 0.9
@@ -89,17 +97,10 @@ func _process_zoom() -> void:
         zoom *= 0.9
         clamp_zoom()
 
+## Handles pinch zoom input events
 func _handle_pinch_zoom() -> void:
     var touch_point_positions: Array = _touch_points.values()
     var current_distance: float = touch_point_positions[0].distance_to(touch_point_positions[1])
     var zoom_factor: float = _start_distance / current_distance
     zoom = _start_zoom / zoom_factor
     clamp_zoom()
-
-## Clamps zoom between min and max values
-func clamp_zoom() -> void:
-    zoom = zoom.clamp(Vector2(min_zoom, min_zoom), Vector2(max_zoom, max_zoom))
-
-## Initiates a camera shake effect
-func shake_camera() -> void:
-    _shake_strength = random_strength

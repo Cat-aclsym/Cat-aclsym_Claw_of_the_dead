@@ -1,14 +1,16 @@
 ## © [2024] A7 Studio. All rights reserved. Trademark.
-## File: autoloads/scenes_loader.gd
+##
 ## Manages loading of game scenes and resources.
 extends Node
 
+## The enemy IDs and their associated scenes.
 enum EnemyId {
 	DEFAULT,
 	BIG_DADDY,
 	FAT,
 }
 
+## The tower IDs and their associated scenes.
 enum TowerId {
 	TOWER_1,
 	TOWER_2,
@@ -25,7 +27,6 @@ const TOWERS: Dictionary = {
 	TowerId.TOWER_1: preload("res://scenes/gameplay/entities/tower/towers/first_tower.tscn"),
 }
 
-# Public Functions
 ## Returns the enemy scene associated with the given ID
 ## Returns null if the enemy ID is not found
 func get_enemy_scene(id: EnemyId) -> PackedScene:

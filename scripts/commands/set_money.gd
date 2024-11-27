@@ -1,5 +1,7 @@
 ## © [2024] A7 Studio. All rights reserved. Trademark.
-## Set in game money
+##
+## Sets the player's in-game money amount.
+## Can only be used when a level is active. Updates the [member ILevel.coins] value.
 extends ICommand
 
 
@@ -20,8 +22,11 @@ func expected_args_types() -> Array[ICommand.Types]:
 func _execute(console: Console, args: Array) -> int:
 	if not ILevel.current_level:
 		console.push_error("You must be in a level to use this method")
-		return -1
+		return ERR_UNCONFIGURED
 
-	ILevel.current_level.coins = int(args[0])
+	var amount: int = int(args[0])
+	assert(amount >= 0, "Money amount cannot be negative")
+
+	ILevel.current_level.coins = amount
 
 	return OK

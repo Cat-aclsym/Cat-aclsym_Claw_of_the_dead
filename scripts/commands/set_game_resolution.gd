@@ -1,5 +1,7 @@
 ## © [2024] A7 Studio. All rights reserved. Trademark.
-## Set game resolution
+## Sets the game window resolution.
+##
+## Updates both the window size and project settings with the new resolution.
 extends ICommand
 
 
@@ -9,7 +11,7 @@ func command_token() -> String:
 
 
 func description() -> String:
-	return "Set game resolution. set_game_resolution weight height"
+	return "Set game resolution. set_game_resolution width height"
 
 
 func expected_args_types() -> Array[ICommand.Types]:
@@ -18,8 +20,12 @@ func expected_args_types() -> Array[ICommand.Types]:
 
 # private
 func _execute(console: Console, args: Array) -> int:
-	console.get_viewport().get_window().size = Vector2i(int(args[0]), int(args[1]))
-	ProjectSettings.set_setting("display/window/size/width", int(args[0]))
-	ProjectSettings.set_setting("display/window/size/height", int(args[1]))
+	var width: int = int(args[0])
+	var height: int = int(args[1])
+	assert(width > 0 and height > 0, "Resolution dimensions must be positive")
+
+	console.get_viewport().get_window().size = Vector2i(width, height)
+	ProjectSettings.set_setting("display/window/size/width", width)
+	ProjectSettings.set_setting("display/window/size/height", height)
 
 	return OK
