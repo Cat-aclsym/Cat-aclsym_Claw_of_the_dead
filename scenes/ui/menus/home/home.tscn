@@ -163,6 +163,3 @@ text = "HOME.SETTINGS.BUTTON"
 horizontal_alignment = 1
 vertical_alignment = 1
 uppercase = true
-
-[connection signal="pressed" from="GuiMarginContainer/GuiHBoxContainer/HomeScreenVBoxContainer/PlayMarginContainer/PlayButton" to="." method="_on_play_button_pressed"]
-[connection signal="pressed" from="GuiMarginContainer/GuiHBoxContainer/HomeScreenVBoxContainer/SettingsMarginContainer/SettingsButton" to="." method="_on_parameter_button_pressed"]
