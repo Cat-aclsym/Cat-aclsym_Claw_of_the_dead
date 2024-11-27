@@ -1,0 +1,198 @@
+[gd_scene load_steps=12 format=3 uid="uid://dgac5kcibwtmg"]
+
+[ext_resource type="Script" path="res://scenes/ui/menus/level_selection/level_selection.gd" id="1_u6l4m"]
+[ext_resource type="Texture2D" uid="uid://vvmnkp7tiwxm" path="res://assets/environment/backgrounds/Fond Menu 01@2x.png" id="2_gdr4h"]
+[ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="3_1rslt"]
+[ext_resource type="Texture2D" uid="uid://b1yesvpwmntau" path="res://assets/ui/buttons/Bouton orange@2x.png" id="4_uvg8w"]
+[ext_resource type="PackedScene" uid="uid://s70rc0a3unkr" path="res://scenes/gameplay/world/level/level_metadata.tscn" id="5_1a6bq"]
+[ext_resource type="PackedScene" uid="uid://de3tnk1y83r8n" path="res://scenes/gameplay/world/level/levels/level_1.tscn" id="6_6kwx2"]
+[ext_resource type="Texture2D" uid="uid://dbhkk633ispub" path="res://assets/ui/buttons/Bouton Bleu@2x.png" id="7_ludvy"]
+[ext_resource type="PackedScene" uid="uid://8gta0ub172x3" path="res://scenes/gameplay/world/level/levels/level_debug.tscn" id="8_fc2ix"]
+[ext_resource type="Texture2D" uid="uid://cdaralngqjlvk" path="res://assets/ui/buttons/Bouton Vert@2x.png" id="9_eb8kt"]
+
+[sub_resource type="Gradient" id="Gradient_dxsp7"]
+interpolation_mode = 2
+interpolation_color_space = 2
+offsets = PackedFloat32Array(0.0122449, 1)
+colors = PackedColorArray(0.180392, 0.478431, 0.482353, 1, 0.137255, 0.215686, 0.223529, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_mmlef"]
+gradient = SubResource("Gradient_dxsp7")
+width = 1024
+height = 1024
+use_hdr = true
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(0.8, 0)
+
+[node name="LevelsMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_u6l4m")
+
+[node name="BackgroundTextureRect" type="TextureRect" parent="."]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = SubResource("GradientTexture2D_mmlef")
+expand_mode = 1
+
+[node name="GuiMarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 60
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 60
+theme_override_constants/margin_bottom = 20
+
+[node name="BackgroundTextureRect" type="TextureRect" parent="GuiMarginContainer"]
+layout_mode = 2
+texture = ExtResource("2_gdr4h")
+expand_mode = 1
+
+[node name="MenuMarginContainer" type="MarginContainer" parent="GuiMarginContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 15
+
+[node name="LevelSelectVBoxContainer" type="VBoxContainer" parent="GuiMarginContainer/MenuMarginContainer"]
+layout_mode = 2
+
+[node name="TitleLabel" type="Label" parent="GuiMarginContainer/MenuMarginContainer/LevelSelectVBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme = ExtResource("3_1rslt")
+theme_type_variation = &"HeaderLarge"
+theme_override_font_sizes/font_size = 50
+text = "LEVEL.MENU.TITLE"
+horizontal_alignment = 1
+
+[node name="LevelAspectRatioContainer1" type="AspectRatioContainer" parent="GuiMarginContainer/MenuMarginContainer/LevelSelectVBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+ratio = 2.0
+
+[node name="LevelTextureButton1" type="TextureButton" parent="GuiMarginContainer/MenuMarginContainer/LevelSelectVBoxContainer/LevelAspectRatioContainer1"]
+texture_filter = 6
+layout_mode = 2
+size_flags_vertical = 3
+texture_normal = ExtResource("4_uvg8w")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="LevelLabel1" type="Label" parent="GuiMarginContainer/MenuMarginContainer/LevelSelectVBoxContainer/LevelAspectRatioContainer1/LevelTextureButton1"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 0.5
+offset_top = -8.5
+offset_right = 1.5
+offset_bottom = 9.5
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("3_1rslt")
+theme_override_colors/font_color = Color(0.137255, 0.215686, 0.223529, 1)
+theme_override_colors/font_outline_color = Color(0.137255, 0.215686, 0.223529, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 24
+text = "test text"
+vertical_alignment = 1
+uppercase = true
+
+[node name="LevelMetadata1" parent="GuiMarginContainer/MenuMarginContainer/LevelSelectVBoxContainer/LevelAspectRatioContainer1/LevelTextureButton1" instance=ExtResource("5_1a6bq")]
+id = 1
+level_name = "FIRST.LEVEL.NAME"
+level_scene = ExtResource("6_6kwx2")
+
+[node name="LevelAspectRatioContainer2" type="AspectRatioContainer" parent="GuiMarginContainer/MenuMarginContainer/LevelSelectVBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+ratio = 2.0
+
+[node name="LevelTextureButton2" type="TextureButton" parent="GuiMarginContainer/MenuMarginContainer/LevelSelectVBoxContainer/LevelAspectRatioContainer2"]
+layout_mode = 2
+texture_normal = ExtResource("7_ludvy")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="LevelLabel2" type="Label" parent="GuiMarginContainer/MenuMarginContainer/LevelSelectVBoxContainer/LevelAspectRatioContainer2/LevelTextureButton2"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -0.5
+offset_top = -9.0
+offset_right = 0.5
+offset_bottom = 9.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("3_1rslt")
+theme_override_colors/font_color = Color(0.137255, 0.215686, 0.223529, 1)
+theme_override_colors/font_outline_color = Color(0.137255, 0.215686, 0.223529, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 24
+vertical_alignment = 1
+uppercase = true
+
+[node name="LevelMetadata2" parent="GuiMarginContainer/MenuMarginContainer/LevelSelectVBoxContainer/LevelAspectRatioContainer2/LevelTextureButton2" instance=ExtResource("5_1a6bq")]
+position = Vector2(0, -63)
+id = 2
+level_name = "SECOND.LEVEL.NAME"
+level_scene = ExtResource("8_fc2ix")
+
+[node name="LevelAspectRatioContainer3" type="AspectRatioContainer" parent="GuiMarginContainer/MenuMarginContainer/LevelSelectVBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+ratio = 2.0
+
+[node name="LevelTextureButton3" type="TextureButton" parent="GuiMarginContainer/MenuMarginContainer/LevelSelectVBoxContainer/LevelAspectRatioContainer3"]
+layout_mode = 2
+texture_normal = ExtResource("9_eb8kt")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="LevelLabel3" type="Label" parent="GuiMarginContainer/MenuMarginContainer/LevelSelectVBoxContainer/LevelAspectRatioContainer3/LevelTextureButton3"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -0.5
+offset_top = -9.0
+offset_right = 0.5
+offset_bottom = 9.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("3_1rslt")
+theme_override_colors/font_color = Color(0.137255, 0.215686, 0.223529, 1)
+theme_override_colors/font_outline_color = Color(0.137255, 0.215686, 0.223529, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 24
+vertical_alignment = 1
+uppercase = true
+
+[node name="LevelMetadata3" parent="GuiMarginContainer/MenuMarginContainer/LevelSelectVBoxContainer/LevelAspectRatioContainer3/LevelTextureButton3" instance=ExtResource("5_1a6bq")]
+position = Vector2(0, -126)
+id = 3
+level_name = "THIRD.LEVEL.NAME"
+level_scene = ExtResource("8_fc2ix")

@@ -1,0 +1,23 @@
+[gd_scene load_steps=5 format=3 uid="uid://crdosg1fmycsi"]
+
+[ext_resource type="Script" path="res://scenes/gameplay/world/map/i_map.gd" id="1_vhs3p"]
+[ext_resource type="PackedScene" uid="uid://cvxtqnnr7606b" path="res://scenes/gameplay/world/map/tile_map_debug.tscn" id="2_g4v36"]
+[ext_resource type="PackedScene" uid="uid://ddcvda2tcbdq8" path="res://scenes/gameplay/entities/tower_placement/tower_placement.tscn" id="3_ndsux"]
+[ext_resource type="PackedScene" uid="uid://b2gwi4t3c87aw" path="res://scenes/gameplay/world/map/tile_map_plains.tscn" id="4_f6jio"]
+
+[node name="IMap" type="Node2D" node_paths=PackedStringArray("tilemap")]
+script = ExtResource("1_vhs3p")
+tilemap = NodePath("TileMapPlains")
+
+[node name="TileMapDebug" parent="." instance=ExtResource("2_g4v36")]
+
+[node name="TileMapPlains" parent="." instance=ExtResource("4_f6jio")]
+
+[node name="Paths" type="Node2D" parent="."]
+
+[node name="Waves" type="Node" parent="."]
+
+[node name="WavesTimer" type="Timer" parent="."]
+one_shot = true
+
+[node name="Controller" parent="." instance=ExtResource("3_ndsux")]

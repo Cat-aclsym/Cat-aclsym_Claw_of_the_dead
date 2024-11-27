@@ -3,3 +3,10 @@
 .idea
 *.tmp
 *.translation
+
+# Exports
+exports/
+
+.vscode/
+
+log/
