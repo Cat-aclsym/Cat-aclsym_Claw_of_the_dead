@@ -10,6 +10,7 @@ const PAUSE_MENU: PackedScene = preload("res://scenes/ui/menus/pause/pause.tscn"
 ## The flag indicating if the HUD is ready to display.
 var _is_ready: bool = false
 
+## Resources with values nodes
 @onready var coins_rich_text_label: Label = $HUDMarginContainer/HUDVBoxContainer/CoinsWavesMarginContainer/CoinsWavesHBoxContainer/CoinsTextureRect/MarginContainer/CoinsLabel
 @onready var health_rich_text_label: Label = $HUDMarginContainer/HUDVBoxContainer/HeartTextureRect/HealthMarginContainer/MarginContainer/HealthTextureProgressBar/HealthLabel
 @onready var waves_rich_text_label: Label = $HUDMarginContainer/HUDVBoxContainer/CoinsWavesMarginContainer/CoinsWavesHBoxContainer/WavesTextureRect/MarginContainer/WavesLabel
@@ -17,14 +18,24 @@ var _is_ready: bool = false
 @onready var default_health_text: String = health_rich_text_label.text
 @onready var default_waves_text: String = waves_rich_text_label.text
 
+## Nodes for resources display
 @onready var health_texture_progress_bar: TextureProgressBar = $HUDMarginContainer/HUDVBoxContainer/HeartTextureRect/HealthMarginContainer/MarginContainer/HealthTextureProgressBar
 @onready var new_wave_count_label: Label = $NewWaveCountLabel
 
+## Construction menu nodes
 @onready var construction_anim_player: AnimationPlayer = $AnimationPlayer
-@onready var construction_wrapper: VBoxContainer = $VBoxContainer
 @onready var construction_menu: PanelContainer = $VBoxContainer/PanelContainer
-@onready var build_button: TextureButton = $VBoxContainer/MarginContainer/BuildButton
+@onready var construction_wrapper: VBoxContainer = $VBoxContainer
 @onready var tower_list: HBoxContainer = $VBoxContainer/PanelContainer/MarginContainer/HBoxContainer
+
+## HUD buttons
+@onready var build_button: TextureButton = $VBoxContainer/MarginContainer/BuildButton
+@onready var pause_button: TextureButton = $MarginContainer/PauseButton
+
+@onready var signals: Array[Dictionary] = [
+	{SignalUtil.WHO: build_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_build_button_pressed},
+	{SignalUtil.WHO: pause_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_pause_button_pressed},
+]
 
 # core
 func _ready() -> void:
@@ -46,6 +57,7 @@ func _ready() -> void:
 				construction_menu.visible = false
 	)
 	construction_menu.visible = true
+	SignalUtil.connects(signals)
 
 func _process(_delta: float) -> void:
 	if not _is_ready:
@@ -120,11 +132,3 @@ func _on_pause_button_pressed() -> void:
 		Global.paused = true
 		var pause_menu_instance: PauseMenu = PAUSE_MENU.instantiate()
 		Global.ui.add_child(pause_menu_instance)
-
-## Placeholder for place button functionality.
-func _on_place_button_pressed() -> void:
-	pass
-
-## Placeholder for cancel place button functionality.
-func _on_cancel_place_button_pressed() -> void:
-	pass

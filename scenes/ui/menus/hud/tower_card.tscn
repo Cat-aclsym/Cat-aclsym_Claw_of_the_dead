@@ -59,5 +59,3 @@ theme_override_font_sizes/font_size = 18
 text = "25$"
 horizontal_alignment = 1
 vertical_alignment = 1
-
-[connection signal="pressed" from="VBoxContainer/Button" to="." method="_on_button_pressed"]
