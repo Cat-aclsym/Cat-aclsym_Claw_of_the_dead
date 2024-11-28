@@ -74,3 +74,12 @@ func _set_coins(new_value: int) -> void:
 func _set_health(new_value: int) -> void:
 	health = new_value
 	stats_updated.emit()
+
+## Returns a tower instance by name
+func get_tower_by_name(name: String) -> ITower:
+	for child in map.get_children():
+		if child is ITower:
+			var tower: ITower = child as ITower
+			if tower.name == name:
+				return tower
+	return null

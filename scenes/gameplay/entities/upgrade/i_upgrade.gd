@@ -38,8 +38,8 @@ enum UpgradeType {
 	"fire_rate": 0.0, ## Attack speed modifier
 }
 
-## New cannon scene to replace the current one
-@export var cannon: PackedScene
+## The nexts upgrades available after this one
+@export var next_upgrades: Array[PackedScene]
 
 ## New tower model scene to replace the current one
 @export var tower: PackedScene

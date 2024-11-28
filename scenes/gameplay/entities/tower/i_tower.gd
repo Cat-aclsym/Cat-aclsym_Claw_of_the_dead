@@ -24,6 +24,14 @@ enum TowerState {
 ## The bullet scene to be instantiated by the tower
 @export var bullet_scene: PackedScene = null
 
+@export var bullet_stats: Dictionary = {
+	"damage": 0.0,
+	"speed": 0.0,
+	"piercing": 0.0,
+	"piercing_reduction": 0.0,
+	"aoe_range": 0.0,
+}
+
 ## The cost of the tower
 @export var cost: int
 
@@ -40,7 +48,7 @@ enum TowerState {
 @export var shoot_range: float
 
 ## The upgrade array to store upgrades that are applied in the tower
-@export var upgrade: Array[PackedScene]
+@export var available_upgrade: Array[PackedScene]
 
 
 ## The area 2D node for the tower to detect enemies in range
@@ -88,13 +96,9 @@ var target_type: TargetType
 func _ready():
 	## Set the initial target type of the tower to FIRST
 	target_type = TargetType.FIRST
-	## Set the radius of the tower's collision shape to the tower's shooting range
-	collision_shape_2d.shape.radius = shoot_range
 	## Set the z-index of the hover box to 3, making it appear above other nodes
 	hover_box.z_index = 3
-	## Create the range polygon for the tower with the given shooting range and precision
-	_create_range_polygon(shoot_range, 50)
-	_update_z_index()
+	update_dependent_properties()
 
 
 func _process(_delta: float) -> void:
@@ -140,6 +144,9 @@ func fire() -> void:
 	## Get the global position of the target and instantiate a bullet
 	var enemy_position: Vector2 = target.global_position
 	var bullet_instance: IBullet = bullet_scene.instantiate()
+	
+	# Applique les modifications de la tour à la balle
+	_apply_bullet_modifications(bullet_instance)
 
 	## Set the direction, rotation, and target of the bullet
 	bullet_instance.direction = global_position.direction_to(enemy_position)
@@ -150,9 +157,65 @@ func fire() -> void:
 	## Start the fire rate timer
 	fire_rate_timer.start()
 
+func apply_upgrade(upgradeScene: PackedScene) -> void:
+	var upgrade: IUpgrade = upgradeScene.instantiate()
 
-func upgrade_tower():
-	pass
+	Log.trace(Log.Level.DEBUG, "Applying upgrade: {0}".format([upgradeScene]))
+
+	# Vérifie si les statistiques de la tour doivent être modifiées
+	if upgrade.changes["tower_stat"]:
+		for stat in upgrade.tower_stats.keys():
+			if self.get(stat):
+				Log.trace(Log.Level.DEBUG, "Modifying stat: {0} by {1}".format([stat, upgrade.tower_stats[stat]]))
+				self.set(stat, self.get(stat) + upgrade.tower_stats[stat])
+
+	# Vérifie si les statistiques des projectiles doivent être modifiées
+	if upgrade.changes["bullet_stat"]:
+		for stat in upgrade.bullet_stats.keys():
+			if bullet_stats.has(stat):
+				bullet_stats[stat] += upgrade.bullet_stats[stat]
+
+	# Vérifie si le modèle de la tour doit être remplacé
+	if upgrade.changes["tower"]:
+		if upgrade.tower != null:
+			sprite_2d.texture = upgrade.tower.instance() # Remplace le modèle
+
+	update_dependent_properties()
+
+	#Met la nouvelle upgrade disponible dans la liste des upgrades
+	available_upgrade = upgrade.next_upgrades
+
+func update_dependent_properties() -> void:
+	# Met à jour le radius de la collision shape
+	if collision_shape_2d.shape is CircleShape2D:
+		collision_shape_2d.shape.radius = shoot_range
+
+	# Réactualise le polygone de portée
+	_create_range_polygon(shoot_range, 50)
+
+	# Calcul du temps d'attente du Timer en fonction de fire_rate
+	if fire_rate_timer != null:
+		if fire_rate > 0:  # Évite une division par zéro
+			fire_rate_timer.wait_time = 1.0 / fire_rate
+		else:
+			fire_rate_timer.wait_time = 1.0  # Valeur par défaut si fire_rate <= 0
+
+		# Redémarre le Timer si nécessaire
+		if fire_rate_timer.is_stopped():
+			fire_rate_timer.start()
+
+	# Met à jour d'autres propriétés visuelles
+	_update_z_index()
+	
+func _apply_bullet_modifications(bullet_instance: IBullet) -> void:
+	if bullet_instance == null:
+		return
+
+	# Transfert des statistiques
+	bullet_instance.damage += bullet_stats["damage"]
+	bullet_instance.speed += bullet_stats["speed"]
+
+ 
 
 
 func build_tower():
