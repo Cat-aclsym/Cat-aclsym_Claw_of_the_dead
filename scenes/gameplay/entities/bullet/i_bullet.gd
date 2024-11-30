@@ -11,11 +11,27 @@ enum BulletType {
 	EXPLOSIVE, ## Creates an area of effect on impact
 }
 
-## Movement speed of the bullet in pixels per second
-@export var speed: int
+@export var bullet_type: BulletType
 
 ## Base damage value dealt to enemies
 @export var damage: int
+
+## Movement speed of the bullet in pixels per second
+@export var speed: int
+
+@export var piercing: int 
+
+@export var pierce_reduction: int
+
+@export var damage_multiplier: int
+
+@export var aoe_range: int
+
+@export var dot_damage: int
+
+@export var dot_duration: int
+
+@export var dot_tick: int
 
 ## Normalized vector indicating bullet's movement direction
 @export var direction: Vector2

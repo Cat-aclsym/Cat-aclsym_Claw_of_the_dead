@@ -29,7 +29,11 @@ enum TowerState {
 	"speed": 0.0,
 	"piercing": 0.0,
 	"piercing_reduction": 0.0,
+	"damage_multiplier": 0.0,
 	"aoe_range": 0.0,
+	"dot_damage": 0.0,
+	"aoe_duration": 0.0,
+	"aoe_tick": 0.0,
 }
 
 ## The cost of the tower

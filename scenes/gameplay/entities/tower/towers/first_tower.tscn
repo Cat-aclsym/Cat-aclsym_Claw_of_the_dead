@@ -1,7 +1,7 @@
 [gd_scene load_steps=10 format=3 uid="uid://cq705nqdp8fnw"]
 
 [ext_resource type="PackedScene" uid="uid://064cnqw4xlus" path="res://scenes/gameplay/entities/tower/i_tower.tscn" id="1_ecq02"]
-[ext_resource type="PackedScene" uid="uid://cax2gd3swoin0" path="res://scenes/gameplay/entities/bullet/test_bullet.tscn" id="3_g8gbc"]
+[ext_resource type="PackedScene" uid="uid://cax2gd3swoin0" path="res://scenes/gameplay/entities/bullet/arrow.tscn" id="3_g8gbc"]
 [ext_resource type="Texture2D" uid="uid://d4gs327we3e1d" path="res://assets/gameplay/towers/tower_2_lvl1.png" id="4_ftq1a"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_g7olo"]
