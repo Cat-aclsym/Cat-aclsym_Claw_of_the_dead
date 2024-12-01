@@ -24,6 +24,7 @@ enum TowerState {
 ## The bullet scene to be instantiated by the tower
 @export var bullet_scene: PackedScene = null
 
+## The bullet stats to be applied to the bullet
 @export var bullet_stats: Dictionary = {
 	"damage": 0.0,
 	"speed": 0.0,
@@ -54,7 +55,6 @@ enum TowerState {
 ## The upgrade array to store upgrades that are applied in the tower
 @export var available_upgrade: Array[PackedScene]
 
-
 ## The area 2D node for the tower to detect enemies in range
 @onready var area_2d: Area2D = $Area2D
 
@@ -75,7 +75,6 @@ enum TowerState {
 
 ## The sprite 2D node for the tower to display the tower model
 @onready var sprite_2d: Sprite2D = $Sprite2D
-
 
 ## The color of the range polygon
 var color: String = "#FFFFFF"
@@ -148,17 +147,14 @@ func fire() -> void:
 	## Get the global position of the target and instantiate a bullet
 	var enemy_position: Vector2 = target.global_position
 	var bullet_instance: IBullet = bullet_scene.instantiate()
-	
-	# Applique les modifications de la tour à la balle
-	_apply_bullet_modifications(bullet_instance)
 
 	## Set the direction, rotation, and target of the bullet
 	bullet_instance.direction = global_position.direction_to(enemy_position)
 	bullet_instance.rotation = bullet_instance.direction.angle()
 	bullet_instance.target = enemy_position
-	##  Add the bullet to the scene tree
+
+	_apply_bullet_modifications(bullet_instance)
 	add_child(bullet_instance)
-	## Start the fire rate timer
 	fire_rate_timer.start()
 
 func apply_upgrade(upgradeScene: PackedScene) -> void:
@@ -166,60 +162,56 @@ func apply_upgrade(upgradeScene: PackedScene) -> void:
 
 	Log.trace(Log.Level.DEBUG, "Applying upgrade: {0}".format([upgradeScene]))
 
-	# Vérifie si les statistiques de la tour doivent être modifiées
+	## Check if the upgrade is chanfing the tower stats
 	if upgrade.changes["tower_stat"]:
 		for stat in upgrade.tower_stats.keys():
 			if self.get(stat):
 				Log.trace(Log.Level.DEBUG, "Modifying stat: {0} by {1}".format([stat, upgrade.tower_stats[stat]]))
 				self.set(stat, self.get(stat) + upgrade.tower_stats[stat])
 
-	# Vérifie si les statistiques des projectiles doivent être modifiées
+	## Check if the upgrade is changing the bullet stats
 	if upgrade.changes["bullet_stat"]:
 		for stat in upgrade.bullet_stats.keys():
 			if bullet_stats.has(stat):
 				bullet_stats[stat] += upgrade.bullet_stats[stat]
 
-	# Vérifie si le modèle de la tour doit être remplacé
-	if upgrade.changes["tower"]:
+	## Check if the upgrade is changing the tower model
+	if upgrade.changes["tower_model"]:
 		if upgrade.tower != null:
-			sprite_2d.texture = upgrade.tower.instance() # Remplace le modèle
+			sprite_2d.texture = upgrade.tower.instance()
 
+	## Check if the upgrade is changing the bullet model
+	if upgrade.changes["bullet_model"]:
+		if upgrade.bullet != null:
+			bullet_scene = upgrade.bullet
+
+	## Update the available upgrades
+	available_upgrade = upgrade.next_upgrades
 	update_dependent_properties()
 
-	#Met la nouvelle upgrade disponible dans la liste des upgrades
-	available_upgrade = upgrade.next_upgrades
-
 func update_dependent_properties() -> void:
-	# Met à jour le radius de la collision shape
 	if collision_shape_2d.shape is CircleShape2D:
 		collision_shape_2d.shape.radius = shoot_range
 
-	# Réactualise le polygone de portée
 	_create_range_polygon(shoot_range, 50)
 
-	# Calcul du temps d'attente du Timer en fonction de fire_rate
 	if fire_rate_timer != null:
-		if fire_rate > 0:  # Évite une division par zéro
+		if fire_rate > 0:
 			fire_rate_timer.wait_time = 1.0 / fire_rate
 		else:
-			fire_rate_timer.wait_time = 1.0  # Valeur par défaut si fire_rate <= 0
+			fire_rate_timer.wait_time = 1.0
 
-		# Redémarre le Timer si nécessaire
 		if fire_rate_timer.is_stopped():
 			fire_rate_timer.start()
 
-	# Met à jour d'autres propriétés visuelles
 	_update_z_index()
 	
 func _apply_bullet_modifications(bullet_instance: IBullet) -> void:
 	if bullet_instance == null:
 		return
 
-	# Transfert des statistiques
 	bullet_instance.damage += bullet_stats["damage"]
 	bullet_instance.speed += bullet_stats["speed"]
-
- 
 
 
 func build_tower():

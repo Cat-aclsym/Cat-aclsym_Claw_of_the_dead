@@ -16,7 +16,6 @@ enum BulletType {
 ## Base damage value dealt to enemies
 @export var damage: int
 
-## Movement speed of the bullet in pixels per second
 @export var speed: int
 
 @export var piercing: int 
