@@ -4,5 +4,16 @@
 [ext_resource type="PackedScene" uid="uid://4bspols4p3r2" path="res://scenes/gameplay/entities/upgrade/first_tower/upgrade_first_tower_2.tscn" id="2_13fav"]
 
 [node name="UpgradeFirstTower1" instance=ExtResource("1_r0h3k")]
+changes = {
+"bullet_model": false,
+"bullet_stat": false,
+"tower_model": false,
+"tower_stat": true
+}
+tower_stats = {
+"fire_rate": 3.0,
+"level": 0,
+"shoot_range": 0.0
+}
 next_upgrades = Array[PackedScene]([ExtResource("2_13fav")])
 price = 75

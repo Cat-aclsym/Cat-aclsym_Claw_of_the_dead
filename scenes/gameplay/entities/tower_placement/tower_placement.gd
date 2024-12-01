@@ -195,7 +195,7 @@ func _build() -> void:
 	var new_tower: ITower = _tower.duplicate()
 	new_tower.state = ITower.TowerState.ACTIVE
 	new_tower.modulate = Color(1, 1, 1, 1)
-	new_tower.name = "tower_%d" % tower_count
+	new_tower.name = "t%d" % tower_count
 	map_ref.add_child(new_tower)
 	tower_count += 1
 

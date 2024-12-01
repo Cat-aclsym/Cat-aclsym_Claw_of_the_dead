@@ -94,6 +94,8 @@ var target: IEnemy
 ## The type of target the tower will shoot at
 var target_type: TargetType
 
+var pending_upgrade: PackedScene
+
 
 # core
 func _ready():
@@ -119,6 +121,9 @@ func _process(_delta: float) -> void:
 # public
 ## Function to fire a bullet at the target.
 func fire() -> void:
+	## If the tower is not active, return
+	if state != TowerState.ACTIVE:
+		return
 	## If there are no enemies in the enemy array or the bullet_scene is null, return
 	if not len(enemy_array):
 		return
@@ -157,10 +162,19 @@ func fire() -> void:
 	add_child(bullet_instance)
 	fire_rate_timer.start()
 
-func apply_upgrade(upgradeScene: PackedScene) -> void:
-	var upgrade: IUpgrade = upgradeScene.instantiate()
+func start_upgrade(upgradeScene: PackedScene) -> void:
+	pending_upgrade = upgradeScene
+	state = TowerState.UPGRADING
+	$ProgressBar.value = 0
+	$ProgressBar.visible = true
+	$Timer.start()
 
-	Log.trace(Log.Level.DEBUG, "Applying upgrade: {0}".format([upgradeScene]))
+
+func apply_upgrade() -> void:
+	var upgrade: IUpgrade = pending_upgrade.instantiate()
+	
+
+	Log.trace(Log.Level.DEBUG, "Applying upgrade: {0}".format([pending_upgrade]))
 
 	## Check if the upgrade is chanfing the tower stats
 	if upgrade.changes["tower_stat"]:
@@ -188,6 +202,7 @@ func apply_upgrade(upgradeScene: PackedScene) -> void:
 	## Update the available upgrades
 	available_upgrade = upgrade.next_upgrades
 	update_dependent_properties()
+	state = TowerState.ACTIVE
 
 func update_dependent_properties() -> void:
 	if collision_shape_2d.shape is CircleShape2D:
@@ -390,3 +405,11 @@ func _on_tower_hover_box_mouse_exited():
 		polygon_2d.scale = lerp(polygon_2d.scale, Vector2(0, 0), size)
 		await get_tree().create_timer(0.01).timeout
 		size += 0.1
+
+
+func _on_timer_timeout() -> void:
+	$ProgressBar.value += 1
+	if $ProgressBar.value >= $ProgressBar.max_value:
+		apply_upgrade()
+		$Timer.stop()
+		$ProgressBar.visible = false

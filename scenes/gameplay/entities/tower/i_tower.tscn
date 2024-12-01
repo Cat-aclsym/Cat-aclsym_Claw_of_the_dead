@@ -27,3 +27,18 @@ polygon = PackedVector2Array(-13, -37, 108, -111, 3, 46, -53, 0)
 [node name="TowerHoverBox" type="Area2D" parent="."]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="TowerHoverBox"]
+
+[node name="ProgressBar" type="ProgressBar" parent="."]
+visible = false
+z_index = 500
+offset_left = -32.0
+offset_top = 18.0
+offset_right = 33.0
+offset_bottom = 33.0
+max_value = 30.0
+show_percentage = false
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 0.05
+
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]

@@ -35,6 +35,6 @@ func _execute(console: Console, args: Array) -> int:
 		console.push_error("No upgrades available for this tower")
 		return ERR_UNCONFIGURED
 
-	tower.apply_upgrade(tower.available_upgrade[upgrade_path-1])
+	tower.start_upgrade(tower.available_upgrade[upgrade_path-1])
 
 	return OK
