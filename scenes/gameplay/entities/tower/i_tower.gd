@@ -4,23 +4,28 @@
 class_name ITower
 extends Node2D
 
+## Signal emitted when the tower starts upgrading
+signal upgrade_started
+## Signal emitted when the tower finishes upgrading
+signal upgrade_completed
 
 ## Enum for the type of target the tower will shoot at
-enum TargetType {
-	FIRST, ## Shoots at the first enemy that enters the range
-	LAST, ## Shoots at the last enemy that enters the range
+enum TARGET_TYPE {
+	FIRST,    ## Shoots at the first enemy that enters the range
+	LAST,     ## Shoots at the last enemy that enters the range
 	STRONGEST, ## Shoots at the enemy with the most health
-	WEAKEST, ## Shoots at the enemy with the least health
-	RANDOM ## Shoots at a random enemy
+	WEAKEST,   ## Shoots at the enemy with the least health
+	RANDOM    ## Shoots at a random enemy
 }
 
 ## Enum for the state of the tower
-enum TowerState {
-	BUILDING, ## The tower is being built
+enum TOWER_STATE {
+	BUILDING,  ## The tower is being built
 	UPGRADING, ## The tower is being upgraded
-	ACTIVE, ## The tower is placed and active
+	ACTIVE,    ## The tower is placed and active
 }
 
+# Exported variables
 ## The bullet scene to be instantiated by the tower
 @export var bullet_scene: PackedScene = null
 
@@ -39,121 +44,85 @@ enum TowerState {
 
 ## The cost of the tower
 @export var cost: int
-
 ## The fire rate of the tower
 @export var fire_rate: float
-
 ## The level of the tower
 @export var level: int
-
 ## The sell price of the tower
 @export var sell_price: int
-
 ## The shooting range of the tower
 @export var shoot_range: float
-
 ## The upgrade array to store upgrades that are applied in the tower
 @export var available_upgrade: Array[PackedScene]
 
+# Onready variables
 ## The area 2D node for the tower to detect enemies in range
 @onready var area_2d: Area2D = $Area2D
-
 ## The collision shape 2D node for the tower
 @onready var collision_shape_2d: CollisionShape2D = $Area2D/CollisionShape2D
-
 ## The timer for the fire rate of the tower to shoot bullets
 @onready var fire_rate_timer: Timer = $FireRateTimer
-
 ## The collision shape 2D node for the tower hover box
 @onready var hover_box: CollisionShape2D = $TowerHoverBox/CollisionShape2D
-
 ## The line 2D node for the outline of the range polygon
 @onready var outline: Line2D = $Polygon2D/Line2D
-
 ## The polygon 2D node for the range of the tower to detect enemies
 @onready var polygon_2d: Polygon2D = $Polygon2D
-
 ## The sprite 2D node for the tower to display the tower model
 @onready var sprite_2d: Sprite2D = $Sprite2D
 
+# Variables
 ## The color of the range polygon
 var color: String = "#FFFFFF"
-
 ## The enemy array to store enemies in the range of the tower
 var enemy_array: Array[IEnemy]
-
 ## Is the tower is selected
 var selected: bool = false
-
 ## The state of the tower
-var state: TowerState = TowerState.ACTIVE
-
+var state: TOWER_STATE = TOWER_STATE.ACTIVE
 ## The target of the tower
 var target: IEnemy
-
 ## The type of target the tower will shoot at
-var target_type: TargetType
-
+var target_type: TARGET_TYPE
+## The pending upgrade to be applied
 var pending_upgrade: PackedScene
 
-
-# core
-func _ready():
-	## Set the initial target type of the tower to FIRST
-	target_type = TargetType.FIRST
-	## Set the z-index of the hover box to 3, making it appear above other nodes
+# Core methods
+func _ready() -> void:
+	target_type = TARGET_TYPE.FIRST
 	hover_box.z_index = 3
 	update_dependent_properties()
-
 
 func _process(_delta: float) -> void:
 	if Global.paused:
 		return
 
-	if state == TowerState.BUILDING:
+	if state == TOWER_STATE.BUILDING:
 		_update_z_index()
 		return
 
-	## If the fire rate timer is stopped, call the fire function
 	if fire_rate_timer.is_stopped():
 		fire()
 
-# public
-## Function to fire a bullet at the target.
+# Public methods
+## Fires a bullet at the current target if conditions are met
 func fire() -> void:
-	## If the tower is not active, return
-	if state != TowerState.ACTIVE:
+	if state != TOWER_STATE.ACTIVE or not len(enemy_array):
 		return
-	## If there are no enemies in the enemy array or the bullet_scene is null, return
-	if not len(enemy_array):
-		return
-	## Security check for bullet_scene
+	
 	if bullet_scene == null:
 		Log.trace(Log.Level.ERROR, "Missing bullet scene")
 		return
 
-	## Switch statement to determine the target based on the target type
-	match target_type:
-		TargetType.FIRST:
-			_get_first_target()
-		TargetType.LAST:
-			_get_last_target()
-		TargetType.STRONGEST:
-			_get_strongest_target()
-		TargetType.WEAKEST:
-			_get_weakest_target()
-		TargetType.RANDOM:
-			_get_random_target()
-
+	_choose_target()
+	
 	if not target:
 		Log.trace(Log.Level.WARN, "Failed to retrieve target")
 		return
 
-	## Get the global position of the target and instantiate a bullet
 	var enemy_position: Vector2 = target.global_position
 	var bullet_instance: IBullet = bullet_scene.instantiate()
 
-	## Set the direction, rotation, and target of the bullet
 	bullet_instance.direction = global_position.direction_to(enemy_position)
 	bullet_instance.rotation = bullet_instance.direction.angle()
 	bullet_instance.target = enemy_position
@@ -162,48 +131,42 @@ func fire() -> void:
 	add_child(bullet_instance)
 	fire_rate_timer.start()
 
+## Starts the upgrade process with the given upgrade scene
 func start_upgrade(upgradeScene: PackedScene) -> void:
 	pending_upgrade = upgradeScene
-	state = TowerState.UPGRADING
+	state = TOWER_STATE.UPGRADING
 	$ProgressBar.value = 0
 	$ProgressBar.visible = true
 	$Timer.start()
+	emit_signal("upgrade_started")
 
-
+## Applies the pending upgrade to the tower
 func apply_upgrade() -> void:
 	var upgrade: IUpgrade = pending_upgrade.instantiate()
 	
-
 	Log.trace(Log.Level.DEBUG, "Applying upgrade: {0}".format([pending_upgrade]))
 
-	## Check if the upgrade is chanfing the tower stats
 	if upgrade.changes["tower_stat"]:
-		for stat in upgrade.tower_stats.keys():
-			if self.get(stat):
-				Log.trace(Log.Level.DEBUG, "Modifying stat: {0} by {1}".format([stat, upgrade.tower_stats[stat]]))
-				self.set(stat, self.get(stat) + upgrade.tower_stats[stat])
-
-	## Check if the upgrade is changing the bullet stats
+		_apply_tower_stat_changes(upgrade)
+	
 	if upgrade.changes["bullet_stat"]:
-		for stat in upgrade.bullet_stats.keys():
-			if bullet_stats.has(stat):
-				bullet_stats[stat] += upgrade.bullet_stats[stat]
+		_apply_bullet_stat_changes(upgrade)
+	
+	if upgrade.changes["tower_model"] and upgrade.tower != null:
+		var tower_instance = upgrade.tower.instantiate()
+		if tower_instance.get_node("Sprite2D"):
+			sprite_2d.texture = tower_instance.get_node("Sprite2D").texture
+		tower_instance.queue_free()
 
-	## Check if the upgrade is changing the tower model
-	if upgrade.changes["tower_model"]:
-		if upgrade.tower != null:
-			sprite_2d.texture = upgrade.tower.instance()
+	if upgrade.changes["bullet_model"] and upgrade.bullet != null:
+		bullet_scene = upgrade.bullet
 
-	## Check if the upgrade is changing the bullet model
-	if upgrade.changes["bullet_model"]:
-		if upgrade.bullet != null:
-			bullet_scene = upgrade.bullet
-
-	## Update the available upgrades
 	available_upgrade = upgrade.next_upgrades
 	update_dependent_properties()
-	state = TowerState.ACTIVE
+	state = TOWER_STATE.ACTIVE
+	emit_signal("upgrade_completed")
 
+## Updates properties that depend on tower stats
 func update_dependent_properties() -> void:
 	if collision_shape_2d.shape is CircleShape2D:
 		collision_shape_2d.shape.radius = shoot_range
@@ -211,16 +174,32 @@ func update_dependent_properties() -> void:
 	_create_range_polygon(shoot_range, 50)
 
 	if fire_rate_timer != null:
-		if fire_rate > 0:
-			fire_rate_timer.wait_time = 1.0 / fire_rate
-		else:
-			fire_rate_timer.wait_time = 1.0
-
+		fire_rate_timer.wait_time = 1.0 / max(fire_rate, 0.001)
 		if fire_rate_timer.is_stopped():
 			fire_rate_timer.start()
 
 	_update_z_index()
-	
+
+## Builds the tower
+func build_tower() -> void:
+	pass
+
+## Sells the tower
+func sell_tower() -> void:
+	pass
+
+# Private methods
+func _apply_tower_stat_changes(upgrade: IUpgrade) -> void:
+	for stat in upgrade.tower_stats.keys():
+		if self.get(stat):
+			Log.trace(Log.Level.DEBUG, "Modifying stat: {0} by {1}".format([stat, upgrade.tower_stats[stat]]))
+			self.set(stat, self.get(stat) + upgrade.tower_stats[stat])
+
+func _apply_bullet_stat_changes(upgrade: IUpgrade) -> void:
+	for stat in upgrade.bullet_stats.keys():
+		if bullet_stats.has(stat):
+			bullet_stats[stat] += upgrade.bullet_stats[stat]
+
 func _apply_bullet_modifications(bullet_instance: IBullet) -> void:
 	if bullet_instance == null:
 		return
@@ -228,20 +207,19 @@ func _apply_bullet_modifications(bullet_instance: IBullet) -> void:
 	bullet_instance.damage += bullet_stats["damage"]
 	bullet_instance.speed += bullet_stats["speed"]
 
+func _choose_target() -> void:
+	match target_type:
+		TARGET_TYPE.FIRST:
+			_get_first_target()
+		TARGET_TYPE.LAST:
+			_get_last_target()
+		TARGET_TYPE.STRONGEST:
+			_get_strongest_target()
+		TARGET_TYPE.WEAKEST:
+			_get_weakest_target()
+		TARGET_TYPE.RANDOM:
+			_get_random_target()
 
-func build_tower():
-	pass
-
-
-func sell_tower():
-	pass
-
-
-func _choose_target():
-	pass
-
-
-# private
 ## Function to create the range polygon for the tower when the tower is selected.
 ## [param radius] - The radius of the range polygon.
 ## [param precision] - The number of points in the range polygon.
@@ -273,7 +251,6 @@ func _create_range_polygon(radius: float, precision: int) -> void:
 	outline.width = 3
 	outline.default_color = Color(1, 1, 1, 1)
 
-
 ## Function to get the strongest enemy in the enemy array.
 func _get_strongest_target():
 	## Set the initial strongest enemy to the first enemy in the enemy array
@@ -287,7 +264,6 @@ func _get_strongest_target():
 			strongest_health = enemies.health
 	## Set the target to the strongest enemy
 	target = strongest
-
 
 ## Function to get the weakest enemy in the enemy array.
 func _get_weakest_target():
@@ -303,18 +279,15 @@ func _get_weakest_target():
 	## Set the target to the weakest enemy
 	target = weakest
 
-
 ## Function to get the first enemy in the enemy array.
 func _get_first_target():
 	## Set the target to the first enemy in the enemy array
 	target = enemy_array[0]
 
-
 ## Function to get the last enemy in the enemy array.
 func _get_last_target():
 	## Set the target to the last enemy in the enemy array
 	target = enemy_array[-1]
-
 
 ## Function to get a random enemy in the enemy array.
 func _get_random_target():
@@ -324,7 +297,6 @@ func _get_random_target():
 	## Generate a random number between 0 and the length of the enemy array
 	var num: int = rng.randi_range(0, len(enemy_array)-1)
 	target = enemy_array[num]
-
 
 ## Function to interpolate between two values.
 func _color_variation() -> void:
@@ -347,69 +319,45 @@ func _color_variation() -> void:
 	## Call the function to interpolate the color of the range polygon
 	_color_variation()
 
-
 ## Function to check the z position of the tower and adapt the z index of the tower.
 func _update_z_index() -> void:
 	var y_position := int(global_position.y)
 	z_index = y_position if y_position else 0
 	polygon_2d.z_index = z_index
 
-
-# signal
-## Function to detect when an enemy enters the range of the tower.
-## @param body Object - The object that entered the range of the tower.
-func _on_area_2d_body_entered(body) -> void:
-	## If the object is an IEnemy, add it to the enemy array
+# Signal callbacks
+func _on_area_2d_body_entered(body: Node) -> void:
 	if body is IEnemy:
 		enemy_array.append(body)
 
-
-## Function to detect when an enemy exits the range of the tower.
-## @param body Object - The object that exited the range of the tower.
-func _on_area_2d_body_exited(body) -> void:
-	## If the object is an IEnemy, remove it from the enemy array
+func _on_area_2d_body_exited(body: Node) -> void:
 	if body is IEnemy:
 		enemy_array.erase(body)
 
-
-## Function to interpolate between two values.
-## @param a float - The first value.
 func _on_area_2d_area_exited(area: Area2D) -> void:
-	## If the area is an IBullet and is in the range of the tower, queue free the area
-	if area is IBullet && area in get_children():
+	if area is IBullet and area in get_children():
 		area.queue_free()
 
-
-## Function to interpolate between two values.
-func _on_tower_hover_box_mouse_entered():
-	## Set the selected boolean to true
+func _on_tower_hover_box_mouse_entered() -> void:
 	selected = true
-	## Set the size of the range polygon to 0
 	var size: float = 0
-	## Loop to interpolate the size of the range polygon to 1
 	while size < 1:
 		polygon_2d.scale = lerp(polygon_2d.scale, Vector2(1, 1), size)
 		await get_tree().create_timer(0.01).timeout
 		size += 0.1
 		_color_variation()
 
-
-## Function to stop the color variation when the mouse exits the hover box.
-func _on_tower_hover_box_mouse_exited():
-	## Set the selected boolean to false
+func _on_tower_hover_box_mouse_exited() -> void:
 	selected = false
-	## Set the size of the range polygon to 0
 	var size: float = 0
-	## Loop to interpolate the size of the range polygon to 0 to hide the range polygon
 	while size < 1:
 		polygon_2d.scale = lerp(polygon_2d.scale, Vector2(0, 0), size)
 		await get_tree().create_timer(0.01).timeout
 		size += 0.1
 
-
 func _on_timer_timeout() -> void:
 	$ProgressBar.value += 1
 	if $ProgressBar.value >= $ProgressBar.max_value:
-		apply_upgrade()
-		$Timer.stop()
-		$ProgressBar.visible = false
+			apply_upgrade()
+			$Timer.stop()
+			$ProgressBar.visible = false

@@ -131,7 +131,7 @@ func _set_cursor_position(pos: Vector2 = get_global_mouse_position()) -> void:
 func _state_build(tower: ITower = null) -> void:
 	if tower:
 		_tower = tower.duplicate()
-		_tower.state = ITower.TowerState.BUILDING
+		_tower.state = ITower.TOWER_STATE.BUILDING
 		add_child(_tower)
 		await get_tree().create_timer(0.1).timeout
 
@@ -193,7 +193,7 @@ func _build() -> void:
 	_is_move_tower_available = false
 
 	var new_tower: ITower = _tower.duplicate()
-	new_tower.state = ITower.TowerState.ACTIVE
+	new_tower.state = ITower.TOWER_STATE.ACTIVE
 	new_tower.modulate = Color(1, 1, 1, 1)
 	new_tower.name = "t%d" % tower_count
 	map_ref.add_child(new_tower)
