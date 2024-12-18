@@ -56,8 +56,3 @@ func _on_restart_button_pressed() -> void:
 func _on_play_button_pressed() -> void:
 	Global.paused = false
 	queue_free()
-
-## Closes the pause menu and resumes the game.
-func _on_close_texture_button_pressed() -> void:
-	Global.paused = false
-	queue_free()
