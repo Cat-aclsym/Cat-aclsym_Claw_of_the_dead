@@ -8,8 +8,8 @@ size = Vector2(64, 64)
 
 [node name="SlowTrap" instance=ExtResource("1_base")]
 script = ExtResource("2_script")
-slow_amount = 0.9
 cost = 75
+slow_amount = 0.9
 
 [node name="Sprite2D" parent="." index="0"]
 scale = Vector2(0.15, 0.15)
