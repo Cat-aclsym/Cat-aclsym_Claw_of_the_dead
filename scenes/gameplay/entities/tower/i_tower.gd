@@ -153,10 +153,7 @@ func apply_upgrade() -> void:
 		_apply_bullet_stat_changes(upgrade)
 	
 	if upgrade.changes["tower_model"] and upgrade.tower != null:
-		var tower_instance = upgrade.tower.instantiate()
-		if tower_instance.get_node("Sprite2D"):
-			sprite_2d.texture = tower_instance.get_node("Sprite2D").texture
-		tower_instance.queue_free()
+		sprite_2d.texture = upgrade.tower
 
 	if upgrade.changes["bullet_model"] and upgrade.bullet != null:
 		bullet_scene = upgrade.bullet

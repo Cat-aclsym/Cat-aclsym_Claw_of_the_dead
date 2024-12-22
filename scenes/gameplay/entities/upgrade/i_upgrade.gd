@@ -42,8 +42,8 @@ enum UpgradeType {
 ## The nexts upgrades available after this one
 @export var next_upgrades: Array[PackedScene]
 
-## New tower model scene to replace the current one
-@export var tower: PackedScene
+## New tower model texture to replace the current one
+@export var tower: Texture
 
 ## New bullet model scene to replace the current one
 @export var bullet: PackedScene
