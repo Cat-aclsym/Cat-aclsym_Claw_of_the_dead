@@ -5,7 +5,7 @@
 class_name HUD
 extends Control
 
-const PAUSE_MENU: PackedScene = preload("res://scenes/ui/menus/pause/pause.tscn")
+# const PAUSE_MENU: PackedScene = preload("res://scenes/ui/menus/pause/pause.tscn")
 
 ## The flag indicating if the HUD is ready to display.
 var _is_ready: bool = false
@@ -116,10 +116,11 @@ func _on_build_button_pressed() -> void:
 ## Handles the pause button press event.
 ## [br]Creates and shows the pause menu.
 func _on_pause_button_pressed() -> void:
-	if not Global.paused:
-		Global.paused = true
-		var pause_menu_instance: PauseMenu = PAUSE_MENU.instantiate()
-		Global.ui.add_child(pause_menu_instance)
+	# if not Global.paused:
+	# 	Global.paused = true
+	# 	var pause_menu_instance: PauseMenu = PAUSE_MENU.instantiate()
+	# 	Global.ui.add_child(pause_menu_instance)
+	pass  # Temporarily disabled
 
 ## Placeholder for place button functionality.
 func _on_place_button_pressed() -> void:

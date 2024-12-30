@@ -8,7 +8,7 @@ extends CanvasLayer
 ## Flag indicating if the UI has been initialized
 var _initialized: bool = false
 
-@onready var menu_pause: PauseMenu = $MenuPause
+# @onready var menu_pause: PauseMenu = $MenuPause
 @onready var hud: HUD = $HUD
 @onready var pause_button: Button = $PauseButton
 
@@ -18,7 +18,7 @@ var _initialized: bool = false
 
 # core
 func _ready() -> void:
-	assert(menu_pause != null, "menu_pause node not found")
+	# assert(menu_pause != null, "menu_pause node not found")
 	assert(hud != null, "hud node not found")
 	assert(pause_button != null, "pause_button node not found")
 
@@ -45,5 +45,6 @@ func end_level() -> void:
 ## Handles the pause button press event.
 ## [br]Toggles the pause menu visibility and game pause state.
 func _on_pause_button_pressed() -> void:
-	menu_pause.visible = !menu_pause.visible
-	get_tree().paused = menu_pause.visible
+	# menu_pause.visible = !menu_pause.visible
+	# get_tree().paused = menu_pause.visible
+	pass  # Temporarily disabled

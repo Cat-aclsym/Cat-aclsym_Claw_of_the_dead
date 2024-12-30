@@ -83,6 +83,9 @@ var target: IEnemy
 ## The type of target the tower will shoot at
 var target_type: TargetType
 
+## Whether tactical view is enabled globally
+static var tactical_view: bool = false
+
 
 # core
 func _ready():
@@ -104,6 +107,12 @@ func _process(_delta: float) -> void:
 	if state == TowerState.BUILDING:
 		_update_z_index()
 		return
+
+	# Show range in tactical view
+	if tactical_view and not selected:
+		_show_range()
+	elif not tactical_view and not selected:
+		_hide_range()
 
 	## If the fire rate timer is stopped, call the fire function
 	if fire_rate_timer.is_stopped():
@@ -310,9 +319,20 @@ func _on_area_2d_area_exited(area: Area2D) -> void:
 func _on_tower_hover_box_mouse_entered():
 	## Set the selected boolean to true
 	selected = true
-	## Set the size of the range polygon to 0
+	_show_range()
+
+
+## Function to stop the color variation when the mouse exits the hover box.
+func _on_tower_hover_box_mouse_exited():
+	## Set the selected boolean to false
+	selected = false
+	if not tactical_view:
+		_hide_range()
+
+
+## Shows the tower's range polygon
+func _show_range() -> void:
 	var size: float = 0
-	## Loop to interpolate the size of the range polygon to 1
 	while size < 1:
 		polygon_2d.scale = lerp(polygon_2d.scale, Vector2(1, 1), size)
 		await get_tree().create_timer(0.01).timeout
@@ -320,13 +340,9 @@ func _on_tower_hover_box_mouse_entered():
 		_color_variation()
 
 
-## Function to stop the color variation when the mouse exits the hover box.
-func _on_tower_hover_box_mouse_exited():
-	## Set the selected boolean to false
-	selected = false
-	## Set the size of the range polygon to 0
+## Hides the tower's range polygon
+func _hide_range() -> void:
 	var size: float = 0
-	## Loop to interpolate the size of the range polygon to 0 to hide the range polygon
 	while size < 1:
 		polygon_2d.scale = lerp(polygon_2d.scale, Vector2(0, 0), size)
 		await get_tree().create_timer(0.01).timeout
