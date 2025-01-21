@@ -117,7 +117,6 @@ func _handle_state() -> void:
 func _set_cursor_position(pos: Vector2 = get_global_mouse_position()) -> void:
 	var map_pos: Vector2i = tm_ref.local_to_map(pos)
 	var local_pos: Vector2 = tm_ref.map_to_local(map_pos)
-	local_pos -= Vector2(0, 8)
 
 	cursor.position = local_pos
 	cursor.visible = true
@@ -230,6 +229,7 @@ func _is_buildable(pos: Vector2) -> bool:
 	return true
 
 func _on_place_button_pressed() -> void:
+	print("build")
 	_build()
 
 func _on_cancel_place_button_pressed() -> void:

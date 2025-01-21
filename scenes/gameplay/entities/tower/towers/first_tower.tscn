@@ -3,10 +3,10 @@
 [ext_resource type="PackedScene" uid="uid://064cnqw4xlus" path="res://scenes/gameplay/entities/tower/i_tower.tscn" id="1_ecq02"]
 [ext_resource type="PackedScene" uid="uid://6kxfyy7tk2pu" path="res://scenes/gameplay/entities/upgrade/first_tower/upgrade_first_tower_1.tscn" id="2_okbr1"]
 [ext_resource type="PackedScene" uid="uid://cax2gd3swoin0" path="res://scenes/gameplay/entities/bullet/test_bullet.tscn" id="3_g8gbc"]
-[ext_resource type="Texture2D" uid="uid://d4gs327we3e1d" path="res://assets/gameplay/towers/tower_2_lvl1.png" id="4_ftq1a"]
+[ext_resource type="Texture2D" uid="uid://h5f1ntgevb58" path="res://assets/environment/tilesets/tileset_debug.png" id="4_lvnc0"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_g7olo"]
-atlas = ExtResource("4_ftq1a")
+atlas = ExtResource("4_lvnc0")
 region = Rect2(64, 0, 64, 64)
 
 [sub_resource type="Animation" id="Animation_i58hl"]
@@ -56,12 +56,12 @@ height = 36.0
 
 [node name="FirstTower" instance=ExtResource("1_ecq02")]
 position = Vector2(0, -16)
+bullet_scene = ExtResource("3_g8gbc")
 cost = 50
-upgrade = Array[PackedScene]([ExtResource("2_okbr1")])
+fire_rate = 1.0
 level = 1
 shoot_range = 100.0
-fire_rate = 1.0
-bullet_scene = ExtResource("3_g8gbc")
+upgrade = Array[PackedScene]([ExtResource("2_okbr1")])
 
 [node name="Sprite2D" parent="." index="0"]
 texture = SubResource("AtlasTexture_g7olo")

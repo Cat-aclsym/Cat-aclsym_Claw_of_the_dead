@@ -1,55 +1,50 @@
-[gd_scene load_steps=7 format=3 uid="uid://b2gwi4t3c87aw"]
+[gd_scene load_steps=4 format=3 uid="uid://b2gwi4t3c87aw"]
 
-[ext_resource type="Texture2D" uid="uid://bkivdayygrm25" path="res://assets/environment/tilesets/tileset_mateo.png" id="1_7mr2t"]
+[ext_resource type="Texture2D" uid="uid://h5f1ntgevb58" path="res://assets/environment/tilesets/tileset_debug.png" id="1_4jpbf"]
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_lf6it"]
-texture = ExtResource("1_7mr2t")
-texture_region_size = Vector2i(32, 32)
-0:0/0 = 0
-0:1/0 = 0
-0:2/0 = 0
-1:2/0 = 0
-2:2/0 = 0
-6:6/0 = 0
-6:7/0 = 0
-7:7/0 = 0
-7:6/0 = 0
-7:5/0 = 0
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_1it1p"]
-texture = ExtResource("1_7mr2t")
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_l741r"]
+texture = ExtResource("1_4jpbf")
 texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+1:0/0 = 0
+2:0/0 = 0
+3:0/0 = 0
+4:0/0 = 0
+0:1/0 = 0
+1:1/0 = 0
+2:1/0 = 0
+3:1/0 = 0
+4:1/0 = 0
 0:2/0 = 0
-0:3/0 = 0
-1:3/0 = 0
+0:2/0/texture_origin = Vector2i(0, 24)
 1:2/0 = 0
-2:3/0 = 0
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_im66i"]
-texture = ExtResource("1_7mr2t")
-texture_region_size = Vector2i(64, 32)
-4:7/0 = 0
-4:6/0 = 0
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_muc7t"]
-texture = ExtResource("1_7mr2t")
-texture_region_size = Vector2i(32, 64)
+1:2/0/texture_origin = Vector2i(0, 24)
+2:2/0 = 0
+2:2/0/texture_origin = Vector2i(0, 24)
+3:2/0 = 0
+3:2/0/texture_origin = Vector2i(0, 24)
 4:2/0 = 0
-5:2/0 = 0
-6:2/0 = 0
+4:2/0/texture_origin = Vector2i(0, 24)
+0:3/0 = 0
+0:3/0/texture_origin = Vector2i(0, 24)
+1:3/0 = 0
+1:3/0/texture_origin = Vector2i(0, 24)
+2:3/0 = 0
+2:3/0/texture_origin = Vector2i(0, 24)
+3:3/0 = 0
+3:3/0/texture_origin = Vector2i(0, 24)
+4:3/0 = 0
+4:3/0/texture_origin = Vector2i(0, 24)
 
 [sub_resource type="TileSet" id="TileSet_vageo"]
 tile_shape = 1
 tile_layout = 5
 tile_offset_axis = 1
-tile_size = Vector2i(32, 16)
+tile_size = Vector2i(64, 32)
 terrain_set_0/mode = 1
 terrain_set_0/terrain_0/name = "Terrain 0"
 terrain_set_0/terrain_0/color = Color(0.0666667, 0.211765, 0.278431, 1)
-sources/0 = SubResource("TileSetAtlasSource_lf6it")
-sources/1 = SubResource("TileSetAtlasSource_1it1p")
-sources/4 = SubResource("TileSetAtlasSource_im66i")
-sources/5 = SubResource("TileSetAtlasSource_muc7t")
+sources/2 = SubResource("TileSetAtlasSource_l741r")
 
 [node name="TileMapPlains" type="TileMap"]
 y_sort_enabled = true
@@ -59,4 +54,4 @@ layer_0/name = "Terrain"
 layer_0/y_sort_enabled = true
 layer_1/name = "Props"
 layer_1/y_sort_enabled = true
-layer_1/tile_data = PackedInt32Array()
+layer_1/z_index = 1
