@@ -1,25 +1,22 @@
 [gd_scene load_steps=4 format=3 uid="uid://cvxtqnnr7606b"]
 
-[ext_resource type="Texture2D" uid="uid://4l5gtedfsuhr" path="res://assets/environment/tilesets/tileset_debug.png" id="1_a104a"]
+[ext_resource type="Texture2D" uid="uid://cdl4rsb4nexx" path="res://assets/environment/tilesets/tileset_debug.png" id="1_a104a"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_wpmib"]
 texture = ExtResource("1_a104a")
 texture_region_size = Vector2i(32, 32)
+0:0/size_in_atlas = Vector2i(2, 2)
 0:0/0 = 0
-0:9/0 = 0
-1:9/0 = 0
-2:9/0 = 0
-3:9/0 = 0
-4:9/0 = 0
-5:9/0 = 0
-6:9/0 = 0
-7:9/0 = 0
-0:3/0 = 0
+0:2/size_in_atlas = Vector2i(3, 4)
+0:2/0 = 0
+0:2/0/texture_origin = Vector2i(0, 32)
+2:0/size_in_atlas = Vector2i(2, 2)
+2:0/0 = 0
 
 [sub_resource type="TileSet" id="TileSet_qhica"]
 tile_shape = 1
 tile_layout = 4
-tile_size = Vector2i(32, 16)
+tile_size = Vector2i(64, 32)
 sources/1 = SubResource("TileSetAtlasSource_wpmib")
 
 [node name="TileMapDebug" type="TileMap"]
@@ -27,3 +24,8 @@ y_sort_enabled = true
 tile_set = SubResource("TileSet_qhica")
 format = 2
 layer_0/y_sort_enabled = true
+layer_0/tile_data = PackedInt32Array(65536, 1, 0, 131071, 1, 0, 196607, 1, 0, 262143, 1, 0, 196608, 1, 0, 131072, 1, 0, 65537, 1, 0, 131073, 1, 0, 196609, 1, 0, 131070, 131073, 0, 196606, 131073, 0, 262142, 131073, 0, 262141, 131073, 0, 327677, 131073, 0, 327676, 131073, 0, 262140, 131073, 0, 196605, 131073, 0, 393213, 131073, 0, 458749, 131073, 0, 458750, 131073, 0, 393214, 131073, 0, 393215, 131073, 0, 327680, 131073, 0, 262144, 131073, 0, 327679, 131073, 0, 327678, 131073, 0, 262145, 131073, 0, 327681, 131073, 0, 393216, 131073, 0, 458751, 131073, 0, 327682, 131073, 0, 262146, 131073, 0, 196610, 131073, 0, 131074, 131073, 0, 65538, 131073, 0, 2, 131073, 0, 1, 131073, 0, 0, 131073, 0, 65535, 131073, 0, 65534, 131073, 0, 131069, 131073, 0, -1, 131073, 0, -65536, 131073, 0, -65535, 131073, 0, -65534, 131073, 0, 65539, 131073, 0, 131075, 131073, 0, 131076, 131073, 0, 196612, 131073, 0, 262148, 131073, 0, 262147, 131073, 0, 327683, 131073, 0, 393218, 131073, 0, 196611, 131073, 0, 3, 131073, 0, -2, 131073, 0, 393212, 131073, 0, 393217, 131073, 0, 458748, 131073, 0, 196604, 131073, 0, 131068, 131073, 0, 65533, 131073, 0, -3, 131073, 0, 65532, 131073, 0, -4, 131073, 0, 4, 131073, 0, 65540, 131073, 0)
+layer_1/name = "Layer1"
+layer_1/y_sort_enabled = true
+layer_1/z_index = 1
+layer_1/tile_data = PackedInt32Array(327680, 1, 2, 262144, 1, 2, 393215, 1, 2, 327679, 1, 2, 458751, 1, 2, 393216, 1, 2)
