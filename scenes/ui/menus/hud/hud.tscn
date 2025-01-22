@@ -212,6 +212,7 @@ size_flags_vertical = 3
 theme_override_constants/separation = 10
 
 [node name="CoinsTextureRect" type="TextureRect" parent="HUDMarginContainer/HUDVBoxContainer/CoinsWavesMarginContainer/CoinsWavesHBoxContainer"]
+z_index = 3
 texture_filter = 6
 layout_mode = 2
 texture = ExtResource("7_1sk4j")

@@ -128,3 +128,6 @@ func _on_place_button_pressed() -> void:
 ## Placeholder for cancel place button functionality.
 func _on_cancel_place_button_pressed() -> void:
 	pass
+
+func get_coin_counter_position() -> Vector2:
+	return $HUDMarginContainer/HUDVBoxContainer/CoinsWavesMarginContainer/CoinsWavesHBoxContainer/CoinsTextureRect.global_position + Vector2(16, 16)

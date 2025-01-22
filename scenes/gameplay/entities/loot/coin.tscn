@@ -1,0 +1,56 @@
+[gd_scene load_steps=8 format=3 uid="uid://dyn8nrstxo2fe"]
+
+[ext_resource type="Script" path="res://scenes/gameplay/entities/loot/coin.gd" id="1_coin"]
+[ext_resource type="Texture2D" uid="uid://6yurlan5c3ap" path="res://assets/ui/icons/Single_Coin@4x.png" id="2_3ucmy"]
+[ext_resource type="Script" path="res://scenes/ui/popup/popup_spawner.gd" id="2_popup"]
+[ext_resource type="PackedScene" uid="uid://jv7q286fh1vn" path="res://scenes/ui/popup/popup_score.tscn" id="3_score"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_coin"]
+radius = 6.08276
+
+[sub_resource type="Animation" id="Animation_warning"]
+resource_name = "warning"
+length = 0.4
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.2, 0.4),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0.2), Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_coin"]
+_data = {
+"warning": SubResource("Animation_warning")
+}
+
+[node name="Coin" type="Area2D" groups=["coins"]]
+collision_layer = 32
+collision_mask = 0
+monitoring = false
+script = ExtResource("1_coin")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+modulate = Color(1, 0.85, 0, 1)
+position = Vector2(-4.76837e-07, 1)
+scale = Vector2(0.028, 0.028)
+texture = ExtResource("2_3ucmy")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 1)
+shape = SubResource("CircleShape2D_coin")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_coin")
+}
+
+[node name="PopupSpawner" type="Marker2D" parent="."]
+script = ExtResource("2_popup")
+popup_node = ExtResource("3_score")
