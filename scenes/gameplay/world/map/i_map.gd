@@ -5,11 +5,11 @@
 class_name IMap
 extends Node2D
 
-## Emitted when all waves are completed successfully
-signal win
+signal wave_complete(last_wave: bool)
+signal victory
 
-## Emitted when player loses the map
-signal loose
+## Returns true if all waves are completed
+@export var all_waves_completed: bool = false
 
 ## Reference to the TileMap node for map layout
 @export var tilemap: TileMap
@@ -26,6 +26,8 @@ var waves: Array[Wave] = []
 @onready var waves_timer: Timer = $WavesTimer
 @onready var popup_wave_spawner: PopupSpawner = $PopupWaveSpawner
 @onready var camera: Camera2D = $Camera2D
+
+@export var win_condition : WinConditionEntity = null;
 
 @onready var signals: Array[Dictionary] = [
 	{SignalUtil.WHO: waves_timer, SignalUtil.WHAT: "timeout", SignalUtil.TO: _on_waves_timer_timeout},
@@ -46,8 +48,8 @@ func _ready() -> void:
 func _start_wave(index: int) -> void:
 	if index == waves.size():
 		Log.trace(Log.Level.DEBUG, "You WIN !!!")
-		win.emit()
 		waves_timer.stop()
+		emit_signal("victory")
 		return
 
 	waves[index].start_wave()

@@ -99,6 +99,24 @@ func _find_transition(from: State, to: State) -> Transition:
 			return tra
 	return null
 
+## Method to handle state transitions
+func transition_to(state_id: String) -> bool:
+	if not states.has(state_id):
+		Log.trace(Log.Level.ERROR, "%s : Unknown state id: '%s'" % [name, state_id])
+		return false
+	var next_state             = states.get(state_id)
+	var transition: Transition = _find_transition(current_state, next_state)
+
+	if transition:
+		current_state = next_state
+		transition.handle() #
+		Log.trace(Log.Level.INFO, "%s : Transitioned to state %s" % [name, current_state])
+		emit_signal("state_changed", current_state)
+		return true
+	else:
+		Log.trace(Log.Level.ERROR, "%s : Invalid transition from %s to %s" % [name, current_state, state_id])
+		return false
+
 
 # signal
 
