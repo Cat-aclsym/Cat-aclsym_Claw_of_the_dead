@@ -132,11 +132,11 @@ text = "SOCIALS.TEXT.LABEL"
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="InstagramAspectRatioContainer2" type="AspectRatioContainer" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/SocialsHBoxContainer"]
+[node name="InstagramAspectRatioContainer" type="AspectRatioContainer" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/SocialsHBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="InstagramTextureButton" type="TextureButton" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/SocialsHBoxContainer/InstagramAspectRatioContainer2"]
+[node name="InstagramTextureButton" type="TextureButton" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/SocialsHBoxContainer/InstagramAspectRatioContainer"]
 texture_filter = 6
 layout_mode = 2
 texture_normal = ExtResource("9_vb5lp")
@@ -179,11 +179,11 @@ text = "MISC.TEXT.LABEL"
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="UpdateAspectRatioContainer" type="AspectRatioContainer" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/MiscHBoxContainer"]
+[node name="NewsAspectRatioContainer" type="AspectRatioContainer" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/MiscHBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="UpdateTextureButton" type="TextureButton" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/MiscHBoxContainer/UpdateAspectRatioContainer"]
+[node name="NewsTextureButton" type="TextureButton" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/MiscHBoxContainer/NewsAspectRatioContainer"]
 modulate = Color(1, 1, 1, 0.313726)
 texture_filter = 6
 layout_mode = 2
@@ -193,11 +193,11 @@ texture_normal = ExtResource("12_esjhy")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="RgpdAspectRatioContainer2" type="AspectRatioContainer" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/MiscHBoxContainer"]
+[node name="InformationAspectRatioContainer" type="AspectRatioContainer" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/MiscHBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="RgpdTextureButton" type="TextureButton" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/MiscHBoxContainer/RgpdAspectRatioContainer2"]
+[node name="InformationTextureButton" type="TextureButton" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/MiscHBoxContainer/InformationAspectRatioContainer"]
 modulate = Color(1, 1, 1, 0.313726)
 texture_filter = 6
 layout_mode = 2
@@ -207,25 +207,14 @@ texture_normal = ExtResource("13_gyr4v")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="ContactAspectRatioContainer3" type="AspectRatioContainer" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/MiscHBoxContainer"]
+[node name="ContactAspectRatioContainer" type="AspectRatioContainer" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/MiscHBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="ContactTextureButton" type="TextureButton" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/MiscHBoxContainer/ContactAspectRatioContainer3"]
+[node name="ContactTextureButton" type="TextureButton" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/MiscHBoxContainer/ContactAspectRatioContainer"]
 texture_filter = 6
 layout_mode = 2
 size_flags_horizontal = 3
 texture_normal = ExtResource("14_ib5pc")
 ignore_texture_size = true
 stretch_mode = 5
-
-[connection signal="pressed" from="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/TopLineHBoxContainer/AspectRatioContainer/CloseTextureButton" to="." method="_on_close_texture_button_pressed"]
-[connection signal="pressed" from="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/SettingsHBoxContainer/MusicAspectRatioContainer/MusicTextureButton" to="." method="_on_music_texture_button_pressed"]
-[connection signal="pressed" from="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/SettingsHBoxContainer/SoundAspectRatioContainer/SoundTextureButton" to="." method="_on_sound_texture_button_pressed"]
-[connection signal="pressed" from="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/SettingsHBoxContainer/LanguageAspectRatioContainer/LanguageTextureButton" to="." method="_on_language_texture_button_pressed"]
-[connection signal="pressed" from="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/SocialsHBoxContainer/InstagramAspectRatioContainer2/InstagramTextureButton" to="." method="_on_instagram_texture_button_pressed"]
-[connection signal="pressed" from="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/SocialsHBoxContainer/XAspectRatioContainer/XTextureButton" to="." method="_on_x_texture_button_pressed"]
-[connection signal="pressed" from="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/SocialsHBoxContainer/DiscordAspectRatioContainer/DiscordTextureButton" to="." method="_on_discord_texture_button_pressed"]
-[connection signal="pressed" from="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/MiscHBoxContainer/UpdateAspectRatioContainer/UpdateTextureButton" to="." method="_on_update_texture_button_pressed"]
-[connection signal="pressed" from="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/MiscHBoxContainer/RgpdAspectRatioContainer2/RgpdTextureButton" to="." method="_on_rgpd_texture_button_pressed"]
-[connection signal="pressed" from="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/MiscHBoxContainer/ContactAspectRatioContainer3/ContactTextureButton" to="." method="_on_contact_texture_button_pressed"]
