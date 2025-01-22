@@ -1,7 +1,7 @@
 ## © [2024] A7 Studio. All rights reserved. Trademark.
 ## Base class for all game levels. Manages level state, resources, and map loading.
-extends Node2D
-class_name ILevel
+
+class_name ILevel extends Node2D
 
 ## Victory and defeat states
 signal stats_updated
@@ -14,6 +14,8 @@ static var current_level: ILevel = null
 @export var map_scene: PackedScene = null
 
 @export var win_condition: WinConditionEntity = null
+
+## Array of differents signal (if more needed)
 
 ## Current coin count for purchasing towers
 var coins: int = 75:
@@ -40,7 +42,7 @@ func _ready() -> void:
 		win_condition._build_state_machine()
 		win_condition._connect_signals()
 		if map.has_signal("victory"):
-			map.connect("victory", _on_victory)
+			SignalUtil.connects([ {SignalUtil.WHO: map, SignalUtil.WHAT: "victory", SignalUtil.TO: _on_victory}])
 	else:
 		Log.trace(Log.Level.ERROR, "ILevel.gd: map_scene is null. Cannot initialize map.")
 	emit_signal("level_ready", self)
@@ -71,7 +73,8 @@ func _set_health(new_value: int) -> void:
 func _on_wave_complete(last_wave: bool) -> void:
 	Log.trace(Log.Level.INFO, "Wave complete signal received. Last wave: %s" % last_wave)
 	win_condition._on_wave_complete(last_wave)
-	
+
+## Called to change the State to victoryState
 func _on_victory() -> void:
 	Log.trace(Log.Level.INFO, "Victory condition reached")
 	win_condition.state_machine.transition_to(WinConditionEntity.STATE_VICTORY)
@@ -83,9 +86,9 @@ func _load_map() -> void:
 	add_child(new_map)
 
 	Global.cursor.map_ref = map
-	
+
 	if new_map.has_signal("wave_complete"):
-		new_map.connect("wave_complete", Callable(self, "_on_wave_complete"))
+		SignalUtil.connects([ {SignalUtil.WHO: new_map, SignalUtil.WHAT: "wave_complete", SignalUtil.TO: _on_wave_complete}])
 		Log.trace(Log.Level.INFO, "Connected 'wave_complete' signal from map.")
 	else:
 		Log.trace(Log.Level.ERROR, "Map does not have 'wave_complete' signal.")

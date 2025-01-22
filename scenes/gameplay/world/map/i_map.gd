@@ -49,7 +49,7 @@ func _start_wave(index: int) -> void:
 	if index == waves.size():
 		Log.trace(Log.Level.DEBUG, "You WIN !!!")
 		waves_timer.stop()
-		emit_signal("victory")
+		victory.emit()
 		return
 
 	waves[index].start_wave()
