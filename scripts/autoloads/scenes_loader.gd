@@ -8,6 +8,7 @@ enum EnemyId {
 	DEFAULT,
 	BIG_DADDY,
 	FAT,
+	RAT
 }
 
 ## The tower IDs and their associated scenes.
@@ -21,6 +22,7 @@ const ENEMIES: Dictionary = {
 	EnemyId.DEFAULT: preload("res://scenes/gameplay/entities/enemy/enemies/default_zombie.tscn"),
 	EnemyId.BIG_DADDY: preload("res://scenes/gameplay/entities/enemy/enemies/big_daddy.tscn"),
 	EnemyId.FAT: preload("res://scenes/gameplay/entities/enemy/enemies/fat.tscn"),
+	EnemyId.RAT: preload("res://scenes/gameplay/entities/enemy/enemies/rat.tscn"),
 }
 
 const TOWERS: Dictionary = {

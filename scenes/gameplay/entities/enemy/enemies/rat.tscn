@@ -1,0 +1,18 @@
+[gd_scene load_steps=3 format=3 uid="uid://c85f5t7iyoft0"]
+
+[ext_resource type="PackedScene" uid="uid://tmlcshxut7kv" path="res://scenes/gameplay/entities/enemy/i_enemy.tscn" id="1_qtlv0"]
+[ext_resource type="Texture2D" uid="uid://banqtfw2vyqua" path="res://assets/gameplay/enemies/rat.png" id="2_fjlxy"]
+
+[node name="Rat" instance=ExtResource("1_qtlv0")]
+position = Vector2(0, -12)
+scale = Vector2(0.9, 0.9)
+max_health = 10.0
+speed = 45.0
+type = 3
+
+[node name="Sprite2D" parent="." index="0"]
+scale = Vector2(0.385, 0.385)
+texture = ExtResource("2_fjlxy")
+
+[node name="CollisionShape2D" parent="." index="2"]
+scale = Vector2(0.762, 0.765)
