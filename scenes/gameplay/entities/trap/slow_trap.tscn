@@ -1,10 +1,24 @@
-[gd_scene load_steps=4 format=3 uid="uid://cekitu5ltqrp7"]
+[gd_scene load_steps=6 format=3 uid="uid://cekitu5ltqrp7"]
 
 [ext_resource type="PackedScene" uid="uid://d11atjk5rjemm" path="res://scenes/gameplay/entities/trap/i_trap.tscn" id="1_base"]
 [ext_resource type="Script" path="res://scenes/gameplay/entities/trap/slow_trap.gd" id="2_script"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_shape"]
 size = Vector2(64, 64)
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_break"]
+emission_shape = 1
+emission_sphere_radius = 32.0
+particle_flag_disable_z = true
+spread = 180.0
+gravity = Vector3(0, 98, 0)
+initial_velocity_min = 50.0
+initial_velocity_max = 100.0
+orbit_velocity_min = 0.0
+orbit_velocity_max = 0.0
+scale_min = 2.0
+scale_max = 4.0
+color = Color(0.6, 0.6, 0.6, 1)
 
 [node name="SlowTrap" instance=ExtResource("1_base")]
 script = ExtResource("2_script")
@@ -16,3 +30,10 @@ scale = Vector2(0.15, 0.15)
 
 [node name="CollisionShape2D" parent="Area2D" index="0"]
 shape = SubResource("RectangleShape2D_shape")
+
+[node name="BreakParticles" type="GPUParticles2D" parent="." index="2"]
+emitting = false
+amount = 20
+process_material = SubResource("ParticleProcessMaterial_break")
+lifetime = 0.8
+one_shot = true
