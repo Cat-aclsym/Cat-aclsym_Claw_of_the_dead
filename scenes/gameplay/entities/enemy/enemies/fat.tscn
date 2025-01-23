@@ -1,4 +1,4 @@
-[gd_scene load_steps=4 format=3 uid="uid://cy37dv3txy3x8"]
+[gd_scene load_steps=5 format=3 uid="uid://cy37dv3txy3x8"]
 
 [ext_resource type="PackedScene" uid="uid://tmlcshxut7kv" path="res://scenes/gameplay/entities/enemy/i_enemy.tscn" id="1_pdmcd"]
 [ext_resource type="Texture2D" uid="uid://h5f1ntgevb58" path="res://assets/environment/tilesets/tileset_debug.png" id="2_bo1uo"]
@@ -6,6 +6,9 @@
 [sub_resource type="AtlasTexture" id="AtlasTexture_o38oh"]
 atlas = ExtResource("2_bo1uo")
 region = Rect2(272, 128, 32, 64)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_o17gm"]
+size = Vector2(32, 48)
 
 [node name="Fat" instance=ExtResource("1_pdmcd")]
 position = Vector2(0, -27)
@@ -19,4 +22,7 @@ texture = SubResource("AtlasTexture_o38oh")
 
 [node name="CollisionShape2D" parent="." index="2"]
 position = Vector2(0, 5)
-scale = Vector2(1.9, 1.9)
+shape = SubResource("RectangleShape2D_o17gm")
+
+[node name="PopupScoreSpawner" parent="." index="4"]
+position = Vector2(0, -28)

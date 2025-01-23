@@ -124,9 +124,8 @@ _data = {
 "walk_up": SubResource("Animation_jh3bl")
 }
 
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_46uiq"]
-radius = 9.0
-height = 28.2354
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_oeiyk"]
+size = Vector2(32, 32)
 
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_tc12e"]
 particles_animation = true
@@ -162,9 +161,8 @@ libraries = {
 autoplay = "RESET"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-scale = Vector2(1.7, 1.7)
-skew = -0.00247645
-shape = SubResource("CapsuleShape2D_46uiq")
+position = Vector2(0, 4)
+shape = SubResource("RectangleShape2D_oeiyk")
 
 [node name="GPUParticles2D" type="GPUParticles2D" parent="."]
 material = SubResource("CanvasItemMaterial_tc12e")
@@ -173,6 +171,6 @@ process_material = SubResource("ParticleProcessMaterial_aqjwg")
 texture = ExtResource("2_tjt82")
 
 [node name="PopupScoreSpawner" type="Marker2D" parent="."]
-position = Vector2(0, -33)
+position = Vector2(0, -16)
 script = ExtResource("3_6sxxp")
 popup_node = ExtResource("4_7dtc1")
