@@ -122,7 +122,12 @@ func _handle_state() -> void:
 func _set_cursor_position(pos: Vector2 = get_global_mouse_position()) -> void:
 	var map_pos: Vector2i = tm_ref.local_to_map(pos)
 	var local_pos: Vector2 = tm_ref.map_to_local(map_pos)
-	local_pos -= Vector2(0, 8)
+	
+	# Ajuster la position en fonction du type d'entité
+	if _tower is ITrap:
+		local_pos -= Vector2(0, 8)  # Offset pour les pièges (1x1)
+	else:
+		local_pos -= Vector2(0, 8)  # Offset pour les tours (2x2)
 
 	cursor.position = local_pos
 	cursor.visible = true
@@ -217,6 +222,7 @@ func _build() -> void:
 	else:  # ITrap
 		tm_pos = [tm_ref.local_to_map(new_entity.position)]
 
+	# Marquer les positions comme invalides
 	for p in tm_pos:
 		_invalid_cells.append(p)
 

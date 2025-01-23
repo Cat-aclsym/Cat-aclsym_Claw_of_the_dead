@@ -1,16 +1,14 @@
-[gd_scene load_steps=3 format=3 uid="uid://d11atjk5rjemm"]
+[gd_scene load_steps=2 format=3 uid="uid://d11atjk5rjemm"]
 
 [ext_resource type="Script" path="res://scenes/gameplay/entities/trap/i_trap.gd" id="1_trap"]
-[ext_resource type="Texture2D" uid="uid://d2pvckhpu5f7m" path="res://assets/ui/icons/Francais.png" id="2_6iwes"]
 
 [node name="ITrap" type="Node2D"]
 script = ExtResource("1_trap")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-position = Vector2(0, -2)
-scale = Vector2(0.85, 0.85)
-texture = ExtResource("2_6iwes")
+position = Vector2(-9.79164, -7.49999)
+scale = Vector2(0.126805, 1.06875)
 
 [node name="Area2D" type="Area2D" parent="."]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Area2D"]

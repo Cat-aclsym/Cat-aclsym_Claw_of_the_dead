@@ -15,7 +15,7 @@
 [ext_resource type="Texture2D" uid="uid://1mu5cdhd5hw8" path="res://assets/ui/icons/build_button.png" id="10_sc2vu"]
 [ext_resource type="Texture2D" uid="uid://bel17gs3ijyb1" path="res://assets/environment/backgrounds/Fond Menu 02@2x.png" id="11_p2vl4"]
 [ext_resource type="Texture2D" uid="uid://nr3ul4jgyad0" path="res://assets/ui/icons/Bouton Annuler.png" id="12_7moo4"]
-[ext_resource type="PackedScene" uid="uid://cekitu5ltqrp7" path="res://scenes/gameplay/entities/trap/slow_trap.tscn" id="16_cj1op"]
+[ext_resource type="PackedScene" uid="uid://cekitu5ltqrp7" path="res://scenes/gameplay/entities/trap/traps/slow_trap.tscn" id="16_cj1op"]
 [ext_resource type="PackedScene" uid="uid://cwtbkovmt1c8u" path="res://scenes/ui/menus/hud/trap_card.tscn" id="16_udl6i"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_f3r3y"]
