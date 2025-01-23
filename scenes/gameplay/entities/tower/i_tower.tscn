@@ -12,6 +12,7 @@ position = Vector2(0, -2)
 scale = Vector2(0.85, 0.85)
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Sprite2D"]
+active = false
 
 [node name="Area2D" type="Area2D" parent="."]
 

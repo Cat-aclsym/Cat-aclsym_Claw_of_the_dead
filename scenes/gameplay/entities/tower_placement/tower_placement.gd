@@ -21,7 +21,7 @@ const UP_OFFSET := Vector2i(-1, -1)
 const RIGHT_OFFSET := Vector2i(0, -1)
 const LEFT_OFFSET := Vector2i(-1, 0)
 const VALID_TILES: Array[Vector2i] = [
-	Vector2i(0, 1)
+	Vector2i(1, 0)
 ]
 
 ## Get the initial position for a new tower based on camera view
@@ -137,7 +137,6 @@ func _handle_state() -> void:
 func _set_cursor_position(pos: Vector2 = get_global_mouse_position()) -> void:
 	var map_pos: Vector2i = tm_ref.local_to_map(pos)
 	var local_pos: Vector2 = tm_ref.map_to_local(map_pos)
-	local_pos -= Vector2(0, 8)
 
 	cursor.position = local_pos
 	cursor.visible = true
@@ -209,6 +208,7 @@ func _cancel_build() -> void:
 
 func _build() -> void:
 	if not _is_buildable(_tower.position):
+		Log.trace(Log.Level.DEBUG, "Cannot build tower at position: {0}".format([_tower.position]))
 		return
 
 	_is_move_tower_available = false
