@@ -90,6 +90,7 @@ var pending_upgrade: PackedScene
 # Core methods
 func _ready() -> void:
 	target_type = TARGET_TYPE.FIRST
+	sell_price = cost / 2
 	hover_box.z_index = 3
 	update_dependent_properties()
 
@@ -159,6 +160,7 @@ func apply_upgrade() -> void:
 		bullet_scene = upgrade.bullet
 
 	available_upgrade = upgrade.next_upgrades
+	sell_price += upgrade.price / 2
 	update_dependent_properties()
 	state = TOWER_STATE.ACTIVE
 	emit_signal("upgrade_completed")
