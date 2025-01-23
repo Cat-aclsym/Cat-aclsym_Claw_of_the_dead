@@ -5,6 +5,9 @@
 class_name IEnemy
 extends CharacterBody2D
 
+const COIN_SCENE := preload("res://scenes/gameplay/entities/loot/coin.tscn") as PackedScene
+const Coin := preload("res://scenes/gameplay/entities/loot/coin.gd")
+
 ## Emitted when the enemy dies
 signal die
 ## Emitted to trigger camera effects
@@ -150,7 +153,109 @@ func add_poison_effect(damage: float, total_execution: int, interval: float) -> 
 
 	poison_timer.timeout.connect(func(): _on_poison_timer_timeout(poison_timer))
 
-# private
+func _handle_death() -> void:
+	if is_already_dead:
+		return
+	
+	is_already_dead = true
+	
+	die.emit()
+	anim_player.play(ANIM_FADE_OUT)
+	collision_shape.set_deferred("disabled", true)
+
+	await anim_player.animation_finished
+	queue_free()
+	path_follow.queue_free()
+
+## Handle the enemy's death state
+func _dead_state() -> void:
+	if ILevel.current_level == null:
+		Log.trace(Log.Level.ERROR, "Current level is null, aborting.")
+		return
+	
+	Log.trace(Log.Level.INFO, "Enemy died at position: %s" % global_position)
+	
+	# Spawn coins based on enemy type
+	var coins_count := 3
+	match type:
+		EnemyType.FAT:
+			coins_count = 5
+		EnemyType.BIG_DADDY:
+			coins_count = 8
+	
+	Log.trace(Log.Level.INFO, "Spawning %d coins" % coins_count)
+	
+	for i in coins_count:
+		var coin := COIN_SCENE.instantiate() as Coin
+		if not coin:
+			Log.trace(Log.Level.ERROR, "Failed to instantiate coin")
+			continue
+		
+		get_tree().current_scene.add_child(coin)
+		
+		# Random position around enemy
+		var angle := randf() * TAU
+		var distance := randf_range(10, 30)
+		var coin_pos := global_position + Vector2(cos(angle), sin(angle)) * distance
+		coin.global_position = coin_pos
+		
+		# Connect coin collection
+		coin.collected.connect(func(c: Coin): 
+			Log.trace(Log.Level.INFO, "Coin collected: +%d" % c.value)
+			ILevel.current_level.coins += c.value
+		)
+		
+		Log.trace(Log.Level.INFO, "Spawned coin %d at position: %s" % [i, coin_pos])
+	
+	_handle_death()
+
+## Handle the enemy reaching the end of its path
+func _path_finished_state() -> void:
+	_handle_death()
+	if ILevel.current_level == null:
+		Log.trace(Log.Level.ERROR, "Current level is null, aborting.")
+		return
+
+	if type == EnemyType.BIG_DADDY or type == EnemyType.FAT:
+		ILevel.current_level.health = 0
+	else:
+		ILevel.current_level.health -= ceil(health / 2)
+
+## Update the z-index of the enemy based on its position
+func _update_z_index() -> void:
+	var y_position: int = int(global_position.y)
+	z_index = y_position if y_position else 0
+
+## Handle the poison effect timer
+func _on_poison_timer_timeout(timer: Timer) -> void:
+	var timer_index: int = -1
+	for i in range(active_poison_timers.size()):
+		if active_poison_timers[i]["timer"] == timer:
+			timer_index = i
+			break
+
+	active_poison_timers[timer_index]["current_execution"] += 1
+
+	var highest_timer_ratio: float = 0.0
+	var highest_timer_index: int = 0
+	var _highest_timer: Timer = null
+
+	for i in range(active_poison_timers.size()):
+		var ratio: float = (active_poison_timers[i]["damage"] * active_poison_timers[i]["total_execution"]) / (active_poison_timers[i]["total_execution"] * active_poison_timers[i]["interval"])
+		if ratio > highest_timer_ratio:
+			highest_timer_ratio = ratio
+			highest_timer_index = i
+			_highest_timer = active_poison_timers[i]["timer"]
+
+	if timer_index == highest_timer_index:
+		take_damage(active_poison_timers[highest_timer_index]["damage"], DamageType.POISON)
+		if active_poison_timers[highest_timer_index]["current_execution"] >= active_poison_timers[highest_timer_index]["total_execution"]:
+			active_poison_timers.remove_at(timer_index)
+			timer.stop()
+			timer.queue_free()
+		else:
+			timer.start()
+
 ## Apply a damage effect to the enemy sprite
 func _damage_effect(color: Color) -> void:
 	sprite.modulate = color
@@ -213,61 +318,3 @@ func _disappear() -> void:
 	await anim_player.animation_finished
 	queue_free()
 	path_follow.queue_free()
-
-## Handle the enemy's death state
-func _dead_state() -> void:
-	if ILevel.current_level == null:
-		Log.trace(Log.Level.ERROR, "Current level is null, aborting.")
-		return
-
-	var money_reward: int = 10
-	ILevel.current_level.coins += money_reward
-	popup_score_spawner.score("+%s$" % [money_reward])
-	_disappear()
-
-## Handle the enemy reaching the end of its path
-func _path_finished_state() -> void:
-	_disappear()
-	if ILevel.current_level == null:
-		Log.trace(Log.Level.ERROR, "Current level is null, aborting.")
-		return
-
-	if type == EnemyType.BIG_DADDY or type == EnemyType.FAT:
-		ILevel.current_level.health = 0
-	else:
-		ILevel.current_level.health -= ceil(health / 2)
-
-## Update the z-index of the enemy based on its position
-func _update_z_index() -> void:
-	var y_position: int = int(global_position.y)
-	z_index = y_position if y_position else 0
-
-## Handle the poison effect timer
-func _on_poison_timer_timeout(timer: Timer) -> void:
-	var timer_index: int = -1
-	for i in range(active_poison_timers.size()):
-		if active_poison_timers[i]["timer"] == timer:
-			timer_index = i
-			break
-
-	active_poison_timers[timer_index]["current_execution"] += 1
-
-	var highest_timer_ratio: float = 0.0
-	var highest_timer_index: int = 0
-	var _highest_timer: Timer = null
-
-	for i in range(active_poison_timers.size()):
-		var ratio: float = (active_poison_timers[i]["damage"] * active_poison_timers[i]["total_execution"]) / (active_poison_timers[i]["total_execution"] * active_poison_timers[i]["interval"])
-		if ratio > highest_timer_ratio:
-			highest_timer_ratio = ratio
-			highest_timer_index = i
-			_highest_timer = active_poison_timers[i]["timer"]
-
-	if timer_index == highest_timer_index:
-		take_damage(active_poison_timers[highest_timer_index]["damage"], DamageType.POISON)
-		if active_poison_timers[highest_timer_index]["current_execution"] >= active_poison_timers[highest_timer_index]["total_execution"]:
-			active_poison_timers.remove_at(timer_index)
-			timer.stop()
-			timer.queue_free()
-		else:
-			timer.start()
