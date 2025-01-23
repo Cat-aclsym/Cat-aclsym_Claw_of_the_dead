@@ -46,9 +46,5 @@ func update() -> void:
 ## Handles the build button press event.
 ## [br]Changes cursor state to build mode and toggles the build menu.
 func _on_button_pressed() -> void:
-	pressed.emit()
-	if Global.hud:
-		if Global.cursor:
-			var instance = tower.instantiate()
-			Global.cursor.change_state(TowerPlacement.CursorState.BUILD, [instance])
-		Global.hud.toggle_build_menu()
+	Global.cursor.change_state(Global.cursor.CursorState.BUILD, [_tower])
+	Global.hud.toggle_build_menu()

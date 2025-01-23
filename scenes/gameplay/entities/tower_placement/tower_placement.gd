@@ -24,9 +24,8 @@ const VALID_TILES: Array[Vector2i] = [
 	Vector2i(1, 0)
 ]
 const TRAP_VALID_TILES: Array[Vector2i] = [
+	Vector2i(0, 1),
 	Vector2i(0, 2),
-	Vector2i(1, 2),
-	Vector2i(2, 2),
 ]
 
 ## Get the initial position for a new tower based on camera view
@@ -143,12 +142,6 @@ func _set_cursor_position(pos: Vector2 = get_global_mouse_position()) -> void:
 	var map_pos: Vector2i = tm_ref.local_to_map(pos)
 	var local_pos: Vector2 = tm_ref.map_to_local(map_pos)
 
-	# Ajuster la position en fonction du type d'entité
-	if _tower is ITrap:
-		local_pos -= Vector2(0, 8)  # Offset pour les pièges (1x1)
-	else:
-		local_pos -= Vector2(0, 8)  # Offset pour les tours (2x2)
-
 	cursor.position = local_pos
 	cursor.visible = true
 	place_hud.visible = true
@@ -166,7 +159,7 @@ func _state_build(tower: Node2D = null) -> void:
 		_tower.position = cursor.position - Vector2(0, 16)
 	elif _tower is ITrap:
 		_tower.state = ITrap.TrapState.BUILDING
-        _tower.position = cursor.position - Vector2(0, 16)
+		_tower.position = cursor.position - Vector2(0, 16)
 		add_child(_tower)
 
 	_tower.position = cursor.position - Vector2(0, 16)
@@ -230,8 +223,8 @@ func _build() -> void:
 	var new_entity = _tower.duplicate()
 	if new_entity is ITower:
 		new_entity.state = ITower.TowerState.ACTIVE
-        tower_count += 1
-        new_tower.name = "t%d" % tower_count
+		tower_count += 1
+		new_entity.name = "t%d" % tower_count
 	elif new_entity is ITrap:
 		new_entity.state = ITrap.TrapState.ACTIVE
 	new_entity.modulate = Color(1, 1, 1, 1)
@@ -239,20 +232,8 @@ func _build() -> void:
 
 	ILevel.current_level.coins -= _tower.cost
 
-	var tm_pos: Array[Vector2i]
-	if new_entity is ITower:
-		tm_pos = [
-			tm_ref.local_to_map(new_entity.position),
-			tm_ref.local_to_map(new_entity.position) - UP_OFFSET,
-			tm_ref.local_to_map(new_entity.position) - RIGHT_OFFSET,
-			tm_ref.local_to_map(new_entity.position) - LEFT_OFFSET,
-		]
-	else:  # ITrap
-		tm_pos = [tm_ref.local_to_map(new_entity.position)]
-
-	# Marquer les positions comme invalides
-	for p in tm_pos:
-		_invalid_cells.append(p)
+	var tm_pos: Vector2i = tm_ref.local_to_map(new_entity.position)
+	_invalid_cells.append(tm_pos)
 
 	_cancel_build()
 	_is_move_tower_available = true
@@ -266,21 +247,16 @@ func _is_tower_buildable(pos: Vector2) -> bool:
 	if ILevel.current_level.coins < _tower.cost:
 		return false
 
-	var tm_pos: Array[Vector2i] = [
-		tm_ref.local_to_map(pos),
-		tm_ref.local_to_map(pos) - UP_OFFSET,
-		tm_ref.local_to_map(pos) - RIGHT_OFFSET,
-		tm_ref.local_to_map(pos) - LEFT_OFFSET,
-	]
+	var tm_pos: Vector2i = tm_ref.local_to_map(pos)
 
-	for p in tm_pos:
-		if not tm_ref.get_cell_atlas_coords(0, p) in VALID_TILES or p in _invalid_cells:
-			return false
+	if not tm_ref.get_cell_atlas_coords(0, tm_pos) in VALID_TILES or tm_pos in _invalid_cells:
+		return false
 
-		if tm_ref.get_cell_atlas_coords(1, p) != Vector2i(-1, -1):
-			return false
+	if tm_ref.get_cell_atlas_coords(1, tm_pos) != Vector2i(-1, -1):
+		return false
 
 	return true
+
 
 func _is_trap_buildable(pos: Vector2) -> bool:
 	if ILevel.current_level.coins < _tower.cost:
