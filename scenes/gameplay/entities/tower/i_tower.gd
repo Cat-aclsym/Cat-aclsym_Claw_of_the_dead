@@ -190,7 +190,8 @@ func build_tower() -> void:
 
 ## Sells the tower
 func sell_tower() -> void:
-	pass
+	queue_free()
+	ILevel.current_level.coins += sell_price
 
 # Private methods
 func _apply_tower_stat_changes(upgrade: IUpgrade) -> void:
