@@ -5,8 +5,8 @@
 class_name HomeMenu
 extends Control
 
-var _levels_menu_instance: LevelsMenu
-var _option_menu_instance: OptionMenu
+var _levels_menu_instance: Control
+var _option_menu_instance: Control
 
 @onready var gui_margin_container: MarginContainer = $GuiMarginContainer
 @onready var _levels_menu: PackedScene = preload("res://scenes/ui/menus/level_selection/level_selection.tscn")

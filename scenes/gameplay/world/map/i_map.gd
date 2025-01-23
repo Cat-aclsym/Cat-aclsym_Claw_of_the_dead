@@ -87,3 +87,7 @@ func _load_waves() -> void:
 ## Called when the wave timer expires to start next wave
 func _on_waves_timer_timeout() -> void:
 	_start_wave(current_wave + 1)
+
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("tactical_view"):
+		ITower.tactical_view = !ITower.tactical_view
