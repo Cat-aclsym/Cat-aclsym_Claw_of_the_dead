@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://dhmd4je3q8jb6"]
 
-[ext_resource type="PackedScene" uid="uid://tmlcshxut7kv" path="res://i_enemy.tscn" id="1_rsmel"]
+[ext_resource type="PackedScene" uid="uid://tmlcshxut7kv" path="res://scenes/gameplay/entities/enemy/i_enemy.tscn" id="1_rsmel"]
 [ext_resource type="Texture2D" uid="uid://bdexx72ck5ean" path="res://assets/gameplay/enemies/default_zombie.png" id="2_c35mq"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_4pra6"]
