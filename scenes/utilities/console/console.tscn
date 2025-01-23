@@ -1,7 +1,8 @@
-[gd_scene load_steps=8 format=3 uid="uid://wyaikwouv3ik"]
+[gd_scene load_steps=10 format=3 uid="uid://wyaikwouv3ik"]
 
 [ext_resource type="FontFile" uid="uid://247w751m8yed" path="res://assets/ui/fonts/ibm_plex_mono/IBMPlexMono-Regular.ttf" id="1_13l6w"]
 [ext_resource type="Script" path="res://scenes/utilities/console/console.gd" id="1_vvhre"]
+[ext_resource type="FontFile" uid="uid://ddo3rokwsadq0" path="res://assets/ui/fonts/dotgothic/DotGothic16-Regular.ttf" id="3_ecciw"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_eg4vq"]
 content_margin_left = 8.0
@@ -37,6 +38,13 @@ content_margin_top = 8.0
 content_margin_right = 8.0
 content_margin_bottom = 8.0
 bg_color = Color(0, 0, 0, 0.921569)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6408q"]
+bg_color = Color(0, 0, 0, 0.784314)
+expand_margin_left = 2.0
+expand_margin_top = 2.0
+expand_margin_right = 2.0
+expand_margin_bottom = 2.0
 
 [node name="Console" type="Control"]
 layout_mode = 3
@@ -85,3 +93,38 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_dp306")
 placeholder_text = "Command..."
 scroll_past_end_of_file = true
 scroll_fit_content_height = true
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 1.0
+offset_top = -448.0
+offset_right = 201.0
+offset_bottom = -48.0
+grow_vertical = 0
+alignment = 2
+
+[node name="Suggestions" type="RichTextLabel" parent="VBoxContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_fonts/mono_font = ExtResource("3_ecciw")
+theme_override_font_sizes/mono_font_size = 15
+theme_override_styles/background = SubResource("StyleBoxFlat_6408q")
+bbcode_enabled = true
+text = "[code]help
+exit[/code]"
+fit_content = true
+scroll_active = false
+
+[node name="Panel" type="Panel" parent="VBoxContainer2/Suggestions"]
+show_behind_parent = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_6408q")

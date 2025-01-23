@@ -29,6 +29,7 @@ func _execute(console: Console, args: Array) -> int:
 	console.output.add_theme_font_size_override("italics_font_size", new_size)
 	console.output.add_theme_font_size_override("normal_font_size", new_size)
 	console.output.add_theme_font_size_override("mono_font_size", new_size)
+	console.suggestions_label.add_theme_font_size_override("font_size", new_size)
 
 	console.push_text("Set font size to %d." % new_size)
 

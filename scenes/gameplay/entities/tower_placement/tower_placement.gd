@@ -43,6 +43,9 @@ var _is_move_tower_available: bool = true
 var _state: CursorState = CursorState.IDLE
 var _tower: ITower = null
 
+## The number of towers created
+static var tower_count: int = 0
+
 @onready var cancel_place_button: TextureButton = $PlaceHUD/HBoxContainer/CancelPlaceButton
 @onready var cursor: AnimatedSprite2D = $cursor
 @onready var place_button: TextureButton = $PlaceHUD/HBoxContainer/PlaceButton
@@ -191,7 +194,10 @@ func _build() -> void:
 	var new_tower: ITower = _tower.duplicate()
 	new_tower.state = ITower.TowerState.ACTIVE
 	new_tower.modulate = Color(1, 1, 1, 1)
+	new_tower.name = "t%d" % tower_count
 	map_ref.add_child(new_tower)
+	tower_count += 1
+
 
 	ILevel.current_level.coins -= _tower.cost
 
