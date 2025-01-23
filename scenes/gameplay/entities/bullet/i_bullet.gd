@@ -6,9 +6,9 @@ extends Area2D
 
 ## Defines the different types of bullets and their behaviors
 enum BulletType {
-    DEFAULT, ## Standard projectile with basic damage
-    PIERCING, ## Penetrates through multiple enemies
-    EXPLOSIVE, ## Creates an area of effect on impact
+	DEFAULT, ## Standard projectile with basic damage
+	PIERCING, ## Penetrates through multiple enemies
+	EXPLOSIVE, ## Creates an area of effect on impact
 }
 @export var bullet_type: BulletType
 @export var damage: int
@@ -29,8 +29,8 @@ enum BulletType {
 
 ## Signal connections to be established in _ready
 @onready var signals: Array[Dictionary] = [
-                                              {SignalUtil.WHO: self, SignalUtil.WHAT: "body_entered", SignalUtil.TO: _on_body_entered}
-                                          ]
+	{SignalUtil.WHO: self, SignalUtil.WHAT: "body_entered", SignalUtil.TO: _on_body_entered}
+]
 
 ## Store the enemy that the bullet has touched to prevent multiple hits
 var _touched_enemy: IEnemy
@@ -39,21 +39,21 @@ var _touched_enemy: IEnemy
 
 # core
 func _ready() -> void:
-    SignalUtil.connects(signals)
+	SignalUtil.connects(signals)
 
 
 func _physics_process(delta: float) -> void:
-    if Global.paused:
-        return
+	if Global.paused:
+		return
 
-    position += direction * speed * delta
+	position += direction * speed * delta
 
 
 func _on_body_entered(body: Node2D) -> void:
-    if not body is IEnemy or _touched_enemy != null:
-        return
+	if not body is IEnemy or _touched_enemy != null:
+		return
 
-    _touched_enemy = body as IEnemy
-    var enemy := body as IEnemy
-    enemy.take_damage(damage, IEnemy.DamageType.DEFAULT)
-    queue_free()
+	_touched_enemy = body as IEnemy
+	var enemy := body as IEnemy
+	enemy.take_damage(damage, IEnemy.DamageType.DEFAULT)
+	queue_free()
