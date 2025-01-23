@@ -73,6 +73,9 @@ var enemies_in_area: Array[IEnemy] = []
 ## Dictionary to track enemies affected by LIMITED type with their remaining effect duration
 var active_affected_enemies: Dictionary
 
+## Dictionary to track remaining effect duration for dead enemies (LIMITED type)
+var remaining_effects: Array[float] = []
+
 # core
 func _ready():
     _update_z_index()
@@ -104,31 +107,38 @@ func _process(delta: float) -> void:
     
     # Update opacity for LIMITED type and handle effect duration
     elif trap_type == TrapType.LIMITED:
-        if is_usable:
-            # Calculate opacity based on remaining durability (100% to 20%)
-            var opacity := (0.8 * (float(current_durability) / float(max_durability))) + 0.2
-            modulate.a = opacity
-            
-            # Gérer la durée d'effet pour chaque ennemi
-            var to_remove := []
-            for enemy in active_affected_enemies:
-                active_affected_enemies[enemy] -= delta
-                if active_affected_enemies[enemy] <= 0:
-                    if enemy in enemies_in_area:  # Si l'ennemi est toujours sur le piège
-                        active_affected_enemies[enemy] = effect_duration  # Reset duration
-                    else:
-                        remove_effect(enemy)
-                        to_remove.append(enemy)
-            
-            # Nettoyer les ennemis dont l'effet est terminé
-            for enemy in to_remove:
-                active_affected_enemies.erase(enemy)
-        else:
-            # Retirer l'effet sur tous les ennemis avant de détruire le piège
-            for enemy in active_affected_enemies.keys():
-                if enemy != null:  # Vérifier que l'ennemi existe toujours
+        # Calculate opacity based on remaining durability (100% to 20%)
+        var opacity := (0.8 * (float(current_durability) / float(max_durability))) + 0.2
+        modulate.a = opacity
+        
+        # Gérer la durée d'effet pour chaque ennemi
+        var to_remove := []
+        for enemy in active_affected_enemies:
+            active_affected_enemies[enemy] -= delta
+            if active_affected_enemies[enemy] <= 0:
+                if enemy in enemies_in_area and is_usable:  # Reset only if trap is still usable
+                    active_affected_enemies[enemy] = effect_duration  # Reset duration
+                else:
                     remove_effect(enemy)
-            active_affected_enemies.clear()  # Vider le dictionnaire
+                    to_remove.append(enemy)
+        
+        # Gérer les effets restants (ennemis morts)
+        var remaining_to_remove := []
+        for i in range(remaining_effects.size()):
+            remaining_effects[i] -= delta
+            if remaining_effects[i] <= 0:
+                remaining_to_remove.append(i)
+        
+        # Nettoyer les effets terminés
+        for i in range(remaining_to_remove.size() - 1, -1, -1):
+            remaining_effects.remove_at(remaining_to_remove[i])
+        
+        # Nettoyer les ennemis dont l'effet est terminé
+        for enemy in to_remove:
+            active_affected_enemies.erase(enemy)
+            
+        # Destroy trap only when no more active effects
+        if not is_usable and active_affected_enemies.is_empty() and remaining_effects.is_empty():
             queue_free()
 
 # private
@@ -148,13 +158,22 @@ func _handle_trap_activation(enemy: IEnemy) -> void:
                 is_usable = false
                 current_cooldown = cooldown_time
         TrapType.LIMITED:
-            if is_usable:
-                if not enemy in active_affected_enemies:  # Seulement si l'ennemi n'est pas déjà affecté
+            if not enemy in active_affected_enemies:  # Seulement si l'ennemi n'est pas déjà affecté
+                if is_usable:
+                    # Connect to enemy death signal
+                    enemy.die.connect(_on_enemy_die.bind(enemy))
+                    
                     apply_effect(enemy)
                     active_affected_enemies[enemy] = effect_duration
                     current_durability -= 1
                     if current_durability <= 0:
                         is_usable = false
+
+func _on_enemy_die(enemy: IEnemy) -> void:
+    if trap_type == TrapType.LIMITED and enemy in active_affected_enemies:
+        # Transfer remaining duration to remaining_effects
+        remaining_effects.append(active_affected_enemies[enemy])
+        active_affected_enemies.erase(enemy)
 
 # signal
 func _on_area_2d_body_entered(body) -> void:

@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3 uid="uid://b5630xr4v607r"]
+[gd_scene load_steps=23 format=3 uid="uid://b5630xr4v607r"]
 
 [ext_resource type="Script" path="res://scenes/ui/menus/hud/hud.gd" id="1_cuep3"]
 [ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="2_jel3x"]
@@ -17,6 +17,7 @@
 [ext_resource type="Texture2D" uid="uid://nr3ul4jgyad0" path="res://assets/ui/icons/Bouton Annuler.png" id="12_7moo4"]
 [ext_resource type="PackedScene" uid="uid://cekitu5ltqrp7" path="res://scenes/gameplay/entities/trap/traps/slow_trap.tscn" id="16_cj1op"]
 [ext_resource type="PackedScene" uid="uid://cwtbkovmt1c8u" path="res://scenes/ui/menus/hud/trap_card.tscn" id="16_udl6i"]
+[ext_resource type="PackedScene" uid="uid://b4qxkgw2yvnxr" path="res://scenes/gameplay/entities/trap/traps/bear_trap.tscn" id="18_bear"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_f3r3y"]
 texture = ExtResource("11_p2vl4")
@@ -346,6 +347,14 @@ tower_cost = 50
 [node name="TrapCard" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer" instance=ExtResource("16_udl6i")]
 layout_mode = 2
 trap = ExtResource("16_cj1op")
+trap_name = "Slow Trap"
+trap_cost = 75
+
+[node name="BearTrapCard" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer" instance=ExtResource("16_udl6i")]
+layout_mode = 2
+trap = ExtResource("18_bear")
+trap_name = "Bear Trap"
+trap_cost = 150
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
