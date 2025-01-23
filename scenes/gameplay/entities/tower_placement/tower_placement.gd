@@ -24,6 +24,23 @@ const VALID_TILES: Array[Vector2i] = [
 	Vector2i(1, 0)
 ]
 
+## Get the initial position for a new tower based on camera view
+func _get_initial_tower_position() -> Vector2:
+	# Get the camera's center position in world coordinates
+	var camera := get_viewport().get_camera_2d()
+	if camera:
+		var world_position := camera.get_screen_center_position()
+		return world_position
+	
+	# Fallback: if no camera, get the center of the map
+	if tm_ref:
+		var map_rect := tm_ref.get_used_rect()
+		var map_center := map_rect.position + (map_rect.size / 2)
+		return tm_ref.map_to_local(map_center)
+	
+	# Ultimate fallback
+	return Vector2.ZERO
+
 ## States for the tower placement cursor
 enum CursorState {
 	IDLE,  ## Default state
@@ -129,10 +146,14 @@ func _set_cursor_position(pos: Vector2 = get_global_mouse_position()) -> void:
 ## Handles the build state logic, such as tower placement and validation
 func _state_build(tower: ITower = null) -> void:
 	if tower:
+		# Get the initial position before creating the tower
+		var initial_pos := _get_initial_tower_position()
+		_set_cursor_position(initial_pos)
+		
 		_tower = tower.duplicate()
 		_tower.state = ITower.TowerState.BUILDING
+		_tower.position = cursor.position - Vector2(0, 16)
 		add_child(_tower)
-		await get_tree().create_timer(0.1).timeout
 
 	_tower.position = cursor.position - Vector2(0, 16)
 	_tower.modulate = COLOR_OK if _is_buildable(_tower.position) else COLOR_KO
