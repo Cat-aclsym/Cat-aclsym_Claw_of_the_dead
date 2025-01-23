@@ -8,7 +8,7 @@ extends CanvasLayer
 ## Flag indicating if the UI has been initialized
 var _initialized: bool = false
 
-@onready var menu_pause: PauseMenu = $MenuPause
+@onready var menu_pause: Pause = $MenuPause
 @onready var hud: HUD = $HUD
 @onready var pause_button: Button = $PauseButton
 

@@ -1,116 +1,110 @@
-[gd_scene load_steps=12 format=3 uid="uid://c4m4v70cudic"]
+[gd_scene load_steps=11 format=3 uid="uid://c4m4v70cudic"]
 
 [ext_resource type="Script" path="res://scenes/ui/menus/pause/pause.gd" id="1_i4s0k"]
-[ext_resource type="Texture2D" uid="uid://cj3134gnhq33s" path="res://assets/ui/icons/Button Close.png" id="2_bv0yn"]
-[ext_resource type="Texture2D" uid="uid://b1tevrke0h3pb" path="res://assets/ui/icons/Button Music.png" id="2_uduxr"]
+[ext_resource type="Texture2D" uid="uid://c8b8irfugbxdj" path="res://assets/environment/backgrounds/Fond Menu 02.svg" id="2_70uiq"]
+[ext_resource type="Texture2D" uid="uid://b1tevrke0h3pb" path="res://assets/ui/icons/Bouton Musique@2x.png" id="2_uduxr"]
 [ext_resource type="Texture2D" uid="uid://dmr84ptkf8v6" path="res://assets/ui/icons/NoMusic.png" id="3_oh7uc"]
-[ext_resource type="Texture2D" uid="uid://d03x6kldjjybo" path="res://assets/ui/icons/Button Sound.png" id="4_xujui"]
+[ext_resource type="Texture2D" uid="uid://cqxaqw63qtpvr" path="res://assets/ui/icons/Bouton Replay V5.svg" id="4_ant0o"]
+[ext_resource type="Texture2D" uid="uid://d03x6kldjjybo" path="res://assets/ui/icons/Bouton Sons@2x.png" id="4_xujui"]
 [ext_resource type="Texture2D" uid="uid://dscxwuiuolg74" path="res://assets/ui/icons/NoSound.png" id="5_hmrwh"]
 [ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="6_8ptoc"]
-[ext_resource type="Texture2D" path="res://assets/ui/icons/Bouton Replay.png" id="7_x5crg"]
-[ext_resource type="Texture2D" uid="uid://chtjouq0utdei" path="res://assets/ui/icons/Button Play.png" id="8_uk01r"]
-[ext_resource type="Texture2D" uid="uid://0ta7jkwjoxg" path="res://assets/ui/icons/Button Home Menu.png" id="9_42vwe"]
+[ext_resource type="Texture2D" uid="uid://chtjouq0utdei" path="res://assets/ui/icons/Bouton Play 2.png" id="8_uk01r"]
+[ext_resource type="Texture2D" uid="uid://0ta7jkwjoxg" path="res://assets/ui/icons/Bouton Menu Home.png" id="9_42vwe"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_m6ow6"]
-bg_color = Color(0, 0, 0, 0.588235)
-corner_detail = 1
+[node name="PauseMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_bottom = 4.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_i4s0k")
 
-[node name="PauseMenu" type="PanelContainer"]
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_m6ow6")
-script = ExtResource("1_i4s0k")
 
-[node name="MarginContainer" type="MarginContainer" parent="."]
-layout_mode = 2
-theme_override_constants/margin_left = 100
-theme_override_constants/margin_top = 100
-theme_override_constants/margin_right = 100
-theme_override_constants/margin_bottom = 50
+[node name="MarginContainer" type="MarginContainer" parent="Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 300
+theme_override_constants/margin_top = 150
+theme_override_constants/margin_right = 300
+theme_override_constants/margin_bottom = 150
 
-[node name="PanelContainer" type="PanelContainer" parent="MarginContainer"]
-layout_mode = 2
-mouse_filter = 2
-
-[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/PanelContainer"]
-layout_mode = 2
-mouse_filter = 2
-theme_override_constants/margin_right = 30
-theme_override_constants/margin_bottom = 380
-
-[node name="AspectRatioContainer" type="AspectRatioContainer" parent="MarginContainer/PanelContainer/MarginContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-mouse_filter = 2
-alignment_horizontal = 2
-
-[node name="CloseTextureButton" type="TextureButton" parent="MarginContainer/PanelContainer/MarginContainer/AspectRatioContainer"]
-texture_filter = 6
-layout_mode = 2
-texture_normal = ExtResource("2_bv0yn")
-ignore_texture_size = true
-stretch_mode = 4
-
-[node name="CenterContainer" type="CenterContainer" parent="MarginContainer/PanelContainer"]
+[node name="PanelContainer" type="TextureRect" parent="Panel/MarginContainer"]
 layout_mode = 2
 mouse_filter = 2
+texture = ExtResource("2_70uiq")
+expand_mode = 1
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/PanelContainer/CenterContainer"]
+[node name="CenterContainer" type="CenterContainer" parent="Panel/MarginContainer/PanelContainer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel/MarginContainer/PanelContainer/CenterContainer"]
 layout_mode = 2
-theme_override_constants/separation = 50
+theme_override_constants/separation = 35
 alignment = 1
 
-[node name="TitlePauseMenu" type="Label" parent="MarginContainer/PanelContainer/CenterContainer/VBoxContainer"]
+[node name="TitlePauseMenu" type="Label" parent="Panel/MarginContainer/PanelContainer/CenterContainer/VBoxContainer"]
 layout_mode = 2
 theme = ExtResource("6_8ptoc")
 theme_type_variation = &"HeaderLarge"
-theme_override_colors/font_color = Color(0.364706, 0.847059, 0.364706, 1)
-theme_override_colors/font_outline_color = Color(0.364706, 0.847059, 0.364706, 1)
-theme_override_constants/outline_size = 6
-theme_override_font_sizes/font_size = 90
+theme_override_font_sizes/font_size = 50
 text = "PAUSE.TITLE"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="ButtonLayer" type="HBoxContainer" parent="MarginContainer/PanelContainer/CenterContainer/VBoxContainer"]
+[node name="ButtonLayer" type="HBoxContainer" parent="Panel/MarginContainer/PanelContainer/CenterContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 theme_override_constants/separation = 40
 
-[node name="RestartButton" type="TextureButton" parent="MarginContainer/PanelContainer/CenterContainer/VBoxContainer/ButtonLayer"]
-custom_minimum_size = Vector2(160, 140)
+[node name="RestartButton" type="TextureButton" parent="Panel/MarginContainer/PanelContainer/CenterContainer/VBoxContainer/ButtonLayer"]
+custom_minimum_size = Vector2(100, 87.5)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
-texture_normal = ExtResource("7_x5crg")
+texture_normal = ExtResource("4_ant0o")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="PlayButton" type="TextureButton" parent="MarginContainer/PanelContainer/CenterContainer/VBoxContainer/ButtonLayer"]
-custom_minimum_size = Vector2(160, 140)
+[node name="PlayButton" type="TextureButton" parent="Panel/MarginContainer/PanelContainer/CenterContainer/VBoxContainer/ButtonLayer"]
+custom_minimum_size = Vector2(100, 87.5)
 layout_mode = 2
 texture_normal = ExtResource("8_uk01r")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="HomeButton" type="TextureButton" parent="MarginContainer/PanelContainer/CenterContainer/VBoxContainer/ButtonLayer"]
-custom_minimum_size = Vector2(160, 140)
+[node name="HomeButton" type="TextureButton" parent="Panel/MarginContainer/PanelContainer/CenterContainer/VBoxContainer/ButtonLayer"]
+custom_minimum_size = Vector2(100, 87.5)
 layout_mode = 2
 texture_normal = ExtResource("9_42vwe")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="TopLeftIcon" type="HBoxContainer" parent="MarginContainer/PanelContainer/CenterContainer/VBoxContainer"]
+[node name="TopLeftIcon" type="HBoxContainer" parent="Panel/MarginContainer/PanelContainer/CenterContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_constants/separation = 60
 alignment = 1
 
-[node name="MusicButton" type="TextureButton" parent="MarginContainer/PanelContainer/CenterContainer/VBoxContainer/TopLeftIcon"]
+[node name="MusicButton" type="TextureButton" parent="Panel/MarginContainer/PanelContainer/CenterContainer/VBoxContainer/TopLeftIcon"]
 texture_filter = 6
 custom_minimum_size = Vector2(80, 70)
 layout_mode = 2
@@ -120,7 +114,7 @@ texture_pressed = ExtResource("3_oh7uc")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="SoundButton" type="TextureButton" parent="MarginContainer/PanelContainer/CenterContainer/VBoxContainer/TopLeftIcon"]
+[node name="SoundButton" type="TextureButton" parent="Panel/MarginContainer/PanelContainer/CenterContainer/VBoxContainer/TopLeftIcon"]
 custom_minimum_size = Vector2(80, 70)
 layout_mode = 2
 toggle_mode = true
