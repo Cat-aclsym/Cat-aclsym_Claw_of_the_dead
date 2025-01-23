@@ -61,13 +61,8 @@ in_delay = 0.3
 out_delay = 0.3
 
 [node name="EnemyGroup2" parent="Waves/Wave1" index="2" instance=ExtResource("5_tp84h")]
-enemies = Array[int]([0, 0, 0])
+enemies = Array[int]([1])
 in_delay = 1.5
-out_delay = 5.0
-
-[node name="EnemyGroup3" parent="Waves/Wave1" index="3" instance=ExtResource("5_tp84h")]
-enemies = Array[int]([0, 0, 0, 0, 0, 0])
-in_delay = 2.0
 out_delay = 5.0
 
 [node name="Wave2" parent="Waves" index="1" instance=ExtResource("4_hpdff")]
