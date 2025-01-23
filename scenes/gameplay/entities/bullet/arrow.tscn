@@ -6,9 +6,9 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_qj200"]
 size = Vector2(21, 6)
 
-[node name="TestBullet" instance=ExtResource("1_vp3tv")]
-speed = 250
+[node name="Arrow" instance=ExtResource("1_vp3tv")]
 damage = 10
+speed = 250
 
 [node name="Sprite2D" parent="." index="0"]
 rotation = 0.785398

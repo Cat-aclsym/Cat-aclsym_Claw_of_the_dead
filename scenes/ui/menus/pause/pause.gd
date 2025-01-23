@@ -2,22 +2,20 @@
 ##
 ## Manages the pause menu functionality and UI interactions.
 ## Handles game pause, restart, and navigation controls.
-class_name PauseMenu
+class_name Pause
 extends Control
 
 # Onready Variables
-@onready var restart_button: TextureButton = $MarginContainer/PanelContainer/CenterContainer/VBoxContainer/ButtonLayer/RestartButton
-@onready var play_button: TextureButton = $MarginContainer/PanelContainer/CenterContainer/VBoxContainer/ButtonLayer/PlayButton
-@onready var home_button: TextureButton = $MarginContainer/PanelContainer/CenterContainer/VBoxContainer/ButtonLayer/HomeButton
-@onready var music_button: TextureButton = $MarginContainer/PanelContainer/CenterContainer/VBoxContainer/TopLeftIcon/MusicButton
-@onready var sound_button: TextureButton = $MarginContainer/PanelContainer/CenterContainer/VBoxContainer/TopLeftIcon/SoundButton
-@onready var quit_button: TextureButton = $MarginContainer/PanelContainer/MarginContainer/AspectRatioContainer/CloseTextureButton
+@onready var restart_button: TextureButton = $Panel/MarginContainer/PanelContainer/CenterContainer/VBoxContainer/ButtonLayer/RestartButton
+@onready var play_button: TextureButton = $Panel/MarginContainer/PanelContainer/CenterContainer/VBoxContainer/ButtonLayer/PlayButton
+@onready var home_button: TextureButton = $Panel/MarginContainer/PanelContainer/CenterContainer/VBoxContainer/ButtonLayer/HomeButton
+@onready var music_button: TextureButton = $Panel/MarginContainer/PanelContainer/CenterContainer/VBoxContainer/TopLeftIcon/MusicButton
+@onready var sound_button: TextureButton = $Panel/MarginContainer/PanelContainer/CenterContainer/VBoxContainer/TopLeftIcon/SoundButton
 
 @onready var signals: Array[Dictionary] = [
 	{SignalUtil.WHO: home_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_home_button_pressed},
 	{SignalUtil.WHO: restart_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_restart_button_pressed},
-	{SignalUtil.WHO: play_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_play_button_pressed},
-	{SignalUtil.WHO: quit_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_close_texture_button_pressed},
+	{SignalUtil.WHO: play_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_play_button_pressed}
 ]
 
 # core
@@ -25,7 +23,6 @@ func _ready() -> void:
 	assert(home_button != null, "home_button node not found")
 	assert(restart_button != null, "restart_button node not found")
 	assert(play_button != null, "play_button node not found")
-	assert(quit_button != null, "quit_button node not found")
 	SignalUtil.connects(signals)
 
 # private
@@ -57,10 +54,5 @@ func _on_restart_button_pressed() -> void:
 # signals
 ## Resumes the game by unpausing and closing the menu.
 func _on_play_button_pressed() -> void:
-	Global.paused = false
-	queue_free()
-
-## Closes the pause menu and resumes the game.
-func _on_close_texture_button_pressed() -> void:
 	Global.paused = false
 	queue_free()

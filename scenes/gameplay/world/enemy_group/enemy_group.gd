@@ -6,7 +6,7 @@ extends Node
 
 
 ## List of enemies to spawn
-@export var enemies: Array[ScenesLoader.EnemyId] = []
+@export var enemies: Array[IEnemy.EnemyType] = []
 
 ## Delay in second between enemies spawn
 @export_range(0.1, 10.0) var in_delay: float = 0.1
