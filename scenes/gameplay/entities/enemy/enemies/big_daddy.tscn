@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://dkcpg16ie8deh"]
 
-[ext_resource type="PackedScene" uid="uid://tmlcshxut7kv" path="res://scenes/gameplay/entities/enemy/i_enemy.tscn" id="1_o4ric"]
+[ext_resource type="PackedScene" uid="uid://tmlcshxut7kv" path="res://i_enemy.tscn" id="1_o4ric"]
 [ext_resource type="Texture2D" uid="uid://h5f1ntgevb58" path="res://assets/environment/tilesets/tileset_debug.png" id="2_2h5k7"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_by7ku"]

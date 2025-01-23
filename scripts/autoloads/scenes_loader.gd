@@ -7,6 +7,7 @@ const ENEMIES: Dictionary = {
 	IEnemy.EnemyType.DEFAULT: preload("res://scenes/gameplay/entities/enemy/enemies/default_zombie.tscn"),
 	IEnemy.EnemyType.BIG_DADDY: preload("res://scenes/gameplay/entities/enemy/enemies/big_daddy.tscn"),
 	IEnemy.EnemyType.FAT: preload("res://scenes/gameplay/entities/enemy/enemies/fat.tscn"),
+  IEnemy.EnemyType.RAT: preload("res://scenes/gameplay/entities/enemy/enemies/rat.tscn"),
 }
 
 const TOWERS: Dictionary = {
