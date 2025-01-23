@@ -1,31 +1,9 @@
-[gd_scene load_steps=2 format=3 uid="uid://4bspols4p3r2"]
+[gd_scene load_steps=4 format=3 uid="uid://4bspols4p3r2"]
 
 [ext_resource type="PackedScene" uid="uid://ta5ev4qh6unn" path="res://scenes/gameplay/entities/upgrade/i_upgrade.tscn" id="1_heffx"]
+[ext_resource type="PackedScene" uid="uid://b7k083o7qmfss" path="res://scenes/gameplay/entities/upgrade/first_tower/upgrade_first_tower_3_A.tscn" id="2_mqbe6"]
+[ext_resource type="PackedScene" uid="uid://cte40it072jpm" path="res://scenes/gameplay/entities/upgrade/first_tower/upgrade_first_tower_3_B.tscn" id="3_ob27h"]
 
 [node name="UpgradeFirstTower2" instance=ExtResource("1_heffx")]
-change = {
-"bullet_stat": true,
-"cannon": false,
-"cannon_stat": true,
-"tower": false,
-"tower_stat": true
-}
-bulletStats = {
-"aoe_range": 0.0,
-"damage": 10.0,
-"damage_multiplier": 0.0,
-"dot_damage": 0.0,
-"dot_duration": 0.0,
-"dot_tick": 0.0,
-"pierce_reduction": 0.0,
-"piercing": 0.0,
-"speed": 0.0
-}
-cannonStats = {
-"fire_rate": 0.5,
-"range": 5.0
-}
-towerStats = {
-"level": 2
-}
+next_upgrades = Array[PackedScene]([ExtResource("2_mqbe6"), ExtResource("3_ob27h")])
 price = 100
