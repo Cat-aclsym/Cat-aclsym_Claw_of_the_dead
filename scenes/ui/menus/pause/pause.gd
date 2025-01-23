@@ -2,7 +2,7 @@
 ##
 ## Manages the pause menu functionality and UI interactions.
 ## Handles game pause, restart, and navigation controls.
-class_name PauseMenu
+class_name Pause
 extends Control
 
 # Onready Variables
