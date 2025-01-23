@@ -31,6 +31,7 @@ enum EnemyType {
 	BIG_DADDY,
 	DEFAULT,
 	FAT,
+	RAT
 }
 
 ## Types of damage that can be applied

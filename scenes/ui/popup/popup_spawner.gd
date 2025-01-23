@@ -32,11 +32,9 @@ func score(text: String) -> void:
 ## [br]The popup will display the given wave text.
 ## [param text] The wave text to display
 func wave(text: String) -> void:
-	var wave_popup: Node2D = popup_node.instantiate()
-	var label: Label = wave_popup.get_node("WaveMarker/TextureRect/Label")
-	wave_popup.position = global_position
+	var wave_popup: Control = popup_node.instantiate()
+	var label: Label = wave_popup.get_node("CenterContainer/TextureRect/Label")
 
-	get_tree().current_scene.add_child(wave_popup)
-
+	# Add to UI instead of current scene
+	Global.ui.add_child(wave_popup)
 	label.text = text
-	wave_popup.z_index = 4096

@@ -139,6 +139,10 @@ func fire() -> void:
 
 ## Starts the upgrade process with the given upgrade scene
 func start_upgrade(upgradeScene: PackedScene) -> void:
+	var upgrade: IUpgrade = upgradeScene.instantiate()
+	if ILevel.current_level.coins < upgrade.price:
+		Log.trace(Log.Level.ERROR, "Not enough coins to upgrade")
+		return
 	pending_upgrade = upgradeScene
 	state = TowerState.UPGRADING
 	$ProgressBar.value = 0
