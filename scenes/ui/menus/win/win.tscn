@@ -55,13 +55,16 @@ layout_mode = 2
 theme_override_colors/font_color = Color(0.364706, 0.847059, 0.364706, 1)
 theme_override_fonts/font = ExtResource("2_vg85t")
 theme_override_font_sizes/font_size = 50
-text = "VICTORY.LEVEL.TITLE"
+text = "WINMENU.LEVEL.TITLE.WIN"
 horizontal_alignment = 1
 clip_text = true
 
 [node name="TextureRect" type="TextureRect" parent="GUIMarginContainer/BackgroundTextureRect/MarginContainer/VBoxContainer"]
 layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 2.0
 texture = ExtResource("4_kxsyh")
+expand_mode = 3
 stretch_mode = 5
 
 [node name="HBoxContainer" type="HBoxContainer" parent="GUIMarginContainer/BackgroundTextureRect/MarginContainer/VBoxContainer"]
@@ -78,6 +81,7 @@ stretch_mode = 4
 
 [node name="TimeStatisticLabel" type="Label" parent="GUIMarginContainer/BackgroundTextureRect/MarginContainer/VBoxContainer/HBoxContainer/TimeStatisticAspectRatioContainer"]
 layout_mode = 2
+text = "WINMENU.TIMESTATISTIC.LABEL"
 
 [node name="LifeStatisticAspectRatioContainer" type="AspectRatioContainer" parent="GUIMarginContainer/BackgroundTextureRect/MarginContainer/VBoxContainer/HBoxContainer"]
 layout_mode = 2
@@ -90,26 +94,27 @@ stretch_mode = 4
 
 [node name="LifeStatisticLabel" type="Label" parent="GUIMarginContainer/BackgroundTextureRect/MarginContainer/VBoxContainer/HBoxContainer/LifeStatisticAspectRatioContainer"]
 layout_mode = 2
+text = "WINMENU.LIFESTATISTIC.LABEL"
 
 [node name="ButtonsHBoxContainer" type="HBoxContainer" parent="GUIMarginContainer/BackgroundTextureRect/MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
-
-[node name="NextButtonAspectRatioContainer" type="AspectRatioContainer" parent="GUIMarginContainer/BackgroundTextureRect/MarginContainer/VBoxContainer/ButtonsHBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="NextTextureButton" type="TextureButton" parent="GUIMarginContainer/BackgroundTextureRect/MarginContainer/VBoxContainer/ButtonsHBoxContainer/NextButtonAspectRatioContainer"]
-layout_mode = 2
-texture_normal = ExtResource("3_f42u1")
-ignore_texture_size = true
-stretch_mode = 4
 
 [node name="RestartButtonAspectRatioContainer" type="AspectRatioContainer" parent="GUIMarginContainer/BackgroundTextureRect/MarginContainer/VBoxContainer/ButtonsHBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="RestartTextureButton" type="TextureButton" parent="GUIMarginContainer/BackgroundTextureRect/MarginContainer/VBoxContainer/ButtonsHBoxContainer/RestartButtonAspectRatioContainer"]
+layout_mode = 2
+texture_normal = ExtResource("3_f42u1")
+ignore_texture_size = true
+stretch_mode = 4
+
+[node name="NextButtonAspectRatioContainer" type="AspectRatioContainer" parent="GUIMarginContainer/BackgroundTextureRect/MarginContainer/VBoxContainer/ButtonsHBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="NextTextureButton" type="TextureButton" parent="GUIMarginContainer/BackgroundTextureRect/MarginContainer/VBoxContainer/ButtonsHBoxContainer/NextButtonAspectRatioContainer"]
 layout_mode = 2
 texture_normal = ExtResource("4_rkeoh")
 ignore_texture_size = true
