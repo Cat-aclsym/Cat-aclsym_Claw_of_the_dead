@@ -59,4 +59,3 @@ layer_0/name = "Terrain"
 layer_0/y_sort_enabled = true
 layer_1/name = "Props"
 layer_1/y_sort_enabled = true
-layer_1/tile_data = PackedInt32Array()

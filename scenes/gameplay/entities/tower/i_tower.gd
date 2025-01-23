@@ -10,7 +10,7 @@ signal upgrade_started
 signal upgrade_completed
 
 ## Enum for the type of target the tower will shoot at
-enum TARGET_TYPE {
+enum TargetType {
 	FIRST,    ## Shoots at the first enemy that enters the range
 	LAST,     ## Shoots at the last enemy that enters the range
 	STRONGEST, ## Shoots at the enemy with the most health
@@ -19,10 +19,15 @@ enum TARGET_TYPE {
 }
 
 ## Enum for the state of the tower
-enum TOWER_STATE {
+enum TowerState {
 	BUILDING,  ## The tower is being built
 	UPGRADING, ## The tower is being upgraded
 	ACTIVE,    ## The tower is placed and active
+}
+
+## Enum for the type of the tower
+enum TowerType {
+	TOWER_1, ## The first tower
 }
 
 # Exported variables
@@ -79,17 +84,17 @@ var enemy_array: Array[IEnemy]
 ## Is the tower is selected
 var selected: bool = false
 ## The state of the tower
-var state: TOWER_STATE = TOWER_STATE.ACTIVE
+var state: TowerState = TowerState.ACTIVE
 ## The target of the tower
 var target: IEnemy
 ## The type of target the tower will shoot at
-var target_type: TARGET_TYPE
+var target_type: TargetType
 ## The pending upgrade to be applied
 var pending_upgrade: PackedScene
 
 # Core methods
 func _ready() -> void:
-	target_type = TARGET_TYPE.FIRST
+	target_type = TargetType.FIRST
 	sell_price = cost / 2
 	hover_box.z_index = 3
 	update_dependent_properties()
@@ -98,7 +103,7 @@ func _process(_delta: float) -> void:
 	if Global.paused:
 		return
 
-	if state == TOWER_STATE.BUILDING:
+	if state == TowerState.BUILDING:
 		_update_z_index()
 		return
 
@@ -108,7 +113,7 @@ func _process(_delta: float) -> void:
 # Public methods
 ## Fires a bullet at the current target if conditions are met
 func fire() -> void:
-	if state != TOWER_STATE.ACTIVE or not len(enemy_array):
+	if state != TowerState.ACTIVE or not len(enemy_array):
 		return
 	
 	if bullet_scene == null:
@@ -135,7 +140,7 @@ func fire() -> void:
 ## Starts the upgrade process with the given upgrade scene
 func start_upgrade(upgradeScene: PackedScene) -> void:
 	pending_upgrade = upgradeScene
-	state = TOWER_STATE.UPGRADING
+	state = TowerState.UPGRADING
 	$ProgressBar.value = 0
 	$ProgressBar.visible = true
 	$Timer.start()
@@ -162,7 +167,7 @@ func apply_upgrade() -> void:
 	available_upgrade = upgrade.next_upgrades
 	sell_price += upgrade.price / 2
 	update_dependent_properties()
-	state = TOWER_STATE.ACTIVE
+	state = TowerState.ACTIVE
 	emit_signal("upgrade_completed")
 
 ## Updates properties that depend on tower stats
@@ -208,15 +213,15 @@ func _apply_bullet_modifications(bullet_instance: IBullet) -> void:
 
 func _choose_target() -> void:
 	match target_type:
-		TARGET_TYPE.FIRST:
+		TargetType.FIRST:
 			_get_first_target()
-		TARGET_TYPE.LAST:
+		TargetType.LAST:
 			_get_last_target()
-		TARGET_TYPE.STRONGEST:
+		TargetType.STRONGEST:
 			_get_strongest_target()
-		TARGET_TYPE.WEAKEST:
+		TargetType.WEAKEST:
 			_get_weakest_target()
-		TARGET_TYPE.RANDOM:
+		TargetType.RANDOM:
 			_get_random_target()
 
 ## Function to create the range polygon for the tower when the tower is selected.
