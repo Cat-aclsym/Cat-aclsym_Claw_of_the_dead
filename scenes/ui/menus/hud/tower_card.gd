@@ -5,12 +5,8 @@
 class_name TowerCard
 extends MarginContainer
 
-signal pressed
-
 ## The tower scene to instantiate when building.
 @export var tower: PackedScene = null
-@export var tower_name: String = ""
-@export var tower_cost: int = 0
 
 var _tower: ITower = null
 var _cost: int
@@ -22,6 +18,10 @@ var _cost: int
 @onready var build_button: TextureButton = $VBoxContainer/Button
 @onready var text_price: Label = $VBoxContainer/Button/Label
 
+@onready var signals: Array[Dictionary] = [
+	{SignalUtil.WHO: build_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_button_pressed},
+]
+
 # core
 func _ready() -> void:
 	assert(tower != null, "tower scene not assigned")
@@ -31,14 +31,9 @@ func _ready() -> void:
 	assert(build_button != null, "build_button node not found")
 	assert(text_price != null, "text_price node not found")
 
-	_cost = tower_cost
-
-	if tower:
-		var instance = tower.instantiate()
-		_tower = instance
-		$VBoxContainer/Label.text = tower_name
-		$VBoxContainer/Button/Label.text = str(instance.cost) + "$"
-		instance.queue_free()
+	_tower = tower.instantiate()
+	_cost = _tower.cost
+	SignalUtil.connects(signals)
 
 # public
 ## Updates the tower card display with current cost and availability.

@@ -67,7 +67,7 @@ static func trace(level: Log.Level, args: Variant) -> void:
 
 	var prefix_1: String = ""
 	var stack: Array[Dictionary] = get_stack()
-	
+
 	# Stack can be empty when the game is not running from Godot engine
 	if not stack.is_empty():
 		var execution_line := stack[1]
@@ -104,7 +104,7 @@ static func trace(level: Log.Level, args: Variant) -> void:
 static func save_message(message: String) -> void:
 	if _log_filepath.is_empty():
 		return
-		
+
 	var file := FileAccess.open(_log_filepath, FileAccess.READ_WRITE)
 	if not file:
 		return
@@ -142,7 +142,7 @@ static func _format_args(args: Variant) -> String:
 static func _publish_message(message: String) -> void:
 	print(message)
 
-	if Global.console:
+	if Global.console != null:
 		Global.console.push_text(message)
 
 	save_message(message)

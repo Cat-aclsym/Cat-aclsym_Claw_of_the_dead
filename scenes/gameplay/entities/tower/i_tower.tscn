@@ -1,15 +1,18 @@
-[gd_scene load_steps=2 format=3 uid="uid://064cnqw4xlus"]
+[gd_scene load_steps=3 format=3 uid="uid://064cnqw4xlus"]
 
 [ext_resource type="Script" path="res://scenes/gameplay/entities/tower/i_tower.gd" id="1_4edlv"]
+[ext_resource type="PackedScene" uid="uid://6kxfyy7tk2pu" path="res://scenes/gameplay/entities/upgrade/first_tower/upgrade_first_tower_1.tscn" id="2_r3uob"]
 
 [node name="ITower" type="Node2D"]
 script = ExtResource("1_4edlv")
+available_upgrade = Array[PackedScene]([ExtResource("2_r3uob")])
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 position = Vector2(0, -2)
 scale = Vector2(0.85, 0.85)
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Sprite2D"]
+active = false
 
 [node name="Area2D" type="Area2D" parent="."]
 
@@ -25,3 +28,18 @@ polygon = PackedVector2Array(-13, -37, 108, -111, 3, 46, -53, 0)
 [node name="TowerHoverBox" type="Area2D" parent="."]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="TowerHoverBox"]
+
+[node name="ProgressBar" type="ProgressBar" parent="."]
+visible = false
+z_index = 500
+offset_left = -32.0
+offset_top = 18.0
+offset_right = 33.0
+offset_bottom = 33.0
+max_value = 30.0
+show_percentage = false
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 0.05
+
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]

@@ -13,9 +13,10 @@ enum UpgradeType {
 
 ## Configuration of which aspects will be modified by this upgrade
 @export var changes: Dictionary = {
-	"bullet_stat": false, ## Whether bullet stats will be modified
 	"tower_stat": false, ## Whether tower stats will be modified
-	"tower": false, ## Whether tower model will be changed
+	"tower_model": false, ## Whether tower model will be changed
+	"bullet_stat": false, ## Whether bullet stats will be modified
+	"bullet_model": false, ## Whether bullet model will be changed
 }
 
 ## Bullet statistics modification values
@@ -38,11 +39,14 @@ enum UpgradeType {
 	"fire_rate": 0.0, ## Attack speed modifier
 }
 
-## New cannon scene to replace the current one
-@export var cannon: PackedScene
+## The nexts upgrades available after this one
+@export var next_upgrades: Array[PackedScene]
 
-## New tower model scene to replace the current one
-@export var tower: PackedScene
+## New tower model texture to replace the current one
+@export var tower: Texture
+
+## New bullet model scene to replace the current one
+@export var bullet: PackedScene
 
 ## Cost of applying this upgrade
 @export var price: int
