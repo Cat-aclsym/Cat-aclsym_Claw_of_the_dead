@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://scenes/ui/menus/hud/hud.gd" id="1_cuep3"]
 [ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="2_jel3x"]
-[ext_resource type="Texture2D" uid="uid://disuxhruldd8h" path="res://assets/ui/icons/Bouton Pause.png" id="2_meysh"]
+[ext_resource type="Texture2D" uid="uid://disuxhruldd8h" path="res://assets/ui/icons/Button Pause.png" id="2_meysh"]
 [ext_resource type="Texture2D" uid="uid://cml3pcp3ixa0k" path="res://assets/ui/huds/Coeur.png" id="2_neukb"]
 [ext_resource type="Texture2D" uid="uid://bcvoasbjyvuy5" path="res://assets/ui/huds/Barre de vie.png" id="3_g6v8d"]
 [ext_resource type="PackedScene" uid="uid://h0drgd3amf85" path="res://scenes/ui/menus/hud/tower_card.tscn" id="3_mkldi"]
@@ -12,9 +12,9 @@
 [ext_resource type="Texture2D" uid="uid://dg0hpeoeleiff" path="res://assets/ui/huds/Coins@2x.png" id="7_1sk4j"]
 [ext_resource type="Texture2D" uid="uid://bcga3gamtf11v" path="res://assets/ui/huds/Waves@2x.png" id="8_ewojn"]
 [ext_resource type="Script" path="res://scenes/ui/menus/hud/new_wave_count.gd" id="9_o6rym"]
-[ext_resource type="Texture2D" uid="uid://1mu5cdhd5hw8" path="res://assets/ui/icons/build_button.png" id="10_sc2vu"]
+[ext_resource type="Texture2D" uid="uid://1mu5cdhd5hw8" path="res://assets/ui/icons/Button Build.png" id="10_sc2vu"]
 [ext_resource type="Texture2D" uid="uid://bel17gs3ijyb1" path="res://assets/environment/backgrounds/Fond Menu 02@2x.png" id="11_p2vl4"]
-[ext_resource type="Texture2D" uid="uid://nr3ul4jgyad0" path="res://assets/ui/icons/Bouton Annuler.png" id="12_7moo4"]
+[ext_resource type="Texture2D" uid="uid://nr3ul4jgyad0" path="res://assets/ui/icons/Button Cancel.png" id="12_7moo4"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_f3r3y"]
 texture = ExtResource("11_p2vl4")
