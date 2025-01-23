@@ -24,6 +24,9 @@ signal wave_complete(last_wave: bool)
 ## WinConditionEntity with State Machine
 @export var win_condition: WinConditionEntity = null
 
+## Export of wave class
+@export var wave: Wave = null
+
 ## Delay in seconds before next wave starts
 @export_range(0.1, 10.0) var delay: float = 0.1
 
@@ -56,8 +59,6 @@ var paths: Array[Path2D] = []
 
 ## If all the waves are finished
 var all_waves_completed: bool = false
-
-@export var wave: Wave = null
 
 ## Timer to spawn enemies
 @onready var timer: Timer = $Timer

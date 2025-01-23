@@ -8,11 +8,14 @@ extends Node2D
 signal wave_complete(last_wave: bool)
 signal victory
 
-## Returns true if all waves are completed
-@export var all_waves_completed: bool = false
-
 ## Reference to the TileMap node for map layout
 @export var tilemap: TileMap
+
+## Returns true if all waves are completed
+var all_waves_completed: bool = false
+
+# Instance of win condition
+var win_condition : WinConditionEntity = null;
 
 ## Index of current active wave
 var current_wave: int = -1
@@ -26,8 +29,6 @@ var waves: Array[Wave] = []
 @onready var waves_timer: Timer = $WavesTimer
 @onready var popup_wave_spawner: PopupSpawner = $PopupWaveSpawner
 @onready var camera: Camera2D = $Camera2D
-
-@export var win_condition : WinConditionEntity = null;
 
 @onready var signals: Array[Dictionary] = [
 	{SignalUtil.WHO: waves_timer, SignalUtil.WHAT: "timeout", SignalUtil.TO: _on_waves_timer_timeout},

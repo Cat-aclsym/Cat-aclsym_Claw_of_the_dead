@@ -22,6 +22,8 @@ const STATE_LOSE: String = "StateLose"
 # Level reference
 @export var level: ILevel = null
 
+@export var win_condition: WinConditionEntity = null
+
 # State machine instance
 var state_machine: StateMachine
 
@@ -31,6 +33,7 @@ func _ready() -> void:
 func _setup() -> void:
 	_build_state_machine()
 	state_machine.toggle_initial_state()
+	_connect_signals()
 
 	if not level:
 		Log.trace(Log.Level.WARN, "Level reference is missing in WinConditionEntity. Waiting for initialization...")

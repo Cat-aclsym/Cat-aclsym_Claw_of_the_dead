@@ -38,9 +38,7 @@ func _ready() -> void:
 		add_child(new_map)
 		map = new_map
 		Log.trace(Log.Level.INFO, "ILevel.gd: Map instance created and added to the level")
-		win_condition = WinConditionEntity.new()
-		win_condition._build_state_machine()
-		win_condition._connect_signals()
+		win()
 		if map.has_signal("victory"):
 			SignalUtil.connects([ {SignalUtil.WHO: map, SignalUtil.WHAT: "victory", SignalUtil.TO: _on_victory}])
 	else:
@@ -57,6 +55,11 @@ func initialize(meta: LevelMetadata) -> void:
 ## Starts the next wave of enemies
 func start_new_wave() -> void:
 	pass
+	
+func win() -> void:
+	win_condition = WinConditionEntity.new()
+	win_condition._build_state_machine()
+	win_condition._connect_signals()
 
 # private
 ## Updates coin count and emits stats_updated signal

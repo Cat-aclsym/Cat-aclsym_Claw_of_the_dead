@@ -104,7 +104,7 @@ func transition_to(state_id: String) -> bool:
 	if not states.has(state_id):
 		Log.trace(Log.Level.ERROR, "%s : Unknown state id: '%s'" % [name, state_id])
 		return false
-	var next_state             = states.get(state_id)
+	var next_state: State = states.get(state_id)
 	var transition: Transition = _find_transition(current_state, next_state)
 
 	if transition:
