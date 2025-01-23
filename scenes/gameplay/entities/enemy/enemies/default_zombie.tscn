@@ -1,19 +1,25 @@
-[gd_scene load_steps=4 format=3 uid="uid://dhmd4je3q8jb6"]
+[gd_scene load_steps=5 format=3 uid="uid://dhmd4je3q8jb6"]
 
 [ext_resource type="PackedScene" uid="uid://tmlcshxut7kv" path="res://scenes/gameplay/entities/enemy/i_enemy.tscn" id="1_rsmel"]
 [ext_resource type="Texture2D" uid="uid://h5f1ntgevb58" path="res://assets/environment/tilesets/tileset_debug.png" id="2_nnigj"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_4pra6"]
 atlas = ExtResource("2_nnigj")
-region = Rect2(64, 0, 64, 64)
+region = Rect2(128, 192, 64, 64)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_iaady"]
+size = Vector2(18.8235, 18.8236)
 
 [node name="DefaultZombie" instance=ExtResource("1_rsmel")]
 position = Vector2(0, -16)
-scale = Vector2(0.6, 0.6)
 
 [node name="Sprite2D" parent="." index="0"]
-position = Vector2(0, -5)
+position = Vector2(0, -8)
 texture = SubResource("AtlasTexture_4pra6")
+
+[node name="CollisionShape2D" parent="." index="2"]
+position = Vector2(4.65661e-09, 9.53674e-07)
+shape = SubResource("RectangleShape2D_iaady")
 
 [node name="GPUParticles2D" parent="." index="3"]
 visible = false

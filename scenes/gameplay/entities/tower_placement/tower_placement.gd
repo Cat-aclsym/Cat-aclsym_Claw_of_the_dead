@@ -21,7 +21,7 @@ const UP_OFFSET := Vector2i(-1, -1)
 const RIGHT_OFFSET := Vector2i(0, -1)
 const LEFT_OFFSET := Vector2i(-1, 0)
 const VALID_TILES: Array[Vector2i] = [
-	Vector2i(0, 1)
+	Vector2i(1, 0)
 ]
 
 ## States for the tower placement cursor
@@ -187,6 +187,7 @@ func _cancel_build() -> void:
 
 func _build() -> void:
 	if not _is_buildable(_tower.position):
+		Log.trace(Log.Level.DEBUG, "Cannot build tower at position: {0}".format([_tower.position]))
 		return
 
 	_is_move_tower_available = false
@@ -235,7 +236,6 @@ func _is_buildable(pos: Vector2) -> bool:
 	return true
 
 func _on_place_button_pressed() -> void:
-	print("build")
 	_build()
 
 func _on_cancel_place_button_pressed() -> void:

@@ -27,7 +27,7 @@ tracks/0/keys = {
 }
 tracks/1/type = "value"
 tracks/1/imported = false
-tracks/1/enabled = true
+tracks/1/enabled = false
 tracks/1/path = NodePath("Sprite2D:texture:region")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
@@ -126,7 +126,7 @@ _data = {
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_46uiq"]
 radius = 9.0
-height = 34.0
+height = 28.2354
 
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_tc12e"]
 particles_animation = true
@@ -148,7 +148,6 @@ anim_speed_max = 1.0
 
 [node name="IEnemy" type="CharacterBody2D"]
 position = Vector2(0, -20)
-scale = Vector2(0.7, 0.7)
 script = ExtResource("1_ppg1n")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
@@ -156,6 +155,7 @@ texture = SubResource("AtlasTexture_6gv71")
 region_rect = Rect2(0, 0, 64, 64)
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+active = false
 libraries = {
 "": SubResource("AnimationLibrary_jl7ul")
 }

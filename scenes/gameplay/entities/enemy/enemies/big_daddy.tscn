@@ -5,7 +5,7 @@
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_by7ku"]
 atlas = ExtResource("2_2h5k7")
-region = Rect2(64, 0, 64, 64)
+region = Rect2(144, 128, 32, 64)
 
 [node name="BigDaddy" instance=ExtResource("1_o4ric")]
 position = Vector2(0, -22)
@@ -15,5 +15,8 @@ speed = 10.0
 type = 0
 
 [node name="Sprite2D" parent="." index="0"]
-position = Vector2(0, -4)
+position = Vector2(0, 5)
 texture = SubResource("AtlasTexture_by7ku")
+
+[node name="CollisionShape2D" parent="." index="2"]
+position = Vector2(0, 5)
