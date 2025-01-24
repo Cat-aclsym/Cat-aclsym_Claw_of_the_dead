@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://h5f1ntgevb58"
-path="res://.godot/imported/tileset_debug.png-1111e71c06871eb778466039ac5264c0.ctex"
+uid="uid://banqtfw2vyqua"
+path="res://.godot/imported/rat.png-c70f65188683454491add74162c164fa.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/environment/tilesets/tileset_debug.png"
-dest_files=["res://.godot/imported/tileset_debug.png-1111e71c06871eb778466039ac5264c0.ctex"]
+source_file="res://assets/gameplay/enemies/rat.png"
+dest_files=["res://.godot/imported/rat.png-c70f65188683454491add74162c164fa.ctex"]
 
 [params]
 
