@@ -27,7 +27,7 @@ tracks/0/keys = {
 }
 tracks/1/type = "value"
 tracks/1/imported = false
-tracks/1/enabled = true
+tracks/1/enabled = false
 tracks/1/path = NodePath("Sprite2D:texture:region")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
@@ -124,9 +124,8 @@ _data = {
 "walk_up": SubResource("Animation_jh3bl")
 }
 
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_46uiq"]
-radius = 9.0
-height = 34.0
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_oeiyk"]
+size = Vector2(32, 32)
 
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_tc12e"]
 particles_animation = true
@@ -148,7 +147,6 @@ anim_speed_max = 1.0
 
 [node name="IEnemy" type="CharacterBody2D"]
 position = Vector2(0, -20)
-scale = Vector2(0.7, 0.7)
 script = ExtResource("1_ppg1n")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
@@ -156,15 +154,15 @@ texture = SubResource("AtlasTexture_6gv71")
 region_rect = Rect2(0, 0, 64, 64)
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+active = false
 libraries = {
 "": SubResource("AnimationLibrary_jl7ul")
 }
 autoplay = "RESET"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-scale = Vector2(1.7, 1.7)
-skew = -0.00247645
-shape = SubResource("CapsuleShape2D_46uiq")
+position = Vector2(0, 4)
+shape = SubResource("RectangleShape2D_oeiyk")
 
 [node name="GPUParticles2D" type="GPUParticles2D" parent="."]
 material = SubResource("CanvasItemMaterial_tc12e")
@@ -173,6 +171,6 @@ process_material = SubResource("ParticleProcessMaterial_aqjwg")
 texture = ExtResource("2_tjt82")
 
 [node name="PopupScoreSpawner" type="Marker2D" parent="."]
-position = Vector2(0, -33)
+position = Vector2(0, -16)
 script = ExtResource("3_6sxxp")
 popup_node = ExtResource("4_7dtc1")

@@ -2,7 +2,7 @@
 ##
 ## Manages the level selection menu interface and functionality.
 ## Handles level loading and initialization of level metadata.
-class_name LevelsMenu
+class_name LevelSelection
 extends Control
 
 # signals

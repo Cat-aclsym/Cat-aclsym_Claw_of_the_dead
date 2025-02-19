@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://h5f1ntgevb58"
-path="res://.godot/imported/tileset_debug.png-1111e71c06871eb778466039ac5264c0.ctex"
+uid="uid://cqxaqw63qtpvr"
+path="res://.godot/imported/Bouton Replay V5.svg-2e1fa6068cab09fb485a934a3978f098.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/environment/tilesets/tileset_debug.png"
-dest_files=["res://.godot/imported/tileset_debug.png-1111e71c06871eb778466039ac5264c0.ctex"]
+source_file="res://assets/ui/icons/Bouton Replay V5.svg"
+dest_files=["res://.godot/imported/Bouton Replay V5.svg-2e1fa6068cab09fb485a934a3978f098.ctex"]
 
 [params]
 
@@ -32,3 +32,6 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
+svg/scale=1.0
+editor/scale_with_editor_scale=false
+editor/convert_colors_with_editor_theme=false

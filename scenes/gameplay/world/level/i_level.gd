@@ -95,3 +95,12 @@ func _load_map() -> void:
 		Log.trace(Log.Level.INFO, "Connected 'wave_complete' signal from map.")
 	else:
 		Log.trace(Log.Level.ERROR, "Map does not have 'wave_complete' signal.")
+
+## Returns a tower instance by name
+func get_tower_by_name(name: String) -> ITower:
+	for child in map.get_children():
+		if child is ITower:
+			var tower: ITower = child as ITower
+			if tower.name == name:
+				return tower
+	return null

@@ -1,16 +1,8 @@
-[gd_scene load_steps=2 format=3 uid="uid://b7k083o7qmfss"]
+[gd_scene load_steps=3 format=3 uid="uid://b7k083o7qmfss"]
 
 [ext_resource type="PackedScene" uid="uid://ta5ev4qh6unn" path="res://scenes/gameplay/entities/upgrade/i_upgrade.tscn" id="1_v3q2b"]
+[ext_resource type="PackedScene" uid="uid://p3xbvq3bgson" path="res://scenes/gameplay/entities/upgrade/first_tower/upgrade_first_tower_4_A.tscn" id="2_7rotk"]
 
 [node name="UpgradeFirstTower3A" instance=ExtResource("1_v3q2b")]
-change = {
-"bullet_stat": false,
-"cannon": true,
-"cannon_stat": false,
-"tower": true,
-"tower_stat": true
-}
-towerStats = {
-"level": 4
-}
+tower = ExtResource("2_7rotk")
 price = 200

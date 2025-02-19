@@ -43,7 +43,7 @@ var current_group: int = -1
 var dead_enemies: int = 0
 
 ## List of enemies to spawn in current group
-var enemies_to_spawn: Array[ScenesLoader.EnemyId] = []
+var enemies_to_spawn: Array[IEnemy.EnemyType] = []
 
 ## Total number of enemies in this wave
 var enemies_total_count: int = 0
