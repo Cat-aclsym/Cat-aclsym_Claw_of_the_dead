@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://c8u8j5s2xrgvx"]
+
+[ext_resource type="Script" path="res://scenes/narrative/example/dialogic_example.gd" id="1_yjk2p"]
+
+[node name="DialogicExample" type="Node2D"]
+script = ExtResource("1_yjk2p")
