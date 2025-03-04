@@ -1,0 +1,18 @@
+[gd_scene load_steps=4 format=3 uid="uid://cekitu5ltqrp7"]
+
+[ext_resource type="PackedScene" uid="uid://d11atjk5rjemm" path="res://scenes/gameplay/entities/trap/i_trap.tscn" id="1_base"]
+[ext_resource type="Script" path="res://scenes/gameplay/entities/trap/traps/slow_trap.gd" id="2_script"]
+[ext_resource type="Texture2D" uid="uid://do0ybx58p4dnq" path="res://assets/gameplay/traps/spikes.png" id="3_acsu1"]
+
+[node name="SlowTrap" instance=ExtResource("1_base")]
+script = ExtResource("2_script")
+slow_amount = 0.3
+cost = 75
+
+[node name="Sprite2D" parent="." index="0"]
+position = Vector2(0, 0)
+scale = Vector2(1, 1)
+texture = ExtResource("3_acsu1")
+
+[node name="CollisionPolygon2D" parent="Area2D" index="0"]
+polygon = PackedVector2Array(-27, -1, 0, -17, 28, 0, 0, 15)

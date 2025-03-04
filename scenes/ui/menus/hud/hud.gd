@@ -89,7 +89,8 @@ func toggle_build_menu(toggle_bt: bool = true) -> void:
 		return
 
 	for tower_card in tower_list.get_children():
-		tower_card.update()
+		if tower_card is TowerCard:
+			tower_card.update()
 
 ## Initializes and displays the HUD interface.
 ## [br]Sets up signal connections and positions the construction menu.
@@ -119,7 +120,8 @@ func _update() -> void:
 		return
 
 	for tower_card in tower_list.get_children():
-		tower_card.update()
+		if tower_card is TowerCard:
+			tower_card.update()
 
 ## Handles the build button press event.
 func _on_build_button_pressed() -> void:
