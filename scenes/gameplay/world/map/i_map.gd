@@ -5,14 +5,17 @@
 class_name IMap
 extends Node2D
 
-## Emitted when all waves are completed successfully
-signal win
-
-## Emitted when player loses the map
-signal loose
+signal wave_complete(last_wave: bool)
+signal victory
 
 ## Reference to the TileMap node for map layout
 @export var tilemap: TileMap
+
+## Returns true if all waves are completed
+var all_waves_completed: bool = false
+
+# Instance of win condition
+var win_condition : WinConditionEntity = null;
 
 ## Index of current active wave
 var current_wave: int = -1
@@ -46,8 +49,8 @@ func _ready() -> void:
 func _start_wave(index: int) -> void:
 	if index == waves.size():
 		Log.trace(Log.Level.DEBUG, "You WIN !!!")
-		win.emit()
 		waves_timer.stop()
+		victory.emit()
 		return
 
 	waves[index].start_wave()

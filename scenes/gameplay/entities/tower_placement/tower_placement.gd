@@ -21,8 +21,25 @@ const UP_OFFSET := Vector2i(-1, -1)
 const RIGHT_OFFSET := Vector2i(0, -1)
 const LEFT_OFFSET := Vector2i(-1, 0)
 const VALID_TILES: Array[Vector2i] = [
-	Vector2i(0, 1)
+	Vector2i(1, 0)
 ]
+
+## Get the initial position for a new tower based on camera view
+func _get_initial_tower_position() -> Vector2:
+	# Get the camera's center position in world coordinates
+	var camera := get_viewport().get_camera_2d()
+	if camera:
+		var world_position := camera.get_screen_center_position()
+		return world_position
+
+	# Fallback: if no camera, get the center of the map
+	if tm_ref:
+		var map_rect := tm_ref.get_used_rect()
+		var map_center := map_rect.position + (map_rect.size / 2)
+		return tm_ref.map_to_local(map_center)
+
+	# Ultimate fallback
+	return Vector2.ZERO
 
 ## States for the tower placement cursor
 enum CursorState {
@@ -120,7 +137,6 @@ func _handle_state() -> void:
 func _set_cursor_position(pos: Vector2 = get_global_mouse_position()) -> void:
 	var map_pos: Vector2i = tm_ref.local_to_map(pos)
 	var local_pos: Vector2 = tm_ref.map_to_local(map_pos)
-	local_pos -= Vector2(0, 8)
 
 	cursor.position = local_pos
 	cursor.visible = true
@@ -130,10 +146,14 @@ func _set_cursor_position(pos: Vector2 = get_global_mouse_position()) -> void:
 ## Handles the build state logic, such as tower placement and validation
 func _state_build(tower: ITower = null) -> void:
 	if tower:
+		# Get the initial position before creating the tower
+		var initial_pos := _get_initial_tower_position()
+		_set_cursor_position(initial_pos)
+
 		_tower = tower.duplicate()
 		_tower.state = ITower.TowerState.BUILDING
+		_tower.position = cursor.position - Vector2(0, 16)
 		add_child(_tower)
-		await get_tree().create_timer(0.1).timeout
 
 	_tower.position = cursor.position - Vector2(0, 16)
 	_tower.modulate = COLOR_OK if _is_buildable(_tower.position) else COLOR_KO
@@ -188,6 +208,7 @@ func _cancel_build() -> void:
 
 func _build() -> void:
 	if not _is_buildable(_tower.position):
+		Log.trace(Log.Level.DEBUG, "Cannot build tower at position: {0}".format([_tower.position]))
 		return
 
 	_is_move_tower_available = false
@@ -199,18 +220,10 @@ func _build() -> void:
 	map_ref.add_child(new_tower)
 	tower_count += 1
 
-
 	ILevel.current_level.coins -= _tower.cost
 
-	var tm_pos: Array[Vector2i] = [
-		tm_ref.local_to_map(new_tower.position),
-		tm_ref.local_to_map(new_tower.position) - UP_OFFSET,
-		tm_ref.local_to_map(new_tower.position) - RIGHT_OFFSET,
-		tm_ref.local_to_map(new_tower.position) - LEFT_OFFSET,
-	]
-
-	for p in tm_pos:
-		_invalid_cells.append(p)
+	var tm_pos: Vector2i = tm_ref.local_to_map(new_tower.position)
+	_invalid_cells.append(tm_pos)
 
 	_cancel_build()
 	_is_move_tower_available = true
@@ -219,19 +232,13 @@ func _is_buildable(pos: Vector2) -> bool:
 	if ILevel.current_level.coins < _tower.cost:
 		return false
 
-	var tm_pos: Array[Vector2i] = [
-		tm_ref.local_to_map(pos),
-		tm_ref.local_to_map(pos) - UP_OFFSET,
-		tm_ref.local_to_map(pos) - RIGHT_OFFSET,
-		tm_ref.local_to_map(pos) - LEFT_OFFSET,
-	]
+	var tm_pos: Vector2i = tm_ref.local_to_map(pos)
 
-	for p in tm_pos:
-		if not tm_ref.get_cell_atlas_coords(0, p) in VALID_TILES or p in _invalid_cells:
-			return false
+	if not tm_ref.get_cell_atlas_coords(0, tm_pos) in VALID_TILES or tm_pos in _invalid_cells:
+		return false
 
-		if tm_ref.get_cell_atlas_coords(1, p) != Vector2i(-1, -1):
-			return false
+	if tm_ref.get_cell_atlas_coords(1, tm_pos) != Vector2i(-1, -1):
+		return false
 
 	return true
 

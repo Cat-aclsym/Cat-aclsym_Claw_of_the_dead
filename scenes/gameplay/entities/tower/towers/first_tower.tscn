@@ -1,8 +1,12 @@
-[gd_scene load_steps=10 format=3 uid="uid://cq705nqdp8fnw"]
+[gd_scene load_steps=11 format=3 uid="uid://cq705nqdp8fnw"]
 
 [ext_resource type="PackedScene" uid="uid://064cnqw4xlus" path="res://scenes/gameplay/entities/tower/i_tower.tscn" id="1_ecq02"]
-[ext_resource type="PackedScene" uid="uid://cax2gd3swoin0" path="res://scenes/gameplay/entities/bullet/arrow.tscn" id="2_imkq6"]
-[ext_resource type="Texture2D" uid="uid://comglet8s7g5i" path="res://assets/gameplay/towers/tower_2_LVL_1.png" id="3_sycyc"]
+[ext_resource type="PackedScene" uid="uid://cax2gd3swoin0" path="res://scenes/gameplay/entities/bullet/arrow.tscn" id="2_okbr1"]
+[ext_resource type="Texture2D" uid="uid://h5f1ntgevb58" path="res://assets/environment/tilesets/tileset_debug.png" id="4_ftq1a"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hn83r"]
+atlas = ExtResource("4_ftq1a")
+region = Rect2(64, 192, 64, 64)
 
 [sub_resource type="Animation" id="Animation_i58hl"]
 length = 0.001
@@ -58,15 +62,16 @@ height = 36.0
 
 [node name="FirstTower" instance=ExtResource("1_ecq02")]
 position = Vector2(0, -16)
-bullet_scene = ExtResource("2_imkq6")
+bullet_scene = ExtResource("2_okbr1")
 cost = 50
 fire_rate = 1.0
 level = 1
 shoot_range = 100.0
 
 [node name="Sprite2D" parent="." index="0"]
-texture = ExtResource("3_sycyc")
-hframes = 11
+position = Vector2(0, -5)
+scale = Vector2(1, 1)
+texture = SubResource("AtlasTexture_hn83r")
 
 [node name="AnimationPlayer" parent="Sprite2D" index="0"]
 libraries = {
