@@ -28,6 +28,7 @@ enum TowerState {
 ## Enum for the type of the tower
 enum TowerType {
 	TOWER_1, ## The first tower
+	TOWER_2, ## The second tower
 }
 
 # Exported variables
