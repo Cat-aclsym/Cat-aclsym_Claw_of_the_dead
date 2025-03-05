@@ -1,0 +1,131 @@
+[gd_scene load_steps=8 format=3 uid="uid://bj68p6c4lre5p"]
+
+[ext_resource type="Texture2D" uid="uid://c8b8irfugbxdj" path="res://assets/environment/backgrounds/Fond Menu 02.svg" id="1_e2l08"]
+[ext_resource type="Script" path="res://scenes/ui/menus/win/win.gd" id="1_uc30n"]
+[ext_resource type="FontFile" uid="uid://ddo3rokwsadq0" path="res://assets/ui/fonts/dotgothic/DotGothic16-Regular.ttf" id="2_vg85t"]
+[ext_resource type="Texture2D" uid="uid://ddk5xo6vibq1t" path="res://assets/ui/icons/Button Replay.svg" id="3_f42u1"]
+[ext_resource type="Texture2D" uid="uid://bm2s1dmwfanrg" path="res://assets/ui/icons/Icon Victory Gold.svg" id="4_kxsyh"]
+[ext_resource type="Texture2D" uid="uid://dn8ksi7radij3" path="res://assets/ui/icons/Button Skip.svg" id="4_rkeoh"]
+[ext_resource type="Texture2D" uid="uid://0ta7jkwjoxg" path="res://assets/ui/icons/Button Home Menu.png" id="5_iw8rk"]
+
+[node name="Win" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_uc30n")
+
+[node name="GUIMarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="BackgroundTextureRect" type="TextureRect" parent="GUIMarginContainer"]
+layout_mode = 2
+texture = ExtResource("1_e2l08")
+expand_mode = 1
+
+[node name="MarginContainer" type="MarginContainer" parent="GUIMarginContainer/BackgroundTextureRect"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 50
+theme_override_constants/margin_top = 50
+theme_override_constants/margin_right = 50
+theme_override_constants/margin_bottom = 50
+
+[node name="VBoxContainer" type="VBoxContainer" parent="GUIMarginContainer/BackgroundTextureRect/MarginContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="VictoryLabel" type="Label" parent="GUIMarginContainer/BackgroundTextureRect/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.364706, 0.847059, 0.364706, 1)
+theme_override_fonts/font = ExtResource("2_vg85t")
+theme_override_font_sizes/font_size = 50
+text = "WINMENU.LEVEL.TITLE.WIN"
+horizontal_alignment = 1
+clip_text = true
+
+[node name="TextureRect" type="TextureRect" parent="GUIMarginContainer/BackgroundTextureRect/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 2.0
+texture = ExtResource("4_kxsyh")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="HBoxContainer" type="HBoxContainer" parent="GUIMarginContainer/BackgroundTextureRect/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="TimeStatisticAspectRatioContainer" type="AspectRatioContainer" parent="GUIMarginContainer/BackgroundTextureRect/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="TimeStatisticTextureRect" type="TextureRect" parent="GUIMarginContainer/BackgroundTextureRect/MarginContainer/VBoxContainer/HBoxContainer/TimeStatisticAspectRatioContainer"]
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 4
+
+[node name="TimeStatisticLabel" type="Label" parent="GUIMarginContainer/BackgroundTextureRect/MarginContainer/VBoxContainer/HBoxContainer/TimeStatisticAspectRatioContainer"]
+layout_mode = 2
+text = "WINMENU.TIMESTATISTIC.LABEL"
+
+[node name="LifeStatisticAspectRatioContainer" type="AspectRatioContainer" parent="GUIMarginContainer/BackgroundTextureRect/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="LifeStatisticTextureRect" type="TextureRect" parent="GUIMarginContainer/BackgroundTextureRect/MarginContainer/VBoxContainer/HBoxContainer/LifeStatisticAspectRatioContainer"]
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 4
+
+[node name="LifeStatisticLabel" type="Label" parent="GUIMarginContainer/BackgroundTextureRect/MarginContainer/VBoxContainer/HBoxContainer/LifeStatisticAspectRatioContainer"]
+layout_mode = 2
+text = "WINMENU.LIFESTATISTIC.LABEL"
+
+[node name="ButtonsHBoxContainer" type="HBoxContainer" parent="GUIMarginContainer/BackgroundTextureRect/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="RestartButtonAspectRatioContainer" type="AspectRatioContainer" parent="GUIMarginContainer/BackgroundTextureRect/MarginContainer/VBoxContainer/ButtonsHBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="RestartTextureButton" type="TextureButton" parent="GUIMarginContainer/BackgroundTextureRect/MarginContainer/VBoxContainer/ButtonsHBoxContainer/RestartButtonAspectRatioContainer"]
+layout_mode = 2
+texture_normal = ExtResource("3_f42u1")
+ignore_texture_size = true
+stretch_mode = 4
+
+[node name="NextButtonAspectRatioContainer" type="AspectRatioContainer" parent="GUIMarginContainer/BackgroundTextureRect/MarginContainer/VBoxContainer/ButtonsHBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="NextTextureButton" type="TextureButton" parent="GUIMarginContainer/BackgroundTextureRect/MarginContainer/VBoxContainer/ButtonsHBoxContainer/NextButtonAspectRatioContainer"]
+layout_mode = 2
+texture_normal = ExtResource("4_rkeoh")
+ignore_texture_size = true
+stretch_mode = 4
+
+[node name="HomeButtonAspectRatioContainer" type="AspectRatioContainer" parent="GUIMarginContainer/BackgroundTextureRect/MarginContainer/VBoxContainer/ButtonsHBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HomeTextureButton" type="TextureButton" parent="GUIMarginContainer/BackgroundTextureRect/MarginContainer/VBoxContainer/ButtonsHBoxContainer/HomeButtonAspectRatioContainer"]
+layout_mode = 2
+texture_normal = ExtResource("5_iw8rk")
+ignore_texture_size = true
+stretch_mode = 4
