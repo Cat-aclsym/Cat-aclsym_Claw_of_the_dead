@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://064cnqw4xlus"]
 
 [ext_resource type="Script" path="res://scenes/gameplay/entities/tower/i_tower.gd" id="1_4edlv"]
-[ext_resource type="PackedScene" uid="uid://6kxfyy7tk2pu" path="res://scenes/gameplay/entities/upgrade/first_tower/upgrade_first_tower_1.tscn" id="2_r3uob"]
+[ext_resource type="PackedScene" uid="uid://6kxfyy7tk2pu" path="res://scenes/gameplay/entities/upgrade/bat_01/bat_01_02.tscn" id="2_r3uob"]
 
 [node name="ITower" type="Node2D"]
 script = ExtResource("1_4edlv")
