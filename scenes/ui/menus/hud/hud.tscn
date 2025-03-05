@@ -344,6 +344,3 @@ libraries = {
 "": SubResource("AnimationLibrary_omyie")
 }
 autoplay = "show_tower_list"
-
-[connection signal="pressed" from="MarginContainer/PauseButton" to="." method="_on_pause_button_pressed"]
-[connection signal="pressed" from="VBoxContainer/MarginContainer/BuildButton" to="." method="_on_build_button_pressed"]

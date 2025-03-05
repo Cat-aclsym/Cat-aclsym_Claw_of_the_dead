@@ -1,0 +1,28 @@
+[gd_scene load_steps=5 format=3 uid="uid://cbj85p4w3vwii"]
+
+[ext_resource type="PackedScene" uid="uid://tmlcshxut7kv" path="res://scenes/gameplay/entities/enemy/i_enemy.tscn" id="1_qtlv0"]
+[ext_resource type="Texture2D" uid="uid://c13pq5vfql173" path="res://assets/environment/tilesets/tileset_debug-mob.png" id="2_ef2h7"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_i2m30"]
+atlas = ExtResource("2_ef2h7")
+region = Rect2(0, 128, 64, 64)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_6dscd"]
+size = Vector2(32, 32)
+
+[node name="Rat" instance=ExtResource("1_qtlv0")]
+position = Vector2(0, -10)
+max_health = 10.0
+speed = 45.0
+type = 3
+
+[node name="Sprite2D" parent="." index="0"]
+position = Vector2(0, -22)
+texture = SubResource("AtlasTexture_i2m30")
+
+[node name="CollisionShape2D" parent="." index="2"]
+position = Vector2(0, -6)
+shape = SubResource("RectangleShape2D_6dscd")
+
+[node name="PopupScoreSpawner" parent="." index="4"]
+position = Vector2(0, -22)

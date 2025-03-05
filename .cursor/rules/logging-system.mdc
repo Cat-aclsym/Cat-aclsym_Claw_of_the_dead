@@ -1,0 +1,110 @@
+---
+description: Logging system
+globs: scripts/log/*.gd, scripts/autoloads/global.gd
+alwaysApply: false
+---
+# Logging System
+
+The Cat-aclsym project uses a comprehensive logging system to record runtime information, errors, and debugging data. This document explains how to use the logging system effectively.
+
+## Overview
+
+The logging system is built to be:
+- **Flexible**: Multiple output targets (console, file, debug UI)
+- **Configurable**: Different log levels for different needs
+- **Performance-conscious**: Debug logs are only enabled in debug mode
+- **Informative**: Automatically includes context like file, line, and method
+
+## Log Levels
+
+The system supports multiple log levels in ascending order of severity:
+
+```gdscript
+enum Level {
+	DEBUG = 0, ## Detailed debugging information
+	INFO,      ## General information about program execution
+	WARN,      ## Warnings about potential issues
+	ERROR,     ## Errors that don't stop program execution
+	FATAL,     ## Critical errors that may stop program execution
+}
+```
+
+Debug logs are automatically suppressed when `Global.debug` is set to false.
+
+## Basic Usage
+
+To log a message, use the `Log.trace()` method:
+
+```gdscript
+# Initialize the logging system (do this at application start)
+Log.init()
+
+# Log at different levels
+Log.trace(Log.Level.DEBUG, "Debug message")
+Log.trace(Log.Level.INFO, "Player spawned at position %s" % str(position))
+Log.trace(Log.Level.WARN, "Asset not found: %s" % asset_path)
+Log.trace(Log.Level.ERROR, "Failed to save game: %s" % error_message)
+Log.trace(Log.Level.FATAL, "Critical failure in system")
+
+# You can also pass arrays of values to be concatenated
+Log.trace(Log.Level.INFO, ["Player ", player_id, " connected"])
+```
+
+## Context Information
+
+The logging system automatically captures:
+- Timestamp with millisecond precision
+- Log level prefix (`[DEBUG]`, `[INFO]`, etc.)
+- Source file, line number, and function name
+- The actual message
+
+Output format:
+```
+[LEVEL] HH:MM:SS.ms - path/to/script.gd::line@method_name - message
+```
+
+Example:
+```
+[INFO] 14:32:26.421 - scripts/gameplay/player_controller.gd::45@_ready - Player controller initialized
+```
+
+## Log File Management
+
+Log files are stored in the `/log/` directory with the naming scheme:
+```
+YYYY_MM_DD-HH_MM.log
+```
+
+The log system automatically creates this file when `Log.init()` is called. If the directory doesn't exist, it will be created.
+
+## Log Output Destinations
+
+Log messages are sent to multiple destinations:
+1. **Console**: Messages are printed to the Godot console using `print()`
+2. **Debug Console**: If `Global.console` exists, messages are added to it
+3. **Log File**: Messages are stored in the current log file
+
+## Manual Message Logging
+
+You can manually save messages to the log file without using the standard logging levels:
+
+```gdscript
+Log.save_message("Custom message to be logged")
+```
+
+This is useful for logging from the debug console or other systems that need to bypass the standard logging format.
+
+## Best Practices
+
+1. **Initialize early**: Call `Log.init()` at the start of your application
+2. **Choose appropriate levels**: Use DEBUG for details, INFO for status, WARN for potential issues, ERROR for failures, and FATAL for critical problems
+3. **Include context**: Provide relevant information in your log messages
+4. **Check debug mode**: For expensive operations, check `Global.debug` before computing log data
+5. **Structured logging**: Use consistent formatting for similar log messages
+6. **Keep it short**: Avoid extremely long log messages that are difficult to read
+
+## Implementation Details
+
+The logging system is implemented in:
+- `scripts/log/log.gd`: Core logging functionality
+- `scripts/autoloads/global.gd`: Debug flag that controls DEBUG level logs
