@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://b5630xr4v607r"]
+[gd_scene load_steps=21 format=3 uid="uid://b5630xr4v607r"]
 
 [ext_resource type="Script" path="res://scenes/ui/menus/hud/hud.gd" id="1_cuep3"]
 [ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="2_jel3x"]
@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://h0drgd3amf85" path="res://scenes/ui/menus/hud/tower_card.tscn" id="3_mkldi"]
 [ext_resource type="Texture2D" uid="uid://d33ngfvvwv501" path="res://assets/ui/huds/Barre de vie ombre.png" id="4_4h2ri"]
 [ext_resource type="PackedScene" uid="uid://cq705nqdp8fnw" path="res://scenes/gameplay/entities/tower/towers/bat_01.tscn" id="4_ro8fv"]
+[ext_resource type="PackedScene" uid="uid://bvnxnvnxnvnxn" path="res://scenes/gameplay/entities/tower/towers/second_tower.tscn" id="5_ro8fv"]
 [ext_resource type="Texture2D" uid="uid://cf3qgahrw8xo1" path="res://assets/ui/huds/Vie@2x.png" id="5_hukgj"]
 [ext_resource type="Texture2D" uid="uid://dg0hpeoeleiff" path="res://assets/ui/huds/Coins@2x.png" id="7_1sk4j"]
 [ext_resource type="Texture2D" uid="uid://bcga3gamtf11v" path="res://assets/ui/huds/Waves@2x.png" id="8_ewojn"]
@@ -338,6 +339,14 @@ layout_mode = 2
 texture_filter = 1
 layout_mode = 2
 tower = ExtResource("4_ro8fv")
+
+[node name="TowerCard2" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer" instance=ExtResource("3_mkldi")]
+texture_filter = 1
+layout_mode = 2
+tower = ExtResource("5_ro8fv")
+
+[node name="Label" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/TowerCard2/VBoxContainer" index="0"]
+text = "tour 2"
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
