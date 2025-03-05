@@ -62,7 +62,7 @@ func _physics_process(delta: float) -> void:
 
 # private
 func _on_body_entered(body: Node2D) -> void:
-	if not body is IEnemy or _touched_enemy != null:
+	if not body is IEnemy or _touched_enemy != null and not is_piercing:
 		return
 
 	_touched_enemy = body as IEnemy

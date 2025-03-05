@@ -8,11 +8,10 @@ size = Vector2(21, 6)
 
 [node name="PiercingArrow" instance=ExtResource("1_vp3tv")]
 z_index = 1000
-damage = 10
+damage = 100
 speed = 300
 is_piercing = true
-pierce_count = 3
-pierce_reduction = 25
+pierce_count = 10
 
 [node name="Sprite2D" parent="." index="0"]
 modulate = Color(1, 0, 1, 1)
