@@ -1,0 +1,35 @@
+---
+description: General information about the Cat-aclsym project and its technical stack
+globs: 
+alwaysApply: true
+---
+# Cat-aclsym: Claw of the Dead - Project Overview
+
+## Description
+Cat-aclsym: Claw of the Dead is a tower defense game featuring cats vs zombies. Players must strategically place cat towers to defend against waves of zombie enemies.
+
+### Game Concept
+- Tower defense with a cat and zombie theme
+- Strategic placement of cat towers with different abilities
+- Wave-based enemy progression system
+- Resource management and upgrade mechanics
+
+## Technical Stack
+
+### Engine & Languages
+- **Godot 4.3** - Main game engine
+- **GDScript** - Primary programming language
+- **Shader language** - For custom visual effects
+
+### Architecture
+- **Component-based** architecture with clear separation of responsibilities
+- **Signal system** for inter-component communication
+- **Command pattern** for game actions
+- **Resource management** via autoloads
+- **State machine** implementation for entity behaviors
+
+### Development Practices
+- Version control with Git
+- Regular automated builds
+- Test-driven development for core systems
+- Continuous integration workflow
