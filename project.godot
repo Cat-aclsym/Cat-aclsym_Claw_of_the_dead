@@ -20,13 +20,63 @@ config/icon="res://assets/ui/icons/LogoChatVertClairFondFonce-100.jpg"
 Global="*res://scripts/autoloads/global.gd"
 SoundManager="*res://scripts/autoloads/sound_manager.gd"
 ScenesLoader="*res://scripts/autoloads/scenes_loader.gd"
-DialogueManager="*res://addons/dialogue_manager/dialogue_manager.gd"
+Dialogic="*res://addons/dialogic/Core/DialogicGameHandler.gd"
 
-[dialogue_manager]
+[dialogic]
 
-general/balloon_path="res://dialogue_baloon/balloon.tscn"
-general/states=["Global"]
-general/custom_test_scene_path="res://scenes/narrative/lore_scene/lore_scene.tscn"
+directories/dch_directory={
+"character1": "res://assets/narrative/character1.dch"
+}
+directories/dtl_directory={
+"example": "res://assets/narrative/example.dtl"
+}
+text/default_speed=0.05
+text/skippable=true
+text/autoadvance_delay=1.0
+animations/join_default_length=0.5
+animations/leave_default_length=0.5
+animations/leave_default_wait=true
+animations/join_default_wait=true
+choices/autofocus_first=true
+choices/delay=0.2
+save/autosave_delay=60.0
+text/autopauses_enabled=true
+extensions_folder="res://addons/dialogic_additions"
+text/letter_speed=0.03
+text/initial_text_reveal_skippable=true
+text/text_reveal_skip_delay=0.1
+text/advance_delay=0.1
+text/autoadvance_per_character_delay=0.1
+text/autoadvance_ignored_characters_enabled=true
+audio/max_channels=4.0
+animations/cross_fade_default_length=0.5
+choices/reveal_delay=0
+choices/reveal_by_input=false
+save/encryption_on_exports_only=true
+save/autosave=false
+save/autosave_mode=2
+history/simple_history_enabled=false
+history/simple_history_save=false
+history/full_history_enabled=false
+history/full_history_save=false
+translation/enabled=true
+translation/original_locale="fr"
+translation/file_mode=1
+translation/translation_folder="res://assets/translations"
+translation/save_mode=0
+translation/add_separator=false
+translation/intern/save_mode=0
+translation/intern/file_mode=1
+translation/intern/translation_folder="res://assets/translations"
+translation/locales=["en", "fr"]
+text/autopauses={}
+variables={
+"player_name": ""
+}
+layout/style_list=["res://assets/narrative/style.tres"]
+layout/default_style="res://assets/narrative/style.tres"
+glossary/default_case_sensitive=true
+text/autocolor_names=true
 
 [display]
 
@@ -35,7 +85,7 @@ window/stretch/aspect="keep_height"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/dialogue_manager/plugin.cfg")
+enabled=PackedStringArray("res://addons/dialogic/plugin.cfg")
 
 [gui]
 
@@ -52,6 +102,13 @@ console_push={
 "deadzone": 0.5,
 "events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":4194309,"key_label":0,"unicode":0,"location":0,"echo":false,"script":null)
 , Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":4194310,"key_label":0,"unicode":0,"location":0,"echo":false,"script":null)
+]
+}
+dialogic_default_action={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":32,"key_label":0,"unicode":32,"location":0,"echo":false,"script":null)
+, Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":4194309,"key_label":0,"unicode":0,"location":0,"echo":false,"script":null)
+, Object(InputEventMouseButton,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"button_mask":1,"position":Vector2(0, 0),"global_position":Vector2(0, 0),"factor":1.0,"button_index":1,"canceled":false,"pressed":true,"double_click":false,"script":null)
 ]
 }
 scroll_up={
@@ -81,8 +138,9 @@ pointing/emulate_touch_from_mouse=true
 
 [internationalization]
 
-locale/translations=PackedStringArray("res://assets/translations/translations.en.translation", "res://assets/translations/translations.fr.translation")
+locale/translations=PackedStringArray("res://assets/translations/translations.en.translation", "res://assets/translations/translations.fr.translation", "res://dialogic_translations.en.translation", "res://dialogic_translations.fr.translation")
 locale/translations_pot_files=PackedStringArray("res://scenes/narrative/lore_scene/main.dialogue")
+locale/test="fr"
 pseudolocalization/use_pseudolocalization=true
 pseudolocalization/replace_with_accents=false
 pseudolocalization/prefix=""
