@@ -41,12 +41,18 @@ var initial_piercing: int
 	{SignalUtil.WHO: self, SignalUtil.WHAT: "body_entered", SignalUtil.TO: _on_body_entered}
 ]
 
+## Store the enemy that the bullet has touched to prevent multiple hits
+var _touched_enemy: IEnemy
+
+
+
 # core
 func _ready() -> void:
 	SignalUtil.connects(signals)
 	initial_damage = damage
 	piercing = pierce_count
 	initial_piercing = pierce_count
+
 
 func _physics_process(delta: float) -> void:
 	if Global.paused:
@@ -56,9 +62,10 @@ func _physics_process(delta: float) -> void:
 
 # private
 func _on_body_entered(body: Node2D) -> void:
-	if not body is IEnemy:
+	if not body is IEnemy or _touched_enemy != null:
 		return
 
+	_touched_enemy = body as IEnemy
 	var enemy := body as IEnemy
 	
 	# Apply base damage

@@ -1,0 +1,10 @@
+join character1 center [animation="Fade In" wait="true"]
+character1: Hello everyone!
+character1: I am Whiskas, Whiskas the cat!
+[wait time="1.0"]
+character1: How do other humans calls you?
+[text_input text="What is your name?" var="player_name" placeholder="Chill Guy"]
+character1 (Amazed): NO WAY! You're called {player_name} x_x
+character1 (Worry): Anyway, I'm out!
+leave character1 [animation="Slide Out Down" wait="true"]
+[end_timeline]

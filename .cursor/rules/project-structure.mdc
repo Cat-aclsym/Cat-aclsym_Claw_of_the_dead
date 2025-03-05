@@ -1,0 +1,120 @@
+---
+description: Directory structure and file
+globs: 
+alwaysApply: true
+---
+# Project Structure
+
+This document outlines the complete directory structure of the Cat-aclsym project, helping new developers understand where to find and place files.
+
+## Root-Level Organization
+
+```
+/
+	.cursor/rules/ # Cursor Rules
+	addons/ # Godot Addons
+	assets/ # All game assets
+	exports/ # Build outputs
+	log/ # Log files
+	scenes/ # Scenes and related GDScript files (.tscn, .gd)
+	scripts/ # GDScript files (.gd)
+	export_presets.cfg # Export configurations
+	project.godot # Main project file
+```
+
+## Assets Directory (`/assets/`)
+
+All game assets are organized by type:
+
+```
+/assets/
+	audio/ # Audio assets
+		music/ # Background music tracks
+		sfx/ # Sound effects
+		voice/ # Voice acting files
+	environment/ # Environment assets
+		backgrounds/ # Background images
+		props/ # Environmental props
+		tilesets/ # Map tilesets
+		weather/ # Weather effect assets
+	gameplay/ # Gameplay assets
+		towers/ # Tower sprites and animations
+		enemies/ # Enemy sprites and animations
+		projectiles/ # Projectile sprites
+		effects/ # Visual effect sprites
+	resources/ # Shared resources
+		fonts/ # Font files
+		themes/ # UI themes
+		configs/ # Configurations
+	translations/ # Translation CSV and imported files
+	ui/ # UI assets
+		buttons/ # Button graphics
+		icons/ # Icon graphics
+		menus/ # Menu backgrounds
+		hud/ # HUD elements
+```
+
+## Scenes Directory (`/scenes/`)
+
+Organized by scene type and functionality:
+
+```
+/scenes/
+	gameplay/
+		entities/
+			bullet/ # Bullets scenes
+			enemy/ # Zombies enemy scenes
+			tower/ # Towers scenes
+			tower_placement/ # Tower placement system
+			projectiles/ # Projectile scenes
+			upgrade/ # Tower upgrades system
+				first_tower/ # First tower upgrades
+				second_tower/ # Second tower upgrades
+		world/
+			enemy_group/ # Waves groups
+			level/ # Level related scenes
+				levels/ # Levels with waves and map
+			map/ # Map related scenes
+				maps/ # Maps layouts
+			wave/ # Enemy wave definitions system
+			win_condition/ # Win condition system
+	narrative/ # Future narrative scenes for story and dialogues
+	ui/
+		menus/ # Menu scenes
+			home/
+			hud/
+			level_selection/
+			options/
+			pause/
+		popup/ # Popup scenes
+	utilities/
+		console/ # Debug console scene and command system
+		sound_entity/ # Scene transition effects
+```
+
+## Scripts Directory (`/scripts/`)
+
+Contains all GDScript files:
+
+```
+/scripts/
+	autoloads/
+		global.gd # Global variables
+		sound_manager.gd # Audio management
+		scene_manager.gd # Scene transitions
+	camera/ # Camera system for in-game map
+	commands/
+		command_base.gd # Base command class
+		*_command.gd # Individual commands
+	log/ # Logging system
+	state_machine/ # State machine system
+	utilities/
+		signal_util.gd # Signal utilities
+```
+
+## Special Directories
+
+- `/.cursor/` # Cursor IDE settings and rules
+- `/.godot/` # Engine-generated files (do not edit manually)
+- `/exports/` # Contains built game files for different platforms
+- `/log/` # Contains runtime logs in format YYYY_MM_DD-hh_mm.log

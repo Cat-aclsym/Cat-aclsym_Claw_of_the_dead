@@ -1,9 +1,0 @@
-~ this_is_a_node_title
-
-Cat2: [[Hi|Hello|Howdy|Hooplaoop]], le lore le lore le lore
-Cat2: Des choix choix choix.
-- Commencer la partie
-	Cat2: A faire.
-- Retourner au menu principal => END
-- Recommencer => this_is_a_node_title
-=> END
