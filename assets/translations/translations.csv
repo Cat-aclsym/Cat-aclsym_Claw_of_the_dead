@@ -12,4 +12,8 @@ HOME.SETTINGS.BUTTON,Settings,Paramètres
 INGAMEHUD.COINS.LABEL,%s,%s
 INGAMEHUD.HEALTH.LABEL,%s,%s
 INGAMEHUD.WAVES.LABEL,%s,%s
+WINMENU.LIFESTATISTIC.LABEL,%s,%s
+WINMENU.TIMESTATISTIC.LABEL,%s,%s
+WINMENU.LEVEL.TITLE.WIN,Victory,Victoire
+WINMENU.LEVEL.TITLE.LOOSE,Defeat,Défaite
 HOME.COPYRIGHT,© [2024] A7 Studio. All rights reserved. Trademark.,© [2024] A7 Studio. Tous droits réservés. Marque déposée.
