@@ -33,6 +33,7 @@ enum TowerType {
 }
 
 # Exported variables
+@export_subgroup("Bullet Configuration")
 ## The bullet scene to be instantiated by the tower
 @export var bullet_scene: PackedScene = null
 
@@ -49,6 +50,13 @@ enum TowerType {
 	"aoe_tick": 0.0,
 }
 
+@export_subgroup("Multi-Shot Properties")
+## The number of projectiles to fire simultaneously
+@export var projectile_count: int = 1
+## The angle spread between multiple projectiles (in degrees)
+@export var spread_angle: float = 15.0
+
+@export_subgroup("Tower Properties")
 ## The cost of the tower
 @export var cost: int
 ## The fire rate of the tower
@@ -59,6 +67,8 @@ enum TowerType {
 @export var sell_price: int
 ## The shooting range of the tower
 @export var shoot_range: float
+
+@export_subgroup("Upgrades")
 ## The upgrade array to store upgrades that are applied in the tower
 @export var available_upgrade: Array[PackedScene]
 
@@ -117,26 +127,39 @@ func _process(_delta: float) -> void:
 func fire() -> void:
 	if state != TowerState.ACTIVE or not len(enemy_array):
 		return
-	
+
 	if bullet_scene == null:
 		Log.trace(Log.Level.ERROR, "Missing bullet scene")
 		return
 
 	_choose_target()
-	
+
 	if not target:
 		Log.trace(Log.Level.WARN, "Failed to retrieve target")
 		return
 
 	var enemy_position: Vector2 = target.global_position
-	var bullet_instance: IBullet = bullet_scene.instantiate()
+	var base_direction: Vector2 = global_position.direction_to(enemy_position)
+	
+	# Calculate total spread angle for all projectiles
+	var total_angle: float = spread_angle * (projectile_count - 1)
+	var start_angle: float = -total_angle / 2
+	
+	# Spawn each projectile
+	for i in range(projectile_count):
+		var bullet_instance: IBullet = bullet_scene.instantiate()
+		
+		# Calculate angle for this projectile
+		var current_angle: float = start_angle + (spread_angle * i)
+		var rotated_direction: Vector2 = base_direction.rotated(deg_to_rad(current_angle))
+		
+		bullet_instance.direction = rotated_direction
+		bullet_instance.rotation = rotated_direction.angle()
+		bullet_instance.target = enemy_position
 
-	bullet_instance.direction = global_position.direction_to(enemy_position)
-	bullet_instance.rotation = bullet_instance.direction.angle()
-	bullet_instance.target = enemy_position
-
-	_apply_bullet_modifications(bullet_instance)
-	add_child(bullet_instance)
+		_apply_bullet_modifications(bullet_instance)
+		add_child(bullet_instance)
+	
 	fire_rate_timer.start()
 
 ## Starts the upgrade process with the given upgrade scene
@@ -155,15 +178,15 @@ func start_upgrade(upgradeScene: PackedScene) -> void:
 ## Applies the pending upgrade to the tower
 func apply_upgrade() -> void:
 	var upgrade: IUpgrade = pending_upgrade.instantiate()
-	
+
 	Log.trace(Log.Level.DEBUG, "Applying upgrade: {0}".format([pending_upgrade]))
 
 	if upgrade.changes["tower_stat"]:
 		_apply_tower_stat_changes(upgrade)
-	
+
 	if upgrade.changes["bullet_stat"]:
 		_apply_bullet_stat_changes(upgrade)
-	
+
 	if upgrade.changes["tower_model"] and upgrade.tower != null:
 		sprite_2d.texture = upgrade.tower
 
