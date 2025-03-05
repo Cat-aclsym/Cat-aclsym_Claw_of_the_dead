@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://chtjouq0utdei"
-path="res://.godot/imported/Button Play.png-b3c65fd02aec2441c9d930009148b2ce.ctex"
+uid="uid://3n0huugh0rgh"
+path="res://.godot/imported/Button Language French.svg-be9eaca9b368dc5cb6d5f17907f8d800.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ui/icons/Button Play.png"
-dest_files=["res://.godot/imported/Button Play.png-b3c65fd02aec2441c9d930009148b2ce.ctex"]
+source_file="res://assets/ui/icons/Button Language French.svg"
+dest_files=["res://.godot/imported/Button Language French.svg-be9eaca9b368dc5cb6d5f17907f8d800.ctex"]
 
 [params]
 
@@ -32,3 +32,6 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
+svg/scale=1.0
+editor/scale_with_editor_scale=false
+editor/convert_colors_with_editor_theme=false
