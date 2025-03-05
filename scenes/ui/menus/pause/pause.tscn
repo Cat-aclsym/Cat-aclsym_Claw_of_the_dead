@@ -1,15 +1,15 @@
-[gd_scene load_steps=11 format=3 uid="uid://c4m4v70cudic"]
+[gd_scene load_steps=11 format=3 uid="uid://bumh57lmx1jlc"]
 
 [ext_resource type="Script" path="res://scenes/ui/menus/pause/pause.gd" id="1_i4s0k"]
 [ext_resource type="Texture2D" uid="uid://c8b8irfugbxdj" path="res://assets/environment/backgrounds/Fond Menu 02.svg" id="2_70uiq"]
-[ext_resource type="Texture2D" uid="uid://b1tevrke0h3pb" path="res://assets/ui/icons/Bouton Musique@2x.png" id="2_uduxr"]
-[ext_resource type="Texture2D" uid="uid://dmr84ptkf8v6" path="res://assets/ui/icons/NoMusic.png" id="3_oh7uc"]
-[ext_resource type="Texture2D" uid="uid://cqxaqw63qtpvr" path="res://assets/ui/icons/Bouton Replay V5.svg" id="4_ant0o"]
-[ext_resource type="Texture2D" uid="uid://d03x6kldjjybo" path="res://assets/ui/icons/Bouton Sons@2x.png" id="4_xujui"]
-[ext_resource type="Texture2D" uid="uid://dscxwuiuolg74" path="res://assets/ui/icons/NoSound.png" id="5_hmrwh"]
+[ext_resource type="Texture2D" uid="uid://ddk5xo6vibq1t" path="res://assets/ui/icons/Button Replay.svg" id="4_242jj"]
+[ext_resource type="Texture2D" uid="uid://bm2mc3oc02tx" path="res://assets/ui/icons/Button Play.svg" id="5_bqgxy"]
 [ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="6_8ptoc"]
-[ext_resource type="Texture2D" uid="uid://chtjouq0utdei" path="res://assets/ui/icons/Bouton Play 2.png" id="8_uk01r"]
-[ext_resource type="Texture2D" uid="uid://0ta7jkwjoxg" path="res://assets/ui/icons/Bouton Menu Home.png" id="9_42vwe"]
+[ext_resource type="Texture2D" uid="uid://dksoj327amr1a" path="res://assets/ui/icons/Button Home Menu.svg" id="6_ol8q3"]
+[ext_resource type="Texture2D" uid="uid://dqm3a3tfnyu2r" path="res://assets/ui/icons/Button Music On.svg" id="7_gxx80"]
+[ext_resource type="Texture2D" uid="uid://bftxjalenxriu" path="res://assets/ui/icons/Button Music Off.svg" id="8_f8w4k"]
+[ext_resource type="Texture2D" uid="uid://b72djafe25kjf" path="res://assets/ui/icons/Button Sound On.svg" id="9_yy2d7"]
+[ext_resource type="Texture2D" uid="uid://sn02kb1pfkvd" path="res://assets/ui/icons/Button Sound Off.svg" id="10_dy38s"]
 
 [node name="PauseMenu" type="Control"]
 layout_mode = 3
@@ -81,21 +81,21 @@ custom_minimum_size = Vector2(100, 87.5)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
-texture_normal = ExtResource("4_ant0o")
+texture_normal = ExtResource("4_242jj")
 ignore_texture_size = true
 stretch_mode = 5
 
 [node name="PlayButton" type="TextureButton" parent="Panel/MarginContainer/PanelContainer/CenterContainer/VBoxContainer/ButtonLayer"]
 custom_minimum_size = Vector2(100, 87.5)
 layout_mode = 2
-texture_normal = ExtResource("8_uk01r")
+texture_normal = ExtResource("5_bqgxy")
 ignore_texture_size = true
 stretch_mode = 5
 
 [node name="HomeButton" type="TextureButton" parent="Panel/MarginContainer/PanelContainer/CenterContainer/VBoxContainer/ButtonLayer"]
 custom_minimum_size = Vector2(100, 87.5)
 layout_mode = 2
-texture_normal = ExtResource("9_42vwe")
+texture_normal = ExtResource("6_ol8q3")
 ignore_texture_size = true
 stretch_mode = 5
 
@@ -109,8 +109,8 @@ texture_filter = 6
 custom_minimum_size = Vector2(80, 70)
 layout_mode = 2
 toggle_mode = true
-texture_normal = ExtResource("2_uduxr")
-texture_pressed = ExtResource("3_oh7uc")
+texture_normal = ExtResource("7_gxx80")
+texture_pressed = ExtResource("8_f8w4k")
 ignore_texture_size = true
 stretch_mode = 5
 
@@ -118,7 +118,7 @@ stretch_mode = 5
 custom_minimum_size = Vector2(80, 70)
 layout_mode = 2
 toggle_mode = true
-texture_normal = ExtResource("4_xujui")
-texture_pressed = ExtResource("5_hmrwh")
+texture_normal = ExtResource("9_yy2d7")
+texture_pressed = ExtResource("10_dy38s")
 ignore_texture_size = true
 stretch_mode = 5
