@@ -21,9 +21,6 @@ signal wave_complete(last_wave: bool)
 ## @experimental
 @export var global_modifiers: Dictionary = {}
 
-## WinConditionEntity with State Machine
-@export var win_condition: WinConditionEntity = null
-
 ## Export of wave class
 @export var wave: Wave = null
 
@@ -91,6 +88,7 @@ func start_wave() -> void:
 	wave_start.emit()
 	_start_next_group()
 
+## Sets available paths for enemy movement
 func set_paths(in_paths: Array[Path2D]) -> void:
 	paths = in_paths
 	is_ready = true
@@ -109,6 +107,7 @@ func _start_next_group() -> void:
 	timer.wait_time = groups[current_group].in_delay
 	timer.start()
 
+## Loads enemy groups from child nodes
 func _load_groups() -> void:
 	var children: Array[Node] = get_children()
 
