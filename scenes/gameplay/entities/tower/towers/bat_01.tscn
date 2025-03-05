@@ -1,11 +1,11 @@
 [gd_scene load_steps=11 format=3 uid="uid://cq705nqdp8fnw"]
 
-[ext_resource type="PackedScene" uid="uid://064cnqw4xlus" path="res://scenes/gameplay/entities/tower/i_tower.tscn" id="1_ecq02"]
-[ext_resource type="PackedScene" uid="uid://c70wecidmqfqo" path="res://scenes/gameplay/entities/bullet/piercing_arrow.tscn" id="2_pjd1n"]
-[ext_resource type="Texture2D" uid="uid://h5f1ntgevb58" path="res://assets/environment/tilesets/tileset_debug.png" id="4_ftq1a"]
+[ext_resource type="PackedScene" uid="uid://064cnqw4xlus" path="res://scenes/gameplay/entities/tower/i_tower.tscn" id="1_tpm17"]
+[ext_resource type="PackedScene" uid="uid://c70wecidmqfqo" path="res://scenes/gameplay/entities/bullet/piercing_arrow.tscn" id="2_g4qd3"]
+[ext_resource type="Texture2D" uid="uid://h5f1ntgevb58" path="res://assets/environment/tilesets/tileset_debug.png" id="3_nri6x"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_hn83r"]
-atlas = ExtResource("4_ftq1a")
+atlas = ExtResource("3_nri6x")
 region = Rect2(64, 192, 64, 64)
 
 [sub_resource type="Animation" id="Animation_i58hl"]
@@ -60,9 +60,11 @@ radius = 314.23
 radius = 16.0
 height = 36.0
 
-[node name="FirstTower" instance=ExtResource("1_ecq02")]
+[node name="FirstTower" instance=ExtResource("1_tpm17")]
 position = Vector2(0, -16)
-bullet_scene = ExtResource("2_pjd1n")
+bullet_scene = ExtResource("2_g4qd3")
+projectile_count = 10
+spread_angle = 2.0
 cost = 50
 fire_rate = 1.0
 level = 1

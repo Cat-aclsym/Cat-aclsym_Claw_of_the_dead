@@ -1,18 +1,18 @@
 [gd_scene load_steps=4 format=3 uid="uid://b4n8yk4j255wb"]
 
-[ext_resource type="PackedScene" uid="uid://dqcjwachbfj5x" path="res://scenes/gameplay/entities/bullet/i_bullet.tscn" id="1_vp3tv"]
-[ext_resource type="Texture2D" uid="uid://dgsyufigxe0jk" path="res://assets/gameplay/bullet/arrow.png" id="2_cbbwr"]
+[ext_resource type="PackedScene" uid="uid://dqcjwachbfj5x" path="res://scenes/gameplay/entities/bullet/i_bullet.tscn" id="1_i65do"]
+[ext_resource type="Texture2D" uid="uid://dgsyufigxe0jk" path="res://assets/gameplay/bullet/arrow.png" id="2_hg0fm"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_qj200"]
 size = Vector2(21, 6)
 
-[node name="Arrow" instance=ExtResource("1_vp3tv")]
+[node name="Arrow" instance=ExtResource("1_i65do")]
 damage = 10
 speed = 250
 
 [node name="Sprite2D" parent="." index="0"]
 rotation = 0.785398
-texture = ExtResource("2_cbbwr")
+texture = ExtResource("2_hg0fm")
 
 [node name="CollisionShape2D" parent="." index="1"]
 position = Vector2(0.5, 0)
