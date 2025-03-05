@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dq2j3cnac1e5v"
-path="res://.godot/imported/Button Language English.png-96b088062bc753e991f9fa5e33ddc84e.ctex"
+uid="uid://c2epwvau6jxux"
+path="res://.godot/imported/Button Replay Clicked.svg-db9329af8d7a7dda3e58b6417571bee1.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ui/icons/Button Language English.png"
-dest_files=["res://.godot/imported/Button Language English.png-96b088062bc753e991f9fa5e33ddc84e.ctex"]
+source_file="res://assets/ui/icons/Button Replay Clicked.svg"
+dest_files=["res://.godot/imported/Button Replay Clicked.svg-db9329af8d7a7dda3e58b6417571bee1.ctex"]
 
 [params]
 
@@ -32,3 +32,6 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
+svg/scale=5.0
+editor/scale_with_editor_scale=false
+editor/convert_colors_with_editor_theme=false

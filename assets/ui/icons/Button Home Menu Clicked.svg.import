@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cj3134gnhq33s"
-path="res://.godot/imported/Button Close.png-de61d6f99bd3924ad98112f01de22ec4.ctex"
+uid="uid://d1rbloacrmsa5"
+path="res://.godot/imported/Button Home Menu Clicked.svg-0fd2b16b0282ad77540c11a6726c66e8.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ui/icons/Button Close.png"
-dest_files=["res://.godot/imported/Button Close.png-de61d6f99bd3924ad98112f01de22ec4.ctex"]
+source_file="res://assets/ui/icons/Button Home Menu Clicked.svg"
+dest_files=["res://.godot/imported/Button Home Menu Clicked.svg-0fd2b16b0282ad77540c11a6726c66e8.ctex"]
 
 [params]
 
@@ -32,3 +32,6 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
+svg/scale=5.0
+editor/scale_with_editor_scale=false
+editor/convert_colors_with_editor_theme=false
