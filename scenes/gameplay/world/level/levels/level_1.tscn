@@ -6,7 +6,3 @@
 
 [node name="ILevel" instance=ExtResource("1_ymvm1")]
 map_scene = ExtResource("2_kysqm")
-
-[node name="WinConditionEntity" type="Node" parent="." index="1" node_paths=PackedStringArray("level")]
-script = ExtResource("3_61uh2")
-level = NodePath("..")
