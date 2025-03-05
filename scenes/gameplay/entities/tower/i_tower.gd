@@ -95,6 +95,7 @@ var pending_upgrade: PackedScene
 # Core methods
 func _ready() -> void:
 	target_type = TargetType.FIRST
+	sell_price = cost / 2
 	hover_box.z_index = 3
 	update_dependent_properties()
 
@@ -138,6 +139,10 @@ func fire() -> void:
 
 ## Starts the upgrade process with the given upgrade scene
 func start_upgrade(upgradeScene: PackedScene) -> void:
+	var upgrade: IUpgrade = upgradeScene.instantiate()
+	if ILevel.current_level.coins < upgrade.price:
+		Log.trace(Log.Level.ERROR, "Not enough coins to upgrade")
+		return
 	pending_upgrade = upgradeScene
 	state = TowerState.UPGRADING
 	$ProgressBar.value = 0
@@ -164,6 +169,7 @@ func apply_upgrade() -> void:
 		bullet_scene = upgrade.bullet
 
 	available_upgrade = upgrade.next_upgrades
+	sell_price += upgrade.price / 2
 	update_dependent_properties()
 	state = TowerState.ACTIVE
 	emit_signal("upgrade_completed")
@@ -188,7 +194,8 @@ func build_tower() -> void:
 
 ## Sells the tower
 func sell_tower() -> void:
-	pass
+	queue_free()
+	ILevel.current_level.coins += sell_price
 
 # Private methods
 func _apply_tower_stat_changes(upgrade: IUpgrade) -> void:
