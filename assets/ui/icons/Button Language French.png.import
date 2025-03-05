@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dscxwuiuolg74"
-path="res://.godot/imported/NoSound.png-02af4991cd500486e37f3b4e0adbacfa.ctex"
+uid="uid://d2pvckhpu5f7m"
+path="res://.godot/imported/Button Language French.png-a5553df1e24b1766e513fdb33c8a5a3a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ui/icons/NoSound.png"
-dest_files=["res://.godot/imported/NoSound.png-02af4991cd500486e37f3b4e0adbacfa.ctex"]
+source_file="res://assets/ui/icons/Button Language French.png"
+dest_files=["res://.godot/imported/Button Language French.png-a5553df1e24b1766e513fdb33c8a5a3a.ctex"]
 
 [params]
 

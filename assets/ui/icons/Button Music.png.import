@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://btf6mt36qkci8"
-path="res://.godot/imported/Bouton Insta@2x.png-07832991fc2b57a51ed195977b17cb30.ctex"
+uid="uid://b1tevrke0h3pb"
+path="res://.godot/imported/Button Music.png-f51cb99782291d673c5af1e64bae2356.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ui/icons/Bouton Insta@2x.png"
-dest_files=["res://.godot/imported/Bouton Insta@2x.png-07832991fc2b57a51ed195977b17cb30.ctex"]
+source_file="res://assets/ui/icons/Button Music.png"
+dest_files=["res://.godot/imported/Button Music.png-f51cb99782291d673c5af1e64bae2356.ctex"]
 
 [params]
 

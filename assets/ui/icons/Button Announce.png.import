@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b1tevrke0h3pb"
-path="res://.godot/imported/Bouton Musique@2x.png-1fd78927d839f85a7d4c554315622dd5.ctex"
+uid="uid://bqaq0yuqwbuxg"
+path="res://.godot/imported/Button Announce.png-23cba7d19058beef2fe9cc78010268fa.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ui/icons/Bouton Musique@2x.png"
-dest_files=["res://.godot/imported/Bouton Musique@2x.png-1fd78927d839f85a7d4c554315622dd5.ctex"]
+source_file="res://assets/ui/icons/Button Announce.png"
+dest_files=["res://.godot/imported/Button Announce.png-23cba7d19058beef2fe9cc78010268fa.ctex"]
 
 [params]
 

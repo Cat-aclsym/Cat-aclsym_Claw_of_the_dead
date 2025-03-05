@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://46ywfvlxmd8c"
-path="res://.godot/imported/noteDeMusiqueCroix.png-7b47ba4cd270277d42cec191cb9a215d.ctex"
+uid="uid://bldo4ujivtl3m"
+path="res://.godot/imported/Button Confidentiality.png-0d1dc0fe77b258baa700e5cf65d2f875.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ui/icons/noteDeMusiqueCroix.png"
-dest_files=["res://.godot/imported/noteDeMusiqueCroix.png-7b47ba4cd270277d42cec191cb9a215d.ctex"]
+source_file="res://assets/ui/icons/Button Confidentiality.png"
+dest_files=["res://.godot/imported/Button Confidentiality.png-0d1dc0fe77b258baa700e5cf65d2f875.ctex"]
 
 [params]
 

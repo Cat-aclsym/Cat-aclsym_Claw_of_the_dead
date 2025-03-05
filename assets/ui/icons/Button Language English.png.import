@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dq2j3cnac1e5v"
-path="res://.godot/imported/Bouton Langue@2x.png-c77ec4498c3321eb9dcba18917b3d4fb.ctex"
+path="res://.godot/imported/Button Language English.png-96b088062bc753e991f9fa5e33ddc84e.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ui/icons/Bouton Langue@2x.png"
-dest_files=["res://.godot/imported/Bouton Langue@2x.png-c77ec4498c3321eb9dcba18917b3d4fb.ctex"]
+source_file="res://assets/ui/icons/Button Language English.png"
+dest_files=["res://.godot/imported/Button Language English.png-96b088062bc753e991f9fa5e33ddc84e.ctex"]
 
 [params]
 

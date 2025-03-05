@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bldo4ujivtl3m"
-path="res://.godot/imported/Bouton Confidentialité@2x.png-c024246ca6424969eafa1036ec3ff6a4.ctex"
+uid="uid://dn8ksi7radij3"
+path="res://.godot/imported/Button Skip.svg-1284c5d2fece04a819a7ffe47ac031ad.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ui/icons/Bouton Confidentialité@2x.png"
-dest_files=["res://.godot/imported/Bouton Confidentialité@2x.png-c024246ca6424969eafa1036ec3ff6a4.ctex"]
+source_file="res://assets/ui/icons/Button Skip.svg"
+dest_files=["res://.godot/imported/Button Skip.svg-1284c5d2fece04a819a7ffe47ac031ad.ctex"]
 
 [params]
 
@@ -32,3 +32,6 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
+svg/scale=5.0
+editor/scale_with_editor_scale=false
+editor/convert_colors_with_editor_theme=false

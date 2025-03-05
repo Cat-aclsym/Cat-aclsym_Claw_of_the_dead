@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bveg7cn5eocfq"
-path="res://.godot/imported/Bouton Discord@2x.png-15bdb558a1eee5e61e91db715457d7bb.ctex"
+uid="uid://deg1h1e2vrdlv"
+path="res://.godot/imported/Button X.png-a700849674a96259b37cc248b52fe7cb.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ui/icons/Bouton Discord@2x.png"
-dest_files=["res://.godot/imported/Bouton Discord@2x.png-15bdb558a1eee5e61e91db715457d7bb.ctex"]
+source_file="res://assets/ui/icons/Button X.png"
+dest_files=["res://.godot/imported/Button X.png-a700849674a96259b37cc248b52fe7cb.ctex"]
 
 [params]
 

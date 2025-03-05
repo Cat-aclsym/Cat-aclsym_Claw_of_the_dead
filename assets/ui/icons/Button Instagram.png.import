@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cbskr3qu6rty8"
-path="res://.godot/imported/speakerCroix.png-ea47dbc513fe446ecc2ba92ffff70052.ctex"
+uid="uid://btf6mt36qkci8"
+path="res://.godot/imported/Button Instagram.png-7d0f7f7b76999350b2c6b155d10f1224.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ui/icons/speakerCroix.png"
-dest_files=["res://.godot/imported/speakerCroix.png-ea47dbc513fe446ecc2ba92ffff70052.ctex"]
+source_file="res://assets/ui/icons/Button Instagram.png"
+dest_files=["res://.godot/imported/Button Instagram.png-7d0f7f7b76999350b2c6b155d10f1224.ctex"]
 
 [params]
 

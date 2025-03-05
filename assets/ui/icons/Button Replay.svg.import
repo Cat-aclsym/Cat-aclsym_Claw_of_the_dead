@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://d03x6kldjjybo"
-path="res://.godot/imported/Bouton Sons@2x.png-f82fdc1501dd543eb3c60e545ccc4a1b.ctex"
+uid="uid://ddk5xo6vibq1t"
+path="res://.godot/imported/Button Replay.svg-f7f2206d85d890775959f1d993294ed9.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ui/icons/Bouton Sons@2x.png"
-dest_files=["res://.godot/imported/Bouton Sons@2x.png-f82fdc1501dd543eb3c60e545ccc4a1b.ctex"]
+source_file="res://assets/ui/icons/Button Replay.svg"
+dest_files=["res://.godot/imported/Button Replay.svg-f7f2206d85d890775959f1d993294ed9.ctex"]
 
 [params]
 
@@ -32,3 +32,6 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
+svg/scale=5.0
+editor/scale_with_editor_scale=false
+editor/convert_colors_with_editor_theme=false

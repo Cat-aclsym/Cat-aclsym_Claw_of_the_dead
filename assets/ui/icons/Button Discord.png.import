@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://disuxhruldd8h"
-path="res://.godot/imported/Bouton Pause.png-f45067fbf1734dbebac0dbb9249eca72.ctex"
+uid="uid://bveg7cn5eocfq"
+path="res://.godot/imported/Button Discord.png-fdaf5fc9eb0ee7c0a9c2214f2cdb5214.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ui/icons/Bouton Pause.png"
-dest_files=["res://.godot/imported/Bouton Pause.png-f45067fbf1734dbebac0dbb9249eca72.ctex"]
+source_file="res://assets/ui/icons/Button Discord.png"
+dest_files=["res://.godot/imported/Button Discord.png-fdaf5fc9eb0ee7c0a9c2214f2cdb5214.ctex"]
 
 [params]
 

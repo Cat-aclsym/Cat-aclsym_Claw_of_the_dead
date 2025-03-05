@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://1mu5cdhd5hw8"
-path="res://.godot/imported/build_button.png-3779c8bc3e933d35a526fb5c3737c305.ctex"
+uid="uid://nr3ul4jgyad0"
+path="res://.godot/imported/Button Cancel.png-328fcd680fb71303aca9018f3c2132d5.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ui/icons/build_button.png"
-dest_files=["res://.godot/imported/build_button.png-3779c8bc3e933d35a526fb5c3737c305.ctex"]
+source_file="res://assets/ui/icons/Button Cancel.png"
+dest_files=["res://.godot/imported/Button Cancel.png-328fcd680fb71303aca9018f3c2132d5.ctex"]
 
 [params]
 

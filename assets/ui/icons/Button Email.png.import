@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dmr84ptkf8v6"
-path="res://.godot/imported/NoMusic.png-ec651a5dc0a6773c03dda03692385176.ctex"
+uid="uid://ckx46n5itd1ut"
+path="res://.godot/imported/Button Email.png-c28658d450fe27c8c95f7c806c27a0aa.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ui/icons/NoMusic.png"
-dest_files=["res://.godot/imported/NoMusic.png-ec651a5dc0a6773c03dda03692385176.ctex"]
+source_file="res://assets/ui/icons/Button Email.png"
+dest_files=["res://.godot/imported/Button Email.png-c28658d450fe27c8c95f7c806c27a0aa.ctex"]
 
 [params]
 

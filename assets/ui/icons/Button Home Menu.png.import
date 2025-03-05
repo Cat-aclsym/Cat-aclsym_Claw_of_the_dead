@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dleq1jfx87p7j"
-path="res://.godot/imported/Bouton Replay.png-b3bcd4396bd98f91d528a2b0c232b803.ctex"
+uid="uid://0ta7jkwjoxg"
+path="res://.godot/imported/Button Home Menu.png-4843106bd8c20931b05b0bb60d0d418c.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ui/icons/Bouton Replay.png"
-dest_files=["res://.godot/imported/Bouton Replay.png-b3bcd4396bd98f91d528a2b0c232b803.ctex"]
+source_file="res://assets/ui/icons/Button Home Menu.png"
+dest_files=["res://.godot/imported/Button Home Menu.png-4843106bd8c20931b05b0bb60d0d418c.ctex"]
 
 [params]
 
