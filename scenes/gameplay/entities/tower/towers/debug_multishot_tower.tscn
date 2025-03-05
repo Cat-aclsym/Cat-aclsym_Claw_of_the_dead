@@ -1,7 +1,7 @@
 [gd_scene load_steps=11 format=3 uid="uid://bvnxnvnxnvnxn"]
 
 [ext_resource type="PackedScene" uid="uid://064cnqw4xlus" path="res://scenes/gameplay/entities/tower/i_tower.tscn" id="1_ecq02"]
-[ext_resource type="PackedScene" uid="uid://cax2gd3swoin0" path="res://scenes/gameplay/entities/bullet/arrow.tscn" id="2_okbr1"]
+[ext_resource type="PackedScene" uid="uid://b4n8yk4j255wb" path="res://scenes/gameplay/entities/bullet/base_arrow.tscn" id="2_okbr1"]
 [ext_resource type="Texture2D" uid="uid://h5f1ntgevb58" path="res://assets/environment/tilesets/tileset_debug.png" id="4_ftq1a"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_hn83r"]
@@ -60,16 +60,16 @@ radius = 314.23
 radius = 16.0
 height = 36.0
 
-[node name="SecondTower" instance=ExtResource("1_ecq02")]
+[node name="Multishot" instance=ExtResource("1_ecq02")]
 position = Vector2(0, -16)
 bullet_scene = ExtResource("2_okbr1")
-cost = 75
+projectile_count = 3
 fire_rate = 1.0
 level = 1
 shoot_range = 100.0
 
 [node name="Sprite2D" parent="." index="0"]
-modulate = Color(0.26, 0.53, 0.96, 1)
+modulate = Color(0, 1, 0, 1)
 position = Vector2(0, -5)
 scale = Vector2(1, 1)
 texture = SubResource("AtlasTexture_hn83r")
