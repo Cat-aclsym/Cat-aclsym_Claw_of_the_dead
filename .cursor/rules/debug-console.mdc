@@ -1,0 +1,149 @@
+---
+description: Debug console system.
+globs: scenes/utilities/console/*.gd, scripts/commands/*.gd, scripts/autoloads/global.gd
+alwaysApply: true
+---
+# Debug Console System
+
+The Cat-aclsym project includes a powerful debug console system that allows developers to execute commands at runtime. This document details how to use and extend the console system.
+
+## Console Overview
+
+The debug console provides a command-line interface within the game that enables:
+- Runtime debugging and testing
+- Quick game state modification
+- System diagnostics and reporting
+- Command autocompletion with suggestions
+
+## Using the Console
+
+The console can be toggled with the `` ` `` (backtick) key during gameplay or in the editor. Commands follow this syntax:
+
+```
+command_name [arg1] [arg2] ...
+```
+
+## Command Navigation
+
+The console supports keyboard navigation:
+- `Tab`: Autocomplete the current command suggestion
+- `Up/Down`: Navigate through command suggestions
+- `Enter`: Execute the current command
+- `Esc`: Hide suggestions or close console
+
+## Command List
+
+Use `help` command to see the list.
+
+## Creating Custom Commands
+
+All commands are stored in the `scripts/commands/` directory, with each command in its own file. The filename becomes the command token (e.g., `spawn.gd` creates the `spawn` command).
+
+### Command File Structure
+
+Every command must:
+1. Extend the `ICommand` class
+2. Implement required methods:
+   - `command_token()`: Returns the command name
+   - `description()`: Returns the command description
+   - `expected_args_types()`: Returns array of argument types
+   - `_execute()`: Contains the command implementation
+
+### Command Template
+
+```gdscript
+## © [2024] A7 Studio. All rights reserved. Trademark.
+
+class_name SpawnCommand
+extends ICommand
+## Command to spawn entities at runtime.
+##
+## Allows developers to quickly test entities by spawning them
+## at specified coordinates in the current scene.
+
+func command_token() -> String:
+	return "spawn"
+
+func description() -> String:
+	return "Spawns an entity at the specified coordinates. Usage: spawn [entity_name] [x] [y]"
+
+func expected_args_types() -> Array[ICommand.Types]:
+	return [
+		ICommand.Types.ARG_STRING,  # entity_name
+		ICommand.Types.ARG_FLOAT,   # x position
+		ICommand.Types.ARG_FLOAT    # y position
+	]
+
+func _execute(console: Console, args: Array) -> int:
+	var entity_name: String = args[0]
+	var x_pos: float = args[1]
+	var y_pos: float = args[2]
+
+	# Validate entity exists
+	var entity_path: String = "res://scenes/gameplay/entities/%s/%s.tscn" % [entity_name.split("_")[0], entity_name]
+	if not ResourceLoader.exists(entity_path):
+		console.push_error("Entity '%s' does not exist" % entity_name)
+		return ICommand.ERR_UNKNOWN_BEHAVIOR
+
+	# Load and spawn entity
+	var entity_scene = load(entity_path)
+	var entity_instance = entity_scene.instantiate()
+	entity_instance.global_position = Vector2(x_pos, y_pos)
+
+	# Add to appropriate parent in scene tree
+	var current_level = Global.current_level
+	if current_level:
+		current_level.add_child(entity_instance)
+		console.push_text("Spawned '%s' at (%.1f, %.1f)" % [entity_name, x_pos, y_pos])
+		return ICommand.OK
+	else:
+		console.push_error("No active level to spawn entity in")
+		return ICommand.ERR_UNKNOWN_BEHAVIOR
+```
+
+### Argument Types
+
+The `ICommand.Types` enum defines allowed argument types:
+- `ARG_UNKNOWN`: Unknown or invalid type
+- `ARG_BOOL`: True/false values
+- `ARG_INT`: Whole numbers
+- `ARG_FLOAT`: Decimal numbers
+- `ARG_STRING`: Text values
+
+### Return Codes
+
+Command execution should return one of these codes:
+- `ICommand.OK`: Command executed successfully (value: 0)
+- `ICommand.ERR_INVALID_ARGS_TYPES`: Invalid argument types (value: -1)
+- `ICommand.ERR_INVALID_ARGS_COUNT`: Wrong number of arguments (value: -2)
+- `ICommand.ERR_UNKNOWN_BEHAVIOR`: Unknown or custom error (value: -3)
+
+## Console Output Methods
+
+The console provides several methods for output:
+- `push_text(text: String, save: bool = true)`: Add text to console output
+- `push_color(text: String, color: String)`: Add colored text using BBCode
+- `push_error(text: String)`: Add error message in red
+- `push_debug(text: String)`: Add debug message in green
+
+## Invoking Commands Programmatically
+
+Commands can be called from code using:
+
+```gdscript
+Global.console.push_command("command_name arg1 arg2")
+```
+
+Example:
+```gdscript
+# Spawn a zombie at coordinates (100, 200)
+Global.console.push_command("spawn zombie_basic 100 200")
+```
+
+## Console Implementation
+
+The console system is implemented in these key files:
+- `scenes/utilities/console/console.gd`: Main console implementation
+- `scenes/utilities/console/icommand.gd`: Command interface
+- `scripts/commands/`: Individual command implementations
+- `scripts/autoloads/global.gd`: Global reference to the console
