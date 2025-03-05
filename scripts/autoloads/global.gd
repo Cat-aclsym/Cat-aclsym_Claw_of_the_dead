@@ -14,7 +14,7 @@ var ui: UI = null: get = _get_ui
 var paused: bool = false
 
 ## Represents the current game release status
-var debug: bool = false: set = _set_debug
+var debug: bool = true: set = _set_debug
 
 var _initialized: bool = false: set = _set_initialized
 
