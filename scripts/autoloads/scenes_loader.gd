@@ -11,7 +11,7 @@ const ENEMIES: Dictionary = {
 }
 
 const TOWERS: Dictionary = {
-	ITower.TowerType.TOWER_1: preload("res://scenes/gameplay/entities/tower/towers/first_tower.tscn"),
+	ITower.TowerType.TOWER_1: preload("res://scenes/gameplay/entities/tower/towers/bat_01.tscn"),
 }
 
 ## Returns the enemy scene associated with the given ID
