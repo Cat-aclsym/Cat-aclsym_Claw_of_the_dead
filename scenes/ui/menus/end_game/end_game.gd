@@ -22,9 +22,13 @@ extends Control
 	{SignalUtil.WHO: next_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_next_texture_button_pressed}
 ]
 
+## Elapsed time from the start to the end of the level in text format for display purpose
 var elapsed_time_text: String
 
+## Elapsed seconds from the start to the end of the level (minus the minutes if any)
 var elapsed_time_seconds: int
+
+## Elapsed minutes from the start to the end of the level
 var elapsed_time_minutes: int
 
 # Core

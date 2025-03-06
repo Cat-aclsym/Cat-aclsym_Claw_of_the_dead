@@ -23,8 +23,10 @@ static var current_level: ILevel = null
 ## Scene containing the map layout and wave data
 @export var map_scene: PackedScene = null
 
-## Time when the level started and ended
+## Store the time when the level started
 var start_time: float
+
+## Store the time when the level ended
 var end_time: float
 
 ## StateMachine handling the level logic
@@ -172,7 +174,7 @@ func _on_playing(args = []) -> bool:
 
 ## State: Victory
 func _on_victory(args = []) -> bool:
-	var last_wave: bool                 = args[0] if args.size() > 0 and args[0] is bool else true
+	var last_wave: bool = args[0] if args.size() > 0 and args[0] is bool else true
 	end_time = Time.get_unix_time_from_system()
 	var end_game_menu_instance: EndGame = END_GAME_MENU.instantiate()
 	Global.ui.add_child(end_game_menu_instance)
