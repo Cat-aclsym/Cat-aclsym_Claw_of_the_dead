@@ -45,8 +45,8 @@ func build_initial_state(state_id: String, state_callback: Callable) -> StateMac
 ## [param tr_id_to] : The ID of the state we're transitioning to
 ## [param new_callback] : The function to call when the transition is executed
 func build_transition(tr_id_from: String, tr_id_to: String, new_callback: Callable = func(): pass) -> StateMachineBuilder:
-	var transition := TransitionFactory.create(
-		_state_machine.states.get(tr_id_from), 
+	var transition: Transition = TransitionFactory.create(
+		_state_machine.states.get(tr_id_from),
 		_state_machine.states.get(tr_id_to),
 		new_callback
 	)

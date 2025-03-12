@@ -12,13 +12,23 @@ signal wave_start
 ## [param delay] Time to wait before next wave
 signal wave_end(delay: float)
 
-## Modifiers applied to all enemies in group
-## e.g : [code]{"damage": +15}[/code]
+## Emitted when all waves are completed
+## [param last_wave] True if it is the final wave
+signal wave_complete(last_wave: bool)
+
+## Modifiers applied globally to all enemies in this wave
+## e.g : {"damage": +15}
 ## @experimental
 @export var global_modifiers: Dictionary = {}
 
+## Export of wave class
+@export var wave: Wave = null
+
 ## Delay in seconds before next wave starts
 @export_range(0.1, 10.0) var delay: float = 0.1
+
+## ActuelLevel
+var level: ILevel = null
 
 ## Index of current enemy being spawned
 var current_enemy: int = -1
@@ -44,6 +54,9 @@ var is_ready: bool = false
 ## Available paths for enemy movement
 var paths: Array[Path2D] = []
 
+## If all the waves are finished
+var all_waves_completed: bool = false
+
 ## Timer to spawn enemies
 @onready var timer: Timer = $Timer
 
@@ -55,6 +68,7 @@ var paths: Array[Path2D] = []
 func _ready() -> void:
 	_load_groups()
 	SignalUtil.connects(signals)
+	Log.trace(Log.Level.INFO, "Wave instance added to level")
 
 func _process(_delta: float) -> void:
 	timer.set_paused(Global.paused)
@@ -64,6 +78,12 @@ func _process(_delta: float) -> void:
 func start_wave() -> void:
 	Log.trace(Log.Level.INFO, "{0} start".format([name]))
 	if not is_ready: return
+	current_enemy = -1
+	dead_enemies = 0
+	enemies_total_count = 0
+
+	for group in groups:
+		enemies_total_count += group.enemies.size()
 
 	wave_start.emit()
 	_start_next_group()
@@ -77,7 +97,6 @@ func set_paths(in_paths: Array[Path2D]) -> void:
 ## Starts spawning the next group of enemies
 func _start_next_group() -> void:
 	current_group += 1
-
 	if current_group >= groups.size():
 		# wait for last enemy to dies
 		return
@@ -103,10 +122,9 @@ func _load_groups() -> void:
 # signals
 ## Called when timer expires to spawn next enemy
 func _on_timer_timeout() -> void:
-	if not is_ready: return
-
+	if not is_ready:
+		return
 	current_enemy += 1
-
 	if current_enemy >= enemies_to_spawn.size():
 		timer.stop()
 		await get_tree().create_timer(groups[current_group].out_delay).timeout
@@ -120,7 +138,7 @@ func _on_timer_timeout() -> void:
 ## Called when an enemy is defeated
 func _on_ienemy_die() -> void:
 	dead_enemies += 1
-
+	Log.trace(Log.Level.DEBUG, "Total: {0}/{1}".format([dead_enemies, enemies_total_count]))
 	if dead_enemies == enemies_total_count:
 		Log.trace(Log.Level.INFO, "%s end" % name)
 		wave_end.emit(delay)

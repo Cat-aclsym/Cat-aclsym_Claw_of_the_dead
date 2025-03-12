@@ -2,6 +2,7 @@
 
 [ext_resource type="PackedScene" uid="uid://df2663whp8p7v" path="res://scenes/gameplay/world/level/i_level.tscn" id="1_ymvm1"]
 [ext_resource type="PackedScene" uid="uid://oc6r5kow8d7i" path="res://scenes/gameplay/world/map/maps/map_1.tscn" id="2_kysqm"]
+[ext_resource type="Script" path="res://scenes/gameplay/world/win_condition/win_condition.gd" id="3_61uh2"]
 
 [node name="ILevel" instance=ExtResource("1_ymvm1")]
 map_scene = ExtResource("2_kysqm")

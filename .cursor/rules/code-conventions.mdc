@@ -1,0 +1,187 @@
+---
+description: Coding standards and best practices.
+globs: *.gd, *.gdshader
+alwaysApply: false
+---
+# Code Conventions
+
+This document outlines the coding standards and best practices for GDScript files in the Cat-aclsym project.
+
+## Script Structure
+
+All GDScript files should follow this structure:
+
+1. Copyright header
+2. `class_name` and `extends` statements
+3. Enum definitions
+4. Constant definitions
+5. Variables (in order: Exported → Public → Private)
+6. Functions (in order: Built-in → Public → Private)
+
+### Example Script Structure
+
+```gdscript
+## © [2024] A7 Studio. All rights reserved. Trademark.
+
+class_name EnemyZombie
+extends CharacterBody2D
+## A basic zombie enemy that follows paths and attacks the player's base.
+##
+## This enemy has medium health and speed, with melee attacks.
+## It follows waypoints and deals damage to the player's base when it reaches the end.
+
+# Enums
+enum ZombieState {
+	IDLE,
+	WALKING,
+	ATTACKING,
+	DYING
+}
+
+# Constants
+const BASE_HEALTH: float = 100.0
+const MOVEMENT_SPEED: float = 50.0
+const ATTACK_DAMAGE: float = 10.0
+
+# Exported variables
+@export var health_multiplier: float = 1.0
+@export var speed_multiplier: float = 1.0
+@export var sprite: Texture2D
+@export_group("Audio")
+@export var attack_sound: AudioStream
+@export var death_sound: AudioStream
+
+# Public variables
+var current_state: ZombieState = ZombieState.IDLE
+var path_follow: PathFollow2D
+var attack_target = null
+
+# Private variables
+var _current_health: float
+var _death_animation_played: bool = false
+var _target_position: Vector2
+
+# Built-in functions
+func _ready() -> void:
+	_initialize()
+
+func _process(delta: float) -> void:
+	match current_state:
+		ZombieState.IDLE:
+			_process_idle(delta)
+		ZombieState.WALKING:
+			_process_walking(delta)
+		ZombieState.ATTACKING:
+			_process_attacking(delta)
+		ZombieState.DYING:
+			_process_dying(delta)
+
+func _physics_process(delta: float) -> void:
+	if current_state == ZombieState.WALKING:
+		_move(delta)
+
+# Public functions
+func take_damage(amount: float) -> void:
+	_current_health -= amount
+	if _current_health <= 0:
+		set_state(ZombieState.DYING)
+	else:
+		# Flash or show damage effect
+		pass
+
+func set_state(new_state: ZombieState) -> void:
+	if current_state == new_state:
+		return
+
+	current_state = new_state
+	_on_state_changed(new_state)
+
+# Private functions
+func _initialize() -> void:
+	_current_health = BASE_HEALTH * health_multiplier
+
+func _on_state_changed(new_state: ZombieState) -> void:
+	# Handle state transition logic
+	pass
+
+func _move(delta: float) -> void:
+	# Movement implementation
+	pass
+```
+
+## Naming Conventions
+
+- **Files/Directories**: `snake_case` (e.g., `enemy_zombie.gd`, `tower_defense_level.tscn`)
+- **Classes**: `PascalCase` (e.g., `EnemyZombie`, `CatTower`)
+- **Public Variables**: `snake_case` (e.g., `health_points`, `movement_speed`)
+- **Private Variables**: `_snake_case` (e.g., `_current_target`, `_animation_player`)
+- **Public Functions**: `snake_case` (e.g., `take_damage()`, `set_target()`)
+- **Private Functions**: `_snake_case` (e.g., `_initialize()`, `_handle_collision()`)
+- **Constants**: `ALL_CAPS` (e.g., `MAX_HEALTH`, `PROJECTILE_SPEED`)
+- **Enums**: `PascalCase` with values in `ALL_CAPS` (e.g., `enum State { IDLE, ACTIVE, DEAD }`)
+- **Signals**: `snake_case` verb phrases (e.g., `health_changed`, `target_acquired`)
+
+## Documentation
+
+- Use `##` for documentation comments and `#` for regular comments
+- All classes must have a documentation comment explaining their purpose
+- All public methods must be documented
+- Document critical or complex private functions
+- Use descriptive parameter and function names
+
+### Documentation Tags
+
+- `@deprecated`: For methods that should no longer be used
+- `@experimental`: For features still being tested
+- `@tutorial`: For linking to relevant tutorials
+
+## Best Practices
+
+- Always specify return types and parameter types
+- Avoid deep nesting, prefer early returns
+- Use `assert()` to validate assumptions and parameters
+- Connect signals through code using `SignalUtil` rather than the editor
+- Avoid global variables when possible
+- Sort class members alphabetically when appropriate
+- No magic numbers - use constants or @export variables
+- Always use explicit `return` statements for non-void functions
+- Preload resources at the script beginning with `preload()`
+
+## Resource Management
+
+- Always use `res://` paths (never relative paths)
+- Preload resources at the beginning of scripts when possible
+- Use `load()` only for optional or dynamic resources
+- Add type hints to preloaded resources
+
+## Signal Guidelines
+
+Signals should be connected using the `SignalUtil` class.
+
+Ex:
+```gdscript
+const signals: Array[Dictionary] = [
+	{SignalUtil.WHO: self, SignalUtil.WHAT: "my_signal", SignalUtil.TO: _on_my_signal}
+]
+
+func _ready() -> void:
+	SignalUtil.connect(signals)
+```
+
+- SignalUtil.WHO: The emitter of the signal.
+
+- SignalUtil.WHAT: The name of the signal.
+
+- SignalUtil.TO: The callback to be called.
+
+- SignalUtil.connect(signals): Connects multiple signals at once.
+
+- Disconnect signals when no longer needed
+
+## Performance Guidelines
+
+- Avoid expensive operations in `_process()`
+- Cache references to nodes you'll use frequently
+- Optimize physics interaction in `_physics_process()`
+- Use object pooling for frequently created/destroyed objects
+- Consider using quadtrees or spatial partitioning for large numbers of entities

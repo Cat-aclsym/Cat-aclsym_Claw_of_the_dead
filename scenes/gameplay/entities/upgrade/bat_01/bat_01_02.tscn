@@ -1,0 +1,21 @@
+[gd_scene load_steps=4 format=3 uid="uid://6kxfyy7tk2pu"]
+
+[ext_resource type="PackedScene" uid="uid://ta5ev4qh6unn" path="res://scenes/gameplay/entities/upgrade/i_upgrade.tscn" id="1_js4bn"]
+[ext_resource type="PackedScene" uid="uid://4bspols4p3r2" path="res://scenes/gameplay/entities/upgrade/bat_01/bat_01_03.tscn" id="2_e4ahx"]
+[ext_resource type="Texture2D" uid="uid://4rvu7u60f3mg" path="res://assets/gameplay/towers/tower2_LVL_2.png" id="3_lh8fy"]
+
+[node name="UpgradeFirstTower1" instance=ExtResource("1_js4bn")]
+changes = {
+"bullet_model": false,
+"bullet_stat": false,
+"tower_model": true,
+"tower_stat": true
+}
+tower_stats = {
+"fire_rate": 3.0,
+"level": 0,
+"shoot_range": 0.0
+}
+next_upgrades = Array[PackedScene]([ExtResource("2_e4ahx")])
+tower = ExtResource("3_lh8fy")
+price = 75
