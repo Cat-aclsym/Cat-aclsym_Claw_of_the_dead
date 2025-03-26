@@ -7,6 +7,9 @@ extends IBullet
 # Constants
 const AOE_DAMAGE_MULTIPLIER: float = 0.75  # AOE damage is 75% of direct hit damage
 
+# Exports
+@export var aoe_range: int = 100  ## Range of the area of effect
+
 # Variables
 var aoe_enemies: Array[IEnemy] = []
 @onready var aoe_detection_area: Area2D = $AOEArea
@@ -22,8 +25,8 @@ var aoe_enemies: Array[IEnemy] = []
 # core
 func _ready() -> void:
 	super._ready()
-	is_explosive = true
 	
+	# Configuration de la zone AOE
 	if aoe_detection_area_collision.shape is CircleShape2D:
 		aoe_detection_area_collision.shape.radius = aoe_range
 	
@@ -49,7 +52,7 @@ func _on_body_entered(body: Node2D) -> void:
 	enemy.take_damage(damage, IEnemy.DamageType.DEFAULT)
 	
 	# Apply AOE damage to nearby enemies
-	if is_explosive and len(aoe_enemies) > 0:
+	if len(aoe_enemies) > 0:
 		print("Applying AOE damage to ", len(aoe_enemies), " enemies")
 		for nearby_enemy in aoe_enemies:
 			if nearby_enemy != enemy and is_instance_valid(nearby_enemy):  # Skip the directly hit enemy

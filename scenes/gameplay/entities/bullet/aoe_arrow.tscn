@@ -11,10 +11,9 @@ size = Vector2(22, 6)
 
 [node name="AOEArrow" instance=ExtResource("1_ecq02")]
 script = ExtResource("2_okbr1")
+aoe_range = 100
 damage = 20
 speed = 350
-is_explosive = true
-aoe_range = 100
 
 [node name="Sprite2D" parent="." index="0"]
 modulate = Color(0, 1, 0.5, 1)

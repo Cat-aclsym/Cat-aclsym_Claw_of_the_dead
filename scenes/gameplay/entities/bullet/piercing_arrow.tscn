@@ -1,6 +1,7 @@
-[gd_scene load_steps=4 format=3 uid="uid://c70wecidmqfqo"]
+[gd_scene load_steps=5 format=3 uid="uid://c70wecidmqfqo"]
 
 [ext_resource type="PackedScene" uid="uid://dqcjwachbfj5x" path="res://scenes/gameplay/entities/bullet/i_bullet.tscn" id="1_vp3tv"]
+[ext_resource type="Script" path="res://scenes/gameplay/entities/bullet/piercing_arrow.gd" id="2_bdcpf"]
 [ext_resource type="Texture2D" uid="uid://dgsyufigxe0jk" path="res://assets/gameplay/bullet/arrow.png" id="2_cbbwr"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_qj200"]
@@ -8,10 +9,11 @@ size = Vector2(21, 6)
 
 [node name="PiercingArrow" instance=ExtResource("1_vp3tv")]
 z_index = 1000
+script = ExtResource("2_bdcpf")
 damage = 100
 speed = 300
-is_piercing = true
 pierce_count = 10
+pierce_reduction = 10
 
 [node name="Sprite2D" parent="." index="0"]
 modulate = Color(1, 0, 1, 1)
