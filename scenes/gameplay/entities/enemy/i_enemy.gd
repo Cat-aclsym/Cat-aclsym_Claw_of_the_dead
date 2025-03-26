@@ -207,11 +207,11 @@ func _disappear() -> void:
 		return
 
 	die.emit()
-	anim_player.play(ANIM_FADE_OUT)
+	# anim_player.play(ANIM_FADE_OUT)  # Remove the comment when the animation is implemented
 	is_already_dead = true
 	collision_shape.set_deferred("disabled", true)
 
-	await anim_player.animation_finished
+	# await anim_player.animation_finished # Remove the comment when the animation is implemented
 	queue_free()
 	path_follow.queue_free()
 
