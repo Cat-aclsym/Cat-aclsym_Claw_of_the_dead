@@ -18,6 +18,7 @@ var aoe_enemies: Array[IEnemy] = []
 	{SignalUtil.WHO: aoe_detection_area, SignalUtil.WHAT: "body_exited", SignalUtil.TO: _on_aoe_area_body_exited}
 ]
 
+
 # core
 func _ready() -> void:
 	super._ready()
@@ -28,11 +29,13 @@ func _ready() -> void:
 	
 	SignalUtil.connects(aoe_signals)
 
+
 func _physics_process(delta: float) -> void:
 	if Global.paused:
 		return
 		
 	position += direction * speed * delta
+
 
 # private
 func _on_body_entered(body: Node2D) -> void:
@@ -56,10 +59,12 @@ func _on_body_entered(body: Node2D) -> void:
 	# Free the bullet after impact
 	queue_free()
 
+
 func _on_aoe_area_body_entered(body: Node2D) -> void:
 	if body is IEnemy and not aoe_enemies.has(body):
 		aoe_enemies.append(body)
 		print("Enemy entered AOE area, total: ", len(aoe_enemies))
+
 
 func _on_aoe_area_body_exited(body: Node2D) -> void:
 	if body is IEnemy:

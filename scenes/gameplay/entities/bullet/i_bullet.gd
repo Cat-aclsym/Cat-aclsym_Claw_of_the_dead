@@ -45,7 +45,6 @@ var initial_piercing: int
 var _touched_enemy: IEnemy
 
 
-
 # core
 func _ready() -> void:
 	SignalUtil.connects(signals)
@@ -59,6 +58,7 @@ func _physics_process(delta: float) -> void:
 		return
 
 	position += direction * speed * delta
+
 
 # private
 func _on_body_entered(body: Node2D) -> void:
