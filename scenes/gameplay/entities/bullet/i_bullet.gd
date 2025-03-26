@@ -81,11 +81,6 @@ func _on_body_entered(body: Node2D) -> void:
 			queue_free()
 			return
 	
-	# Handle explosive
-	if is_explosive:
-		# TODO: Implement area damage
-		pass
-	
 	# Handle DoT
 	if has_dot:
 		enemy.add_poison_effect(dot_damage, dot_duration, dot_tick)
