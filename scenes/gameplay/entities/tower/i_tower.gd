@@ -107,7 +107,7 @@ var pending_upgrade: PackedScene
 # Core methods
 func _ready() -> void:
 	target_type = TargetType.FIRST
-	sell_price = cost / 2
+	sell_price = ceil(cost / 2.0)
 	hover_box.z_index = 3
 	update_dependent_properties()
 
@@ -140,26 +140,26 @@ func fire() -> void:
 
 	var enemy_position: Vector2 = target.global_position
 	var base_direction: Vector2 = global_position.direction_to(enemy_position)
-	
+
 	# Calculate total spread angle for all projectiles
 	var total_angle: float = spread_angle * (projectile_count - 1)
 	var start_angle: float = -total_angle / 2
-	
+
 	# Spawn each projectile
 	for i in range(projectile_count):
 		var bullet_instance: IBullet = bullet_scene.instantiate()
-		
+
 		# Calculate angle for this projectile
 		var current_angle: float = start_angle + (spread_angle * i)
 		var rotated_direction: Vector2 = base_direction.rotated(deg_to_rad(current_angle))
-		
+
 		bullet_instance.direction = rotated_direction
 		bullet_instance.rotation = rotated_direction.angle()
 		bullet_instance.target = enemy_position
 
 		_apply_bullet_modifications(bullet_instance)
 		add_child(bullet_instance)
-	
+
 	fire_rate_timer.start()
 
 ## Starts the upgrade process with the given upgrade scene
@@ -194,7 +194,7 @@ func apply_upgrade() -> void:
 		bullet_scene = upgrade.bullet
 
 	available_upgrade = upgrade.next_upgrades
-	sell_price += upgrade.price / 2
+	sell_price += ceil(upgrade.price / 2.0)
 	update_dependent_properties()
 	state = TowerState.ACTIVE
 	emit_signal("upgrade_completed")

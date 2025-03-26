@@ -15,9 +15,7 @@ const STATE_VICTORY: String = "VICTORY"
 const STATE_DEFEAT: String = "DEFEAT"
 const STATE_ERROR: String = "ERROR"
 const STATE_PAUSE: String = "PAUSE"
-
-## StateMachine handling the level logic
-var state_machine: StateMachine
+const END_GAME_MENU: PackedScene = preload("res://scenes/ui/menus/end_game/end_game.tscn")
 
 ## Reference to currently active level instance
 static var current_level: ILevel = null
@@ -25,7 +23,14 @@ static var current_level: ILevel = null
 ## Scene containing the map layout and wave data
 @export var map_scene: PackedScene = null
 
-## Array of differents signal (if more needed)
+## Store the time when the level started
+var start_time: float
+
+## Store the time when the level ended
+var end_time: float
+
+## StateMachine handling the level logic
+var state_machine: StateMachine
 
 ## Current coin count for purchasing towers
 var coins: int = 75:
@@ -40,6 +45,12 @@ var map: IMap = null
 
 ## Metadata containing level configuration
 var metadata: LevelMetadata = null
+
+## Current state of the level
+var current_state: String
+
+## Last state of the level
+var last_state: String = ""
 
 # core
 func _ready() -> void:
@@ -56,11 +67,10 @@ func _ready() -> void:
 
 	_build_state_machine()
 	state_machine.toggle_initial_state()
-
-var last_state: String = ""
+	start_time = Time.get_unix_time_from_system()
 
 func _physics_process(delta: float) -> void:
-	var current_state: String = state_machine.get_current_state().name
+	current_state = state_machine.get_current_state().name
 	if current_state != last_state:
 		state_machine.handle_current_state([delta])
 		last_state = current_state
@@ -165,6 +175,9 @@ func _on_playing(args = []) -> bool:
 ## State: Victory
 func _on_victory(args = []) -> bool:
 	var last_wave: bool = args[0] if args.size() > 0 and args[0] is bool else true
+	end_time = Time.get_unix_time_from_system()
+	var end_game_menu_instance: EndGame = END_GAME_MENU.instantiate()
+	Global.ui.add_child(end_game_menu_instance)
 	Log.trace(Log.Level.INFO, "Entering VICTORY state. Last wave: %s" % last_wave)
 
 	return true
@@ -172,10 +185,10 @@ func _on_victory(args = []) -> bool:
 ## State: Defeat
 func _on_defeat(args = []) -> bool:
 	Log.trace(Log.Level.INFO, "Entering DEFEAT state.")
-	var success: bool = state_machine.toggle_state(STATE_PAUSE)
-	if not success:
-		Log.trace(Log.Level.ERROR, "Transition to PAUSE failed from DEFEAT.")
-		return false
+	end_time = Time.get_unix_time_from_system()
+	var end_game_menu_instance: EndGame = END_GAME_MENU.instantiate()
+	Global.ui.add_child(end_game_menu_instance)
+
 	return true
 
 ### State: Pause
