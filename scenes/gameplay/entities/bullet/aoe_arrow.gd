@@ -26,7 +26,6 @@ func _ready() -> void:
 	if aoe_detection_area_collision.shape is CircleShape2D:
 		aoe_detection_area_collision.shape.radius = aoe_range
 	
-	
 	SignalUtil.connects(aoe_signals)
 
 func _physics_process(delta: float) -> void:
