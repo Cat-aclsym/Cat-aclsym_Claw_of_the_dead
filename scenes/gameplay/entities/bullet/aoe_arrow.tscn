@@ -1,0 +1,30 @@
+[gd_scene load_steps=6 format=3 uid="uid://nfkadjkkl"]
+
+[ext_resource type="PackedScene" uid="uid://dqcjwachbfj5x" path="res://scenes/gameplay/entities/bullet/i_bullet.tscn" id="1_ecq02"]
+[ext_resource type="Script" path="res://scenes/gameplay/entities/bullet/aoe_arrow.gd" id="2_okbr1"]
+[ext_resource type="Texture2D" uid="uid://dgsyufigxe0jk" path="res://assets/gameplay/bullet/arrow.png" id="3_fsffr"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_4a8wn"]
+size = Vector2(22, 6)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_3qy0v"]
+
+[node name="AOEArrow" instance=ExtResource("1_ecq02")]
+script = ExtResource("2_okbr1")
+damage = 20
+speed = 350
+is_explosive = true
+aoe_range = 100
+
+[node name="Sprite2D" parent="." index="0"]
+modulate = Color(0, 1, 0.5, 1)
+rotation = 0.785782
+texture = ExtResource("3_fsffr")
+
+[node name="CollisionShape2D" parent="." index="1"]
+shape = SubResource("RectangleShape2D_4a8wn")
+
+[node name="AOEArea" type="Area2D" parent="." index="2"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AOEArea" index="0"]
+shape = SubResource("CircleShape2D_3qy0v")

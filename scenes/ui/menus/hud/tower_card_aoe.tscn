@@ -1,0 +1,7 @@
+[gd_scene load_steps=3 format=3 uid="uid://b3ndi1p0pet8k"]
+
+[ext_resource type="PackedScene" uid="uid://h0drgd3amf85" path="res://scenes/ui/menus/hud/tower_card.tscn" id="1_lh15l"]
+[ext_resource type="PackedScene" uid="uid://in0dna0dnoa0" path="res://scenes/gameplay/entities/tower/towers/debug_aoe_tower.tscn" id="2_rjokk"]
+
+[node name="TowerCardAOE" instance=ExtResource("1_lh15l")]
+tower = ExtResource("2_rjokk")
