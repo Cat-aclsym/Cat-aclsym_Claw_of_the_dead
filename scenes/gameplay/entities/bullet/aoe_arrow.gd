@@ -23,7 +23,6 @@ func _ready() -> void:
 	super._ready()
 	is_explosive = true
 	
-	# Configuration de la zone AOE existante
 	if aoe_detection_area_collision.shape is CircleShape2D:
 		aoe_detection_area_collision.shape.radius = aoe_range
 	
@@ -58,13 +57,11 @@ func _on_body_entered(body: Node2D) -> void:
 	# Free the bullet after impact
 	queue_free()
 
-# Gestion des ennemis qui entrent dans la zone AOE
 func _on_aoe_area_body_entered(body: Node2D) -> void:
 	if body is IEnemy and not aoe_enemies.has(body):
 		aoe_enemies.append(body)
 		print("Enemy entered AOE area, total: ", len(aoe_enemies))
 
-# Gestion des ennemis qui sortent de la zone AOE
 func _on_aoe_area_body_exited(body: Node2D) -> void:
 	if body is IEnemy:
 		aoe_enemies.erase(body)
