@@ -23,6 +23,10 @@ const LEFT_OFFSET := Vector2i(-1, 0)
 const VALID_TILES: Array[Vector2i] = [
 	Vector2i(1, 0)
 ]
+const TRAP_VALID_TILES: Array[Vector2i] = [
+	Vector2i(0, 1),
+	Vector2i(0, 2),
+]
 
 ## Get the initial position for a new tower based on camera view
 func _get_initial_tower_position() -> Vector2:
@@ -58,7 +62,7 @@ var _is_dragging: bool = false
 var _is_holding_click: bool = false
 var _is_move_tower_available: bool = true
 var _state: CursorState = CursorState.IDLE
-var _tower: ITower = null
+var _tower: Node2D = null
 
 ## The number of towers created
 static var tower_count: int = 0
@@ -104,12 +108,12 @@ func change_state(new_state: CursorState, args: Array = []) -> void:
 				Log.trace(Log.Level.WARN, "Cannot change cursor state from BUILD to IDLE")
 				return
 			assert(args.size() == 1)
-			assert(args[0] is ITower)
+			assert(args[0] is ITower or args[0] is ITrap)
 
 			trigger_state_build.emit()
 			_state = new_state
 			visible = true
-			_state_build(args[0] as ITower)
+			_state_build(args[0])
 
 		CursorState.UPGRADE:
 			if _state != CursorState.IDLE:
@@ -144,7 +148,7 @@ func _set_cursor_position(pos: Vector2 = get_global_mouse_position()) -> void:
 	place_hud.position = local_pos
 
 ## Handles the build state logic, such as tower placement and validation
-func _state_build(tower: ITower = null) -> void:
+func _state_build(tower: Node2D = null) -> void:
 	if tower:
 		# Get the initial position before creating the tower
 		var initial_pos := _get_initial_tower_position()
@@ -152,6 +156,9 @@ func _state_build(tower: ITower = null) -> void:
 
 		_tower = tower.duplicate()
 		_tower.state = ITower.TowerState.BUILDING
+		_tower.position = cursor.position - Vector2(0, 16)
+	elif _tower is ITrap:
+		_tower.state = ITrap.TrapState.BUILDING
 		_tower.position = cursor.position - Vector2(0, 16)
 		add_child(_tower)
 
@@ -213,22 +220,30 @@ func _build() -> void:
 
 	_is_move_tower_available = false
 
-	var new_tower: ITower = _tower.duplicate()
-	new_tower.state = ITower.TowerState.ACTIVE
-	new_tower.modulate = Color(1, 1, 1, 1)
-	new_tower.name = "t%d" % tower_count
-	map_ref.add_child(new_tower)
-	tower_count += 1
+	var new_entity = _tower.duplicate()
+	if new_entity is ITower:
+		new_entity.state = ITower.TowerState.ACTIVE
+		tower_count += 1
+		new_entity.name = "t%d" % tower_count
+	elif new_entity is ITrap:
+		new_entity.state = ITrap.TrapState.ACTIVE
+	new_entity.modulate = Color(1, 1, 1, 1)
+	map_ref.add_child(new_entity)
 
 	ILevel.current_level.coins -= _tower.cost
 
-	var tm_pos: Vector2i = tm_ref.local_to_map(new_tower.position)
+	var tm_pos: Vector2i = tm_ref.local_to_map(new_entity.position)
 	_invalid_cells.append(tm_pos)
 
 	_cancel_build()
 	_is_move_tower_available = true
 
 func _is_buildable(pos: Vector2) -> bool:
+	if _tower is ITrap:
+		return _is_trap_buildable(pos)
+	return _is_tower_buildable(pos)
+
+func _is_tower_buildable(pos: Vector2) -> bool:
 	if ILevel.current_level.coins < _tower.cost:
 		return false
 
@@ -238,6 +253,22 @@ func _is_buildable(pos: Vector2) -> bool:
 		return false
 
 	if tm_ref.get_cell_atlas_coords(1, tm_pos) != Vector2i(-1, -1):
+		return false
+
+	return true
+
+
+func _is_trap_buildable(pos: Vector2) -> bool:
+	if ILevel.current_level.coins < _tower.cost:
+		return false
+
+	var tm_pos := tm_ref.local_to_map(pos)
+
+	# Vérifie si la tuile est une tuile de chemin (layer 1)
+	if not tm_ref.get_cell_atlas_coords(0, tm_pos) in TRAP_VALID_TILES:
+		return false
+
+	if tm_pos in _invalid_cells:
 		return false
 
 	return true
