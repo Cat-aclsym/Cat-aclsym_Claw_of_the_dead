@@ -1,161 +1,103 @@
-
-## © 2024 A7 Studio. All rights reserved. Trademark.
-## Base class for all game levels. Manages level state, resources, and map loading.
-
-class_name ILevel extends Node2D
+class_name ILevel2 extends Node2D
 
 
-## Signals for game state changes
-signal stats_updated
-
-# Constants for state names
 const STATE_CONFIGURING: String = "CONFIGURING"
-const STATE_PLAYING: String = "PLAYING"
 const STATE_VICTORY: String = "VICTORY"
 const STATE_DEFEAT: String = "DEFEAT"
 const STATE_ERROR: String = "ERROR"
 const STATE_PAUSE: String = "PAUSE"
-const END_GAME_MENU: PackedScene = preload("res://scenes/ui/menus/end_game/end_game.tscn")
+const STATE_WAVE: String = "WAVE_%d"
+const STATE_WAVE_0: String = "WAVE_0"
 
-## Reference to currently active level instance
-static var current_level: ILevel = null
-
-## Scene containing the map layout and wave data
+@export var level_id: String = "lev.XX"
+@export var level_name: String
 @export var map_scene: PackedScene = null
 
-## Store the time when the level started
-var start_time: float
-
-## Store the time when the level ended
-var end_time: float
-
-## StateMachine handling the level logic
 var state_machine: StateMachine
 
-## Current coin count for purchasing towers
-var coins: int = 75:
-	set = _set_coins
-
-## Current player health points
-var health: int = 20:
-	set = _set_health
-
-## Reference to the active map instance
 var map: IMap = null
+var waves: Array
 
-## Metadata containing level configuration
-var metadata: LevelMetadata = null
-
-## Current state of the level
-var current_state: String
-
-## Last state of the level
-var last_state: String = ""
+var start_time: float
+var end_time: float
 
 # core
 func _ready() -> void:
-	if map_scene != null:
-		var new_map = map_scene.instantiate()
-		add_child(new_map)
-		map = new_map
-		Log.trace(Log.Level.INFO, "ILevel.gd: Map instance created and added to the level")
-		if map.has_signal("victory"):
-			SignalUtil.connects([ {SignalUtil.WHO: map, SignalUtil.WHAT: "victory", SignalUtil.TO: _on_victory}])
-
-	else:
-		Log.trace(Log.Level.ERROR, "ILevel.gd: map_scene is null. Cannot initialize map.")
-
+	# initialisation procedure
+	# _init_map()
+	_load_waves()
 	_build_state_machine()
-	state_machine.toggle_initial_state()
-	start_time = Time.get_unix_time_from_system()
-
-func _physics_process(delta: float) -> void:
-	current_state = state_machine.get_current_state().name
-	if current_state != last_state:
-		state_machine.handle_current_state([delta])
-		last_state = current_state
-
 
 # public
-## Initializes the level with provided metadata
-func initialize(meta: LevelMetadata) -> void:
-	metadata = meta.duplicate()
-	Log.trace(Log.Level.INFO, "Level initializing [{0}] : {1}".format([metadata.id, metadata.level_name]))
-	_load_map()
 
-## Starts the next wave of enemies
-func start_new_wave() -> void:
-	pass
 
 # private
-## Updates coin count and emits stats_updated signal
-func _set_health(new_value: int) -> void:
-	if health <= 0:
-		return
-	health = new_value
-	stats_updated.emit()
-
-	if health <= 0 and state_machine.transition_to(STATE_DEFEAT):
-		Log.trace(Log.Level.INFO, "Player defeated.")
-
-## Update player's coin count
-func _set_coins(new_value: int) -> void:
-	coins = new_value
-	stats_updated.emit()
+func _init_map() -> void:
+	assert(map_scene != null)
+	map = map_scene.instantiate()
+	add_child(map)
+	Log.trace(Log.Level.INFO, "ILevel.gd: Map instance created and added to the level");
 
 
-## Loads and initializes the map scene
-func _load_map() -> void:
-	var new_map: Node = map_scene.instantiate()
-	add_child(new_map)
+func _load_waves() -> void:
+	Log.trace(Log.Level.DEBUG, "LAODING WAVES");
+	var filepath: String = "res://resources/levels/%s.json" % level_id
+	var file := FileAccess.open(filepath, FileAccess.READ)
+	assert(file, "Failed to open file %s" % filepath)
 
-	Global.cursor.map_ref = map
-	if map.has_signal("wave_complete"):
-		SignalUtil.connects([
-			{SignalUtil.WHO: map, SignalUtil.WHAT: "wave_complete", SignalUtil.TO: _on_wave_complete}
-		])
-		Log.trace(Log.Level.INFO, "Connected 'wave_complete' signal from IMap to ILevel.")
-	else:
-		Log.trace(Log.Level.ERROR, "IMap does not have 'wave_complete' signal.")
+	var raw_content: String = file.get_as_text()
+	file.close()
+	var parsed = JSON.parse_string(raw_content)
+	assert(parsed and parsed.has("waves"))
+
+	waves = parsed["waves"]
+	for i in range(len(waves)):
+		print("%d :" % i)
+		print(waves[i])
+		print("")
 
 
-## Builds the state machine
 func _build_state_machine() -> void:
-	var builder: StateMachineBuilder = StateMachineBuilder.new()
+	var builder := StateMachineBuilder.new()
+	builder.build_initial_state(STATE_CONFIGURING)
+	builder.build_state(STATE_VICTORY)
+	builder.build_state(STATE_DEFEAT)
+	builder.build_state(STATE_ERROR)
+	builder.build_state(STATE_PAUSE)
 
-	builder.build_initial_state(STATE_CONFIGURING, _on_configuring)
-	builder.build_state(STATE_PLAYING, _on_playing)
-	builder.build_state(STATE_VICTORY, _on_victory)
-	builder.build_state(STATE_DEFEAT, _on_defeat)
-	builder.build_state(STATE_ERROR, _on_error)
-	builder.build_state(STATE_PAUSE, _on_pause)
+	for i in waves.size():
+		builder.build_state(STATE_WAVE % i)
+		builder.build_transition(STATE_WAVE % i, STATE_CONFIGURING)
+		builder.build_transition(STATE_WAVE % i, STATE_DEFEAT)
+		builder.build_transition(STATE_WAVE % i, STATE_PAUSE)
+		builder.build_transition(STATE_WAVE % i, STATE_ERROR)
+		builder.build_transition(STATE_PAUSE, STATE_WAVE % i)
+		if i == waves.size() - 1:
+			builder.build_transition(STATE_WAVE % i, STATE_VICTORY)
+		else:
+			builder.build_transition(STATE_WAVE % i, STATE_WAVE % (i + 1))
 
-	builder.build_transition(STATE_CONFIGURING, STATE_PLAYING)
-	builder.build_transition(STATE_PLAYING, STATE_VICTORY)
-	builder.build_transition(STATE_PLAYING, STATE_DEFEAT)
+	builder.build_transition(STATE_CONFIGURING, STATE_WAVE % 0)
 	builder.build_transition(STATE_CONFIGURING, STATE_DEFEAT)
-	builder.build_transition(STATE_ERROR, STATE_CONFIGURING)
 	builder.build_transition(STATE_DEFEAT, STATE_PAUSE)
-	builder.build_transition(STATE_PAUSE, STATE_PLAYING)
 	builder.build_transition(STATE_VICTORY, STATE_CONFIGURING)
-	builder.build_transition(STATE_DEFEAT, STATE_ERROR)
 
+	builder.build_transition(STATE_CONFIGURING, STATE_ERROR)
+	builder.build_transition(STATE_DEFEAT, STATE_ERROR)
+	builder.build_transition(STATE_VICTORY, STATE_ERROR)
 
 	state_machine = builder.build()
 	Log.trace(Log.Level.INFO, "State Machine built. Initial State: %s" % state_machine.get_current_state().name)
 
-## Getter current state
-func get_current_state() -> String:
-	return state_machine.get_current_state().name if state_machine else STATE_CONFIGURING
 
 ## State: Configuring
 func _on_configuring(args = []) -> bool:
 	var delta: float = args[0] if args.size() > 0 else 0.0
 	Log.trace(Log.Level.INFO, "Entering CONFIGURING state. Delta: %s" % delta)
 	Log.trace(Log.Level.INFO, "Configuration complete. Transitioning to PLAYING...")
-	var success: bool = state_machine.toggle_state(STATE_PLAYING)
+	var success: bool = state_machine.toggle_state(STATE_WAVE_0)
 	if not success:
-		Log.trace(Log.Level.ERROR, "Transition to PLAYING failed.")
+		Log.trace(Log.Level.ERROR, "Transition to State(WAVE_0) failed.")
 		return false
 
 	return true
@@ -228,3 +170,12 @@ func get_tower_by_name(name: String) -> ITower:
 			if tower.name == name:
 				return tower
 	return null
+
+
+# signal
+
+
+# event
+
+
+# setget

@@ -4,10 +4,10 @@
 [ext_resource type="Texture2D" uid="uid://vvmnkp7tiwxm" path="res://assets/environment/backgrounds/Fond Menu 01@2x.png" id="2_gdr4h"]
 [ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="3_1rslt"]
 [ext_resource type="Texture2D" uid="uid://b1yesvpwmntau" path="res://assets/ui/buttons/Bouton orange@2x.png" id="4_uvg8w"]
-[ext_resource type="PackedScene" uid="uid://s70rc0a3unkr" path="res://scenes/gameplay/world/level/level_metadata.tscn" id="5_1a6bq"]
-[ext_resource type="PackedScene" uid="uid://de3tnk1y83r8n" path="res://scenes/gameplay/world/level/levels/level_1.tscn" id="6_6kwx2"]
+[ext_resource type="PackedScene" uid="uid://s70rc0a3unkr" path="res://scenes/gameplay/world/level.old/level_metadata.tscn" id="5_1a6bq"]
+[ext_resource type="PackedScene" uid="uid://de3tnk1y83r8n" path="res://scenes/gameplay/world/level.old/levels/level_1.tscn" id="6_6kwx2"]
 [ext_resource type="Texture2D" uid="uid://dbhkk633ispub" path="res://assets/ui/buttons/Bouton Bleu@2x.png" id="7_ludvy"]
-[ext_resource type="PackedScene" uid="uid://8gta0ub172x3" path="res://scenes/gameplay/world/level/levels/level_debug.tscn" id="8_fc2ix"]
+[ext_resource type="PackedScene" uid="uid://8gta0ub172x3" path="res://scenes/gameplay/world/level.old/levels/level_debug.tscn" id="8_fc2ix"]
 [ext_resource type="Texture2D" uid="uid://cdaralngqjlvk" path="res://assets/ui/buttons/Bouton Vert@2x.png" id="9_eb8kt"]
 
 [sub_resource type="Gradient" id="Gradient_dxsp7"]
