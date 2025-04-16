@@ -79,6 +79,9 @@ libraries = {
 }
 autoplay = "idle"
 
+[node name="Area2D" parent="." index="1"]
+visible = false
+
 [node name="CollisionShape2D" parent="Area2D" index="0"]
 position = Vector2(4.76837e-07, 16)
 rotation = 0.567232
@@ -90,6 +93,9 @@ visible = true
 scale = Vector2(1e-05, 1e-05)
 
 [node name="Line2D" type="Line2D" parent="Polygon2D" index="0"]
+
+[node name="TowerHoverBox" parent="." index="4"]
+visible = false
 
 [node name="CollisionShape2D" parent="TowerHoverBox" index="0"]
 position = Vector2(0, 8)
