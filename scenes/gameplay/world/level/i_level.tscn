@@ -15,7 +15,7 @@ height = 512
 use_hdr = true
 fill_to = Vector2(0, 1)
 
-[node name="ILevel" type="Node2D"]
+[node name="ILevel" type="Node2D" groups=["bullet_container"]]
 script = ExtResource("1_hgrcn")
 
 [node name="ParallaxBackground" type="ParallaxBackground" parent="."]
