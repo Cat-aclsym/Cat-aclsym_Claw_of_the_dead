@@ -3,8 +3,8 @@
 [ext_resource type="Script" path="res://scenes/gameplay/entities/tower_placement/tower_placement.gd" id="1_3aclw"]
 [ext_resource type="Texture2D" uid="uid://dn7sa2jf2kvor" path="res://assets/environment/grid_placement/moving_arrow.png" id="2_8yjt0"]
 [ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="3_bj1wi"]
-[ext_resource type="Texture2D" uid="uid://1mu5cdhd5hw8" path="res://assets/ui/icons/Button Build.png" id="4_updrk"]
-[ext_resource type="Texture2D" uid="uid://nr3ul4jgyad0" path="res://assets/ui/icons/Button Cancel.png" id="5_4oww3"]
+[ext_resource type="Texture2D" uid="uid://do48sldu5a83i" path="res://assets/ui/icons/Button Build.svg" id="4_updrk"]
+[ext_resource type="Texture2D" uid="uid://c2uqlay1r2d1d" path="res://assets/ui/icons/Button Cancel.svg" id="5_4oww3"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_xhnpy"]
 atlas = ExtResource("2_8yjt0")
