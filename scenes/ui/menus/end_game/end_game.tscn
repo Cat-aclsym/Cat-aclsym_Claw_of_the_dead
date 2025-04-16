@@ -1,0 +1,151 @@
+[gd_scene load_steps=10 format=3 uid="uid://bj68p6c4lre5p"]
+
+[ext_resource type="Script" path="res://scenes/ui/menus/end_game/end_game.gd" id="1_6bb00"]
+[ext_resource type="Texture2D" uid="uid://c8b8irfugbxdj" path="res://assets/environment/backgrounds/Fond Menu 02.svg" id="2_kg5vp"]
+[ext_resource type="FontFile" uid="uid://ddo3rokwsadq0" path="res://assets/ui/fonts/dotgothic/DotGothic16-Regular.ttf" id="3_fbiyc"]
+[ext_resource type="Texture2D" uid="uid://2h2ubjxfobs5" path="res://assets/ui/icons/Victory Gold.svg" id="4_u374u"]
+[ext_resource type="Texture2D" uid="uid://d01pp2dnlu1uh" path="res://assets/ui/icons/Clock.svg" id="5_jbudf"]
+[ext_resource type="Texture2D" uid="uid://qhsyglmr4xyo" path="res://assets/ui/icons/Heart.svg" id="6_86q27"]
+[ext_resource type="Texture2D" uid="uid://ddk5xo6vibq1t" path="res://assets/ui/icons/Button Replay.svg" id="7_shpam"]
+[ext_resource type="Texture2D" uid="uid://dn8ksi7radij3" path="res://assets/ui/icons/Button Skip.svg" id="8_ueh5j"]
+[ext_resource type="Texture2D" uid="uid://dksoj327amr1a" path="res://assets/ui/icons/Button Home Menu.svg" id="9_g4nh0"]
+
+[node name="EndGame" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_6bb00")
+
+[node name="GUIMarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="BackgroundTextureRect" type="TextureRect" parent="GUIMarginContainer"]
+layout_mode = 2
+texture = ExtResource("2_kg5vp")
+expand_mode = 1
+
+[node name="MarginContainer" type="MarginContainer" parent="GUIMarginContainer/BackgroundTextureRect"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 50
+theme_override_constants/margin_top = 35
+theme_override_constants/margin_right = 50
+theme_override_constants/margin_bottom = 35
+
+[node name="VBoxContainer" type="VBoxContainer" parent="GUIMarginContainer/BackgroundTextureRect/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="TitleLabel" type="Label" parent="GUIMarginContainer/BackgroundTextureRect/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.364706, 0.847059, 0.364706, 1)
+theme_override_fonts/font = ExtResource("3_fbiyc")
+theme_override_font_sizes/font_size = 50
+text = "ENDGAMEMENU.TIMESTATISTIC.LABEL"
+horizontal_alignment = 1
+clip_text = true
+
+[node name="TextureRect" type="TextureRect" parent="GUIMarginContainer/BackgroundTextureRect/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 2.0
+texture = ExtResource("4_u374u")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="HBoxContainer" type="HBoxContainer" parent="GUIMarginContainer/BackgroundTextureRect/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 100
+
+[node name="TimeAspectRatioContainer" type="AspectRatioContainer" parent="GUIMarginContainer/BackgroundTextureRect/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+stretch_mode = 1
+alignment_horizontal = 2
+
+[node name="TimeHBoxContainer" type="HBoxContainer" parent="GUIMarginContainer/BackgroundTextureRect/MarginContainer/VBoxContainer/HBoxContainer/TimeAspectRatioContainer"]
+layout_mode = 2
+
+[node name="TimeStatisticTextureRect" type="TextureRect" parent="GUIMarginContainer/BackgroundTextureRect/MarginContainer/VBoxContainer/HBoxContainer/TimeAspectRatioContainer/TimeHBoxContainer"]
+layout_mode = 2
+texture = ExtResource("5_jbudf")
+expand_mode = 3
+stretch_mode = 4
+
+[node name="TimeStatisticLabel" type="Label" parent="GUIMarginContainer/BackgroundTextureRect/MarginContainer/VBoxContainer/HBoxContainer/TimeAspectRatioContainer/TimeHBoxContainer"]
+layout_mode = 2
+text = "ENDGAMEMENU.TIMESTATISTIC.LABEL"
+
+[node name="LifeAspectRatioContainer" type="AspectRatioContainer" parent="GUIMarginContainer/BackgroundTextureRect/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+stretch_mode = 1
+alignment_horizontal = 0
+
+[node name="LifeHBoxContainer" type="HBoxContainer" parent="GUIMarginContainer/BackgroundTextureRect/MarginContainer/VBoxContainer/HBoxContainer/LifeAspectRatioContainer"]
+layout_mode = 2
+
+[node name="LifeStatisticTextureRect" type="TextureRect" parent="GUIMarginContainer/BackgroundTextureRect/MarginContainer/VBoxContainer/HBoxContainer/LifeAspectRatioContainer/LifeHBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+texture = ExtResource("6_86q27")
+expand_mode = 3
+stretch_mode = 4
+
+[node name="LifeStatisticLabel" type="Label" parent="GUIMarginContainer/BackgroundTextureRect/MarginContainer/VBoxContainer/HBoxContainer/LifeAspectRatioContainer/LifeHBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "ENDGAMEMENU.LIFESTATISTIC.LABEL"
+
+[node name="ButtonsHBoxContainer" type="HBoxContainer" parent="GUIMarginContainer/BackgroundTextureRect/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+alignment = 1
+
+[node name="RestartButtonAspectRatioContainer" type="AspectRatioContainer" parent="GUIMarginContainer/BackgroundTextureRect/MarginContainer/VBoxContainer/ButtonsHBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="RestartTextureButton" type="TextureButton" parent="GUIMarginContainer/BackgroundTextureRect/MarginContainer/VBoxContainer/ButtonsHBoxContainer/RestartButtonAspectRatioContainer"]
+layout_mode = 2
+texture_normal = ExtResource("7_shpam")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="NextButtonAspectRatioContainer" type="AspectRatioContainer" parent="GUIMarginContainer/BackgroundTextureRect/MarginContainer/VBoxContainer/ButtonsHBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="NextTextureButton" type="TextureButton" parent="GUIMarginContainer/BackgroundTextureRect/MarginContainer/VBoxContainer/ButtonsHBoxContainer/NextButtonAspectRatioContainer"]
+layout_mode = 2
+texture_normal = ExtResource("8_ueh5j")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="HomeButtonAspectRatioContainer" type="AspectRatioContainer" parent="GUIMarginContainer/BackgroundTextureRect/MarginContainer/VBoxContainer/ButtonsHBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HomeTextureButton" type="TextureButton" parent="GUIMarginContainer/BackgroundTextureRect/MarginContainer/VBoxContainer/ButtonsHBoxContainer/HomeButtonAspectRatioContainer"]
+layout_mode = 2
+texture_normal = ExtResource("9_g4nh0")
+ignore_texture_size = true
+stretch_mode = 5

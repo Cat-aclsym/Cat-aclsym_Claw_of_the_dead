@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Calque_2" data-name="Calque 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 37.66 32.74">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #bb5749;
+      }
+
+      .cls-2 {
+        fill: #f08c7f;
+      }
+
+      .cls-3 {
+        fill: #ed6c5c;
+      }
+    </style>
+  </defs>
+  <g id="Calque_1-2" data-name="Calque 1">
+    <path id="devant" class="cls-1" d="M37.66,6.7c-.37,3.77-.74,7.55-1.11,11.32-2.24,2.67-4.48,5.33-6.72,8-3.15,2.24-6.3,4.48-9.45,6.72-3.12-1.76-6.24-3.52-9.36-5.28-2.27-2.58-4.54-5.16-6.81-7.74-.55-4.36-1.11-8.72-1.66-13.08,2.8-1.76,5.59-3.53,8.39-5.29l9.19,4.16L30.51,1.35c2.38,1.78,4.77,3.57,7.15,5.35Z"/>
+    <path id="devant-2" data-name="devant" class="cls-3" d="M35.11,5.35c-.37,3.77-.74,7.55-1.11,11.32-2.24,2.67-4.48,5.33-6.72,8-3.15,2.24-6.3,4.48-9.45,6.72-3.12-1.76-6.24-3.52-9.36-5.28-2.27-2.58-4.54-5.16-6.81-7.74C1.11,14.01.55,9.65,0,5.29,2.8,3.53,5.59,1.76,8.39,0l9.19,4.16L27.96,0c2.38,1.78,4.77,3.57,7.15,5.35Z"/>
+    <g>
+      <rect id="lumière" class="cls-2" x="23.42" y="5.19" width="1.38" height="1.38"/>
+      <rect id="lumière-2" data-name="lumière" class="cls-2" x="24.8" y="3.8" width="1.38" height="1.38"/>
+      <rect id="lumière-3" data-name="lumière" class="cls-2" x="26.18" y="3.8" width="1.38" height="1.38"/>
+      <rect id="lumière-4" data-name="lumière" class="cls-2" x="27.57" y="3.8" width="1.38" height="1.38"/>
+      <rect id="lumière-5" data-name="lumière" class="cls-2" x="28.95" y="5.19" width="1.38" height="1.38"/>
+      <rect id="lumière-6" data-name="lumière" class="cls-2" x="31.71" y="7.95" width="1.38" height="1.38"/>
+      <rect id="lumière-7" data-name="lumière" class="cls-2" x="31.71" y="9.33" width="1.38" height="1.38"/>
+      <rect id="lumière-8" data-name="lumière" class="cls-2" x="30.33" y="6.57" width="1.38" height="1.38"/>
+    </g>
+    <g>
+      <rect id="lumière-9" data-name="lumière" class="cls-2" x="9.45" y="23.58" width="1.38" height="1.38" transform="translate(-5.03 2.78) rotate(-12.54)"/>
+      <rect id="lumière-10" data-name="lumière" class="cls-2" x="11.1" y="24.63" width="1.38" height="1.38" transform="translate(-5.22 3.17) rotate(-12.54)"/>
+      <rect id="lumière-11" data-name="lumière" class="cls-2" x="12.75" y="25.68" width="1.38" height="1.38" transform="translate(-5.41 3.55) rotate(-12.54)"/>
+      <rect id="lumière-12" data-name="lumière" class="cls-2" x="14.4" y="26.73" width="1.38" height="1.38" transform="translate(-5.59 3.93) rotate(-12.54)"/>
+    </g>
+  </g>
+</svg>
