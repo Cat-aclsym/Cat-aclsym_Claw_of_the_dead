@@ -62,6 +62,7 @@ func _load_paths() -> void:
 
 ## Loads and initializes wave nodes from the Waves node
 func _load_waves() -> void:
+	return
 	var children: Array = $Waves.get_children()
 	var i: int = 0
 

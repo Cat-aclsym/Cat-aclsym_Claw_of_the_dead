@@ -2,7 +2,7 @@
 ##
 ## Manages a wave of enemies in the game.
 ## Handles spawning of enemy groups with configurable delays and modifiers.
-class_name Wave
+class_name WaveOld
 extends Node
 
 ## Emitted when wave starts spawning enemies
@@ -22,7 +22,7 @@ signal wave_complete(last_wave: bool)
 @export var global_modifiers: Dictionary = {}
 
 ## Export of wave class
-@export var wave: Wave = null
+@export var wave = null
 
 ## Delay in seconds before next wave starts
 @export_range(0.1, 10.0) var delay: float = 0.1
