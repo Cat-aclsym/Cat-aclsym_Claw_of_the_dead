@@ -1,6 +1,10 @@
+## © [2024] A7 Studio. All rights reserved. Trademark.
+## Level script that manages map, waves, state transitions, and enemy spawning.
+## @experimental
 class_name ILevel2 extends Node2D
 
 
+# Constants
 const STATE_CONFIGURING: String = "CONFIGURING"
 const STATE_VICTORY: String = "VICTORY"
 const STATE_DEFEAT: String = "DEFEAT"
@@ -9,58 +13,76 @@ const STATE_PAUSE: String = "PAUSE"
 const STATE_WAVE: String = "WAVE_%d"
 const STATE_WAVE_0: String = "WAVE_0"
 
+# Exported Variables
 @export var level_id: String = "lev.XX"
 @export var level_name: String
 @export var map_scene: PackedScene
 
-var is_completed := false
+# Public Variables
+var enemies_scene: Dictionary = {}
+var is_completed: bool = false
 var state_machine: StateMachine
-
 var map: IMap = null
-var waves: Array
+var waves: Array = []
 var current_step: WaveStep = null
 var current_wave: int = 0
-
 var start_time: float
 var end_time: float
 
+# Private Variables
+var _frame_counter: int = 0 # Temporary frame counter for spawn delay
+var _enemies_alive: int = 0
+
+
 # core
 func _ready() -> void:
-	# initialisation procedure
-	# _init_map()
+	start_level()
+
+
+func _process(_delta: float) -> void:
+	if state_machine:
+		state_machine.handle_current_state([])
+
+
+# public
+## Starts the level by initializing map, waves, and state machine.
+func start_level() -> void:
+	_init_map()
 	_load_waves()
 	_build_state_machine()
 	state_machine.toggle_initial_state()
 
 
-func _process(_delta: float) -> void:
-	state_machine.handle_current_state([])
+## Returns a tower instance by name.
+func get_tower_by_name(name: String) -> ITower:
+	for child in map.get_children():
+		if child is ITower:
+			var tower: ITower = child as ITower
+			if tower.name == name:
+				return tower
+	return null
 
-# public
 
-
-# private
+# privates
 func _init_map() -> void:
-	assert(map_scene != null)
+	assert(map_scene != null, "[ILevel2] Map scene is null. Cannot instantiate map.")
 	map = map_scene.instantiate()
 	add_child(map)
-	Log.trace(Log.Level.INFO, "ILevel.gd: Map instance created and added to the level");
-
+	Log.trace(Log.Level.INFO, "Map instance created and added to the level.")
 
 func _load_waves() -> void:
-	Log.trace(Log.Level.DEBUG, "LAODING WAVES");
+	Log.trace(Log.Level.DEBUG, "Loading waves")
 	var filepath: String = "res://resources/levels/%s.json" % level_id
 	var file := FileAccess.open(filepath, FileAccess.READ)
-	assert(file, "Failed to open file %s" % filepath)
+	assert(file != null, "[ILevel2] Failed to open wave file: %s" % filepath)
 
 	var raw_content: String = file.get_as_text()
 	file.close()
 	var parsed = JSON.parse_string(raw_content)
-	assert(parsed and parsed.has("waves"))
+	assert(parsed != null and parsed.has("waves"), "[ILevel2] Failed to parse waves or missing 'waves' key in JSON.")
 
 	for wave in parsed["waves"]:
 		waves.append(Wave.new(wave))
-		print(waves.back())
 
 
 func _build_state_machine() -> void:
@@ -73,148 +95,131 @@ func _build_state_machine() -> void:
 
 	for i in waves.size():
 		builder.build_state(STATE_WAVE % i, _on_state_wave)
+
+	for i in waves.size():
 		builder.build_transition(STATE_WAVE % i, STATE_CONFIGURING)
 		builder.build_transition(STATE_WAVE % i, STATE_DEFEAT)
 		builder.build_transition(STATE_WAVE % i, STATE_PAUSE)
 		builder.build_transition(STATE_WAVE % i, STATE_ERROR)
 		builder.build_transition(STATE_PAUSE, STATE_WAVE % i)
-		if i == waves.size() - 1:
-			builder.build_transition(STATE_WAVE % i, STATE_VICTORY)
-		else:
-			builder.build_transition(STATE_WAVE % i, STATE_WAVE % (i + 1))
+		builder.build_transition(STATE_WAVE % i, STATE_VICTORY if i == waves.size() - 1 else STATE_WAVE % (i + 1))
 
-	builder.build_transition(STATE_CONFIGURING, STATE_WAVE % 0)
+	builder.build_transition(STATE_CONFIGURING, STATE_WAVE_0)
 	builder.build_transition(STATE_CONFIGURING, STATE_DEFEAT)
-	builder.build_transition(STATE_DEFEAT, STATE_PAUSE)
-	builder.build_transition(STATE_VICTORY, STATE_CONFIGURING)
-
 	builder.build_transition(STATE_CONFIGURING, STATE_ERROR)
+	builder.build_transition(STATE_DEFEAT, STATE_PAUSE)
 	builder.build_transition(STATE_DEFEAT, STATE_ERROR)
+	builder.build_transition(STATE_VICTORY, STATE_CONFIGURING)
 	builder.build_transition(STATE_VICTORY, STATE_ERROR)
 
 	state_machine = builder.build()
-	Log.trace(Log.Level.INFO, "State Machine built. Initial State: %s" % state_machine.get_current_state().name)
+	Log.trace(Log.Level.INFO, "State machine built. Initial state: %s" % state_machine.get_current_state().name)
 
 
-func _next() -> void:
-	Log.trace(Log.Level.DEBUG, "Wave(%d) completed." % current_step);
-	current_step = null
+func _next_wave() -> void:
 	waves.pop_front()
-	
-	if waves.size() == 0:
+	if waves.is_empty():
 		state_machine.toggle_state(STATE_VICTORY)
 		return
-
 	current_wave += 1
-	Log.trace(Log.Level.DEBUG, "Starting Wave(%d)" % current_wave);
 	state_machine.toggle_state(STATE_WAVE % current_wave)
 
 
+func _next_step() -> void:
+	current_step = waves.front().pop()
+
+
+func _process_frame_counter() -> bool:
+	if _frame_counter < 60:
+		_frame_counter += 1
+		return true
+	_frame_counter = 0
+	return false
+
+
 func _execute_spawn_order(step: WaveStep) -> void:
-	Log.trace(Log.Level.DEBUG, "Executing spawn order");
-	pass
+	var enemy_id: String = step.data()[WaveStep.ENEMY_ID]
+	var spawner_index: int = step.data()[WaveStep.SPAWNER]
+
+	if not enemies_scene.has(enemy_id):
+		enemies_scene[enemy_id] = load("res://scenes/gameplay/entities/enemy/enemies/%s.tscn" % enemy_id)
+
+	var enemy: IEnemy = enemies_scene[enemy_id].instantiate()
+	enemy.connect("die", func(): _enemies_alive -= 1)
+	EnemySpawner.spawn_enemy(map.paths[spawner_index], enemy)
+	step.data()[WaveStep.COUNT] -= 1
+	_enemies_alive += 1
+
+
+func _spawn_order_post_execution() -> void:
+	if current_step.data()[WaveStep.COUNT] == 0:
+		_next_step()
 
 
 func _execute_wait_order(step: WaveStep) -> void:
-	Log.trace(Log.Level.DEBUG, "Executing wait order");
-	pass
+	if not step.data().has("start"):
+		step.data()["start"] = Time.get_ticks_msec() / 1000.0
 
 
-## State: Configuring
-func _on_state_configuring(args = []) -> bool:
-	var delta: float = args[0] if args.size() > 0 else 0.0
-	Log.trace(Log.Level.INFO, "Entering CONFIGURING state. Delta: %s" % delta)
-	Log.trace(Log.Level.INFO, "Configuration complete. Transitioning to PLAYING...")
-	var success: bool = state_machine.toggle_state(STATE_WAVE_0)
-	if not success:
-		Log.trace(Log.Level.ERROR, "Transition to State(WAVE_0) failed.")
-		return false
+func _wait_order_post_execution() -> void:
+	var elapsed: float = Time.get_ticks_msec() / 1000.0 - start_time
+	if elapsed >= current_step.data()[WaveStep.WAIT_S]:
+		Log.trace(Log.Level.DEBUG, "Wait order finished")
+		_next_step()
 
-	return true
-
-var has_logged_playing: bool = false
-
-## State: Playing
-func _on_playing(args = []) -> bool:
-	var delta: float = args[0] if args.size() > 0 else 0.0
-	if not has_logged_playing:
-		Log.trace(Log.Level.INFO, "Entering PLAYING state with delta: %s" % delta)
-		has_logged_playing = true
-
+# states
+func _on_state_configuring(_args = []) -> bool:
+	state_machine.toggle_state(STATE_WAVE_0)
 	return true
 
 
-## State: Victory
 func _on_state_wave(_args = []) -> bool:
-	Log.trace(Log.Level.INFO, "Entering WAVE state.");
-	
 	var wave: Wave = waves.front()
-	if wave.peak() == null:
-		# Trigger next wave
-		_next()
+
+	if wave.peak() == null and _enemies_alive == 0:
+		_next_wave()
 		return true
-	
+
 	if current_step == null:
-		current_step = wave.pop()
+		_next_step()
 		return true
-	
+
 	match current_step.order():
 		WaveStep.Order.SPAWN:
-			# TODO : execute spawn order
-			pass
+			if _process_frame_counter():
+				return true
+			_execute_spawn_order(current_step)
+			_spawn_order_post_execution()
+			return true
 
 		WaveStep.Order.WAIT:
-			# TODO : handle wait time
-			pass
+			_execute_wait_order(current_step)
+			_wait_order_post_execution()
+			return true
 
 		_:
-			Log.trace(Log.Level.ERROR, "Unhandled WaveStep Order.");
+			Log.trace(Log.Level.ERROR, "Unhandled WaveStep order.")
 			return false
-
-	return true
 
 
 func _on_state_victory(_args = []) -> bool:
 	Log.trace(Log.Level.INFO, "Entering VICTORY state.")
 	return true
 
-## State: Defeat
-func _on_state_defeat(args = []) -> bool:
+
+func _on_state_defeat(_args = []) -> bool:
 	Log.trace(Log.Level.INFO, "Entering DEFEAT state.")
 	return true
 
-## State: Pause
-func _on_state_pause(args = []) -> bool:
-	Log.trace(Log.Level.INFO, "Entering PAUSE state")
+
+func _on_state_pause(_args = []) -> bool:
+	Log.trace(Log.Level.INFO, "Entering PAUSE state.")
 	get_tree().paused = true
 	Engine.time_scale = 0
 	Log.trace(Log.Level.INFO, "Game paused")
 	return true
 
-## State: Error
-func _on_state_error(args = []) -> bool:
-	Log.trace(Log.Level.ERROR, "Entering ERROR state")
-	return true
 
-
-func _on_wave_complete(last_wave: bool) -> void:
-	Log.trace(Log.Level.INFO, "Wave complete signal received.")
-
-
-## Returns a tower instance by name
-func get_tower_by_name(name: String) -> ITower:
-	for child in map.get_children():
-		if child is ITower:
-			var tower: ITower = child as ITower
-			if tower.name == name:
-				return tower
-	return null
-
-
-# signal
-
-
-# event
-
-
-# setget
+func _on_state_error(_args = []) -> bool:
+	Log.trace(Log.Level.ERROR, "Entering ERROR state.")
+	return false

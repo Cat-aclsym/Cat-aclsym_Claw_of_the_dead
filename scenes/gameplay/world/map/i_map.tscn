@@ -15,9 +15,4 @@ tilemap = NodePath("TileMapPlains")
 
 [node name="Paths" type="Node2D" parent="."]
 
-[node name="Waves" type="Node" parent="."]
-
-[node name="WavesTimer" type="Timer" parent="."]
-one_shot = true
-
 [node name="Controller" parent="." instance=ExtResource("3_ndsux")]
