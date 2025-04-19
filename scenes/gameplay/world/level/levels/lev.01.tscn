@@ -1,9 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://dfahd0bsnk0p4"]
+[gd_scene load_steps=4 format=3 uid="uid://dfahd0bsnk0p4"]
 
 [ext_resource type="PackedScene" uid="uid://bnsejcujkvcqg" path="res://scenes/gameplay/world/level/i_level.tscn" id="1_bhpo8"]
 [ext_resource type="PackedScene" uid="uid://buj5yatu3iyt" path="res://scenes/gameplay/world/map/maps/map_debug_1.tscn" id="2_gttx7"]
 [ext_resource type="PackedScene" uid="uid://7a3coyl5og1a" path="res://scenes/ui/ui.tscn" id="3_e614u"]
-[ext_resource type="PackedScene" uid="uid://2qg5t1x8h72s" path="res://scenes/watcher/watcher.tscn" id="4_5jel7"]
 
 [node name="Level01" instance=ExtResource("1_bhpo8")]
 level_id = "lev.01"
@@ -14,34 +13,5 @@ map_scene = ExtResource("2_gttx7")
 
 [node name="HomeMenu" parent="UI" index="2"]
 visible = false
-
-[node name="Watcher" parent="." index="1"]
-offset_left = 256.0
-offset_top = 132.0
-offset_right = 487.0
-offset_bottom = 182.0
-
-[node name="Watcher2" parent="." index="2"]
-offset_left = 256.0
-offset_top = 181.0
-offset_right = 487.0
-offset_bottom = 231.0
-property = &"current_step"
-
-[node name="Watcher3" parent="." index="3" node_paths=PackedStringArray("node") instance=ExtResource("4_5jel7")]
-offset_left = 256.0
-offset_top = 227.0
-offset_right = 487.0
-offset_bottom = 277.0
-node = NodePath("..")
-property = &"current_wave"
-
-[node name="Watcher4" parent="." index="4" node_paths=PackedStringArray("node") instance=ExtResource("4_5jel7")]
-offset_left = 256.0
-offset_top = 272.0
-offset_right = 487.0
-offset_bottom = 322.0
-node = NodePath("..")
-property = &"start_time"
 
 [editable path="UI"]

@@ -34,7 +34,7 @@ var start_time: float
 var end_time: float
 
 var coins: int = 75: set = _set_coins
-var health: int = 20: set = _set_health
+var health: int = 20000: set = _set_health
 
 # Private Variables
 var _frame_counter: int = 0 # Temporary frame counter for spawn delay
@@ -131,7 +131,7 @@ func _build_state_machine() -> void:
 
 func _next_wave() -> void:
 	waves.pop_front()
-	if waves.is_empty():
+	if waves.is_empty() and current_step == null: # oupsi 
 		state_machine.toggle_state(STATE_VICTORY)
 		return
 	current_wave += 1
