@@ -40,11 +40,15 @@ var health: int = 20: set = _set_health
 var _frame_counter: int = 0 # Temporary frame counter for spawn delay
 var _enemies_alive: int = 0
 
+var tmp_current_state: String = "n/a"
+
+@onready var popup_spawner: PopupSpawner = $PopupSpawner
 
 # core
 func _process(_delta: float) -> void:
 	if state_machine:
 		state_machine.handle_current_state([])
+		tmp_current_state = state_machine.get_current_state().name
 
 
 # public
@@ -56,21 +60,22 @@ func start_level() -> void:
 	_build_state_machine()
 	state_machine.toggle_initial_state()
 	start_time = Time.get_unix_time_from_system()
+	popup_spawner.wave("Wave %s" % [current_wave+1])
 
 
 ## Returns a tower instance by name.
-func get_tower_by_name(name: String) -> ITower:
+func get_tower_by_name(tower_name: String) -> ITower:
 	for child in map.get_children():
 		if child is ITower:
 			var tower: ITower = child as ITower
-			if tower.name == name:
+			if tower.name == tower_name:
 				return tower
 	return null
 
 
 # privates
 func _init_map() -> void:
-	assert(map_scene != null, "[ILevel2] Map scene is null. Cannot instantiate map.")
+	assert(map_scene != null, "Map scene is null. Cannot instantiate map.")
 	map = map_scene.instantiate()
 	add_child(map)
 	Log.trace(Log.Level.INFO, "Map instance created and added to the level.")
@@ -79,12 +84,12 @@ func _init_map() -> void:
 func _load_waves() -> void:
 	var filepath: String = "res://resources/levels/%s.json" % level_id
 	var file := FileAccess.open(filepath, FileAccess.READ)
-	assert(file != null, "[ILevel2] Failed to open wave file: %s" % filepath)
+	assert(file != null, "Failed to open wave file: %s" % filepath)
 
 	var raw_content: String = file.get_as_text()
 	file.close()
 	var parsed = JSON.parse_string(raw_content)
-	assert(parsed != null and parsed.has("waves"), "[ILevel2] Failed to parse waves or missing 'waves' key in JSON.")
+	assert(parsed != null and parsed.has("waves"), "Failed to parse waves or missing 'waves' key in JSON.")
 
 	for wave in parsed["waves"]:
 		waves.append(Wave.new(wave))
@@ -130,6 +135,7 @@ func _next_wave() -> void:
 		state_machine.toggle_state(STATE_VICTORY)
 		return
 	current_wave += 1
+	popup_spawner.wave("Wave %s" % [current_wave+1])
 	state_machine.toggle_state(STATE_WAVE % current_wave)
 
 
@@ -166,11 +172,11 @@ func _spawn_order_post_execution() -> void:
 
 func _execute_wait_order(step: WaveStep) -> void:
 	if not step.data().has("start"):
-		step.data()["start"] = Time.get_ticks_msec() / 1000.0
+		step.data()["start"] = Time.get_unix_time_from_system()
 
 
 func _wait_order_post_execution() -> void:
-	var elapsed: float = Time.get_ticks_msec() / 1000.0 - start_time
+	var elapsed: float = Time.get_unix_time_from_system() - start_time
 	if elapsed >= current_step.data()[WaveStep.WAIT_S]:
 		_next_step()
 

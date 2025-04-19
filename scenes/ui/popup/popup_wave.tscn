@@ -130,14 +130,11 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="TextureRect" type="TextureRect" parent="CenterContainer"]
-self_modulate = Color(1, 1, 1, 1)
 custom_minimum_size = Vector2(370, 117)
 layout_mode = 2
 texture = ExtResource("2_26l8s")
 expand_mode = 3
 stretch_mode = 5
-pivot_offset = Vector2(185, 58.5)
-scale = Vector2(0.7, 0.7)
 
 [node name="Label" type="Label" parent="CenterContainer/TextureRect"]
 self_modulate = Color(1, 1, 1, 0)

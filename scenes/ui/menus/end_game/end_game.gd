@@ -43,8 +43,8 @@ func init(victory: bool) -> void:
 
 	elapsed_time_seconds = floor(ILevel.current_level.end_time - ILevel.current_level.start_time)
 	elapsed_time_minutes = floor(elapsed_time_seconds / 60.)
-	Log.trace(Log.Level.DEBUG, str(elapsed_time_minutes))
-	Log.trace(Log.Level.DEBUG, str(elapsed_time_seconds))
+	# Log.trace(Log.Level.DEBUG, str(elapsed_time_minutes))
+	# Log.trace(Log.Level.DEBUG, str(elapsed_time_seconds))
 	if elapsed_time_seconds > 60:
 		elapsed_time_seconds = elapsed_time_seconds - (elapsed_time_minutes * 60)
 		elapsed_time_text = str(elapsed_time_minutes) + "m " + str(elapsed_time_seconds) + "s"

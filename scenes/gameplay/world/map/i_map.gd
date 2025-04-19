@@ -11,8 +11,6 @@ extends Node2D
 ## Array of paths that enemies can follow
 var paths: Array[Path2D] = []
 
-
-@onready var popup_wave_spawner: PopupSpawner = $PopupWaveSpawner
 @onready var camera: Camera2D = $Camera2D
 
 # core
@@ -20,7 +18,6 @@ func _ready() -> void:
 	_load_paths()
 
 	Global.cursor.tm_ref = tilemap
-
 
 
 # private
