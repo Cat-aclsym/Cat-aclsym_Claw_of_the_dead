@@ -1,14 +1,12 @@
-[gd_scene load_steps=12 format=3 uid="uid://dgac5kcibwtmg"]
+[gd_scene load_steps=10 format=3 uid="uid://dgac5kcibwtmg"]
 
 [ext_resource type="Script" path="res://scenes/ui/menus/level_selection/level_selection.gd" id="1_u6l4m"]
 [ext_resource type="Texture2D" uid="uid://vvmnkp7tiwxm" path="res://assets/environment/backgrounds/Fond Menu 01@2x.png" id="2_gdr4h"]
 [ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="3_1rslt"]
 [ext_resource type="Texture2D" uid="uid://b1yesvpwmntau" path="res://assets/ui/buttons/Bouton orange@2x.png" id="4_uvg8w"]
-[ext_resource type="PackedScene" uid="uid://s70rc0a3unkr" path="res://scenes/gameplay/world/level.old/level_metadata.tscn" id="5_1a6bq"]
-[ext_resource type="PackedScene" uid="uid://de3tnk1y83r8n" path="res://scenes/gameplay/world/level.old/levels/level_1.tscn" id="6_6kwx2"]
+[ext_resource type="PackedScene" uid="uid://dfahd0bsnk0p4" path="res://scenes/gameplay/world/level/levels/lev.01.tscn" id="5_nkka1"]
+[ext_resource type="PackedScene" uid="uid://c5xxpj04k5gcy" path="res://scenes/gameplay/world/level/levels/lev.02.tscn" id="7_b2deu"]
 [ext_resource type="Texture2D" uid="uid://dbhkk633ispub" path="res://assets/ui/buttons/Bouton Bleu@2x.png" id="7_ludvy"]
-[ext_resource type="PackedScene" uid="uid://8gta0ub172x3" path="res://scenes/gameplay/world/level.old/levels/level_debug.tscn" id="8_fc2ix"]
-[ext_resource type="Texture2D" uid="uid://cdaralngqjlvk" path="res://assets/ui/buttons/Bouton Vert@2x.png" id="9_eb8kt"]
 
 [sub_resource type="Gradient" id="Gradient_dxsp7"]
 interpolation_mode = 2
@@ -115,10 +113,7 @@ theme_override_font_sizes/font_size = 24
 vertical_alignment = 1
 uppercase = true
 
-[node name="LevelMetadata1" parent="GuiMarginContainer/MenuMarginContainer/LevelSelectVBoxContainer/LevelAspectRatioContainer1/LevelTextureButton1" instance=ExtResource("5_1a6bq")]
-id = 1
-level_name = "FIRST.LEVEL.NAME"
-level_scene = ExtResource("6_6kwx2")
+[node name="Level01" parent="GuiMarginContainer/MenuMarginContainer/LevelSelectVBoxContainer/LevelAspectRatioContainer1/LevelTextureButton1" instance=ExtResource("5_nkka1")]
 
 [node name="LevelAspectRatioContainer2" type="AspectRatioContainer" parent="GuiMarginContainer/MenuMarginContainer/LevelSelectVBoxContainer"]
 layout_mode = 2
@@ -152,46 +147,4 @@ theme_override_font_sizes/font_size = 24
 vertical_alignment = 1
 uppercase = true
 
-[node name="LevelMetadata2" parent="GuiMarginContainer/MenuMarginContainer/LevelSelectVBoxContainer/LevelAspectRatioContainer2/LevelTextureButton2" instance=ExtResource("5_1a6bq")]
-position = Vector2(0, -63)
-id = 2
-level_name = "SECOND.LEVEL.NAME"
-level_scene = ExtResource("8_fc2ix")
-
-[node name="LevelAspectRatioContainer3" type="AspectRatioContainer" parent="GuiMarginContainer/MenuMarginContainer/LevelSelectVBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-ratio = 2.0
-
-[node name="LevelTextureButton3" type="TextureButton" parent="GuiMarginContainer/MenuMarginContainer/LevelSelectVBoxContainer/LevelAspectRatioContainer3"]
-layout_mode = 2
-texture_normal = ExtResource("9_eb8kt")
-ignore_texture_size = true
-stretch_mode = 5
-
-[node name="LevelLabel3" type="Label" parent="GuiMarginContainer/MenuMarginContainer/LevelSelectVBoxContainer/LevelAspectRatioContainer3/LevelTextureButton3"]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -0.5
-offset_top = -9.0
-offset_right = 0.5
-offset_bottom = 9.0
-grow_horizontal = 2
-grow_vertical = 2
-theme = ExtResource("3_1rslt")
-theme_override_colors/font_color = Color(0.137255, 0.215686, 0.223529, 1)
-theme_override_colors/font_outline_color = Color(0.137255, 0.215686, 0.223529, 1)
-theme_override_constants/outline_size = 3
-theme_override_font_sizes/font_size = 24
-vertical_alignment = 1
-uppercase = true
-
-[node name="LevelMetadata3" parent="GuiMarginContainer/MenuMarginContainer/LevelSelectVBoxContainer/LevelAspectRatioContainer3/LevelTextureButton3" instance=ExtResource("5_1a6bq")]
-position = Vector2(0, -126)
-id = 3
-level_name = "THIRD.LEVEL.NAME"
-level_scene = ExtResource("8_fc2ix")
+[node name="Level02" parent="GuiMarginContainer/MenuMarginContainer/LevelSelectVBoxContainer/LevelAspectRatioContainer2/LevelTextureButton2" instance=ExtResource("7_b2deu")]

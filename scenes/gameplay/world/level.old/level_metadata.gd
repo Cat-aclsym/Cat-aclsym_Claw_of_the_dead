@@ -1,7 +1,7 @@
 ## © [2024] A7 Studio. All rights reserved. Trademark.
 ##
 ## Contains metadata for a level.
-class_name LevelMetadata
+class_name LevelMetadata_OLD
 extends Node2D
 
 ## Unique identifier for the level

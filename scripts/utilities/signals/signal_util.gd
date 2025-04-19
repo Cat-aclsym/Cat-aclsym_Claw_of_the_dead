@@ -42,14 +42,14 @@ static func connects(signals: Array[Dictionary]) -> void:
 
 		signal_info[WHO].connect(signal_info[WHAT], signal_info[TO])
 
-		Log.trace(
-			Log.Level.DEBUG,
-			"Connecting signal {node}.{signal} to {callback}".format({
-				"node": signal_info[WHO],
-				"signal": signal_info[WHAT],
-				"callback": signal_info[TO]
-			})
-		)
+		# Log.trace(
+		# 	Log.Level.DEBUG,
+		# 	"Connecting signal {node}.{signal} to {callback}".format({
+		# 		"node": signal_info[WHO],
+		# 		"signal": signal_info[WHAT],
+		# 		"callback": signal_info[TO]
+		# 	})
+		# )
 
 # private
 

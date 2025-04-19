@@ -138,7 +138,7 @@ func _on_timer_timeout() -> void:
 ## Called when an enemy is defeated
 func _on_ienemy_die() -> void:
 	dead_enemies += 1
-	Log.trace(Log.Level.DEBUG, "Total: {0}/{1}".format([dead_enemies, enemies_total_count]))
+	# Log.trace(Log.Level.DEBUG, "Total: {0}/{1}".format([dead_enemies, enemies_total_count]))
 	if dead_enemies == enemies_total_count:
 		Log.trace(Log.Level.INFO, "%s end" % name)
 		wave_end.emit(delay)

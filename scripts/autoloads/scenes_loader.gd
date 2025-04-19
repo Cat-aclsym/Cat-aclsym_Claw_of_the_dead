@@ -3,6 +3,8 @@
 ## Manages loading of game scenes and resources.
 extends Node
 
+const END_GAME_MENU: PackedScene = preload("res://scenes/ui/menus/end_game/end_game.tscn")
+
 const ENEMIES: Dictionary = {
 	IEnemy.EnemyType.DEFAULT: preload("res://scenes/gameplay/entities/enemy/enemies/ene.01.tscn"),
 	IEnemy.EnemyType.BIG_DADDY: preload("res://scenes/gameplay/entities/enemy/enemies/big_daddy.tscn"),

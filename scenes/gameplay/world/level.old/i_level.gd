@@ -2,7 +2,7 @@
 ## © 2024 A7 Studio. All rights reserved. Trademark.
 ## Base class for all game levels. Manages level state, resources, and map loading.
 
-class_name ILevel extends Node2D
+class_name ILevel_OLD extends Node2D
 
 
 ## Signals for game state changes

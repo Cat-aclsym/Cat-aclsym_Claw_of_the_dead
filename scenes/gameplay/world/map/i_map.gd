@@ -27,7 +27,7 @@ func _ready() -> void:
 
 ## Loads path nodes from the Paths node
 func _load_paths() -> void:
-	Log.trace(Log.Level.DEBUG, "Loading mappaths");
+	# Log.trace(Log.Level.DEBUG, "Loading mappaths");
 	var children: Array[Node] = $Paths.get_children()
 
 	for child in children:

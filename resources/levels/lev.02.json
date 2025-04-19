@@ -3,11 +3,11 @@
     [
       {
         "enemy_id": "ene.01",
-        "count": 5,
-        "spawner": 2
+        "count": 1,
+        "spawner": 0
       },
       {
-        "wait_s": 10
+        "wait_s": 3
       },
       {
         "enemy_id": "ene.02",
