@@ -1,7 +1,7 @@
-[gd_scene load_steps=11 format=3 uid="uid://c8yvnxnxnvnxn"]
+[gd_scene load_steps=11 format=3 uid="uid://in0dna0dnoa0"]
 
 [ext_resource type="PackedScene" uid="uid://064cnqw4xlus" path="res://scenes/gameplay/entities/tower/i_tower.tscn" id="1_ecq02"]
-[ext_resource type="PackedScene" uid="uid://c70wecidmqfqo" path="res://scenes/gameplay/entities/bullet/piercing_arrow.tscn" id="2_0ujgl"]
+[ext_resource type="PackedScene" uid="uid://nfkadjkkl" path="res://scenes/gameplay/entities/bullet/aoe_arrow.tscn" id="2_42c24"]
 [ext_resource type="Texture2D" uid="uid://h5f1ntgevb58" path="res://assets/environment/tilesets/tileset_debug.png" id="4_ftq1a"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_hn83r"]
@@ -60,15 +60,15 @@ radius = 314.23
 radius = 16.0
 height = 36.0
 
-[node name="Piercing" instance=ExtResource("1_ecq02")]
+[node name="AOETower" instance=ExtResource("1_ecq02")]
 position = Vector2(0, -16)
-bullet_scene = ExtResource("2_0ujgl")
-fire_rate = 0.5
+bullet_scene = ExtResource("2_42c24")
+fire_rate = 1.5
 level = 1
 shoot_range = 150.0
 
 [node name="Sprite2D" parent="." index="0"]
-modulate = Color(1, 0, 1, 1)
+modulate = Color(0.878431, 0, 0, 1)
 position = Vector2(0, -5)
 scale = Vector2(1, 1)
 texture = SubResource("AtlasTexture_hn83r")
