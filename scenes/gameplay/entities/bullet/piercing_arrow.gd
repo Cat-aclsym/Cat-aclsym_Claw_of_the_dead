@@ -4,15 +4,12 @@
 class_name PiercingArrow
 extends IBullet
 
-# Constants
-const TRAIL_LENGTH: int = 10  # Longueur de la traînée visuelle
-
 # Exports
 @export var pierce_count: int = 3  ## Number of enemies the bullet can pierce
 @export_range(0, 100) var pierce_reduction: int = 10  ## Percentage of damage reduction per enemy pierced
 
 # Variables
-var pierced_enemies: Array[IEnemy] = []  # Ennemis déjà transpercés
+var pierced_enemies: Array[IEnemy] = []  # Enemies already pierced
 var piercing: int  # Current number of enemies that can be pierced
 var initial_piercing: int  # Initial number of enemies that can be pierced
 
@@ -20,11 +17,9 @@ var initial_piercing: int  # Initial number of enemies that can be pierced
 func _ready() -> void:
 	super._ready()
 	
-	# Initialisation des variables de perçage
+	# Initialize piercing variables
 	piercing = pierce_count
 	initial_piercing = pierce_count
-	
-	# On peut ajouter un effet visuel de traînée ici si besoin
 
 
 func _physics_process(delta: float) -> void:
@@ -40,23 +35,23 @@ func _on_body_entered(body: Node2D) -> void:
 		return
 		
 	if pierced_enemies.has(body):
-		return  # Éviter de frapper le même ennemi deux fois
+		return  # Avoid hitting the same enemy twice
 		
 	var enemy := body as IEnemy
 	pierced_enemies.append(enemy)
 	
-	# Application des dégâts
+	# Apply damage
 	enemy.take_damage(damage, IEnemy.DamageType.DEFAULT)
 	
-	# Gestion du perçage
+	# Handle piercing
 	piercing -= 1
 	
-	# Calcul de la réduction de dégâts
+	# Calculate damage reduction
 	var enemies_pierced := initial_piercing - piercing
 	var remaining_damage_percent: float = 100 - (pierce_reduction * enemies_pierced)
 	damage = roundi(initial_damage * (remaining_damage_percent / 100))
 	
-	# Si on a atteint la limite de perçage, on détruit la flèche
+	# If the piercing limit is reached, destroy the arrow
 	if piercing <= 0:
 		queue_free()
 		return

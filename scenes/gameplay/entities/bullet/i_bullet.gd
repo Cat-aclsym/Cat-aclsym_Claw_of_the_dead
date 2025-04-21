@@ -8,12 +8,6 @@ extends Area2D
 @export var damage: int ## Base damage value dealt to enemies	
 @export var speed: int ## Speed of the bullet
 
-@export_subgroup("Damage over Time")
-@export var has_dot: bool ## Whether the bullet can apply damage over time
-@export var dot_damage: int ## Damage per tick
-@export var dot_duration: int ## Duration of the damage over time
-@export var dot_tick: int ## Number of ticks the damage over time lasts
-
 # public
 ## Normalized vector indicating bullet's movement direction
 var direction: Vector2
@@ -56,10 +50,6 @@ func _on_body_entered(body: Node2D) -> void:
 	
 	# Apply base damage
 	enemy.take_damage(damage, IEnemy.DamageType.DEFAULT)
-	
-	# Handle DoT
-	if has_dot:
-		enemy.add_poison_effect(dot_damage, dot_duration, dot_tick)
 	
 	# Free the bullet 
 	queue_free()

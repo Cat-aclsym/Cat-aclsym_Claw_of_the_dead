@@ -26,7 +26,7 @@ var aoe_enemies: Array[IEnemy] = []
 func _ready() -> void:
 	super._ready()
 	
-	# Configuration de la zone AOE
+	# Configure the AOE area
 	if aoe_detection_area_collision.shape is CircleShape2D:
 		aoe_detection_area_collision.shape.radius = aoe_range
 	
