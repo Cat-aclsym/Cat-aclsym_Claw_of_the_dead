@@ -12,6 +12,8 @@ const ENEMIES: Dictionary = {
   	IEnemy.EnemyType.RAT: preload("res://scenes/gameplay/entities/enemy/enemies/ene.03.tscn"),
 }
 
+var enemies_scene: Dictionary = {}
+
 const TOWERS: Dictionary = {
 	ITower.TowerType.TOWER_1: preload("res://scenes/gameplay/entities/tower/towers/bat_01.tscn"),
 }

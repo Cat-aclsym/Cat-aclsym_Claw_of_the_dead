@@ -7,7 +7,7 @@
         "spawner": 2
       },
       {
-        "wait_s": 9999
+        "wait_s": 5
       },
       {
         "enemy_id": "ene.01",

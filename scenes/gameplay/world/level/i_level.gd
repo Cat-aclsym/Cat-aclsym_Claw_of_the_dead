@@ -24,36 +24,36 @@ const STATE_END: String = "END"
 static var current_level: ILevel = null
 
 var enemies_scene: Dictionary = {}
-var is_completed: bool = false
 var state_machine: StateMachine
 var map: IMap = null
-var waves: Array = []
+var waves: Array[Wave] = []
 var current_step: WaveStep = null
 var current_wave: int = 0
 var start_time: float
 var end_time: float
 
+# stats
 var coins: int = 75: set = _set_coins
 var health: int = 20000: set = _set_health
 
 # Private Variables
-var _frame_counter: int = 0 # Temporary frame counter for spawn delay
 var _enemies_alive: int = 0
 
-var tmp_current_state: String = "n/a"
 
 @onready var popup_spawner: PopupSpawner = $PopupSpawner
+@onready var clock: Clock = $Clock
 
 # core
-func _process(_delta: float) -> void:
-	if state_machine:
-		state_machine.handle_current_state([])
-		tmp_current_state = state_machine.get_current_state().name
+## Custom ticker callback
+func _process_tick() -> void:
+	assert(state_machine)
+	state_machine.handle_current_state([])
 
 
 # public
 ## Starts the level by initializing map, waves, and state machine.
 func start_level() -> void:
+	position = Vector2i.ZERO
 	ILevel.current_level = self
 	_init_map()
 	_load_waves()
@@ -62,15 +62,8 @@ func start_level() -> void:
 	start_time = Time.get_unix_time_from_system()
 	popup_spawner.wave("Wave %s" % [current_wave+1])
 
-
-## Returns a tower instance by name.
-func get_tower_by_name(tower_name: String) -> ITower:
-	for child in map.get_children():
-		if child is ITower:
-			var tower: ITower = child as ITower
-			if tower.name == tower_name:
-				return tower
-	return null
+	clock.subscribe(_process_tick, 5)
+	clock.start()
 
 
 # privates
@@ -130,8 +123,9 @@ func _build_state_machine() -> void:
 
 
 func _next_wave() -> void:
-	waves.pop_front()
-	if waves.is_empty() and current_step == null: # oupsi 
+	waves.pop_front() # NOTE : may shit later with save system
+
+	if waves.is_empty() and current_step == null:
 		state_machine.toggle_state(STATE_VICTORY)
 		return
 	current_wave += 1
@@ -143,43 +137,6 @@ func _next_step() -> void:
 	current_step = waves.front().pop()
 
 
-func _process_frame_counter() -> bool:
-	if _frame_counter < 60:
-		_frame_counter += 1
-		return true
-	_frame_counter = 0
-	return false
-
-
-func _execute_spawn_order(step: WaveStep) -> void:
-	var enemy_id: String = step.data()[WaveStep.ENEMY_ID]
-	var spawner_index: int = step.data()[WaveStep.SPAWNER]
-
-	if not enemies_scene.has(enemy_id):
-		enemies_scene[enemy_id] = load("res://scenes/gameplay/entities/enemy/enemies/%s.tscn" % enemy_id)
-
-	var enemy: IEnemy = enemies_scene[enemy_id].instantiate()
-	enemy.connect("die", func(): _enemies_alive -= 1)
-	EnemySpawner.spawn_enemy(map.paths[spawner_index], enemy)
-	step.data()[WaveStep.COUNT] -= 1
-	_enemies_alive += 1
-
-
-func _spawn_order_post_execution() -> void:
-	if current_step.data()[WaveStep.COUNT] == 0:
-		_next_step()
-
-
-func _execute_wait_order(step: WaveStep) -> void:
-	if not step.data().has("start"):
-		step.data()["start"] = Time.get_unix_time_from_system()
-
-
-func _wait_order_post_execution() -> void:
-	var elapsed: float = Time.get_unix_time_from_system() - start_time
-	if elapsed >= current_step.data()[WaveStep.WAIT_S]:
-		_next_step()
-
 # states
 func _on_state_configuring(_args = []) -> bool:
 	state_machine.toggle_state(STATE_WAVE_0)
@@ -189,30 +146,22 @@ func _on_state_configuring(_args = []) -> bool:
 func _on_state_wave(_args = []) -> bool:
 	var wave: Wave = waves.front()
 
+	# if no more steps and no enemy alive -> trigger next wave
 	if wave.peak() == null and _enemies_alive == 0:
 		_next_wave()
 		return true
 
+	# if no current step -> tigger next step
 	if current_step == null:
 		_next_step()
 		return true
 
-	match current_step.order():
-		WaveStep.Order.SPAWN:
-			if _process_frame_counter():
-				return true
-			_execute_spawn_order(current_step)
-			_spawn_order_post_execution()
-			return true
-
-		WaveStep.Order.WAIT:
-			_execute_wait_order(current_step)
-			_wait_order_post_execution()
-			return true
-
-		_:
-			Log.trace(Log.Level.ERROR, "Unhandled WaveStep order.")
-			return false
+	# execute current step then check if it is over
+	current_step.exec()
+	if current_step.is_over():
+		_next_step()
+	
+	return true
 
 
 func _on_state_victory(_args = []) -> bool:
@@ -258,6 +207,14 @@ func _set_health(new_value: int) -> void:
 
 	if health <= 0 and state_machine.toggle_state(STATE_DEFEAT):
 		Log.trace(Log.Level.INFO, "Player defeated.")
+
+
+func _on_enemy_die() -> void:
+	_enemies_alive -= 1
+
+
+func _on_enemy_spawn() -> void:
+	_enemies_alive += 1
 
 
 ## Update player's coin count

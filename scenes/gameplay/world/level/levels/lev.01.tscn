@@ -1,17 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://dfahd0bsnk0p4"]
+[gd_scene load_steps=3 format=3 uid="uid://dfahd0bsnk0p4"]
 
 [ext_resource type="PackedScene" uid="uid://bnsejcujkvcqg" path="res://scenes/gameplay/world/level/i_level.tscn" id="1_bhpo8"]
 [ext_resource type="PackedScene" uid="uid://buj5yatu3iyt" path="res://scenes/gameplay/world/map/maps/map_debug_1.tscn" id="2_gttx7"]
-[ext_resource type="PackedScene" uid="uid://7a3coyl5og1a" path="res://scenes/ui/ui.tscn" id="3_e614u"]
 
 [node name="Level01" instance=ExtResource("1_bhpo8")]
 level_id = "lev.01"
 level_name = "Coink coink"
 map_scene = ExtResource("2_gttx7")
-
-[node name="UI" parent="." index="0" instance=ExtResource("3_e614u")]
-
-[node name="HomeMenu" parent="UI" index="2"]
-visible = false
-
-[editable path="UI"]

@@ -1,6 +1,6 @@
 ## © [2024] A7 Studio. All rights reserved. Trademark.
 ##
-## Base class for game maps. Manages tile-based map layout and wave spawning.
+## Base class for game maps. Manages tile-based map layout.
 ## @tutorial: See map_1.tscn for implementation example
 class_name IMap
 extends Node2D
@@ -19,6 +19,14 @@ func _ready() -> void:
 
 	Global.cursor.tm_ref = tilemap
 
+#public
+func get_tower_by_name(tower_name: String) -> ITower:
+	for child in get_children():
+		if child is ITower:
+			var tower: ITower = child as ITower
+			if tower.name == tower_name:
+				return tower
+	return null
 
 # private
 

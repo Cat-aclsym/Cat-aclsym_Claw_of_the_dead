@@ -1,11 +1,14 @@
-[gd_scene load_steps=4 format=3 uid="uid://bnsejcujkvcqg"]
+[gd_scene load_steps=5 format=3 uid="uid://bnsejcujkvcqg"]
 
 [ext_resource type="Script" path="res://scenes/gameplay/world/level/i_level.gd" id="1_hgrcn"]
 [ext_resource type="PackedScene" uid="uid://b76p6ee6fomr4" path="res://scenes/ui/popup/popup_spawner.tscn" id="2_0xf4n"]
 [ext_resource type="PackedScene" uid="uid://cqe6sjyhnpfci" path="res://scenes/ui/popup/popup_wave.tscn" id="2_uvsjo"]
+[ext_resource type="PackedScene" uid="uid://chxjyy0li4wc4" path="res://scenes/gameplay/world/clock/clock.tscn" id="4_11eeu"]
 
 [node name="ILevel" type="Node2D"]
 script = ExtResource("1_hgrcn")
+
+[node name="Clock" parent="." instance=ExtResource("4_11eeu")]
 
 [node name="PopupSpawner" parent="." instance=ExtResource("2_0xf4n")]
 popup_node = ExtResource("2_uvsjo")
