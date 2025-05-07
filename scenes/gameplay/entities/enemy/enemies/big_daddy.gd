@@ -112,8 +112,6 @@ func _shoot() -> void:
 		Log.trace(Log.Level.ERROR, "BigDaddy: Missing projectile scene!")
 		return
 
-	Log.trace(Log.Level.INFO, "BigDaddy: Firing at %s" % current_target.name)
-
 	# Instantiate projectile
 	var projectile = projectile_scene.instantiate() # Assuming projectile script handles itself
 

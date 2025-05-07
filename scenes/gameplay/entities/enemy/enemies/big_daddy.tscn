@@ -13,7 +13,7 @@ region = Rect2(144, 128, 32, 64)
 size = Vector2(32, 48)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_2ay3q"]
-radius = 97.0
+radius = 214.189
 
 [node name="BigDaddy" instance=ExtResource("1_o4ric")]
 position = Vector2(0, -22)
@@ -22,8 +22,6 @@ projectile_scene = ExtResource("3_nitix")
 shoot_range = 100.0
 fire_rate = 100.0
 max_health = 100000.0
-speed = null
-type = null
 
 [node name="Sprite2D" parent="." index="0"]
 position = Vector2(0, -2)
