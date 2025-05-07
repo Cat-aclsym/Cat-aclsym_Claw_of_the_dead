@@ -1,7 +1,6 @@
-[gd_scene load_steps=5 format=3 uid="uid://36pr3jclrpv2"]
+[gd_scene load_steps=4 format=3 uid="uid://refrl471xcqg"]
 
 [ext_resource type="PackedScene" uid="uid://crdosg1fmycsi" path="res://scenes/gameplay/world/map/i_map.tscn" id="1_pnymt"]
-[ext_resource type="Script" path="res://scripts/camera/camera.gd" id="4_dothb"]
 
 [sub_resource type="Curve2D" id="Curve2D_1ver7"]
 _data = {
@@ -30,18 +29,5 @@ curve = SubResource("Curve2D_1ver7")
 position = Vector2(216, 176)
 curve = SubResource("Curve2D_pnrrg")
 
-[node name="Camera2D" type="Camera2D" parent="." index="3"]
-position = Vector2(707, 377)
-zoom = Vector2(1.6, 1.6)
-limit_left = -250
-limit_top = -250
-limit_right = 1500
-limit_bottom = 1000
-position_smoothing_enabled = true
-position_smoothing_speed = 8.0
-editor_draw_limits = true
-editor_draw_drag_margin = true
-script = ExtResource("4_dothb")
-
-[node name="Controller" parent="." index="4"]
+[node name="Controller" parent="." index="3"]
 z_index = 4000
