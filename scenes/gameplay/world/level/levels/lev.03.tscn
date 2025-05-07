@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://ft5g7ih3eyl"]
 
 [ext_resource type="PackedScene" uid="uid://bnsejcujkvcqg" path="res://scenes/gameplay/world/level/i_level.tscn" id="1_cwl21"]
-[ext_resource type="PackedScene" uid="uid://36pr3jclrpv2" path="res://scenes/gameplay/world/map/maps/arc.01/map.03.tscn" id="2_pd7n8"]
+[ext_resource type="PackedScene" uid="uid://refrl471xcqg" path="res://scenes/gameplay/world/map/maps/arc.01/map.03.tscn" id="2_pd7n8"]
 
 [node name="Level03" instance=ExtResource("1_cwl21")]
 level_id = "lev.03"
