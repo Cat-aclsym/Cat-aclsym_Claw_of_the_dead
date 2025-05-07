@@ -38,11 +38,6 @@ func init(_direction: Vector2) -> void:
 func _on_body_entered(body: Node2D) -> void:
 	# Check if the body is a tower
 	if body.is_in_group("towers"): # Assumes towers are in the "towers" group
-		Log.trace(Log.Level.INFO, "Enemy projectile hit tower: %s at %s" % [body.name, body.global_position])
-		# Here you would normally apply damage to the tower:
-		# if body.has_method("take_damage"):
-		# 	 body.take_damage(damage_value) # Need to define damage_value
-
 		# Destroy the projectile after hitting a tower
 		queue_free()
 

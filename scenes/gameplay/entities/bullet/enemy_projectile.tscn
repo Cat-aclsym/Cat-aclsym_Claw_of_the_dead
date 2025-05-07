@@ -8,6 +8,8 @@ radius = 8.0
 height = 20.0
 
 [node name="EnemyProjectile" type="Area2D" groups=["bullet"]]
+collision_layer = 0
+collision_mask = 256
 script = ExtResource("1_c6v3k")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
