@@ -21,6 +21,7 @@ script = ExtResource("2_3ulna")
 projectile_scene = ExtResource("3_nitix")
 shoot_range = 100.0
 fire_rate = 100.0
+tower_disable_duration = 3.0
 max_health = 100000.0
 
 [node name="Sprite2D" parent="." index="0"]
