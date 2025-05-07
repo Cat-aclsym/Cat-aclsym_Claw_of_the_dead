@@ -18,5 +18,5 @@ tilemap = NodePath("TileMapPlains")
 
 [node name="Controller" parent="." instance=ExtResource("3_ndsux")]
 
-[node name="Camera" type="Camera2D" parent="."]
+[node name="Camera2D" type="Camera2D" parent="."]
 script = ExtResource("5_6tbgf")

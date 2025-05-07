@@ -1,9 +1,9 @@
 [gd_scene load_steps=3 format=3 uid="uid://ft5g7ih3eyl"]
 
 [ext_resource type="PackedScene" uid="uid://bnsejcujkvcqg" path="res://scenes/gameplay/world/level/i_level.tscn" id="1_cwl21"]
-[ext_resource type="PackedScene" uid="uid://eo3o6kohdiy2" path="res://scenes/gameplay/world/map/maps/map_coink.tscn" id="2_ud2gq"]
+[ext_resource type="PackedScene" uid="uid://refrl471xcqg" path="res://scenes/gameplay/world/map/maps/arc.01/map.03.tscn" id="2_pd7n8"]
 
 [node name="Level03" instance=ExtResource("1_cwl21")]
 level_id = "lev.03"
 level_name = "Coink land"
-map_scene = ExtResource("2_ud2gq")
+map_scene = ExtResource("2_pd7n8")

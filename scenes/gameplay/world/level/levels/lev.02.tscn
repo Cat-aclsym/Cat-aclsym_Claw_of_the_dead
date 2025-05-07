@@ -1,9 +1,9 @@
 [gd_scene load_steps=3 format=3 uid="uid://c5xxpj04k5gcy"]
 
 [ext_resource type="PackedScene" uid="uid://bnsejcujkvcqg" path="res://scenes/gameplay/world/level/i_level.tscn" id="1_6tx67"]
-[ext_resource type="PackedScene" uid="uid://oc6r5kow8d7i" path="res://scenes/gameplay/world/map/maps/map_1.tscn" id="2_ritky"]
+[ext_resource type="PackedScene" uid="uid://cbm0xrnbliawh" path="res://scenes/gameplay/world/map/maps/arc.01/map.02.tscn" id="2_j3hnd"]
 
 [node name="Level02" instance=ExtResource("1_6tx67")]
 level_id = "lev.02"
 level_name = "Couack couack"
-map_scene = ExtResource("2_ritky")
+map_scene = ExtResource("2_j3hnd")
