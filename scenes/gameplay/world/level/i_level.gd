@@ -34,7 +34,7 @@ var end_time: float
 
 # stats
 var coins: int = 75: set = _set_coins
-var health: int = 20000: set = _set_health
+var health: int = 20: set = _set_health
 
 # Private Variables
 var _enemies_alive: int = 0
@@ -106,7 +106,10 @@ func _build_state_machine() -> void:
 		builder.build_transition(STATE_WAVE % i, STATE_PAUSE)
 		builder.build_transition(STATE_WAVE % i, STATE_ERROR)
 		builder.build_transition(STATE_PAUSE, STATE_WAVE % i)
-		builder.build_transition(STATE_WAVE % i, STATE_VICTORY if i == waves.size() - 1 else STATE_WAVE % (i + 1))
+		if i < waves.size() - 1:
+			builder.build_transition(STATE_WAVE % i, STATE_WAVE % (i + 1))
+		else:
+			builder.build_transition(STATE_WAVE % i, STATE_VICTORY)
 
 	builder.build_transition(STATE_CONFIGURING, STATE_WAVE_0)
 	builder.build_transition(STATE_CONFIGURING, STATE_DEFEAT)
@@ -125,8 +128,11 @@ func _build_state_machine() -> void:
 func _next_wave() -> void:
 	waves.pop_front() # NOTE : may shit later with save system
 
-	if waves.is_empty() and current_step == null:
-		state_machine.toggle_state(STATE_VICTORY)
+	if waves.is_empty():
+		if current_step == null:
+			state_machine.toggle_state(STATE_VICTORY)
+			return
+		# If we still have a step (like a dialog), continue
 		return
 	current_wave += 1
 	popup_spawner.wave("Wave %s" % [current_wave+1])
@@ -134,6 +140,9 @@ func _next_wave() -> void:
 
 
 func _next_step() -> void:
+	if waves.is_empty():
+		current_step = null
+		return
 	current_step = waves.front().pop()
 
 
@@ -144,6 +153,17 @@ func _on_state_configuring(_args = []) -> bool:
 
 
 func _on_state_wave(_args = []) -> bool:
+	if waves.is_empty():
+		# If we have a current step (like a dialog), continue
+		if current_step != null:
+			current_step.exec()
+			if current_step.is_over():
+				_next_step()
+			return true
+		# Otherwise go to VICTORY
+		state_machine.toggle_state(STATE_VICTORY)
+		return true
+
 	var wave: Wave = waves.front()
 
 	# if no more steps and no enemy alive -> trigger next wave

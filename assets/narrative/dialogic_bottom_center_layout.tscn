@@ -1,0 +1,39 @@
+[gd_scene format=3 uid="uid://dwi3lpqen74re"]
+
+[node name="DialogicLayout_BottomCenter" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+
+[node name="DialogBox" type="PanelContainer" parent="."]
+layout_mode = 0
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+
+[node name="DialogText" type="RichTextLabel" parent="DialogBox"]
+layout_mode = 2
+text = "Ceci est un dialogue centré en bas !"
+
+[node name="Positions" type="Control" parent="."]
+anchors_preset = 0
+anchor_top = 0.7
+anchor_right = 1.0
+anchor_bottom = 0.95
+
+[node name="left" type="Control" parent="Positions"]
+anchors_preset = 0
+anchor_right = 0.33
+anchor_bottom = 1.0
+
+[node name="center" type="Control" parent="Positions"]
+anchors_preset = 0
+anchor_left = 0.33
+anchor_right = 0.66
+anchor_bottom = 1.0
+
+[node name="right" type="Control" parent="Positions"]
+anchors_preset = 0
+anchor_left = 0.66
+anchor_right = 1.0
+anchor_bottom = 1.0

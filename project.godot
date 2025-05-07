@@ -25,10 +25,14 @@ Dialogic="*res://addons/dialogic/Core/DialogicGameHandler.gd"
 [dialogic]
 
 directories/dch_directory={
-"character1": "res://assets/narrative/character1.dch"
+"character1": "res://assets/narrative/character1.dch",
+"character2": "res://assets/narrative/character2.dch"
 }
 directories/dtl_directory={
-"example": "res://assets/narrative/example.dtl"
+"after_lionel": "res://assets/narrative/after_lionel.dtl",
+"example": "res://assets/narrative/example.dtl",
+"lore_origins": "res://assets/narrative/lore_origins.dtl",
+"post_lionel": "res://assets/narrative/post_lionel.dtl"
 }
 text/default_speed=0.05
 text/skippable=true
@@ -77,6 +81,7 @@ layout/style_list=["res://assets/narrative/style.tres"]
 layout/default_style="res://assets/narrative/style.tres"
 glossary/default_case_sensitive=true
 text/autocolor_names=true
+portraits/default_portrait=""
 
 [display]
 

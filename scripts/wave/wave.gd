@@ -29,6 +29,8 @@ func pop() -> WaveStep:
 
 
 # private
+func _build_step(in_data: Dictionary) -> WaveStep:
+	return WaveStep.build(in_data)
 
 
 # signal
@@ -38,4 +40,3 @@ func pop() -> WaveStep:
 
 
 # setget
-
