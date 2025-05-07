@@ -29,7 +29,7 @@ theme_type_variation = &"UILabel"
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_constants/outline_size = 0
 theme_override_font_sizes/font_size = 16
-text = "tour basique"
+text = "Arbre à Chat'rchés"
 horizontal_alignment = 1
 
 [node name="TextureRect" type="TextureRect" parent="VBoxContainer"]

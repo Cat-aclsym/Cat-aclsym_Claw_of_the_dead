@@ -38,6 +38,7 @@ enum EnemyType {
 enum DamageType {
 	DEFAULT,
 	POISON,
+	FIRE,
 }
 
 const ANIM_FADE_OUT := "fade_out"
@@ -47,7 +48,8 @@ const ANIM_WALK_DOWN := "walk_down"
 ## Damage configuration for different damage types
 const DAMAGES: Dictionary = {
 	DamageType.DEFAULT: {"color": Color(0.7, 0.5, 0.5, 1)},
-	DamageType.POISON: {"color": Color(0.7, 0.5, 0.7, 1)}
+	DamageType.POISON: {"color": Color(0.7, 0.5, 0.7, 1)},
+	DamageType.FIRE: {"color": Color(1.0, 0.3, 0.1, 1)},
 }
 
 @export var max_health: float = 20.0

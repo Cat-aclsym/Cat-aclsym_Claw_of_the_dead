@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3 uid="uid://b5630xr4v607r"]
+[gd_scene load_steps=27 format=3 uid="uid://b5630xr4v607r"]
 
 [ext_resource type="Script" path="res://scenes/ui/menus/hud/hud.gd" id="1_cuep3"]
 [ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="2_jel3x"]
@@ -20,6 +20,8 @@
 [ext_resource type="Texture2D" uid="uid://c2uqlay1r2d1d" path="res://assets/ui/icons/Button Cancel.svg" id="12_7moo4"]
 [ext_resource type="PackedScene" uid="uid://c8yvnxnxnvnxn" path="res://scenes/gameplay/entities/tower/towers/debug_piercing_tower.tscn" id="20_rwj7v"]
 [ext_resource type="PackedScene" uid="uid://b3ndi1p0pet8k" path="res://scenes/ui/menus/hud/tower_card_aoe.tscn" id="20_uu5jw"]
+[ext_resource type="PackedScene" uid="uid://r62aikxwre88" path="res://scenes/ui/menus/hud/tower_card_fire.tscn" id="21_ge1r3"]
+[ext_resource type="PackedScene" uid="uid://uyg8jfudgsjx" path="res://scenes/gameplay/entities/tower/towers/debug_fire_tower.tscn" id="22_10bub"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_f3r3y"]
 texture = ExtResource("11_p2vl4")
@@ -355,6 +357,10 @@ tower = ExtResource("20_rwj7v")
 
 [node name="TowerCardAOE" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer" instance=ExtResource("20_uu5jw")]
 layout_mode = 2
+
+[node name="TowerCard" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer" instance=ExtResource("21_ge1r3")]
+layout_mode = 2
+tower = ExtResource("22_10bub")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
