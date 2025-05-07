@@ -35,6 +35,10 @@ var elapsed_time_minutes: int
 
 # public
 func init(victory: bool) -> void:
+	if Global.ui.get_node("TowerSelection") :
+		Global.ui.get_node("TowerSelection").queue_free()
+		Global.hud.get_node("TowerSelectionMarginContainer/TowerSelectionButton").set_pressed_no_signal(false)
+
 	assert(time_label != null, "time_label node not found")
 	assert(life_label != null, "life_label node not found")
 	assert(home_button != null, "home_button node not found")
