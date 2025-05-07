@@ -11,7 +11,7 @@
 atlas = ExtResource("4_qgkas")
 region = Rect2(-1, -2, 64, 64)
 
-[node name="TowerCardBasic" type="Control"]
+[node name="TowerCardMultishot" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -52,7 +52,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("2_ll238")
 theme_override_font_sizes/font_size = 15
-text = "Multishot"
+text = "Debug Multishot"
 horizontal_alignment = 1
 vertical_alignment = 1
 
