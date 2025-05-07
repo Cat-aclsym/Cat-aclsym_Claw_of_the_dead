@@ -1,0 +1,34 @@
+{
+  "waves": [
+    [
+      {
+        "enemy_id": "ene.01",
+        "count": 2,
+        "spawner": 2
+      },
+      {
+        "wait_s": 5
+      },
+      {
+        "enemy_id": "ene.01",
+        "count": 1,
+        "spawner": 3
+      }
+    ],
+    [
+      {
+        "enemy_id": "ene.01",
+        "count": 2,
+        "spawner": 0
+      },
+      {
+        "wait_s": 3
+      },
+      {
+        "enemy_id": "ene.01",
+        "count": 1,
+        "spawner": 1
+      }
+    ]
+  ]
+}

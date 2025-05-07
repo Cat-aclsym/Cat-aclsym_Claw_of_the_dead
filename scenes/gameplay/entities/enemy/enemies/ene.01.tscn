@@ -12,6 +12,7 @@ size = Vector2(18.8235, 18.8236)
 
 [node name="DefaultZombie" instance=ExtResource("1_rsmel")]
 position = Vector2(0, -16)
+speed = 100.0
 
 [node name="Sprite2D" parent="." index="0"]
 position = Vector2(0, -8)

@@ -179,7 +179,7 @@ func start_upgrade(upgradeScene: PackedScene) -> void:
 func apply_upgrade() -> void:
 	var upgrade: IUpgrade = pending_upgrade.instantiate()
 
-	Log.trace(Log.Level.DEBUG, "Applying upgrade: {0}".format([pending_upgrade]))
+	# Log.trace(Log.Level.DEBUG, "Applying upgrade: {0}".format([pending_upgrade]))
 
 	if upgrade.changes["tower_stat"]:
 		_apply_tower_stat_changes(upgrade)

@@ -29,21 +29,18 @@ func _initialize() -> void:
 			continue
 		var button: TextureButton = node.get_child(0)
 		var level_label: Label = button.get_child(0)
-		var level_metadata: LevelMetadata = button.get_child(1)
-		_buttons[level_label] = level_metadata
+		var level: ILevel = button.get_child(1)
+		_buttons[level_label] = level
 
 	for bt in _buttons:
-		var metadata: LevelMetadata = _buttons[bt]
-		bt.text = "{0}".format([tr(metadata.level_name)])
+		var level: ILevel = _buttons[bt]
+		bt.text = "{0}".format([tr(level.level_name)])
 		bt.get_parent().connect("pressed",
 		func() -> void:
-			assert(metadata.level_scene != null, "Level scene is null.")
 			visible = false
 
-			var level: ILevel = metadata.level_scene.instantiate()
-			get_tree().get_root().add_child(level)
-			level.initialize(metadata)
-			ILevel.current_level = level
+			level.reparent(get_tree().get_root())
+			level.start_level()
 
 			Global.ui.start_level()
 			level_selected.emit()
