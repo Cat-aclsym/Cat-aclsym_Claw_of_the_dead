@@ -48,8 +48,6 @@ enum CursorState {
 	UPGRADE  ## Tower upgrade state
 }
 
-## Reference to the map node
-var map_ref: IMap = null
 ## Reference to the tilemap node
 var tm_ref: TileMap = null
 
@@ -208,7 +206,7 @@ func _cancel_build() -> void:
 
 func _build() -> void:
 	if not _is_buildable(_tower.position):
-		Log.trace(Log.Level.DEBUG, "Cannot build tower at position: {0}".format([_tower.position]))
+		# Log.trace(Log.Level.DEBUG, "Cannot build tower at position: {0}".format([_tower.position]))
 		return
 
 	_is_move_tower_available = false
@@ -217,7 +215,7 @@ func _build() -> void:
 	new_tower.state = ITower.TowerState.ACTIVE
 	new_tower.modulate = Color(1, 1, 1, 1)
 	new_tower.name = "t%d" % tower_count
-	map_ref.add_child(new_tower)
+	ILevel.current_level.map.add_child(new_tower)
 	tower_count += 1
 
 	ILevel.current_level.coins -= _tower.cost

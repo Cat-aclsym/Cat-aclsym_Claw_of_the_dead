@@ -6,6 +6,7 @@ class_name HUD
 extends Control
 
 const PAUSE_MENU: PackedScene = preload("res://scenes/ui/menus/pause/pause.tscn")
+const TOWER_SELECTION_MENU: PackedScene = preload("res://scenes/ui/menus/tower_selection/tower_selection.tscn")
 
 ## The flag indicating if the HUD is ready to display.
 var _is_ready: bool = false
@@ -22,19 +23,13 @@ var _is_ready: bool = false
 @onready var health_texture_progress_bar: TextureProgressBar = $HUDMarginContainer/HUDVBoxContainer/HeartTextureRect/HealthMarginContainer/MarginContainer/HealthTextureProgressBar
 @onready var new_wave_count_label: Label = $NewWaveCountLabel
 
-## Construction menu nodes
-@onready var construction_anim_player: AnimationPlayer = $AnimationPlayer
-@onready var construction_menu: PanelContainer = $VBoxContainer/PanelContainer
-@onready var construction_wrapper: VBoxContainer = $VBoxContainer
-@onready var tower_list: HBoxContainer = $VBoxContainer/PanelContainer/MarginContainer/HBoxContainer
-
 ## HUD buttons
-@onready var build_button: TextureButton = $VBoxContainer/MarginContainer/BuildButton
 @onready var pause_button: TextureButton = $MarginContainer/PauseButton
+@onready var tower_selection_button: TextureButton = $TowerSelectionMarginContainer/TowerSelectionButton
 
 @onready var signals: Array[Dictionary] = [
-	{SignalUtil.WHO: build_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_build_button_pressed},
 	{SignalUtil.WHO: pause_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_pause_button_pressed},
+	{SignalUtil.WHO: tower_selection_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_tower_selection_button_pressed}
 ]
 
 # core
@@ -43,20 +38,11 @@ func _ready() -> void:
 	assert(health_rich_text_label != null, "health_rich_text_label node not found")
 	assert(waves_rich_text_label != null, "waves_rich_text_label node not found")
 	assert(health_texture_progress_bar != null, "health_texture_progress_bar node not found")
-	assert(construction_anim_player != null, "construction_anim_player node not found")
-	assert(construction_menu != null, "construction_menu node not found")
-	assert(build_button != null, "build_button node not found")
-	assert(tower_list != null, "tower_list node not found")
+	assert(tower_selection_button != null, "tower_selection_button node not found")
 
 	Global.hud = self
 	hide()
 
-	construction_anim_player.animation_finished.connect(
-		func(_name: String) -> void:
-			if _name == "RESET" and construction_menu.visible:
-				construction_menu.visible = false
-	)
-	construction_menu.visible = true
 	SignalUtil.connects(signals)
 
 func _process(_delta: float) -> void:
@@ -68,28 +54,10 @@ func _process(_delta: float) -> void:
 	coins_rich_text_label.text = tr(default_coins_text) % ILevel.current_level.coins
 	health_rich_text_label.text = tr(default_health_text) % (str(ILevel.current_level.health) + "/20")
 	health_texture_progress_bar.value = ILevel.current_level.health
-	var current_wave: int = ILevel.current_level.map.current_wave + 1
+	var current_wave: int = ILevel.current_level.current_wave + 1
 	waves_rich_text_label.text = tr(default_waves_text) % current_wave
 
 # public
-## Toggles the build menu visibility with animation.
-## [br]Updates tower cards when showing the menu.
-## [param toggle_bt] Whether to toggle the build button state
-func toggle_build_menu(toggle_bt: bool = true) -> void:
-	if toggle_bt:
-		build_button.button_pressed = !build_button.button_pressed
-
-	if construction_menu.visible:
-		Log.trace(Log.Level.INFO, "Hiding construction menu")
-		construction_anim_player.play("RESET")
-	else:
-		Log.trace(Log.Level.INFO, "Showing construction menu")
-		construction_anim_player.play("show_tower_list")
-		construction_menu.visible = true
-		return
-
-	for tower_card in tower_list.get_children():
-		tower_card.update()
 
 ## Initializes and displays the HUD interface.
 ## [br]Sets up signal connections and positions the construction menu.
@@ -103,9 +71,6 @@ func load_ui() -> void:
 	SignalUtil.connects([ {SignalUtil.WHO: ILevel.current_level, SignalUtil.WHAT: "stats_updated", SignalUtil.TO: _update}])
 	_update()
 
-	var construction_wrapper_y: float = get_viewport_rect().size.y - (construction_wrapper.size.y + 5)
-	construction_wrapper.position.y = construction_wrapper_y
-
 ## Cleans up and hides the HUD interface.
 func unload_ui() -> void:
 	_is_ready = false
@@ -113,17 +78,11 @@ func unload_ui() -> void:
 	ILevel.current_level.disconnect("stats_updated", _update)
 
 # private
+
 ## Updates all tower cards in the build menu.
 func _update() -> void:
 	if !_is_ready:
 		return
-
-	for tower_card in tower_list.get_children():
-		tower_card.update()
-
-## Handles the build button press event.
-func _on_build_button_pressed() -> void:
-	toggle_build_menu(false)
 
 ## Handles the pause button press event.
 ## [br]Creates and shows the pause menu.
@@ -132,3 +91,12 @@ func _on_pause_button_pressed() -> void:
 		Global.paused = true
 		var pause_menu_instance: Pause = PAUSE_MENU.instantiate()
 		Global.ui.add_child(pause_menu_instance)
+
+## Handles the tower selection button press event.
+## [br]Creates and shows the tower selection menu.
+func _on_tower_selection_button_pressed() -> void:
+	if Global.ui.get_node("TowerSelection") == null :
+		var tower_selection_menu_instance: TowerSelection = TOWER_SELECTION_MENU.instantiate()
+		Global.ui.add_child(tower_selection_menu_instance)
+	else :
+		Global.ui.get_node("TowerSelection").queue_free()

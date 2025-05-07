@@ -24,7 +24,7 @@ func build() -> StateMachine:
 ##
 ## [param state_id] : ID of the State Object
 ## [param state_callback] :
-func build_state(state_id: String, state_callback: Callable) -> StateMachineBuilder:
+func build_state(state_id: String, state_callback: Callable = func(_args): return true) -> StateMachineBuilder:
 	var state := StateFactory.create(state_id, state_callback)
 	_state_machine.add_state(state_id, state)
 	return self
@@ -33,7 +33,7 @@ func build_state(state_id: String, state_callback: Callable) -> StateMachineBuil
 ## This function adds a new initial state to our StateMachine
 ## [param state_id] : ID of the state we're adding
 ## [param state_callback] : The function to call when the state is executed
-func build_initial_state(state_id: String, state_callback: Callable) -> StateMachineBuilder:
+func build_initial_state(state_id: String, state_callback: Callable = func(_args): return true) -> StateMachineBuilder:
 	var state := StateFactory.create(state_id, state_callback)
 	_state_machine.add_initial_state(state_id, state)
 	return self

@@ -1,3 +1,4 @@
+
 [gd_scene load_steps=3 format=3 uid="uid://de3tnk1y83r8n"]
 
 [ext_resource type="PackedScene" uid="uid://df2663whp8p7v" path="res://scenes/gameplay/world/level/i_level.tscn" id="1_ymvm1"]
