@@ -11,6 +11,8 @@ extends IEnemy
 @export var shoot_range: float = 150.0
 ## The fire rate of the enemy (shots per second)
 @export var fire_rate: float = 0.5
+## The duration in seconds that a tower is disabled when hit by a projectile
+@export var tower_disable_duration: float = 3.0
 
 # Onready variables
 ## The area 2D node for the enemy to detect towers in range
@@ -136,7 +138,7 @@ func _shoot() -> void:
 
 	# Pass necessary info to projectile (if its script needs it)
 	if projectile.has_method("init"):
-		projectile.init(direction_to_target) # Example init method
+		projectile.init(direction_to_target, tower_disable_duration) # Pass direction and disable duration
 	elif projectile.has_meta("direction"): # Check if using exported variable
 		projectile.set_meta("direction", direction_to_target)
 	# projectile.target_group = "towers" # Set group for collision if needed
