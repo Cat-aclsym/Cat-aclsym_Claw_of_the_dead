@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://calb1m2wmghd8"
-path="res://.godot/imported/Button Discord.svg-5389dfa638f5c4272868b3a9d68a5c3b.ctex"
+uid="uid://85310xv6g30a"
+path="res://.godot/imported/Construction Tower Title.svg-8dddd9552561aaa9582e0013a1703aaa.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ui/icons/Button Discord.svg"
-dest_files=["res://.godot/imported/Button Discord.svg-5389dfa638f5c4272868b3a9d68a5c3b.ctex"]
+source_file="res://assets/ui/tower_cards/Construction Tower Title.svg"
+dest_files=["res://.godot/imported/Construction Tower Title.svg-8dddd9552561aaa9582e0013a1703aaa.ctex"]
 
 [params]
 

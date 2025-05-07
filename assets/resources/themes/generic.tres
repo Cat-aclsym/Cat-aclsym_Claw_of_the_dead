@@ -9,11 +9,11 @@ axis_stretch_horizontal = 2
 axis_stretch_vertical = 2
 
 [resource]
-default_base_scale = 1.0
 default_font_size = 30
 Fonts/colors/color = Color(0.137255, 0.215686, 0.223529, 1)
 Fonts/fonts/text = null
 Fonts/fonts/title = null
+Fonts/styles/test = null
 HeaderLarge/base_type = &"Label"
 HeaderLarge/colors/font_color = Color(1, 1, 1, 1)
 HeaderLarge/colors/font_outline_color = Color(1, 1, 1, 1)

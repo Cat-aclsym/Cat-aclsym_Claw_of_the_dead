@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://calb1m2wmghd8"
-path="res://.godot/imported/Button Discord.svg-5389dfa638f5c4272868b3a9d68a5c3b.ctex"
+uid="uid://fvh2jxcbrn75"
+path="res://.godot/imported/Grey Frame.svg-cf7f668a6bd5ef713be1424af8051bfd.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ui/icons/Button Discord.svg"
-dest_files=["res://.godot/imported/Button Discord.svg-5389dfa638f5c4272868b3a9d68a5c3b.ctex"]
+source_file="res://assets/ui/tower_cards/Grey Frame.svg"
+dest_files=["res://.godot/imported/Grey Frame.svg-cf7f668a6bd5ef713be1424af8051bfd.ctex"]
 
 [params]
 
