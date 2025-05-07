@@ -21,7 +21,7 @@ const UP_OFFSET := Vector2i(-1, -1)
 const RIGHT_OFFSET := Vector2i(0, -1)
 const LEFT_OFFSET := Vector2i(-1, 0)
 const VALID_TILES: Array[Vector2i] = [
-	Vector2i(1, 0)
+	Vector2i(0, 0)
 ]
 
 ## Get the initial position for a new tower based on camera view
