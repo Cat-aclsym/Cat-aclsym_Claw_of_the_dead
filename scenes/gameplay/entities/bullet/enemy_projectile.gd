@@ -45,6 +45,9 @@ func init(_direction: Vector2, _disable_duration: float = 3.0) -> void:
 func _on_body_entered(body: Node2D) -> void:
 	# Check if the body is a tower
 	if body.is_in_group("towers"): # Assumes towers are in the "towers" group
+		# Create impact particles at collision point
+		_spawn_impact_particles(body.global_position)
+		
 		# Get the parent tower node
 		var tower = body.get_parent()
 		if tower is ITower:
@@ -57,6 +60,58 @@ func _on_body_entered(body: Node2D) -> void:
 	# Optional: Check if it hit terrain/obstacles and destroy
 	# elif body.is_in_group("obstacles"):
 	# 	 queue_free() 
+
+
+func _spawn_impact_particles(position: Vector2) -> void:
+	"""Creates bubble particles at the impact point.
+	
+	Args:
+		position: The global position where particles will appear
+	"""
+	# Create a particles node
+	var particles = CPUParticles2D.new()  # Using CPUParticles2D instead of GPUParticles2D
+	particles.position = position
+	particles.z_index = 100  # Ensure particles appear above other elements
+	
+	# Get scene tree root to add particles at top level
+	var root = get_tree().root
+	root.add_child(particles)
+	
+	# Set emission shape
+	particles.emission_shape = CPUParticles2D.EMISSION_SHAPE_SPHERE
+	particles.emission_sphere_radius = 5.0
+	
+	# Set particle movement
+	particles.direction = Vector2(0, -1)
+	particles.spread = 45.0
+	particles.initial_velocity_min = 20.0
+	particles.initial_velocity_max = 40.0
+	particles.gravity = Vector2(0, -20)  # Slight upward movement like bubbles
+	
+	# Set particle appearance
+	particles.color = Color(0.3, 0.6, 0.9, 0.7)  # Semi-transparent blue
+	particles.scale_amount_min = 2.0  # Small squares
+	particles.scale_amount_max = 4.0  # Slightly larger squares
+	
+	# Set particle lifetime
+	particles.lifetime_randomness = 0.3
+	
+	# Set emission parameters
+	particles.amount = 15  # Not too many for performance
+	particles.lifetime = 1.0
+	particles.one_shot = true
+	particles.explosiveness = 0.8  # Burst at beginning
+	
+	# Start emitting
+	particles.emitting = true
+	
+	# Automatically remove particles after they're done
+	var timer = Timer.new()
+	timer.wait_time = particles.lifetime * 1.2  # Give a bit extra time
+	timer.one_shot = true
+	timer.autostart = true
+	particles.add_child(timer)
+	timer.timeout.connect(func(): particles.queue_free())
 
 
 func _disable_tower(tower: ITower) -> void:
