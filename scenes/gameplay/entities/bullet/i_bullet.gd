@@ -18,6 +18,15 @@ extends Area2D
 @export var trail_fade_curve: float = 0.4 ## Contrôle la rapidité du fondu (plus petit = plus rapide)
 @export var trail_thickness: int = 2 ## Épaisseur des branches de l'étoile
 
+@export_group("Hit Effect")
+@export var hit_effect_enabled: bool = true ## Activer l'effet d'impact
+@export var hit_particles_count: int = 15 ## Nombre de particules à l'impact
+@export var hit_particles_lifetime: float = 0.6 ## Durée de vie des particules d'impact
+@export var hit_particles_speed: float = 100.0 ## Vitesse des particules d'impact
+@export var hit_particles_size: float = 3.0 ## Taille des particules d'impact
+@export var hit_particles_color: Color = Color(0.8, 0.0, 0.0, 0.9) ## Couleur des particules (rouge sang par défaut)
+@export var hit_particles_z_index: int = 1000 ## Valeur Z-index pour s'assurer que les particules sont au premier plan
+
 # public
 ## Normalized vector indicating bullet's movement direction
 var direction: Vector2
@@ -218,6 +227,115 @@ func _draw_circle(image: Image, center: Vector2, radius: int, color: Color) -> v
 					image.set_pixel(x, y, color)
 
 
+func _create_hit_particle_texture() -> Texture2D:
+	# Créer une simple texture de particule ronde pour l'effet de sang
+	var image_size := 8
+	var image := Image.create(image_size, image_size, false, Image.FORMAT_RGBA8)
+	
+	# Remplir avec de la transparence
+	image.fill(Color(0, 0, 0, 0))
+	
+	# Dessiner un cercle plein pour simuler des gouttes de sang
+	var center := Vector2(image_size / 2, image_size / 2)
+	var radius := image_size / 2 - 1
+	
+	for x in range(image_size):
+		for y in range(image_size):
+			var dist := Vector2(x, y).distance_to(center)
+			if dist <= radius:
+				# Utiliser du blanc pour la texture (la couleur sera définie par le matériau)
+				image.set_pixel(x, y, Color(1, 1, 1, 1))
+	
+	var texture := ImageTexture.create_from_image(image)
+	return texture
+
+
+func _create_hit_effect(hit_position: Vector2) -> void:
+	# Log de débogage pour vérifier que la fonction est bien appelée
+	if Global.console:
+		Global.console.push_debug("Creating hit effect at position: " + str(hit_position))
+	
+	# Récupérer la scène actuelle pour y attacher les particules
+	var scene_root := get_tree().get_root()
+	
+	# Créer un système de particules pour l'effet d'impact
+	var hit_particles := GPUParticles2D.new()
+	scene_root.add_child(hit_particles)
+	hit_particles.global_position = hit_position # Utiliser global_position pour garantir la position correcte
+	hit_particles.z_index = hit_particles_z_index # Valeur très élevée pour être au premier plan
+	
+	# Configurer les paramètres de dessin pour garantir que les particules sont au premier plan
+	hit_particles.set_meta("_edit_lock_", true) # Éviter les modifications accidentelles
+	
+	# Créer un CanvasItem personnalisé pour s'assurer que les particules sont dessinées en dernier
+	var canvas_item_material := CanvasItemMaterial.new()
+	canvas_item_material.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	hit_particles.material = canvas_item_material
+	
+	# Créer le matériau des particules
+	var particle_material := ParticleProcessMaterial.new()
+	
+	# Configurer le matériau pour un effet d'éclaboussure
+	particle_material.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_POINT
+	particle_material.direction = Vector3(0, 0, 1)
+	particle_material.spread = 180.0 # Émission dans toutes les directions
+	particle_material.gravity = Vector3(0, 200.0, 0) # Augmenter la gravité pour un effet plus réaliste
+	particle_material.initial_velocity_min = hit_particles_speed * 0.5
+	particle_material.initial_velocity_max = hit_particles_speed
+	particle_material.scale_min = hit_particles_size * 0.5
+	particle_material.scale_max = hit_particles_size
+	particle_material.color = hit_particles_color
+	particle_material.damping_min = 10.0
+	particle_material.damping_max = 30.0
+	
+	# Créer un gradient pour le fondu
+	var gradient := Gradient.new()
+	gradient.add_point(0.0, hit_particles_color)
+	
+	# Point intermédiaire à mi-chemin
+	var mid_color := hit_particles_color
+	mid_color.a *= 0.7
+	gradient.add_point(0.5, mid_color)
+	
+	# Point final transparent
+	var fade_color := hit_particles_color
+	fade_color.a = 0.0
+	gradient.add_point(1.0, fade_color)
+	
+	var color_ramp := GradientTexture1D.new()
+	color_ramp.gradient = gradient
+	particle_material.color_ramp = color_ramp
+	
+	# Configurer les particules
+	hit_particles.process_material = particle_material
+	hit_particles.amount = hit_particles_count
+	hit_particles.lifetime = hit_particles_lifetime
+	hit_particles.explosiveness = 0.95 # Presque instantané pour un effet d'éclaboussure
+	hit_particles.randomness = 0.3 # Ajouter de l'aléatoire pour un effet plus naturel
+	hit_particles.one_shot = true
+	hit_particles.texture = _create_hit_particle_texture()
+	
+	# Démarrer l'émission
+	hit_particles.emitting = true
+	
+	# Log pour vérifier les paramètres
+	if Global.console:
+		Global.console.push_debug("Hit particles created with count: " + str(hit_particles_count) + " z_index: " + str(hit_particles.z_index))
+	
+	# Supprimer les particules après leur durée de vie
+	var timer := Timer.new()
+	hit_particles.add_child(timer)
+	timer.wait_time = hit_particles_lifetime + 0.5 # Ajouter une marge pour être sûr
+	timer.one_shot = true
+	timer.timeout.connect(func(): 
+		# Log de débogage
+		if Global.console:
+			Global.console.push_debug("Removing hit particles")
+		hit_particles.queue_free()
+	)
+	timer.start()
+
+
 func _on_body_entered(body: Node2D) -> void:
 	if not body is IEnemy or _touched_enemy != null:
 		return
@@ -225,8 +343,17 @@ func _on_body_entered(body: Node2D) -> void:
 	_touched_enemy = body as IEnemy
 	var enemy := body as IEnemy
 	
+	# Log de débogage
+	if Global.console:
+		Global.console.push_debug("Bullet hit enemy at position: " + str(global_position))
+	
 	# Apply base damage
 	enemy.take_damage(damage, IEnemy.DamageType.DEFAULT)
+	
+	# Créer l'effet d'éclaboussure de sang au point d'impact
+	if hit_effect_enabled:
+		# Utiliser les coordonnées globales pour un positionnement correct
+		_create_hit_effect(global_position)
 	
 	if trail_enabled and is_instance_valid(_trail_particles):
 		# Stop emitting but allow existing particles to finish
