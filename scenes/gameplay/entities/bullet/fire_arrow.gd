@@ -1,31 +1,34 @@
 ## © [2024] A7 Studio. All rights reserved. Trademark.
-##
-## Fire arrow bullet that creates a burning area on impact.
-## La zone de feu persiste et inflige des dégâts au fil du temps.
+
 class_name FireArrow
 extends AOEArrow
+## Fire arrow bullet that creates a burning area on impact.
+##
+## The fire zone persists and deals damage over time to enemies
+## within its radius. It creates visual fire effects and applies
+## burn damage ticks to all enemies staying in the area.
 
 # Constants
 const BURN_DAMAGE_MULTIPLIER: float = 0.5  # Burn damage is 50% of direct hit damage
 const BURN_TICK_TIME: float = 1.0  # Time between burn damage ticks
-const BASE_BURN_DAMAGE: int = 5  # Dégâts de base par tick
-const DEFAULT_AOE_RANGE: int = 80  # Taille de référence pour calculer les proportions
+const BASE_BURN_DAMAGE: int = 5  # Base damage per tick
+const DEFAULT_AOE_RANGE: int = 80  # Reference size to calculate proportions
 
 # Exports
 @export var burn_duration: float = 5.0  # Duration of the burning area effect
 @export var burn_damage_base: int = 5  # Base damage per tick
-## Explication des paramètres:
-## - burn_duration: Durée en secondes pendant laquelle la zone de feu persiste
-## - burn_damage_base: Dégâts de base par tick (1 tick par seconde)
-## - aoe_range: Taille du rayon de la zone de feu (en pixels)
-##   Note: La taille affecte les dégâts et le nombre de particules
+## Parameter explanation:
+## - burn_duration: Duration in seconds for which the fire area persists
+## - burn_damage_base: Base damage per tick (1 tick per second)
+## - aoe_range: Size of the fire area radius (in pixels)
+##   Note: Size affects damage and number of particles
 
 # Variables
 var _is_burning: bool = false
 var _burn_time_remaining: float = 0.0
 var _burn_tick_timer: float = 0.0
 var _burning_enemies: Array[IEnemy] = []
-var _area_size_ratio: float = 1.0  # Ratio calculé par rapport à la taille standard
+var _area_size_ratio: float = 1.0  # Ratio calculated relative to standard size
 
 @onready var burn_area_sprite: Sprite2D = $BurnAreaSprite
 @onready var burn_area_circle: Polygon2D = $BurnAreaCircle
@@ -40,11 +43,12 @@ var _area_size_ratio: float = 1.0  # Ratio calculé par rapport à la taille sta
 	{SignalUtil.WHO: burn_area, SignalUtil.WHAT: "body_exited", SignalUtil.TO: _on_burn_area_body_exited}
 ]
 
+#region Built-in functions
 # Override _ready to initialize burning area
 func _ready() -> void:
 	super._ready()
 	
-	# Calcul du ratio de taille par rapport à la taille standard
+	# Calculate size ratio compared to standard size
 	_area_size_ratio = float(aoe_range) / DEFAULT_AOE_RANGE
 	
 	# Set up burn area
@@ -74,37 +78,9 @@ func _physics_process(delta: float) -> void:
 	else:
 		# Normal arrow movement
 		super._physics_process(delta)
+#endregion
 
-# Process burning area effect
-func _process_burning_area(delta: float) -> void:
-	_burn_time_remaining -= delta
-	
-	if _burn_time_remaining <= 0:
-		# Time's up, start fade out instead of immediately removing
-		_start_fade_out()
-		return
-	
-	# Start fade out animation when less than 1 second remains
-	if _burn_time_remaining < 1.0 and burn_area_circle.modulate.a == 1.0:
-		_start_partial_fade()
-	
-	# Process burn damage ticks
-	_burn_tick_timer -= delta
-	if _burn_tick_timer <= 0:
-		_apply_burn_damage()
-		_burn_tick_timer = BURN_TICK_TIME
-
-# Apply burn damage to all enemies in the area
-func _apply_burn_damage() -> void:
-	# Clean up invalid references
-	_burning_enemies = _burning_enemies.filter(func(enemy): return is_instance_valid(enemy))
-	
-	# Apply burn damage to all enemies in burn area
-	for enemy in _burning_enemies:
-		if is_instance_valid(enemy):
-			var burn_damage = burn_damage_base + roundi(damage * BURN_DAMAGE_MULTIPLIER)
-			enemy.take_damage(burn_damage, IEnemy.DamageType.FIRE)
-
+#region Signal handlers
 # Override the body entered function to create burning area on impact
 func _on_body_entered(body: Node2D) -> void:
 	if not body is IEnemy or _touched_enemy != null or _is_burning:
@@ -135,6 +111,38 @@ func _on_burn_area_body_entered(body: Node2D) -> void:
 func _on_burn_area_body_exited(body: Node2D) -> void:
 	if body is IEnemy:
 		_burning_enemies.erase(body)
+#endregion
+
+#region Private functions
+# Process burning area effect
+func _process_burning_area(delta: float) -> void:
+	_burn_time_remaining -= delta
+	
+	if _burn_time_remaining <= 0:
+		# Time's up, start fade out instead of immediately removing
+		_start_fade_out()
+		return
+	
+	# Start fade out animation when less than 1 second remains
+	if _burn_time_remaining < 1.0 and burn_area_circle.modulate.a == 1.0:
+		_start_partial_fade()
+	
+	# Process burn damage ticks
+	_burn_tick_timer -= delta
+	if _burn_tick_timer <= 0:
+		_apply_burn_damage()
+		_burn_tick_timer = BURN_TICK_TIME
+
+# Apply burn damage to all enemies in the area
+func _apply_burn_damage() -> void:
+	# Clean up invalid references
+	_burning_enemies = _burning_enemies.filter(func(enemy): return is_instance_valid(enemy))
+	
+	# Apply burn damage to all enemies in burn area
+	for enemy in _burning_enemies:
+		if is_instance_valid(enemy):
+			var burn_damage = burn_damage_base + roundi(damage * BURN_DAMAGE_MULTIPLIER)
+			enemy.take_damage(burn_damage, IEnemy.DamageType.FIRE)
 
 # Activate the burning area effect
 func _activate_burning_area() -> void:
@@ -166,59 +174,59 @@ func _start_grow_animation() -> void:
 	# Start with a small scale
 	burn_area_circle.scale = Vector2(0.1, 0.1) * _area_size_ratio
 	
-	# Create a tween for smooth, realistic growth - mais rapide
+	# Create a tween for smooth, realistic growth - but fast
 	var tween = create_tween()
 	tween.set_ease(Tween.EASE_OUT)
 	tween.set_trans(Tween.TRANS_SINE)
 	
-	# Cible finale avec le multiplicateur de taille
+	# Final target with size multiplier
 	var target_scale = Vector2(1.0, 1.0) * _area_size_ratio
 	var overshoot_scale = Vector2(1.05, 1.05) * _area_size_ratio
 	
-	# Croissance très rapide au début
+	# Very fast growth at the beginning
 	tween.tween_property(burn_area_circle, "scale", overshoot_scale, 0.18)
 	tween.tween_property(burn_area_circle, "scale", target_scale, 0.12)
 	
-	# Ajuster l'opacité normalement mais avec un départ plus visible
+	# Adjust opacity normally but with a more visible start
 	burn_area_circle.modulate.a = 0.5
 	var opacity_tween = create_tween()
 	opacity_tween.tween_property(burn_area_circle, "modulate:a", 1.0, 0.35)
 	
-	# Démarre les particules rapidement
+	# Start particles quickly
 	burn_particles.amount = 25
 	burn_particles.emitting = true
 	
-	# Augmenter le nombre de particules
+	# Increase number of particles
 	var particle_tween = create_tween()
 	particle_tween.tween_property(burn_particles, "amount", 30, 0.35)
 	
-	# Effet de chaleur avec légère pulsation - conservé comme avant
+	# Heat effect with slight pulsation - kept as before
 	await get_tree().create_timer(0.18).timeout
 	_add_heat_pulse()
 
-# Ajoute un effet de pulsation légère pour simuler la chaleur du feu
+# Adds a slight pulsation effect to simulate fire heat
 func _add_heat_pulse() -> void:
-	# Ne pas créer l'effet si le feu est déjà en train de disparaître
+	# Don't create the effect if the fire is already fading
 	if _burn_time_remaining <= 1.0:
 		return
 		
-	# Crée un effet subtil de pulsation
+	# Creates a subtle pulsation effect
 	var pulse_tween = create_tween()
-	pulse_tween.set_loops() # Boucle continue
+	pulse_tween.set_loops() # Continuous loop
 	pulse_tween.set_trans(Tween.TRANS_SINE)
 	
-	# Échelle de base avec le facteur de taille
+	# Base scale with size factor
 	var base_scale = Vector2(1.0, 1.0) * _area_size_ratio
 	
-	# Pulsation légère plus rapide
+	# Slight faster pulsation
 	pulse_tween.tween_property(burn_area_circle, "scale", base_scale * 1.02, 1.0)
 	pulse_tween.tween_property(burn_area_circle, "scale", base_scale * 0.98, 1.0)
 	
-	# Stoppe la pulsation quand le temps est presque écoulé
+	# Stop pulsation when time is almost up
 	await get_tree().create_timer(_burn_time_remaining - 1.0).timeout
 	pulse_tween.kill()
 	
-	# Retour à l'échelle normale
+	# Return to normal scale
 	var reset_tween = create_tween()
 	reset_tween.tween_property(burn_area_circle, "scale", base_scale, 0.2)
 
@@ -236,7 +244,7 @@ func _start_fade_out() -> void:
 	# Disable the burn collision to stop dealing damage
 	burn_area_collision.set_deferred("disabled", true)
 	
-	# Échelle de base avec le facteur de taille
+	# Base scale with size factor
 	var base_scale = Vector2(1.0, 1.0) * _area_size_ratio
 	
 	# Create a tween for smooth fade out
@@ -244,7 +252,7 @@ func _start_fade_out() -> void:
 	tween.tween_property(burn_area_circle, "modulate:a", 0, 0.8)
 	tween.parallel().tween_property(burn_particles, "modulate:a", 0, 0.8)
 	
-	# Réduire légèrement la taille pendant le fade out
+	# Slightly reduce size during fade out
 	var scale_tween = create_tween()
 	scale_tween.tween_property(burn_area_circle, "scale", base_scale * 0.9, 0.8)
 	
@@ -252,19 +260,20 @@ func _start_fade_out() -> void:
 	await tween.finished
 	queue_free()
 
-# Ajuste toutes les propriétés liées à la taille de la zone de feu
+# Adjusts all properties related to fire area size
 func _adjust_burn_area_size() -> void:
-	# Calculer le ratio d'échelle pour le Polygon2D
-	# Nous adaptons l'échelle du Polygon2D car sa géométrie est définie pour une taille de 80
+	# Calculate scale ratio for Polygon2D
+	# We adapt the Polygon2D scale because its geometry is defined for a size of 80
 	var visual_scale = _area_size_ratio
 	burn_area_circle.scale = Vector2(visual_scale, visual_scale)
 	
-	# Ajuster le système de particules
+	# Adjust particle system
 	burn_particles.process_material.emission_sphere_radius = 50 * _area_size_ratio
 	
-	# Ajuster la quantité de particules en fonction de la surface (qui augmente au carré)
+	# Adjust particle amount based on area (which increases with square)
 	var particle_amount = round(30 * _area_size_ratio * _area_size_ratio)
 	burn_particles.amount = int(clamp(particle_amount, 10, 100))
 	
-	# Ajuster la force des dégâts proportionnellement à la taille
+	# Adjust damage strength proportionally to size
 	burn_damage_base = int(BASE_BURN_DAMAGE * _area_size_ratio)
+#endregion
