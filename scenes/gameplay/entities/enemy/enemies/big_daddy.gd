@@ -14,6 +14,16 @@ extends IEnemy
 ## The duration in seconds that a tower is disabled when hit by a projectile
 @export var tower_disable_duration: float = 3.0
 
+@export_subgroup("Attack Cycle Configuration")
+## Time to wait before starting an attack after detecting a target.
+@export var pre_attack_delay: float = 1.0
+## Duration of the attack phase (shooting).
+@export var attack_duration: float = 1.0
+## Time to wait after an attack before resuming movement.
+@export var post_attack_delay: float = 1.0
+## Cooldown time between full attack cycles.
+@export var attack_cooldown: float = 5.0
+
 # Onready variables
 ## The area 2D node for the enemy to detect towers in range
 @onready var range_area: Area2D = $RangeArea
@@ -21,6 +31,22 @@ extends IEnemy
 @onready var range_collision_shape: CollisionShape2D = $RangeArea/CollisionShape2D
 ## The timer for the fire rate of the enemy to shoot projectiles
 @onready var fire_rate_timer: Timer = $FireRateTimer
+
+# Attack Cycle Timers (created in _ready)
+var _pre_attack_timer: Timer
+var _attack_duration_timer: Timer
+var _post_attack_timer: Timer
+var _attack_cooldown_timer: Timer
+
+# Attack Cycle State
+enum AttackCycleState {
+	NONE,      # Not in an attack cycle, or cooldown finished
+	PRE_ATTACK,  # Waiting before attack
+	ATTACKING,   # Actively shooting
+	POST_ATTACK, # Waiting after attack
+	COOLDOWN     # Waiting before next attack cycle can start
+}
+var _current_attack_cycle_state: AttackCycleState = AttackCycleState.NONE
 
 # Variables
 ## Array to store towers currently within range
@@ -42,13 +68,38 @@ func _ready() -> void:
 	range_area.body_entered.connect(_on_range_area_body_entered)
 	range_area.body_exited.connect(_on_range_area_body_exited)
 
-	# Configure Fire Rate Timer
+	# Configure Fire Rate Timer (DO NOT START IT HERE. It's controlled by attack cycle)
 	assert(fire_rate_timer)
 	fire_rate_timer.wait_time = 1.0 / max(fire_rate, 0.01) # Avoid division by zero
 	fire_rate_timer.timeout.connect(_shoot)
-	fire_rate_timer.start()
+	# fire_rate_timer.start() # REMOVED: Controlled by attack cycle state
 
-	# Initial check for targets already in range (optional, depends on timing)
+	# Create and configure Attack Cycle Timers
+	_pre_attack_timer = Timer.new()
+	_pre_attack_timer.name = "PreAttackTimer"
+	_pre_attack_timer.one_shot = true
+	_pre_attack_timer.timeout.connect(_on_pre_attack_timer_timeout)
+	add_child(_pre_attack_timer)
+
+	_attack_duration_timer = Timer.new()
+	_attack_duration_timer.name = "AttackDurationTimer"
+	_attack_duration_timer.one_shot = true
+	_attack_duration_timer.timeout.connect(_on_attack_duration_timer_timeout)
+	add_child(_attack_duration_timer)
+
+	_post_attack_timer = Timer.new()
+	_post_attack_timer.name = "PostAttackTimer"
+	_post_attack_timer.one_shot = true
+	_post_attack_timer.timeout.connect(_on_post_attack_timer_timeout)
+	add_child(_post_attack_timer)
+
+	_attack_cooldown_timer = Timer.new()
+	_attack_cooldown_timer.name = "AttackCooldownTimer"
+	_attack_cooldown_timer.one_shot = true
+	_attack_cooldown_timer.timeout.connect(_on_attack_cooldown_timer_timeout)
+	add_child(_attack_cooldown_timer)
+
+	# Initial check for targets already in range
 	_find_new_target()
 
 
@@ -56,94 +107,158 @@ func _physics_process(delta: float) -> void:
 	if is_already_dead or Global.paused:
 		if fire_rate_timer and not fire_rate_timer.is_stopped():
 			fire_rate_timer.stop()
+		_stop_all_attack_timers_and_reset_state()
 		return
 
-	# Restart timer if it was stopped and the enemy is alive
-	if not is_already_dead and fire_rate_timer and fire_rate_timer.is_stopped():
-		fire_rate_timer.start()
+	# Attack Cycle Logic
+	if current_target and _current_attack_cycle_state == AttackCycleState.NONE:
+		Log.trace(Log.Level.DEBUG, "BigDaddy: Target '%s' in range, starting attack cycle." % current_target.name if current_target else "UNKNOWN")
+		_current_attack_cycle_state = AttackCycleState.PRE_ATTACK
+		_pre_attack_timer.start(pre_attack_delay)
+	elif not current_target and \
+	   (_current_attack_cycle_state == AttackCycleState.PRE_ATTACK or \
+		_current_attack_cycle_state == AttackCycleState.ATTACKING):
+		Log.trace(Log.Level.DEBUG, "BigDaddy: Target lost during pre-attack/attack. Interrupting.")
+		_interrupt_attack_cycle()
 
-	# Keep standard enemy behavior (movement, etc.)
-	super._physics_process(delta)
+	# Movement Logic
+	var should_move: bool = true
+	match _current_attack_cycle_state:
+		AttackCycleState.PRE_ATTACK, AttackCycleState.ATTACKING, AttackCycleState.POST_ATTACK:
+			should_move = false
+		_: 
+			should_move = true
+	
+	if should_move:
+		super._physics_process(delta)
 
 	# Optional: Make the enemy face its target if it has one
 	# if current_target:
 	#	look_at(current_target.global_position)
 
+# --- Attack Cycle Timer Handlers ---
 
-# func _on_RangeArea_body_exited(body: Node2D) -> void:
-	# if body in towers_in_range:
-	# 	towers_in_range.erase(body)
-	# 	Log.trace(Log.Level.DEBUG, "BigDaddy: Tower exited range: %s" % body.name)
-	# 	if body == current_target: # If the target left range, find a new one
-	# 		current_target = null
-	# 		_find_new_target()
+func _on_pre_attack_timer_timeout() -> void:
+	if _current_attack_cycle_state != AttackCycleState.PRE_ATTACK or not current_target:
+		if _current_attack_cycle_state == AttackCycleState.PRE_ATTACK: # Only interrupt if we were in pre_attack
+			Log.trace(Log.Level.DEBUG, "BigDaddy: Target lost or state changed during pre_attack_delay. Interrupting.")
+			_interrupt_attack_cycle()
+		return
+	Log.trace(Log.Level.DEBUG, "BigDaddy: Pre-attack delay finished. Starting ATTACKING.")
+	_current_attack_cycle_state = AttackCycleState.ATTACKING
+	_attack_duration_timer.start(attack_duration)
+	if fire_rate > 0 and fire_rate_timer: 
+		fire_rate_timer.start()
 
+func _on_attack_duration_timer_timeout() -> void:
+	if _current_attack_cycle_state != AttackCycleState.ATTACKING:
+		return 
+	Log.trace(Log.Level.DEBUG, "BigDaddy: Attack duration finished. Starting POST_ATTACK.")
+	_current_attack_cycle_state = AttackCycleState.POST_ATTACK
+	_post_attack_timer.start(post_attack_delay)
+	if fire_rate_timer:
+		fire_rate_timer.stop()
+
+func _on_post_attack_timer_timeout() -> void:
+	if _current_attack_cycle_state != AttackCycleState.POST_ATTACK:
+		return
+	Log.trace(Log.Level.DEBUG, "BigDaddy: Post-attack delay finished. Starting COOLDOWN.")
+	_current_attack_cycle_state = AttackCycleState.COOLDOWN
+	_attack_cooldown_timer.start(attack_cooldown)
+
+func _on_attack_cooldown_timer_timeout() -> void:
+	if _current_attack_cycle_state != AttackCycleState.COOLDOWN:
+		return
+	Log.trace(Log.Level.DEBUG, "BigDaddy: Attack cooldown finished. State back to NONE.")
+	_current_attack_cycle_state = AttackCycleState.NONE
+
+# --- Helper functions for Attack Cycle ---
+
+func _interrupt_attack_cycle() -> void:
+	Log.trace(Log.Level.DEBUG, "BigDaddy: Interrupting attack cycle.")
+	if _pre_attack_timer: _pre_attack_timer.stop()
+	if _attack_duration_timer: _attack_duration_timer.stop()
+	if _post_attack_timer: _post_attack_timer.stop()
+	if fire_rate_timer: fire_rate_timer.stop()
+
+	_current_attack_cycle_state = AttackCycleState.COOLDOWN
+	if _attack_cooldown_timer: _attack_cooldown_timer.start(attack_cooldown)
+
+func _stop_all_attack_timers_and_reset_state() -> void:
+	Log.trace(Log.Level.DEBUG, "BigDaddy: Stopping all attack timers and resetting state (death/pause).")
+	if _pre_attack_timer: _pre_attack_timer.stop()
+	if _attack_duration_timer: _attack_duration_timer.stop()
+	if _post_attack_timer: _post_attack_timer.stop()
+	if _attack_cooldown_timer: _attack_cooldown_timer.stop()
+	if fire_rate_timer: fire_rate_timer.stop()
+	_current_attack_cycle_state = AttackCycleState.NONE
+
+# --- Target Management ---
 
 func _find_new_target() -> void:
-	current_target = null
+	# current_target = null # Let's only nullify if no valid tower found
+	var old_target = current_target
 	var closest_tower: Node2D = null
-	var min_dist_sq: float = 999999999 # Use squared distance for efficiency
+	var min_dist_sq: float = INF 
 
 	for tower in towers_in_range:
-		# Optional: Add a check to ensure the tower is still valid (e.g., not destroyed)
-		# if not is_instance_valid(tower): continue
+		if not is_instance_valid(tower): 
+			continue
 
 		var dist_sq: float = global_position.distance_squared_to(tower.global_position)
 		if dist_sq < min_dist_sq:
 			min_dist_sq = dist_sq
 			closest_tower = tower
-
+	
 	current_target = closest_tower
+
+	if old_target != current_target:
+		if current_target:
+			Log.trace(Log.Level.DEBUG, "BigDaddy: New target acquired: %s" % current_target.name)
+		else:
+			Log.trace(Log.Level.DEBUG, "BigDaddy: Target lost or no valid targets in range.")
 
 
 # --- Shooting ---
 
 func _shoot() -> void:
-	if is_already_dead or state != EnemyState.FOLLOW_PATH: # Only shoot while moving/idle, not when dead/finished
+	if is_already_dead or _current_attack_cycle_state != AttackCycleState.ATTACKING:
 		return
 
-	# Re-validate target just before shooting
-	if not is_instance_valid(current_target) or not current_target in towers_in_range:
-		_find_new_target() # Try to find a new target if the current one is invalid
-
-	if not current_target:
-		# Log.trace(Log.Level.DEBUG, "BigDaddy: Shoot cancelled, no valid target.")
-		return # No target to shoot at
-
+	if not is_instance_valid(current_target): 
+		_find_new_target() 
+		if not current_target: 
+			return
+	
 	if not projectile_scene:
 		Log.trace(Log.Level.ERROR, "BigDaddy: Missing projectile scene!")
 		return
 
-	# Instantiate projectile
-	var projectile = projectile_scene.instantiate() # Assuming projectile script handles itself
+	var projectile = projectile_scene.instantiate()
 
-	# Add projectile to the main level scene tree for proper cleanup? Or parent?
-	# Option 1: Add to parent (the enemy spawner or level)
-	# get_parent().add_child(projectile)
-	# Option 2: Add to a dedicated bullet container node in the level (better)
-	var bullet_container = get_tree().get_first_node_in_group("bullet_container") # Needs setup
+	var bullet_container = get_tree().get_first_node_in_group("bullet_container")
 	if bullet_container:
 		bullet_container.add_child(projectile)
-		projectile.z_index = 100
-		projectile.global_position = global_position
-	else: # Fallback to parent
-		Log.trace(Log.Level.WARN, "BigDaddy: 'bullet_container' group not found. Adding projectile to parent.")
+		projectile.z_index = 100 
+	elif get_parent(): 
 		get_parent().add_child(projectile)
+		Log.trace(Log.Level.WARN, "BigDaddy: 'bullet_container' group not found. Adding projectile to get_parent().")
+	else:
+		Log.trace(Log.Level.ERROR, "BigDaddy: Cannot add projectile, no parent and no bullet_container.")
+		projectile.queue_free()
+		return
+			
+	projectile.global_position = global_position 
+	if is_instance_valid(current_target): 
+		var direction_to_target = global_position.direction_to(current_target.global_position)
+		projectile.rotation = direction_to_target.angle()
 
-
-	# Setup projectile
-	projectile.global_position = global_position # Start at enemy position
-	var direction_to_target = global_position.direction_to(current_target.global_position)
-	projectile.rotation = direction_to_target.angle()
-
-	# Pass necessary info to projectile (if its script needs it)
-	if projectile.has_method("init"):
-		projectile.init(direction_to_target, tower_disable_duration) # Pass direction and disable duration
-	elif projectile.has_meta("direction"): # Check if using exported variable
-		projectile.set_meta("direction", direction_to_target)
-	# projectile.target_group = "towers" # Set group for collision if needed
-
-	# Note: Projectile movement and collision should be handled in its own script.
+		if projectile.has_method("init"):
+			projectile.init(direction_to_target, tower_disable_duration) 
+		elif projectile.has_meta("direction"): 
+			projectile.set_meta("direction", direction_to_target)
+	else:
+		Log.trace(Log.Level.WARN, "BigDaddy: Target became invalid right before setting projectile direction.")
 
 
 # Override take_damage if needed, e.g., to stop shooting temporarily
@@ -161,20 +276,19 @@ func _shoot() -> void:
 
 
 func _on_range_area_body_entered(body: Node2D) -> void:
-	Log.trace(Log.Level.DEBUG, "BigDaddy: Range area body entered: %s" % body.name)
-	# Check if the body is a tower (using group or class_name)
-	if body.is_in_group("towers"): # Assuming towers are in the "towers" group
-		Log.trace(Log.Level.DEBUG, "BigDaddy: Tower entered range: %s" % body.name)
+	# Log.trace(Log.Level.DEBUG, "BigDaddy: Range area body entered: %s" % body.name) # Can be verbose
+	if body.is_in_group("towers"): 
 		if not body in towers_in_range:
 			towers_in_range.append(body)
-			if not current_target: # Find a target if we don't have one
+			Log.trace(Log.Level.DEBUG, "BigDaddy: Tower '%s' entered range. Total in range: %s" % [body.name, towers_in_range.size()])
+			if not current_target: 
 				_find_new_target()
 
 
 func _on_range_area_body_exited(body: Node2D) -> void:
 	if body in towers_in_range:
 		towers_in_range.erase(body)
-		Log.trace(Log.Level.DEBUG, "BigDaddy: Tower exited range: %s" % body.name)
-		if body == current_target: # If the target left range, find a new one
-			current_target = null
+		Log.trace(Log.Level.DEBUG, "BigDaddy: Tower '%s' exited range. Total in range: %s" % [body.name, towers_in_range.size()])
+		if body == current_target: 
+			current_target = null 
 			_find_new_target()
