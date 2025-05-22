@@ -8,11 +8,11 @@ const LVL_IDEN: String = "id"
 const LVL_NAME: String = "name"
 const LVL_DESC: String = "desc"
 
+@export var level_id: String = "lev.XX"
 @export var arc_title: String
-@export var arc_texture: CompressedTexture2D
-@export var level_scene: PackedScene
 
 var level: ILevel
+var arc_texture: Texture2D
 
 @onready var level_name_label: Label = $PanelContainer/MarginContainer/VBoxContainer/HeaderContainer/LevelNameLabel
 @onready var description_label: Label = $PanelContainer/MarginContainer/VBoxContainer/DescriptionLabel
@@ -30,9 +30,12 @@ func _ready() -> void:
 
 # public
 func configure() -> void:
+	var level_scene := load("res://scenes/gameplay/world/level/levels/%s.tscn" % level_id)
 	level = level_scene.instantiate()
 
 	level_name_label.text = level.level_name
+
+	arc_texture = load("res://assets/ui/level_selection/bg_arcs/%s.png" % level.arc_id)
 	
 	SignalUtil.connects(signals)
 

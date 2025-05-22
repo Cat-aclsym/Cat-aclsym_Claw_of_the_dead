@@ -15,6 +15,7 @@ content_margin_bottom = 16.0
 texture = ExtResource("1_qgd5p")
 
 [node name="LevelFrame" type="Control"]
+modulate = Color(1, 1, 1, 0.784314)
 layout_mode = 3
 anchors_preset = 0
 size_flags_horizontal = 3

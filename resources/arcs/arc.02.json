@@ -1,10 +1,10 @@
 {
     "id": "arc.02",
     "next": "none",
-    "name": "La grande traversée",
-    "levels": [
-        "lev.06",
-        "lev.07",
-        "lev.08"
-    ]
+    "name": "La mer Nyaditerranée",
+    "levels": {
+        "lev.06": "locked",
+        "lev.07": "locked",
+        "lev.08": "locked"
+    }
 }

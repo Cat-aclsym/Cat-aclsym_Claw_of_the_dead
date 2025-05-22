@@ -6,6 +6,11 @@ signal level_selected
 var level_frames: Array[LevelFrame] = []
 var level_index: int = 0
 
+@onready var separator_scene: PackedScene = preload("res://scenes/ui/menus/level_selection/components/separator.tscn")
+@onready var indicator_scene: PackedScene = preload("res://scenes/ui/menus/level_selection/components/level_frame.tscn")
+
+@onready var background_texture_rect: TextureRect = $BackgroundTextureRect
+
 @onready var main_menu_button: TextureButton = $MarginContainer/VBoxContainer/HeaderContainer/MainMenuButton
 
 @onready var body_container: HBoxContainer = $MarginContainer/VBoxContainer/BodyContainer
@@ -32,6 +37,7 @@ func configure() -> void:
 # private
 func _update() -> void:
 	level_frames[level_index].visible = true
+	background_texture_rect.texture = level_frames[level_index].arc_texture
 
 func _load_levels() -> void:
 	for child in body_container.get_children():

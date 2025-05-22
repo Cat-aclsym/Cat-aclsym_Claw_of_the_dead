@@ -1,12 +1,10 @@
 {
-    "id": "arc.01",
-    "next": "arc.02",
-    "name": "Chat'lanques de Nyarseille",
-    "levels": [
-        "lev.01",
-        "lev.02",
-        "lev.03",
-        "lev.04",
-        "lev.05"
-    ]
+	"id": "arc.01",
+	"next": "arc.02",
+	"name": "Chat'lanques de Nyarseille",
+	"levels": {
+		"lev.01": "done",
+		"lev.02": "current",
+		"lev.03": "locked"
+	}
 }

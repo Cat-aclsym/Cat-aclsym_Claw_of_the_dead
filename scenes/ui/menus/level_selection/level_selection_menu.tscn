@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://dbngb5qll51sg"]
+[gd_scene load_steps=12 format=3 uid="uid://dbngb5qll51sg"]
 
 [ext_resource type="Script" path="res://scenes/ui/menus/level_selection/level_selection_menu.gd" id="1_3d0bw"]
 [ext_resource type="Texture2D" uid="uid://c2uqlay1r2d1d" path="res://assets/ui/icons/Button Cancel.svg" id="1_bbxe4"]
@@ -9,9 +9,8 @@
 [ext_resource type="PackedScene" uid="uid://dx5t3ko8f6o27" path="res://scenes/ui/menus/level_selection/components/level_frame.tscn" id="5_x0b1a"]
 [ext_resource type="Texture2D" uid="uid://dfb5h521uwj4o" path="res://assets/ui/level_selection/bt_level/level_current.svg" id="6_motxa"]
 [ext_resource type="Texture2D" uid="uid://qsdp3h1h2rg" path="res://assets/ui/level_selection/bt_level/line.svg" id="7_3fcy5"]
-[ext_resource type="PackedScene" uid="uid://dfahd0bsnk0p4" path="res://scenes/gameplay/world/level/levels/lev.01.tscn" id="7_vvx8y"]
-[ext_resource type="PackedScene" uid="uid://c5xxpj04k5gcy" path="res://scenes/gameplay/world/level/levels/lev.02.tscn" id="8_hlp3g"]
-[ext_resource type="PackedScene" uid="uid://ft5g7ih3eyl" path="res://scenes/gameplay/world/level/levels/lev.03.tscn" id="9_rxo2w"]
+[ext_resource type="PackedScene" uid="uid://b0nyq2do4mc83" path="res://scenes/ui/menus/level_selection/components/level_indicator.tscn" id="11_t50gr"]
+[ext_resource type="PackedScene" uid="uid://b80oipuymr4oa" path="res://scenes/ui/menus/level_selection/components/separator.tscn" id="12_ba7jr"]
 
 [node name="LevelSelectionMenu" type="Control"]
 layout_mode = 3
@@ -92,22 +91,19 @@ stretch_mode = 5
 [node name="LevelFrame1" parent="MarginContainer/VBoxContainer/BodyContainer" instance=ExtResource("5_x0b1a")]
 layout_mode = 2
 size_flags_vertical = 1
-arc_texture = ExtResource("1_hmbw8")
-level_scene = ExtResource("7_vvx8y")
+level_id = "lev.01"
 
 [node name="LevelFrame2" parent="MarginContainer/VBoxContainer/BodyContainer" instance=ExtResource("5_x0b1a")]
 visible = false
 layout_mode = 2
 size_flags_vertical = 1
-arc_texture = ExtResource("1_hmbw8")
-level_scene = ExtResource("8_hlp3g")
+level_id = "lev.02"
 
 [node name="LevelFrame3" parent="MarginContainer/VBoxContainer/BodyContainer" instance=ExtResource("5_x0b1a")]
 visible = false
 layout_mode = 2
 size_flags_vertical = 1
-arc_texture = ExtResource("1_hmbw8")
-level_scene = ExtResource("9_rxo2w")
+level_id = "lev.03"
 
 [node name="RightCenterContainer" type="CenterContainer" parent="MarginContainer/VBoxContainer/BodyContainer"]
 layout_mode = 2
@@ -141,29 +137,11 @@ layout_mode = 2
 size_flags_vertical = 4
 alignment = 1
 
-[node name="LevelButton" type="TextureButton" parent="MarginContainer/VBoxContainer/FooterContainer/VBoxContainer/HBoxContainer"]
+[node name="LevelButton" parent="MarginContainer/VBoxContainer/FooterContainer/VBoxContainer/HBoxContainer" instance=ExtResource("11_t50gr")]
 layout_mode = 2
-texture_normal = ExtResource("6_motxa")
 
-[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/FooterContainer/VBoxContainer/HBoxContainer/LevelButton"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-text = "1
-"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="Separator" type="TextureRect" parent="MarginContainer/VBoxContainer/FooterContainer/VBoxContainer/HBoxContainer"]
-custom_minimum_size = Vector2(64, 4)
+[node name="Separator" parent="MarginContainer/VBoxContainer/FooterContainer/VBoxContainer/HBoxContainer" instance=ExtResource("12_ba7jr")]
 layout_mode = 2
-size_flags_vertical = 4
-texture = ExtResource("7_3fcy5")
-expand_mode = 1
-stretch_mode = 1
 
 [node name="LevelButton4" type="TextureButton" parent="MarginContainer/VBoxContainer/FooterContainer/VBoxContainer/HBoxContainer"]
 layout_mode = 2
