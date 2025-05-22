@@ -14,6 +14,7 @@ const LVL_DESC: String = "desc"
 var level: ILevel
 var arc_texture: Texture2D
 
+@onready var description_label: Label = $PanelContainer/MarginContainer/VBoxContainer/DescriptionLabel
 @onready var level_name_label: Label = $PanelContainer/MarginContainer/VBoxContainer/HeaderContainer/LevelNameLabel
 @onready var play_button: TextureButton = $PanelContainer/MarginContainer/VBoxContainer/FooterContainer/PlayButton
 @onready var signals: Array[Dictionary] = [
@@ -31,6 +32,7 @@ func configure() -> void:
 	level = level_scene.instantiate()
 
 	level_name_label.text = level.level_name
+	description_label.text = level.level_description
 
 	arc_texture = load("res://assets/ui/level_selection/bg_arcs/%s.png" % level.arc_id)
 	

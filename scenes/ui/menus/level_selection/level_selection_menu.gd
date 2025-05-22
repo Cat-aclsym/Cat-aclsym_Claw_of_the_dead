@@ -1,4 +1,5 @@
 ## © [2024] A7 Studio. All rights reserved. Trademark.
+## @experimental
 class_name LevelSelectionMenu extends Control
 
 signal level_selected
@@ -35,7 +36,7 @@ var level_index: int = 0
 func _ready() -> void:
 	configure()
 
-	
+
 # public
 func configure() -> void:
 	_load_levels()
@@ -129,7 +130,7 @@ func _on_previous_button_pressed() -> void:
 
 
 func _on_next_button_pressed() -> void:
-	var i = (level_index + 1) if level_index + 1 < level_frames.size() else level_index
+	var i: int = (level_index + 1) if level_index + 1 < level_frames.size() else level_index
 	
 	if not level_frames[i] is LevelFrame:
 		level_index = i
