@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://dbngb5qll51sg"]
+[gd_scene load_steps=12 format=3 uid="uid://dbngb5qll51sg"]
 
 [ext_resource type="Script" path="res://scenes/ui/menus/level_selection/level_selection_menu.gd" id="1_3d0bw"]
 [ext_resource type="Texture2D" uid="uid://cuyo3k1ec4f18" path="res://assets/ui/level_selection/bg_arcs/arc.01.png" id="1_hmbw8"]
@@ -7,6 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://b282kcmxfhwo1" path="res://assets/ui/level_selection/arrows/left.svg" id="4_cs7f2"]
 [ext_resource type="Texture2D" uid="uid://bjde51xuyor3t" path="res://assets/ui/level_selection/arrows/right.svg" id="5_m6wuc"]
 [ext_resource type="PackedScene" uid="uid://dx5t3ko8f6o27" path="res://scenes/ui/menus/level_selection/components/level_frame.tscn" id="5_x0b1a"]
+[ext_resource type="Texture2D" uid="uid://b5q25yrnofsly" path="res://assets/ui/level_selection/window/locked.svg" id="6_miktb"]
 
 [sub_resource type="Animation" id="Animation_t7266"]
 resource_name = "dim_bg"
@@ -130,6 +131,7 @@ size_flags_vertical = 4
 texture_normal = ExtResource("4_cs7f2")
 
 [node name="LevelFrame1" parent="MarginContainer/VBoxContainer/BodyContainer" instance=ExtResource("5_x0b1a")]
+visible = false
 layout_mode = 2
 size_flags_vertical = 1
 level_id = "lev.01"
@@ -183,6 +185,26 @@ layout_mode = 2
 size_flags_vertical = 1
 level_id = "lev.08"
 arc_title = "La mer Nyaditerranée"
+
+[node name="LockedFrame" type="CenterContainer" parent="MarginContainer/VBoxContainer/BodyContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/BodyContainer/LockedFrame"]
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="MarginContainer/VBoxContainer/BodyContainer/LockedFrame/VBoxContainer"]
+texture_filter = 2
+texture_repeat = 1
+layout_mode = 2
+texture = ExtResource("6_miktb")
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/BodyContainer/LockedFrame/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "suite à la prochaine mise à jour"
+uppercase = true
 
 [node name="NextButton" type="TextureButton" parent="MarginContainer/VBoxContainer/BodyContainer"]
 texture_filter = 2

@@ -4,10 +4,8 @@ class_name LevelSelectionMenu extends Control
 signal level_selected
 
 var level_statuses: Dictionary = {}
-var level_frames: Array[LevelFrame] = []
+var level_frames: Array = []
 var level_index: int = 0
-
-var bg_texture: Texture2D = null
 
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
 
@@ -22,6 +20,7 @@ var bg_texture: Texture2D = null
 @onready var body_container: HBoxContainer = $MarginContainer/VBoxContainer/BodyContainer
 @onready var previous_button: TextureButton = $MarginContainer/VBoxContainer/BodyContainer/PreviousButton
 @onready var next_button: TextureButton = $MarginContainer/VBoxContainer/BodyContainer/NextButton
+@onready var locked_frame: CenterContainer = $MarginContainer/VBoxContainer/BodyContainer/LockedFrame
 
 @onready var indicators_container: HBoxContainer = $MarginContainer/VBoxContainer/VBoxContainer/IndicatorsContainer
 
@@ -39,9 +38,9 @@ func _ready() -> void:
 
 # public
 func configure() -> void:
-	SignalUtil.connects(signals)
 	_load_levels()
 	_update()
+	SignalUtil.connects(signals)
 
 
 # private
@@ -49,6 +48,9 @@ func _update() -> void:
 	for level_frame in level_frames:
 		level_frame.visible = false
 	level_frames[level_index].visible = true
+
+	if not level_frames[level_index] is LevelFrame:
+		return
 
 	if background_texture_rect.texture != level_frames[level_index].arc_texture:
 		animation_player.play("dim_bg")
@@ -63,16 +65,12 @@ func _load_levels() -> void:
 		if not child is LevelFrame:
 			continue
 		level_frames.append(child)
-		signals.append({
-			SignalUtil.WHO: child, 
-			SignalUtil.WHAT: "start_level", 
-			SignalUtil.TO: _on_frame_start_level
-		})
+		signals.append({SignalUtil.WHO: child, SignalUtil.WHAT: "start_level", SignalUtil.TO: _on_frame_start_level})
 
 		var indicator: LevelIndicator = indicator_scene.instantiate()
 		indicators_container.add_child(indicator)
 		indicator.configure(i, level_statuses[child.level_id])
-		SignalUtil.connects([{SignalUtil.WHO: indicator, SignalUtil.WHAT: "selected", SignalUtil.TO: _on_level_indicator_selected}])
+		signals.append({SignalUtil.WHO: indicator, SignalUtil.WHAT: "selected", SignalUtil.TO: _on_level_indicator_selected})
 
 		var separator := separator_scene.instantiate()
 		indicators_container.add_child(separator)
@@ -82,6 +80,7 @@ func _load_levels() -> void:
 
 		i += 1
 
+	level_frames.append(locked_frame)
 	indicators_container.get_children().back().queue_free()
 
 func _load_level_statuses() -> Dictionary:
@@ -131,6 +130,12 @@ func _on_previous_button_pressed() -> void:
 
 func _on_next_button_pressed() -> void:
 	var i = (level_index + 1) if level_index + 1 < level_frames.size() else level_index
+	
+	if not level_frames[i] is LevelFrame:
+		level_index = i
+		_update()
+		return
+
 	var id = level_frames[i].level.level_id
 	if level_statuses[id] == LevelIndicator.Status.LOCKED:
 		return
