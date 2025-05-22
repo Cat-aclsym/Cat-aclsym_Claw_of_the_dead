@@ -30,3 +30,6 @@ curve = SubResource("Curve2D_pnrrg")
 
 [node name="Controller" parent="." index="3"]
 z_index = 4000
+
+[node name="Camera" parent="." index="4"]
+position = Vector2(752, -222)
