@@ -18,7 +18,6 @@ var arc_texture: Texture2D
 @onready var description_label: Label = $PanelContainer/MarginContainer/VBoxContainer/DescriptionLabel
 @onready var challenges_container: VBoxContainer = $PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/ChallengesContainer
 @onready var play_button: TextureButton = $PanelContainer/MarginContainer/VBoxContainer/FooterContainer/PlayButton
-
 @onready var signals: Array[Dictionary] = [
 	{SignalUtil.WHO: play_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_play_button_pressed}
 ]

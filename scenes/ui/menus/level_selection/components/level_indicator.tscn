@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://b0nyq2do4mc83"]
+[gd_scene load_steps=5 format=3 uid="uid://b0nyq2do4mc83"]
 
 [ext_resource type="Texture2D" uid="uid://dfb5h521uwj4o" path="res://assets/ui/level_selection/bt_level/level_current.svg" id="1_aq3t4"]
 [ext_resource type="Texture2D" uid="uid://7wb4hm8xi87c" path="res://assets/ui/level_selection/bt_level/level_lock.svg" id="2_yn7g2"]
 [ext_resource type="Script" path="res://scenes/ui/menus/level_selection/components/level_indicator.gd" id="3_07itj"]
+[ext_resource type="FontFile" uid="uid://ddo3rokwsadq0" path="res://assets/ui/fonts/dotgothic/DotGothic16-Regular.ttf" id="4_b47p3"]
 
 [node name="LevelIndicator" type="TextureButton"]
 texture_normal = ExtResource("1_aq3t4")
@@ -14,8 +15,14 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = 2.0
+offset_top = 2.0
+offset_right = -5.0
+offset_bottom = -7.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_fonts/font = ExtResource("4_b47p3")
+theme_override_font_sizes/font_size = 24
 text = "1
 "
 horizontal_alignment = 1

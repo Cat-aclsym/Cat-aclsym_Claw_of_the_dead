@@ -7,24 +7,30 @@ var level_statuses: Dictionary = {}
 var level_frames: Array[LevelFrame] = []
 var level_index: int = 0
 
+var bg_texture: Texture2D = null
+
+@onready var animation_player: AnimationPlayer = $AnimationPlayer
+
 @onready var separator_scene: PackedScene = preload("res://scenes/ui/menus/level_selection/components/separator.tscn")
 @onready var indicator_scene: PackedScene = preload("res://scenes/ui/menus/level_selection/components/level_indicator.tscn")
 
 @onready var background_texture_rect: TextureRect = $BackgroundTextureRect
 
-@onready var main_menu_button: TextureButton = $MarginContainer/VBoxContainer/HeaderContainer/MainMenuButton
+@onready var main_menu_button: TextureButton = $MarginContainer/MainMenuButton
+@onready var arc_title_label: Label = $MarginContainer/VBoxContainer/CenterContainer/ArcTitleLabel
 
 @onready var body_container: HBoxContainer = $MarginContainer/VBoxContainer/BodyContainer
-@onready var previous_button: TextureButton = $MarginContainer/VBoxContainer/BodyContainer/LeftCenterContainer/PreviousButton
-@onready var next_button: TextureButton = $MarginContainer/VBoxContainer/BodyContainer/RightCenterContainer/NextButton
+@onready var previous_button: TextureButton = $MarginContainer/VBoxContainer/BodyContainer/PreviousButton
+@onready var next_button: TextureButton = $MarginContainer/VBoxContainer/BodyContainer/NextButton
 
-@onready var indicators_container: HBoxContainer = $MarginContainer/VBoxContainer/FooterContainer/VBoxContainer/IndicatorsContainer
+@onready var indicators_container: HBoxContainer = $MarginContainer/VBoxContainer/VBoxContainer/IndicatorsContainer
 
 @onready var signals: Array[Dictionary] = [
 	{SignalUtil.WHO: previous_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_previous_button_pressed},
 	{SignalUtil.WHO: next_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_next_button_pressed},
 	{SignalUtil.WHO: main_menu_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_main_menu_button_button_pressed}
 ]
+
 
 # core
 func _ready() -> void:
@@ -33,8 +39,9 @@ func _ready() -> void:
 
 # public
 func configure() -> void:
-	_load_levels()
 	SignalUtil.connects(signals)
+	_load_levels()
+	_update()
 
 
 # private
@@ -42,7 +49,10 @@ func _update() -> void:
 	for level_frame in level_frames:
 		level_frame.visible = false
 	level_frames[level_index].visible = true
-	background_texture_rect.texture = level_frames[level_index].arc_texture
+
+	if background_texture_rect.texture != level_frames[level_index].arc_texture:
+		animation_player.play("dim_bg")
+		arc_title_label.text = 	level_frames[level_index].arc_title
 
 func _load_levels() -> void:
 	var i := 1
@@ -66,6 +76,9 @@ func _load_levels() -> void:
 
 		var separator := separator_scene.instantiate()
 		indicators_container.add_child(separator)
+
+		if level_statuses[child.level_id] == LevelIndicator.Status.CURRENT:
+			level_index = i-1
 
 		i += 1
 
@@ -96,7 +109,6 @@ func _load_level_statuses() -> Dictionary:
 
 
 	return result
-
 
 
 # signal
@@ -137,6 +149,10 @@ func _on_main_menu_button_button_pressed() -> void:
 func _on_level_indicator_selected(indicator: LevelIndicator) -> void:
 	level_index = indicator.level - 1
 	_update()
+
+
+func _on_dim_bg() -> void: # pas vraiment un signal mais un peu quand meme
+	background_texture_rect.texture = level_frames[level_index].arc_texture
 
 # event
 

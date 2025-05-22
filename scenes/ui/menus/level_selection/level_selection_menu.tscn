@@ -1,12 +1,63 @@
-[gd_scene load_steps=8 format=3 uid="uid://dbngb5qll51sg"]
+[gd_scene load_steps=11 format=3 uid="uid://dbngb5qll51sg"]
 
 [ext_resource type="Script" path="res://scenes/ui/menus/level_selection/level_selection_menu.gd" id="1_3d0bw"]
-[ext_resource type="Texture2D" uid="uid://c2uqlay1r2d1d" path="res://assets/ui/icons/Button Cancel.svg" id="1_bbxe4"]
 [ext_resource type="Texture2D" uid="uid://cuyo3k1ec4f18" path="res://assets/ui/level_selection/bg_arcs/arc.01.png" id="1_hmbw8"]
+[ext_resource type="Texture2D" uid="uid://lh0y2k7t6cat" path="res://assets/ui/level_selection/bt_cancel/bt_cancel.svg" id="3_cju3k"]
 [ext_resource type="FontFile" uid="uid://ddo3rokwsadq0" path="res://assets/ui/fonts/dotgothic/DotGothic16-Regular.ttf" id="3_kbg2u"]
 [ext_resource type="Texture2D" uid="uid://b282kcmxfhwo1" path="res://assets/ui/level_selection/arrows/left.svg" id="4_cs7f2"]
 [ext_resource type="Texture2D" uid="uid://bjde51xuyor3t" path="res://assets/ui/level_selection/arrows/right.svg" id="5_m6wuc"]
 [ext_resource type="PackedScene" uid="uid://dx5t3ko8f6o27" path="res://scenes/ui/menus/level_selection/components/level_frame.tscn" id="5_x0b1a"]
+
+[sub_resource type="Animation" id="Animation_t7266"]
+resource_name = "dim_bg"
+length = 0.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("BackgroundTextureRect:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.133333, 0.333333, 0.5),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Color(0.297402, 0.481874, 0.475991, 0.537255), Color(0.0745098, 0.14902, 0.145098, 0.537255), Color(0.0745389, 0.148719, 0.145659, 0.537255), Color(0.297402, 0.481874, 0.475991, 0.537255)]
+}
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.266667),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"_on_dim_bg"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_p8ui4"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("BackgroundTextureRect:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(0.297402, 0.481874, 0.475991, 0.537255)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_djou2"]
+_data = {
+"RESET": SubResource("Animation_p8ui4"),
+"dim_bg": SubResource("Animation_t7266")
+}
 
 [node name="LevelSelectionMenu" type="Control"]
 layout_mode = 3
@@ -17,6 +68,11 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_3d0bw")
 
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_djou2")
+}
+
 [node name="BackgroundTextureRect" type="TextureRect" parent="."]
 modulate = Color(0.297402, 0.481874, 0.475991, 0.537255)
 layout_mode = 1
@@ -26,7 +82,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("1_hmbw8")
-expand_mode = 5
+expand_mode = 2
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1
@@ -42,93 +98,122 @@ theme_override_constants/margin_bottom = 16
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
 layout_mode = 2
+theme_override_constants/separation = 60
 
-[node name="HeaderContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
-layout_mode = 2
-alignment = 2
-
-[node name="CenterContainer" type="CenterContainer" parent="MarginContainer/VBoxContainer/HeaderContainer"]
+[node name="CenterContainer" type="CenterContainer" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="ArcTitleLabel" type="Label" parent="MarginContainer/VBoxContainer/HeaderContainer/CenterContainer"]
+[node name="ArcTitleLabel" type="Label" parent="MarginContainer/VBoxContainer/CenterContainer"]
 layout_mode = 2
+size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.4, 1, 0.4, 1)
 theme_override_fonts/font = ExtResource("3_kbg2u")
 theme_override_font_sizes/font_size = 65
 text = "Chat'lanques de Nyarseille"
-
-[node name="MainMenuButton" type="TextureButton" parent="MarginContainer/VBoxContainer/HeaderContainer"]
-custom_minimum_size = Vector2(80, 70)
-layout_mode = 2
-texture_normal = ExtResource("1_bbxe4")
-ignore_texture_size = true
-stretch_mode = 5
+horizontal_alignment = 1
+vertical_alignment = 2
 
 [node name="BodyContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_constants/separation = 32
+theme_override_constants/separation = 96
 alignment = 1
 
-[node name="LeftCenterContainer" type="CenterContainer" parent="MarginContainer/VBoxContainer/BodyContainer"]
-layout_mode = 2
-size_flags_horizontal = 0
-size_flags_vertical = 4
-
-[node name="PreviousButton" type="TextureButton" parent="MarginContainer/VBoxContainer/BodyContainer/LeftCenterContainer"]
+[node name="PreviousButton" type="TextureButton" parent="MarginContainer/VBoxContainer/BodyContainer"]
 texture_filter = 2
 texture_repeat = 1
-custom_minimum_size = Vector2(128, 128)
+custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
 texture_normal = ExtResource("4_cs7f2")
-stretch_mode = 5
 
 [node name="LevelFrame1" parent="MarginContainer/VBoxContainer/BodyContainer" instance=ExtResource("5_x0b1a")]
 layout_mode = 2
 size_flags_vertical = 1
 level_id = "lev.01"
+arc_title = "Chat'lanques de Nyarseille"
 
 [node name="LevelFrame2" parent="MarginContainer/VBoxContainer/BodyContainer" instance=ExtResource("5_x0b1a")]
 visible = false
 layout_mode = 2
 size_flags_vertical = 1
 level_id = "lev.02"
+arc_title = "Chat'lanques de Nyarseille"
 
 [node name="LevelFrame3" parent="MarginContainer/VBoxContainer/BodyContainer" instance=ExtResource("5_x0b1a")]
 visible = false
 layout_mode = 2
 size_flags_vertical = 1
 level_id = "lev.03"
+arc_title = "Chat'lanques de Nyarseille"
 
-[node name="RightCenterContainer" type="CenterContainer" parent="MarginContainer/VBoxContainer/BodyContainer"]
+[node name="LevelFrame4" parent="MarginContainer/VBoxContainer/BodyContainer" instance=ExtResource("5_x0b1a")]
+visible = false
 layout_mode = 2
-size_flags_horizontal = 8
-size_flags_vertical = 4
+size_flags_vertical = 1
+level_id = "lev.04"
+arc_title = "Chat'lanques de Nyarseille"
 
-[node name="NextButton" type="TextureButton" parent="MarginContainer/VBoxContainer/BodyContainer/RightCenterContainer"]
+[node name="LevelFrame5" parent="MarginContainer/VBoxContainer/BodyContainer" instance=ExtResource("5_x0b1a")]
+visible = false
+layout_mode = 2
+size_flags_vertical = 1
+level_id = "lev.05"
+arc_title = "Chat'lanques de Nyarseille"
+
+[node name="LevelFrame6" parent="MarginContainer/VBoxContainer/BodyContainer" instance=ExtResource("5_x0b1a")]
+visible = false
+layout_mode = 2
+size_flags_vertical = 1
+level_id = "lev.06"
+arc_title = "La mer Nyaditerranée"
+
+[node name="LevelFrame7" parent="MarginContainer/VBoxContainer/BodyContainer" instance=ExtResource("5_x0b1a")]
+visible = false
+layout_mode = 2
+size_flags_vertical = 1
+level_id = "lev.07"
+arc_title = "La mer Nyaditerranée"
+
+[node name="LevelFrame8" parent="MarginContainer/VBoxContainer/BodyContainer" instance=ExtResource("5_x0b1a")]
+visible = false
+layout_mode = 2
+size_flags_vertical = 1
+level_id = "lev.08"
+arc_title = "La mer Nyaditerranée"
+
+[node name="NextButton" type="TextureButton" parent="MarginContainer/VBoxContainer/BodyContainer"]
 texture_filter = 2
 texture_repeat = 1
-custom_minimum_size = Vector2(128, 128)
+custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
-texture_normal = ExtResource("5_m6wuc")
-stretch_mode = 5
-
-[node name="FooterContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
-layout_mode = 2
+size_flags_horizontal = 4
 size_flags_vertical = 4
+texture_normal = ExtResource("5_m6wuc")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/FooterContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/FooterContainer/VBoxContainer"]
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/VBoxContainer"]
 layout_mode = 2
+size_flags_horizontal = 4
 text = "Niveaux"
 horizontal_alignment = 1
-vertical_alignment = 1
+vertical_alignment = 2
 
-[node name="IndicatorsContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/FooterContainer/VBoxContainer"]
+[node name="IndicatorsContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 4
 alignment = 1
+
+[node name="MainMenuButton" type="TextureButton" parent="MarginContainer"]
+custom_minimum_size = Vector2(80, 70)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+texture_normal = ExtResource("3_cju3k")
+ignore_texture_size = true
+stretch_mode = 5
