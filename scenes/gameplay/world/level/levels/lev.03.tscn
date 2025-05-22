@@ -8,4 +8,4 @@ level_id = "lev.03"
 level_name = "3. Niveau trois"
 level_description = "coinki coink coink"
 arc_id = "arc.01"
-map_scene = ExtResource("2_ud2gq")
+map_scene = ExtResource("2_pd7n8")

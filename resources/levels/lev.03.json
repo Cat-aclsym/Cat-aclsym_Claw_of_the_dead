@@ -13,7 +13,7 @@
 	  {
 		"enemy_id": "ene.02",
 		"count": 1,
-		"spawner": 1
+		"spawner": 0
 	  }
 	],
 	[
@@ -28,7 +28,7 @@
 	  {
 		"enemy_id": "ene.01",
 		"count": 4,
-		"spawner": 2
+		"spawner": 0
 	  }
 	],
 	[
@@ -38,7 +38,7 @@
 	  {
 		"enemy_id": "ene.03",
 		"count": 1,
-		"spawner": 2
+		"spawner": 0
 	  },
 	  {
 		"enemy_id": "ene.02",

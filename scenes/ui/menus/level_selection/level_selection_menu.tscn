@@ -9,6 +9,21 @@
 [ext_resource type="PackedScene" uid="uid://dx5t3ko8f6o27" path="res://scenes/ui/menus/level_selection/components/level_frame.tscn" id="5_x0b1a"]
 [ext_resource type="Texture2D" uid="uid://b5q25yrnofsly" path="res://assets/ui/level_selection/window/locked.svg" id="6_miktb"]
 
+[sub_resource type="Animation" id="Animation_p8ui4"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("BackgroundTextureRect:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(0.297402, 0.481874, 0.475991, 0.537255)]
+}
+
 [sub_resource type="Animation" id="Animation_t7266"]
 resource_name = "dim_bg"
 length = 0.5
@@ -37,21 +52,6 @@ tracks/1/keys = {
 "args": [],
 "method": &"_on_dim_bg"
 }]
-}
-
-[sub_resource type="Animation" id="Animation_p8ui4"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("BackgroundTextureRect:modulate")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Color(0.297402, 0.481874, 0.475991, 0.537255)]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_djou2"]
