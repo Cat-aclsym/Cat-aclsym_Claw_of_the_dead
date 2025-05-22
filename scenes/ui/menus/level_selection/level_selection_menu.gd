@@ -35,7 +35,7 @@ var level_index: int = 0
 func _ready() -> void:
 	configure()
 
-
+	
 # public
 func configure() -> void:
 	_load_levels()
