@@ -1,0 +1,204 @@
+[gd_scene load_steps=13 format=3 uid="uid://dbngb5qll51sg"]
+
+[ext_resource type="Script" path="res://scenes/ui/menus/level_selection/level_selection_menu.gd" id="1_3d0bw"]
+[ext_resource type="Texture2D" uid="uid://c2uqlay1r2d1d" path="res://assets/ui/icons/Button Cancel.svg" id="1_bbxe4"]
+[ext_resource type="Texture2D" uid="uid://cuyo3k1ec4f18" path="res://assets/ui/level_selection/bg_arcs/arc.01.png" id="1_hmbw8"]
+[ext_resource type="FontFile" uid="uid://ddo3rokwsadq0" path="res://assets/ui/fonts/dotgothic/DotGothic16-Regular.ttf" id="3_kbg2u"]
+[ext_resource type="Texture2D" uid="uid://b282kcmxfhwo1" path="res://assets/ui/level_selection/arrows/left.svg" id="4_cs7f2"]
+[ext_resource type="Texture2D" uid="uid://bjde51xuyor3t" path="res://assets/ui/level_selection/arrows/right.svg" id="5_m6wuc"]
+[ext_resource type="PackedScene" uid="uid://dx5t3ko8f6o27" path="res://scenes/ui/menus/level_selection/components/level_frame.tscn" id="5_x0b1a"]
+[ext_resource type="Texture2D" uid="uid://dfb5h521uwj4o" path="res://assets/ui/level_selection/bt_level/level_current.svg" id="6_motxa"]
+[ext_resource type="Texture2D" uid="uid://qsdp3h1h2rg" path="res://assets/ui/level_selection/bt_level/line.svg" id="7_3fcy5"]
+[ext_resource type="PackedScene" uid="uid://dfahd0bsnk0p4" path="res://scenes/gameplay/world/level/levels/lev.01.tscn" id="7_vvx8y"]
+[ext_resource type="PackedScene" uid="uid://c5xxpj04k5gcy" path="res://scenes/gameplay/world/level/levels/lev.02.tscn" id="8_hlp3g"]
+[ext_resource type="PackedScene" uid="uid://ft5g7ih3eyl" path="res://scenes/gameplay/world/level/levels/lev.03.tscn" id="9_rxo2w"]
+
+[node name="LevelSelectionMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_3d0bw")
+
+[node name="BackgroundTextureRect" type="TextureRect" parent="."]
+modulate = Color(0.297402, 0.481874, 0.475991, 0.537255)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_hmbw8")
+expand_mode = 5
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+
+[node name="HeaderContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+alignment = 2
+
+[node name="CenterContainer" type="CenterContainer" parent="MarginContainer/VBoxContainer/HeaderContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ArcTitleLabel" type="Label" parent="MarginContainer/VBoxContainer/HeaderContainer/CenterContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 1, 0.4, 1)
+theme_override_fonts/font = ExtResource("3_kbg2u")
+theme_override_font_sizes/font_size = 65
+text = "Chat'lanques de Nyarseille"
+
+[node name="MainMenuButton" type="TextureButton" parent="MarginContainer/VBoxContainer/HeaderContainer"]
+custom_minimum_size = Vector2(80, 70)
+layout_mode = 2
+texture_normal = ExtResource("1_bbxe4")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="BodyContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 32
+alignment = 1
+
+[node name="LeftCenterContainer" type="CenterContainer" parent="MarginContainer/VBoxContainer/BodyContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+
+[node name="PreviousButton" type="TextureButton" parent="MarginContainer/VBoxContainer/BodyContainer/LeftCenterContainer"]
+texture_filter = 2
+texture_repeat = 1
+custom_minimum_size = Vector2(128, 128)
+layout_mode = 2
+texture_normal = ExtResource("4_cs7f2")
+stretch_mode = 5
+
+[node name="LevelFrame1" parent="MarginContainer/VBoxContainer/BodyContainer" instance=ExtResource("5_x0b1a")]
+layout_mode = 2
+size_flags_vertical = 1
+arc_texture = ExtResource("1_hmbw8")
+level_scene = ExtResource("7_vvx8y")
+
+[node name="LevelFrame2" parent="MarginContainer/VBoxContainer/BodyContainer" instance=ExtResource("5_x0b1a")]
+visible = false
+layout_mode = 2
+size_flags_vertical = 1
+arc_texture = ExtResource("1_hmbw8")
+level_scene = ExtResource("8_hlp3g")
+
+[node name="LevelFrame3" parent="MarginContainer/VBoxContainer/BodyContainer" instance=ExtResource("5_x0b1a")]
+visible = false
+layout_mode = 2
+size_flags_vertical = 1
+arc_texture = ExtResource("1_hmbw8")
+level_scene = ExtResource("9_rxo2w")
+
+[node name="RightCenterContainer" type="CenterContainer" parent="MarginContainer/VBoxContainer/BodyContainer"]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 4
+
+[node name="NextButton" type="TextureButton" parent="MarginContainer/VBoxContainer/BodyContainer/RightCenterContainer"]
+texture_filter = 2
+texture_repeat = 1
+custom_minimum_size = Vector2(128, 128)
+layout_mode = 2
+texture_normal = ExtResource("5_m6wuc")
+stretch_mode = 5
+
+[node name="FooterContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 4
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/FooterContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/FooterContainer/VBoxContainer"]
+layout_mode = 2
+text = "Niveaux"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/FooterContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 4
+alignment = 1
+
+[node name="LevelButton" type="TextureButton" parent="MarginContainer/VBoxContainer/FooterContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+texture_normal = ExtResource("6_motxa")
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/FooterContainer/VBoxContainer/HBoxContainer/LevelButton"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "1
+"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Separator" type="TextureRect" parent="MarginContainer/VBoxContainer/FooterContainer/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(64, 4)
+layout_mode = 2
+size_flags_vertical = 4
+texture = ExtResource("7_3fcy5")
+expand_mode = 1
+stretch_mode = 1
+
+[node name="LevelButton4" type="TextureButton" parent="MarginContainer/VBoxContainer/FooterContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+texture_normal = ExtResource("6_motxa")
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/FooterContainer/VBoxContainer/HBoxContainer/LevelButton4"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "2"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Separator2" type="TextureRect" parent="MarginContainer/VBoxContainer/FooterContainer/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(64, 4)
+layout_mode = 2
+size_flags_vertical = 4
+texture = ExtResource("7_3fcy5")
+expand_mode = 1
+stretch_mode = 1
+
+[node name="LevelButton5" type="TextureButton" parent="MarginContainer/VBoxContainer/FooterContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+texture_normal = ExtResource("6_motxa")
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/FooterContainer/VBoxContainer/HBoxContainer/LevelButton5"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "3"
+horizontal_alignment = 1
+vertical_alignment = 1

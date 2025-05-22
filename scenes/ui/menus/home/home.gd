@@ -5,13 +5,13 @@
 class_name Home
 extends Control
 
-var _levels_menu_instance: LevelSelection
+var _levels_menu_instance: LevelSelectionMenu
 var _option_menu_instance: Options
 
 @onready var gui_margin_container: MarginContainer = $GuiMarginContainer
 @onready var play_button: TextureButton = $GuiMarginContainer/GuiHBoxContainer/HomeScreenVBoxContainer/PlayMarginContainer/PlayButton
 @onready var settings_button: TextureButton = $GuiMarginContainer/GuiHBoxContainer/HomeScreenVBoxContainer/SettingsMarginContainer/SettingsButton
-@onready var _levels_menu: PackedScene = preload("res://scenes/ui/menus/level_selection/level_selection.tscn")
+@onready var _levels_menu: PackedScene = preload("res://scenes/ui/menus/level_selection/level_selection_menu.tscn")
 @onready var _option_menu: PackedScene = preload("res://scenes/ui/menus/options/options.tscn")
 
 @onready var signals: Array[Dictionary] = [
