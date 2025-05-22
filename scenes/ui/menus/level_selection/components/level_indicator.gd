@@ -1,6 +1,8 @@
 ## © [2024] A7 Studio. All rights reserved. Trademark.
 ##
 ## Small level indicator on level selection menu
+class_name LevelIndicator extends TextureButton
+
 signal selected(LevelIndicator)
 
 enum Status {
