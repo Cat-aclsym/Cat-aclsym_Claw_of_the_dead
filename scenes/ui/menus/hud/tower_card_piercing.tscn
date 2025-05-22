@@ -29,11 +29,10 @@ theme_type_variation = &"UILabel"
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_constants/outline_size = 0
 theme_override_font_sizes/font_size = 16
-text = "tour perçante"
+text = "Test Piercing"
 horizontal_alignment = 1
 
 [node name="TextureRect" type="TextureRect" parent="VBoxContainer"]
-modulate = Color(1, 0, 1, 1)
 layout_mode = 2
 size_flags_vertical = 3
 texture = SubResource("AtlasTexture_oa8os")
@@ -57,6 +56,6 @@ grow_vertical = 2
 theme = ExtResource("1_pcje7")
 theme_type_variation = &"UILabel"
 theme_override_font_sizes/font_size = 18
-text = "25$"
+text = "0$"
 horizontal_alignment = 1
 vertical_alignment = 1

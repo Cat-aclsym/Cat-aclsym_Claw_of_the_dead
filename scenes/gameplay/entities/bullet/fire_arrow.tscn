@@ -1,0 +1,72 @@
+[gd_scene load_steps=9 format=3 uid="uid://c5k5m6mvkhiyt"]
+
+[ext_resource type="PackedScene" uid="uid://dqcjwachbfj5x" path="res://scenes/gameplay/entities/bullet/i_bullet.tscn" id="1_ecq02"]
+[ext_resource type="Script" path="res://scenes/gameplay/entities/bullet/fire_arrow.gd" id="2_okbr1"]
+[ext_resource type="Texture2D" uid="uid://dgsyufigxe0jk" path="res://assets/gameplay/bullet/arrow.png" id="3_fsffr"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_4a8wn"]
+size = Vector2(22, 6)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_3qy0v"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_a2b3u"]
+radius = 80.0
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_tc12e"]
+particles_animation = true
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = true
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_aqjwg"]
+particle_flag_disable_z = true
+emission_shape = 2
+emission_sphere_radius = 50.0
+gravity = Vector3(0, -20, 0)
+scale_min = 0.5
+scale_max = 2.0
+color = Color(1, 0.5, 0, 1)
+
+[node name="FireArrow" instance=ExtResource("1_ecq02")]
+script = ExtResource("2_okbr1")
+burn_duration = 3.0
+burn_damage_base = 10
+aoe_range = 80
+speed = 400
+
+[node name="Sprite2D" parent="." index="0"]
+modulate = Color(1, 0.4, 0, 1)
+rotation = 0.785782
+texture = ExtResource("3_fsffr")
+
+[node name="CollisionShape2D" parent="." index="1"]
+shape = SubResource("RectangleShape2D_4a8wn")
+
+[node name="AOEArea" type="Area2D" parent="." index="2"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AOEArea" index="0"]
+shape = SubResource("CircleShape2D_3qy0v")
+
+[node name="BurnArea" type="Area2D" parent="." index="3"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="BurnArea" index="0"]
+shape = SubResource("CircleShape2D_a2b3u")
+
+[node name="BurnParticles" type="GPUParticles2D" parent="." index="4"]
+material = SubResource("CanvasItemMaterial_tc12e")
+emitting = false
+amount = 30
+process_material = SubResource("ParticleProcessMaterial_aqjwg")
+lifetime = 1.5
+
+[node name="BurnAreaSprite" type="Sprite2D" parent="." index="5"]
+visible = false
+modulate = Color(1, 0.3, 0, 0.5)
+scale = Vector2(0.8, 0.8)
+
+[node name="BurnAreaCircle" type="Polygon2D" parent="." index="6"]
+visible = false
+rotation = 0.567232
+skew = 0.436332
+color = Color(1, 0.3, 0, 0.3)
+polygon = PackedVector2Array(0, -80, 20, -77, 40, -69, 56, -56, 69, -40, 77, -20, 80, 0, 77, 20, 69, 40, 56, 56, 40, 69, 20, 77, 0, 80, -20, 77, -40, 69, -56, 56, -69, 40, -77, 20, -80, 0, -77, -20, -69, -40, -56, -56, -40, -69, -20, -77)

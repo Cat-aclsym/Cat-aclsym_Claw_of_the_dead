@@ -38,5 +38,3 @@ func _load_paths() -> void:
 	for child in children:
 		if (child is Path2D):
 			paths.append(child as Path2D)
-
-

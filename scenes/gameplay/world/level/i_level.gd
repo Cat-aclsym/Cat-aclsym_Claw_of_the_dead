@@ -161,7 +161,7 @@ func _on_state_wave(_args = []) -> bool:
 	current_step.exec()
 	if current_step.is_over():
 		_next_step()
-	
+
 	return true
 
 
