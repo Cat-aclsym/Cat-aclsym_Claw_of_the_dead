@@ -196,27 +196,43 @@ func _stop_all_attack_timers_and_reset_state() -> void:
 # --- Target Management ---
 
 func _find_new_target() -> void:
-	# current_target = null # Let's only nullify if no valid tower found
-	var old_target = current_target
-	var closest_tower: Node2D = null
-	var min_dist_sq: float = INF 
+	var old_target_body = current_target # current_target is the body
+	var closest_tower_body: Node2D = null # This will be the body node (e.g. TowerBody)
+	var min_dist_sq: float = INF
 
-	for tower in towers_in_range:
-		if not is_instance_valid(tower): 
+	for detected_body in towers_in_range: # detected_body is from range_area
+		if not is_instance_valid(detected_body):
+			# Log.trace(Log.Level.DEBUG, "BigDaddy: Invalid instance in towers_in_range, skipping.")
 			continue
 
-		var dist_sq: float = global_position.distance_squared_to(tower.global_position)
+		var tower_script_node = detected_body.get_parent()
+		if not (tower_script_node is ITower):
+			Log.trace(Log.Level.WARN, "BigDaddy: Body '%s' in towers_in_range (group 'towers') does not have ITower as parent. Skipping." % detected_body.name)
+			continue
+
+		if tower_script_node.state != ITower.TowerState.ACTIVE:
+			Log.trace(Log.Level.DEBUG, "BigDaddy: Tower '%s' (parent of '%s') is not ACTIVE (state: %s), skipping." % [tower_script_node.name, detected_body.name, tower_script_node.state])
+			continue
+
+		# Target is active, proceed with distance check
+		var dist_sq: float = global_position.distance_squared_to(detected_body.global_position)
 		if dist_sq < min_dist_sq:
 			min_dist_sq = dist_sq
-			closest_tower = tower
+			closest_tower_body = detected_body
 	
-	current_target = closest_tower
+	current_target = closest_tower_body # current_target is the body (e.g. "TowerBody")
 
-	if old_target != current_target:
+	if old_target_body != current_target:
 		if current_target:
-			Log.trace(Log.Level.DEBUG, "BigDaddy: New target acquired: %s" % current_target.name)
-		else:
-			Log.trace(Log.Level.DEBUG, "BigDaddy: Target lost or no valid targets in range.")
+			var parent_tower_name = "UNKNOWN_PARENT"
+			var parent_tower_state = "UNKNOWN_STATE"
+			if current_target.get_parent() is ITower:
+				parent_tower_name = current_target.get_parent().name
+				parent_tower_state = ITower.TowerState.keys()[current_target.get_parent().state] # Get state name
+			Log.trace(Log.Level.DEBUG, "BigDaddy: New target body acquired: %s (parent ITower: %s, state: %s)" % [current_target.name, parent_tower_name, parent_tower_state])
+		elif old_target_body: # Had a target, but now no active ones
+			Log.trace(Log.Level.DEBUG, "BigDaddy: Target body lost or no valid (active) tower bodies in range.")
+		# else: No old target, no new target, already covered by logging if new target is found or not.
 
 
 # --- Shooting ---
@@ -225,11 +241,34 @@ func _shoot() -> void:
 	if is_already_dead or _current_attack_cycle_state != AttackCycleState.ATTACKING:
 		return
 
-	if not is_instance_valid(current_target): 
-		_find_new_target() 
-		if not current_target: 
+	if not is_instance_valid(current_target): # current_target is the body
+		_find_new_target() # This will now only find bodies of ACTIVE towers
+		if not current_target: # Still no target body
+			# Log.trace(Log.Level.DEBUG, "BigDaddy: No valid target found after _find_new_target in _shoot.")
 			return
-	
+
+	# current_target is a body (e.g. "TowerBody"). Get its parent ITower for state check.
+	var tower_script_node = current_target.get_parent()
+
+	if not (tower_script_node is ITower):
+		Log.trace(Log.Level.ERROR, "BigDaddy: current_target '%s' (body) does not have an ITower parent. Critical issue. Interrupting attack." % current_target.name)
+		_interrupt_attack_cycle() # Stop current attack cycle
+		current_target = null # Clear invalid target
+		# Potentially remove from towers_in_range if it's fundamentally wrong, though body_exited should handle if freed
+		if towers_in_range.has(current_target):
+			towers_in_range.erase(current_target)
+		_find_new_target() # Try to recover by finding a new target
+		return
+
+	if tower_script_node.state != ITower.TowerState.ACTIVE:
+		var current_state_name = ITower.TowerState.keys()[tower_script_node.state]
+		Log.trace(Log.Level.DEBUG, "BigDaddy: Tower '%s' (parent of '%s') is no longer ACTIVE (state: %s). Aborting shot." % [tower_script_node.name, current_target.name, current_state_name])
+		_interrupt_attack_cycle()
+		current_target = null # Clear this non-active target
+		# No need to remove from towers_in_range here, _find_new_target will filter it out next time.
+		_find_new_target() # Find a new one.
+		return
+
 	if not projectile_scene:
 		Log.trace(Log.Level.ERROR, "BigDaddy: Missing projectile scene!")
 		return
