@@ -79,6 +79,7 @@ func _physics_process(delta: float) -> void:
 # Override the impact effect to create burning area instead of explosion
 func _on_impact_effect(enemy: IEnemy, impact_position: Vector2) -> void:
 	# Don't call super - we want burning area instead of explosion
+	_create_explosion_effect(impact_position)
 	_activate_burning_area()
 
 # Called when an enemy enters the burn area

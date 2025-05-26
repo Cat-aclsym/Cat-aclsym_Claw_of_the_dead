@@ -9,11 +9,12 @@ size = Vector2(21, 6)
 [node name="Arrow" instance=ExtResource("1_i65do")]
 damage = 10
 speed = 500
+trail_color = Color(1, 1, 1, 0.901961)
 hit_particles_count = 5
 hit_particles_lifetime = 0.25
 hit_particles_speed = 150.0
 hit_particles_size = 1.0
-hit_particles_color = Color(0.926299, 2.5028e-06, 1.54018e-06, 1)
+hit_particles_color = Color(1, 1, 1, 1)
 
 [node name="Sprite2D" parent="." index="0"]
 rotation = 0.785398

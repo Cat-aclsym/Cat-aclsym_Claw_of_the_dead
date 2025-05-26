@@ -14,25 +14,27 @@ script = ExtResource("2_okbr1")
 aoe_range = 100
 explosion_effect_enabled = true
 shockwave_duration = 0.4
-shockwave_color = Color(0.8, 0.9, 1, 0.7)
+shockwave_color = Color(0.784314, 0.784314, 0.784314, 0.705882)
 debris_particles_count = 20
 debris_particles_lifetime = 0.6
 debris_particles_speed = 120.0
 debris_particles_size = 2.5
-debris_particles_color = Color(0.6, 0.6, 0.6, 0.8)
+debris_particles_color = Color(0.588235, 0.588235, 0.588235, 1)
 damage = 20
 speed = 350
 hit_effect_enabled = false
 
 [node name="Sprite2D" parent="." index="0"]
-modulate = Color(0, 1, 0.5, 1)
+modulate = Color(0.490196, 0.490196, 0.490196, 1)
 rotation = 0.785782
 texture = ExtResource("3_fsffr")
 
 [node name="CollisionShape2D" parent="." index="1"]
+visible = false
 shape = SubResource("RectangleShape2D_4a8wn")
 
 [node name="AOEArea" type="Area2D" parent="." index="2"]
+visible = false
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="AOEArea" index="0"]
 shape = SubResource("CircleShape2D_3qy0v")
