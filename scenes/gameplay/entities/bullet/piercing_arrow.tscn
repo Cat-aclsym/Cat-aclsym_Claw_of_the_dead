@@ -12,6 +12,12 @@ z_index = 1000
 script = ExtResource("2_bdcpf")
 pierce_count = 10
 pierce_reduction = 10
+spark_effect_enabled = true
+spark_particles_count = 8
+spark_particles_lifetime = 0.3
+spark_particles_speed = 80.0
+spark_particles_size = 1.5
+spark_particles_color = Color(1, 1, 0.7, 0.9)
 damage = 100
 speed = 300
 

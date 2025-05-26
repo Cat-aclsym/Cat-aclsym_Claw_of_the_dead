@@ -32,7 +32,16 @@ script = ExtResource("2_okbr1")
 burn_duration = 3.0
 burn_damage_base = 10
 aoe_range = 80
+explosion_effect_enabled = true
+shockwave_duration = 0.4
+shockwave_color = Color(0.8, 0.9, 1, 0.7)
+debris_particles_count = 20
+debris_particles_lifetime = 0.6
+debris_particles_speed = 120.0
+debris_particles_size = 2.5
+debris_particles_color = Color(0.6, 0.6, 0.6, 0.8)
 speed = 400
+hit_effect_enabled = false
 
 [node name="Sprite2D" parent="." index="0"]
 modulate = Color(1, 0.4, 0, 1)
@@ -62,7 +71,6 @@ lifetime = 1.5
 [node name="BurnAreaSprite" type="Sprite2D" parent="." index="5"]
 visible = false
 modulate = Color(1, 0.3, 0, 0.5)
-scale = Vector2(0.8, 0.8)
 
 [node name="BurnAreaCircle" type="Polygon2D" parent="." index="6"]
 visible = false

@@ -8,7 +8,7 @@ size = Vector2(21, 6)
 
 [node name="Arrow" instance=ExtResource("1_i65do")]
 damage = 10
-speed = 250
+speed = 500
 hit_particles_count = 5
 hit_particles_lifetime = 0.25
 hit_particles_speed = 150.0
