@@ -38,15 +38,14 @@ var target: Vector2
 var initial_damage: int
 ## Trail particle system
 var _trail_particles: GPUParticles2D
+## Store the enemy that the bullet has touched to prevent multiple hits
+var _touched_enemy: IEnemy
 
+# signal
 ## Signal connections to be established in _ready
 @onready var signals: Array[Dictionary] = [
 	{SignalUtil.WHO: self, SignalUtil.WHAT: "body_entered", SignalUtil.TO: _on_body_entered}
 ]
-
-## Store the enemy that the bullet has touched to prevent multiple hits
-var _touched_enemy: IEnemy
-
 
 # core
 func _ready() -> void:

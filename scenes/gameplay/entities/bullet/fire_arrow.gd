@@ -8,12 +8,12 @@ extends AOEArrow
 ## within its radius. It creates visual fire effects and applies
 ## burn damage ticks to all enemies staying in the area.
 
-# Constants
+# constants
 const BURN_DAMAGE_MULTIPLIER: float = 0.5  # Burn damage is 50% of direct hit damage
 const BURN_TICK_TIME: float = 1.0  # Time between burn damage ticks
 const BASE_BURN_DAMAGE: int = 5  # Base damage per tick
 
-# Exports
+# exports
 @export var burn_duration: float = 5.0  # Duration of the burning area effect
 @export var burn_damage_base: int = 5  # Base damage per tick
 ## Parameter explanation:
@@ -22,7 +22,7 @@ const BASE_BURN_DAMAGE: int = 5  # Base damage per tick
 ## - aoe_range: Size of the fire area radius (in pixels)
 ##   Note: Size affects damage and number of particles
 
-# Variables
+# private
 var _is_burning: bool = false
 var _burn_time_remaining: float = 0.0
 var _burn_tick_timer: float = 0.0
@@ -33,14 +33,13 @@ var _burning_enemies: Array[IEnemy] = []
 @onready var burn_area: Area2D = $BurnArea
 @onready var burn_area_collision: CollisionShape2D = $BurnArea/CollisionShape2D
 
-# Signals
+# signal
 @onready var burn_signals: Array[Dictionary] = [
 	{SignalUtil.WHO: burn_area, SignalUtil.WHAT: "body_entered", SignalUtil.TO: _on_burn_area_body_entered},
 	{SignalUtil.WHO: burn_area, SignalUtil.WHAT: "body_exited", SignalUtil.TO: _on_burn_area_body_exited}
 ]
 
-#region Built-in functions
-# Override _ready to initialize burning area
+# core
 func _ready() -> void:
 	super._ready()
 	
@@ -63,7 +62,6 @@ func _ready() -> void:
 	
 	SignalUtil.connects(burn_signals)
 
-# Override physics process to handle burning effect
 func _physics_process(delta: float) -> void:
 	if Global.paused:
 		return
@@ -73,28 +71,22 @@ func _physics_process(delta: float) -> void:
 	else:
 		# Normal arrow movement
 		super._physics_process(delta)
-#endregion
 
-#region Signal handlers
-# Override the impact effect to create burning area instead of explosion
+# public
 func _on_impact_effect(enemy: IEnemy, impact_position: Vector2) -> void:
 	# Don't call super - we want burning area instead of explosion
 	_create_explosion_effect(impact_position)
 	_activate_burning_area()
 
-# Called when an enemy enters the burn area
 func _on_burn_area_body_entered(body: Node2D) -> void:
 	if body is IEnemy and not _burning_enemies.has(body):
 		_burning_enemies.append(body)
 
-# Called when an enemy exits the burn area
 func _on_burn_area_body_exited(body: Node2D) -> void:
 	if body is IEnemy:
 		_burning_enemies.erase(body)
-#endregion
 
-#region Private functions
-# Process burning area effect
+# private
 func _process_burning_area(delta: float) -> void:
 	_burn_time_remaining -= delta
 	
@@ -266,4 +258,3 @@ func _adjust_burn_area_size() -> void:
 	
 	# Adjust damage strength proportionally to size
 	burn_damage_base = int(BASE_BURN_DAMAGE * _area_size_ratio)
-#endregion

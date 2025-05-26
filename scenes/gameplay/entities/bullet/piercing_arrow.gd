@@ -4,7 +4,7 @@
 class_name PiercingArrow
 extends IBullet
 
-# Exports
+# exports
 @export var pierce_count: int = 3  ## Number of enemies the bullet can pierce
 @export_range(0, 100) var pierce_reduction: int = 10  ## Percentage of damage reduction per enemy pierced
 
@@ -16,7 +16,7 @@ extends IBullet
 @export var spark_particles_size: float = 1.5 ## Size of sparks
 @export var spark_particles_color: Color = Color(1.0, 1.0, 0.7, 0.9) ## Color of sparks (yellow-white)
 
-# Variables
+# public
 var pierced_enemies: Array[IEnemy] = []  # Enemies already pierced
 var piercing: int  # Current number of enemies that can be pierced
 var initial_piercing: int  # Initial number of enemies that can be pierced

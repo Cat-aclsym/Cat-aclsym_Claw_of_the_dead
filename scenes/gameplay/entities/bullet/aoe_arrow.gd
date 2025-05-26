@@ -4,11 +4,11 @@
 class_name AOEArrow
 extends IBullet
 
-# Constants
+# constants
 const AOE_DAMAGE_MULTIPLIER: float = 0.75  # AOE damage is 75% of direct hit damage
 const DEFAULT_AOE_RANGE: int = 100  # Reference size to calculate proportions
 
-# Exports
+# exports
 @export var aoe_range: int = 100  ## Range of the area of effect
 
 @export_group("Explosion Effect")
@@ -21,8 +21,12 @@ const DEFAULT_AOE_RANGE: int = 100  # Reference size to calculate proportions
 @export var debris_particles_size: float = 2.0 ## Size of debris
 @export var debris_particles_color: Color = Color(0.6, 0.6, 0.6, 0.8) ## Color of debris
 
-# Variables
+# public
 var aoe_enemies: Array[IEnemy] = []
+# Effect circle - can be ShockwaveCircle or BurnAreaCircle depending on the child class
+var effect_circle: Polygon2D
+
+# private
 var _area_size_ratio: float = 1.0  # Ratio calculated relative to standard size
 var _is_exploding: bool = false
 
@@ -30,15 +34,11 @@ var _is_exploding: bool = false
 @onready var aoe_detection_area_collision: CollisionShape2D = $AOEArea/CollisionShape2D
 @onready var arrow_sprite: Sprite2D = $Sprite2D
 
-# Effect circle - can be ShockwaveCircle or BurnAreaCircle depending on the child class
-var effect_circle: Polygon2D
-
-# Signals
+# signal
 @onready var aoe_signals: Array[Dictionary] = [
 	{SignalUtil.WHO: aoe_detection_area, SignalUtil.WHAT: "body_entered", SignalUtil.TO: _on_aoe_area_body_entered},
 	{SignalUtil.WHO: aoe_detection_area, SignalUtil.WHAT: "body_exited", SignalUtil.TO: _on_aoe_area_body_exited}
 ]
-
 
 # core
 func _ready() -> void:
@@ -71,8 +71,7 @@ func _physics_process(delta: float) -> void:
 		
 	position += direction * speed * delta
 
-
-# Protected methods for inheritance
+# public
 ## Virtual method called when impact occurs - override in child classes
 func _on_impact_effect(enemy: IEnemy, impact_position: Vector2) -> void:
 	# Default behavior: create explosion effect
