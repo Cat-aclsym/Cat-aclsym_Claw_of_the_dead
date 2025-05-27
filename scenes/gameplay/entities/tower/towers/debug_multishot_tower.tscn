@@ -64,6 +64,7 @@ height = 36.0
 position = Vector2(0, -16)
 bullet_scene = ExtResource("2_okbr1")
 projectile_count = 3
+cost = 50
 fire_rate = 1.0
 level = 1
 shoot_range = 100.0

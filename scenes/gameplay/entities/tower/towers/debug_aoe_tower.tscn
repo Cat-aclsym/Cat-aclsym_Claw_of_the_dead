@@ -1,7 +1,7 @@
 [gd_scene load_steps=11 format=3 uid="uid://in0dna0dnoa0"]
 
 [ext_resource type="PackedScene" uid="uid://064cnqw4xlus" path="res://scenes/gameplay/entities/tower/i_tower.tscn" id="1_ecq02"]
-[ext_resource type="PackedScene" uid="uid://nfkadjkkl" path="res://scenes/gameplay/entities/bullet/aoe_arrow.tscn" id="2_dbrwh"]
+[ext_resource type="PackedScene" path="res://scenes/gameplay/entities/bullet/aoe_arrow.tscn" id="2_dbrwh"]
 [ext_resource type="Texture2D" uid="uid://h5f1ntgevb58" path="res://assets/environment/tilesets/tileset_debug.png" id="4_ftq1a"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_hn83r"]
@@ -63,6 +63,7 @@ height = 36.0
 [node name="AOETower" instance=ExtResource("1_ecq02")]
 position = Vector2(0, -16)
 bullet_scene = ExtResource("2_dbrwh")
+cost = 50
 fire_rate = 1.5
 level = 1
 shoot_range = 150.0
@@ -95,6 +96,12 @@ scale = Vector2(1e-05, 1e-05)
 position = Vector2(0, 8)
 rotation = 1.5708
 shape = SubResource("CapsuleShape2D_7wfw0")
+
+[node name="Button" parent="." index="8"]
+offset_left = -4.0
+offset_top = -4.0
+offset_right = 4.0
+offset_bottom = 4.0
 
 [connection signal="area_exited" from="Area2D" to="." method="_on_area_2d_area_exited"]
 [connection signal="body_entered" from="Area2D" to="." method="_on_area_2d_body_entered"]

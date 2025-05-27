@@ -35,7 +35,7 @@ var end_time: float
 
 # stats
 var coins: int = 75: set = _set_coins
-var health: int = 20000: set = _set_health
+var health: int = 20: set = _set_health
 
 # Private Variables
 var _enemies_alive: int = 0

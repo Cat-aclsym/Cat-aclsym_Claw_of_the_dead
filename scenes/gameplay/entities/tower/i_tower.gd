@@ -87,6 +87,12 @@ enum TowerType {
 @onready var polygon_2d: Polygon2D = $Polygon2D
 ## The sprite 2D node for the tower to display the tower model
 @onready var sprite_2d: Sprite2D = $Sprite2D
+## The button node for the tower to interact with
+@onready var button: Button = $Button
+
+@onready var signals: Array[Dictionary] = [
+	{SignalUtil.WHO: button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_tower_pressed}
+]
 
 # Variables
 ## The color of the range polygon
@@ -110,6 +116,7 @@ func _ready() -> void:
 	sell_price = ceil(cost / 2.0)
 	hover_box.z_index = 3
 	update_dependent_properties()
+	SignalUtil.connects(signals)
 
 func _process(_delta: float) -> void:
 	if Global.paused:
@@ -168,6 +175,7 @@ func start_upgrade(upgradeScene: PackedScene) -> void:
 	if ILevel.current_level.coins < upgrade.price:
 		Log.trace(Log.Level.ERROR, "Not enough coins to upgrade")
 		return
+		return
 	pending_upgrade = upgradeScene
 	state = TowerState.UPGRADING
 	$ProgressBar.value = 0
@@ -219,8 +227,8 @@ func build_tower() -> void:
 
 ## Sells the tower
 func sell_tower() -> void:
-	queue_free()
 	ILevel.current_level.coins += sell_price
+	queue_free()
 
 # Private methods
 func _apply_tower_stat_changes(upgrade: IUpgrade) -> void:
@@ -395,3 +403,15 @@ func _on_timer_timeout() -> void:
 			apply_upgrade()
 			$Timer.stop()
 			$ProgressBar.visible = false
+
+func _on_tower_pressed() -> void:
+	Log.trace(Log.Level.INFO, "Tower Pressed")
+	if self.find_child("TowerUpgrade") != null:
+		Log.trace(Log.Level.WARN, "Tower upgrade menu already exists")
+		return
+	var tower_upgrade_menu : PackedScene = load("res://scenes/ui/menus/tower_upgrade/tower_upgrade_buttons.tscn")
+	if tower_upgrade_menu == null :
+		Log.trace(Log.Level.ERROR, "Failed to load tower upgrade menu scene")
+		return
+	var tower_upgrade_menu_instance: Control = tower_upgrade_menu.instantiate()
+	self.add_child(tower_upgrade_menu_instance)

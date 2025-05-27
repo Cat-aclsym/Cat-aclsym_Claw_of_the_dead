@@ -63,6 +63,7 @@ height = 36.0
 [node name="Piercing" instance=ExtResource("1_ecq02")]
 position = Vector2(0, -16)
 bullet_scene = ExtResource("2_0ujgl")
+cost = 50
 fire_rate = 0.5
 level = 1
 shoot_range = 150.0
