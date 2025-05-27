@@ -1,8 +1,32 @@
-[gd_scene load_steps=6 format=3 uid="uid://dkcpg16ie8deh"]
+[gd_scene load_steps=9 format=3 uid="uid://dkcpg16ie8deh"]
 
 [ext_resource type="PackedScene" uid="uid://tmlcshxut7kv" path="res://scenes/gameplay/entities/enemy/i_enemy.tscn" id="1_o4ric"]
 [ext_resource type="Script" path="res://scenes/gameplay/entities/enemy/enemies/big_daddy.gd" id="2_3ulna"]
 [ext_resource type="PackedScene" uid="uid://dp10vag23o4m5" path="res://scenes/gameplay/entities/bullet/enemy_projectile.tscn" id="3_nitix"]
+[ext_resource type="Texture2D" uid="uid://h5f1ntgevb58" path="res://assets/environment/tilesets/tileset_debug.png" id="4_b8bv8"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1qv5u"]
+atlas = ExtResource("4_b8bv8")
+region = Rect2(128, 128, 64, 64)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_i8exp"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1qv5u")
+}],
+"loop": true,
+"name": &"walk_down",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1qv5u")
+}],
+"loop": true,
+"name": &"walk_up",
+"speed": 8.0
+}]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_tvjnp"]
 size = Vector2(32, 48)
@@ -22,7 +46,10 @@ attack_duration = 1.0
 post_attack_delay = 1.0
 attack_cooldown = 5.0
 max_health = 100000.0
-type = 0
+
+[node name="AnimatedSprite2D" parent="." index="0"]
+sprite_frames = SubResource("SpriteFrames_i8exp")
+animation = &"walk_up"
 
 [node name="CollisionShape2D" parent="." index="2"]
 position = Vector2(0, -2)
