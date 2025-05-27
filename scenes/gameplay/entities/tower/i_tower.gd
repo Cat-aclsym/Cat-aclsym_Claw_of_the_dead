@@ -44,6 +44,8 @@ enum TowerType {
 	"pierce_count": 0.0, ## Armor penetration value
 	"pierce_reduction": 0.0, ## Reduction in piercing effectiveness
 	"aoe_range": 0.0, ## Area of effect range
+	"burn_duration": 0.0, ## Duration of the burn effect
+	"burn_damage_base": 0.0, ## Base damage of the burn effect
 }
 
 @export_subgroup("Multi-Shot Properties")
