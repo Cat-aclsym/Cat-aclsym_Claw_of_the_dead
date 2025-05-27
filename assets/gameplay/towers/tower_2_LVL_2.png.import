@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://d4gs327we3e1d"
-path="res://.godot/imported/tower_2_lvl1.png-50c7691fe998e2c468fc8323c3b1cb5a.ctex"
+uid="uid://das6d43774tt4"
+path="res://.godot/imported/tower_2_LVL_2.png-08b2a0bef76e17698c8f570775bf455a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/gameplay/towers/tower_2_lvl1.png"
-dest_files=["res://.godot/imported/tower_2_lvl1.png-50c7691fe998e2c468fc8323c3b1cb5a.ctex"]
+source_file="res://assets/gameplay/towers/tower_2_LVL_2.png"
+dest_files=["res://.godot/imported/tower_2_LVL_2.png-08b2a0bef76e17698c8f570775bf455a.ctex"]
 
 [params]
 
