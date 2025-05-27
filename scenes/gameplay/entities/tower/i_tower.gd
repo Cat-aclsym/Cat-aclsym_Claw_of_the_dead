@@ -39,15 +39,11 @@ enum TowerType {
 
 ## The bullet stats to be applied to the bullet
 @export var bullet_stats: Dictionary = {
-	"damage": 0.0,
-	"speed": 0.0,
-	"piercing": 0.0,
-	"piercing_reduction": 0.0,
-	"damage_multiplier": 0.0,
-	"aoe_range": 0.0,
-	"dot_damage": 0.0,
-	"aoe_duration": 0.0,
-	"aoe_tick": 0.0,
+	"damage": 0.0, ## Base damage increase
+	"speed": 0.0, ## Projectile speed modifier
+	"pierce_count": 0.0, ## Armor penetration value
+	"pierce_reduction": 0.0, ## Reduction in piercing effectiveness
+	"aoe_range": 0.0, ## Area of effect range
 }
 
 @export_subgroup("Multi-Shot Properties")

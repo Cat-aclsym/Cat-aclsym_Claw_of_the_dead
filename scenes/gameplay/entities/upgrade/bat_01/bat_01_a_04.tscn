@@ -1,8 +1,22 @@
-[gd_scene load_steps=3 format=3 uid="uid://b7k083o7qmfss"]
+[gd_scene load_steps=4 format=3 uid="uid://b7k083o7qmfss"]
 
 [ext_resource type="PackedScene" uid="uid://ta5ev4qh6unn" path="res://scenes/gameplay/entities/upgrade/i_upgrade.tscn" id="1_v3q2b"]
 [ext_resource type="PackedScene" uid="uid://p3xbvq3bgson" path="res://scenes/gameplay/entities/upgrade/bat_01/bat_01_a_05.tscn" id="2_7rotk"]
+[ext_resource type="PackedScene" uid="uid://c70wecidmqfqo" path="res://scenes/gameplay/entities/bullet/piercing_arrow.tscn" id="2_q5lr3"]
 
 [node name="UpgradeFirstTower3A" instance=ExtResource("1_v3q2b")]
-tower = ExtResource("2_7rotk")
-price = 200
+changes = {
+"bullet_model": true,
+"bullet_stat": false,
+"tower_model": false,
+"tower_stat": true
+}
+tower_stats = {
+"fire_rate": 0.0,
+"level": 1,
+"projectile_count": 0,
+"shoot_range": 30.0,
+"spread_angle": 0.0
+}
+next_upgrades = Array[PackedScene]([ExtResource("2_7rotk")])
+bullet = ExtResource("2_q5lr3")

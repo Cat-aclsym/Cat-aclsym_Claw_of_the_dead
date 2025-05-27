@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://in0dna0dnoa0"]
+[gd_scene load_steps=12 format=3 uid="uid://in0dna0dnoa0"]
 
 [ext_resource type="PackedScene" uid="uid://064cnqw4xlus" path="res://scenes/gameplay/entities/tower/i_tower.tscn" id="1_ecq02"]
 [ext_resource type="PackedScene" uid="uid://nfkadjkkl" path="res://scenes/gameplay/entities/bullet/aoe_arrow.tscn" id="2_dbrwh"]
@@ -60,6 +60,8 @@ radius = 314.23
 radius = 16.0
 height = 36.0
 
+[sub_resource type="CircleShape2D" id="CircleShape2D_hnqt7"]
+
 [node name="AOETower" instance=ExtResource("1_ecq02")]
 position = Vector2(0, -16)
 bullet_scene = ExtResource("2_dbrwh")
@@ -95,6 +97,13 @@ scale = Vector2(1e-05, 1e-05)
 position = Vector2(0, 8)
 rotation = 1.5708
 shape = SubResource("CapsuleShape2D_7wfw0")
+
+[node name="TowerBody" type="StaticBody2D" parent="." index="7" groups=["towers"]]
+collision_layer = 256
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TowerBody" index="0"]
+shape = SubResource("CircleShape2D_hnqt7")
 
 [connection signal="area_exited" from="Area2D" to="." method="_on_area_2d_area_exited"]
 [connection signal="body_entered" from="Area2D" to="." method="_on_area_2d_body_entered"]

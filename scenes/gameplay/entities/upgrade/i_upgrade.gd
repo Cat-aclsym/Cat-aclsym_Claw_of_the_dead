@@ -23,13 +23,9 @@ enum UpgradeType {
 @export var bullet_stats: Dictionary = {
 	"damage": 0.0, ## Base damage increase
 	"speed": 0.0, ## Projectile speed modifier
-	"piercing": 0.0, ## Armor penetration value
+	"pierce_count": 0.0, ## Armor penetration value
 	"pierce_reduction": 0.0, ## Reduction in piercing effectiveness
-	"damage_multiplier": 0.0, ## Damage multiplication factor
 	"aoe_range": 0.0, ## Area of effect range
-	"dot_damage": 0.0, ## Damage over time amount
-	"dot_duration": 0.0, ## Duration of damage over time effect
-	"dot_tick": 0.0, ## Interval between damage ticks
 }
 
 ## Tower statistics modification values
@@ -37,6 +33,8 @@ enum UpgradeType {
 	"level": 0, ## Tower upgrade level
 	"shoot_range": 0.0, ## Attack range modifier
 	"fire_rate": 0.0, ## Attack speed modifier
+	"projectile_count": 0, ## Number of projectiles to fire
+	"spread_angle": 0.0, ## Angle between projectiles
 }
 
 ## The nexts upgrades available after this one

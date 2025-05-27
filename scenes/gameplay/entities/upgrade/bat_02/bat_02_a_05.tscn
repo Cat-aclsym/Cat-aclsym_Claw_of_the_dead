@@ -1,0 +1,5 @@
+[gd_scene load_steps=2 format=3 uid="uid://bxyvln5f3n2sq"]
+
+[ext_resource type="PackedScene" uid="uid://ta5ev4qh6unn" path="res://scenes/gameplay/entities/upgrade/i_upgrade.tscn" id="1_dl5ji"]
+
+[node name="IUpgrade" instance=ExtResource("1_dl5ji")]
