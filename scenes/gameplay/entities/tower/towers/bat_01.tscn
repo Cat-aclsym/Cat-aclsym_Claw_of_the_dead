@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://cq705nqdp8fnw"]
+[gd_scene load_steps=19 format=3 uid="uid://cq705nqdp8fnw"]
 
 [ext_resource type="PackedScene" uid="uid://064cnqw4xlus" path="res://scenes/gameplay/entities/tower/i_tower.tscn" id="1_tpm17"]
 [ext_resource type="PackedScene" uid="uid://b4n8yk4j255wb" path="res://scenes/gameplay/entities/bullet/base_arrow.tscn" id="2_g3vd4"]
@@ -96,6 +96,8 @@ radius = 314.23
 radius = 16.0
 height = 36.0
 
+[sub_resource type="CircleShape2D" id="CircleShape2D_hnqt7"]
+
 [node name="Bat01" instance=ExtResource("1_tpm17")]
 position = Vector2(0, -16)
 bullet_scene = ExtResource("2_g3vd4")
@@ -110,12 +112,9 @@ bullet_stats = {
 "piercing_reduction": 0.0,
 "speed": 0.0
 }
-projectile_count = 1
-spread_angle = 15.0
 cost = 50
-fire_rate = 1.0
+fire_rate = 1.5
 level = 1
-sell_price = 0
 shoot_range = 100.0
 
 [node name="AnimatedSprite2D" parent="." index="0"]
@@ -145,6 +144,13 @@ visible = false
 position = Vector2(0, 8)
 rotation = 1.5708
 shape = SubResource("CapsuleShape2D_7wfw0")
+
+[node name="TowerBody2" type="StaticBody2D" parent="." index="7" groups=["towers"]]
+collision_layer = 256
+collision_mask = 0
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="TowerBody" index="0"]
+shape = SubResource("CircleShape2D_hnqt7")
 
 [connection signal="area_exited" from="Area2D" to="." method="_on_area_2d_area_exited"]
 [connection signal="body_entered" from="Area2D" to="." method="_on_area_2d_body_entered"]

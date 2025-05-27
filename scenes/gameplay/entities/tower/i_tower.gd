@@ -39,15 +39,13 @@ enum TowerType {
 
 ## The bullet stats to be applied to the bullet
 @export var bullet_stats: Dictionary = {
-	"damage": 0.0,
-	"speed": 0.0,
-	"piercing": 0.0,
-	"piercing_reduction": 0.0,
-	"damage_multiplier": 0.0,
-	"aoe_range": 0.0,
-	"dot_damage": 0.0,
-	"aoe_duration": 0.0,
-	"aoe_tick": 0.0,
+	"damage": 0.0, ## Base damage increase
+	"speed": 0.0, ## Projectile speed modifier
+	"pierce_count": 0.0, ## Armor penetration value
+	"pierce_reduction": 0.0, ## Reduction in piercing effectiveness
+	"aoe_range": 0.0, ## Area of effect range
+	"burn_duration": 0.0, ## Duration of the burn effect
+	"burn_damage_base": 0.0, ## Base damage of the burn effect
 }
 
 @export_subgroup("Multi-Shot Properties")
@@ -87,6 +85,13 @@ enum TowerType {
 @onready var polygon_2d: Polygon2D = $Polygon2D
 ## The sprite 2D node for the tower to display the tower model
 @onready var animated_sprite_2d: AnimatedSprite2D = $AnimatedSprite2D
+@onready var sprite_2d: Sprite2D = $Sprite2D
+## The button node for the tower to interact with
+@onready var button: Button = $Button
+
+@onready var signals: Array[Dictionary] = [
+	{SignalUtil.WHO: button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_tower_pressed}
+]
 
 # Variables
 ## The color of the range polygon
@@ -112,6 +117,7 @@ func _ready() -> void:
 	update_dependent_properties()
 	if animated_sprite_2d and animated_sprite_2d.sprite_frames and animated_sprite_2d.sprite_frames.has_animation("idle"):
 		animated_sprite_2d.play("idle")
+	SignalUtil.connects(signals)
 
 func _process(_delta: float) -> void:
 	if Global.paused:
@@ -241,8 +247,8 @@ func build_tower() -> void:
 
 ## Sells the tower
 func sell_tower() -> void:
-	queue_free()
 	ILevel.current_level.coins += sell_price
+	queue_free()
 
 # Private methods
 func _apply_tower_stat_changes(upgrade: IUpgrade) -> void:
@@ -417,3 +423,15 @@ func _on_timer_timeout() -> void:
 			apply_upgrade()
 			$Timer.stop()
 			$ProgressBar.visible = false
+
+func _on_tower_pressed() -> void:
+	Log.trace(Log.Level.INFO, "Tower Pressed")
+	if self.find_child("TowerUpgrade") != null:
+		Log.trace(Log.Level.WARN, "Tower upgrade menu already exists")
+		return
+	var tower_upgrade_menu : PackedScene = load("res://scenes/ui/menus/tower_upgrade/tower_upgrade_buttons.tscn")
+	if tower_upgrade_menu == null :
+		Log.trace(Log.Level.ERROR, "Failed to load tower upgrade menu scene")
+		return
+	var tower_upgrade_menu_instance: Control = tower_upgrade_menu.instantiate()
+	self.add_child(tower_upgrade_menu_instance)

@@ -1,51 +1,52 @@
-[gd_scene load_steps=18 format=3 uid="uid://in0dna0dnoa0"]
+[gd_scene load_steps=20 format=3 uid="uid://b44e1fg0djni3"]
 
-[ext_resource type="PackedScene" uid="uid://064cnqw4xlus" path="res://scenes/gameplay/entities/tower/i_tower.tscn" id="1_ecq02"]
-[ext_resource type="PackedScene" uid="uid://nfkadjkkl" path="res://scenes/gameplay/entities/bullet/aoe_arrow.tscn" id="2_dbrwh"]
-[ext_resource type="Texture2D" uid="uid://comglet8s7g5i" path="res://assets/gameplay/towers/tower_2_LVL_1.png" id="3_ni8cb"]
+[ext_resource type="PackedScene" uid="uid://064cnqw4xlus" path="res://scenes/gameplay/entities/tower/i_tower.tscn" id="1_yt4jj"]
+[ext_resource type="PackedScene" path="res://scenes/gameplay/entities/bullet/aoe_arrow.tscn" id="2_pv1tv"]
+[ext_resource type="Texture2D" uid="uid://comglet8s7g5i" path="res://assets/gameplay/towers/tower_2_LVL_1.png" id="3_ke6be"]
+[ext_resource type="PackedScene" uid="uid://bpqwahx4p4lmu" path="res://scenes/gameplay/entities/upgrade/bat_02/bat_02_02.tscn" id="3_sq6hj"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_uuih4"]
-atlas = ExtResource("3_ni8cb")
+atlas = ExtResource("3_ke6be")
 region = Rect2(0, 0, 64, 64)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_lkbtq"]
-atlas = ExtResource("3_ni8cb")
+atlas = ExtResource("3_ke6be")
 region = Rect2(64, 0, 64, 64)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_po86j"]
-atlas = ExtResource("3_ni8cb")
+atlas = ExtResource("3_ke6be")
 region = Rect2(128, 0, 64, 64)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_46xyu"]
-atlas = ExtResource("3_ni8cb")
+atlas = ExtResource("3_ke6be")
 region = Rect2(192, 0, 64, 64)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_u3wgy"]
-atlas = ExtResource("3_ni8cb")
+atlas = ExtResource("3_ke6be")
 region = Rect2(256, 0, 64, 64)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_1qkae"]
-atlas = ExtResource("3_ni8cb")
+atlas = ExtResource("3_ke6be")
 region = Rect2(320, 0, 64, 64)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_fivy4"]
-atlas = ExtResource("3_ni8cb")
+atlas = ExtResource("3_ke6be")
 region = Rect2(384, 0, 64, 64)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_lrdsg"]
-atlas = ExtResource("3_ni8cb")
+atlas = ExtResource("3_ke6be")
 region = Rect2(448, 0, 64, 64)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_mpphq"]
-atlas = ExtResource("3_ni8cb")
+atlas = ExtResource("3_ke6be")
 region = Rect2(512, 0, 64, 64)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_631dl"]
-atlas = ExtResource("3_ni8cb")
+atlas = ExtResource("3_ke6be")
 region = Rect2(576, 0, 64, 64)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_eunfx"]
-atlas = ExtResource("3_ni8cb")
+atlas = ExtResource("3_ke6be")
 region = Rect2(640, 0, 64, 64)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_ynjgg"]
@@ -96,9 +97,11 @@ radius = 314.23
 radius = 16.0
 height = 36.0
 
-[node name="AOETower" instance=ExtResource("1_ecq02")]
+[sub_resource type="CircleShape2D" id="CircleShape2D_hnqt7"]
+
+[node name="Bat02" instance=ExtResource("1_yt4jj")]
 position = Vector2(0, -16)
-bullet_scene = ExtResource("2_dbrwh")
+bullet_scene = ExtResource("2_pv1tv")
 bullet_stats = {
 "aoe_duration": 0.0,
 "aoe_range": 0.0,
@@ -110,13 +113,11 @@ bullet_stats = {
 "piercing_reduction": 0.0,
 "speed": 0.0
 }
-projectile_count = 1
-spread_angle = 15.0
-cost = 0
+cost = 50
 fire_rate = 1.5
 level = 1
-sell_price = 0
 shoot_range = 150.0
+available_upgrade = Array[PackedScene]([ExtResource("3_sq6hj")])
 
 [node name="AnimatedSprite2D" parent="." index="0"]
 sprite_frames = SubResource("SpriteFrames_ynjgg")
@@ -138,6 +139,13 @@ scale = Vector2(1e-05, 1e-05)
 position = Vector2(0, 8)
 rotation = 1.5708
 shape = SubResource("CapsuleShape2D_7wfw0")
+
+[node name="TowerBody2" type="StaticBody2D" parent="." index="7" groups=["towers"]]
+collision_layer = 256
+collision_mask = 0
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="TowerBody" index="0"]
+shape = SubResource("CircleShape2D_hnqt7")
 
 [connection signal="area_exited" from="Area2D" to="." method="_on_area_2d_area_exited"]
 [connection signal="body_entered" from="Area2D" to="." method="_on_area_2d_body_entered"]
