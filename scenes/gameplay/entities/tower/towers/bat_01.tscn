@@ -113,7 +113,7 @@ bullet_stats = {
 "speed": 0.0
 }
 cost = 50
-fire_rate = 1.0
+fire_rate = 1.5
 level = 1
 shoot_range = 100.0
 
