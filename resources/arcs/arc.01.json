@@ -1,0 +1,12 @@
+{
+	"id": "arc.01",
+	"next": "arc.02",
+	"name": "Chat'lanques de Nyarseille",
+	"levels": {
+		"lev.01": "done",
+		"lev.02": "done",
+		"lev.03": "done",
+		"lev.04": "done",
+		"lev.05": "done"
+	}
+}

@@ -1,91 +1,17 @@
-[gd_scene load_steps=24 format=3 uid="uid://b5630xr4v607r"]
+[gd_scene load_steps=13 format=3 uid="uid://b5630xr4v607r"]
 
 [ext_resource type="Script" path="res://scenes/ui/menus/hud/hud.gd" id="1_cuep3"]
 [ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="2_jel3x"]
 [ext_resource type="Texture2D" uid="uid://fioj6q2hn4ii" path="res://assets/ui/icons/Button Pause.svg" id="2_meysh"]
 [ext_resource type="Texture2D" uid="uid://cml3pcp3ixa0k" path="res://assets/ui/huds/Coeur.png" id="2_neukb"]
 [ext_resource type="Texture2D" uid="uid://bcvoasbjyvuy5" path="res://assets/ui/huds/Barre de vie.png" id="3_g6v8d"]
-[ext_resource type="PackedScene" uid="uid://d0drgd3amf85" path="res://scenes/ui/menus/hud/tower_card_basic.tscn" id="3_mkldi"]
 [ext_resource type="Texture2D" uid="uid://d33ngfvvwv501" path="res://assets/ui/huds/Barre de vie ombre.png" id="4_4h2ri"]
-[ext_resource type="PackedScene" uid="uid://cq705nqdp8fnw" path="res://scenes/gameplay/entities/tower/towers/bat_01.tscn" id="4_ro8fv"]
 [ext_resource type="Texture2D" uid="uid://cf3qgahrw8xo1" path="res://assets/ui/huds/Vie@2x.png" id="5_hukgj"]
-[ext_resource type="PackedScene" uid="uid://bvnxnvnxnvnxn" path="res://scenes/gameplay/entities/tower/towers/debug_multishot_tower.tscn" id="5_ro8fv"]
-[ext_resource type="PackedScene" uid="uid://c0drgd3amf85" path="res://scenes/ui/menus/hud/tower_card_multishot.tscn" id="6_mkldi"]
-[ext_resource type="PackedScene" uid="uid://c8yvnxnxnvnxn" path="res://scenes/gameplay/entities/tower/towers/debug_piercing_tower.tscn" id="6_ro8fv"]
 [ext_resource type="Texture2D" uid="uid://dg0hpeoeleiff" path="res://assets/ui/huds/Coins@2x.png" id="7_1sk4j"]
-[ext_resource type="PackedScene" uid="uid://b1drgd3amf85" path="res://scenes/ui/menus/hud/tower_card_piercing.tscn" id="7_mkldi"]
 [ext_resource type="Texture2D" uid="uid://bcga3gamtf11v" path="res://assets/ui/huds/Waves@2x.png" id="8_ewojn"]
 [ext_resource type="Script" path="res://scenes/ui/menus/hud/new_wave_count.gd" id="9_o6rym"]
 [ext_resource type="Texture2D" uid="uid://do48sldu5a83i" path="res://assets/ui/icons/Button Build.svg" id="10_sc2vu"]
-[ext_resource type="Texture2D" uid="uid://bel17gs3ijyb1" path="res://assets/environment/backgrounds/Fond Menu 02@2x.png" id="11_p2vl4"]
-[ext_resource type="Texture2D" uid="uid://c2uqlay1r2d1d" path="res://assets/ui/icons/Button Cancel.svg" id="12_7moo4"]
-
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_f3r3y"]
-texture = ExtResource("11_p2vl4")
-texture_margin_top = 31.0
-expand_margin_left = 25.0
-expand_margin_right = 25.0
-expand_margin_bottom = 25.0
-modulate_color = Color(1, 1, 1, 0.784314)
-
-[sub_resource type="Animation" id="Animation_fpn5b"]
-length = 0.35
-step = 0.05
-tracks/0/type = "bezier"
-tracks/0/imported = false
-tracks/0/enabled = false
-tracks/0/path = NodePath("VBoxContainer:position:x")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"handle_modes": PackedInt32Array(0, 0),
-"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0, 0, -0.25, 0, 0.25, 0),
-"times": PackedFloat32Array(0, 0.35)
-}
-tracks/1/type = "bezier"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("VBoxContainer:position:y")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"handle_modes": PackedInt32Array(0, 0),
-"points": PackedFloat32Array(392, -0.25, 0, 0.25, 0, 555, -0.25, 0, 0.25, 0),
-"times": PackedFloat32Array(0, 0.35)
-}
-
-[sub_resource type="Animation" id="Animation_wc0kk"]
-resource_name = "show_tower_list"
-length = 0.35
-step = 0.05
-tracks/0/type = "bezier"
-tracks/0/imported = false
-tracks/0/enabled = false
-tracks/0/path = NodePath("VBoxContainer:position:x")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"handle_modes": PackedInt32Array(0, 0),
-"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0, 0, -0.25, 0, 0.25, 0),
-"times": PackedFloat32Array(0, 0.35)
-}
-tracks/1/type = "bezier"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("VBoxContainer:position:y")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"handle_modes": PackedInt32Array(0, 0),
-"points": PackedFloat32Array(555, -0.25, 0, 0.25, 0, 392, -0.25, 0, 0.25, 0),
-"times": PackedFloat32Array(0, 0.35)
-}
-
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_omyie"]
-_data = {
-"RESET": SubResource("Animation_fpn5b"),
-"show_tower_list": SubResource("Animation_wc0kk")
-}
+[ext_resource type="Texture2D" uid="uid://c2uqlay1r2d1d" path="res://assets/ui/icons/Button Cancel.svg" id="12_5jyti"]
 
 [node name="HUD" type="Control"]
 texture_filter = 6
@@ -293,68 +219,25 @@ theme_override_font_sizes/font_size = 25
 text = "New wave in XX.XX s"
 script = ExtResource("9_o6rym")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
+[node name="TowerSelectionMarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1
-anchors_preset = 12
+anchors_preset = 3
+anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = -256.0
-offset_bottom = 3.0
-grow_horizontal = 2
+offset_left = -130.0
+offset_top = -112.0
+offset_bottom = -22.0
+grow_horizontal = 0
 grow_vertical = 0
-theme_override_constants/separation = -5
+theme_override_constants/margin_right = 20
 
-[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 0
-size_flags_vertical = 8
-theme_override_constants/margin_left = 20
-
-[node name="BuildButton" type="TextureButton" parent="VBoxContainer/MarginContainer"]
+[node name="TowerSelectionButton" type="TextureButton" parent="TowerSelectionMarginContainer"]
 custom_minimum_size = Vector2(110, 90)
 layout_mode = 2
-size_flags_horizontal = 0
-size_flags_vertical = 8
-theme = ExtResource("2_jel3x")
 toggle_mode = true
-texture_normal = ExtResource("12_7moo4")
-texture_pressed = ExtResource("10_sc2vu")
+texture_normal = ExtResource("10_sc2vu")
+texture_pressed = ExtResource("12_5jyti")
 ignore_texture_size = true
-stretch_mode = 4
-
-[node name="PanelContainer" type="PanelContainer" parent="VBoxContainer"]
-layout_mode = 2
-theme = ExtResource("2_jel3x")
-theme_override_styles/panel = SubResource("StyleBoxTexture_f3r3y")
-
-[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/PanelContainer"]
-layout_mode = 2
-theme_override_constants/margin_left = 30
-theme_override_constants/margin_top = 0
-theme_override_constants/margin_right = 30
-theme_override_constants/margin_bottom = 0
-
-[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/PanelContainer/MarginContainer"]
-layout_mode = 2
-
-[node name="TowerCardBasic" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer" instance=ExtResource("3_mkldi")]
-texture_filter = 1
-layout_mode = 2
-tower = ExtResource("4_ro8fv")
-
-[node name="TowerCardMultishot" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer" instance=ExtResource("6_mkldi")]
-texture_filter = 1
-layout_mode = 2
-tower = ExtResource("5_ro8fv")
-
-[node name="TowerCardPiercing" parent="VBoxContainer/PanelContainer/MarginContainer/HBoxContainer" instance=ExtResource("7_mkldi")]
-texture_filter = 1
-layout_mode = 2
-tower = ExtResource("6_ro8fv")
-
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {
-"": SubResource("AnimationLibrary_omyie")
-}
-autoplay = "show_tower_list"
+stretch_mode = 5

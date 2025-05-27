@@ -1,18 +1,17 @@
-[gd_scene load_steps=3 format=3 uid="uid://064cnqw4xlus"]
+[gd_scene load_steps=4 format=3 uid="uid://064cnqw4xlus"]
 
 [ext_resource type="Script" path="res://scenes/gameplay/entities/tower/i_tower.gd" id="1_4edlv"]
 [ext_resource type="PackedScene" uid="uid://6kxfyy7tk2pu" path="res://scenes/gameplay/entities/upgrade/bat_01/bat_01_02.tscn" id="2_r3uob"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_hnqt7"]
 
 [node name="ITower" type="Node2D"]
 script = ExtResource("1_4edlv")
 available_upgrade = Array[PackedScene]([ExtResource("2_r3uob")])
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(0, -2)
 scale = Vector2(0.85, 0.85)
-
-[node name="AnimationPlayer" type="AnimationPlayer" parent="Sprite2D"]
-active = false
 
 [node name="Area2D" type="Area2D" parent="."]
 
@@ -41,5 +40,26 @@ show_percentage = false
 
 [node name="Timer" type="Timer" parent="."]
 wait_time = 0.05
+
+[node name="TowerBody" type="StaticBody2D" parent="." groups=["towers"]]
+collision_layer = 256
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TowerBody"]
+shape = SubResource("CircleShape2D_hnqt7")
+
+[node name="Button" type="Button" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -16.0
+offset_top = -16.5
+offset_right = 16.0
+offset_bottom = 16.5
+grow_horizontal = 2
+grow_vertical = 2
+flat = true
 
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]

@@ -146,6 +146,10 @@ pseudolocalization/replace_with_accents=false
 pseudolocalization/prefix=""
 pseudolocalization/suffix=""
 
+[layer_names]
+
+2d_physics/layer_9="TOWERS"
+
 [rendering]
 
 textures/canvas_textures/default_texture_filter=0

@@ -1,0 +1,47 @@
+[gd_scene load_steps=6 format=3 uid="uid://nfkadjkkl"]
+
+[ext_resource type="PackedScene" uid="uid://dqcjwachbfj5x" path="res://scenes/gameplay/entities/bullet/i_bullet.tscn" id="1_ecq02"]
+[ext_resource type="Script" path="res://scenes/gameplay/entities/bullet/aoe_arrow.gd" id="2_okbr1"]
+[ext_resource type="Texture2D" uid="uid://dgsyufigxe0jk" path="res://assets/gameplay/bullet/arrow.png" id="3_fsffr"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_4a8wn"]
+size = Vector2(22, 6)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_3qy0v"]
+
+[node name="AOEArrow" instance=ExtResource("1_ecq02")]
+script = ExtResource("2_okbr1")
+aoe_range = 100
+explosion_effect_enabled = true
+shockwave_duration = 0.4
+shockwave_color = Color(0.784314, 0.784314, 0.784314, 0.705882)
+debris_particles_count = 20
+debris_particles_lifetime = 0.6
+debris_particles_speed = 120.0
+debris_particles_size = 2.5
+debris_particles_color = Color(0.588235, 0.588235, 0.588235, 1)
+damage = 20
+speed = 350
+hit_effect_enabled = false
+
+[node name="Sprite2D" parent="." index="0"]
+modulate = Color(0.490196, 0.490196, 0.490196, 1)
+rotation = 0.785782
+texture = ExtResource("3_fsffr")
+
+[node name="CollisionShape2D" parent="." index="1"]
+visible = false
+shape = SubResource("RectangleShape2D_4a8wn")
+
+[node name="AOEArea" type="Area2D" parent="." index="2"]
+visible = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AOEArea" index="0"]
+shape = SubResource("CircleShape2D_3qy0v")
+
+[node name="ShockwaveCircle" type="Polygon2D" parent="." index="3"]
+visible = false
+rotation = 0.567232
+skew = 0.436332
+color = Color(0.8, 0.9, 1, 0.7)
+polygon = PackedVector2Array(0, -100, 25, -97, 50, -87, 71, -71, 87, -50, 97, -25, 100, 0, 97, 25, 87, 50, 71, 71, 50, 87, 25, 97, 0, 100, -25, 97, -50, 87, -71, 71, -87, 50, -97, 25, -100, 0, -97, -25, -87, -50, -71, -71, -50, -87, -25, -97)

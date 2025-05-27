@@ -1,6 +1,7 @@
-[gd_scene load_steps=4 format=3 uid="uid://c70wecidmqfqo"]
+[gd_scene load_steps=5 format=3 uid="uid://c70wecidmqfqo"]
 
 [ext_resource type="PackedScene" uid="uid://dqcjwachbfj5x" path="res://scenes/gameplay/entities/bullet/i_bullet.tscn" id="1_vp3tv"]
+[ext_resource type="Script" path="res://scenes/gameplay/entities/bullet/piercing_arrow.gd" id="2_bdcpf"]
 [ext_resource type="Texture2D" uid="uid://dgsyufigxe0jk" path="res://assets/gameplay/bullet/arrow.png" id="2_cbbwr"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_qj200"]
@@ -8,16 +9,25 @@ size = Vector2(21, 6)
 
 [node name="PiercingArrow" instance=ExtResource("1_vp3tv")]
 z_index = 1000
+script = ExtResource("2_bdcpf")
+pierce_count = 10
+pierce_reduction = 10
+spark_effect_enabled = true
+spark_particles_count = 8
+spark_particles_lifetime = 0.3
+spark_particles_speed = 80.0
+spark_particles_size = 1.5
+spark_particles_color = Color(1, 1, 0.376471, 0.901961)
 damage = 100
 speed = 300
-is_piercing = true
-pierce_count = 10
+trail_color = Color(1, 0.886275, 0, 0.901961)
 
 [node name="Sprite2D" parent="." index="0"]
-modulate = Color(1, 0, 1, 1)
+modulate = Color(1, 0.913725, 0, 1)
 rotation = 0.785398
 texture = ExtResource("2_cbbwr")
 
 [node name="CollisionShape2D" parent="." index="1"]
+visible = false
 position = Vector2(0.5, 0)
 shape = SubResource("RectangleShape2D_qj200")

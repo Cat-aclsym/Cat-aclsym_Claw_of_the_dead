@@ -36,7 +36,6 @@ func _on_home_button_pressed() -> void:
 ## [br]Creates a new instance of the current level and initializes it.
 func _on_restart_button_pressed() -> void:
 	var current_level := ILevel.current_level
-	var level_metadata: LevelMetadata = current_level.metadata.duplicate()
 	var level_scene: PackedScene = load(current_level.get_scene_file_path())
 
 	current_level.queue_free()
@@ -44,8 +43,7 @@ func _on_restart_button_pressed() -> void:
 
 	var new_level: ILevel = level_scene.instantiate()
 	get_tree().get_root().add_child(new_level)
-	new_level.initialize(level_metadata)
-	ILevel.current_level = new_level
+	new_level.start_level()
 	Global.ui.start_level()
 
 	Global.paused = false

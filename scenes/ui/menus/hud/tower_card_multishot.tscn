@@ -1,7 +1,8 @@
-[gd_scene load_steps=6 format=3 uid="uid://c0drgd3amf85"]
+[gd_scene load_steps=7 format=3 uid="uid://c0drgd3amf85"]
 
 [ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="1_pcje7"]
-[ext_resource type="Script" path="res://scenes/ui/menus/hud/tower_card.gd" id="1_wa45g"]
+[ext_resource type="Script" path="res://scenes/ui/menus/tower_selection/tower_cards/tower_card.gd" id="1_wa45g"]
+[ext_resource type="PackedScene" uid="uid://uyg8jfudgsjx" path="res://scenes/gameplay/entities/tower/towers/debug_fire_tower.tscn" id="2_sf174"]
 [ext_resource type="Texture2D" uid="uid://4rvu7u60f3mg" path="res://assets/gameplay/towers/tower2_LVL_2.png" id="2_xy8o1"]
 [ext_resource type="Texture2D" uid="uid://nsf3nkto3p0t" path="res://assets/ui/buttons/Bouton Vert.svg" id="4_tu8sq"]
 
@@ -17,6 +18,7 @@ theme_override_constants/margin_top = 8
 theme_override_constants/margin_right = 8
 theme_override_constants/margin_bottom = 8
 script = ExtResource("1_wa45g")
+tower = ExtResource("2_sf174")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 2
@@ -29,11 +31,10 @@ theme_type_variation = &"UILabel"
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_constants/outline_size = 0
 theme_override_font_sizes/font_size = 16
-text = "tour multishot"
+text = "Test Multishot"
 horizontal_alignment = 1
 
 [node name="TextureRect" type="TextureRect" parent="VBoxContainer"]
-modulate = Color(0.26, 0.53, 0.96, 1)
 layout_mode = 2
 size_flags_vertical = 3
 texture = SubResource("AtlasTexture_oa8os")
@@ -57,6 +58,6 @@ grow_vertical = 2
 theme = ExtResource("1_pcje7")
 theme_type_variation = &"UILabel"
 theme_override_font_sizes/font_size = 18
-text = "75$"
+text = "0$"
 horizontal_alignment = 1
-vertical_alignment = 1 
+vertical_alignment = 1

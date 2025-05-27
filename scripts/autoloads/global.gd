@@ -47,7 +47,8 @@ func _get_cursor() -> TowerPlacement:
 	return cursor
 
 func _get_console() -> Console:
-	if _initialized: assert(console != null, "Console is null")
+	# if _initialized: assert(console != null, "Console is null")
+	# NOTE : Console can be null in some cases
 	return console
 
 func _get_ui() -> UI:

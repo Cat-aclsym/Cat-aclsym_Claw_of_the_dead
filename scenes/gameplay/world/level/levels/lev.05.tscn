@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://ccjwpbsdmeu4x"]
+
+[ext_resource type="PackedScene" uid="uid://bnsejcujkvcqg" path="res://scenes/gameplay/world/level/i_level.tscn" id="1_7px2v"]
+[ext_resource type="PackedScene" uid="uid://eo3o6kohdiy2" path="res://scenes/gameplay/world/map/maps/map_coink.tscn" id="2_u8q3p"]
+
+[node name="Level05" instance=ExtResource("1_7px2v")]
+level_id = "lev.05"
+level_name = "5. Le boss"
+arc_id = "arc.01"
+map_scene = ExtResource("2_u8q3p")

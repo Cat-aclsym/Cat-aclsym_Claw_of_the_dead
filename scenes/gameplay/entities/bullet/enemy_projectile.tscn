@@ -1,0 +1,19 @@
+[gd_scene load_steps=4 format=3 uid="uid://bji7sb08qku4y"]
+
+[ext_resource type="Script" path="res://scenes/gameplay/entities/bullet/enemy_projectile.gd" id="1_c6v3k"]
+[ext_resource type="Texture2D" uid="uid://dixg3ka2fwde8" path="res://assets/gameplay/bullet/jedo.png" id="2_uie3j"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_4gnow"]
+radius = 8.0
+height = 20.0
+
+[node name="EnemyProjectile" type="Area2D" groups=["bullet"]]
+collision_layer = 0
+collision_mask = 256
+script = ExtResource("1_c6v3k")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_uie3j")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CapsuleShape2D_4gnow")

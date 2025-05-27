@@ -32,7 +32,7 @@ func toggle_state(state_id: String) -> bool:
 	if transition:
 		current_state = states.get(state_id)
 		transition.handle()
-		Log.trace(Log.Level.DEBUG, "%s : Toggle state %s" % [name, current_state])
+		# Log.trace(Log.Level.DEBUG, "%s : Toggle state %s" % [name, current_state])
 		state_changed.emit(current_state)
 		return true
 
@@ -42,7 +42,7 @@ func toggle_state(state_id: String) -> bool:
 ## This is used at the start of the game to set the initial state
 func toggle_initial_state() -> bool:
 	assert(current_state, "Initial state has not be initialized")
-	Log.trace(Log.Level.DEBUG, "%s : Toggle initial state %s" % [name, current_state])
+	# Log.trace(Log.Level.DEBUG, "%s : Toggle initial state %s" % [name, current_state])
 	state_changed.emit(current_state)
 	return true
 
