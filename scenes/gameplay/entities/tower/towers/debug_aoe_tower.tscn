@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://in0dna0dnoa0"]
+[gd_scene load_steps=19 format=3 uid="uid://in0dna0dnoa0"]
 
 [ext_resource type="PackedScene" uid="uid://064cnqw4xlus" path="res://scenes/gameplay/entities/tower/i_tower.tscn" id="1_ecq02"]
 [ext_resource type="PackedScene" uid="uid://nfkadjkkl" path="res://scenes/gameplay/entities/bullet/aoe_arrow.tscn" id="2_dbrwh"]
@@ -112,12 +112,8 @@ bullet_stats = {
 "piercing_reduction": 0.0,
 "speed": 0.0
 }
-projectile_count = 1
-spread_angle = 15.0
-cost = 0
 fire_rate = 1.5
 level = 1
-sell_price = 0
 shoot_range = 150.0
 
 [node name="AnimatedSprite2D" parent="." index="0"]
@@ -141,11 +137,11 @@ position = Vector2(0, 8)
 rotation = 1.5708
 shape = SubResource("CapsuleShape2D_7wfw0")
 
-[node name="TowerBody" type="StaticBody2D" parent="." index="7" groups=["towers"]]
+[node name="TowerBody2" type="StaticBody2D" parent="." index="7" groups=["towers"]]
 collision_layer = 256
 collision_mask = 0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="TowerBody" index="0"]
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="TowerBody" index="0"]
 shape = SubResource("CircleShape2D_hnqt7")
 
 [connection signal="area_exited" from="Area2D" to="." method="_on_area_2d_area_exited"]
