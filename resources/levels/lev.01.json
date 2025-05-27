@@ -6,7 +6,7 @@
 			"wait_s": 1
 		},
 		{
-		  "enemy_id": "big_daddy",
+		  "enemy_id": "ene.01",
 		  "count": 3,
 		  "spawner": 0
 		},
