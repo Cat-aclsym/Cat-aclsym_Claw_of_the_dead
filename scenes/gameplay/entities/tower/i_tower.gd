@@ -110,7 +110,7 @@ func _ready() -> void:
 	sell_price = ceil(cost / 2.0)
 	hover_box.z_index = 3
 	update_dependent_properties()
-	if animated_sprite_2d and animated_sprite_2d.sprite_frames.has_animation("idle"):
+	if animated_sprite_2d and animated_sprite_2d.sprite_frames and animated_sprite_2d.sprite_frames.has_animation("idle"):
 		animated_sprite_2d.play("idle")
 
 func _process(_delta: float) -> void:

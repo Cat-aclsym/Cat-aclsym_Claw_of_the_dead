@@ -7,14 +7,6 @@
 
 [node name="ITower" type="Node2D"]
 script = ExtResource("1_4edlv")
-bullet_stats = null
-projectile_count = null
-spread_angle = null
-cost = null
-fire_rate = null
-level = null
-sell_price = null
-shoot_range = null
 available_upgrade = Array[PackedScene]([ExtResource("2_r3uob")])
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
