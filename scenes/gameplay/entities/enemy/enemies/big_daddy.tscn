@@ -1,13 +1,8 @@
-[gd_scene load_steps=8 format=3 uid="uid://dkcpg16ie8deh"]
+[gd_scene load_steps=6 format=3 uid="uid://dkcpg16ie8deh"]
 
 [ext_resource type="PackedScene" uid="uid://tmlcshxut7kv" path="res://scenes/gameplay/entities/enemy/i_enemy.tscn" id="1_o4ric"]
-[ext_resource type="Texture2D" uid="uid://h5f1ntgevb58" path="res://assets/environment/tilesets/tileset_debug.png" id="2_2h5k7"]
 [ext_resource type="Script" path="res://scenes/gameplay/entities/enemy/enemies/big_daddy.gd" id="2_3ulna"]
 [ext_resource type="PackedScene" uid="uid://dp10vag23o4m5" path="res://scenes/gameplay/entities/bullet/enemy_projectile.tscn" id="3_nitix"]
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_by7ku"]
-atlas = ExtResource("2_2h5k7")
-region = Rect2(144, 128, 32, 64)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_tvjnp"]
 size = Vector2(32, 48)
@@ -28,9 +23,8 @@ post_attack_delay = 1.0
 attack_cooldown = 5.0
 max_health = 100000.0
 
-[node name="Sprite2D" parent="." index="0"]
-position = Vector2(0, -2)
-texture = SubResource("AtlasTexture_by7ku")
+[node name="AnimatedSprite2D" parent="." index="0"]
+animation = &""
 
 [node name="CollisionShape2D" parent="." index="2"]
 position = Vector2(0, -2)

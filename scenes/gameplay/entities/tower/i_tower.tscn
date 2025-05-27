@@ -9,12 +9,9 @@
 script = ExtResource("1_4edlv")
 available_upgrade = Array[PackedScene]([ExtResource("2_r3uob")])
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(0, -2)
 scale = Vector2(0.85, 0.85)
-
-[node name="AnimationPlayer" type="AnimationPlayer" parent="Sprite2D"]
-active = false
 
 [node name="Area2D" type="Area2D" parent="."]
 

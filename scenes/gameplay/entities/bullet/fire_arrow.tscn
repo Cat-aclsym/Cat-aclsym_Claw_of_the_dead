@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://c5k5m6mvkhiyt"]
+[gd_scene load_steps=9 format=3 uid="uid://dg161722x21wu"]
 
 [ext_resource type="PackedScene" uid="uid://dqcjwachbfj5x" path="res://scenes/gameplay/entities/bullet/i_bullet.tscn" id="1_ecq02"]
 [ext_resource type="Script" path="res://scenes/gameplay/entities/bullet/fire_arrow.gd" id="2_okbr1"]
@@ -32,22 +32,35 @@ script = ExtResource("2_okbr1")
 burn_duration = 3.0
 burn_damage_base = 10
 aoe_range = 80
+explosion_effect_enabled = true
+shockwave_duration = 0.4
+shockwave_color = Color(0.8, 0.9, 1, 0.7)
+debris_particles_count = 20
+debris_particles_lifetime = 0.35
+debris_particles_speed = 150.0
+debris_particles_size = 3.0
+debris_particles_color = Color(1, 0.156863, 0.0313726, 0.847059)
 speed = 400
+trail_color = Color(1, 0.2, 0, 0.784314)
+hit_effect_enabled = false
 
 [node name="Sprite2D" parent="." index="0"]
-modulate = Color(1, 0.4, 0, 1)
-rotation = 0.785782
+modulate = Color(1, 0.258824, 0, 1)
+rotation = 0.785398
 texture = ExtResource("3_fsffr")
 
 [node name="CollisionShape2D" parent="." index="1"]
+visible = false
 shape = SubResource("RectangleShape2D_4a8wn")
 
 [node name="AOEArea" type="Area2D" parent="." index="2"]
+visible = false
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="AOEArea" index="0"]
 shape = SubResource("CircleShape2D_3qy0v")
 
 [node name="BurnArea" type="Area2D" parent="." index="3"]
+visible = false
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="BurnArea" index="0"]
 shape = SubResource("CircleShape2D_a2b3u")
@@ -62,7 +75,6 @@ lifetime = 1.5
 [node name="BurnAreaSprite" type="Sprite2D" parent="." index="5"]
 visible = false
 modulate = Color(1, 0.3, 0, 0.5)
-scale = Vector2(0.8, 0.8)
 
 [node name="BurnAreaCircle" type="Polygon2D" parent="." index="6"]
 visible = false

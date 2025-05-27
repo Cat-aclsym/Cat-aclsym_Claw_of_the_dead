@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://uyg8jfudgsjx"]
+[gd_scene load_steps=5 format=3 uid="uid://uyg8jfudgsjx"]
 
 [ext_resource type="PackedScene" uid="uid://064cnqw4xlus" path="res://scenes/gameplay/entities/tower/i_tower.tscn" id="1_ecq02"]
 [ext_resource type="PackedScene" uid="uid://c5k5m6mvkhiyt" path="res://scenes/gameplay/entities/bullet/fire_arrow.tscn" id="2_oklm3"]
@@ -63,22 +63,24 @@ height = 36.0
 [node name="FireTower" instance=ExtResource("1_ecq02")]
 position = Vector2(0, -16)
 bullet_scene = ExtResource("2_oklm3")
+bullet_stats = {
+"aoe_duration": 0.0,
+"aoe_range": 0.0,
+"aoe_tick": 0.0,
+"damage": 0.0,
+"damage_multiplier": 0.0,
+"dot_damage": 0.0,
+"piercing": 0.0,
+"piercing_reduction": 0.0,
+"speed": 0.0
+}
+projectile_count = 1
+spread_angle = 15.0
 cost = 50
 fire_rate = 1.0
 level = 1
+sell_price = 0
 shoot_range = 150.0
-
-[node name="Sprite2D" parent="." index="0"]
-modulate = Color(1, 0.4, 0, 1)
-position = Vector2(0, -5)
-scale = Vector2(1, 1)
-texture = SubResource("AtlasTexture_hn83r")
-
-[node name="AnimationPlayer" parent="Sprite2D" index="0"]
-libraries = {
-"": SubResource("AnimationLibrary_va1jy")
-}
-autoplay = "idle"
 
 [node name="CollisionShape2D" parent="Area2D" index="0"]
 position = Vector2(4.76837e-07, 16)

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://4rvu7u60f3mg"
-path="res://.godot/imported/tower2_LVL_2.png-7b1c3c212728d7980a777ea629ca1722.ctex"
+uid="uid://ddu35rooifyex"
+path="res://.godot/imported/Zombie_lOM_Damage-Sheet.png-6595c5533981a2d0f5bbffb6b3036a2b.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/gameplay/towers/tower2_LVL_2.png"
-dest_files=["res://.godot/imported/tower2_LVL_2.png-7b1c3c212728d7980a777ea629ca1722.ctex"]
+source_file="res://assets/gameplay/enemies/Zombie_lOM_Damage-Sheet.png"
+dest_files=["res://.godot/imported/Zombie_lOM_Damage-Sheet.png-6595c5533981a2d0f5bbffb6b3036a2b.ctex"]
 
 [params]
 

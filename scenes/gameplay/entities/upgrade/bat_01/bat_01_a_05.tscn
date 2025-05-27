@@ -3,14 +3,23 @@
 [ext_resource type="PackedScene" uid="uid://ta5ev4qh6unn" path="res://scenes/gameplay/entities/upgrade/i_upgrade.tscn" id="1_kn51o"]
 
 [node name="UpgradeFirstTower4A" instance=ExtResource("1_kn51o")]
-change = {
-"bullet_stat": false,
-"cannon": true,
-"cannon_stat": false,
-"tower": true,
+changes = {
+"bullet_model": false,
+"bullet_stat": true,
+"tower_model": false,
 "tower_stat": true
 }
-towerStats = {
-"level": 4
+bullet_stats = {
+"aoe_range": 0.0,
+"damage": 5.0,
+"pierce_count": 1.0,
+"pierce_reduction": 0.0,
+"speed": 0.0
 }
-price = 200
+tower_stats = {
+"fire_rate": 0.0,
+"level": 1,
+"projectile_count": 0,
+"shoot_range": 0.0,
+"spread_angle": 0.0
+}

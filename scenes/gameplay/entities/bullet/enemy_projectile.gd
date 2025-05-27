@@ -142,10 +142,10 @@ func _disable_tower(tower: ITower) -> void:
 	tower.add_child(disabled_timer)
 	
 	# Store the original modulate color
-	var original_modulate = tower.sprite_2d.modulate
+	var original_modulate = tower.animated_sprite_2d.modulate
 	
 	# Visually indicate the tower is disabled by reducing opacity
-	tower.sprite_2d.modulate = Color(original_modulate.r, original_modulate.g, 
+	tower.animated_sprite_2d.modulate = Color(original_modulate.r, original_modulate.g, 
 		original_modulate.b, 0.5)
 	
 	# Functionally disable the tower
@@ -155,7 +155,7 @@ func _disable_tower(tower: ITower) -> void:
 	# Re-enable the tower when the timer expires
 	disabled_timer.timeout.connect(func():
 		# Reset visual appearance
-		tower.sprite_2d.modulate = original_modulate
+		tower.animated_sprite_2d.modulate = original_modulate
 		
 		# Restore functionality
 		tower.set_process(true)

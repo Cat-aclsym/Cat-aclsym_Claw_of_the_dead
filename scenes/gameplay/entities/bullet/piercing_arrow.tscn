@@ -12,14 +12,22 @@ z_index = 1000
 script = ExtResource("2_bdcpf")
 pierce_count = 10
 pierce_reduction = 10
+spark_effect_enabled = true
+spark_particles_count = 8
+spark_particles_lifetime = 0.3
+spark_particles_speed = 80.0
+spark_particles_size = 1.5
+spark_particles_color = Color(1, 1, 0.376471, 0.901961)
 damage = 100
 speed = 300
+trail_color = Color(1, 0.886275, 0, 0.901961)
 
 [node name="Sprite2D" parent="." index="0"]
-modulate = Color(1, 0, 1, 1)
+modulate = Color(1, 0.913725, 0, 1)
 rotation = 0.785398
 texture = ExtResource("2_cbbwr")
 
 [node name="CollisionShape2D" parent="." index="1"]
+visible = false
 position = Vector2(0.5, 0)
 shape = SubResource("RectangleShape2D_qj200")

@@ -1,17 +1,10 @@
-[gd_scene load_steps=16 format=3 uid="uid://n3whw75fypkc"]
+[gd_scene load_steps=9 format=3 uid="uid://n3whw75fypkc"]
 
 [ext_resource type="Script" path="res://scenes/ui/menus/tower_selection/tower_selection.gd" id="1_1guy3"]
 [ext_resource type="Texture2D" uid="uid://c8eh0l6o5swnq" path="res://assets/ui/background/Construction Background.svg" id="2_tcv0b"]
-[ext_resource type="PackedScene" uid="uid://dyb6n443ycksr" path="res://scenes/ui/menus/tower_selection/tower_cards/tower_card_multishot.tscn" id="4_akdq5"]
-[ext_resource type="PackedScene" uid="uid://3noiaamd0p84" path="res://scenes/ui/menus/tower_selection/tower_cards/tower_card_basic.tscn" id="4_fc0px"]
-[ext_resource type="PackedScene" uid="uid://bvnxnvnxnvnxn" path="res://scenes/gameplay/entities/tower/towers/debug_multishot_tower.tscn" id="5_j4blq"]
-[ext_resource type="PackedScene" uid="uid://s41m7efasldn" path="res://scenes/ui/menus/tower_selection/tower_cards/tower_card_piercing.tscn" id="5_xe3nl"]
-[ext_resource type="PackedScene" uid="uid://c8yvnxnxnvnxn" path="res://scenes/gameplay/entities/tower/towers/debug_piercing_tower.tscn" id="7_10i7f"]
+[ext_resource type="PackedScene" uid="uid://3noiaamd0p84" path="res://scenes/ui/menus/tower_selection/tower_cards/tower_card_bat_01.tscn" id="3_60iow"]
+[ext_resource type="PackedScene" uid="uid://6kkbpbexa8ec" path="res://scenes/ui/menus/tower_selection/tower_cards/tower_card_bat_02.tscn" id="5_aw86t"]
 [ext_resource type="PackedScene" uid="uid://cq705nqdp8fnw" path="res://scenes/gameplay/entities/tower/towers/bat_01.tscn" id="7_n8eii"]
-[ext_resource type="PackedScene" uid="uid://b3aebjvjtv7la" path="res://scenes/ui/menus/tower_selection/tower_cards/tower_card_aoe.tscn" id="9_8a3o5"]
-[ext_resource type="PackedScene" uid="uid://b0t0twur86gil" path="res://scenes/ui/menus/tower_selection/tower_cards/tower_card_fire.tscn" id="10_edukk"]
-[ext_resource type="PackedScene" uid="uid://in0dna0dnoa0" path="res://scenes/gameplay/entities/tower/towers/debug_aoe_tower.tscn" id="10_sqshl"]
-[ext_resource type="PackedScene" uid="uid://uyg8jfudgsjx" path="res://scenes/gameplay/entities/tower/towers/debug_fire_tower.tscn" id="12_xma1y"]
 
 [sub_resource type="Animation" id="Animation_fpn5b"]
 length = 0.35
@@ -72,47 +65,20 @@ theme_override_constants/margin_bottom = 7
 layout_mode = 2
 theme_override_constants/separation = 150
 
-[node name="BasicAspectRatioContainer" type="AspectRatioContainer" parent="MarginContainer/BackgroundTextureRect/TowerListMarginContainer/HBoxContainer"]
+[node name="Bat01AspectRatioContainer" type="AspectRatioContainer" parent="MarginContainer/BackgroundTextureRect/TowerListMarginContainer/HBoxContainer"]
 layout_mode = 2
 stretch_mode = 1
 
-[node name="TowerCardBasic" parent="MarginContainer/BackgroundTextureRect/TowerListMarginContainer/HBoxContainer/BasicAspectRatioContainer" instance=ExtResource("4_fc0px")]
-z_index = 0
+[node name="TowerCardBat01" parent="MarginContainer/BackgroundTextureRect/TowerListMarginContainer/HBoxContainer/Bat01AspectRatioContainer" instance=ExtResource("3_60iow")]
 layout_mode = 2
 tower = ExtResource("7_n8eii")
 
-[node name="MultishotAspectRatioContainer" type="AspectRatioContainer" parent="MarginContainer/BackgroundTextureRect/TowerListMarginContainer/HBoxContainer"]
+[node name="Bat02AspectRatioContainer" type="AspectRatioContainer" parent="MarginContainer/BackgroundTextureRect/TowerListMarginContainer/HBoxContainer"]
 layout_mode = 2
 stretch_mode = 1
 
-[node name="TowerCardMultishot" parent="MarginContainer/BackgroundTextureRect/TowerListMarginContainer/HBoxContainer/MultishotAspectRatioContainer" instance=ExtResource("4_akdq5")]
+[node name="TowerCardBat02" parent="MarginContainer/BackgroundTextureRect/TowerListMarginContainer/HBoxContainer/Bat02AspectRatioContainer" instance=ExtResource("5_aw86t")]
 layout_mode = 2
-size_flags_horizontal = 1
-tower = ExtResource("5_j4blq")
-
-[node name="PiercingAspectRatioContainer" type="AspectRatioContainer" parent="MarginContainer/BackgroundTextureRect/TowerListMarginContainer/HBoxContainer"]
-layout_mode = 2
-stretch_mode = 1
-
-[node name="TowerCardPiercing" parent="MarginContainer/BackgroundTextureRect/TowerListMarginContainer/HBoxContainer/PiercingAspectRatioContainer" instance=ExtResource("5_xe3nl")]
-layout_mode = 2
-tower = ExtResource("7_10i7f")
-
-[node name="AoEAspectRatioContainer" type="AspectRatioContainer" parent="MarginContainer/BackgroundTextureRect/TowerListMarginContainer/HBoxContainer"]
-layout_mode = 2
-stretch_mode = 1
-
-[node name="TowerCardAoe" parent="MarginContainer/BackgroundTextureRect/TowerListMarginContainer/HBoxContainer/AoEAspectRatioContainer" instance=ExtResource("9_8a3o5")]
-layout_mode = 2
-tower = ExtResource("10_sqshl")
-
-[node name="FireAspectRatioContainer" type="AspectRatioContainer" parent="MarginContainer/BackgroundTextureRect/TowerListMarginContainer/HBoxContainer"]
-layout_mode = 2
-stretch_mode = 1
-
-[node name="TowerCardFire" parent="MarginContainer/BackgroundTextureRect/TowerListMarginContainer/HBoxContainer/FireAspectRatioContainer" instance=ExtResource("10_edukk")]
-layout_mode = 2
-tower = ExtResource("12_xma1y")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 root_node = NodePath("../MarginContainer")
