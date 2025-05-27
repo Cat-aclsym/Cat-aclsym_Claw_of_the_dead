@@ -147,7 +147,9 @@ pre_attack_delay = 1.0
 attack_duration = 1.0
 post_attack_delay = 1.0
 attack_cooldown = 5.0
-max_health = 500.0
+max_health = 400.0
+speed = 15.0
+type = 0
 
 [node name="AnimatedSprite2D" parent="." index="0"]
 sprite_frames = SubResource("SpriteFrames_i8exp")

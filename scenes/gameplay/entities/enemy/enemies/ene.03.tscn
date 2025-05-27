@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://cbj85p4w3vwii"]
+[gd_scene load_steps=9 format=3 uid="uid://b01fv7yq6ie7c"]
 
 [ext_resource type="PackedScene" uid="uid://tmlcshxut7kv" path="res://scenes/gameplay/entities/enemy/i_enemy.tscn" id="1_dhx8w"]
 [ext_resource type="Texture2D" uid="uid://cfxkadf64p7m6" path="res://assets/gameplay/enemies/Zombie_Deliverer.png" id="2_1oooy"]
@@ -50,7 +50,7 @@ size = Vector2(44, 66)
 [node name="Rat" instance=ExtResource("1_dhx8w")]
 position = Vector2(0, -10)
 max_health = 10.0
-speed = 45.0
+speed = 60.0
 type = 3
 
 [node name="AnimatedSprite2D" parent="." index="0"]
