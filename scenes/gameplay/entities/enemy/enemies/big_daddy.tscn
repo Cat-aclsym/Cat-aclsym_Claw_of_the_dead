@@ -1,24 +1,30 @@
-[gd_scene load_steps=5 format=3 uid="uid://dkcpg16ie8deh"]
+[gd_scene load_steps=6 format=3 uid="uid://dkcpg16ie8deh"]
 
 [ext_resource type="PackedScene" uid="uid://tmlcshxut7kv" path="res://scenes/gameplay/entities/enemy/i_enemy.tscn" id="1_o4ric"]
-[ext_resource type="Texture2D" uid="uid://h5f1ntgevb58" path="res://assets/environment/tilesets/tileset_debug.png" id="2_2h5k7"]
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_by7ku"]
-atlas = ExtResource("2_2h5k7")
-region = Rect2(144, 128, 32, 64)
+[ext_resource type="Script" path="res://scenes/gameplay/entities/enemy/enemies/big_daddy.gd" id="2_3ulna"]
+[ext_resource type="PackedScene" uid="uid://dp10vag23o4m5" path="res://scenes/gameplay/entities/bullet/enemy_projectile.tscn" id="3_nitix"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_tvjnp"]
 size = Vector2(32, 48)
 
+[sub_resource type="CircleShape2D" id="CircleShape2D_2ay3q"]
+radius = 214.189
+
 [node name="BigDaddy" instance=ExtResource("1_o4ric")]
 position = Vector2(0, -22)
-max_health = 320.0
-speed = 10.0
-type = 0
+script = ExtResource("2_3ulna")
+projectile_scene = ExtResource("3_nitix")
+shoot_range = 100.0
+fire_rate = 100.0
+tower_disable_duration = 3.0
+pre_attack_delay = 1.0
+attack_duration = 1.0
+post_attack_delay = 1.0
+attack_cooldown = 5.0
+max_health = 100000.0
 
-[node name="Sprite2D" parent="." index="0"]
-position = Vector2(0, -2)
-texture = SubResource("AtlasTexture_by7ku")
+[node name="AnimatedSprite2D" parent="." index="0"]
+animation = &""
 
 [node name="CollisionShape2D" parent="." index="2"]
 position = Vector2(0, -2)
@@ -27,3 +33,14 @@ shape = SubResource("RectangleShape2D_tvjnp")
 
 [node name="PopupScoreSpawner" parent="." index="4"]
 position = Vector2(0, -34)
+
+[node name="RangeArea" type="Area2D" parent="." index="5"]
+collision_layer = 0
+collision_mask = 256
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="RangeArea" index="0"]
+shape = SubResource("CircleShape2D_2ay3q")
+
+[node name="FireRateTimer" type="Timer" parent="." index="6"]
+
+[connection signal="body_entered" from="RangeArea" to="." method="_on_range_area_body_entered"]

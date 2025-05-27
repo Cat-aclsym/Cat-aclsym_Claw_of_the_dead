@@ -47,3 +47,6 @@ curve = SubResource("Curve2D_u7j3k")
 
 [node name="Path2DB2" type="Path2D" parent="Paths" index="3"]
 curve = SubResource("Curve2D_4wu0t")
+
+[node name="Camera" parent="." index="4"]
+position = Vector2(638, 375)

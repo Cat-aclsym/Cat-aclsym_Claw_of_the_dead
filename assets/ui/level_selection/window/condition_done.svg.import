@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://4rvu7u60f3mg"
-path="res://.godot/imported/tower2_LVL_2.png-7b1c3c212728d7980a777ea629ca1722.ctex"
+uid="uid://bm6k4rajx0ffb"
+path="res://.godot/imported/condition_done.svg-282508b48fa924abcbff7814864c1d93.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/gameplay/towers/tower2_LVL_2.png"
-dest_files=["res://.godot/imported/tower2_LVL_2.png-7b1c3c212728d7980a777ea629ca1722.ctex"]
+source_file="res://assets/ui/level_selection/window/condition_done.svg"
+dest_files=["res://.godot/imported/condition_done.svg-282508b48fa924abcbff7814864c1d93.ctex"]
 
 [params]
 
@@ -32,3 +32,6 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
+svg/scale=2.0
+editor/scale_with_editor_scale=false
+editor/convert_colors_with_editor_theme=false
