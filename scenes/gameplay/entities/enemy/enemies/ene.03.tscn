@@ -56,7 +56,7 @@ type = 3
 [node name="AnimatedSprite2D" parent="." index="0"]
 sprite_frames = SubResource("SpriteFrames_ojixu")
 animation = &"walk_up"
-frame_progress = 0.92676
+frame_progress = 0.448919
 offset = Vector2(0, -16)
 
 [node name="CollisionShape2D" parent="." index="2"]
