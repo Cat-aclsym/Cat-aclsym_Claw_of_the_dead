@@ -79,7 +79,7 @@ var state: EnemyState = EnemyState.FOLLOW_PATH
 
 # core
 func _ready() -> void:
-	if type == EnemyType.FAT:
+	if type == EnemyType.FAT or type == EnemyType.BIG_DADDY:
 		camera_effect.connect(Global.camera.handle_effect)
 		camera_effect.emit('shake')
 

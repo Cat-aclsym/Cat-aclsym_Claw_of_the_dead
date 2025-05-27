@@ -1,35 +1,153 @@
 {
-  "status": "done",
-  "waves": [
-	[
-	  {
-		"enemy_id": "ene.01",
-		"count": 2,
-		"spawner": 0
-	  },
-	  {
-		"wait_s": 5
-	  },
-	  {
-		"enemy_id": "ene.01",
-		"count": 1,
-		"spawner": 0
-	  }
-	],
-	[
-	  {
-		"enemy_id": "ene.01",
-		"count": 2,
-		"spawner": 0
-	  },
-	  {
-		"wait_s": 3
-	  },
-	  {
-		"enemy_id": "ene.01",
-		"count": 1,
-		"spawner": 0
-	  }
+	"status": "done",
+	"waves": [
+	  [
+		{
+			"wait_s": 1
+		},
+		{
+		  "enemy_id": "ene.01",
+		  "count": 3,
+		  "spawner": 0
+		},
+		{
+			"wait_s": 3
+		}
+	  ],
+	  [
+		{
+			"wait_s": 1
+		},
+		{
+		  "enemy_id": "ene.01",
+		  "count": 5,
+		  "spawner": 0
+		},
+		{
+			"wait_s": 1
+		},
+		{
+		  "enemy_id": "ene.01",
+		  "count": 2,
+		  "spawner": 0
+		},
+		{
+			"wait_s": 3
+		}
+	  ],
+	  [
+		{
+			"wait_s": 1
+		},
+		{
+		  "enemy_id": "ene.01",
+		  "count": 3,
+		  "spawner": 0
+		},
+		{
+		  "wait_s": 2
+		},
+		{
+		  "enemy_id": "ene.02",
+		  "count": 1,
+		  "spawner": 0
+		},
+		{
+			"wait_s": 3
+		}
+	  ],
+	  [
+		{
+			"wait_s": 1
+		},
+		{
+		  "enemy_id": "ene.01",
+		  "count": 4,
+		  "spawner": 0
+		},
+		{
+		  "wait_s": 2
+		},
+		{
+		  "enemy_id": "ene.03",
+		  "count": 2,
+		  "spawner": 0
+		},
+		{
+			"wait_s": 3
+		}
+	  ],
+	  [
+		{
+			"wait_s": 1
+		},
+		{
+		  "enemy_id": "ene.01",
+		  "count": 2,
+		  "spawner": 0
+		},
+		{
+		  "wait_s": 1
+		},
+		{
+		  "enemy_id": "ene.02",
+		  "count": 2,
+		  "spawner": 0
+		},
+		{
+		  "wait_s": 1
+		},
+		{
+		  "enemy_id": "ene.03",
+		  "count": 1,
+		  "spawner": 0
+		},
+		{
+			"wait_s": 3
+		}
+	  ],
+	  [
+		{
+			"wait_s": 1
+		},
+		{
+		  "enemy_id": "ene.02",
+		  "count": 3,
+		  "spawner": 0
+		},
+		{
+		  "wait_s": 2
+		},
+		{
+		  "enemy_id": "ene.03",
+		  "count": 3,
+		  "spawner": 0
+		},
+		{
+			"wait_s": 4
+		}
+	  ],
+	  [
+		{
+			"wait_s": 1
+		},
+		{
+		  "enemy_id": "ene.01",
+		  "count": 5,
+		  "spawner": 0
+		},
+		{
+			"wait_s": 3
+		},
+		{
+		  "enemy_id": "big_daddy",
+		  "count": 1,
+		  "spawner": 0
+		},
+		{
+			"wait_s": 5
+		}
+	  ]
 	]
-  ]
-}
+  }
+  
