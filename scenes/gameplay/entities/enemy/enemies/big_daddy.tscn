@@ -22,9 +22,7 @@ attack_duration = 1.0
 post_attack_delay = 1.0
 attack_cooldown = 5.0
 max_health = 100000.0
-
-[node name="AnimatedSprite2D" parent="." index="0"]
-animation = &""
+type = 0
 
 [node name="CollisionShape2D" parent="." index="2"]
 position = Vector2(0, -2)
