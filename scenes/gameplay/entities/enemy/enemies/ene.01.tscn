@@ -1,22 +1,145 @@
-[gd_scene load_steps=5 format=3 uid="uid://dhmd4je3q8jb6"]
+[gd_scene load_steps=21 format=3 uid="uid://dhmd4je3q8jb6"]
 
 [ext_resource type="PackedScene" uid="uid://tmlcshxut7kv" path="res://scenes/gameplay/entities/enemy/i_enemy.tscn" id="1_rsmel"]
-[ext_resource type="Texture2D" uid="uid://h5f1ntgevb58" path="res://assets/environment/tilesets/tileset_debug.png" id="2_nnigj"]
+[ext_resource type="Texture2D" uid="uid://it5nrej70nlf" path="res://assets/gameplay/enemies/Zombie_lOM_Base-Sheet.png" id="2_04mla"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_4pra6"]
-atlas = ExtResource("2_nnigj")
-region = Rect2(128, 192, 64, 64)
+[sub_resource type="AtlasTexture" id="AtlasTexture_au3yq"]
+atlas = ExtResource("2_04mla")
+region = Rect2(0, 0, 64, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ucc6t"]
+atlas = ExtResource("2_04mla")
+region = Rect2(64, 0, 64, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uvjl3"]
+atlas = ExtResource("2_04mla")
+region = Rect2(128, 0, 64, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_e5kh1"]
+atlas = ExtResource("2_04mla")
+region = Rect2(192, 0, 64, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rxk6r"]
+atlas = ExtResource("2_04mla")
+region = Rect2(256, 0, 64, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1r2mk"]
+atlas = ExtResource("2_04mla")
+region = Rect2(320, 0, 64, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_iwrbg"]
+atlas = ExtResource("2_04mla")
+region = Rect2(384, 0, 64, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_p3p8o"]
+atlas = ExtResource("2_04mla")
+region = Rect2(448, 0, 64, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_175k3"]
+atlas = ExtResource("2_04mla")
+region = Rect2(0, 128, 64, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_15i3k"]
+atlas = ExtResource("2_04mla")
+region = Rect2(64, 128, 64, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ckwal"]
+atlas = ExtResource("2_04mla")
+region = Rect2(128, 128, 64, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_k8dv7"]
+atlas = ExtResource("2_04mla")
+region = Rect2(192, 128, 64, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ag77b"]
+atlas = ExtResource("2_04mla")
+region = Rect2(256, 128, 64, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_s233w"]
+atlas = ExtResource("2_04mla")
+region = Rect2(320, 128, 64, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_u7tpa"]
+atlas = ExtResource("2_04mla")
+region = Rect2(384, 128, 64, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jj1p8"]
+atlas = ExtResource("2_04mla")
+region = Rect2(448, 128, 64, 128)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_krtrw"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_au3yq")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ucc6t")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_uvjl3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_e5kh1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rxk6r")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1r2mk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_iwrbg")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_p3p8o")
+}],
+"loop": true,
+"name": &"walk_down",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_175k3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_15i3k")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ckwal")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_k8dv7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ag77b")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_s233w")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_u7tpa")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jj1p8")
+}],
+"loop": true,
+"name": &"walk_up",
+"speed": 8.0
+}]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_iaady"]
 size = Vector2(18.8235, 18.8236)
 
 [node name="DefaultZombie" instance=ExtResource("1_rsmel")]
 position = Vector2(0, -16)
+max_health = null
 speed = 100.0
+type = null
 
-[node name="Sprite2D" parent="." index="0"]
-position = Vector2(0, -8)
-texture = SubResource("AtlasTexture_4pra6")
+[node name="AnimatedSprite2D" parent="." index="0"]
+sprite_frames = SubResource("SpriteFrames_krtrw")
+animation = &"walk_down"
 
 [node name="CollisionShape2D" parent="." index="2"]
 position = Vector2(4.65661e-09, 9.53674e-07)
