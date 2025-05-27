@@ -84,7 +84,7 @@ enum TowerType {
 ## The polygon 2D node for the range of the tower to detect enemies
 @onready var polygon_2d: Polygon2D = $Polygon2D
 ## The sprite 2D node for the tower to display the tower model
-@onready var sprite_2d: Sprite2D = $Sprite2D
+@onready var animated_sprite_2d: AnimatedSprite2D = $AnimatedSprite2D
 
 # Variables
 ## The color of the range polygon
@@ -108,6 +108,8 @@ func _ready() -> void:
 	sell_price = ceil(cost / 2.0)
 	hover_box.z_index = 3
 	update_dependent_properties()
+	if animated_sprite_2d and animated_sprite_2d.sprite_frames and animated_sprite_2d.sprite_frames.has_animation("idle"):
+		animated_sprite_2d.play("idle")
 
 func _process(_delta: float) -> void:
 	if Global.paused:
@@ -186,7 +188,27 @@ func apply_upgrade() -> void:
 		_apply_bullet_stat_changes(upgrade)
 
 	if upgrade.changes["tower_model"] and upgrade.tower != null:
-		sprite_2d.texture = upgrade.tower
+		if upgrade.tower is Texture2D:
+			if animated_sprite_2d.sprite_frames != null and animated_sprite_2d.sprite_frames.has_animation("idle"):
+				var idle_anim = animated_sprite_2d.sprite_frames.get_animation("idle")
+				# Determine frame index: 0 to add if empty, or last frame index to update
+				var frame_idx = 0
+				if idle_anim.get_frame_count() > 0:
+					frame_idx = idle_anim.get_frame_count() - 1
+
+				idle_anim.set_frame_texture(frame_idx, upgrade.tower)
+
+				if not animated_sprite_2d.is_playing() or animated_sprite_2d.animation != "idle":
+					animated_sprite_2d.play("idle")
+			else: # upgrade.tower is Texture2D, but no 'idle' animation or no sprite_frames
+				var reason = "'idle' animation missing"
+				if animated_sprite_2d.sprite_frames == null:
+					reason = "no sprite_frames assigned"
+				elif not animated_sprite_2d.sprite_frames.has_animation("idle"):
+					reason = "'idle' animation missing" # Redundant but clear
+				Log.trace(Log.Level.WARN, "Cannot apply tower_model texture: %s in AnimatedSprite2D." % reason)
+		else: # upgrade.tower is not Texture2D (and not null)
+			Log.trace(Log.Level.ERROR, "upgrade.tower for tower_model is not a Texture2D as expected. Type: %s" % typeof(upgrade.tower))
 
 	if upgrade.changes["bullet_model"] and upgrade.bullet != null:
 		bullet_scene = upgrade.bullet
@@ -273,7 +295,7 @@ func _create_range_polygon(radius: float, precision: int) -> void:
 	polygon_2d.color = Color(color, 0.3)
 
 	## Set the z-index of the range polygon to 1, making it appear below other nodes
-	sprite_2d.z_index = 1
+	animated_sprite_2d.z_index = 1
 
 	## Add the first value of points to the end of the array to close the outline
 	points.append(Vector2(points[0]))

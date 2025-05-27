@@ -57,17 +57,18 @@ const DAMAGES: Dictionary = {
 @export var type: EnemyType = EnemyType.DEFAULT
 
 var active_poison_timers: Array[Dictionary] = []
-var current_point_id: int = 0
+var current_animation: String = ""
 var direction: EnemyDirection = EnemyDirection.UP_RIGHT
 var health: float
 var is_already_dead: bool = false
 var path: Path2D = null
 var path_follow: PathFollow2D = null
 var poison_timer_execution_count: int = 0
+var previous_position: Vector2 = Vector2.ZERO
 var state: EnemyState = EnemyState.FOLLOW_PATH
 
 ## Must be placed first as it is used in other onready variables
-@onready var sprite: Sprite2D = $Sprite2D
+@onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
 
 @onready var anim_player: AnimationPlayer = $AnimationPlayer
 @onready var collision_shape: CollisionShape2D = $CollisionShape2D
@@ -83,7 +84,15 @@ func _ready() -> void:
 		camera_effect.emit('shake')
 
 	health = max_health
-	_set_path_direction()
+
+	# Wait one frame to ensure PathFollow2D is properly positioned
+	await get_tree().process_frame
+
+	# Initialize previous position and direction correctly
+	previous_position = path_follow.global_position
+
+	# Force initial animation to match direction
+	_walk()
 
 func _physics_process(delta: float) -> void:
 	if is_already_dead or Global.paused:
@@ -128,6 +137,8 @@ func follow_path(delta: float) -> void:
 		return
 
 	path_follow.set_progress(path_follow.get_progress() + (speed * delta))
+
+	# Always update direction, regardless of path position
 	_update_direction()
 	_walk()
 
@@ -160,48 +171,91 @@ func _damage_effect(color: Color) -> void:
 	await get_tree().create_timer(0.1).timeout
 	sprite.modulate = old_modulate
 
-## Set the direction of the enemy based on the path
-func _set_path_direction() -> void:
-	var x_pos_difference: float = path.curve.get_point_position(current_point_id).x - path.curve.get_point_position(current_point_id + 1).x
-	var y_pos_difference: float = path.curve.get_point_position(current_point_id).y - path.curve.get_point_position(current_point_id + 1).y
-
-	var is_going_up := y_pos_difference > 0
-	var is_going_down := y_pos_difference < 0
-	var is_going_right := x_pos_difference < 0
-	var is_going_left := x_pos_difference > 0
-
-	if is_going_right:
-		direction = EnemyDirection.DOWN_RIGHT if is_going_down else EnemyDirection.UP_RIGHT
-	elif is_going_left:
-		direction = EnemyDirection.DOWN_LEFT if is_going_down else EnemyDirection.UP_LEFT
-
-## Update the direction of the enemy based on the path
+## Update the direction of the enemy based on movement
 func _update_direction() -> void:
-	if current_point_id == path_points_size - 2:
-		return
+	var current_pos: Vector2 = path_follow.global_position
+	var movement: Vector2 = current_pos - previous_position
 
-	if (round(path_follow.position) == round(path.curve.get_point_position(current_point_id + 1)) and
-		path.curve.get_closest_point(path_follow.position) != path.curve.get_point_position(current_point_id)):
-		current_point_id += 1
-		_set_path_direction()
+	# Check actual movement with low threshold
+	if movement.length() > 0.1:
+		_determine_direction_from_movement(movement)
+
+	# Look ahead on path when near the end
+	elif path_follow.get_progress_ratio() > 0.85:
+		_check_direction_ahead()
+
+	# Store current position for next frame
+	previous_position = current_pos
+
+## Determine direction based on movement vector
+func _determine_direction_from_movement(movement: Vector2) -> void:
+	# Use angle-based direction detection for precision
+	var angle: float = movement.angle()
+
+	# Convert angle to direction
+	if angle >= -PI/8 and angle < PI/8:  # Right
+		direction = EnemyDirection.UP_RIGHT
+	elif angle >= PI/8 and angle < 3*PI/8:  # Down-right
+		direction = EnemyDirection.DOWN_RIGHT
+	elif angle >= 3*PI/8 and angle < 5*PI/8:  # Down
+		direction = EnemyDirection.DOWN_RIGHT
+	elif angle >= 5*PI/8 and angle < 7*PI/8:  # Down-left
+		direction = EnemyDirection.DOWN_LEFT
+	elif angle >= 7*PI/8 or angle < -7*PI/8:  # Left
+		direction = EnemyDirection.UP_LEFT
+	elif angle >= -7*PI/8 and angle < -5*PI/8:  # Up-left
+		direction = EnemyDirection.UP_LEFT
+	elif angle >= -5*PI/8 and angle < -3*PI/8:  # Up
+		direction = EnemyDirection.UP_RIGHT
+	elif angle >= -3*PI/8 and angle < -PI/8:  # Up-right
+		direction = EnemyDirection.UP_RIGHT
+
+## Look ahead on the path to detect upcoming direction changes
+func _check_direction_ahead() -> void:
+	var current_progress := path_follow.get_progress()
+	var look_ahead_distance := 15.0
+
+	# Look ahead on path
+	var original_progress := path_follow.get_progress()
+	path_follow.set_progress(current_progress + look_ahead_distance)
+	var ahead_pos := path_follow.global_position
+	path_follow.set_progress(original_progress)
+
+	var look_ahead_movement := ahead_pos - path_follow.global_position
+
+	if look_ahead_movement.length() > 1.0:
+		_determine_direction_from_movement(look_ahead_movement)
 
 ## Update the enemy sprite animation based on the direction
 func _walk() -> void:
+	var target_animation: String
+	var should_flip: bool
+
 	match direction:
 		EnemyDirection.UP_RIGHT:
-			sprite.flip_h = false
-			anim_player.play(ANIM_WALK_UP)
+			target_animation = ANIM_WALK_UP
+			should_flip = true
 		EnemyDirection.UP_LEFT:
-			sprite.flip_h = true
-			anim_player.play(ANIM_WALK_UP)
+			target_animation = ANIM_WALK_UP
+			should_flip = false
 		EnemyDirection.DOWN_RIGHT:
-			sprite.flip_h = false
-			anim_player.play(ANIM_WALK_DOWN)
+			target_animation = ANIM_WALK_DOWN
+			should_flip = true
 		EnemyDirection.DOWN_LEFT:
-			sprite.flip_h = true
-			anim_player.play(ANIM_WALK_DOWN)
+			target_animation = ANIM_WALK_DOWN
+			should_flip = false
 		_:
 			Log.trace(Log.Level.WARN, "{0}::_walk() direction does not match EnemyDirection enum".format([name]))
+			return
+
+	# Only change animation if it's different from current one to prevent stuttering
+	if current_animation != target_animation:
+		sprite.play(target_animation)
+		current_animation = target_animation
+
+	# Only change flip if necessary to prevent stuttering
+	if sprite.flip_h != should_flip:
+		sprite.flip_h = should_flip
 
 ## Make the enemy disappear, then remove it from the scene
 func _disappear() -> void:
