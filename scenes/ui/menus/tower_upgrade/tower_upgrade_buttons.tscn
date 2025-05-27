@@ -31,6 +31,7 @@ theme_override_constants/margin_right = 30
 theme_override_constants/margin_bottom = 30
 
 [node name="ButtonsMenuTextureRect" type="TextureRect" parent="MarginContainer"]
+z_index = 4096
 layout_mode = 2
 size_flags_horizontal = 3
 texture = ExtResource("1_togqw")
@@ -57,12 +58,14 @@ stretch_mode = 1
 alignment_horizontal = 2
 
 [node name="SellTextureButton" type="TextureButton" parent="VBoxContainer/HBoxContainer/SellAspectRatioContainer"]
+z_index = 4096
 layout_mode = 2
 texture_normal = ExtResource("2_v84gu")
 ignore_texture_size = true
 stretch_mode = 5
 
 [node name="SellLabel" type="Label" parent="VBoxContainer/HBoxContainer/SellAspectRatioContainer"]
+z_index = 4096
 layout_mode = 2
 size_flags_vertical = 0
 theme_override_font_sizes/font_size = 15
@@ -76,12 +79,14 @@ stretch_mode = 1
 alignment_horizontal = 0
 
 [node name="UpgradeTextureButton" type="TextureButton" parent="VBoxContainer/HBoxContainer/UpgradeAspectRatioContainer"]
+z_index = 4096
 layout_mode = 2
 texture_normal = ExtResource("3_ki7m7")
 ignore_texture_size = true
 stretch_mode = 5
 
 [node name="UpgradeLabel" type="Label" parent="VBoxContainer/HBoxContainer/UpgradeAspectRatioContainer"]
+z_index = 4096
 layout_mode = 2
 size_flags_vertical = 0
 theme_override_font_sizes/font_size = 15
@@ -94,6 +99,7 @@ ratio = 0.4
 stretch_mode = 1
 
 [node name="CloseTextureButton" type="TextureButton" parent="VBoxContainer/CloseAspectRatioContainer"]
+z_index = 4096
 layout_mode = 2
 texture_normal = ExtResource("4_3n0fm")
 ignore_texture_size = true

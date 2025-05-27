@@ -23,12 +23,15 @@ func _ready() -> void:
 	tower = get_parent() as ITower
 	sell_price = tower.sell_price
 	sell_label.text = str(sell_price)+"$"
-
-	var upg: IUpgrade = tower.available_upgrade[0].instantiate()
-	upgrade_price = upg.price
-
-	upgrade_label.text = str(upgrade_price)+"$"
-
+	if !tower.available_upgrade.is_empty():
+		var upg: IUpgrade = tower.available_upgrade[0].instantiate()
+		upgrade_price = upg.price
+		upgrade_label.text = str(upgrade_price)+"$"
+	else:
+		upgrade_button.disabled = true
+		# Change upgrade button to gray rbg #525252
+		upgrade_button.modulate = Color(0.325, 0.325, 0.325)  # Gray color
+		upgrade_label.text = "MAX"
 	SignalUtil.connects(signals)
 
 
