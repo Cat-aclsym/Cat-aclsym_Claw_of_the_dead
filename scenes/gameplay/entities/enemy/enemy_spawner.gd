@@ -29,6 +29,3 @@ static func spawn_enemy(path: Path2D, enemy: IEnemy) -> void:
 	enemy.path_follow = pathfollow
 
 	pathfollow.add_child(enemy)
-
-	# Fix same animation on multiple instances:
-	enemy.sprite.texture = enemy.sprite.texture.duplicate()
