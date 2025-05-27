@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3 uid="uid://b80oipuymr4oa"]
+
+[ext_resource type="Texture2D" uid="uid://qsdp3h1h2rg" path="res://assets/ui/level_selection/bt_level/line.svg" id="1_el6xv"]
+
+[node name="Separator" type="TextureRect"]
+custom_minimum_size = Vector2(64, 4)
+size_flags_vertical = 4
+texture = ExtResource("1_el6xv")
+expand_mode = 1
+stretch_mode = 1

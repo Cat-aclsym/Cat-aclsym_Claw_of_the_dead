@@ -1,6 +1,5 @@
 ## © [2024] A7 Studio. All rights reserved. Trademark.
 ## Level script that manages map, waves, state transitions, and enemy spawning.
-## @experimental
 class_name ILevel extends Node2D
 
 signal stats_updated
@@ -18,6 +17,8 @@ const STATE_END: String = "END"
 # Exported Variables
 @export var level_id: String = "lev.XX"
 @export var level_name: String
+@export var level_description: String
+@export var arc_id: String = "arc.XX"
 @export var map_scene: PackedScene
 
 # Public Variables
@@ -147,7 +148,7 @@ func _on_state_wave(_args = []) -> bool:
 	var wave: Wave = waves.front()
 
 	# if no more steps and no enemy alive -> trigger next wave
-	if wave.peak() == null and _enemies_alive == 0:
+	if wave == null or wave.peak() == null and _enemies_alive == 0:
 		_next_wave()
 		return true
 
@@ -160,7 +161,7 @@ func _on_state_wave(_args = []) -> bool:
 	current_step.exec()
 	if current_step.is_over():
 		_next_step()
-	
+
 	return true
 
 

@@ -1,9 +1,10 @@
 [gd_scene load_steps=3 format=3 uid="uid://dfahd0bsnk0p4"]
 
 [ext_resource type="PackedScene" uid="uid://bnsejcujkvcqg" path="res://scenes/gameplay/world/level/i_level.tscn" id="1_bhpo8"]
-[ext_resource type="PackedScene" uid="uid://buj5yatu3iyt" path="res://scenes/gameplay/world/map/maps/map_debug_1.tscn" id="2_gttx7"]
+[ext_resource type="PackedScene" uid="uid://cta5yotths5ck" path="res://scenes/gameplay/world/map/maps/arc.01/map.01.tscn" id="2_h0j7n"]
 
 [node name="Level01" instance=ExtResource("1_bhpo8")]
 level_id = "lev.01"
-level_name = "Coink coink"
-map_scene = ExtResource("2_gttx7")
+level_name = "1. Premier niveau"
+arc_id = "arc.01"
+map_scene = ExtResource("2_h0j7n")

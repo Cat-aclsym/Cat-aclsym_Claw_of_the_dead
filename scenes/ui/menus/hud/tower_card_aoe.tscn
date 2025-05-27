@@ -5,3 +5,9 @@
 
 [node name="TowerCardAOE" instance=ExtResource("1_lh15l")]
 tower = ExtResource("2_rjokk")
+
+[node name="Label" parent="VBoxContainer" index="0"]
+text = "Test AOE"
+
+[node name="Label" parent="VBoxContainer/Button" index="0"]
+text = "0$"

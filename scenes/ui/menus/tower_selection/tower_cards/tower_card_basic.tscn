@@ -53,7 +53,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("6_1er5m")
 theme_override_font_sizes/font_size = 15
-text = "Basic"
+text = "Arbre à Chat'rchés"
 horizontal_alignment = 1
 vertical_alignment = 1
 
