@@ -1,0 +1,42 @@
+[gd_scene load_steps=3 format=3 uid="uid://b2smroj1exbjv"]
+
+[ext_resource type="PackedScene" uid="uid://bl1lywmexedvo" path="res://scenes/ui/menus/tower_upgrade/tower_upgrade_buttons.tscn" id="1_2l2an"]
+[ext_resource type="PackedScene" uid="uid://ds0xkohs1fv3w" path="res://scenes/ui/menus/tower_upgrade/tower_upgrade_description.tscn" id="2_7mhmu"]
+
+[node name="TowerUpgradeMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(145, 324)
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="AspectRatioContainer" type="AspectRatioContainer" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.35
+ratio = 1.5
+stretch_mode = 0
+
+[node name="TowerUpgrade" parent="HBoxContainer/AspectRatioContainer" instance=ExtResource("1_2l2an")]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 16.27
+
+[node name="AspectRatioContainer2" type="AspectRatioContainer" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+ratio = 2.0
+
+[node name="TowerUpgradeDescription" parent="HBoxContainer/AspectRatioContainer2" instance=ExtResource("2_7mhmu")]
+layout_mode = 2
+size_flags_horizontal = 3

@@ -1,0 +1,116 @@
+[gd_scene load_steps=7 format=3 uid="uid://ds0xkohs1fv3w"]
+
+[ext_resource type="Texture2D" uid="uid://c8b8irfugbxdj" path="res://assets/environment/backgrounds/Fond Menu 02.svg" id="1_so8lf"]
+[ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="2_rnnwo"]
+[ext_resource type="Texture2D" uid="uid://bbucgkj5y4nmf" path="res://assets/ui/icons/Icon Attack.svg" id="3_cm8xc"]
+[ext_resource type="Texture2D" uid="uid://lhh28p8y5tlr" path="res://assets/ui/icons/Gauge Level 2.svg" id="4_kgu3r"]
+[ext_resource type="Texture2D" uid="uid://bn681yyp8o1o5" path="res://assets/ui/icons/Gauge Level 4.svg" id="5_4ivqn"]
+[ext_resource type="Texture2D" uid="uid://do5m6onbun8lf" path="res://assets/ui/icons/Icon Attack Speed.svg" id="6_b8lf3"]
+
+[node name="TowerUpgradeDescription" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="UpgradeDescriptionTextureRect" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 2.1
+texture = ExtResource("1_so8lf")
+expand_mode = 2
+
+[node name="UpgradeDescriptionVBoxContainer" type="VBoxContainer" parent="UpgradeDescriptionTextureRect"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.018
+anchor_top = 0.045
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 0.263998
+offset_top = -0.160002
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="UpgradeTitleLabel" type="Label" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.3
+text = "XTOWER.XUPGRADE.TITLE"
+
+[node name="UpgradeDescriptionLabel" type="Label" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.3
+theme = ExtResource("2_rnnwo")
+theme_override_font_sizes/font_size = 20
+text = "XTOWER.XUPGRADE.DESCRIPTION"
+
+[node name="Node" type="MarginContainer" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/margin_left = 40
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/Node"]
+layout_mode = 2
+
+[node name="AspectRatioContainer2" type="AspectRatioContainer" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/Node/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+ratio = 4.0
+alignment_horizontal = 0
+
+[node name="AttackSpeedHBoxContainer" type="HBoxContainer" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/Node/VBoxContainer/AspectRatioContainer2"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 50
+
+[node name="AttackSpeedIconTextureRect" type="TextureRect" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/Node/VBoxContainer/AspectRatioContainer2/AttackSpeedHBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+texture = ExtResource("3_cm8xc")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="AttackSpeedGaugeTextureRect" type="TextureRect" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/Node/VBoxContainer/AspectRatioContainer2/AttackSpeedHBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 5.0
+texture = ExtResource("4_kgu3r")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="AspectRatioContainer" type="AspectRatioContainer" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/Node/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+ratio = 4.0
+alignment_horizontal = 0
+
+[node name="AttackSpeedHBoxContainer" type="HBoxContainer" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/Node/VBoxContainer/AspectRatioContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 50
+
+[node name="AttackSpeedIconTextureRect" type="TextureRect" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/Node/VBoxContainer/AspectRatioContainer/AttackSpeedHBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+texture = ExtResource("6_b8lf3")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="AttackSpeedGaugeTextureRect" type="TextureRect" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/Node/VBoxContainer/AspectRatioContainer/AttackSpeedHBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 5.0
+texture = ExtResource("5_4ivqn")
+expand_mode = 1
+stretch_mode = 5
