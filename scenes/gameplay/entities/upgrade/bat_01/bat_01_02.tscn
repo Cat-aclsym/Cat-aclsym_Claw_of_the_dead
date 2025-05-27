@@ -25,3 +25,4 @@ tower_stats = {
 "spread_angle": 0.0
 }
 next_upgrades = Array[PackedScene]([ExtResource("2_e4ahx")])
+price = 75
