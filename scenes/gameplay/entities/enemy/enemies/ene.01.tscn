@@ -129,20 +129,20 @@ animations = [{
 }]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_iaady"]
-size = Vector2(18.8235, 18.8236)
+size = Vector2(23, 61.4118)
 
 [node name="DefaultZombie" instance=ExtResource("1_rsmel")]
 position = Vector2(0, -16)
-max_health = null
-speed = 100.0
-type = null
+max_health = 30.0
+speed = 50.0
 
 [node name="AnimatedSprite2D" parent="." index="0"]
+position = Vector2(0, -8)
 sprite_frames = SubResource("SpriteFrames_krtrw")
 animation = &"walk_down"
 
 [node name="CollisionShape2D" parent="." index="2"]
-position = Vector2(4.65661e-09, 9.53674e-07)
+position = Vector2(0, 0)
 shape = SubResource("RectangleShape2D_iaady")
 
 [node name="GPUParticles2D" parent="." index="3"]
