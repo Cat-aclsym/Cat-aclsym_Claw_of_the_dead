@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://ddcvda2tcbdq8"]
+[gd_scene load_steps=12 format=3 uid="uid://ddcvda2tcbdq8"]
 
 [ext_resource type="Script" uid="uid://du3smf4s8h4d2" path="res://scenes/gameplay/entities/tower_placement/tower_placement.gd" id="1_3aclw"]
 [ext_resource type="Texture2D" uid="uid://dn7sa2jf2kvor" path="res://assets/environment/grid_placement/moving_arrow.png" id="2_8yjt0"]
@@ -42,6 +42,9 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_bapwk"]
+size = Vector2(14, 14)
+
 [node name="TowerPlacement" type="Node2D"]
 script = ExtResource("1_3aclw")
 
@@ -49,6 +52,13 @@ script = ExtResource("1_3aclw")
 sprite_frames = SubResource("SpriteFrames_o400i")
 autoplay = "default"
 offset = Vector2(0, -3)
+
+[node name="Area2D" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+shape = SubResource("RectangleShape2D_bapwk")
 
 [node name="PlaceHUD" type="Control" parent="."]
 layout_mode = 3
