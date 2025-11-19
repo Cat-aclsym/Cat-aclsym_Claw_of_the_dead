@@ -156,6 +156,31 @@ func _state_build(tower: ITower = null) -> void:
 	_tower.position = cursor.position - Vector2(0, 16)
 	_tower.modulate = COLOR_OK if _is_buildable(_tower.position) else COLOR_KO
 
+## Check if a position is too close to any enemy path
+func _is_position_on_path(pos: Vector2, min_distance: float = 15.0) -> bool:
+	"""Check if the given position is within min_distance of any enemy path.
+	
+	Args:
+		pos: The position to check
+		min_distance: Minimum distance to keep from paths (in pixels). Default 15px allows placement adjacent to paths.
+	
+	Returns:
+		true if the position is too close to a path, false otherwise
+	"""
+	if not ILevel.current_level or not ILevel.current_level.map:
+		return false
+	
+	var paths: Array[Path2D] = ILevel.current_level.map.paths
+	
+	for path in paths:
+		var closest_point = path.curve.get_closest_point(path.to_local(pos))
+		var distance = pos.distance_to(path.to_global(closest_point))
+		
+		if distance < min_distance:
+			return true
+	
+	return false
+
 ## Handles the build state input events, such as mouse clicks and drags
 func _state_build_input(event: InputEvent) -> void:
 	if event is InputEventScreenDrag or event is InputEventMouseMotion:
@@ -236,6 +261,10 @@ func _is_buildable(pos: Vector2) -> bool:
 		return false
 
 	if tm_ref.get_cell_atlas_coords(1, tm_pos) != Vector2i(-1, -1):
+		return false
+
+	# Prevent placement on or near enemy paths
+	if _is_position_on_path(pos):
 		return false
 
 	return true
