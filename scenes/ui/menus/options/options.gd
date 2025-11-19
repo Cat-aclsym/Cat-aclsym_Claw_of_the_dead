@@ -49,12 +49,20 @@ func _on_music_texture_button_pressed() -> void:
 	_actual_texture = music_toggle_button.get_texture_normal()
 	music_toggle_button.set_texture_normal(music_toggle_button.get_texture_pressed())
 	music_toggle_button.set_texture_pressed(_actual_texture)
+	# Update progression parameter and persist it
+	var current_music: bool = ProgressionManager.data.parameters.music_volume
+	ProgressionManager.data.parameters.music_volume = not current_music
+	ProgressionManager.save_game()
 
 ## Toggles the sound state and updates the button texture.
 func _on_sound_texture_button_pressed() -> void:
 	_actual_texture = sound_toggle_button.get_texture_normal()
 	sound_toggle_button.set_texture_normal(sound_toggle_button.get_texture_pressed())
 	sound_toggle_button.set_texture_pressed(_actual_texture)
+	# Update progression parameter and persist it
+	var current_sound: bool = ProgressionManager.data.parameters.sound_volume
+	ProgressionManager.data.parameters.sound_volume = not current_sound
+	ProgressionManager.save_game()
 
 ## Toggles between English and French languages.
 ## [br]Updates the button texture to reflect the current language.
@@ -69,6 +77,9 @@ func _on_language_texture_button_pressed() -> void:
 		_actual_texture = language_toggle_button.get_texture_normal()
 		language_toggle_button.set_texture_normal(language_toggle_button.get_texture_pressed())
 		language_toggle_button.set_texture_pressed(_actual_texture)
+	# Persist language choice into progression
+	ProgressionManager.data.parameters.language = TranslationServer.get_locale()
+	ProgressionManager.save_game()
 
 ## Opens the Instagram social media link.
 func _on_instagram_texture_button_pressed() -> void:
