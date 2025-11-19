@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://ysqbusmy0qma" path="res://addons/dialogic/Editor/TimelineEditor/VisualEditor/timeline_editor_visual.tscn" id="2_qs7vc"]
 [ext_resource type="PackedScene" uid="uid://dbpkta2tjsqim" path="res://addons/dialogic/Editor/Common/hint_tooltip_icon.tscn" id="2_yqd26"]
 [ext_resource type="PackedScene" uid="uid://defdeav8rli6o" path="res://addons/dialogic/Editor/TimelineEditor/TextEditor/timeline_editor_text.tscn" id="3_up2bn"]
-[ext_resource type="Script" uid="uid://b35hvsvrvjjl4" path="res://addons/dialogic/Editor/TimelineEditor/shortcut_popup.gd" id="6_rfuk0"]
+[ext_resource type="Script" path="res://addons/dialogic/Editor/TimelineEditor/shortcut_popup.gd" id="6_rfuk0"]
 
 [sub_resource type="Image" id="Image_6bv6r"]
 data = {

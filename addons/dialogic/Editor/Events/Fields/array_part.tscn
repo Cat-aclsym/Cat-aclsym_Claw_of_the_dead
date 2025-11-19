@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://ch4j2lesn1sis"]
 
-[ext_resource type="Script" uid="uid://cm8w2iamuulp7" path="res://addons/dialogic/Editor/Events/Fields/array_part.gd" id="1"]
+[ext_resource type="Script" uid="uid://wtu0ecnf6wic" path="res://addons/dialogic/Editor/Events/Fields/array_part.gd" id="1"]
 [ext_resource type="PackedScene" uid="uid://dl08ubinx6ugu" path="res://addons/dialogic/Editor/Events/Fields/field_flex_value.tscn" id="3_s4j7i"]
 
 [sub_resource type="Image" id="Image_28ws6"]

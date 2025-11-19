@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://de13fdeebrkcb"]
 
-[ext_resource type="Script" uid="uid://cyjmcay08lmr8" path="res://addons/dialogic/Editor/Events/BranchEnd.gd" id="1"]
+[ext_resource type="Script" uid="uid://bou8leltb2c3y" path="res://addons/dialogic/Editor/Events/BranchEnd.gd" id="1"]
 
 [sub_resource type="Image" id="Image_6aqdp"]
 data = {

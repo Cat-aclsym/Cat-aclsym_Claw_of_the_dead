@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://btmy7ageqpyq1"]
 
-[ext_resource type="Script" uid="uid://kmn7rns1g4fc" path="res://addons/dialogic/Editor/Events/Fields/field_array.gd" id="2"]
+[ext_resource type="Script" uid="uid://x0ddteraxftn" path="res://addons/dialogic/Editor/Events/Fields/field_array.gd" id="2"]
 
 [sub_resource type="Image" id="Image_v6fhx"]
 data = {
