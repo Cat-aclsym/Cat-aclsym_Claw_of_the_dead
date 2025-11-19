@@ -180,9 +180,8 @@ func _state_build(tower: ITower = null) -> void:
 	_tower.modulate = COLOR_OK if is_buildable else COLOR_KO
 	_update_place_button_state(is_buildable)
 	
-	# Disable the tower button and hover box so it can't be interacted with during placement
-	if _tower.button:
-		_tower.button.disabled = true
+	# Allow the tower button to work during placement for range preview
+	# Disable only the hover box to prevent interference
 	if _tower.hover_box and _tower.hover_box.get_parent():
 		var hover_area: Area2D = _tower.hover_box.get_parent()
 		hover_area.monitoring = false
