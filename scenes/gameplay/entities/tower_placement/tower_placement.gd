@@ -66,6 +66,7 @@ static var tower_count: int = 0
 @onready var place_button: TextureButton = $PlaceHUD/HBoxContainer/PlaceButton
 @onready var place_hud: Control = $PlaceHUD
 @onready var place_hud_content: BoxContainer = $PlaceHUD/HBoxContainer
+@onready var placement_area: Area2D = $Area2D
 
 @onready var signals: Array[Dictionary] = [
 	{SignalUtil.WHO: place_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_place_button_pressed},
@@ -140,6 +141,9 @@ func _set_cursor_position(pos: Vector2 = get_global_mouse_position()) -> void:
 	cursor.visible = true
 	place_hud.visible = true
 	place_hud.position = local_pos
+	
+	# Move the placement area hitbox to follow the cursor
+	placement_area.position = local_pos
 
 ## Handles the build state logic, such as tower placement and validation
 func _state_build(tower: ITower = null) -> void:
@@ -154,29 +158,33 @@ func _state_build(tower: ITower = null) -> void:
 		add_child(_tower)
 
 	_tower.position = cursor.position - Vector2(0, 16)
-	_tower.modulate = COLOR_OK if _is_buildable(_tower.position) else COLOR_KO
+	# Use the placement area position (cursor position) for validation, not the tower position
+	_tower.modulate = COLOR_OK if _is_buildable(cursor.position) else COLOR_KO
 
-## Check if a position is too close to any enemy path
-func _is_position_on_path(pos: Vector2, min_distance: float = 15.0) -> bool:
-	"""Check if the given position is within min_distance of any enemy path.
+## Check if the placement area overlaps with any enemy path
+func _is_position_on_path(pos: Vector2) -> bool:
+	"""Check if the placement area at a given position would overlap with any enemy path.
+	Uses a 25x25 box (the placement area size) to check collision with paths.
 	
 	Args:
-		pos: The position to check
-		min_distance: Minimum distance to keep from paths (in pixels). Default 15px allows placement adjacent to paths.
+		pos: The world position where to check placement
 	
 	Returns:
-		true if the position is too close to a path, false otherwise
+		true if the placement area would collide with a path, false otherwise
 	"""
 	if not ILevel.current_level or not ILevel.current_level.map:
 		return false
 	
 	var paths: Array[Path2D] = ILevel.current_level.map.paths
+	var placement_half_size: float = 12.5  # Half of 25x25 placement box
 	
+	# Check distance to each path
 	for path in paths:
 		var closest_point = path.curve.get_closest_point(path.to_local(pos))
 		var distance = pos.distance_to(path.to_global(closest_point))
 		
-		if distance < min_distance:
+		# If distance is less than placement box size, it's overlapping
+		if distance < placement_half_size:
 			return true
 	
 	return false
