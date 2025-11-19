@@ -1,6 +1,5 @@
-extends Control
-
 class_name TowerUpgradeMenu
+extends Control
 
 var sell_price: int
 var upgrade_price: int
@@ -17,6 +16,7 @@ var tower: ITower
 	{SignalUtil.WHO: upgrade_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_upgrade_button_pressed},
 	{SignalUtil.WHO: sell_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_sell_button_pressed}
 ]
+
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -35,16 +35,14 @@ func _ready() -> void:
 	SignalUtil.connects(signals)
 
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
-	pass
-
 func _on_close_button_pressed():
 	queue_free()
+
 
 func _on_upgrade_button_pressed():
 	tower.start_upgrade(tower.available_upgrade[0])
 	_on_close_button_pressed()
+
 
 func _on_sell_button_pressed():
 	tower.sell_tower()
