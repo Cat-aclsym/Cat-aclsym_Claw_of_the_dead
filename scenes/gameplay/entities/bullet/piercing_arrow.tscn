@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://c70wecidmqfqo"]
 
 [ext_resource type="PackedScene" uid="uid://dqcjwachbfj5x" path="res://scenes/gameplay/entities/bullet/i_bullet.tscn" id="1_vp3tv"]
-[ext_resource type="Script" path="res://scenes/gameplay/entities/bullet/piercing_arrow.gd" id="2_bdcpf"]
+[ext_resource type="Script" uid="uid://bxvbbuq50fv4x" path="res://scenes/gameplay/entities/bullet/piercing_arrow.gd" id="2_bdcpf"]
 [ext_resource type="Texture2D" uid="uid://dgsyufigxe0jk" path="res://assets/gameplay/bullet/arrow.png" id="2_cbbwr"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_qj200"]

@@ -1,11 +1,9 @@
-[gd_scene load_steps=9 format=3 uid="uid://oc6r5kow8d7i"]
+[gd_scene load_steps=49 format=3 uid="uid://oc6r5kow8d7i"]
 
 [ext_resource type="PackedScene" uid="uid://crdosg1fmycsi" path="res://scenes/gameplay/world/map/i_map.tscn" id="1_18xh2"]
-[ext_resource type="Script" path="res://scenes/ui/popup/popup_spawner.gd" id="2_ue4yl"]
+[ext_resource type="Script" uid="uid://bpx6dilajh058" path="res://scenes/ui/popup/popup_spawner.gd" id="2_ue4yl"]
 [ext_resource type="PackedScene" uid="uid://cqe6sjyhnpfci" path="res://scenes/ui/popup/popup_wave.tscn" id="3_nqi3c"]
-[ext_resource type="PackedScene" uid="uid://ce6ydtoqy6h55" path="res://scenes/gameplay/world/wave/wave.tscn" id="4_hpdff"]
-[ext_resource type="PackedScene" uid="uid://dowhoig8uluo6" path="res://scenes/gameplay/world/enemy_group/enemy_group.tscn" id="5_tp84h"]
-[ext_resource type="Script" path="res://scripts/camera/camera.gd" id="7_1kqiw"]
+[ext_resource type="Script" uid="uid://51dxs1xx5brc" path="res://scripts/camera/camera.gd" id="7_1kqiw"]
 
 [sub_resource type="Curve2D" id="Curve2D_1ver7"]
 _data = {
@@ -18,6 +16,132 @@ _data = {
 "points": PackedVector2Array(0, 0, 0, 0, -136, 80, 0, 0, 0, 0, 200, 248, 0, 0, 0, 0, 312, 192, 0, 0, 0, 0, 216, 144, 0, 0, 0, 0, 328, 88, 0, 0, 0, 0, 744, 296)
 }
 point_count = 6
+
+[sub_resource type="Resource" id="Resource_qjj7r"]
+metadata/__load_path__ = "res://scenes/gameplay/world/wave/wave.tscn"
+
+[sub_resource type="Resource" id="Resource_h0ek7"]
+metadata/__load_path__ = "res://scenes/gameplay/world/enemy_group/enemy_group.tscn"
+
+[sub_resource type="Resource" id="Resource_d7phg"]
+metadata/__load_path__ = "res://scenes/gameplay/world/enemy_group/enemy_group.tscn"
+
+[sub_resource type="Resource" id="Resource_8qd07"]
+metadata/__load_path__ = "res://scenes/gameplay/world/wave/wave.tscn"
+
+[sub_resource type="Resource" id="Resource_55ar1"]
+metadata/__load_path__ = "res://scenes/gameplay/world/enemy_group/enemy_group.tscn"
+
+[sub_resource type="Resource" id="Resource_nd00r"]
+metadata/__load_path__ = "res://scenes/gameplay/world/wave/wave.tscn"
+
+[sub_resource type="Resource" id="Resource_jss4b"]
+metadata/__load_path__ = "res://scenes/gameplay/world/enemy_group/enemy_group.tscn"
+
+[sub_resource type="Resource" id="Resource_vh73f"]
+metadata/__load_path__ = "res://scenes/gameplay/world/enemy_group/enemy_group.tscn"
+
+[sub_resource type="Resource" id="Resource_mi61a"]
+metadata/__load_path__ = "res://scenes/gameplay/world/wave/wave.tscn"
+
+[sub_resource type="Resource" id="Resource_qxrxj"]
+metadata/__load_path__ = "res://scenes/gameplay/world/enemy_group/enemy_group.tscn"
+
+[sub_resource type="Resource" id="Resource_dvfx2"]
+metadata/__load_path__ = "res://scenes/gameplay/world/wave/wave.tscn"
+
+[sub_resource type="Resource" id="Resource_6pdmi"]
+metadata/__load_path__ = "res://scenes/gameplay/world/enemy_group/enemy_group.tscn"
+
+[sub_resource type="Resource" id="Resource_cjnwn"]
+metadata/__load_path__ = "res://scenes/gameplay/world/wave/wave.tscn"
+
+[sub_resource type="Resource" id="Resource_e5pex"]
+metadata/__load_path__ = "res://scenes/gameplay/world/enemy_group/enemy_group.tscn"
+
+[sub_resource type="Resource" id="Resource_ahwnw"]
+metadata/__load_path__ = "res://scenes/gameplay/world/enemy_group/enemy_group.tscn"
+
+[sub_resource type="Resource" id="Resource_hlie5"]
+metadata/__load_path__ = "res://scenes/gameplay/world/enemy_group/enemy_group.tscn"
+
+[sub_resource type="Resource" id="Resource_qpug2"]
+metadata/__load_path__ = "res://scenes/gameplay/world/wave/wave.tscn"
+
+[sub_resource type="Resource" id="Resource_stq8s"]
+metadata/__load_path__ = "res://scenes/gameplay/world/enemy_group/enemy_group.tscn"
+
+[sub_resource type="Resource" id="Resource_uw4bi"]
+metadata/__load_path__ = "res://scenes/gameplay/world/enemy_group/enemy_group.tscn"
+
+[sub_resource type="Resource" id="Resource_a2pfr"]
+metadata/__load_path__ = "res://scenes/gameplay/world/enemy_group/enemy_group.tscn"
+
+[sub_resource type="Resource" id="Resource_dq26o"]
+metadata/__load_path__ = "res://scenes/gameplay/world/enemy_group/enemy_group.tscn"
+
+[sub_resource type="Resource" id="Resource_hfwlm"]
+metadata/__load_path__ = "res://scenes/gameplay/world/enemy_group/enemy_group.tscn"
+
+[sub_resource type="Resource" id="Resource_2x8yh"]
+metadata/__load_path__ = "res://scenes/gameplay/world/enemy_group/enemy_group.tscn"
+
+[sub_resource type="Resource" id="Resource_0m1sp"]
+metadata/__load_path__ = "res://scenes/gameplay/world/wave/wave.tscn"
+
+[sub_resource type="Resource" id="Resource_8hsks"]
+metadata/__load_path__ = "res://scenes/gameplay/world/enemy_group/enemy_group.tscn"
+
+[sub_resource type="Resource" id="Resource_v1cyc"]
+metadata/__load_path__ = "res://scenes/gameplay/world/enemy_group/enemy_group.tscn"
+
+[sub_resource type="Resource" id="Resource_jwpbm"]
+metadata/__load_path__ = "res://scenes/gameplay/world/enemy_group/enemy_group.tscn"
+
+[sub_resource type="Resource" id="Resource_woi63"]
+metadata/__load_path__ = "res://scenes/gameplay/world/enemy_group/enemy_group.tscn"
+
+[sub_resource type="Resource" id="Resource_r05dp"]
+metadata/__load_path__ = "res://scenes/gameplay/world/wave/wave.tscn"
+
+[sub_resource type="Resource" id="Resource_ipn7a"]
+metadata/__load_path__ = "res://scenes/gameplay/world/enemy_group/enemy_group.tscn"
+
+[sub_resource type="Resource" id="Resource_lrpcd"]
+metadata/__load_path__ = "res://scenes/gameplay/world/enemy_group/enemy_group.tscn"
+
+[sub_resource type="Resource" id="Resource_koxm0"]
+metadata/__load_path__ = "res://scenes/gameplay/world/enemy_group/enemy_group.tscn"
+
+[sub_resource type="Resource" id="Resource_rbncy"]
+metadata/__load_path__ = "res://scenes/gameplay/world/enemy_group/enemy_group.tscn"
+
+[sub_resource type="Resource" id="Resource_mq0sg"]
+metadata/__load_path__ = "res://scenes/gameplay/world/enemy_group/enemy_group.tscn"
+
+[sub_resource type="Resource" id="Resource_stn1d"]
+metadata/__load_path__ = "res://scenes/gameplay/world/enemy_group/enemy_group.tscn"
+
+[sub_resource type="Resource" id="Resource_ub7xf"]
+metadata/__load_path__ = "res://scenes/gameplay/world/enemy_group/enemy_group.tscn"
+
+[sub_resource type="Resource" id="Resource_pec31"]
+metadata/__load_path__ = "res://scenes/gameplay/world/wave/wave.tscn"
+
+[sub_resource type="Resource" id="Resource_skyk7"]
+metadata/__load_path__ = "res://scenes/gameplay/world/enemy_group/enemy_group.tscn"
+
+[sub_resource type="Resource" id="Resource_hnnoq"]
+metadata/__load_path__ = "res://scenes/gameplay/world/enemy_group/enemy_group.tscn"
+
+[sub_resource type="Resource" id="Resource_7jxqk"]
+metadata/__load_path__ = "res://scenes/gameplay/world/enemy_group/enemy_group.tscn"
+
+[sub_resource type="Resource" id="Resource_8bppw"]
+metadata/__load_path__ = "res://scenes/gameplay/world/enemy_group/enemy_group.tscn"
+
+[sub_resource type="Resource" id="Resource_hdax4"]
+metadata/__load_path__ = "res://scenes/gameplay/world/enemy_group/enemy_group.tscn"
 
 [node name="IMap" instance=ExtResource("1_18xh2")]
 
@@ -51,183 +175,183 @@ editor_draw_limits = true
 editor_draw_drag_margin = true
 script = ExtResource("7_1kqiw")
 
-[node name="Wave1" parent="Waves" index="0" instance=ExtResource("4_hpdff")]
+[node name="Wave1" parent="Waves" index="0"]
 delay = 5.0
 
-[node name="EnemyGroup" parent="Waves/Wave1" index="1" instance=ExtResource("5_tp84h")]
+[node name="EnemyGroup" parent="Waves/Wave1" index="1"]
 enemies = Array[int]([1])
 in_delay = 0.3
 out_delay = 0.3
 
-[node name="EnemyGroup2" parent="Waves/Wave1" index="2" instance=ExtResource("5_tp84h")]
+[node name="EnemyGroup2" parent="Waves/Wave1" index="2"]
 enemies = Array[int]([0])
 in_delay = 1.5
 out_delay = 5.0
 
-[node name="Wave2" parent="Waves" index="1" instance=ExtResource("4_hpdff")]
+[node name="Wave2" parent="Waves" index="1"]
 delay = 5.0
 
-[node name="EnemyGroup" parent="Waves/Wave2" index="1" instance=ExtResource("5_tp84h")]
+[node name="EnemyGroup" parent="Waves/Wave2" index="1"]
 enemies = Array[int]([1, 1])
 in_delay = 5.0
 out_delay = 10.0
 
-[node name="Wave3" parent="Waves" index="2" instance=ExtResource("4_hpdff")]
+[node name="Wave3" parent="Waves" index="2"]
 delay = 5.0
 
-[node name="EnemyGroup" parent="Waves/Wave3" index="1" instance=ExtResource("5_tp84h")]
+[node name="EnemyGroup" parent="Waves/Wave3" index="1"]
 enemies = Array[int]([0, 0, 0, 0, 0])
 in_delay = 2.0
 out_delay = 4.0
 
-[node name="EnemyGroup2" parent="Waves/Wave3" index="2" instance=ExtResource("5_tp84h")]
+[node name="EnemyGroup2" parent="Waves/Wave3" index="2"]
 enemies = Array[int]([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
 in_delay = 1.25
 out_delay = 3.0
 
-[node name="Wave4" parent="Waves" index="3" instance=ExtResource("4_hpdff")]
+[node name="Wave4" parent="Waves" index="3"]
 delay = 5.0
 
-[node name="EnemyGroup" parent="Waves/Wave4" index="1" instance=ExtResource("5_tp84h")]
+[node name="EnemyGroup" parent="Waves/Wave4" index="1"]
 enemies = Array[int]([1, 1, 1, 0])
 in_delay = 5.0
 out_delay = 10.0
 
-[node name="Wave5" parent="Waves" index="4" instance=ExtResource("4_hpdff")]
+[node name="Wave5" parent="Waves" index="4"]
 delay = 5.0
 
-[node name="EnemyGroup" parent="Waves/Wave5" index="1" instance=ExtResource("5_tp84h")]
+[node name="EnemyGroup" parent="Waves/Wave5" index="1"]
 enemies = Array[int]([1, 1, 1, 0, 0, 0])
 in_delay = 3.0
 out_delay = 5.0
 
-[node name="Wave6" parent="Waves" index="5" instance=ExtResource("4_hpdff")]
+[node name="Wave6" parent="Waves" index="5"]
 delay = 5.0
 
-[node name="EnemyGroup" parent="Waves/Wave6" index="1" instance=ExtResource("5_tp84h")]
+[node name="EnemyGroup" parent="Waves/Wave6" index="1"]
 enemies = Array[int]([0, 0, 0, 0, 0, 0])
 in_delay = 0.3
 out_delay = 5.0
 
-[node name="EnemyGroup2" parent="Waves/Wave6" index="2" instance=ExtResource("5_tp84h")]
+[node name="EnemyGroup2" parent="Waves/Wave6" index="2"]
 enemies = Array[int]([0, 0, 0, 0, 0, 0])
 in_delay = 0.3
 out_delay = 4.0
 
-[node name="EnemyGroup3" parent="Waves/Wave6" index="3" instance=ExtResource("5_tp84h")]
+[node name="EnemyGroup3" parent="Waves/Wave6" index="3"]
 enemies = Array[int]([0, 0, 0, 0, 0, 0])
 in_delay = 0.3
 out_delay = 3.0
 
-[node name="Wave7" parent="Waves" index="6" instance=ExtResource("4_hpdff")]
+[node name="Wave7" parent="Waves" index="6"]
 delay = 10.0
 
-[node name="EnemyGroup" parent="Waves/Wave7" index="1" instance=ExtResource("5_tp84h")]
+[node name="EnemyGroup" parent="Waves/Wave7" index="1"]
 enemies = Array[int]([0, 0, 0, 0, 0, 0, 0, 0])
 in_delay = 0.2
 out_delay = 5.0
 
-[node name="EnemyGroup2" parent="Waves/Wave7" index="2" instance=ExtResource("5_tp84h")]
+[node name="EnemyGroup2" parent="Waves/Wave7" index="2"]
 enemies = Array[int]([0, 0, 0])
 out_delay = 6.0
 
-[node name="EnemyGroup3" parent="Waves/Wave7" index="3" instance=ExtResource("5_tp84h")]
+[node name="EnemyGroup3" parent="Waves/Wave7" index="3"]
 enemies = Array[int]([0, 0, 0, 0])
 out_delay = 5.0
 
-[node name="EnemyGroup4" parent="Waves/Wave7" index="4" instance=ExtResource("5_tp84h")]
+[node name="EnemyGroup4" parent="Waves/Wave7" index="4"]
 enemies = Array[int]([0, 0, 0, 0, 0])
 out_delay = 5.0
 
-[node name="EnemyGroup5" parent="Waves/Wave7" index="5" instance=ExtResource("5_tp84h")]
+[node name="EnemyGroup5" parent="Waves/Wave7" index="5"]
 enemies = Array[int]([0, 0, 0, 0])
 out_delay = 2.0
 
-[node name="EnemyGroup6" parent="Waves/Wave7" index="6" instance=ExtResource("5_tp84h")]
+[node name="EnemyGroup6" parent="Waves/Wave7" index="6"]
 enemies = Array[int]([0, 0, 0, 0])
 out_delay = 5.0
 
-[node name="Wave8" parent="Waves" index="7" instance=ExtResource("4_hpdff")]
+[node name="Wave8" parent="Waves" index="7"]
 delay = 10.0
 
-[node name="EnemyGroup" parent="Waves/Wave8" index="1" instance=ExtResource("5_tp84h")]
+[node name="EnemyGroup" parent="Waves/Wave8" index="1"]
 enemies = Array[int]([1, 0, 1, 0])
 in_delay = 2.0
 out_delay = 5.0
 
-[node name="EnemyGroup2" parent="Waves/Wave8" index="2" instance=ExtResource("5_tp84h")]
+[node name="EnemyGroup2" parent="Waves/Wave8" index="2"]
 enemies = Array[int]([1, 0, 1, 0])
 in_delay = 1.0
 out_delay = 8.0
 
-[node name="EnemyGroup3" parent="Waves/Wave8" index="3" instance=ExtResource("5_tp84h")]
+[node name="EnemyGroup3" parent="Waves/Wave8" index="3"]
 enemies = Array[int]([1, 0, 1, 0])
 in_delay = 2.0
 out_delay = 5.0
 
-[node name="EnemyGroup4" parent="Waves/Wave8" index="4" instance=ExtResource("5_tp84h")]
+[node name="EnemyGroup4" parent="Waves/Wave8" index="4"]
 enemies = Array[int]([1, 0, 1, 0])
 in_delay = 1.0
 out_delay = 8.0
 
-[node name="Wave9" parent="Waves" index="8" instance=ExtResource("4_hpdff")]
+[node name="Wave9" parent="Waves" index="8"]
 delay = 5.0
 
-[node name="EnemyGroup" parent="Waves/Wave9" index="1" instance=ExtResource("5_tp84h")]
+[node name="EnemyGroup" parent="Waves/Wave9" index="1"]
 enemies = Array[int]([0, 0, 0, 0, 0])
 out_delay = 4.0
 
-[node name="EnemyGroup2" parent="Waves/Wave9" index="2" instance=ExtResource("5_tp84h")]
+[node name="EnemyGroup2" parent="Waves/Wave9" index="2"]
 enemies = Array[int]([0, 0, 0])
 out_delay = 5.0
 
-[node name="EnemyGroup3" parent="Waves/Wave9" index="3" instance=ExtResource("5_tp84h")]
+[node name="EnemyGroup3" parent="Waves/Wave9" index="3"]
 enemies = Array[int]([1, 1])
 in_delay = 0.5
 out_delay = 5.0
 
-[node name="EnemyGroup4" parent="Waves/Wave9" index="4" instance=ExtResource("5_tp84h")]
+[node name="EnemyGroup4" parent="Waves/Wave9" index="4"]
 enemies = Array[int]([0, 0, 0, 0])
 out_delay = 5.0
 
-[node name="EnemyGroup5" parent="Waves/Wave9" index="5" instance=ExtResource("5_tp84h")]
+[node name="EnemyGroup5" parent="Waves/Wave9" index="5"]
 enemies = Array[int]([1, 1, 1])
 in_delay = 0.5
 out_delay = 5.0
 
-[node name="EnemyGroup6" parent="Waves/Wave9" index="6" instance=ExtResource("5_tp84h")]
+[node name="EnemyGroup6" parent="Waves/Wave9" index="6"]
 enemies = Array[int]([0, 0, 0, 0, 0])
 out_delay = 5.0
 
-[node name="EnemyGroup7" parent="Waves/Wave9" index="7" instance=ExtResource("5_tp84h")]
+[node name="EnemyGroup7" parent="Waves/Wave9" index="7"]
 enemies = Array[int]([1, 1, 1, 0])
 in_delay = 0.5
 out_delay = 5.0
 
-[node name="Wave10" parent="Waves" index="9" instance=ExtResource("4_hpdff")]
+[node name="Wave10" parent="Waves" index="9"]
 delay = 5.0
 
-[node name="EnemyGroup" parent="Waves/Wave10" index="1" instance=ExtResource("5_tp84h")]
+[node name="EnemyGroup" parent="Waves/Wave10" index="1"]
 enemies = Array[int]([1, 1, 1, 0])
 in_delay = 1.0
 out_delay = 5.0
 
-[node name="EnemyGroup2" parent="Waves/Wave10" index="2" instance=ExtResource("5_tp84h")]
+[node name="EnemyGroup2" parent="Waves/Wave10" index="2"]
 enemies = Array[int]([0, 0, 0])
 in_delay = 1.0
 out_delay = 3.0
 
-[node name="EnemyGroup3" parent="Waves/Wave10" index="3" instance=ExtResource("5_tp84h")]
+[node name="EnemyGroup3" parent="Waves/Wave10" index="3"]
 enemies = Array[int]([0, 0, 0])
 in_delay = 1.0
 out_delay = 3.0
 
-[node name="EnemyGroup4" parent="Waves/Wave10" index="4" instance=ExtResource("5_tp84h")]
+[node name="EnemyGroup4" parent="Waves/Wave10" index="4"]
 enemies = Array[int]([0])
 in_delay = 2.0
 out_delay = 10.0
 
-[node name="EnemyGroup5" parent="Waves/Wave10" index="5" instance=ExtResource("5_tp84h")]
+[node name="EnemyGroup5" parent="Waves/Wave10" index="5"]
 enemies = Array[int]([2])
 in_delay = 2.0
 out_delay = 10.0

@@ -1,6 +1,6 @@
 [gd_scene load_steps=9 format=3 uid="uid://cqfsr6yjn6hm8"]
 
-[ext_resource type="Script" path="res://scenes/ui/menus/home/home.gd" id="1_dvove"]
+[ext_resource type="Script" uid="uid://cibbgvfpeyya0" path="res://scenes/ui/menus/home/home.gd" id="1_dvove"]
 [ext_resource type="Texture2D" uid="uid://dbhkk633ispub" path="res://assets/ui/buttons/Bouton Bleu@2x.png" id="3_0g4o3"]
 [ext_resource type="Texture2D" uid="uid://bsir4xrig5yqd" path="res://assets/ui/icons/LogoChatVertFonce.png" id="3_gislx"]
 [ext_resource type="Texture2D" uid="uid://c2pj8fxbv5usu" path="res://assets/ui/icons/LogoTypoBlancTransp.png" id="4_aa1tm"]
