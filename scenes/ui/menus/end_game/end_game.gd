@@ -65,6 +65,8 @@ func init(victory: bool) -> void:
 		end_game_image.texture = ResourceLoader.load("res://assets/ui/icons/Defeat.svg")
 
 	SignalUtil.connects(signals)
+	# Persist progression when the endgame menu is shown (either victory or defeat)
+	ProgressionManager.save_game()
 
 
 # private
