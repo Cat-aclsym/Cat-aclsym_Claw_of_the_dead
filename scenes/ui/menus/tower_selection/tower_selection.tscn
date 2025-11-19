@@ -83,6 +83,6 @@ layout_mode = 2
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 root_node = NodePath("../MarginContainer")
 libraries = {
-"": SubResource("AnimationLibrary_omyie")
+&"": SubResource("AnimationLibrary_omyie")
 }
 autoplay = "show_tower_list"
