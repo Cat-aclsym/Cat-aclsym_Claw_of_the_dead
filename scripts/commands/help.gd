@@ -22,6 +22,8 @@ func _execute(console: Console, _args: Array) -> int:
 	var cmd_paths: PackedStringArray = cmd_dir.get_files()
 
 	for path in cmd_paths:
+		if not path.ends_with(".gd"):
+			continue
 		var cmd: ICommand = load("%s/%s" % [Console.COMMANDS_DIRECTORY, path]).new()
 		var message: String = " -%s" % cmd.command_token()
 
