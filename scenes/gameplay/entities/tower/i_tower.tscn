@@ -49,6 +49,7 @@ collision_mask = 0
 shape = SubResource("CircleShape2D_hnqt7")
 
 [node name="Button" type="Button" parent="."]
+self_modulate = Color(1, 1, 1, 0)
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
