@@ -17,6 +17,7 @@ var text := ""
 ## it will play.
 var character: DialogicCharacter = null
 ## If a character is set, this setting can change the portrait of that character.
+## If a runtime-character is created, the portrait can instead be a color (hex or color name).
 var portrait := ""
 
 ### Helpers
@@ -24,15 +25,15 @@ var portrait := ""
 ## Used to set the character resource from the unique name identifier and vice versa
 var character_identifier: String:
 	get:
-		if character:
-			var identifier := DialogicResourceUtil.get_unique_identifier(character.resource_path)
+		if character and not "{" in character_identifier:
+			var identifier := character.get_identifier()
 			if not identifier.is_empty():
 				return identifier
 		return character_identifier
 	set(value):
 		character_identifier = value
 		character = DialogicResourceUtil.get_character_resource(value)
-		if not character.portraits.has(portrait):
+		if Engine.is_editor_hint() and ((not character) or (character and not character.portraits.has(portrait))):
 			portrait = ""
 			ui_update_needed.emit()
 
@@ -51,44 +52,65 @@ func _clear_state() -> void:
 	dialogic.current_state_info.erase('text_sub_idx')
 	_disconnect_signals()
 
+
 func _execute() -> void:
 	if text.is_empty():
 		finish()
 		return
 
-	if (not character or character.custom_info.get('style', '').is_empty()) and dialogic.has_subsystem('Styles'):
-		# if previous characters had a custom style change back to base style
-		if dialogic.current_state_info.get('base_style') != dialogic.current_state_info.get('style'):
-			dialogic.Styles.change_style(dialogic.current_state_info.get('base_style', 'Default'))
-			await dialogic.get_tree().process_frame
+	## If the speaker is provided as an expression, parse it now.
+	if "{" in character_identifier:
+		character = null
+		var character_name: String = dialogic.Expressions.execute_string(character_identifier)
+		get_or_create_character(character_name)
 
-	var character_name_text := dialogic.Text.get_character_name_parsed(character)
-	if character:
-		if dialogic.has_subsystem('Styles') and character.custom_info.get('style', null):
-			dialogic.Styles.change_style(character.custom_info.style, false)
-			await dialogic.get_tree().process_frame
+	## Change Portrait and Active Speaker
+	if dialogic.has_subsystem("Portraits"):
+		if character:
 
+			dialogic.Portraits.change_speaker(character, portrait)
 
-		if portrait and dialogic.has_subsystem('Portraits') and dialogic.Portraits.is_character_joined(character):
-			dialogic.Portraits.change_character_portrait(character, portrait)
-		dialogic.Portraits.change_speaker(character, portrait)
-		var check_portrait: String = portrait if !portrait.is_empty() else dialogic.current_state_info['portraits'].get(character.resource_path, {}).get('portrait', '')
+			if portrait and dialogic.Portraits.is_character_joined(character):
+				dialogic.Portraits.change_character_portrait(character, portrait)
 
-		if check_portrait and character.portraits.get(check_portrait, {}).get('sound_mood', '') in character.custom_info.get('sound_moods', {}):
-			dialogic.Text.update_typing_sound_mood(character.custom_info.get('sound_moods', {}).get(character.portraits[check_portrait].get('sound_mood', {}), {}))
-		elif !character.custom_info.get('sound_mood_default', '').is_empty():
-			dialogic.Text.update_typing_sound_mood(character.custom_info.get('sound_moods', {}).get(character.custom_info.get('sound_mood_default'), {}))
 		else:
-			dialogic.Text.update_typing_sound_mood()
+			dialogic.Portraits.change_speaker(null)
 
+	## Change and Type Sound Mood
+	if character:
 		dialogic.Text.update_name_label(character)
+
+		var current_portrait: String = portrait
+		if portrait.is_empty():
+			current_portrait = dialogic.current_state_info["portraits"].get(character.get_identifier(), {}).get("portrait", "")
+
+		var current_portrait_sound_mood: String = character.portraits.get(current_portrait, {}).get("sound_mood", "")
+		dialogic.Text.update_typing_sound_mood_from_character(character, current_portrait_sound_mood)
+
 	else:
-		dialogic.Portraits.change_speaker(null)
 		dialogic.Text.update_name_label(null)
 		dialogic.Text.update_typing_sound_mood()
 
+
+	## Handle style changes
+	if dialogic.has_subsystem("Styles"):
+		var current_base_style: String = dialogic.current_state_info.get("base_style")
+		var current_style: String = dialogic.current_state_info.get("style", "")
+		var character_style: String = "" if not character else character.custom_info.get("style", "")
+
+		## Change back to base style, if another characters style is currently used
+		if (not character or character_style.is_empty()) and (current_base_style != current_style):
+			dialogic.Styles.change_style(dialogic.current_state_info.get("base_style", "Default"))
+			await dialogic.get_tree().process_frame
+
+		## Change to the characters style if this character has one
+		elif character and not character_style.is_empty():
+			dialogic.Styles.change_style(character_style, false)
+			await dialogic.get_tree().process_frame
+
 	_connect_signals()
 
+	var character_name_text := dialogic.Text.get_character_name_parsed(character)
 	var final_text: String = get_property_translated('text')
 	if ProjectSettings.get_setting('dialogic/text/split_at_new_lines', false):
 		match ProjectSettings.get_setting('dialogic/text/split_at_new_lines_as', 0):
@@ -114,10 +136,10 @@ func _execute() -> void:
 
 			dialogic.current_state_info['text_sub_idx'] = section_idx
 
-			var segment: String = dialogic.Text.parse_text(split_text[section_idx][0])
+			var segment: String = dialogic.Text.parse_text(split_text[section_idx][0], 0)
 			var is_append: bool = split_text[section_idx][1]
 
-			final_text = segment
+			final_text = ProjectSettings.get_setting("dialogic/text/dialog_text_prefix", "")+segment
 			dialogic.Text.about_to_show_text.emit({'text':final_text, 'character':character, 'portrait':portrait, 'append': is_append})
 
 			await dialogic.Text.update_textbox(final_text, false)
@@ -125,6 +147,8 @@ func _execute() -> void:
 			state = States.REVEALING
 			_try_play_current_line_voice()
 			final_text = dialogic.Text.update_dialog_text(final_text, false, is_append)
+
+			dialogic.Text.text_started.emit({'text':final_text, 'character':character, 'portrait':portrait, 'append': is_append})
 
 			_mark_as_read(character_name_text, final_text)
 
@@ -257,22 +281,23 @@ func _init() -> void:
 	event_category = "Main"
 	event_sorting_index = 0
 	expand_by_default = true
-	help_page_path = "https://docs.dialogic.pro/writing-text-events.html"
+	help_page_path = "https://docs.dialogic.pro/writing-texts.html"
 
 
 
-################################################################################
-## 						SAVING/LOADING
+#region SAVING/LOADING
 ################################################################################
 
 func to_text() -> String:
-	var result := text.replace('\n', '\\\n')
+	var result := text.replace('\n', '\\\n').strip_edges(false).trim_suffix("\\")
 	result = result.replace(':', '\\:')
 	if result.is_empty():
 		result = "<Empty Text Event>"
 
-	if character:
-		var name := DialogicResourceUtil.get_unique_identifier(character.resource_path)
+	if character or character_identifier:
+		var name := character_identifier
+		if character:
+			name = character.get_identifier()
 		if name.count(" ") > 0:
 			name = '"' + name + '"'
 		if not portrait.is_empty():
@@ -293,27 +318,45 @@ func from_text(string:String) -> void:
 	character = DialogicResourceUtil.get_character_resource(character_identifier)
 
 	var result := regex.search(string.trim_prefix('\\'))
+
+	if result.get_string('portrait'):
+		portrait = result.get_string('portrait').strip_edges().trim_prefix('(').trim_suffix(')')
+
 	if result and not result.get_string('name').is_empty():
 		var name := result.get_string('name').strip_edges()
 
 		if name == '_':
 			character = null
+		elif "{" in name:
+			## If it's an expression, we load the character in _execute.
+			character_identifier = name
+			character = null
 		else:
-			character = DialogicResourceUtil.get_character_resource(name)
+			get_or_create_character(name)
 
-			if character == null and Engine.is_editor_hint() == false:
-				character = DialogicCharacter.new()
-				character.display_name = name
-				character.resource_path = "user://"+name+".dch"
-				DialogicResourceUtil.add_resource_to_directory(character.resource_path, DialogicResourceUtil.get_character_directory())
+	if not result:
+		return
 
-	if !result.get_string('portrait').is_empty():
-		portrait = result.get_string('portrait').strip_edges().trim_prefix('(').trim_suffix(')')
+	text = result.get_string('text').replace("\\\n", "\n").replace('\\:', ':').strip_edges().trim_prefix('\\')
+	if text == '<Empty Text Event>':
+		text = ""
 
-	if result:
-		text = result.get_string('text').replace("\\\n", "\n").replace('\\:', ':').strip_edges().trim_prefix('\\')
-		if text == '<Empty Text Event>':
-			text = ""
+
+func get_or_create_character(name:String) -> void:
+	character = DialogicResourceUtil.get_character_resource(name)
+
+	if character == null:
+		if Engine.is_editor_hint() == false:
+			character = DialogicCharacter.new()
+			character.display_name = name
+			character.set_identifier(name)
+			if portrait:
+				if "{" in portrait:
+					character.color = Color(dialogic.Expressions.execute_string(portrait))
+				else:
+					character.color = Color(portrait)
+		else:
+			character_identifier = name
 
 
 func is_valid_event(_string:String) -> bool:
@@ -329,8 +372,8 @@ func is_string_full_event(string:String) -> bool:
 func get_shortcode_parameters() -> Dictionary:
 	return {
 		#param_name 	: property_info
-		"character"		: {"property": "character_identifier", "default": ""},
-		"portrait"		: {"property": "portrait", 					"default": ""},
+		"character"		: {"property": "character_identifier", "default": "", "ext_file":true},
+		"portrait"		: {"property": "portrait", 				"default": ""},
 	}
 #endregion
 
@@ -364,7 +407,7 @@ func build_event_editor() -> void:
 			{'file_extension' 	: '.dch',
 			'mode'				: 2,
 			'suggestions_func' 	: get_character_suggestions,
-			'empty_text' 		: '(No one)',
+			'placeholder' 		: '(No one)',
 			'icon' 				: load("res://addons/dialogic/Editor/Images/Resources/character.svg")}, 'do_any_characters_exist()')
 	add_header_edit('portrait', ValueType.DYNAMIC_OPTIONS,
 			{'suggestions_func' : get_portrait_suggestions,
@@ -384,8 +427,13 @@ func do_any_characters_exist() -> bool:
 
 
 func get_character_suggestions(search_text:String) -> Dictionary:
-	return DialogicUtil.get_character_suggestions(search_text, character, true, false, editor_node)
-
+	var suggestions := DialogicUtil.get_character_suggestions(search_text, character, true, false, editor_node)
+	if search_text and not search_text in suggestions:
+		suggestions[search_text] = {
+			"value":search_text,
+			"tooltip": "A temporary character, created on the spot.",
+			"editor_icon":["GuiEllipsis", "EditorIcons"]}
+	return suggestions
 
 func get_portrait_suggestions(search_text:String) -> Dictionary:
 	return DialogicUtil.get_portrait_suggestions(search_text, character, true, "Don't change")
@@ -429,7 +477,7 @@ func _get_code_completion(CodeCompletionHelper:Node, TextNode:TextEdit, line:Str
 
 
 func _get_start_code_completion(CodeCompletionHelper:Node, TextNode:TextEdit) -> void:
-	CodeCompletionHelper.suggest_characters(TextNode, CodeEdit.KIND_CLASS, true)
+	CodeCompletionHelper.suggest_characters(TextNode, CodeEdit.KIND_CLASS, self)
 
 
 func suggest_bbcode(TextNode:CodeEdit):
@@ -462,10 +510,10 @@ var text_effect_color := Color('#898276')
 func _get_syntax_highlighting(Highlighter:SyntaxHighlighter, dict:Dictionary, line:String) -> Dictionary:
 	load_text_effects()
 	if text_random_word_regex.get_pattern().is_empty():
-		text_random_word_regex.compile("(?<!\\\\)\\<[^\\[\\>]+(\\/[^\\>]*)\\>")
+		text_random_word_regex.compile(r"(?<!\\)\<[^\>]+(\/[^\>]*)\>")
 
 	var result := regex.search(line)
-	if !result:
+	if not result:
 		return dict
 	if Highlighter.mode == Highlighter.Modes.FULL_HIGHLIGHTING:
 		if result.get_string('name'):
@@ -475,24 +523,29 @@ func _get_syntax_highlighting(Highlighter:SyntaxHighlighter, dict:Dictionary, li
 			dict[result.get_start('portrait')] = {"color":Highlighter.character_portrait_color}
 			dict[result.get_end('portrait')] = {"color":Highlighter.normal_color}
 	if result.get_string('text'):
-		var effects_result := text_effects_regex.search_all(line)
-		for eff in effects_result:
-			dict[eff.get_start()] = {"color":text_effect_color}
-			dict[eff.get_end()] = {"color":Highlighter.normal_color}
-		dict = Highlighter.color_region(dict, Highlighter.variable_color, line, '{', '}', result.get_start('text'))
 
+		## Color the random selection modifier
 		for replace_mod_match in text_random_word_regex.search_all(result.get_string('text')):
 			var color: Color = Highlighter.string_color
 			color = color.lerp(Highlighter.normal_color, 0.4)
 			dict[replace_mod_match.get_start()+result.get_start('text')] = {'color':Highlighter.string_color}
 			var offset := 1
-			for b in replace_mod_match.get_string().trim_suffix('>').trim_prefix('<').split('/'):
+			for b:RegExMatch in RegEx.create_from_string(r"(\[[^\]]*\]|[^\/]|\/\/)+").search_all(replace_mod_match.get_string().trim_prefix("<").trim_suffix(">")):
 				color.h = wrap(color.h+0.2, 0, 1)
 				dict[replace_mod_match.get_start()+result.get_start('text')+offset] = {'color':color}
-				offset += len(b)
+				offset += len(b.get_string())
 				dict[replace_mod_match.get_start()+result.get_start('text')+offset] = {'color':Highlighter.string_color}
 				offset += 1
 			dict[replace_mod_match.get_end()+result.get_start('text')] = {'color':Highlighter.normal_color}
+
+		## Color bbcode and text effects
+		var effects_result := text_effects_regex.search_all(line)
+		for eff in effects_result:
+			var prev_color: Color = Highlighter.dict_get_color_at_column(dict, eff.get_start())
+			dict[eff.get_start()] = {"color":text_effect_color.lerp(prev_color, 0.4)}
+			dict[eff.get_end()] = {"color":prev_color}
+		dict = Highlighter.color_region(dict, Highlighter.variable_color, line, '{', '}', result.get_start('text'))
+
 	return dict
 
 #endregion
