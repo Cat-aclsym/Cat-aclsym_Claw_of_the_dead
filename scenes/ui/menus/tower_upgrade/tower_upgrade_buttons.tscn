@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=3 uid="uid://bl1lywmexedvo"]
 
-[ext_resource type="Script" path="res://scenes/ui/menus/tower_upgrade/tower_upgrade_menu.gd" id="1_1xpnn"]
+[ext_resource type="Script" uid="uid://ck6h8104eswk3" path="res://scenes/ui/menus/tower_upgrade/tower_upgrade_menu.gd" id="1_1xpnn"]
 [ext_resource type="Texture2D" uid="uid://dvp3hoqhdf26w" path="res://assets/ui/background/Background Tower Upgrade.svg" id="1_togqw"]
 [ext_resource type="Texture2D" uid="uid://y5tjtxraiimh" path="res://assets/ui/icons/Button Sell.svg" id="2_v84gu"]
 [ext_resource type="Texture2D" uid="uid://dt6gdmmcgr3c7" path="res://assets/ui/icons/Button Upgrade.svg" id="3_ki7m7"]

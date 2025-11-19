@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=3 uid="uid://nfkadjkkl"]
 
 [ext_resource type="PackedScene" uid="uid://dqcjwachbfj5x" path="res://scenes/gameplay/entities/bullet/i_bullet.tscn" id="1_ecq02"]
-[ext_resource type="Script" path="res://scenes/gameplay/entities/bullet/aoe_arrow.gd" id="2_okbr1"]
+[ext_resource type="Script" uid="uid://cs1dmcvhoti6a" path="res://scenes/gameplay/entities/bullet/aoe_arrow.gd" id="2_okbr1"]
 [ext_resource type="Texture2D" uid="uid://dgsyufigxe0jk" path="res://assets/gameplay/bullet/arrow.png" id="3_fsffr"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_4a8wn"]

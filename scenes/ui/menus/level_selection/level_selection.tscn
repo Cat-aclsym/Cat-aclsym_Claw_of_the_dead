@@ -1,10 +1,10 @@
 [gd_scene load_steps=11 format=3 uid="uid://dgac5kcibwtmg"]
 
-[ext_resource type="Script" path="res://scenes/ui/menus/level_selection/level_selection.gd" id="1_u6l4m"]
+[ext_resource type="Script" uid="uid://18q7ab6yj5kc" path="res://scenes/ui/menus/level_selection/level_selection.gd" id="1_u6l4m"]
 [ext_resource type="Texture2D" uid="uid://vvmnkp7tiwxm" path="res://assets/environment/backgrounds/Fond Menu 01@2x.png" id="2_gdr4h"]
 [ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="3_1rslt"]
 [ext_resource type="Texture2D" uid="uid://b1yesvpwmntau" path="res://assets/ui/buttons/Bouton orange@2x.png" id="4_uvg8w"]
-[ext_resource type="PackedScene" uid="uid://dfahd0bsnk0p4" path="res://scenes/gameplay/world/level/levels/lev.01.tscn" id="5_nkka1"]
+[ext_resource type="PackedScene" uid="uid://d1joepsngpm7n" path="res://scenes/gameplay/world/level/levels/lev.01.tscn" id="5_nkka1"]
 [ext_resource type="PackedScene" uid="uid://c5xxpj04k5gcy" path="res://scenes/gameplay/world/level/levels/lev.02.tscn" id="7_b2deu"]
 [ext_resource type="Texture2D" uid="uid://dbhkk633ispub" path="res://assets/ui/buttons/Bouton Bleu@2x.png" id="7_ludvy"]
 [ext_resource type="PackedScene" uid="uid://ft5g7ih3eyl" path="res://scenes/gameplay/world/level/levels/lev.03.tscn" id="8_dbfb0"]
