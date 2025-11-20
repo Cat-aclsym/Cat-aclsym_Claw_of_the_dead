@@ -1,6 +1,6 @@
 extends Node
 
-const SAVE_PATH: String = "user://save01.save"
+const SAVE_PATH: String = "user://progression.dat"
 
 var data := ProgressionData.new()
 
@@ -17,7 +17,7 @@ func save_game() -> void:
 	# Save Parameters
 	var params_data = data.parameters.save()
 	params_data["type"] = "parameters"
-	file.store_line(JSON.stringify(params_data))
+	file.store_var(params_data)
 
 	# Save Levels
 	for id in data.levels:
@@ -25,7 +25,7 @@ func save_game() -> void:
 		var level_data = level_obj.save()
 		level_data["type"] = "level"
 		level_data["id"] = id
-		file.store_line(JSON.stringify(level_data))
+		file.store_var(level_data)
 
 	# Save Towers
 	for id in data.towers:
@@ -33,7 +33,7 @@ func save_game() -> void:
 		var tower_data = tower_obj.save()
 		tower_data["type"] = "tower"
 		tower_data["id"] = id
-		file.store_line(JSON.stringify(tower_data))
+		file.store_var(tower_data)
 
 	file.close()
 	Log.trace(Log.Level.DEBUG, "Game saved to %s (absolute: %s)" % [SAVE_PATH, file.get_path_absolute()])
@@ -53,14 +53,11 @@ func load_game() -> void:
 		return
 
 	while file.get_position() < file.get_length():
-		var json_string = file.get_line()
-		var json = JSON.new()
-		var parse_result = json.parse(json_string)
-		if not parse_result == OK:
-			Log.trace(Log.Level.WARN, "JSON Parse Error: %s in %s at line %s" % [json.get_error_message(), json_string, str(json.get_error_line())])
+		var node_data = file.get_var()
+
+		if typeof(node_data) != TYPE_DICTIONARY:
 			continue
 
-		var node_data = json.data
 		if not node_data.has("type"):
 			continue
 
