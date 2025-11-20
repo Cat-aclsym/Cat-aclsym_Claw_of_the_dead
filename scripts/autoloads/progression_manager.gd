@@ -1,12 +1,18 @@
+## © [2025] A7 Studio. All rights reserved. Trademark.
+
 extends Node
 
+# Constants
 const SAVE_PATH: String = "user://progression.dat"
 
+# Public variables
 var data := ProgressionData.new()
 
+# Built-in functions
 func _ready() -> void:
 	load_game()
 
+# Public functions
 ## Saves the current progression to disk.
 func save_game() -> void:
 	var file := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
@@ -88,28 +94,16 @@ func reset_progression() -> void:
 	save_game()
 	Log.trace(Log.Level.DEBUG, "Progression reset to default.")
 
-func _init_default_data() -> void:
-	data = ProgressionData.new()
+## Marks a level as completed and unlocks the next one.
+func complete_level(level_id: String) -> void:
+	# Unlock the next level
+	var next_level_id := _get_next_level_id(level_id)
+	if not next_level_id.is_empty():
+		if not data.levels.has(next_level_id):
+			data.levels[next_level_id] = LevelData.new()
+		data.levels[next_level_id].unlocked = true
+		Log.trace(Log.Level.DEBUG, "Unlocked next level: " + next_level_id)
 
-	# Default values
-	# Unlock Level 1
-	if not data.levels.has("lev.01"):
-		data.levels["lev.01"] = LevelData.new()
-	data.levels["lev.01"].unlocked = true
-
-	# Unlock all towers by default
-	for tower_type in ITower.TowerType.values():
-		var tid = str(tower_type)
-		if not data.towers.has(tid):
-			data.towers[tid] = TowerData.new()
-		data.towers[tid].unlocked = true
-
-## Unlocks a level by ID.
-func unlock_level(level_id: String) -> void:
-	if not data.levels.has(level_id):
-		data.levels[level_id] = LevelData.new()
-
-	data.levels[level_id].unlocked = true
 	save_game()
 
 ## Marks a challenge as completed for a level.
@@ -146,3 +140,30 @@ func apply_settings() -> void:
 	var sound_vol: float = 0.0 if data.parameters.sound_volume else -80.0
 	SoundManager.change_volume("music", music_vol)
 	SoundManager.change_volume("sfx", sound_vol)
+
+# Private functions
+func _init_default_data() -> void:
+	data = ProgressionData.new()
+
+	# Default values
+	# Unlock Level 1
+	if not data.levels.has("lev.01"):
+		data.levels["lev.01"] = LevelData.new()
+	data.levels["lev.01"].unlocked = true
+
+	# Unlock all towers by default
+	for tower_type in ITower.TowerType.values():
+		var tid = str(tower_type)
+		if not data.towers.has(tid):
+			data.towers[tid] = TowerData.new()
+		data.towers[tid].unlocked = true
+
+func _get_next_level_id(current_id: String) -> String:
+	var regex = RegEx.new()
+	regex.compile("lev\\.(\\d+)")
+	var result = regex.search(current_id)
+	if result:
+		var num = int(result.get_string(1))
+		var next_num = num + 1
+		return "lev.%02d" % next_num
+	return ""

@@ -1,4 +1,4 @@
-## © [2024] A7 Studio. All rights reserved. Trademark.
+## © [2025] A7 Studio. All rights reserved. Trademark.
 ##
 ## Manages game progression via console.
 extends ICommand
@@ -34,7 +34,10 @@ func _execute(console: Console, args: Array) -> int:
 				console.push_error("Usage: progression unlock <level_id>")
 				return OK
 			var level_id = args[1]
-			ProgressionManager.unlock_level(level_id)
+			if not ProgressionManager.data.levels.has(level_id):
+				ProgressionManager.data.levels[level_id] = LevelData.new()
+			ProgressionManager.data.levels[level_id].unlocked = true
+			ProgressionManager.save_game()
 			console.push_text("Unlocked level: " + level_id)
 
 		"challenge":

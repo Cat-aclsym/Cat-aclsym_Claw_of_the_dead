@@ -60,13 +60,13 @@ func init(victory: bool) -> void:
 	if victory:
 		title_label.text = tr("ENDGAMEMENU.LEVEL.TITLE.WIN")
 		end_game_image.texture = ResourceLoader.load("res://assets/ui/icons/Victory Gold.svg")
+		ProgressionManager.complete_level(ILevel.current_level.level_id)
+		ProgressionManager.save_game()
 	else:
 		title_label.text = tr("ENDGAMEMENU.LEVEL.TITLE.LOOSE")
 		end_game_image.texture = ResourceLoader.load("res://assets/ui/icons/Defeat.svg")
 
 	SignalUtil.connects(signals)
-	# Persist progression when the endgame menu is shown (either victory or defeat)
-	ProgressionManager.save_game()
 
 
 # private
