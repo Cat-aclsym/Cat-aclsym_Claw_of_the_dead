@@ -97,7 +97,7 @@ func reset_progression() -> void:
 ## Marks a level as completed and unlocks the next one.
 func complete_level(level_id: String) -> void:
 	# Unlock the next level
-	var next_level_id := _get_next_level_id(level_id)
+	var next_level_id := get_next_level_id(level_id)
 	if not next_level_id.is_empty():
 		if not data.levels.has(next_level_id):
 			data.levels[next_level_id] = LevelData.new()
@@ -141,6 +141,16 @@ func apply_settings() -> void:
 	SoundManager.change_volume("music", music_vol)
 	SoundManager.change_volume("sfx", sound_vol)
 
+func get_next_level_id(current_id: String) -> String:
+	var regex = RegEx.new()
+	regex.compile("lev\\.(\\d+)")
+	var result = regex.search(current_id)
+	if result:
+		var num = int(result.get_string(1))
+		var next_num = num + 1
+		return "lev.%02d" % next_num
+	return ""
+
 # Private functions
 func _init_default_data() -> void:
 	data = ProgressionData.new()
@@ -157,13 +167,3 @@ func _init_default_data() -> void:
 		if not data.towers.has(tid):
 			data.towers[tid] = TowerData.new()
 		data.towers[tid].unlocked = true
-
-func _get_next_level_id(current_id: String) -> String:
-	var regex = RegEx.new()
-	regex.compile("lev\\.(\\d+)")
-	var result = regex.search(current_id)
-	if result:
-		var num = int(result.get_string(1))
-		var next_num = num + 1
-		return "lev.%02d" % next_num
-	return ""
