@@ -45,6 +45,8 @@ func load_game() -> void:
 	if not FileAccess.file_exists(SAVE_PATH):
 		Log.trace(Log.Level.DEBUG, "No save file found. Using defaults.")
 		save_game() # Save the defaults
+		# Apply default settings immediately so UI shows the correct state on first launch.
+		apply_settings()
 		return
 
 	var file := FileAccess.open(SAVE_PATH, FileAccess.READ)
