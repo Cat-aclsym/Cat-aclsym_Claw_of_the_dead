@@ -35,6 +35,7 @@ func load_game() -> void:
 		if error == OK:
 			data.from_dictionary(json.data)
 			Log.trace(Log.Level.DEBUG, "Game loaded from %s (absolute: %s)" % [SAVE_PATH, file.get_path_absolute()])
+			apply_settings()
 		else:
 			Log.trace(Log.Level.ERROR, "JSON Parse Error: %s in %s at line %s" % [json.get_error_message(), json_string, str(json.get_error_line())])
 			reset_progression()
@@ -54,6 +55,7 @@ func reset_progression() -> void:
 	for tower_type in ITower.TowerType.values():
 		unlock_tower(str(tower_type))
 
+	apply_settings()
 	save_game()
 	Log.trace(Log.Level.DEBUG, "Progression reset to default.")
 
@@ -88,3 +90,14 @@ func is_level_unlocked(level_id: String) -> bool:
 	if data.levels.has(level_id):
 		return data.levels[level_id].unlocked
 	return false
+
+## Applies the current settings to the game.
+func apply_settings() -> void:
+	# Set language
+	TranslationServer.set_locale(data.parameters.language)
+
+	# Set audio volumes
+	var music_vol: float = 0.0 if data.parameters.music_volume else -80.0
+	var sound_vol: float = 0.0 if data.parameters.sound_volume else -80.0
+	SoundManager.change_volume("music", music_vol)
+	SoundManager.change_volume("sfx", sound_vol)
