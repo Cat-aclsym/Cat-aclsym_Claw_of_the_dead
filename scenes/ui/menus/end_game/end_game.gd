@@ -65,6 +65,7 @@ func init(victory: bool) -> void:
 	else:
 		title_label.text = tr("ENDGAMEMENU.LEVEL.TITLE.LOOSE")
 		end_game_image.texture = ResourceLoader.load("res://assets/ui/icons/Defeat.svg")
+		next_button.get_parent().visible = false
 
 	SignalUtil.connects(signals)
 
