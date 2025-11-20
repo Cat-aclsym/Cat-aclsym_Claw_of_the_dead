@@ -1,6 +1,6 @@
 extends Node
 
-const SAVE_PATH: String = "user://progression.json"
+const SAVE_PATH: String = "user://save01.save"
 
 var data := ProgressionData.new()
 
@@ -10,54 +10,100 @@ func _ready() -> void:
 ## Saves the current progression to disk.
 func save_game() -> void:
 	var file := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
-	if file:
-		var json_string := JSON.stringify(data.to_dictionary(), "\t")
-		file.store_string(json_string)
-		file.close()
-		Log.trace(Log.Level.DEBUG, "Game saved to %s (absolute: %s)" % [SAVE_PATH, file.get_path_absolute()])
-	else:
-		Log.trace(Log.Level.ERROR, "Failed to save game to %s (absolute: %s)" % [SAVE_PATH, file.get_path_absolute()])
+	if not file:
+		Log.trace(Log.Level.ERROR, "Failed to save game to %s" % SAVE_PATH)
+		return
+
+	# Save Parameters
+	var params_data = data.parameters.save()
+	params_data["type"] = "parameters"
+	file.store_line(JSON.stringify(params_data))
+
+	# Save Levels
+	for id in data.levels:
+		var level_obj = data.levels[id]
+		var level_data = level_obj.save()
+		level_data["type"] = "level"
+		level_data["id"] = id
+		file.store_line(JSON.stringify(level_data))
+
+	# Save Towers
+	for id in data.towers:
+		var tower_obj = data.towers[id]
+		var tower_data = tower_obj.save()
+		tower_data["type"] = "tower"
+		tower_data["id"] = id
+		file.store_line(JSON.stringify(tower_data))
+
+	file.close()
+	Log.trace(Log.Level.DEBUG, "Game saved to %s (absolute: %s)" % [SAVE_PATH, file.get_path_absolute()])
 
 ## Loads the progression from disk.
 func load_game() -> void:
+	_init_default_data()
+
 	if not FileAccess.file_exists(SAVE_PATH):
-		Log.trace(Log.Level.DEBUG, "No save file found. Creating new progression.")
-		reset_progression()
+		Log.trace(Log.Level.DEBUG, "No save file found. Using defaults.")
+		save_game() # Save the defaults
 		return
 
 	var file := FileAccess.open(SAVE_PATH, FileAccess.READ)
-	if file:
-		var json_string = file.get_as_text()
-		file.close()
-
-		var json := JSON.new()
-		var error := json.parse(json_string)
-		if error == OK:
-			data.from_dictionary(json.data)
-			Log.trace(Log.Level.DEBUG, "Game loaded from %s (absolute: %s)" % [SAVE_PATH, file.get_path_absolute()])
-			apply_settings()
-		else:
-			Log.trace(Log.Level.ERROR, "JSON Parse Error: %s in %s at line %s" % [json.get_error_message(), json_string, str(json.get_error_line())])
-			reset_progression()
-	else:
+	if not file:
 		Log.trace(Log.Level.ERROR, "Failed to open save file " + SAVE_PATH)
-		reset_progression()
+		return
+
+	while file.get_position() < file.get_length():
+		var json_string = file.get_line()
+		var json = JSON.new()
+		var parse_result = json.parse(json_string)
+		if not parse_result == OK:
+			Log.trace(Log.Level.WARN, "JSON Parse Error: %s in %s at line %s" % [json.get_error_message(), json_string, str(json.get_error_line())])
+			continue
+
+		var node_data = json.data
+		if not node_data.has("type"):
+			continue
+
+		match node_data["type"]:
+			"parameters":
+				data.parameters.from_dictionary(node_data)
+			"level":
+				var id = node_data["id"]
+				if not data.levels.has(id):
+					data.levels[id] = LevelData.new()
+				data.levels[id].from_dictionary(node_data)
+			"tower":
+				var id = node_data["id"]
+				if not data.towers.has(id):
+					data.towers[id] = TowerData.new()
+				data.towers[id].from_dictionary(node_data)
+
+	file.close()
+	apply_settings()
+	Log.trace(Log.Level.DEBUG, "Game loaded from %s (absolute: %s)" % [SAVE_PATH, file.get_path_absolute()])
 
 ## Resets progression to default state.
 func reset_progression() -> void:
+	_init_default_data()
+	apply_settings()
+	save_game()
+	Log.trace(Log.Level.DEBUG, "Progression reset to default.")
+
+func _init_default_data() -> void:
 	data = ProgressionData.new()
 
 	# Default values
 	# Unlock Level 1
-	unlock_level("lev.01")
+	if not data.levels.has("lev.01"):
+		data.levels["lev.01"] = LevelData.new()
+	data.levels["lev.01"].unlocked = true
 
 	# Unlock all towers by default
 	for tower_type in ITower.TowerType.values():
-		unlock_tower(str(tower_type))
-
-	apply_settings()
-	save_game()
-	Log.trace(Log.Level.DEBUG, "Progression reset to default.")
+		var tid = str(tower_type)
+		if not data.towers.has(tid):
+			data.towers[tid] = TowerData.new()
+		data.towers[tid].unlocked = true
 
 ## Unlocks a level by ID.
 func unlock_level(level_id: String) -> void:

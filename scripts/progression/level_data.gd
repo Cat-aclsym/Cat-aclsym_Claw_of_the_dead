@@ -9,7 +9,7 @@ var unlocked: bool = false
 var challenges_completed: Array[String] = []
 
 ## Converts the object to a dictionary for serialization.
-func to_dictionary() -> Dictionary:
+func save() -> Dictionary:
 	return {
 		"unlocked": unlocked,
 		"challenges_completed": challenges_completed

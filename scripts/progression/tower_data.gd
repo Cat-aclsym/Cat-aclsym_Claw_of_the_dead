@@ -6,7 +6,7 @@ extends RefCounted
 var unlocked: bool = false
 
 ## Converts the object to a dictionary for serialization.
-func to_dictionary() -> Dictionary:
+func save() -> Dictionary:
 	return {
 		"unlocked": unlocked
 	}

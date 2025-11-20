@@ -12,7 +12,7 @@ var music_volume: bool = true
 var language: String = "en"
 
 ## Converts the object to a dictionary for serialization.
-func to_dictionary() -> Dictionary:
+func save() -> Dictionary:
 	return {
 		"sound_volume": sound_volume,
 		"music_volume": music_volume,
