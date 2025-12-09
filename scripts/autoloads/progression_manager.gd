@@ -136,11 +136,14 @@ func apply_settings() -> void:
 	TranslationServer.set_locale(data.parameters.language)
 
 	# Set audio volumes
-	var music_vol: float = 0.0 if data.parameters.music_volume else -80.0
-	var sound_vol: float = 0.0 if data.parameters.sound_volume else -80.0
+	var music_vol: float = 0.0 if data.parameters.music_enabled else -80.0
+	var sound_vol: float = 0.0 if data.parameters.sound_enabled else -80.0
 	SoundManager.change_volume("music", music_vol)
 	SoundManager.change_volume("sfx", sound_vol)
 
+
+## Returns the ID of the next level based on the given current level ID.
+## If the current ID does not match the expected format (e.g., "lev.01"), returns an empty string.
 func get_next_level_id(current_id: String) -> String:
 	var regex := RegEx.new()
 	regex.compile("lev\\.(\\d+)")

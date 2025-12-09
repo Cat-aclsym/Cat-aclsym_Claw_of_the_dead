@@ -3,10 +3,10 @@ extends RefCounted
 ## Data class representing the game settings/parameters.
 
 ## Whether sound effects are enabled.
-var sound_volume: bool = true
+var sound_enabled: bool = true
 
 ## Whether music is enabled.
-var music_volume: bool = true
+var music_enabled: bool = true
 
 ## The selected language code (e.g., "en", "fr").
 var language: String = "fr"
@@ -14,13 +14,13 @@ var language: String = "fr"
 ## Converts the object to a dictionary for serialization.
 func save() -> Dictionary:
 	return {
-		"sound_volume": sound_volume,
-		"music_volume": music_volume,
+		"sound_enabled": sound_enabled,
+		"music_enabled": music_enabled,
 		"language": language
 	}
 
 ## Populates the object from a dictionary.
 func from_dictionary(data: Dictionary) -> void:
-	sound_volume = data.get("sound_volume", true)
-	music_volume = data.get("music_volume", true)
+	sound_enabled = data.get("sound_enabled", true)
+	music_enabled = data.get("music_enabled", true)
 	language = data.get("language", "fr")

@@ -57,8 +57,8 @@ func _on_music_texture_button_pressed() -> void:
 	music_toggle_button.set_texture_normal(music_toggle_button.get_texture_pressed())
 	music_toggle_button.set_texture_pressed(_actual_texture)
 	# Update progression parameter and persist it
-	var current_music: bool = ProgressionManager.data.parameters.music_volume
-	ProgressionManager.data.parameters.music_volume = not current_music
+	var current_music: bool = ProgressionManager.data.parameters.music_enabled
+	ProgressionManager.data.parameters.music_enabled = not current_music
 	ProgressionManager.save_game()
 	ProgressionManager.apply_settings()
 
@@ -68,8 +68,8 @@ func _on_sound_texture_button_pressed() -> void:
 	sound_toggle_button.set_texture_normal(sound_toggle_button.get_texture_pressed())
 	sound_toggle_button.set_texture_pressed(_actual_texture)
 	# Update progression parameter and persist it
-	var current_sound: bool = ProgressionManager.data.parameters.sound_volume
-	ProgressionManager.data.parameters.sound_volume = not current_sound
+	var current_sound: bool = ProgressionManager.data.parameters.sound_enabled
+	ProgressionManager.data.parameters.sound_enabled = not current_sound
 	ProgressionManager.save_game()
 	ProgressionManager.apply_settings()
 
@@ -79,7 +79,6 @@ func _on_language_texture_button_pressed() -> void:
 	# Toggle to the other language and persist the choice.
 	var current_locale := ProgressionManager.data.parameters.language if ProgressionManager.data.parameters.language != "" else TranslationServer.get_locale()
 	var new_locale := "fr" if current_locale == "en" else "en"
-	TranslationServer.set_locale(new_locale)
 
 	ProgressionManager.data.parameters.language = new_locale
 	ProgressionManager.save_game()
@@ -114,16 +113,16 @@ func _on_contact_texture_button_pressed() -> void:
 
 ## Updates the button textures to reflect the current settings.
 func _update_button_states() -> void:
-	# For music button: if music_volume is true, normal should be "on" texture
+	# For music button: if music_enabled is true, normal should be "on" texture
 	# Assuming normal is on, pressed is off
-	if not ProgressionManager.data.parameters.music_volume:
+	if not ProgressionManager.data.parameters.music_enabled:
 		# Swap to show off
 		var temp: Texture2D = music_toggle_button.get_texture_normal()
 		music_toggle_button.set_texture_normal(music_toggle_button.get_texture_pressed())
 		music_toggle_button.set_texture_pressed(temp)
 
 	# Same for sound
-	if not ProgressionManager.data.parameters.sound_volume:
+	if not ProgressionManager.data.parameters.sound_enabled:
 		var temp: Texture2D = sound_toggle_button.get_texture_normal()
 		sound_toggle_button.set_texture_normal(sound_toggle_button.get_texture_pressed())
 		sound_toggle_button.set_texture_pressed(temp)
