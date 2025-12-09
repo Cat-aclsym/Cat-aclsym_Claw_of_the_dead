@@ -118,13 +118,13 @@ func _update_button_states() -> void:
 	# Assuming normal is on, pressed is off
 	if not ProgressionManager.data.parameters.music_volume:
 		# Swap to show off
-		var temp = music_toggle_button.get_texture_normal()
+		var temp: Texture2D = music_toggle_button.get_texture_normal()
 		music_toggle_button.set_texture_normal(music_toggle_button.get_texture_pressed())
 		music_toggle_button.set_texture_pressed(temp)
 
 	# Same for sound
 	if not ProgressionManager.data.parameters.sound_volume:
-		var temp = sound_toggle_button.get_texture_normal()
+		var temp: Texture2D = sound_toggle_button.get_texture_normal()
 		sound_toggle_button.set_texture_normal(sound_toggle_button.get_texture_pressed())
 		sound_toggle_button.set_texture_pressed(temp)
 

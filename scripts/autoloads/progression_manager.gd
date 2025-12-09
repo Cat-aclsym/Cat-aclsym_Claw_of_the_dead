@@ -21,22 +21,22 @@ func save_game() -> void:
 		return
 
 	# Save Parameters
-	var params_data = data.parameters.save()
+	var params_data: Dictionary = data.parameters.save()
 	params_data["type"] = "parameters"
 	file.store_var(params_data)
 
 	# Save Levels
 	for id in data.levels:
-		var level_obj = data.levels[id]
-		var level_data = level_obj.save()
+		var level_obj: LevelData = data.levels[id]
+		var level_data: Dictionary = level_obj.save()
 		level_data["type"] = "level"
 		level_data["id"] = id
 		file.store_var(level_data)
 
 	# Save Towers
 	for id in data.towers:
-		var tower_obj = data.towers[id]
-		var tower_data = tower_obj.save()
+		var tower_obj: TowerData = data.towers[id]
+		var tower_data: Dictionary = tower_obj.save()
 		tower_data["type"] = "tower"
 		tower_data["id"] = id
 		file.store_var(tower_data)
@@ -61,7 +61,7 @@ func load_game() -> void:
 		return
 
 	while file.get_position() < file.get_length():
-		var node_data = file.get_var()
+		var node_data: Variant = file.get_var()
 
 		if typeof(node_data) != TYPE_DICTIONARY:
 			continue
@@ -73,12 +73,12 @@ func load_game() -> void:
 			"parameters":
 				data.parameters.from_dictionary(node_data)
 			"level":
-				var id = node_data["id"]
+				var id: String = node_data["id"]
 				if not data.levels.has(id):
 					data.levels[id] = LevelData.new()
 				data.levels[id].from_dictionary(node_data)
 			"tower":
-				var id = node_data["id"]
+				var id: String = node_data["id"]
 				if not data.towers.has(id):
 					data.towers[id] = TowerData.new()
 				data.towers[id].from_dictionary(node_data)
@@ -142,12 +142,12 @@ func apply_settings() -> void:
 	SoundManager.change_volume("sfx", sound_vol)
 
 func get_next_level_id(current_id: String) -> String:
-	var regex = RegEx.new()
+	var regex := RegEx.new()
 	regex.compile("lev\\.(\\d+)")
-	var result = regex.search(current_id)
+	var result: RegExMatch = regex.search(current_id)
 	if result:
-		var num = int(result.get_string(1))
-		var next_num = num + 1
+		var num := int(result.get_string(1))
+		var next_num := num + 1
 		return "lev.%02d" % next_num
 	return ""
 
@@ -163,7 +163,7 @@ func _init_default_data() -> void:
 
 	# Unlock all towers by default
 	for tower_type in ITower.TowerType.values():
-		var tid = str(tower_type)
+		var tid := str(tower_type)
 		if not data.towers.has(tid):
 			data.towers[tid] = TowerData.new()
 		data.towers[tid].unlocked = true

@@ -22,7 +22,7 @@ func _execute(console: Console, args: Array) -> int:
 		console.push_error("Missing subcommand. Usage: progression [reset|unlock|challenge]")
 		return OK
 
-	var subcommand = args[0]
+	var subcommand: String = args[0]
 
 	match subcommand:
 		"reset":
@@ -33,7 +33,7 @@ func _execute(console: Console, args: Array) -> int:
 			if args.size() < 2:
 				console.push_error("Usage: progression unlock <level_id>")
 				return OK
-			var level_id = args[1]
+			var level_id: String = args[1]
 			if not ProgressionManager.data.levels.has(level_id):
 				ProgressionManager.data.levels[level_id] = LevelData.new()
 			ProgressionManager.data.levels[level_id].unlocked = true
@@ -44,8 +44,8 @@ func _execute(console: Console, args: Array) -> int:
 			if args.size() < 3:
 				console.push_error("Usage: progression challenge <level_id> <challenge_id>")
 				return OK
-			var level_id = args[1]
-			var challenge_id = args[2]
+			var level_id: String = args[1]
+			var challenge_id: String = args[2]
 			ProgressionManager.complete_challenge(level_id, challenge_id)
 			console.push_text("Completed challenge " + challenge_id + " for level " + level_id)
 

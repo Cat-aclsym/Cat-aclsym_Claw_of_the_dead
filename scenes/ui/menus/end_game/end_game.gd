@@ -92,8 +92,8 @@ func _on_restart_texture_button_pressed() -> void:
 ## Returns to the main menu and cleans up the current level.
 func _on_next_texture_button_pressed() -> void:
 	var current_level := ILevel.current_level
-	var next_level_id = ProgressionManager.get_next_level_id(current_level.level_id)
-	var next_level_path = "res://scenes/gameplay/world/level/levels/%s.tscn" % next_level_id
+	var next_level_id := ProgressionManager.get_next_level_id(current_level.level_id)
+	var next_level_path := "res://scenes/gameplay/world/level/levels/%s.tscn" % next_level_id
 
 	if not ResourceLoader.exists(next_level_path):
 		Log.trace(Log.Level.ERROR, "Next level scene not found: " + next_level_path)
