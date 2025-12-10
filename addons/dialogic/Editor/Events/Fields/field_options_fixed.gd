@@ -3,11 +3,7 @@ extends DialogicVisualEditorField
 
 ## Event block field for constant options. For varying options use ComplexPicker.
 
-var options: Array = []:
-	set(o):
-		options = o
-		if current_value != -1:
-			set_value(current_value)
+var options: Array = []
 
 ## if true, only the symbol will be displayed. In the dropdown text will be visible.
 ## Useful for making UI simpler
@@ -25,7 +21,6 @@ func _ready() -> void:
 	call("get_popup").index_pressed.connect(index_pressed)
 
 
-
 func _load_display_info(info:Dictionary) -> void:
 	options = info.get('options', [])
 	self.disabled = info.get('disabled', false)
@@ -40,7 +35,7 @@ func _set_value(value:Variant) -> void:
 			if !symbol_only:
 				self.text = option['label']
 			self.icon = option.get('icon', null)
-	current_value = value
+			current_value = value
 
 
 func get_value() -> Variant:

@@ -7,8 +7,7 @@ extends DialogicEvent
 enum ConditionTypes {IF, ELIF, ELSE}
 
 ### Settings
-
-## Condition type (see [ConditionTypes]). Defaults to if.
+## condition type (see [ConditionTypes]). Defaults to if.
 var condition_type := ConditionTypes.IF
 ## The condition as a string. Will be executed as an Expression.
 var condition := ""
@@ -27,12 +26,24 @@ func _execute() -> void:
 
 	var result: bool = dialogic.Expressions.execute_condition(condition)
 	if not result:
-		dialogic.current_event_idx = get_end_branch_index()
+		var idx: int = dialogic.current_event_idx
+		var ignore := 1
+		while true:
+			idx += 1
+			if not dialogic.current_timeline.get_event(idx) or ignore == 0:
+				break
+			elif dialogic.current_timeline.get_event(idx).can_contain_events:
+				ignore += 1
+			elif dialogic.current_timeline.get_event(idx) is DialogicEndBranchEvent:
+				ignore -= 1
 
+		dialogic.current_event_idx = idx-1
 	finish()
 
 
-func _is_branch_starter() -> bool:
+## only called if the previous event was an end-branch event
+## return true if this event should be executed if the previous event was an end-branch event
+func should_execute_this_branch() -> bool:
 	return condition_type == ConditionTypes.IF
 
 
@@ -49,7 +60,7 @@ func _init() -> void:
 
 
 # return a control node that should show on the END BRANCH node
-func _get_end_branch_control() -> Control:
+func get_end_branch_control() -> Control:
 	return load(get_script().resource_path.get_base_dir().path_join('ui_condition_end.tscn')).instantiate()
 
 ################################################################################

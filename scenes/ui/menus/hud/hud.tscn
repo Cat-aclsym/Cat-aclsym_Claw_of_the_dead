@@ -1,6 +1,6 @@
 [gd_scene load_steps=13 format=3 uid="uid://b5630xr4v607r"]
 
-[ext_resource type="Script" uid="uid://cc06prch72skr" path="res://scenes/ui/menus/hud/hud.gd" id="1_cuep3"]
+[ext_resource type="Script" path="res://scenes/ui/menus/hud/hud.gd" id="1_cuep3"]
 [ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="2_jel3x"]
 [ext_resource type="Texture2D" uid="uid://fioj6q2hn4ii" path="res://assets/ui/icons/Button Pause.svg" id="2_meysh"]
 [ext_resource type="Texture2D" uid="uid://cml3pcp3ixa0k" path="res://assets/ui/huds/Coeur.png" id="2_neukb"]
@@ -9,7 +9,7 @@
 [ext_resource type="Texture2D" uid="uid://cf3qgahrw8xo1" path="res://assets/ui/huds/Vie@2x.png" id="5_hukgj"]
 [ext_resource type="Texture2D" uid="uid://dg0hpeoeleiff" path="res://assets/ui/huds/Coins@2x.png" id="7_1sk4j"]
 [ext_resource type="Texture2D" uid="uid://bcga3gamtf11v" path="res://assets/ui/huds/Waves@2x.png" id="8_ewojn"]
-[ext_resource type="Script" uid="uid://b5mbfrr7vwpj7" path="res://scenes/ui/menus/hud/new_wave_count.gd" id="9_o6rym"]
+[ext_resource type="Script" path="res://scenes/ui/menus/hud/new_wave_count.gd" id="9_o6rym"]
 [ext_resource type="Texture2D" uid="uid://do48sldu5a83i" path="res://assets/ui/icons/Button Build.svg" id="10_sc2vu"]
 [ext_resource type="Texture2D" uid="uid://c2uqlay1r2d1d" path="res://assets/ui/icons/Button Cancel.svg" id="12_5jyti"]
 

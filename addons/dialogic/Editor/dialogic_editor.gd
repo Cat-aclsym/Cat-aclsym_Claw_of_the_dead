@@ -8,7 +8,6 @@ extends Control
 signal resource_saved()
 signal resource_unsaved()
 
-@warning_ignore("unused_signal")# This is emitted from the Editors Manager
 signal opened
 
 var current_resource: Resource

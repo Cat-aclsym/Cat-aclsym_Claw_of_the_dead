@@ -82,8 +82,7 @@ func _on_dialogic_text_event(info:Dictionary):
 
 	bubble_to_use.current_character = info.character
 	bubble_to_use.node_to_point_at = node_to_point_at
-	if not bubble_to_use.visible:
-		bubble_to_use.reset()
+	bubble_to_use.reset()
 	if has_node('TextBubbleLayer'):
 		get_node("TextBubbleLayer").bubble_apply_overrides(bubble_to_use)
 	bubble_to_use.open()

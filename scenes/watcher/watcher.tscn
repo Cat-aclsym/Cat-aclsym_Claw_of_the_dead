@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://2qg5t1x8h72s"]
 
-[ext_resource type="Script" uid="uid://s5ymor4txuxp" path="res://scenes/watcher/watcher.gd" id="1_y5ft3"]
+[ext_resource type="Script" path="res://scenes/watcher/watcher.gd" id="1_y5ft3"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fhcge"]
 content_margin_left = 8.0

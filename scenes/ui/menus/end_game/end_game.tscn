@@ -1,6 +1,6 @@
 [gd_scene load_steps=10 format=3 uid="uid://bj68p6c4lre5p"]
 
-[ext_resource type="Script" uid="uid://c11t4xafdj5o1" path="res://scenes/ui/menus/end_game/end_game.gd" id="1_6bb00"]
+[ext_resource type="Script" path="res://scenes/ui/menus/end_game/end_game.gd" id="1_6bb00"]
 [ext_resource type="Texture2D" uid="uid://c8b8irfugbxdj" path="res://assets/environment/backgrounds/Fond Menu 02.svg" id="2_kg5vp"]
 [ext_resource type="FontFile" uid="uid://ddo3rokwsadq0" path="res://assets/ui/fonts/dotgothic/DotGothic16-Regular.ttf" id="3_fbiyc"]
 [ext_resource type="Texture2D" uid="uid://2h2ubjxfobs5" path="res://assets/ui/icons/Victory Gold.svg" id="4_u374u"]

@@ -17,11 +17,11 @@ const ANIMATION_CROSSFADE_DEFAULT_LENGTH_KEY:= 'dialogic/animations/cross_fade_d
 
 
 func _ready():
-	%JoinDefault.suggestions_func = get_join_animation_suggestions
+	%JoinDefault.get_suggestions_func = get_join_animation_suggestions
 	%JoinDefault.mode = 1
-	%LeaveDefault.suggestions_func = get_leave_animation_suggestions
+	%LeaveDefault.get_suggestions_func = get_leave_animation_suggestions
 	%LeaveDefault.mode = 1
-	%CrossFadeDefault.suggestions_func = get_crossfade_animation_suggestions
+	%CrossFadeDefault.get_suggestions_func = get_crossfade_animation_suggestions
 	%CrossFadeDefault.mode = 1
 
 	%PositionSuggestions.text_submitted.connect(save_setting.bind(POSITION_SUGGESTION_KEY))

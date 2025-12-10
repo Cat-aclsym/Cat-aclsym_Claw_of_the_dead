@@ -19,7 +19,6 @@ signal variable_changed(info:Dictionary)
 ## `new_value` | [type Variant]| The value that [variable] has after the change (the result). [br]
 ## `value`     | [type Variant]| The value that the variable is changed by/to. [br]
 ## `value_str` | [type String] | Whatever has been given as the value (not interpreted, so a variable is just a string).[br]
-@warning_ignore("unused_signal") # This is emitted from the variable event
 signal variable_was_set(info:Dictionary)
 
 
@@ -60,7 +59,7 @@ func parse_variables(text:String) -> String:
 
 	# Trying to extract the curly brackets from the text
 	var regex := RegEx.new()
-	regex.compile(r"(?<!\\)\{(?<variable>([^{}]|\{[^}]*\})*)\}")
+	regex.compile("(?<!\\\\)\\{(?<variable>([^{}]|\\{.*\\})*)\\}")
 
 	var parsed := text.replace('\\{', '{')
 	for result in regex.search_all(text):

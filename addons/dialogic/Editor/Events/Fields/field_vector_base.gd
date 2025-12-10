@@ -1,12 +1,7 @@
-@tool
 class_name DialogicVisualEditorFieldVector
 extends DialogicVisualEditorField
 ## Base type for Vector event blocks
 
-var step := 0.001 :
-	set(val):
-		step = val
-		_on_step_changed(step)
 
 func _ready() -> void:
 	for child in get_children():
@@ -40,8 +35,4 @@ func _on_sub_value_changed(sub_component: String, value: float) -> void:
 
 
 func _update_sub_component_text(value: Variant) -> void:
-	pass
-
-
-func _on_step_changed(step:float) -> void:
 	pass

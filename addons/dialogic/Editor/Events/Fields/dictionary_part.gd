@@ -41,3 +41,4 @@ func _on_flex_value_value_changed() -> void:
 func _on_delete_pressed() -> void:
 	queue_free()
 	value_changed.emit()
+

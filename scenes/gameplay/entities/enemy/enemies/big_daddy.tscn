@@ -1,8 +1,8 @@
 [gd_scene load_steps=24 format=3 uid="uid://dkcpg16ie8deh"]
 
 [ext_resource type="PackedScene" uid="uid://tmlcshxut7kv" path="res://scenes/gameplay/entities/enemy/i_enemy.tscn" id="1_o4ric"]
-[ext_resource type="Script" uid="uid://c86lpodcyvqbd" path="res://scenes/gameplay/entities/enemy/enemies/big_daddy.gd" id="2_3ulna"]
-[ext_resource type="PackedScene" uid="uid://bji7sb08qku4y" path="res://scenes/gameplay/entities/bullet/enemy_projectile.tscn" id="3_nitix"]
+[ext_resource type="Script" path="res://scenes/gameplay/entities/enemy/enemies/big_daddy.gd" id="2_3ulna"]
+[ext_resource type="PackedScene" uid="uid://dp10vag23o4m5" path="res://scenes/gameplay/entities/bullet/enemy_projectile.tscn" id="3_nitix"]
 [ext_resource type="Texture2D" uid="uid://bxq7e3iuv0otk" path="res://assets/gameplay/enemies/Pompier_Zombie.png" id="5_g4vvv"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_nobep"]

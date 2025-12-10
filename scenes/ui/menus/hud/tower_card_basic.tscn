@@ -1,10 +1,12 @@
-[gd_scene load_steps=5 format=3 uid="uid://d0drgd3amf85"]
+[gd_scene load_steps=6 format=3 uid="uid://d0drgd3amf85"]
 
 [ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="1_pcje7"]
-[ext_resource type="Script" uid="uid://b3yu61ipsc8r0" path="res://scenes/ui/menus/tower_selection/tower_cards/tower_card.gd" id="1_wa45g"]
+[ext_resource type="Script" path="res://scenes/ui/menus/tower_selection/tower_cards/tower_card.gd" id="1_wa45g"]
+[ext_resource type="Texture2D" uid="uid://4rvu7u60f3mg" path="res://assets/gameplay/towers/tower2_LVL_2.png" id="2_xy8o1"]
 [ext_resource type="Texture2D" uid="uid://nsf3nkto3p0t" path="res://assets/ui/buttons/Bouton Vert.svg" id="4_tu8sq"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_oa8os"]
+atlas = ExtResource("2_xy8o1")
 region = Rect2(0, 0, 64, 64)
 
 [node name="TowerCardBasic" type="MarginContainer"]
