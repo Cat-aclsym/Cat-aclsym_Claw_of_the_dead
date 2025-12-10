@@ -16,13 +16,14 @@ var shape_scale: float = 0.0:
 		shape_scale = clamp(value, 0.0, 1.0)
 		queue_redraw()
 
-@onready var sell_label: Label = $SellLabel
-@onready var upgrade_label: Label = $UpgradeLabel
-
 @onready var buttons: Control = $Buttons
 @onready var sell_button: TextureButton = $Buttons/SellTextureButton
 @onready var upgrade_button: TextureButton = $Buttons/UpgradeTextureButton
 @onready var close_button: TextureButton = $Buttons/CloseTextureButton
+
+@onready var sell_label: Label = sell_button.find_child("ValueLabel") as Label
+@onready var upgrade_label: Label = upgrade_button.find_child("ValueLabel") as Label
+
 
 @onready var signals: Array[Dictionary] = [
 	{SignalUtil.WHO: close_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_close_button_pressed},
@@ -33,6 +34,8 @@ var shape_scale: float = 0.0:
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	assert(sell_label != null, "Sell label not found")
+	assert(upgrade_label != null, "Upgrade label not found")
 	tower = get_parent() as ITower
 	global_position = tower.global_position
 	sell_button.position = Vector2.ZERO
@@ -40,8 +43,6 @@ func _ready() -> void:
 	close_button.position = Vector2.ZERO
 	buttons.global_position = global_position
 	buttons.position = Vector2.ZERO
-	sell_label.hide()
-	upgrade_label.hide()
 
 	sell_price = tower.sell_price
 	sell_label.text = str(sell_price)+"$"
@@ -59,6 +60,13 @@ func _ready() -> void:
 	for b in buttons.get_children():
 		b.position = buttons.position
 	show_menu()
+
+
+func _input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.pressed:
+		var mouse_pos: Vector2 = get_global_mouse_position()
+		if not buttons.get_global_rect().has_point(mouse_pos):
+			hide_menu()
 
 		
 func _draw() -> void:
@@ -88,7 +96,6 @@ func show_menu():
 	tw.tween_property(self, "shape_scale", 1.0, speed)\
 		.set_trans(Tween.TRANS_BACK)\
 		.set_ease(Tween.EASE_OUT)
-
 
 
 func hide_menu():
@@ -144,12 +151,6 @@ func _on_sell_button_pressed():
 
 
 func _on_tween_finished():
-	# Update labels position after animation to ensure they are correctly placed
-	sell_label.position = sell_button.position + Vector2((sell_button.size.x * bt_scale.x / 2) - (sell_label.size.x / 2), sell_button.size.y * bt_scale.y)
-	sell_label.show()
-	upgrade_label.position = upgrade_button.position + Vector2((upgrade_button.size.x * bt_scale.x / 2) - (upgrade_label.size.x / 2), upgrade_button.size.y * bt_scale.y)
-	upgrade_label.show()
-
 	# If menu is not active, hide buttons and free the menu
 	if not active:
 		buttons.hide()

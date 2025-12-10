@@ -426,6 +426,10 @@ func _on_timer_timeout() -> void:
 
 func _on_tower_pressed() -> void:
 	Log.trace(Log.Level.DEBUG, "Tower Pressed")
+
+	if state != TowerState.ACTIVE:
+		return
+
 	if self.find_child("TowerUpgrade", true, false) != null:
 		Log.trace(Log.Level.DEBUG, "Tower upgrade menu already exists")
 		return
