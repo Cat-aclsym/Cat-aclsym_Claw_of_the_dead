@@ -167,18 +167,19 @@ func _update_gauge_with_values(container: HBoxContainer, current_value: float, m
 		if GAUGE_TEXTURES.has(level):
 			gauge_bar.texture = GAUGE_TEXTURES[level]
 	
-	# Create a label to display the values (placed above the bar)
+	# Ensure a right-side label exists (and not stacked repeatedly)
+	for child in container.get_children():
+		if child is Label:
+			child.queue_free()
+	
 	var value_label := Label.new()
 	value_label.text = label_text
 	value_label.add_theme_font_size_override("font_size", 16)
-	value_label.custom_minimum_size = Vector2(0, 20)
-	value_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	value_label.custom_minimum_size = Vector2(60, 20)
+	value_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	value_label.size_flags_horizontal = Control.SIZE_FILL
+	value_label.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	
-	# Insert the label just before the HBoxContainer inside its parent (AspectRatioContainer)
-	var parent = container.get_parent()
-	if parent != null:
-		var idx := parent.get_children().find(container)
-		if idx != -1:
-			parent.add_child(value_label)
-			parent.move_child(value_label, idx)
+	# Add label to the end of the HBox (after icon and gauge)
+	container.add_child(value_label)
 
