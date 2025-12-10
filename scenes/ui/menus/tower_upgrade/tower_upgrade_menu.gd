@@ -5,6 +5,7 @@ var sell_price: int
 var upgrade_price: int
 var tower: ITower
 var description_instance: TowerUpgradeDescription
+var _description_tween: Tween
 
 @onready var sell_button: TextureButton = $VBoxContainer/HBoxContainer/SellAspectRatioContainer/SellTextureButton
 @onready var sell_label: Label = $VBoxContainer/HBoxContainer/SellAspectRatioContainer/SellLabel
@@ -64,20 +65,52 @@ func _load_upgrade_description(upgrade_scene: PackedScene) -> void:
 	else:
 		add_child(description_instance)
 	
+	# Animate slide-in from the left
+	_animate_description(true)
+	
 	# Pass the tower instance and find its scene by checking the scene tree
 	description_instance.setup(tower, upgrade_scene)
 
 
 func _on_close_button_pressed():
 	# Also remove the description panel from HUD
-	if description_instance != null:
-		description_instance.queue_free()
+	await _animate_description(false)
 	queue_free()
 
 
 func _on_upgrade_button_pressed():
 	tower.start_upgrade(tower.available_upgrade[0])
 	_on_close_button_pressed()
+
+
+func _animate_description(show: bool) -> void:
+	if description_instance == null:
+		return
+	if _description_tween and _description_tween.is_running():
+		_description_tween.kill()
+	
+	var viewport_size := get_viewport_rect().size
+	var target_x := viewport_size.x * 0.55
+	var hidden_x := viewport_size.x + description_instance.size.x
+	var start_x := hidden_x if show else description_instance.global_position.x
+	var end_x := target_x if show else hidden_x
+	
+	description_instance.global_position = Vector2(start_x, description_instance.global_position.y) if show else description_instance.global_position
+	_description_tween = create_tween()
+	_description_tween.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT if show else Tween.EASE_IN)
+	_description_tween.tween_property(description_instance, "global_position:x", end_x, 0.25)
+	if not show:
+		await _description_tween.finished
+		description_instance.queue_free()
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.pressed and event.button_index == MouseButton.MOUSE_BUTTON_LEFT:
+		var pos: Vector2 = event.position
+		var inside_menu := get_global_rect().has_point(pos)
+		var inside_desc := description_instance != null and description_instance.get_global_rect().has_point(pos)
+		if not inside_menu and not inside_desc:
+			_on_close_button_pressed()
 
 
 func _on_sell_button_pressed():
