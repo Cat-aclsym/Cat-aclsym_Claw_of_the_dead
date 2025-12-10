@@ -1,0 +1,24 @@
+## © [2025] A7 Studio. All rights reserved. Trademark.
+
+class_name LevelData
+extends RefCounted
+## Data class representing the progression state of a single level.
+
+# Public variables
+## List of challenge IDs that have been completed for this level.
+var challenges_completed: Array[String] = []
+## Whether the level is unlocked and playable.
+var unlocked: bool = false
+
+# Public functions
+## Converts the object to a dictionary for serialization.
+func save() -> Dictionary:
+	return {
+		"unlocked": unlocked,
+		"challenges_completed": challenges_completed
+	}
+
+## Populates the object from a dictionary.
+func from_dictionary(data: Dictionary) -> void:
+	unlocked = data.get("unlocked", false)
+	challenges_completed.assign(data.get("challenges_completed", []))

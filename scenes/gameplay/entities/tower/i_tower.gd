@@ -28,6 +28,7 @@ enum TowerState {
 ## Enum for the type of the tower
 enum TowerType {
 	TOWER_1, ## The first tower
+	TOWER_AOE, ## The tower with area of effect damage
 	DEBUG_MULTISHOT, ## The debug multishot tower
 	DEBUG_PIERCING, ## The debug piercing tower
 }

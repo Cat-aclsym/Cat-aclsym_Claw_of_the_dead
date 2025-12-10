@@ -60,55 +60,38 @@ func _update() -> void:
 func _load_levels() -> void:
 	var i := 1
 
-	level_statuses = _load_level_statuses()
-
 	for child in body_container.get_children():
 		if not child is LevelFrame:
 			continue
+
+		var status := LevelIndicator.Status.LOCKED
+		if ProgressionManager.is_level_unlocked(child.level_id):
+			var level_data: LevelData = ProgressionManager.data.levels[child.level_id]
+			if not level_data.challenges_completed.is_empty():
+				status = LevelIndicator.Status.COMPLETED
+			else:
+				status = LevelIndicator.Status.CURRENT
+
+		level_statuses[child.level_id] = status
+
 		level_frames.append(child)
 		signals.append({SignalUtil.WHO: child, SignalUtil.WHAT: "start_level", SignalUtil.TO: _on_frame_start_level})
 
 		var indicator: LevelIndicator = indicator_scene.instantiate()
 		indicators_container.add_child(indicator)
-		indicator.configure(i, level_statuses[child.level_id])
+		indicator.configure(i, status)
 		signals.append({SignalUtil.WHO: indicator, SignalUtil.WHAT: "selected", SignalUtil.TO: _on_level_indicator_selected})
 
 		var separator := separator_scene.instantiate()
 		indicators_container.add_child(separator)
 
-		if level_statuses[child.level_id] == LevelIndicator.Status.CURRENT:
+		if status == LevelIndicator.Status.CURRENT:
 			level_index = i-1
 
 		i += 1
 
 	level_frames.append(locked_frame)
 	indicators_container.get_children().back().queue_free()
-
-func _load_level_statuses() -> Dictionary:
-	var result := {}
-	var dir := DirAccess.open("res://resources/levels")
-	
-	if dir:
-		dir.list_dir_begin()
-		var file_name := dir.get_next()
-		
-		while file_name != "":
-			if not dir.current_is_dir() and file_name.begins_with("lev.") and file_name.ends_with(".json"):
-				var name_no_ext := file_name.get_basename()  # removes .json
-				var file := FileAccess.open("res://resources/levels/%s" % file_name, FileAccess.READ)
-				if file:
-					var json_text := file.get_as_text()
-					var json = JSON.parse_string(json_text)
-					if typeof(json) == TYPE_DICTIONARY and json.has("status"):
-						result[name_no_ext] = LevelIndicator.string_to_status(json["status"])
-			file_name = dir.get_next()
-		
-		dir.list_dir_end()
-	else:
-		Log.trace(Log.Level.ERROR, "Could not open directory: %s" % dir);
-
-
-	return result
 
 
 # signal
@@ -131,7 +114,7 @@ func _on_previous_button_pressed() -> void:
 
 func _on_next_button_pressed() -> void:
 	var i: int = (level_index + 1) if level_index + 1 < level_frames.size() else level_index
-	
+
 	if not level_frames[i] is LevelFrame:
 		level_index = i
 		_update()

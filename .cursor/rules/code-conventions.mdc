@@ -54,7 +54,7 @@ const ATTACK_DAMAGE: float = 10.0
 # Public variables
 var current_state: ZombieState = ZombieState.IDLE
 var path_follow: PathFollow2D
-var attack_target = null
+var attack_target: Node2D = null
 
 # Private variables
 var _current_health: float
@@ -101,12 +101,22 @@ func _initialize() -> void:
 	_current_health = BASE_HEALTH * health_multiplier
 
 func _on_state_changed(new_state: ZombieState) -> void:
-	# Handle state transition logic
-	pass
+	match new_state:
+		ZombieState.IDLE:
+			pass
+		ZombieState.WALKING:
+			_move(delta)
+		ZombieState.ATTACKING:
+			pass
+		ZombieState.DYING:
+			pass
+		_:
+			Log.trace(Log.Level.WARN, "%s::_on_state_changed() unknown ZombieState : %s" % [name, new_state])
 
 func _move(delta: float) -> void:
-	# Movement implementation
-	pass
+	var direction := (target_position - global_position).normalized()
+	velocity = direction * MOVEMENT_SPEED * delta
+	move_and_slide()
 ```
 
 ## Naming Conventions
