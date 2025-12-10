@@ -7,10 +7,12 @@ extends Node
 const STATS_PATH: String = "res://assets/resources/configs/stats.json"
 
 var _data: Dictionary = {}
+var _upgrade_by_scene: Dictionary = {}
 
 
 func _ready() -> void:
 	_data = _load_json(STATS_PATH)
+	_index_upgrades_by_scene()
 
 
 func get_tower(id: String) -> Dictionary:
@@ -37,6 +39,12 @@ func has_upgrade(id: String) -> bool:
 	return _data.get("upgrades", {}).has(id)
 
 
+func upgrade_id_from_scene(path: String) -> String:
+	if path.is_empty():
+		return ""
+	return _upgrade_by_scene.get(path, "")
+
+
 func has_enemy(id: String) -> bool:
 	return _data.get("enemies", {}).has(id)
 
@@ -58,4 +66,13 @@ func _load_json(path: String) -> Dictionary:
 		push_warning("StatsDB: format JSON inattendu pour %s" % path)
 		return {}
 	return parsed
+
+
+func _index_upgrades_by_scene() -> void:
+	_upgrade_by_scene.clear()
+	var upgrades: Dictionary = _data.get("upgrades", {})
+	for id in upgrades.keys():
+		var upgrade: Dictionary = upgrades.get(id, {})
+		if upgrade.has("scene"):
+			_upgrade_by_scene[upgrade["scene"]] = id
 

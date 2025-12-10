@@ -43,6 +43,7 @@
   },
   "upgrades": {
     "bat_01_02": {
+      "scene": "res://scenes/gameplay/entities/upgrade/bat_01/bat_01_02.tscn",
       "price": 75,
       "tower_stats": {
         "level": 1,
@@ -61,12 +62,14 @@
       "next": ["bat_01_03"]
     },
     "bat_01_03": {
+      "scene": "res://scenes/gameplay/entities/upgrade/bat_01/bat_01_03.tscn",
       "price": null,
       "tower_stats": {},
       "bullet_stats": {},
       "next": []
     },
     "bat_01_b_04": {
+      "scene": "res://scenes/gameplay/entities/upgrade/bat_01/bat_01_b_04.tscn",
       "price": null,
       "tower_stats": {
         "level": 1,
@@ -81,30 +84,35 @@
       "next": ["bat_01_b_05"]
     },
     "bat_01_b_05": {
+      "scene": "res://scenes/gameplay/entities/upgrade/bat_01/bat_01_b_05.tscn",
       "price": null,
       "tower_stats": {},
       "bullet_stats": {},
       "next": []
     },
     "bat_02_02": {
+      "scene": "res://scenes/gameplay/entities/upgrade/bat_02/bat_02_02.tscn",
       "price": null,
       "tower_stats": {},
       "bullet_stats": {},
       "next": ["bat_02_03"]
     },
     "bat_02_03": {
+      "scene": "res://scenes/gameplay/entities/upgrade/bat_02/bat_02_03.tscn",
       "price": null,
       "tower_stats": {},
       "bullet_stats": {},
       "next": ["bat_02_a_04", "bat_02_b_04"]
     },
     "bat_02_a_04": {
+      "scene": "res://scenes/gameplay/entities/upgrade/bat_02/bat_02_a_04.tscn",
       "price": null,
       "tower_stats": {},
       "bullet_stats": {},
       "next": []
     },
     "bat_02_b_04": {
+      "scene": "res://scenes/gameplay/entities/upgrade/bat_02/bat_02_b_04.tscn",
       "price": null,
       "tower_stats": {
         "level": 1,
@@ -125,6 +133,7 @@
       "next": ["bat_02_b_05"]
     },
     "bat_02_b_05": {
+      "scene": "res://scenes/gameplay/entities/upgrade/bat_02/bat_02_b_05.tscn",
       "price": null,
       "tower_stats": {},
       "bullet_stats": {},

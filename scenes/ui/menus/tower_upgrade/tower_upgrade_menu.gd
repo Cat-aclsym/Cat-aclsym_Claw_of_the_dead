@@ -4,6 +4,7 @@ extends Control
 var sell_price: int
 var tower: ITower
 var upgrade_price: int
+@onready var stats_db: StatsDB = StatsDB
 
 @onready var close_button: TextureButton = $VBoxContainer/CloseAspectRatioContainer/CloseTextureButton
 @onready var sell_button: TextureButton = $VBoxContainer/HBoxContainer/SellAspectRatioContainer/SellTextureButton
@@ -24,8 +25,7 @@ func _ready() -> void:
 	sell_price = tower.sell_price
 	sell_label.text = str(sell_price)+"$"
 	if !tower.available_upgrade.is_empty():
-		var upg: IUpgrade = tower.available_upgrade[0].instantiate()
-		upgrade_price = upg.price
+		upgrade_price = _resolve_upgrade_price(tower.available_upgrade[0])
 		upgrade_label.text = str(upgrade_price)+"$"
 	else:
 		upgrade_button.disabled = true
@@ -78,3 +78,18 @@ func _on_sell_button_pressed():
 func _on_upgrade_button_pressed():
 	tower.start_upgrade(tower.available_upgrade[0])
 	_on_close_button_pressed()
+
+
+func _resolve_upgrade_price(upgrade_scene: PackedScene) -> int:
+	if upgrade_scene == null:
+		return 0
+	var upgrade_path: String = upgrade_scene.resource_path
+	if not upgrade_path.is_empty():
+		var upgrade_id := stats_db.upgrade_id_from_scene(upgrade_path)
+		if not upgrade_id.is_empty():
+			var upgrade_data := stats_db.get_upgrade(upgrade_id)
+			var price = upgrade_data.get("price", null)
+			if price != null:
+				return int(price)
+	var upg: IUpgrade = upgrade_scene.instantiate()
+	return upg.price
