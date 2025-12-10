@@ -425,13 +425,17 @@ func _on_timer_timeout() -> void:
 			$ProgressBar.visible = false
 
 func _on_tower_pressed() -> void:
-	Log.trace(Log.Level.INFO, "Tower Pressed")
-	if self.find_child("TowerUpgrade") != null:
-		Log.trace(Log.Level.WARN, "Tower upgrade menu already exists")
+	Log.trace(Log.Level.DEBUG, "Tower Pressed")
+	if self.find_child("TowerUpgrade", true, false) != null:
+		Log.trace(Log.Level.DEBUG, "Tower upgrade menu already exists")
 		return
-	var tower_upgrade_menu : PackedScene = load("res://scenes/ui/menus/tower_upgrade/tower_upgrade_buttons.tscn")
+
+	var tower_upgrade_menu : PackedScene = load("res://scenes/ui/menus/tower_upgrade/radial_menu_tower_upgrade.tscn")
 	if tower_upgrade_menu == null :
 		Log.trace(Log.Level.ERROR, "Failed to load tower upgrade menu scene")
 		return
+	
 	var tower_upgrade_menu_instance: Control = tower_upgrade_menu.instantiate()
+	tower_upgrade_menu_instance.position = position
+	tower_upgrade_menu_instance.name = "TowerUpgrade"
 	self.add_child(tower_upgrade_menu_instance)
