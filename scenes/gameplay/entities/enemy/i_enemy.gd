@@ -72,6 +72,7 @@ var state: EnemyState = EnemyState.FOLLOW_PATH
 
 @onready var anim_player: AnimationPlayer = $AnimationPlayer
 @onready var collision_shape: CollisionShape2D = $CollisionShape2D
+@onready var health_bar: EnemyHealthBar = $HealthBar
 @onready var old_modulate: Color = sprite.modulate
 @onready var path_points_size: int = path.curve.point_count
 @onready var poison_particle: GPUParticles2D = $GPUParticles2D
@@ -127,6 +128,9 @@ func take_damage(damage: float, damage_type: DamageType) -> void:
 		state = EnemyState.DEAD
 	else:
 		health -= damage
+
+	if health_bar:
+		health_bar.update_health(health, max_health)
 
 ## Update enemy position along its path
 ## [br]
