@@ -77,18 +77,22 @@ func _animate_description(show: bool) -> void:
 	
 	var viewport_size := get_viewport_rect().size
 	var panel_width := description_instance.size.x
-	var end_x := viewport_size.x - panel_width
-	var hidden_x := viewport_size.x + panel_width
-	var start_x := hidden_x if show else description_instance.global_position.x
-	var y_pos := 0.0
+	if panel_width <= 0:
+		panel_width = description_instance.get_rect().size.x
+	if panel_width <= 0:
+		panel_width = 400.0  # fallback to a reasonable width
+
+	var target_pos := Vector2(viewport_size.x - panel_width, 0.0)
+	var offset := Vector2(200.0, 0.0)
+
 	if show:
-		description_instance.global_position = Vector2(start_x, y_pos)
+		description_instance.position = target_pos + offset
 	else:
-		y_pos = description_instance.global_position.y
-	
+		target_pos = description_instance.position + offset
+
 	_description_tween = create_tween()
 	_description_tween.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT if show else Tween.EASE_IN)
-	_description_tween.tween_property(description_instance, "global_position:x", end_x, 0.25)
+	_description_tween.tween_property(description_instance, "position", target_pos, 0.18)
 	if not show:
 		_description_tween.finished.connect(_on_close_anim_finished, CONNECT_ONE_SHOT)
 
