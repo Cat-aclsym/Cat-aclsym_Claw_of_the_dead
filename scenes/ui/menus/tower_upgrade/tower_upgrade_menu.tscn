@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://b2smroj1exbjv"]
 
-[ext_resource type="PackedScene" uid="uid://bl1lywmexedvo" path="res://scenes/ui/menus/tower_upgrade/tower_upgrade_buttons.tscn" id="1_2l2an"]
+[ext_resource type="PackedScene" uid="uid://bl1lywmexedvo" path="res://scenes/ui/menus/tower_upgrade/radial_menu_tower_upgrade.tscn" id="1_2l2an"]
 [ext_resource type="PackedScene" uid="uid://ds0xkohs1fv3w" path="res://scenes/ui/menus/tower_upgrade/tower_upgrade_description.tscn" id="2_7mhmu"]
 
 [node name="TowerUpgradeMenu" type="Control"]
