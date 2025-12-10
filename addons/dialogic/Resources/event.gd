@@ -52,7 +52,11 @@ var empty_lines_above: int = 0
 ### Editor UI Properties ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ## The event color that event node will take in the editor
-var event_color := Color("FBB13C")
+var event_color := Color("FBB13C"):
+	get:
+		if dialogic_color_name:
+			return DialogicUtil.get_color(dialogic_color_name)
+		return event_color
 ## If you are using the default color palette
 var dialogic_color_name: = ""
 ## To sort the buttons shown in the editor. Lower index is placed at the top of a category
@@ -93,7 +97,7 @@ enum ValueType {
 	NUMBER,
 	VECTOR2, VECTOR3, VECTOR4,
 	# Other
-	CUSTOM, BUTTON, LABEL, COLOR, AUDIO_PREVIEW
+	CUSTOM, BUTTON, LABEL, COLOR, AUDIO_PREVIEW, IMAGE_PREVIEW
 }
 ## List that stores the fields for the editor
 var editor_list: Array = []
@@ -101,7 +105,9 @@ var editor_list: Array = []
 var this_folder: String = get_script().resource_path.get_base_dir()
 
 ## Singal that notifies the visual editor block to update
+@warning_ignore("unused_signal")
 signal ui_update_needed
+@warning_ignore("unused_signal")
 signal ui_update_warning(text:String)
 
 
@@ -142,22 +148,37 @@ func _execute() -> void:
 #endregion
 
 
-#region OVERRIDABLES
+#region BRANCHING EVENTS
 ################################################################################
+## All of this section should only be in use if [member can_contain_events] is `true`.
 
-## to be overridden by sub-classes
-## only called if can_contain_events is true.
-## return a control node that should show on the END BRANCH node
-func get_end_branch_control() -> Control:
+
+## To be overridden. Only called if [member can_contain_events] is `true`.
+## Return a control node that should show on the END BRANCH node.
+func _get_end_branch_control() -> Control:
 	return null
 
 
-## to be overridden by sub-classes
-## only called if can_contain_events is true and the previous event was an end-branch event
-## return true if this event should be executed if the previous event was an end-branch event
-## basically only important for the Condition event but who knows. Some day someone might need this.
-func should_execute_this_branch() -> bool:
+## To be overridden. Return `true` if this event should be executed even if a previous branch has been executed.
+## E.g. IF events returns true, but ELIF and ELSE do not. The first choice of a question does this, while the others don't.
+func _is_branch_starter() -> bool:
 	return false
+
+
+## Returns the index of the end branch event of this event (Only use if can_contain_events is true).
+func get_end_branch_index() -> int:
+	var idx: int = dialogic.current_timeline_events.find(self)
+	while true:
+		idx += 1
+		var event: DialogicEvent = dialogic.current_timeline.get_event(idx)
+		if not event:
+			break
+		if event.can_contain_events:
+			idx = event.get_end_branch_index()
+		if event is DialogicEndBranchEvent:
+			break
+	return idx
+
 
 #endregion
 
@@ -248,6 +269,21 @@ func _test_event_string(string:String) -> bool:
 	if '#id:' in string and can_be_translated():
 		return is_valid_event(string.get_slice('#id:', 0))
 	return is_valid_event(string.strip_edges())
+
+
+func get_dependencies() -> PackedStringArray:
+	var deps := PackedStringArray()
+	var params := get_shortcode_parameters()
+	for i in params:
+		if params[i].has("ext_file"):
+			var path: String = get(params[i].property)
+			if path.begins_with("res://") or path.begins_with("uid://"):
+				deps.append(path)
+			elif i == "character":
+				deps.append(DialogicResourceUtil.get_resource_path_from_identifier(path, "dch"))
+			elif i == "timeline":
+				deps.append(DialogicResourceUtil.get_resource_path_from_identifier(path, "dtl"))
+	return deps
 
 #endregion
 
@@ -422,6 +458,9 @@ func _get_icon() -> Resource:
 
 
 func set_default_color(value:Variant) -> void:
+	# Skip in running games
+	if not Engine.is_editor_hint():
+		return
 	dialogic_color_name = value
 	event_color = DialogicUtil.get_color(value)
 
@@ -466,6 +505,8 @@ func get_event_editor_info() -> Array:
 		else:
 			editor_list = []
 
+		if DialogicUtil.get_editor_setting('show_event_names', false):
+			add_header_label(event_name)
 		build_event_editor()
 		return editor_list
 	else:
@@ -483,7 +524,7 @@ func build_event_editor() -> void:
 ## @left_text: 		Text that will be shown to the left of the field
 ## @right_text: 	Text that will be shown to the right of the field
 ## @extra_info: 	Allows passing a lot more info to the field.
-## 					What info can be passed is differnet for every field
+## 					What info can be passed is different for every field
 
 func add_header_label(text:String, condition:= "") -> void:
 	editor_list.append({

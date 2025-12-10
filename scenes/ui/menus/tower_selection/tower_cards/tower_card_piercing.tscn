@@ -1,6 +1,6 @@
 [gd_scene load_steps=8 format=3 uid="uid://s41m7efasldn"]
 
-[ext_resource type="Script" path="res://scenes/ui/menus/tower_selection/tower_cards/tower_card.gd" id="1_ivgf3"]
+[ext_resource type="Script" uid="uid://b3yu61ipsc8r0" path="res://scenes/ui/menus/tower_selection/tower_cards/tower_card.gd" id="1_ivgf3"]
 [ext_resource type="Texture2D" uid="uid://85310xv6g30a" path="res://assets/ui/tower_cards/Construction Tower Title.svg" id="2_bddyt"]
 [ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="2_fawl5"]
 [ext_resource type="Texture2D" uid="uid://yayv0hygrr3u" path="res://assets/ui/tower_cards/Blue Backgrond.svg" id="3_yvdcs"]

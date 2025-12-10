@@ -109,8 +109,8 @@ tracks/3/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_an5og"]
 _data = {
-"RESET": SubResource("Animation_bagxy"),
-"popup": SubResource("Animation_yjn6s")
+&"RESET": SubResource("Animation_bagxy"),
+&"popup": SubResource("Animation_yjn6s")
 }
 
 [node name="PopupWave" type="Control"]
