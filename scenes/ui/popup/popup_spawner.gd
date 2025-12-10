@@ -34,7 +34,9 @@ func score(text: String) -> void:
 func wave(text: String) -> void:
 	var wave_popup: Control = popup_node.instantiate()
 	var label: Label = wave_popup.get_node("CenterContainer/TextureRect/Label")
+	var texture_rect: TextureRect = wave_popup.get_node("CenterContainer/TextureRect")
 
 	# Add to UI instead of current scene
 	Global.ui.add_child(wave_popup)
+	texture_rect.pivot_offset = texture_rect.get_size() / 2
 	label.text = text
