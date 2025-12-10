@@ -102,21 +102,6 @@ height = 36.0
 tower_id = "bat_01"
 position = Vector2(0, -16)
 bullet_scene = ExtResource("2_g3vd4")
-bullet_stats = {
-"aoe_duration": 0.0,
-"aoe_range": 0.0,
-"aoe_tick": 0.0,
-"damage": 0.0,
-"damage_multiplier": 0.0,
-"dot_damage": 0.0,
-"piercing": 0.0,
-"piercing_reduction": 0.0,
-"speed": 0.0
-}
-cost = 50
-fire_rate = 1.5
-level = 1
-shoot_range = 100.0
 
 [node name="AnimatedSprite2D" parent="." index="0"]
 sprite_frames = SubResource("SpriteFrames_1t44q")

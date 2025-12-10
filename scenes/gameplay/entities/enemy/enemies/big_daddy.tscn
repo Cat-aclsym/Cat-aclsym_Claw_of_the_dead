@@ -137,18 +137,10 @@ size = Vector2(41, 81.5001)
 radius = 214.189
 
 [node name="BigDaddy" instance=ExtResource("1_o4ric")]
+enemy_id = "big_daddy"
 position = Vector2(0, -22)
 script = ExtResource("2_3ulna")
 projectile_scene = ExtResource("3_nitix")
-shoot_range = 100.0
-fire_rate = 100.0
-tower_disable_duration = 3.0
-pre_attack_delay = 1.0
-attack_duration = 1.0
-post_attack_delay = 1.0
-attack_cooldown = 5.0
-max_health = 1000.0
-speed = 20.0
 type = 0
 
 [node name="AnimatedSprite2D" parent="." index="0"]

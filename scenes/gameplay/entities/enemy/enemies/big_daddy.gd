@@ -24,6 +24,8 @@ extends IEnemy
 ## Cooldown time between full attack cycles.
 @export var attack_cooldown: float = 5.0
 
+@onready var stats_db: StatsDB = StatsDB
+
 # Onready variables
 ## The area 2D node for the enemy to detect towers in range
 @onready var range_area: Area2D = $RangeArea
@@ -56,6 +58,7 @@ var current_target: Node2D = null
 
 
 func _ready() -> void:
+	_apply_extra_stats_override()
 	super._ready() # Call the parent class's _ready function
 
 	# Ensure nodes are ready before connecting signals or configuring them
@@ -101,6 +104,29 @@ func _ready() -> void:
 
 	# Initial check for targets already in range
 	_find_new_target()
+
+
+func _apply_extra_stats_override() -> void:
+	if enemy_id.is_empty():
+		return
+	if not stats_db.has_enemy(enemy_id):
+		return
+	var data := stats_db.get_enemy(enemy_id)
+	var extra := data.get("extra", {})
+	if extra.has("shoot_range"):
+		shoot_range = float(extra["shoot_range"])
+	if extra.has("fire_rate"):
+		fire_rate = float(extra["fire_rate"])
+	if extra.has("tower_disable_duration"):
+		tower_disable_duration = float(extra["tower_disable_duration"])
+	if extra.has("pre_attack_delay"):
+		pre_attack_delay = float(extra["pre_attack_delay"])
+	if extra.has("attack_duration"):
+		attack_duration = float(extra["attack_duration"])
+	if extra.has("post_attack_delay"):
+		post_attack_delay = float(extra["post_attack_delay"])
+	if extra.has("attack_cooldown"):
+		attack_cooldown = float(extra["attack_cooldown"])
 
 
 func _physics_process(delta: float) -> void:
