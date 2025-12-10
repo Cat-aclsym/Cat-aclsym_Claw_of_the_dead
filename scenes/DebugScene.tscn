@@ -1,0 +1,22 @@
+[gd_scene load_steps=3 format=3 uid="uid://bjq47mnk5f20t"]
+
+[ext_resource type="Script" uid="uid://51dxs1xx5brc" path="res://scripts/camera/camera.gd" id="1_i72g1"]
+[ext_resource type="PackedScene" uid="uid://cq705nqdp8fnw" path="res://scenes/gameplay/entities/tower/towers/bat_01.tscn" id="2_rcd0g"]
+
+[node name="DebugScene" type="Node2D"]
+
+[node name="Camera" type="Camera2D" parent="."]
+script = ExtResource("1_i72g1")
+metadata/_custom_type_script = "uid://51dxs1xx5brc"
+
+[node name="Bat01" parent="." instance=ExtResource("2_rcd0g")]
+position = Vector2(330, 260)
+
+[node name="Bat03" parent="." instance=ExtResource("2_rcd0g")]
+position = Vector2(338, -216)
+
+[node name="Bat04" parent="." instance=ExtResource("2_rcd0g")]
+position = Vector2(-292, 186)
+
+[node name="Bat02" parent="." instance=ExtResource("2_rcd0g")]
+position = Vector2(-412, -86)
