@@ -28,6 +28,7 @@ enum TowerState {
 ## Enum for the type of the tower
 enum TowerType {
 	TOWER_1, ## The first tower
+	TOWER_AOE, ## The tower with area of effect damage
 	DEBUG_MULTISHOT, ## The debug multishot tower
 	DEBUG_PIERCING, ## The debug piercing tower
 }
@@ -125,6 +126,7 @@ func _process(_delta: float) -> void:
 
 	if state == TowerState.BUILDING:
 		_update_z_index()
+		# Allow range display even during building
 		return
 
 	if fire_rate_timer.is_stopped():
@@ -251,6 +253,19 @@ func sell_tower() -> void:
 	queue_free()
 
 # Private methods
+## Animates the range display based on the selected state
+func _animate_range_display() -> void:
+	var target_scale := Vector2(1, 1) if selected else Vector2(0, 0)
+	polygon_2d.visible = selected
+	var size: float = 0
+	while size < 1:
+		polygon_2d.scale = lerp(polygon_2d.scale, target_scale, size)
+		await get_tree().create_timer(0.01).timeout
+		size += 0.1
+
+	if selected:
+		_color_variation()
+
 func _apply_tower_stat_changes(upgrade: IUpgrade) -> void:
 	for stat in upgrade.tower_stats.keys():
 		if self.get(stat):
@@ -438,7 +453,7 @@ func _on_tower_pressed() -> void:
 	if tower_upgrade_menu == null :
 		Log.trace(Log.Level.ERROR, "Failed to load tower upgrade menu scene")
 		return
-	
+
 	var tower_upgrade_menu_instance: Control = tower_upgrade_menu.instantiate()
 	tower_upgrade_menu_instance.position = position
 	tower_upgrade_menu_instance.name = "TowerUpgrade"

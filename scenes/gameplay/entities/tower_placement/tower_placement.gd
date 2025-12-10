@@ -17,6 +17,9 @@ signal trigger_state_upgrade
 const COLOR_OK := Color(1, 1, 1, 0.5)
 const COLOR_KO := Color(1, 0.5, 0.5, 0.5)
 
+const BUTTON_COLOR_ENABLED := Color(1, 1, 1, 1)
+const BUTTON_COLOR_DISABLED := Color(0.5, 0.5, 0.5, 0.6)
+
 const UP_OFFSET := Vector2i(-1, -1)
 const RIGHT_OFFSET := Vector2i(0, -1)
 const LEFT_OFFSET := Vector2i(-1, 0)
@@ -66,6 +69,7 @@ static var tower_count: int = 0
 @onready var place_button: TextureButton = $PlaceHUD/HBoxContainer/PlaceButton
 @onready var place_hud: Control = $PlaceHUD
 @onready var place_hud_content: BoxContainer = $PlaceHUD/HBoxContainer
+@onready var placement_area: Area2D = $Area2D
 
 @onready var signals: Array[Dictionary] = [
 	{SignalUtil.WHO: place_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_place_button_pressed},
@@ -82,8 +86,12 @@ func _ready() -> void:
 	visible = false
 	place_hud.visible = false
 	SignalUtil.connects(signals)
+	
+	# Connect to level stats updates to refresh button state when coins change
+	if ILevel.current_level:
+		ILevel.current_level.stats_updated.connect(_on_level_stats_updated)
 
-func _input(event: InputEvent) -> void:
+func _unhandled_input(event: InputEvent) -> void:
 	if _state == CursorState.BUILD:
 		_state_build_input(event)
 
@@ -97,6 +105,9 @@ func change_state(new_state: CursorState, args: Array = []) -> void:
 			trigger_state_idle.emit()
 			_state = new_state
 			visible = false
+			
+			# Re-enable tower buttons
+			_set_all_tower_buttons_enabled(true)
 		CursorState.BUILD:
 			if _state != CursorState.IDLE:
 				Log.trace(Log.Level.WARN, "Cannot change cursor state from BUILD to IDLE")
@@ -107,6 +118,14 @@ func change_state(new_state: CursorState, args: Array = []) -> void:
 			trigger_state_build.emit()
 			_state = new_state
 			visible = true
+			
+			# Connect to level stats if not already connected
+			if ILevel.current_level and not ILevel.current_level.stats_updated.is_connected(_on_level_stats_updated):
+				ILevel.current_level.stats_updated.connect(_on_level_stats_updated)
+			
+			# Disable tower buttons to prevent interference
+			_set_all_tower_buttons_enabled(false)
+			
 			_state_build(args[0] as ITower)
 
 		CursorState.UPGRADE:
@@ -140,6 +159,9 @@ func _set_cursor_position(pos: Vector2 = get_global_mouse_position()) -> void:
 	cursor.visible = true
 	place_hud.visible = true
 	place_hud.position = local_pos
+	
+	# Move the placement area hitbox to follow the cursor
+	placement_area.position = local_pos
 
 ## Handles the build state logic, such as tower placement and validation
 func _state_build(tower: ITower = null) -> void:
@@ -154,7 +176,47 @@ func _state_build(tower: ITower = null) -> void:
 		add_child(_tower)
 
 	_tower.position = cursor.position - Vector2(0, 16)
-	_tower.modulate = COLOR_OK if _is_buildable(_tower.position) else COLOR_KO
+	var is_buildable := _is_buildable(_tower.position)
+	_tower.modulate = COLOR_OK if is_buildable else COLOR_KO
+	_update_place_button_state(is_buildable)
+	
+	# Allow the tower button to work during placement for range preview
+	# Disable only the hover box to prevent interference
+	if _tower.hover_box and _tower.hover_box.get_parent():
+		var hover_area: Area2D = _tower.hover_box.get_parent()
+		hover_area.monitoring = false
+		hover_area.monitorable = false
+		hover_area.input_pickable = false
+	# Use the placement area position (cursor position) for validation, not the tower position
+	_tower.modulate = COLOR_OK if _is_buildable(cursor.position) else COLOR_KO
+
+## Check if the placement area overlaps with any enemy path
+func _is_position_on_path(pos: Vector2) -> bool:
+	"""Check if the placement area at a given position would overlap with any enemy path.
+	Uses a 25x25 box (the placement area size) to check collision with paths.
+	
+	Args:
+		pos: The world position where to check placement
+	
+	Returns:
+		true if the placement area would collide with a path, false otherwise
+	"""
+	if not ILevel.current_level or not ILevel.current_level.map:
+		return false
+	
+	var paths: Array[Path2D] = ILevel.current_level.map.paths
+	var placement_half_size: float = 12.5  # Half of 25x25 placement box
+	
+	# Check distance to each path
+	for path in paths:
+		var closest_point = path.curve.get_closest_point(path.to_local(pos))
+		var distance = pos.distance_to(path.to_global(closest_point))
+		
+		# If distance is less than placement box size, it's overlapping
+		if distance < placement_half_size:
+			return true
+	
+	return false
 
 ## Handles the build state input events, such as mouse clicks and drags
 func _state_build_input(event: InputEvent) -> void:
@@ -174,6 +236,7 @@ func _state_build_input(event: InputEvent) -> void:
 			_set_cursor_position(pos)
 			_update()
 	elif event is InputEventMouseButton and not OS.has_feature("mobile"):
+		# Don't process clicks on buttons
 		if not _is_move_tower_available:
 			return
 
@@ -238,7 +301,38 @@ func _is_buildable(pos: Vector2) -> bool:
 	if tm_ref.get_cell_atlas_coords(1, tm_pos) != Vector2i(-1, -1):
 		return false
 
+	# Prevent placement on or near enemy paths
+	if _is_position_on_path(pos):
+		return false
+
 	return true
+
+## Updates the visual state of the place button based on buildability
+func _update_place_button_state(can_build: bool) -> void:
+	if can_build:
+		place_button.modulate = BUTTON_COLOR_ENABLED
+		place_button.disabled = false
+	else:
+		place_button.modulate = BUTTON_COLOR_DISABLED
+		place_button.disabled = true
+
+## Enables or disables all tower buttons and hover boxes to prevent interference during placement
+func _set_all_tower_buttons_enabled(enabled: bool) -> void:
+	if not ILevel.current_level or not ILevel.current_level.map:
+		return
+	
+	var towers := get_tree().get_nodes_in_group("towers")
+	for tower_body in towers:
+		if tower_body.get_parent() is ITower:
+			var tower: ITower = tower_body.get_parent()
+			if tower.button:
+				tower.button.disabled = not enabled
+			# Also disable/enable the hover box
+			if tower.hover_box and tower.hover_box.get_parent():
+				var hover_area: Area2D = tower.hover_box.get_parent()
+				hover_area.monitoring = enabled
+				hover_area.monitorable = enabled
+				hover_area.input_pickable = enabled
 
 func _on_place_button_pressed() -> void:
 	_build()
@@ -251,3 +345,9 @@ func _on_button_mouse_entered() -> void:
 
 func _on_button_mouse_exited() -> void:
 	_is_move_tower_available = true
+
+func _on_level_stats_updated() -> void:
+	# Update button state when coins change during tower placement
+	if _state == CursorState.BUILD and _tower:
+		var is_buildable := _is_buildable(_tower.position)
+		_update_place_button_state(is_buildable)

@@ -21,6 +21,7 @@ Global="*res://scripts/autoloads/global.gd"
 SoundManager="*res://scripts/autoloads/sound_manager.gd"
 ScenesLoader="*res://scripts/autoloads/scenes_loader.gd"
 Dialogic="*res://addons/dialogic/Core/DialogicGameHandler.gd"
+ProgressionManager="*res://scripts/autoloads/progression_manager.gd"
 
 [dialogic]
 
