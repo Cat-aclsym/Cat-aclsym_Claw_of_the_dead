@@ -7,6 +7,12 @@ extends Control
 # Constants
 const NUM_GAUGE_SQUARES: int = 4
 const SQUARE_SPACING: float = 5.0
+const GAUGE_TEXTURES := {
+	1: preload("res://assets/ui/icons/Gauge Level 1.svg"),
+	2: preload("res://assets/ui/icons/Gauge Level 2.svg"),
+	3: preload("res://assets/ui/icons/Gauge Level 3.svg"),
+	4: preload("res://assets/ui/icons/Gauge Level 4.svg"),
+}
 
 ## Reference to the tower being upgraded
 var tower: ITower
@@ -129,13 +135,11 @@ func _update_damage_gauge(upgrade: IUpgrade) -> void:
 	
 	# Calculate total damage including tower upgrades and bullet damage
 	var current_damage = bullet_base_damage + tower.bullet_stats.get("damage", 0.0) + upgrade.bullet_stats.get("damage", 0.0)
-	var percentage = _calculate_percentage(current_damage, _max_damage)
 	_update_gauge_with_values(attack_gauge_container, current_damage, _max_damage, "%.0f / %.0f" % [current_damage, _max_damage])
 
 ## Updates the range gauge bar with colored squares
 func _update_range_gauge(upgrade: IUpgrade) -> void:
 	var current_range = tower.shoot_range + upgrade.tower_stats.get("shoot_range", 0.0)
-	var percentage = _calculate_percentage(current_range, _max_shoot_range)
 	_update_gauge_with_values(attack_speed_gauge_container, current_range, _max_shoot_range, "%.0f / %.0f" % [current_range, _max_shoot_range])
 
 ## Calculates the percentage of stat progress (0.0 to 1.0)
@@ -144,20 +148,37 @@ func _calculate_percentage(current_value: float, max_value: float) -> float:
 		return 0.0
 	return clamp(current_value / max_value, 0.0, 1.0)
 
-## Updates gauge with current and max values displayed as text
+## Updates gauge with current and max values displayed as text and dynamic gauge texture
 func _update_gauge_with_values(container: HBoxContainer, current_value: float, max_value: float, label_text: String) -> void:
-	# Create a label to display the values
-	var value_label = Label.new()
+	var percentage := _calculate_percentage(current_value, max_value)
+
+	# Determine gauge level (rounded to nearest quarter)
+	var level := int(round(percentage * 4.0))
+	level = clamp(level, 1, 4)
+
+	# Find gauge bar (second TextureRect) and icon (first TextureRect)
+	var texture_rects: Array = []
+	for child in container.get_children():
+		if child is TextureRect:
+			texture_rects.append(child)
+	
+	if texture_rects.size() >= 2:
+		var gauge_bar: TextureRect = texture_rects[1]
+		if GAUGE_TEXTURES.has(level):
+			gauge_bar.texture = GAUGE_TEXTURES[level]
+	
+	# Create a label to display the values (placed above the bar)
+	var value_label := Label.new()
 	value_label.text = label_text
 	value_label.add_theme_font_size_override("font_size", 12)
 	value_label.custom_minimum_size = Vector2(0, 16)
 	value_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	
-	# Get the parent (AspectRatioContainer) and add the label before this container
+	# Insert the label just before the HBoxContainer inside its parent (AspectRatioContainer)
 	var parent = container.get_parent()
 	if parent != null:
-		var container_index = parent.get_children().find(container)
-		if container_index != -1:
+		var idx := parent.get_children().find(container)
+		if idx != -1:
 			parent.add_child(value_label)
-			parent.move_child(value_label, container_index)
+			parent.move_child(value_label, idx)
 
