@@ -1,4 +1,3 @@
-@tool
 extends DialogicIndexer
 
 func _get_editors() -> Array:

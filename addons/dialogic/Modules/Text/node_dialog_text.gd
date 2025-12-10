@@ -52,12 +52,6 @@ func _ready() -> void:
 		textbox_root.hide()
 	text = ""
 
-	var custom_bbcode_effects: Array = ProjectSettings.get_setting("dialogic/text/custom_bbcode_effects", "").split(",", false)
-	for i in custom_bbcode_effects:
-		var x : Resource = load(i.strip_edges())
-		if x is RichTextEffect:
-			custom_effects.append(x)
-
 
 # this is called by the DialogicGameHandler to set text
 
@@ -65,8 +59,6 @@ func reveal_text(_text: String, keep_previous:=false) -> void:
 	if !enabled:
 		return
 	show()
-
-	custom_fx_reset()
 
 	if !keep_previous:
 		text = _text
@@ -81,7 +73,6 @@ func reveal_text(_text: String, keep_previous:=false) -> void:
 	else:
 		base_visible_characters = len(text)
 		visible_characters = len(get_parsed_text())
-		custom_fx_update()
 		text = text + _text
 
 		# If Auto-Skip is enabled and we append the text (keep_previous),
@@ -122,21 +113,16 @@ func continue_reveal() -> void:
 
 		if visible_characters > -1 and visible_characters <= len(get_parsed_text()):
 			continued_revealing_text.emit(get_parsed_text()[visible_characters-1])
-
-		custom_fx_update()
 	else:
-		finish_text(true)
+		finish_text()
 		# if the text finished organically, add a small input block
 		# this prevents accidental skipping when you expected the text to be longer
 		DialogicUtil.autoload().Inputs.block_input(ProjectSettings.get_setting('dialogic/text/advance_delay', 0.1))
 
 
 ## Reveals the entire text instantly.
-func finish_text(is_organic := false) -> void:
+func finish_text() -> void:
 	visible_ratio = 1
-	custom_fx_update()
-	if not is_organic:
-		custom_fx_skip()
 	DialogicUtil.autoload().Text.execute_effects(-1, self, true)
 	revealing = false
 	DialogicUtil.autoload().current_state = DialogicGameHandler.States.IDLE
@@ -170,21 +156,3 @@ func _on_meta_clicked(_meta:Variant) -> void:
 ## Handle mouse input
 func on_gui_input(event:InputEvent) -> void:
 	DialogicUtil.autoload().Inputs.handle_node_gui_input(event)
-
-
-func custom_fx_update() -> void:
-	for effect in custom_effects:
-		if "visible_characters" in effect:
-			effect.visible_characters = visible_characters
-
-
-func custom_fx_reset() -> void:
-	for effect in custom_effects:
-		if effect.has_method("reset"):
-			effect.reset()
-
-
-func custom_fx_skip() -> void:
-	for effect in custom_effects:
-		if effect.has_method("skip"):
-			effect.skip()

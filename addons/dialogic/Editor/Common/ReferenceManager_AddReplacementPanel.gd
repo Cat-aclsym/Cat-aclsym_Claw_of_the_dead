@@ -11,7 +11,7 @@ var item: TreeItem = null
 func _ready() -> void:
 	hide()
 	%Character.resource_icon = load("res://addons/dialogic/Editor/Images/Resources/character.svg")
-	%Character.suggestions_func = get_character_suggestions
+	%Character.get_suggestions_func = get_character_suggestions
 
 	%WholeWords.icon = get_theme_icon("FontItem", "EditorIcons")
 	%MatchCase.icon = get_theme_icon("MatchCase", "EditorIcons")
@@ -51,9 +51,6 @@ func open_existing(_item:TreeItem, info:Dictionary):
 
 	%Old.text = info.what
 	%New.text = info.forwhat
-
-	%MatchCase.button_pressed = info.case_sensitive
-	%WholeWords.button_pressed = info.whole_words
 
 func _on_type_item_selected(index:int) -> void:
 	match index:

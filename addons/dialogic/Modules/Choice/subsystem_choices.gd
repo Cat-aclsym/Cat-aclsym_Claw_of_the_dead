@@ -70,8 +70,8 @@ func post_install() -> void:
 func hide_all_choices() -> void:
 	for node in get_tree().get_nodes_in_group('dialogic_choice_button'):
 		node.hide()
-		if node.choice_selected.is_connected(_on_choice_selected):
-			node.choice_selected.disconnect(_on_choice_selected)
+		if node.is_connected('button_up', _on_choice_selected):
+			node.disconnect('button_up', _on_choice_selected)
 
 
 ## Collects information on all the choices of the current question.
@@ -120,7 +120,7 @@ func get_current_question_info() -> Dictionary:
 			if not hide:
 				button_idx += 1
 
-		choice_info.text = dialogic.Text.parse_text(choice_info.text, 1)
+		choice_info.text = dialogic.Text.parse_text(choice_info.text, true, true, false, true, false, false)
 
 		choice_info.merge(choice_event.extra_data)
 
@@ -128,7 +128,6 @@ func get_current_question_info() -> Dictionary:
 			choice_info['visited_before'] = dialogic.History.has_event_been_visited(choice_index)
 
 		question_info['choices'].append(choice_info)
-		last_question_info['choices'].append(choice_info['text'])
 
 	return question_info
 
@@ -156,7 +155,7 @@ func show_current_question(instant:=true) -> void:
 	var question_info := get_current_question_info()
 
 	for choice in question_info.choices:
-		var node: DialogicNode_ChoiceButton = get_choice_button(choice.button_index)
+		var node: DialogicNode_ChoiceButton = get_choice_button_node(choice.button_index)
 
 		if not node:
 			missing_button = true
@@ -182,9 +181,9 @@ func show_current_question(instant:=true) -> void:
 					shortcut.events.append(input_key)
 					node.shortcut = shortcut
 
-		if node.choice_selected.is_connected(_on_choice_selected):
-			node.choice_selected.disconnect(_on_choice_selected)
-		node.choice_selected.connect(_on_choice_selected.bind(choice))
+		if node.pressed.is_connected(_on_choice_selected):
+			node.pressed.disconnect(_on_choice_selected)
+		node.pressed.connect(_on_choice_selected.bind(choice))
 
 	_choice_blocker.start(block_delay)
 	question_shown.emit(question_info)
@@ -193,24 +192,8 @@ func show_current_question(instant:=true) -> void:
 		printerr("[Dialogic] The layout you are using doesn't have enough Choice Buttons for the choices you are trying to display.")
 
 
-func focus_choice(button_index:int) -> void:
-	var node: DialogicNode_ChoiceButton = get_choice_button(button_index)
-	if node:
-		node.grab_focus()
 
-
-func select_choice(button_index:int) -> void:
-	var node: DialogicNode_ChoiceButton = get_choice_button(button_index)
-	if node:
-		node.choice_selected.emit()
-
-
-func select_focused_choice() -> void:
-	if get_viewport().gui_get_focus_owner() is DialogicNode_ChoiceButton:
-		(get_viewport().gui_get_focus_owner() as DialogicNode_ChoiceButton).choice_selected.emit()
-
-
-func get_choice_button(button_index:int) -> DialogicNode_ChoiceButton:
+func get_choice_button_node(button_index:int) -> DialogicNode_ChoiceButton:
 	var idx := 1
 	for node: DialogicNode_ChoiceButton in get_tree().get_nodes_in_group('dialogic_choice_button'):
 		if !node.get_parent().is_visible_in_tree():
@@ -244,29 +227,33 @@ func _on_choice_selected(choice_info := {}) -> void:
 	dialogic.handle_event(choice_info.event_index + 1)
 
 
-## Returns the indexes of the choice events related to the current question.
+
 func get_current_choice_indexes() -> Array:
 	var choices := []
-	var index := dialogic.current_event_idx-1
+	var evt_idx := dialogic.current_event_idx
+	var ignore := 0
 	while true:
-		index += 1
-		if index >= len(dialogic.current_timeline_events):
+		if evt_idx >= len(dialogic.current_timeline_events):
 			break
-
-		var event: DialogicEvent = dialogic.current_timeline_events[index]
-		if event is DialogicChoiceEvent:
-			choices.append(index)
-			index = event.get_end_branch_index()
+		if dialogic.current_timeline_events[evt_idx] is DialogicChoiceEvent:
+			if ignore == 0:
+				choices.append(evt_idx)
+			ignore += 1
+		elif dialogic.current_timeline_events[evt_idx].can_contain_events:
+			ignore += 1
 		else:
-			break
+			if ignore == 0:
+				break
 
+		if dialogic.current_timeline_events[evt_idx] is DialogicEndBranchEvent:
+			ignore -= 1
+		evt_idx += 1
 	return choices
 
 
-## Forward the dialogic action to the focused button
 func _on_dialogic_action() -> void:
-	if use_input_action and not dialogic.Inputs.input_was_mouse_input:
-		select_focused_choice()
+	if get_viewport().gui_get_focus_owner() is DialogicNode_ChoiceButton and use_input_action and not dialogic.Inputs.input_was_mouse_input:
+		get_viewport().gui_get_focus_owner().pressed.emit()
 
 
 #endregion
@@ -275,27 +262,20 @@ func _on_dialogic_action() -> void:
 #region HELPERS
 ####################################################################################################
 
-## Returns `true` if the given index is a text event before a question or the first choice event of a question.
 func is_question(index:int) -> bool:
-	var event: DialogicEvent = dialogic.current_timeline_events[index]
-	if event is DialogicTextEvent:
+	if dialogic.current_timeline_events[index] is DialogicTextEvent:
 		if len(dialogic.current_timeline_events)-1 != index:
-			var next_event: DialogicEvent = dialogic.current_timeline_events[index+1]
-			if next_event is DialogicChoiceEvent:
+			if dialogic.current_timeline_events[index+1] is DialogicChoiceEvent:
 				return true
 
-	if event is DialogicChoiceEvent:
-		if index == 0:
-			return true
-		var prev_event: DialogicEvent = dialogic.current_timeline_events[index-1]
-		if not prev_event is DialogicEndBranchEvent:
-			return true
-		var prev_event_opener: DialogicEvent = dialogic.current_timeline_events[prev_event.get_opening_index()]
-		if prev_event_opener is DialogicChoiceEvent:
-			return false
+	if dialogic.current_timeline_events[index] is DialogicChoiceEvent:
+		if index != 0 and dialogic.current_timeline_events[index-1] is DialogicEndBranchEvent:
+			if dialogic.current_timeline_events[dialogic.current_timeline_events[index-1].find_opening_index(index-1)] is DialogicChoiceEvent:
+				return false
+			else:
+				return true
 		else:
 			return true
-
 	return false
 
 #endregion

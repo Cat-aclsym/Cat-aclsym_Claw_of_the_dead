@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://bnsejcujkvcqg"]
 
-[ext_resource type="Script" uid="uid://d30luim5i1mdf" path="res://scenes/gameplay/world/level/i_level.gd" id="1_hgrcn"]
+[ext_resource type="Script" path="res://scenes/gameplay/world/level/i_level.gd" id="1_hgrcn"]
 [ext_resource type="PackedScene" uid="uid://b76p6ee6fomr4" path="res://scenes/ui/popup/popup_spawner.tscn" id="2_0xf4n"]
 [ext_resource type="PackedScene" uid="uid://cqe6sjyhnpfci" path="res://scenes/ui/popup/popup_wave.tscn" id="2_uvsjo"]
 [ext_resource type="PackedScene" uid="uid://chxjyy0li4wc4" path="res://scenes/gameplay/world/clock/clock.tscn" id="4_11eeu"]

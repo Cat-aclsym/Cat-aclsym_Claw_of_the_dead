@@ -58,14 +58,12 @@ func _apply_export_overrides() -> void:
 #region HANDLE PERSISTENT DATA
 ################################################################################
 
-func _init() -> void:
+func _enter_tree() -> void:
 	_load_persistent_info(Engine.get_meta("dialogic_persistent_style_info", {}))
 
 
 func _exit_tree() -> void:
-	var info: Dictionary = Engine.get_meta("dialogic_persistent_style_info", {})
-	info.merge(_get_persistent_info(), true)
-	Engine.set_meta("dialogic_persistent_style_info", info)
+	Engine.set_meta("dialogic_persistent_style_info", _get_persistent_info())
 
 
 ## To be overwritten. Return any info that a later used style might want to know.
@@ -74,7 +72,7 @@ func _get_persistent_info() -> Dictionary:
 
 
 ## To be overwritten. Apply any info that a previous style might have stored and this style should use.
-func _load_persistent_info(_info: Dictionary) -> void:
+func _load_persistent_info(info: Dictionary) -> void:
 	pass
 
 #endregion

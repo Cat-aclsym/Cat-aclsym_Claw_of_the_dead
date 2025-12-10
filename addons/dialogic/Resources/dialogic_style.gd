@@ -73,7 +73,7 @@ func get_layer_info(id:String) -> Dictionary:
 		if layer_resource.scene != null:
 			info.path = layer_resource.scene.resource_path
 		elif id == "":
-			info.path = DialogicStylesUtil.get_default_layout_base().resource_path
+			info.path = DialogicUtil.get_default_layout_base().resource_path
 
 		info.overrides = layer_resource.overrides.duplicate()
 
@@ -122,7 +122,7 @@ func move_layer(from_index:int, to_index:int) -> void:
 	if not has_layer_index(from_index) or not has_layer_index(to_index-1):
 		return
 
-	var id: String = layer_list.pop_at(from_index)
+	var id := layer_list.pop_at(from_index)
 	layer_list.insert(to_index, id)
 
 	changed.emit()
@@ -132,6 +132,7 @@ func move_layer(from_index:int, to_index:int) -> void:
 func set_layer_scene(layer_id:String, scene:String) -> void:
 	if not has_layer(layer_id):
 		return
+
 	layer_info[layer_id].scene = load(scene)
 	changed.emit()
 
@@ -187,8 +188,8 @@ func get_inheritance_root() -> DialogicStyle:
 
 
 ## This merges some [param layer_info] with it's param ancestors layer info.
-func merge_layer_infos(new_layer_info:Dictionary, ancestor_info:Dictionary) -> Dictionary:
-	var combined := new_layer_info.duplicate(true)
+func merge_layer_infos(layer_info:Dictionary, ancestor_info:Dictionary) -> Dictionary:
+	var combined := layer_info.duplicate(true)
 
 	combined.path = ancestor_info.path
 	combined.overrides.merge(ancestor_info.overrides)
@@ -246,8 +247,8 @@ func clone() -> DialogicStyle:
 	style.inherits = inherits
 
 	var base_info := get_layer_info("")
-	style.set_layer_scene("", base_info.path)
-	style.set_layer_overrides("", base_info.overrides)
+	set_layer_scene("", base_info.path)
+	set_layer_overrides("", base_info.overrides)
 
 	for id in layer_list:
 		var info := get_layer_info(id)

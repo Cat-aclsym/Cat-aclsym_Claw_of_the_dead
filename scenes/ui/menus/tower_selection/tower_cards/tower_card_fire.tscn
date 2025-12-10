@@ -1,12 +1,14 @@
-[gd_scene load_steps=7 format=3 uid="uid://b0t0twur86gil"]
+[gd_scene load_steps=8 format=3 uid="uid://b0t0twur86gil"]
 
-[ext_resource type="Script" uid="uid://b3yu61ipsc8r0" path="res://scenes/ui/menus/tower_selection/tower_cards/tower_card.gd" id="1_ebn2x"]
+[ext_resource type="Script" path="res://scenes/ui/menus/tower_selection/tower_cards/tower_card.gd" id="1_ebn2x"]
 [ext_resource type="Texture2D" uid="uid://85310xv6g30a" path="res://assets/ui/tower_cards/Construction Tower Title.svg" id="2_d1ixk"]
 [ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="3_emkig"]
 [ext_resource type="Texture2D" uid="uid://cdesir3miwmug" path="res://assets/ui/tower_cards/Green Frame.svg" id="4_cf3eu"]
 [ext_resource type="Texture2D" uid="uid://yayv0hygrr3u" path="res://assets/ui/tower_cards/Blue Backgrond.svg" id="5_1fryq"]
+[ext_resource type="Texture2D" uid="uid://d4gs327we3e1d" path="res://assets/gameplay/towers/tower_2_lvl1.png" id="6_l7q0m"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_hh3vp"]
+atlas = ExtResource("6_l7q0m")
 region = Rect2(0, -2, 64, 64)
 
 [node name="TowerCardFire" type="Control"]

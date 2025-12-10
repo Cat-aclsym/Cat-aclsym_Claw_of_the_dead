@@ -1,6 +1,6 @@
 [gd_scene load_steps=12 format=3 uid="uid://dbngb5qll51sg"]
 
-[ext_resource type="Script" uid="uid://b5tuo5eh0j8iw" path="res://scenes/ui/menus/level_selection/level_selection_menu.gd" id="1_3d0bw"]
+[ext_resource type="Script" path="res://scenes/ui/menus/level_selection/level_selection_menu.gd" id="1_3d0bw"]
 [ext_resource type="Texture2D" uid="uid://cuyo3k1ec4f18" path="res://assets/ui/level_selection/bg_arcs/arc.01.png" id="1_hmbw8"]
 [ext_resource type="Texture2D" uid="uid://lh0y2k7t6cat" path="res://assets/ui/level_selection/bt_cancel/bt_cancel.svg" id="3_cju3k"]
 [ext_resource type="FontFile" uid="uid://ddo3rokwsadq0" path="res://assets/ui/fonts/dotgothic/DotGothic16-Regular.ttf" id="3_kbg2u"]
@@ -56,8 +56,8 @@ tracks/1/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_djou2"]
 _data = {
-&"RESET": SubResource("Animation_p8ui4"),
-&"dim_bg": SubResource("Animation_t7266")
+"RESET": SubResource("Animation_p8ui4"),
+"dim_bg": SubResource("Animation_t7266")
 }
 
 [node name="LevelSelectionMenu" type="Control"]
