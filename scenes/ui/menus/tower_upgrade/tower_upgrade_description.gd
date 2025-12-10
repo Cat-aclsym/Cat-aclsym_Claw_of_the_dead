@@ -17,10 +17,10 @@ const GAUGE_TEXTURES := {
 ## Reference to the tower being upgraded
 var tower: ITower
 
-@onready var upgrade_title_label: Label = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/UpgradeTitleLabel
-@onready var upgrade_description_label: Label = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/UpgradeDescriptionLabel
-@onready var attack_gauge_container: HBoxContainer = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/Node/VBoxContainer/AspectRatioContainer2/AttackSpeedHBoxContainer
-@onready var attack_speed_gauge_container: HBoxContainer = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/Node/VBoxContainer/AspectRatioContainer/AttackSpeedHBoxContainer
+@onready var upgrade_title_label: Label = $UpgradeDescriptionTextureRect/MarginContainer/UpgradeDescriptionVBoxContainer/UpgradeTitleLabel
+@onready var upgrade_description_label: Label = $UpgradeDescriptionTextureRect/MarginContainer/UpgradeDescriptionVBoxContainer/UpgradeDescriptionLabel
+@onready var attack_gauge_container: HBoxContainer = $UpgradeDescriptionTextureRect/MarginContainer/UpgradeDescriptionVBoxContainer/Node/VBoxContainer/AspectRatioContainer2/AttackSpeedHBoxContainer
+@onready var attack_speed_gauge_container: HBoxContainer = $UpgradeDescriptionTextureRect/MarginContainer/UpgradeDescriptionVBoxContainer/Node/VBoxContainer/AspectRatioContainer/AttackSpeedHBoxContainer
 
 # Private variables
 var _max_damage: float = 0.0
@@ -170,8 +170,8 @@ func _update_gauge_with_values(container: HBoxContainer, current_value: float, m
 	# Create a label to display the values (placed above the bar)
 	var value_label := Label.new()
 	value_label.text = label_text
-	value_label.add_theme_font_size_override("font_size", 12)
-	value_label.custom_minimum_size = Vector2(0, 16)
+	value_label.add_theme_font_size_override("font_size", 16)
+	value_label.custom_minimum_size = Vector2(0, 20)
 	value_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	
 	# Insert the label just before the HBoxContainer inside its parent (AspectRatioContainer)

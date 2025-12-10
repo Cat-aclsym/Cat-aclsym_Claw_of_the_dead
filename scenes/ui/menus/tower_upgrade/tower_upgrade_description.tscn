@@ -15,39 +15,41 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 script = ExtResource("0_script")
 
 [node name="UpgradeDescriptionTextureRect" type="TextureRect" parent="."]
 layout_mode = 1
-anchors_preset = 15
+anchors_preset = -1
 anchor_right = 1.0
-anchor_bottom = 1.0
+anchor_bottom = 0.6
+offset_left = 632.0
+offset_top = 145.0
+offset_bottom = 44.2
 grow_horizontal = 2
-grow_vertical = 2
+grow_vertical = 0
 size_flags_horizontal = 3
-size_flags_stretch_ratio = 2.1
+mouse_filter = 2
 texture = ExtResource("1_so8lf")
 expand_mode = 2
 
-[node name="UpgradeDescriptionVBoxContainer" type="VBoxContainer" parent="UpgradeDescriptionTextureRect"]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.018
-anchor_top = 0.045
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 0.263998
-offset_top = -0.160002
-grow_horizontal = 2
-grow_vertical = 2
+[node name="MarginContainer" type="MarginContainer" parent="UpgradeDescriptionTextureRect"]
+layout_mode = 0
+offset_right = 520.0
+offset_bottom = 279.0
+theme_override_constants/margin_left = 30
+theme_override_constants/margin_top = 22
 
-[node name="UpgradeTitleLabel" type="Label" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer"]
+[node name="UpgradeDescriptionVBoxContainer" type="VBoxContainer" parent="UpgradeDescriptionTextureRect/MarginContainer"]
+layout_mode = 2
+
+[node name="UpgradeTitleLabel" type="Label" parent="UpgradeDescriptionTextureRect/MarginContainer/UpgradeDescriptionVBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 0.3
 text = "XTOWER.XUPGRADE.TITLE"
 
-[node name="UpgradeDescriptionLabel" type="Label" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer"]
+[node name="UpgradeDescriptionLabel" type="Label" parent="UpgradeDescriptionTextureRect/MarginContainer/UpgradeDescriptionVBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 0.3
@@ -55,64 +57,63 @@ theme = ExtResource("2_rnnwo")
 theme_override_font_sizes/font_size = 20
 text = "XTOWER.XUPGRADE.DESCRIPTION"
 
-[node name="Node" type="MarginContainer" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer"]
+[node name="Node" type="MarginContainer" parent="UpgradeDescriptionTextureRect/MarginContainer/UpgradeDescriptionVBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_constants/margin_left = 40
-theme_override_constants/margin_right = 20
-theme_override_constants/margin_bottom = 20
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 10
 
-[node name="VBoxContainer" type="VBoxContainer" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/Node"]
+[node name="VBoxContainer" type="VBoxContainer" parent="UpgradeDescriptionTextureRect/MarginContainer/UpgradeDescriptionVBoxContainer/Node"]
 layout_mode = 2
+theme_override_constants/separation = 27
 
-[node name="AspectRatioContainer2" type="AspectRatioContainer" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/Node/VBoxContainer"]
+[node name="AspectRatioContainer2" type="AspectRatioContainer" parent="UpgradeDescriptionTextureRect/MarginContainer/UpgradeDescriptionVBoxContainer/Node/VBoxContainer"]
 layout_mode = 2
-size_flags_vertical = 3
-ratio = 4.0
+ratio = 6.0
 alignment_horizontal = 0
 
-[node name="AttackSpeedHBoxContainer" type="HBoxContainer" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/Node/VBoxContainer/AspectRatioContainer2"]
+[node name="AttackSpeedHBoxContainer" type="HBoxContainer" parent="UpgradeDescriptionTextureRect/MarginContainer/UpgradeDescriptionVBoxContainer/Node/VBoxContainer/AspectRatioContainer2"]
 layout_mode = 2
-size_flags_vertical = 3
-theme_override_constants/separation = 50
+theme_override_constants/separation = 16
 
-[node name="AttackSpeedIconTextureRect" type="TextureRect" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/Node/VBoxContainer/AspectRatioContainer2/AttackSpeedHBoxContainer"]
+[node name="AttackSpeedIconTextureRect" type="TextureRect" parent="UpgradeDescriptionTextureRect/MarginContainer/UpgradeDescriptionVBoxContainer/Node/VBoxContainer/AspectRatioContainer2/AttackSpeedHBoxContainer"]
+custom_minimum_size = Vector2(48, 48)
 layout_mode = 2
 size_flags_horizontal = 3
 texture = ExtResource("3_cm8xc")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="AttackSpeedGaugeTextureRect" type="TextureRect" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/Node/VBoxContainer/AspectRatioContainer2/AttackSpeedHBoxContainer"]
+[node name="AttackSpeedGaugeTextureRect" type="TextureRect" parent="UpgradeDescriptionTextureRect/MarginContainer/UpgradeDescriptionVBoxContainer/Node/VBoxContainer/AspectRatioContainer2/AttackSpeedHBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_stretch_ratio = 5.0
+size_flags_stretch_ratio = 4.0
 texture = ExtResource("4_kgu3r")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="AspectRatioContainer" type="AspectRatioContainer" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/Node/VBoxContainer"]
+[node name="AspectRatioContainer" type="AspectRatioContainer" parent="UpgradeDescriptionTextureRect/MarginContainer/UpgradeDescriptionVBoxContainer/Node/VBoxContainer"]
 layout_mode = 2
-size_flags_vertical = 3
-ratio = 4.0
+ratio = 6.0
 alignment_horizontal = 0
 
-[node name="AttackSpeedHBoxContainer" type="HBoxContainer" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/Node/VBoxContainer/AspectRatioContainer"]
+[node name="AttackSpeedHBoxContainer" type="HBoxContainer" parent="UpgradeDescriptionTextureRect/MarginContainer/UpgradeDescriptionVBoxContainer/Node/VBoxContainer/AspectRatioContainer"]
 layout_mode = 2
-size_flags_vertical = 3
-theme_override_constants/separation = 50
+theme_override_constants/separation = 16
 
-[node name="AttackSpeedIconTextureRect" type="TextureRect" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/Node/VBoxContainer/AspectRatioContainer/AttackSpeedHBoxContainer"]
+[node name="AttackSpeedIconTextureRect" type="TextureRect" parent="UpgradeDescriptionTextureRect/MarginContainer/UpgradeDescriptionVBoxContainer/Node/VBoxContainer/AspectRatioContainer/AttackSpeedHBoxContainer"]
+custom_minimum_size = Vector2(48, 48)
 layout_mode = 2
 size_flags_horizontal = 3
 texture = ExtResource("6_b8lf3")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="AttackSpeedGaugeTextureRect" type="TextureRect" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/Node/VBoxContainer/AspectRatioContainer/AttackSpeedHBoxContainer"]
+[node name="AttackSpeedGaugeTextureRect" type="TextureRect" parent="UpgradeDescriptionTextureRect/MarginContainer/UpgradeDescriptionVBoxContainer/Node/VBoxContainer/AspectRatioContainer/AttackSpeedHBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_stretch_ratio = 5.0
+size_flags_stretch_ratio = 4.0
 texture = ExtResource("5_4ivqn")
 expand_mode = 1
 stretch_mode = 5
