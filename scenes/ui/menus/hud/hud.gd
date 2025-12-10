@@ -7,6 +7,9 @@ extends Control
 
 const PAUSE_MENU: PackedScene = preload("res://scenes/ui/menus/pause/pause.tscn")
 const TOWER_SELECTION_MENU: PackedScene = preload("res://scenes/ui/menus/tower_selection/tower_selection.tscn")
+const DEFAULT_TIME_SCALE: float = 1.0
+const FAST_TIME_SCALE: float = 2.0
+const FASTEST_TIME_SCALE: float = 4.0
 
 ## The flag indicating if the HUD is ready to display.
 var _is_ready: bool = false
@@ -26,10 +29,21 @@ var _is_ready: bool = false
 ## HUD buttons
 @onready var pause_button: TextureButton = $MarginContainer/PauseButton
 @onready var tower_selection_button: TextureButton = $TowerSelectionMarginContainer/TowerSelectionButton
+@onready var time_scale_1x_button: Button = $TimeScaleMarginContainer/TimeScaleHBoxContainer/TimeScale1xButton
+@onready var time_scale_2x_button: Button = $TimeScaleMarginContainer/TimeScaleHBoxContainer/TimeScale2xButton
+@onready var time_scale_4x_button: Button = $TimeScaleMarginContainer/TimeScaleHBoxContainer/TimeScale4xButton
+@onready var time_scale_buttons: Array[Button] = [
+	time_scale_1x_button,
+	time_scale_2x_button,
+	time_scale_4x_button
+]
 
 @onready var signals: Array[Dictionary] = [
 	{SignalUtil.WHO: pause_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_pause_button_pressed},
-	{SignalUtil.WHO: tower_selection_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_tower_selection_button_pressed}
+	{SignalUtil.WHO: tower_selection_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_tower_selection_button_pressed},
+	{SignalUtil.WHO: time_scale_1x_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_time_scale_1x_button_pressed},
+	{SignalUtil.WHO: time_scale_2x_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_time_scale_2x_button_pressed},
+	{SignalUtil.WHO: time_scale_4x_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_time_scale_4x_button_pressed}
 ]
 
 # core
@@ -39,11 +53,14 @@ func _ready() -> void:
 	assert(waves_rich_text_label != null, "waves_rich_text_label node not found")
 	assert(health_texture_progress_bar != null, "health_texture_progress_bar node not found")
 	assert(tower_selection_button != null, "tower_selection_button node not found")
+	for button in time_scale_buttons:
+		assert(button != null, "time scale button node not found")
 
 	Global.hud = self
 	hide()
 
 	SignalUtil.connects(signals)
+	_apply_time_scale(DEFAULT_TIME_SCALE, time_scale_1x_button)
 
 func _process(_delta: float) -> void:
 	if not _is_ready:
@@ -100,3 +117,20 @@ func _on_tower_selection_button_pressed() -> void:
 		Global.ui.add_child(tower_selection_menu_instance)
 	else :
 		Global.ui.get_node("TowerSelection").queue_free()
+
+## Handles the 1x speed button press event.
+func _on_time_scale_1x_button_pressed() -> void:
+	_apply_time_scale(DEFAULT_TIME_SCALE, time_scale_1x_button)
+
+## Handles the 2x speed button press event.
+func _on_time_scale_2x_button_pressed() -> void:
+	_apply_time_scale(FAST_TIME_SCALE, time_scale_2x_button)
+
+## Handles the 4x speed button press event.
+func _on_time_scale_4x_button_pressed() -> void:
+	_apply_time_scale(FASTEST_TIME_SCALE, time_scale_4x_button)
+
+## Applies the requested time scale and updates button states.
+func _apply_time_scale(time_scale: float, pressed_button: Button) -> void:
+	Engine.time_scale = time_scale
+	pressed_button.button_pressed = true
