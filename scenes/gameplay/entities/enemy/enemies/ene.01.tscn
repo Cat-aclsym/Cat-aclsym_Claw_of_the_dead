@@ -132,6 +132,7 @@ animations = [{
 size = Vector2(23, 61.4118)
 
 [node name="DefaultZombie" instance=ExtResource("1_rsmel")]
+enemy_id = "default_zombie"
 position = Vector2(0, -16)
 max_health = 20.0
 speed = 45.0

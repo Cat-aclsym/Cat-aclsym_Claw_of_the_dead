@@ -132,6 +132,7 @@ animations = [{
 size = Vector2(22, 63)
 
 [node name="DamageZombie" instance=ExtResource("1_pdmcd")]
+enemy_id = "damage_zombie"
 position = Vector2(0, -27)
 max_health = 100.0
 speed = 30.0

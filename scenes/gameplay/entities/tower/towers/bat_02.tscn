@@ -100,6 +100,7 @@ height = 36.0
 [sub_resource type="CircleShape2D" id="CircleShape2D_hnqt7"]
 
 [node name="Bat02" instance=ExtResource("1_yt4jj")]
+tower_id = "bat_02"
 position = Vector2(0, -16)
 bullet_scene = ExtResource("2_pv1tv")
 bullet_stats = {

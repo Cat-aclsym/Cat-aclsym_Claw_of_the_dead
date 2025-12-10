@@ -48,6 +48,7 @@ animations = [{
 size = Vector2(44, 66)
 
 [node name="Rat" instance=ExtResource("1_dhx8w")]
+enemy_id = "rat"
 position = Vector2(0, -10)
 max_health = 10.0
 speed = 100.0

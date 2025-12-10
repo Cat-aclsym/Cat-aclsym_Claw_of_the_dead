@@ -109,10 +109,13 @@ var target: IEnemy
 var target_type: TargetType
 ## The pending upgrade to be applied
 var pending_upgrade: PackedScene
+@onready var stats_db: StatsDB = StatsDB
+@export var tower_id: String = ""
 
 # Core methods
 func _ready() -> void:
 	target_type = TargetType.FIRST
+	_apply_base_stats_override()
 	sell_price = ceil(cost / 2.0)
 	hover_box.z_index = 3
 	update_dependent_properties()
@@ -283,6 +286,25 @@ func _apply_bullet_modifications(bullet_instance: IBullet) -> void:
 
 	bullet_instance.damage += bullet_stats["damage"]
 	bullet_instance.speed += bullet_stats["speed"]
+
+
+func _apply_base_stats_override() -> void:
+	if tower_id.is_empty():
+		return
+	if not stats_db.has_tower(tower_id):
+		return
+	var data := stats_db.get_tower(tower_id)
+	var base := data.get("base", {})
+	if base.has("cost"):
+		cost = int(base["cost"])
+	if base.has("fire_rate"):
+		fire_rate = float(base["fire_rate"])
+	if base.has("shoot_range"):
+		shoot_range = float(base["shoot_range"])
+	if base.has("bullet_stats"):
+		var bs: Dictionary = base["bullet_stats"]
+		for k in bs.keys():
+			bullet_stats[k] = bs[k]
 
 func _choose_target() -> void:
 	match target_type:

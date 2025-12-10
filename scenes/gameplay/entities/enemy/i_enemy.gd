@@ -54,6 +54,8 @@ const DAMAGES: Dictionary = {
 
 @export var max_health: float = 20.0
 @export var speed: float = 30.0
+@export var enemy_id: String = ""
+@onready var stats_db: StatsDB = StatsDB
 @export var type: EnemyType = EnemyType.DEFAULT
 
 var active_poison_timers: Array[Dictionary] = []
@@ -79,6 +81,7 @@ var state: EnemyState = EnemyState.FOLLOW_PATH
 
 # core
 func _ready() -> void:
+	_apply_stats_override()
 	if type == EnemyType.FAT or type == EnemyType.BIG_DADDY:
 		camera_effect.connect(Global.camera.handle_effect)
 		camera_effect.emit('shake')
@@ -293,6 +296,20 @@ func _path_finished_state() -> void:
 		ILevel.current_level.health = 0
 	else:
 		ILevel.current_level.health -= ceil(health / 2)
+
+
+func _apply_stats_override() -> void:
+	if enemy_id.is_empty():
+		return
+	if not stats_db.has_enemy(enemy_id):
+		return
+	var data := stats_db.get_enemy(enemy_id)
+	var hp = data.get("max_health", null)
+	var spd = data.get("speed", null)
+	if hp != null:
+		max_health = float(hp)
+	if spd != null:
+		speed = float(spd)
 
 ## Update the z-index of the enemy based on its position
 func _update_z_index() -> void:
