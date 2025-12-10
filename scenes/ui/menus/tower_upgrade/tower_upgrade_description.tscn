@@ -1,5 +1,6 @@
-[gd_scene load_steps=7 format=3 uid="uid://ds0xkohs1fv3w"]
+[gd_scene load_steps=8 format=3 uid="uid://ds0xkohs1fv3w"]
 
+[ext_resource type="Script" uid="uid://dfdt3ady1wp2a" path="res://scenes/ui/menus/tower_upgrade/tower_upgrade_description.gd" id="0_script"]
 [ext_resource type="Texture2D" uid="uid://c8b8irfugbxdj" path="res://assets/environment/backgrounds/Fond Menu 02.svg" id="1_so8lf"]
 [ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="2_rnnwo"]
 [ext_resource type="Texture2D" uid="uid://bbucgkj5y4nmf" path="res://assets/ui/icons/Icon Attack.svg" id="3_cm8xc"]
@@ -14,6 +15,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("0_script")
 
 [node name="UpgradeDescriptionTextureRect" type="TextureRect" parent="."]
 layout_mode = 1
