@@ -38,5 +38,5 @@ func wave(text: String) -> void:
 
 	# Add to UI instead of current scene
 	Global.ui.add_child(wave_popup)
-	texture_rect.pivot_offset = label.get_size() / 2
+	texture_rect.pivot_offset = texture_rect.get_size() / 2
 	label.text = text
