@@ -1,17 +1,16 @@
 class_name TowerUpgradeMenu
 extends Control
 
-var sell_price: int
-var upgrade_price: int
-var tower: ITower
 var description_instance: TowerUpgradeDescription
-var _description_tween: Tween
+var sell_price: int
+var tower: ITower
+var upgrade_price: int
 
+@onready var close_button: TextureButton = $VBoxContainer/CloseAspectRatioContainer/CloseTextureButton
 @onready var sell_button: TextureButton = $VBoxContainer/HBoxContainer/SellAspectRatioContainer/SellTextureButton
 @onready var sell_label: Label = $VBoxContainer/HBoxContainer/SellAspectRatioContainer/SellLabel
 @onready var upgrade_button: TextureButton = $VBoxContainer/HBoxContainer/UpgradeAspectRatioContainer/UpgradeTextureButton
 @onready var upgrade_label: Label = $VBoxContainer/HBoxContainer/UpgradeAspectRatioContainer/UpgradeLabel
-@onready var close_button: TextureButton = $VBoxContainer/CloseAspectRatioContainer/CloseTextureButton
 
 @onready var signals: Array[Dictionary] = [
 	{SignalUtil.WHO: close_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_close_button_pressed},
@@ -36,6 +35,14 @@ func _ready() -> void:
 		# Change upgrade button to gray rbg #525252
 		upgrade_button.modulate = Color(0.325, 0.325, 0.325)  # Gray color
 		upgrade_label.text = "MAX"
+
+	# Connect to level stats updates to refresh button state when coins change
+	if ILevel.current_level:
+		ILevel.current_level.stats_updated.connect(_on_level_stats_updated)
+
+	# Update button state initially
+	_update_upgrade_button_state()
+
 	SignalUtil.connects(signals)
 
 ## Loads and displays the upgrade description panel
@@ -44,75 +51,51 @@ func _load_upgrade_description(upgrade_scene: PackedScene) -> void:
 	if description_scene == null:
 		Log.trace(Log.Level.ERROR, "Failed to load tower upgrade description scene")
 		return
-	
+
 	description_instance = description_scene.instantiate()
-	
+
 	# Add to the global HUD instead of to the tower, so it stays fixed on screen
 	if Global.hud != null:
 		Global.hud.add_child(description_instance)
 	else:
 		add_child(description_instance)
-	
-	# Animate slide-in from the left
-	_animate_description(true)
-	
+
 	# Pass the tower instance and find its scene by checking the scene tree
 	description_instance.setup(tower, upgrade_scene)
 
 
-func _on_close_button_pressed():
-	_animate_description(false)
-
-
-func _on_upgrade_button_pressed():
-	tower.start_upgrade(tower.available_upgrade[0])
-	_on_close_button_pressed()
-
-
-func _animate_description(show: bool) -> void:
-	if description_instance == null:
+## Updates the visual state of the upgrade button based on available coins
+func _update_upgrade_button_state() -> void:
+	# Only check money if there's an upgrade available
+	if tower.available_upgrade.is_empty():
 		return
-	if _description_tween and _description_tween.is_running():
-		_description_tween.kill()
-	
-	var viewport_size := get_viewport_rect().size
-	var panel_width := description_instance.size.x
-	if panel_width <= 0:
-		panel_width = description_instance.get_rect().size.x
-	if panel_width <= 0:
-		panel_width = 400.0  # fallback to a reasonable width
 
-	var target_pos := Vector2(viewport_size.x - panel_width, 0.0)
-	var offset := Vector2(200.0, 0.0)
+	var can_afford: bool = ILevel.current_level.coins >= upgrade_price
 
-	if show:
-		description_instance.position = target_pos + offset
+	if can_afford:
+		upgrade_button.modulate = Color(1.0, 1.0, 1.0)  # White (enabled)
+		upgrade_button.disabled = false
 	else:
-		target_pos = description_instance.position + offset
-
-	_description_tween = create_tween()
-	_description_tween.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT if show else Tween.EASE_IN)
-	_description_tween.tween_property(description_instance, "position", target_pos, 0.18)
-	if not show:
-		_description_tween.finished.connect(_on_close_anim_finished, CONNECT_ONE_SHOT)
+		upgrade_button.modulate = Color(0.325, 0.325, 0.325)  # Gray (disabled)
+		upgrade_button.disabled = true
 
 
-func _on_close_anim_finished() -> void:
-	if description_instance:
-		description_instance.queue_free()
-		description_instance = null
+func _on_close_button_pressed():
+	# Disconnect from level stats when closing
+	if ILevel.current_level and ILevel.current_level.stats_updated.is_connected(_on_level_stats_updated):
+		ILevel.current_level.stats_updated.disconnect(_on_level_stats_updated)
 	queue_free()
 
 
-func _unhandled_input(event: InputEvent) -> void:
-	if event is InputEventMouseButton and event.pressed and event.button_index == MouseButton.MOUSE_BUTTON_LEFT:
-		var pos: Vector2 = event.position
-		var inside_menu := get_global_rect().has_point(pos)
-		var inside_desc := description_instance != null and description_instance.get_global_rect().has_point(pos)
-		if not inside_menu and not inside_desc:
-			_on_close_button_pressed()
+func _on_level_stats_updated() -> void:
+	_update_upgrade_button_state()
 
 
 func _on_sell_button_pressed():
 	tower.sell_tower()
 	queue_free()
+
+
+func _on_upgrade_button_pressed():
+	tower.start_upgrade(tower.available_upgrade[0])
+	_on_close_button_pressed()

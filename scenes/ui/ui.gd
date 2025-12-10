@@ -33,3 +33,5 @@ func end_level() -> void:
 	assert(_initialized, "UI not properly initialized")
 	Log.trace(Log.Level.INFO, "HUD : Unloading level interface")
 	hud.unload_ui()
+	# Auto-save progression when exiting a level
+	ProgressionManager.save_game()

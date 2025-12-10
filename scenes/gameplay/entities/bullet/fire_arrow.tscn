@@ -69,8 +69,8 @@ shape = SubResource("CircleShape2D_a2b3u")
 material = SubResource("CanvasItemMaterial_tc12e")
 emitting = false
 amount = 30
-process_material = SubResource("ParticleProcessMaterial_aqjwg")
 lifetime = 1.5
+process_material = SubResource("ParticleProcessMaterial_aqjwg")
 
 [node name="BurnAreaSprite" type="Sprite2D" parent="." index="5"]
 visible = false

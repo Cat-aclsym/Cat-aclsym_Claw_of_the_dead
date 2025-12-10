@@ -148,7 +148,7 @@ func _on_state_wave(_args = []) -> bool:
 	var wave: Wave = waves.front()
 
 	# if no more steps and no enemy alive -> trigger next wave
-	if wave == null or wave.peak() == null and _enemies_alive == 0:
+	if (wave == null or wave.peak() == null) and _enemies_alive == 0 and current_step == null:
 		_next_wave()
 		return true
 

@@ -61,9 +61,11 @@ collision_mask = 0
 shape = SubResource("RectangleShape2D_bapwk")
 
 [node name="PlaceHUD" type="Control" parent="."]
+z_index = 4096
 layout_mode = 3
 anchors_preset = 0
 scale = Vector2(0.5, 0.5)
+mouse_filter = 1
 
 [node name="HBoxContainer" type="HBoxContainer" parent="PlaceHUD"]
 layout_mode = 0
@@ -77,6 +79,7 @@ theme_override_constants/separation = 8
 alignment = 1
 
 [node name="PlaceButton" type="TextureButton" parent="PlaceHUD/HBoxContainer"]
+z_index = 1
 custom_minimum_size = Vector2(80, 70)
 layout_mode = 2
 size_flags_horizontal = 0
@@ -87,6 +90,7 @@ ignore_texture_size = true
 stretch_mode = 4
 
 [node name="CancelPlaceButton" type="TextureButton" parent="PlaceHUD/HBoxContainer"]
+z_index = 1
 custom_minimum_size = Vector2(80, 70)
 layout_mode = 2
 size_flags_horizontal = 0

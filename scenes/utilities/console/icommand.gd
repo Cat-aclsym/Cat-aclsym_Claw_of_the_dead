@@ -35,14 +35,20 @@ func expected_args_types() -> Array[ICommand.Types]:
 	return []
 
 
+## Returns true if the command accepts a variable number of arguments.
+## If true, argument count validation is skipped.
+func is_variable_args() -> bool:
+	return false
+
+
 ## Executes the command with the given arguments.
 ##
 ## Returns [constant OK] on success or an error code on failure.
 func execute(console: Console, args: Array) -> int:
-	if len(args) != len(expected_args_types()):
+	if not is_variable_args() and len(args) != len(expected_args_types()):
 		return ERR_INVALID_ARGS_COUNT
 
-	if not _validate_args(args):
+	if not is_variable_args() and not _validate_args(args):
 		return ERR_INVALID_ARGS_TYPES
 
 	return _execute(console, args)
