@@ -24,7 +24,6 @@ extends IEnemy
 ## Cooldown time between full attack cycles.
 @export var attack_cooldown: float = 5.0
 
-@onready var stats_db: StatsDB = StatsDB
 
 # Onready variables
 ## The area 2D node for the enemy to detect towers in range
@@ -107,12 +106,12 @@ func _ready() -> void:
 
 
 func _apply_extra_stats_override() -> void:
-	if enemy_id.is_empty():
+	if enemy_id.is_empty() or stats_db == null:
 		return
 	if not stats_db.has_enemy(enemy_id):
 		return
-	var data := stats_db.get_enemy(enemy_id)
-	var extra := data.get("extra", {})
+	var data: Dictionary = stats_db.get_enemy(enemy_id)
+	var extra: Dictionary = data.get("extra", {})
 	if extra.has("shoot_range"):
 		shoot_range = float(extra["shoot_range"])
 	if extra.has("fire_rate"):

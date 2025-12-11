@@ -99,9 +99,9 @@ height = 36.0
 [sub_resource type="CircleShape2D" id="CircleShape2D_hnqt7"]
 
 [node name="Bat01" instance=ExtResource("1_tpm17")]
-tower_id = "bat_01"
 position = Vector2(0, -16)
 bullet_scene = ExtResource("2_g3vd4")
+tower_id = "bat_01"
 
 [node name="AnimatedSprite2D" parent="." index="0"]
 sprite_frames = SubResource("SpriteFrames_1t44q")

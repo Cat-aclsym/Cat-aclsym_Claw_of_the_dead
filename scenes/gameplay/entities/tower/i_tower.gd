@@ -109,7 +109,7 @@ var target: IEnemy
 var target_type: TargetType
 ## The pending upgrade to be applied
 var pending_upgrade: PackedScene
-@onready var stats_db: StatsDB = StatsDB
+@onready var stats_db = get_node("/root/StatsDB")
 @export var tower_id: String = ""
 
 # Core methods
@@ -289,12 +289,12 @@ func _apply_bullet_modifications(bullet_instance: IBullet) -> void:
 
 
 func _apply_base_stats_override() -> void:
-	if tower_id.is_empty():
+	if tower_id.is_empty() or stats_db == null:
 		return
 	if not stats_db.has_tower(tower_id):
 		return
-	var data := stats_db.get_tower(tower_id)
-	var base := data.get("base", {})
+	var data: Dictionary = stats_db.get_tower(tower_id)
+	var base: Dictionary = data.get("base", {})
 	if base.has("cost"):
 		cost = int(base["cost"])
 	if base.has("fire_rate"):

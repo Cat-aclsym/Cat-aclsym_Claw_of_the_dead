@@ -4,7 +4,7 @@ extends Control
 var sell_price: int
 var tower: ITower
 var upgrade_price: int
-@onready var stats_db: StatsDB = StatsDB
+@onready var stats_db = get_node("/root/StatsDB")
 
 @onready var close_button: TextureButton = $VBoxContainer/CloseAspectRatioContainer/CloseTextureButton
 @onready var sell_button: TextureButton = $VBoxContainer/HBoxContainer/SellAspectRatioContainer/SellTextureButton
@@ -84,10 +84,10 @@ func _resolve_upgrade_price(upgrade_scene: PackedScene) -> int:
 	if upgrade_scene == null:
 		return 0
 	var upgrade_path: String = upgrade_scene.resource_path
-	if not upgrade_path.is_empty():
-		var upgrade_id := stats_db.upgrade_id_from_scene(upgrade_path)
+	if not upgrade_path.is_empty() and stats_db != null:
+		var upgrade_id: String = stats_db.upgrade_id_from_scene(upgrade_path)
 		if not upgrade_id.is_empty():
-			var upgrade_data := stats_db.get_upgrade(upgrade_id)
+			var upgrade_data: Dictionary = stats_db.get_upgrade(upgrade_id)
 			var price = upgrade_data.get("price", null)
 			if price != null:
 				return int(price)

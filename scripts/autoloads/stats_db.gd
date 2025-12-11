@@ -1,7 +1,6 @@
 ## © [2024] A7 Studio. All rights reserved. Trademark.
 ##
 ## Charge et expose les stats centralisées (tours, upgrades, ennemis) depuis un JSON.
-class_name StatsDB
 extends Node
 
 const STATS_PATH: String = "res://assets/resources/configs/stats.json"
@@ -52,7 +51,7 @@ func has_enemy(id: String) -> bool:
 func load_packed_scene(path: String) -> PackedScene:
 	if path.is_empty():
 		return null
-	var res := load(path)
+	var res: Resource = load(path)
 	return res if res is PackedScene else null
 
 
@@ -60,8 +59,8 @@ func _load_json(path: String) -> Dictionary:
 	if not FileAccess.file_exists(path):
 		push_warning("StatsDB: fichier introuvable %s" % path)
 		return {}
-	var content := FileAccess.get_file_as_string(path)
-	var parsed := JSON.parse_string(content)
+	var content: String = FileAccess.get_file_as_string(path)
+	var parsed: Variant = JSON.parse_string(content)
 	if typeof(parsed) != TYPE_DICTIONARY:
 		push_warning("StatsDB: format JSON inattendu pour %s" % path)
 		return {}
@@ -75,4 +74,3 @@ func _index_upgrades_by_scene() -> void:
 		var upgrade: Dictionary = upgrades.get(id, {})
 		if upgrade.has("scene"):
 			_upgrade_by_scene[upgrade["scene"]] = id
-

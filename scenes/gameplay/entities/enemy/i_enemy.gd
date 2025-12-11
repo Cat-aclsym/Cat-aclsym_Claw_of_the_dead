@@ -55,7 +55,7 @@ const DAMAGES: Dictionary = {
 @export var max_health: float = 20.0
 @export var speed: float = 30.0
 @export var enemy_id: String = ""
-@onready var stats_db: StatsDB = StatsDB
+@onready var stats_db = get_node("/root/StatsDB")
 @export var type: EnemyType = EnemyType.DEFAULT
 
 var active_poison_timers: Array[Dictionary] = []
@@ -299,11 +299,11 @@ func _path_finished_state() -> void:
 
 
 func _apply_stats_override() -> void:
-	if enemy_id.is_empty():
+	if enemy_id.is_empty() or stats_db == null:
 		return
 	if not stats_db.has_enemy(enemy_id):
 		return
-	var data := stats_db.get_enemy(enemy_id)
+	var data: Dictionary = stats_db.get_enemy(enemy_id)
 	var hp = data.get("max_health", null)
 	var spd = data.get("speed", null)
 	if hp != null:
