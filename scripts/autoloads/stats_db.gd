@@ -12,6 +12,10 @@ var _upgrade_by_scene: Dictionary = {}
 func _ready() -> void:
 	_data = _load_json(STATS_PATH)
 	_index_upgrades_by_scene()
+	var towers_count: int = _data.get("towers", {}).size()
+	var enemies_count: int = _data.get("enemies", {}).size()
+	var upgrades_count: int = _data.get("upgrades", {}).size()
+	Log.trace(Log.Level.INFO, "StatsDB loaded: towers=%s, enemies=%s, upgrades=%s" % [towers_count, enemies_count, upgrades_count])
 
 
 func get_tower(id: String) -> Dictionary:

@@ -38,34 +38,26 @@ enum TowerType {
 ## The bullet scene to be instantiated by the tower
 @export var bullet_scene: PackedScene = null
 
-## The bullet stats to be applied to the bullet
-@export var bullet_stats: Dictionary = {
-	"damage": 0.0, ## Base damage increase
-	"speed": 0.0, ## Projectile speed modifier
-	"pierce_count": 0.0, ## Armor penetration value
-	"pierce_reduction": 0.0, ## Reduction in piercing effectiveness
-	"aoe_range": 0.0, ## Area of effect range
-	"burn_duration": 0.0, ## Duration of the burn effect
-	"burn_damage_base": 0.0, ## Base damage of the burn effect
-}
+## The bullet stats to be applied to the bullet (overridden at runtime from StatsDB)
+var bullet_stats: Dictionary = {}
 
 @export_subgroup("Multi-Shot Properties")
-## The number of projectiles to fire simultaneously
-@export var projectile_count: int = 1
-## The angle spread between multiple projectiles (in degrees)
-@export var spread_angle: float = 15.0
+## The number of projectiles to fire simultaneously (overridden at runtime)
+var projectile_count: int = 0
+## The angle spread between multiple projectiles (in degrees) (overridden at runtime)
+var spread_angle: float = 0.0
 
 @export_subgroup("Tower Properties")
-## The cost of the tower
-@export var cost: int
-## The fire rate of the tower
-@export var fire_rate: float
-## The level of the tower
-@export var level: int
-## The sell price of the tower
-@export var sell_price: int
-## The shooting range of the tower
-@export var shoot_range: float
+## The cost of the tower (overridden at runtime)
+var cost: int = 0
+## The fire rate of the tower (overridden at runtime)
+var fire_rate: float = 0.0
+## The level of the tower (overridden at runtime)
+var level: int = 0
+## The sell price of the tower (computed)
+var sell_price: int = 0
+## The shooting range of the tower (overridden at runtime)
+var shoot_range: float = 0.0
 
 @export_subgroup("Upgrades")
 ## The upgrade array to store upgrades that are applied in the tower
@@ -292,15 +284,21 @@ func _apply_base_stats_override() -> void:
 	if tower_id.is_empty() or stats_db == null:
 		return
 	if not stats_db.has_tower(tower_id):
+		Log.trace(Log.Level.ERROR, "StatsDB missing tower id: %s" % tower_id)
 		return
 	var data: Dictionary = stats_db.get_tower(tower_id)
 	var base: Dictionary = data.get("base", {})
+	Log.trace(Log.Level.INFO, "Applying tower stats from StatsDB for %s: %s" % [tower_id, base])
 	if base.has("cost"):
 		cost = int(base["cost"])
 	if base.has("fire_rate"):
 		fire_rate = float(base["fire_rate"])
 	if base.has("shoot_range"):
 		shoot_range = float(base["shoot_range"])
+	if base.has("projectile_count"):
+		projectile_count = int(base["projectile_count"])
+	if base.has("spread_angle"):
+		spread_angle = float(base["spread_angle"])
 	if base.has("bullet_stats"):
 		var bs: Dictionary = base["bullet_stats"]
 		for k in bs.keys():

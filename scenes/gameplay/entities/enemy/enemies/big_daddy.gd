@@ -7,22 +7,17 @@ extends IEnemy
 @export_subgroup("Shooting Configuration")
 ## The projectile scene to be instantiated by the enemy
 @export var projectile_scene: PackedScene = null
-## The shooting range of the enemy
-@export var shoot_range: float = 150.0
-## The fire rate of the enemy (shots per second)
-@export var fire_rate: float = 0.5
-## The duration in seconds that a tower is disabled when hit by a projectile
-@export var tower_disable_duration: float = 3.0
+## Runtime stats loaded from StatsDB (JSON); defaults kept neutral here
+var shoot_range: float = 0.0
+var fire_rate: float = 0.0
+var tower_disable_duration: float = 0.0
 
 @export_subgroup("Attack Cycle Configuration")
-## Time to wait before starting an attack after detecting a target.
-@export var pre_attack_delay: float = 1.0
-## Duration of the attack phase (shooting).
-@export var attack_duration: float = 1.0
-## Time to wait after an attack before resuming movement.
-@export var post_attack_delay: float = 1.0
-## Cooldown time between full attack cycles.
-@export var attack_cooldown: float = 5.0
+## Runtime stats loaded from StatsDB (JSON); defaults kept neutral here
+var pre_attack_delay: float = 0.0
+var attack_duration: float = 0.0
+var post_attack_delay: float = 0.0
+var attack_cooldown: float = 0.0
 
 
 # Onready variables
@@ -112,6 +107,7 @@ func _apply_extra_stats_override() -> void:
 		return
 	var data: Dictionary = stats_db.get_enemy(enemy_id)
 	var extra: Dictionary = data.get("extra", {})
+	Log.trace(Log.Level.INFO, "Applying big_daddy extra stats from StatsDB: %s" % extra)
 	if extra.has("shoot_range"):
 		shoot_range = float(extra["shoot_range"])
 	if extra.has("fire_rate"):

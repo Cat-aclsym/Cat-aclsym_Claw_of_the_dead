@@ -52,8 +52,8 @@ const DAMAGES: Dictionary = {
 	DamageType.FIRE: {"color": Color(1.0, 0.3, 0.1, 1)},
 }
 
-@export var max_health: float = 20.0
-@export var speed: float = 30.0
+var max_health: float = 0.0
+var speed: float = 0.0
 @export var enemy_id: String = ""
 @onready var stats_db = get_node("/root/StatsDB")
 @export var type: EnemyType = EnemyType.DEFAULT
@@ -302,8 +302,10 @@ func _apply_stats_override() -> void:
 	if enemy_id.is_empty() or stats_db == null:
 		return
 	if not stats_db.has_enemy(enemy_id):
+		Log.trace(Log.Level.ERROR, "StatsDB missing enemy id: %s" % enemy_id)
 		return
 	var data: Dictionary = stats_db.get_enemy(enemy_id)
+	Log.trace(Log.Level.INFO, "Applying enemy stats from StatsDB for %s: %s" % [enemy_id, data])
 	var hp = data.get("max_health", null)
 	var spd = data.get("speed", null)
 	if hp != null:
