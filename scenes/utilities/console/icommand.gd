@@ -20,18 +20,23 @@ enum Types {
 
 
 # public
-## Returns the command's identifier token.
-func command_token() -> String:
-	return ""
-
-
 ## Returns the command's description.
 func description() -> String:
 	return ""
 
 
 ## Returns an array of expected argument types.
+## Deprecated: Use [method get_args] instead.
 func expected_args_types() -> Array[ICommand.Types]:
+	return []
+
+
+## Returns an array of argument definitions.
+## Each definition is a Dictionary with:
+## - "name": String (Argument name)
+## - "type": ICommand.Types (Argument type)
+## - "optional": bool (Whether the argument is optional, default false)
+func get_args() -> Array[Dictionary]:
 	return []
 
 
@@ -45,11 +50,28 @@ func is_variable_args() -> bool:
 ##
 ## Returns [constant OK] on success or an error code on failure.
 func execute(console: Console, args: Array) -> int:
-	if not is_variable_args() and len(args) != len(expected_args_types()):
-		return ERR_INVALID_ARGS_COUNT
+	var defined_args := get_args()
 
-	if not is_variable_args() and not _validate_args(args):
-		return ERR_INVALID_ARGS_TYPES
+	if not defined_args.is_empty():
+		var required_count := 0
+		for arg in defined_args:
+			if not arg.get("optional", false):
+				required_count += 1
+
+		if args.size() < required_count or args.size() > defined_args.size():
+			return ERR_INVALID_ARGS_COUNT
+
+		for i in range(args.size()):
+			var arg_def := defined_args[i]
+			if not _validate_type(args[i], arg_def.get("type", Types.ARG_UNKNOWN)):
+				return ERR_INVALID_ARGS_TYPES
+
+	elif not is_variable_args():
+		if len(args) != len(expected_args_types()):
+			return ERR_INVALID_ARGS_COUNT
+
+		if not _validate_args(args):
+			return ERR_INVALID_ARGS_TYPES
 
 	return _execute(console, args)
 
