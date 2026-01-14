@@ -30,12 +30,6 @@ func description() -> String:
 	return ""
 
 
-## Returns an array of expected argument types.
-## Deprecated: Use [method get_args] instead.
-func expected_args_types() -> Array[ICommand.Types]:
-	return []
-
-
 ## Returns an array of argument definitions.
 ## Each definition is a Dictionary with:
 ## - "name": String (Argument name)
@@ -72,13 +66,6 @@ func execute(console: Console, args: Array) -> int:
 			if not _validate_type_with_def(args[i], arg_def):
 				return ERR_INVALID_ARGS_TYPES
 
-	elif not is_variable_args():
-		if len(args) != len(expected_args_types()):
-			return ERR_INVALID_ARGS_COUNT
-
-		if not _validate_args(args):
-			return ERR_INVALID_ARGS_TYPES
-
 	return _execute(console, args)
 
 
@@ -111,13 +98,6 @@ func type_to_string(t: ICommand.Types) -> String:
 ## Implements the command's behavior. Override in derived classes.
 func _execute(_console: Console, _args: Array) -> int:
 	return OK
-
-
-func _validate_args(args: Array) -> bool:
-	for i in range(len(args)):
-		if not _validate_type(args[i], expected_args_types()[i]):
-			return false
-	return true
 
 
 func _validate_type(in_string: String, in_type: ICommand.Types) -> bool:

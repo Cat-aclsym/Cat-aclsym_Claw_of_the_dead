@@ -42,10 +42,6 @@ func _execute(console: Console, args: Array) -> int:
 							message += " [%s: %s]" % [arg_name, type_str]
 						else:
 							message += " <%s: %s>" % [arg_name, type_str]
-				else:
-					for arg_type in cmd.expected_args_types():
-						var type_str: String = cmd.type_to_string(arg_type)
-						message += " <%s>" % type_str
 
 				console.push_text(message)
 				console.push_text("Description: %s" % cmd.description())
@@ -79,9 +75,6 @@ func _execute(console: Console, args: Array) -> int:
 					message += " [%s]" % arg_name
 				else:
 					message += " <%s>" % arg_name
-		else:
-			for arg_type in cmd.expected_args_types():
-				message += " <%s>" % type_to_string(arg_type)
 
 		message += ": %s" % cmd.description()
 		console.push_text(message)

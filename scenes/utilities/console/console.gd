@@ -217,8 +217,6 @@ func _complete_suggestion() -> void:
 			var cmd_instance: ICommand = cmd_script.new()
 			if cmd_instance.has_method("get_args"):
 				has_args = not cmd_instance.get_args().is_empty()
-			if not has_args:
-				has_args = not cmd_instance.expected_args_types().is_empty()
 
 	if has_args:
 		# Recalculate suggestions for the new command text
