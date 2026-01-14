@@ -6,16 +6,15 @@ extends ICommand
 
 
 # public
-func command_token() -> String:
-	return "set_game_resolution"
-
-
 func description() -> String:
-	return "Set game resolution. set_game_resolution width height"
+	return "Set game resolution."
 
 
-func expected_args_types() -> Array[ICommand.Types]:
-	return [ICommand.Types.ARG_INT, ICommand.Types.ARG_INT]
+func get_args() -> Array[Dictionary]:
+	return [
+		{"name": "width", "type": Types.ARG_INT},
+		{"name": "height", "type": Types.ARG_INT}
+	]
 
 
 # private

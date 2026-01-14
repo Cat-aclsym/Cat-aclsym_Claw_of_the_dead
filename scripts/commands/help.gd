@@ -6,10 +6,6 @@ extends ICommand
 
 
 # public
-func command_token() -> String:
-	return "help"
-
-
 func description() -> String:
 	return "Display all commands with their description."
 
@@ -25,16 +21,21 @@ func _execute(console: Console, _args: Array) -> int:
 		if not path.ends_with(".gd"):
 			continue
 		var cmd: ICommand = load("%s/%s" % [Console.COMMANDS_DIRECTORY, path]).new()
-		var message: String = " -%s" % cmd.command_token()
+		var message: String = "%s" % path.trim_suffix(".gd")
 
-		var first_arg := true
-		for arg in cmd.expected_args_types():
-			message += " %s" % type_to_string(arg)
-			if not first_arg:
-				message += ","
-			first_arg = false
+		var defined_args := cmd.get_args()
+		if not defined_args.is_empty():
+			for arg in defined_args:
+				var arg_name: String = arg.get("name", "arg")
+				if arg.get("optional", false):
+					message += " [%s]" % arg_name
+				else:
+					message += " <%s>" % arg_name
+		else:
+			for arg in cmd.expected_args_types():
+				message += " <%s>" % type_to_string(arg)
 
-		message += "\n\t%s" % cmd.description()
+		message += ": %s" % cmd.description()
 		console.push_text(message)
 
 	return OK

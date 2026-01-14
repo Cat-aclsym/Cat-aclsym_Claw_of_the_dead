@@ -6,16 +6,12 @@ extends ICommand
 
 
 # public
-func command_token() -> String:
-	return "set_font_size"
-
-
 func description() -> String:
 	return "Set font size of debug console."
 
 
-func expected_args_types() -> Array[ICommand.Types]:
-	return [ICommand.Types.ARG_INT]
+func get_args() -> Array[Dictionary]:
+	return [{"name": "size", "type": Types.ARG_INT}]
 
 
 # private

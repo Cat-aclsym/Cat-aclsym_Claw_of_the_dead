@@ -6,16 +6,12 @@ extends ICommand
 
 
 # public
-func command_token() -> String:
-	return "set_money"
-
-
 func description() -> String:
 	return "Set in game money."
 
 
-func expected_args_types() -> Array[ICommand.Types]:
-	return [ICommand.Types.ARG_INT]
+func get_args() -> Array[Dictionary]:
+	return [{"name": "amount", "type": Types.ARG_INT}]
 
 
 # private

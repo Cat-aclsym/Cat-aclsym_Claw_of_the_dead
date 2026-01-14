@@ -4,17 +4,21 @@
 extends ICommand
 
 # public
-func command_token() -> String:
-	return "progression"
-
 func description() -> String:
-	return "Manage game progression. Usage: progression [reset|unlock <level>|challenge <level> <number>]"
+	return "Manage game progression."
 
-func expected_args_types() -> Array[ICommand.Types]:
-	return [] # Not used when is_variable_args returns true
+
+func get_args() -> Array[Dictionary]:
+	return [
+		{"name": "action", "type": Types.ARG_STRING},
+		{"name": "level", "type": Types.ARG_STRING, "optional": true},
+		{"name": "id", "type": Types.ARG_STRING, "optional": true}
+	]
+
 
 func is_variable_args() -> bool:
 	return true
+
 
 # private
 func _execute(console: Console, args: Array) -> int:

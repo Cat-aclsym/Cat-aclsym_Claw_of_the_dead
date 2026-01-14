@@ -2,19 +2,16 @@
 extends ICommand
 
 # public
-## Return le nom de la command
-func command_token() -> String:
-	return "up_tower"
-
-
 ## Return descript de la command
 func description() -> String:
-	return "Upgrade a tower. Pass the tower's name and the upgrade path (default 1, higher if available). e.g up_tower tower_1 1"
+	return "Upgrade a tower."
 
 
-## Return une list des types d'arguments attendu. e.g [ICommand.Types.ARG_INT, ICommand.Types.ARG_INT]
-func expected_args_types() -> Array[ICommand.Types]:
-	return [ICommand.Types.ARG_STRING, ICommand.Types.ARG_INT]
+func get_args() -> Array[Dictionary]:
+	return [
+		{"name": "tower_name", "type": Types.ARG_STRING},
+		{"name": "path", "type": Types.ARG_INT, "optional": true}
+	]
 
 
 # private
@@ -24,7 +21,7 @@ func expected_args_types() -> Array[ICommand.Types]:
 func _execute(console: Console, args: Array) -> int:
 
 	var tower_name: String = args[0]
-	var upgrade_path: int = int(args[1])
+	var upgrade_path: int = int(args[1]) if args.size() > 1 else 1
 
 	var tower: ITower = ILevel.current_level.map.get_tower_by_name(tower_name)
 	if not tower:

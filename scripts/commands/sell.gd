@@ -2,19 +2,13 @@
 extends ICommand
 
 # public
-## Return le nom de la command
-func command_token() -> String:
-	return "sell_tower"
-
-
 ## Return descript de la command
 func description() -> String:
-	return "Sell a tower. Pass the tower's name. e.g sell_tower tower_1"
+	return "Sell a tower."
 
 
-## Return une list des types d'arguments attendu. e.g [ICommand.Types.ARG_INT, ICommand.Types.ARG_INT]
-func expected_args_types() -> Array[ICommand.Types]:
-	return [ICommand.Types.ARG_STRING]
+func get_args() -> Array[Dictionary]:
+	return [{"name": "tower_name", "type": Types.ARG_STRING}]
 
 
 # private

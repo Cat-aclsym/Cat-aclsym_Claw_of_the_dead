@@ -5,16 +5,12 @@ extends ICommand
 
 
 # public
-func command_token() -> String:
-	return "set_time_scale"
-
-
 func description() -> String:
 	return "Set time scale"
 
 
-func expected_args_types() -> Array[ICommand.Types]:
-	return [ICommand.Types.ARG_FLOAT]
+func get_args() -> Array[Dictionary]:
+	return [{ "name": "timescale", "type": ICommand.Types.ARG_FLOAT, "optional": false }]
 
 
 # private

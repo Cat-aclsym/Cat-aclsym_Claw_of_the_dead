@@ -6,10 +6,6 @@ extends ICommand
 
 
 # public
-func command_token() -> String:
-	return "exit"
-
-
 func description() -> String:
 	return "Exit game."
 
