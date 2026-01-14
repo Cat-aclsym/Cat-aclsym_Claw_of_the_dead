@@ -3,12 +3,15 @@
 ## Charge et expose les stats centralisées (tours, upgrades, ennemis) depuis un JSON.
 extends Node
 
+# Constants
 const STATS_PATH: String = "res://assets/resources/configs/stats.json"
 
+# Private variables
 var _data: Dictionary = {}
 var _upgrade_by_scene: Dictionary = {}
 
 
+# Built-in functions
 func _ready() -> void:
 	_data = _load_json(STATS_PATH)
 	_index_upgrades_by_scene()
@@ -18,6 +21,7 @@ func _ready() -> void:
 	Log.trace(Log.Level.INFO, "StatsDB loaded: towers=%s, enemies=%s, upgrades=%s" % [towers_count, enemies_count, upgrades_count])
 
 
+# Public functions
 func get_tower(id: String) -> Dictionary:
 	return _data.get("towers", {}).get(id, {})
 
@@ -59,6 +63,7 @@ func load_packed_scene(path: String) -> PackedScene:
 	return res if res is PackedScene else null
 
 
+# Private functions
 func _load_json(path: String) -> Dictionary:
 	if not FileAccess.file_exists(path):
 		push_warning("StatsDB: fichier introuvable %s" % path)
