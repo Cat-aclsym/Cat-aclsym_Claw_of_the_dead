@@ -6,13 +6,13 @@ extends Control
 ## Signal emitted when the menu is closed
 signal menu_close
 
-@onready var close_button: TextureButton = $GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/TopLineHBoxContainer/AspectRatioContainer/CloseTextureButton
-@onready var prev_button: Button = $GuiMarginContainer/MenuMarginContainer/NavigationHBoxContainer/PrevButton
-@onready var next_button: Button = $GuiMarginContainer/MenuMarginContainer/NavigationHBoxContainer/NextButton
-@onready var sprite_rect: TextureRect = $GuiMarginContainer/MenuMarginContainer/ContentHBoxContainer/LeftPageVBox/SpriteAspectRatio/SpriteRect
-@onready var name_label: Label = $GuiMarginContainer/MenuMarginContainer/ContentHBoxContainer/LeftPageVBox/NameLabel
-@onready var stats_grid: GridContainer = $GuiMarginContainer/MenuMarginContainer/ContentHBoxContainer/RightPageVBox/StatsGrid
-@onready var section_label: Label = $GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/TopLineHBoxContainer/SectionLabel
+@onready var close_button: TextureButton = $GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/TopLineHBoxContainer/AspectRatioContainer/CloseTextureButton
+@onready var prev_button: Button = $GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/NavigationHBoxContainer/PrevButton
+@onready var next_button: Button = $GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/NavigationHBoxContainer/NextButton
+@onready var sprite_rect: TextureRect = $GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/ContentHBoxContainer/LeftPageVBox/SpriteAspectRatio/SpriteRect
+@onready var name_label: Label = $GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/ContentHBoxContainer/LeftPageVBox/NameLabel
+@onready var stats_grid: GridContainer = $GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/ContentHBoxContainer/RightPageVBox/StatsGrid
+@onready var section_label: Label = $GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/TopLineHBoxContainer/SectionLabel
 
 var _entries: Array[Dictionary] = []
 var _current_index: int = 0

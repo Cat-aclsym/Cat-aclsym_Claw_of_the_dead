@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://bn138mkgu2wba"]
+[gd_scene load_steps=5 format=3 uid="uid://doml7biiq8g2o"]
 
 [ext_resource type="Script" uid="uid://boqaeq5svhocn" path="res://scenes/ui/menus/hud/encyclopedia.gd" id="1_ency"]
 [ext_resource type="Texture2D" uid="uid://bel17gs3ijyb1" path="res://assets/environment/backgrounds/Fond Menu 02@2x.png" id="2_bg"]
@@ -24,6 +24,7 @@ anchor_right = 0.95
 anchor_bottom = 0.95
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 
 [node name="BackgroundTextureRect" type="TextureRect" parent="GuiMarginContainer"]
 layout_mode = 2
@@ -32,20 +33,21 @@ expand_mode = 1
 
 [node name="MenuMarginContainer" type="MarginContainer" parent="GuiMarginContainer"]
 layout_mode = 2
+mouse_filter = 2
 theme_override_constants/margin_left = 40
 theme_override_constants/margin_top = 20
 theme_override_constants/margin_right = 40
 theme_override_constants/margin_bottom = 20
 
-[node name="MenuRowVBoxContainer" type="VBoxContainer" parent="GuiMarginContainer/MenuMarginContainer"]
+[node name="MainVBoxContainer" type="VBoxContainer" parent="GuiMarginContainer/MenuMarginContainer"]
 layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
+mouse_filter = 2
 
-[node name="TopLineHBoxContainer" type="HBoxContainer" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer"]
+[node name="TopLineHBoxContainer" type="HBoxContainer" parent="GuiMarginContainer/MenuMarginContainer/MainVBoxContainer"]
 layout_mode = 2
+mouse_filter = 2
 
-[node name="SectionLabel" type="Label" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/TopLineHBoxContainer"]
+[node name="SectionLabel" type="Label" parent="GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/TopLineHBoxContainer"]
 texture_filter = 5
 layout_mode = 2
 theme = ExtResource("4_theme")
@@ -53,14 +55,14 @@ theme_type_variation = &"HeaderMedium"
 theme_override_font_sizes/font_size = 28
 text = "ENCYCLOPEDIA.TITLE"
 
-[node name="AspectRatioContainer" type="AspectRatioContainer" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/TopLineHBoxContainer"]
+[node name="AspectRatioContainer" type="AspectRatioContainer" parent="GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/TopLineHBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_vertical = 3
+mouse_filter = 2
 alignment_horizontal = 2
-alignment_vertical = 2
+alignment_vertical = 0
 
-[node name="CloseTextureButton" type="TextureButton" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/TopLineHBoxContainer/AspectRatioContainer"]
+[node name="CloseTextureButton" type="TextureButton" parent="GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/TopLineHBoxContainer/AspectRatioContainer"]
 texture_filter = 6
 custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
@@ -68,56 +70,60 @@ texture_normal = ExtResource("3_close")
 ignore_texture_size = true
 stretch_mode = 4
 
-[node name="ContentHBoxContainer" type="HBoxContainer" parent="GuiMarginContainer/MenuMarginContainer"]
+[node name="ContentHBoxContainer" type="HBoxContainer" parent="GuiMarginContainer/MenuMarginContainer/MainVBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
+mouse_filter = 2
 theme_override_constants/separation = 50
 
-[node name="LeftPageVBox" type="VBoxContainer" parent="GuiMarginContainer/MenuMarginContainer/ContentHBoxContainer"]
+[node name="LeftPageVBox" type="VBoxContainer" parent="GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/ContentHBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
+mouse_filter = 2
 alignment = 1
 
-[node name="SpriteAspectRatio" type="AspectRatioContainer" parent="GuiMarginContainer/MenuMarginContainer/ContentHBoxContainer/LeftPageVBox"]
+[node name="SpriteAspectRatio" type="AspectRatioContainer" parent="GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/ContentHBoxContainer/LeftPageVBox"]
 layout_mode = 2
 size_flags_vertical = 3
+mouse_filter = 2
 
-[node name="SpriteRect" type="TextureRect" parent="GuiMarginContainer/MenuMarginContainer/ContentHBoxContainer/LeftPageVBox/SpriteAspectRatio"]
+[node name="SpriteRect" type="TextureRect" parent="GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/ContentHBoxContainer/LeftPageVBox/SpriteAspectRatio"]
 texture_filter = 6
 layout_mode = 2
 expand_mode = 1
 stretch_mode = 5
 
-[node name="NameLabel" type="Label" parent="GuiMarginContainer/MenuMarginContainer/ContentHBoxContainer/LeftPageVBox"]
+[node name="NameLabel" type="Label" parent="GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/ContentHBoxContainer/LeftPageVBox"]
 layout_mode = 2
 theme = ExtResource("4_theme")
 theme_type_variation = &"HeaderMedium"
 text = "ITEM NAME"
 horizontal_alignment = 1
 
-[node name="RightPageVBox" type="VBoxContainer" parent="GuiMarginContainer/MenuMarginContainer/ContentHBoxContainer"]
+[node name="RightPageVBox" type="VBoxContainer" parent="GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/ContentHBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
+mouse_filter = 2
 alignment = 1
 
-[node name="StatsGrid" type="GridContainer" parent="GuiMarginContainer/MenuMarginContainer/ContentHBoxContainer/RightPageVBox"]
+[node name="StatsGrid" type="GridContainer" parent="GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/ContentHBoxContainer/RightPageVBox"]
 layout_mode = 2
 size_flags_vertical = 4
 theme_override_constants/h_separation = 20
 theme_override_constants/v_separation = 10
 columns = 2
 
-[node name="NavigationHBoxContainer" type="HBoxContainer" parent="GuiMarginContainer/MenuMarginContainer"]
+[node name="NavigationHBoxContainer" type="HBoxContainer" parent="GuiMarginContainer/MenuMarginContainer/MainVBoxContainer"]
 layout_mode = 2
-size_flags_vertical = 8
+mouse_filter = 2
 alignment = 2
 
-[node name="PrevButton" type="Button" parent="GuiMarginContainer/MenuMarginContainer/NavigationHBoxContainer"]
+[node name="PrevButton" type="Button" parent="GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/NavigationHBoxContainer"]
 layout_mode = 2
 theme = ExtResource("4_theme")
 text = " < "
 
-[node name="NextButton" type="Button" parent="GuiMarginContainer/MenuMarginContainer/NavigationHBoxContainer"]
+[node name="NextButton" type="Button" parent="GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/NavigationHBoxContainer"]
 layout_mode = 2
 theme = ExtResource("4_theme")
 text = " > "
