@@ -5,7 +5,7 @@
 extends ICommand
 
 
-# public
+# Public functions
 func description() -> String:
 	return "Set game resolution."
 
@@ -17,7 +17,7 @@ func get_args() -> Array[Dictionary]:
 	]
 
 
-# private
+# Private functions
 func _execute(console: Console, args: Array) -> int:
 	var width: int = int(args[0])
 	var height: int = int(args[1])

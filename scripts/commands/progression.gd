@@ -1,9 +1,10 @@
-## © [2025] A7 Studio. All rights reserved. Trademark.
+## © [2024] A7 Studio. All rights reserved. Trademark.
 ##
 ## Manages game progression via console.
 extends ICommand
 
-# public
+
+# Public functions
 func description() -> String:
 	return "Manage game progression."
 
@@ -20,7 +21,7 @@ func is_variable_args() -> bool:
 	return true
 
 
-# private
+# Private functions
 func _execute(console: Console, args: Array) -> int:
 	if args.is_empty():
 		console.push_error("Missing subcommand. Usage: progression [reset|unlock|challenge]")

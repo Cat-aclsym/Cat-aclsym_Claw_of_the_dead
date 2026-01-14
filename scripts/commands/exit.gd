@@ -5,13 +5,12 @@
 extends ICommand
 
 
-# public
+# Public functions
 func description() -> String:
 	return "Exit game."
 
 
-# private
+# Private functions
 func _execute(console: Console, _args: Array) -> int:
 	console.get_tree().quit()
-	queue_free()
-	return ERR_UNKNOWN_BEHAVIOR
+	return OK

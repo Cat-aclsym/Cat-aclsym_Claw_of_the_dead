@@ -4,7 +4,7 @@
 extends ICommand
 
 
-# public
+# Public functions
 func description() -> String:
 	return "Set time scale"
 
@@ -13,10 +13,14 @@ func get_args() -> Array[Dictionary]:
 	return [{ "name": "timescale", "type": ICommand.Types.ARG_FLOAT, "optional": false }]
 
 
-# private
-func _execute(_console: Console, args: Array) -> int:
-	assert(float(args[0]) > 0.0, "Time scale must be positive")
+# Private functions
+func _execute(console: Console, args: Array) -> int:
+	var timescale: float = float(args[0])
+	if timescale <= 0.0:
+		console.push_error("Time scale must be positive.")
+		return ERR_UNKNOWN_BEHAVIOR
 
-	Engine.time_scale = float(args[0])
+	Engine.time_scale = timescale
+	console.push_text("Set time scale to: %.2f" % timescale)
 
 	return OK

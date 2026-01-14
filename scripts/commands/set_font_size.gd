@@ -5,7 +5,7 @@
 extends ICommand
 
 
-# public
+# Public functions
 func description() -> String:
 	return "Set font size of debug console."
 
@@ -14,7 +14,7 @@ func get_args() -> Array[Dictionary]:
 	return [{"name": "size", "type": Types.ARG_INT}]
 
 
-# private
+# Private functions
 func _execute(console: Console, args: Array) -> int:
 	var new_size: int = int(args[0])
 	assert(new_size > 0, "Font size must be positive")

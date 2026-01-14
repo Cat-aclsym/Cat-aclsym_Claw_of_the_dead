@@ -5,23 +5,29 @@
 extends ICommand
 
 
-# public
+# Public functions
 func description() -> String:
 	return "Display all commands with their description."
 
 
-# private
+# Private functions
 func _execute(console: Console, _args: Array) -> int:
 	var cmd_dir := DirAccess.open(Console.COMMANDS_DIRECTORY)
 	assert(cmd_dir != null, "Failed to open commands directory")
 
 	var cmd_paths: PackedStringArray = cmd_dir.get_files()
 
+	console.push_text("Available commands:")
 	for path in cmd_paths:
 		if not path.ends_with(".gd"):
 			continue
-		var cmd: ICommand = load("%s/%s" % [Console.COMMANDS_DIRECTORY, path]).new()
-		var message: String = "%s" % path.trim_suffix(".gd")
+
+		var cmd_script := load("%s/%s" % [Console.COMMANDS_DIRECTORY, path])
+		if not cmd_script:
+			continue
+
+		var cmd: ICommand = cmd_script.new()
+		var message: String = " - %s" % path.trim_suffix(".gd")
 
 		var defined_args := cmd.get_args()
 		if not defined_args.is_empty():
@@ -32,8 +38,8 @@ func _execute(console: Console, _args: Array) -> int:
 				else:
 					message += " <%s>" % arg_name
 		else:
-			for arg in cmd.expected_args_types():
-				message += " <%s>" % type_to_string(arg)
+			for arg_type in cmd.expected_args_types():
+				message += " <%s>" % type_to_string(arg_type)
 
 		message += ": %s" % cmd.description()
 		console.push_text(message)

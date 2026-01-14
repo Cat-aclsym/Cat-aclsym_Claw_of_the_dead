@@ -17,52 +17,36 @@ var _available_commands: Array[String] = []
 var _current_suggestions: Array[String] = []
 var _suggestion_index: int = -1
 
-# core
+# Built-in functions
 func _ready() -> void:
 	Global.console = self
 	input.grab_focus()
 	_load_available_commands()
 	suggestions_label.hide()
-
-	# Configure suggestions label
 	suggestions_label.autowrap_mode = TextServer.AUTOWRAP_OFF
 
 	push_command("help")
 
-	# Connect signals
 	SignalUtil.connects([
 		{SignalUtil.WHO: input, SignalUtil.WHAT: "text_changed", SignalUtil.TO: _on_input_text_changed},
 		{SignalUtil.WHO: input, SignalUtil.WHAT: "gui_input", SignalUtil.TO: _on_input_gui_input}
 	])
 
 
-func _load_available_commands() -> void:
-	var cmd_dir := DirAccess.open(COMMANDS_DIRECTORY)
-	assert(cmd_dir != null, "Failed to open commands directory")
-
-	for path in cmd_dir.get_files():
-		if path.ends_with(".gd"):
-			_available_commands.append(path.trim_suffix(".gd"))
-	# Sort commands alphabetically
-	_available_commands.sort()
-
-
 func _process(_delta: float) -> void:
 	_listen_inputs()
 
-# public
+
+# Public functions
 ## Pushes text to the console output.
-##
-## If [param save] is true and debug mode is active, the message will be logged.
 func push_text(text: String, save: bool = true) -> void:
 	output.text += "%s\n" % text
 
 	if Global.debug and save:
 		Log.save_message(text)
 
+
 ## Pushes colored text to the console output.
-##
-## Uses BBCode for coloring. If debug mode is active, saves the uncolored text to log.
 func push_color(text: String, color: String) -> void:
 	var colored_text: String = "[color=%s]%s[/color]" % [color, text]
 
@@ -70,17 +54,20 @@ func push_color(text: String, color: String) -> void:
 	if Global.debug:
 		Log.save_message(text)
 
+
 ## Pushes an error message in red color.
 func push_error(text: String) -> void:
 	push_color(text, CONSOLE_COLOR_ERROR)
+
 
 ## Pushes a debug message in green color.
 func push_debug(text: String) -> void:
 	push_color(text, CONSOLE_COLOR_DEBUG)
 
+
 ## Executes a command string in the console.
 func push_command(command: String) -> void:
-	command = command.strip_escapes()
+	command = command.strip_edges()
 	if command.is_empty():
 		return
 
@@ -88,7 +75,18 @@ func push_command(command: String) -> void:
 	_process_command(command)
 	_clear_suggestions()
 
-# private
+
+# Private functions
+func _load_available_commands() -> void:
+	var cmd_dir := DirAccess.open(COMMANDS_DIRECTORY)
+	assert(cmd_dir != null, "Failed to open commands directory")
+
+	for path in cmd_dir.get_files():
+		if path.ends_with(".gd"):
+			_available_commands.append(path.trim_suffix(".gd"))
+	_available_commands.sort()
+
+
 func _listen_inputs() -> void:
 	if Input.is_action_just_pressed("toggle_console"):
 		visible = not visible

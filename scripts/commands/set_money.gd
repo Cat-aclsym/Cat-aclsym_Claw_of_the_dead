@@ -5,7 +5,7 @@
 extends ICommand
 
 
-# public
+# Public functions
 func description() -> String:
 	return "Set in game money."
 
@@ -14,15 +14,18 @@ func get_args() -> Array[Dictionary]:
 	return [{"name": "amount", "type": Types.ARG_INT}]
 
 
-# private
+# Private functions
 func _execute(console: Console, args: Array) -> int:
 	if not ILevel.current_level:
-		console.push_error("You must be in a level to use this method")
-		return ERR_UNCONFIGURED
+		console.push_error("You must be in a level to use this command.")
+		return ERR_UNKNOWN_BEHAVIOR
 
 	var amount: int = int(args[0])
-	assert(amount >= 0, "Money amount cannot be negative")
+	if amount < 0:
+		console.push_error("Money amount cannot be negative.")
+		return ERR_UNKNOWN_BEHAVIOR
 
 	ILevel.current_level.coins = amount
+	console.push_text("Set coins to: %d" % amount)
 
 	return OK

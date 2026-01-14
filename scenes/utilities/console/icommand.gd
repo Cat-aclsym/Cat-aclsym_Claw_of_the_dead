@@ -19,7 +19,7 @@ enum Types {
 }
 
 
-# public
+# Public functions
 ## Returns the command's description.
 func description() -> String:
 	return ""
@@ -91,7 +91,7 @@ func type_to_string(t: ICommand.Types) -> String:
 			return "unknown"
 
 
-# private
+# Private functions
 ## Implements the command's behavior. Override in derived classes.
 func _execute(_console: Console, _args: Array) -> int:
 	return OK
