@@ -19,6 +19,10 @@ class_name Console extends Control
 var _available_commands: Array[String] = []
 var _current_suggestions: Array[String] = []
 var _suggestion_index: int = -1
+var _command_history: Array[String] = []
+var _history_index: int = -1
+var _history_stash: String = ""
+var _is_navigating_history: bool = false
 
 # Built-in functions
 func _ready() -> void:
@@ -28,7 +32,7 @@ func _ready() -> void:
 	suggestions_label.hide()
 	suggestions_label.autowrap_mode = TextServer.AUTOWRAP_OFF
 
-	push_command("help")
+	push_command("help", false)
 
 	SignalUtil.connects([
 		{SignalUtil.WHO: input, SignalUtil.WHAT: "text_changed", SignalUtil.TO: _on_input_text_changed},
@@ -75,10 +79,15 @@ func push_debug(text: String) -> void:
 
 
 ## Executes a command string in the console.
-func push_command(command: String) -> void:
+func push_command(command: String, add_to_history: bool = true) -> void:
 	command = command.strip_edges()
 	if command.is_empty():
 		return
+
+	if add_to_history:
+		if _command_history.is_empty() or _command_history[-1] != command:
+			_command_history.append(command)
+	_history_index = -1
 
 	push_text("> %s" % command)
 	_process_command(command)
@@ -86,6 +95,7 @@ func push_command(command: String) -> void:
 
 
 # Private functions
+## Loads starting command scripts from the commands directory.
 func _load_available_commands() -> void:
 	var cmd_dir := DirAccess.open(commands_directory)
 	assert(cmd_dir != null, "Failed to open commands directory: " + commands_directory)
@@ -96,6 +106,7 @@ func _load_available_commands() -> void:
 	_available_commands.sort()
 
 
+## Listens for global console inputs (toggle, push, cancel).
 func _listen_inputs() -> void:
 	if Input.is_action_just_pressed("toggle_console"):
 		visible = not visible
@@ -117,12 +128,18 @@ func _listen_inputs() -> void:
 		_clear_suggestions()
 		return
 
+## Callback triggered when console input text changes.
 func _on_input_text_changed() -> void:
 	if _suggestion_index >= 0 and (Input.is_action_just_pressed("ui_focus_next") or Input.is_key_pressed(KEY_TAB)):
 		return
 
+	# Reset history index if user types something manual
+	if not _is_navigating_history and _history_index != -1:
+		_history_index = -1
+
 	_update_suggestions()
 
+## Callback triggered on console input GUI events.
 func _on_input_gui_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed:
 		if event.keycode == KEY_TAB:
@@ -137,7 +154,21 @@ func _on_input_gui_input(event: InputEvent) -> void:
 			else:
 				_navigate_suggestions(1)
 			get_viewport().set_input_as_handled()
+		elif (event.keycode == KEY_UP or event.keycode == KEY_DOWN):
+			# History navigation: allowed if empty input OR already navigating history
+			if input.text.strip_edges().is_empty() or _history_index != -1:
+				if event.keycode == KEY_UP:
+					_navigate_history(-1)
+				else:
+					_navigate_history(1)
+				get_viewport().set_input_as_handled()
+				# Force TextEdit to not move cursor internally
+				input.accept_event()
+		elif _history_index != -1 and (event.keycode == KEY_LEFT or event.keycode == KEY_RIGHT):
+			# Validate history selection by moving cursor
+			_history_index = -1
 
+## Handles the tab-completion logic.
 func _handle_tab_completion() -> void:
 	if _current_suggestions.is_empty():
 		_update_suggestions()
@@ -146,6 +177,7 @@ func _handle_tab_completion() -> void:
 
 	_complete_suggestion()
 
+## Completes the currently selected suggestion in the input field.
 func _complete_suggestion() -> void:
 	if _current_suggestions.is_empty():
 		return
@@ -194,6 +226,7 @@ func _complete_suggestion() -> void:
 	else:
 		_clear_suggestions()
 
+## Updates the list of command and argument suggestions.
 func _update_suggestions() -> void:
 	_current_suggestions.clear()
 	_suggestion_index = -1
@@ -288,6 +321,7 @@ func _update_suggestions() -> void:
 	else:
 		_clear_suggestions()
 
+## Displays the suggestions and current command signature in the suggestions label.
 func _show_suggestions() -> void:
 	var full_input := input.text
 	var parts := full_input.split(" ", false)
@@ -343,6 +377,7 @@ func _show_suggestions() -> void:
 	suggestions_label.text = suggestions_text
 	suggestions_label.show()
 
+## Builds a rich text signature for the given command.
 func _build_signature(cmd: ICommand, command_name: String, current_arg_index: int) -> String:
 	var cmd_args := cmd.get_args()
 	var signature := "  " + command_name
@@ -368,6 +403,7 @@ func _build_signature(cmd: ICommand, command_name: String, current_arg_index: in
 	signature += "  — " + cmd.description()
 	return signature
 
+## Gets a readable string for an argument type.
 func _get_type_string(cmd: ICommand, arg_def: Dictionary, arg_type: int) -> String:
 	var type_str: String = cmd.type_to_string(arg_type)
 	if arg_type == ICommand.Types.ARG_ENUM:
@@ -376,11 +412,13 @@ func _get_type_string(cmd: ICommand, arg_def: Dictionary, arg_type: int) -> Stri
 			type_str = "|".join(enum_values)
 	return type_str
 
+## Clears and hides suggestions.
 func _clear_suggestions() -> void:
 	_current_suggestions.clear()
 	_suggestion_index = -1
 	suggestions_label.hide()
 
+## Tokenizes and executes a command.
 func _process_command(command: String) -> void:
 	var tokens := Array(command.split(" "))
 
@@ -402,6 +440,7 @@ func _process_command(command: String) -> void:
 
 	push_error("%d" % err)
 
+## Finds a command script in the commands directory.
 func _find_command(command_token: String, silent: bool = false) -> ICommand:
 	var cmd_dir := DirAccess.open(commands_directory)
 	assert(cmd_dir != null, "Failed to open commands directory")
@@ -415,6 +454,7 @@ func _find_command(command_token: String, silent: bool = false) -> ICommand:
 		push_error("No command named '%s'" % command_token)
 	return null
 
+## Navigates up/down in the suggestions list.
 func _navigate_suggestions(direction: int) -> void:
 	if _current_suggestions.is_empty():
 		return
@@ -427,3 +467,35 @@ func _navigate_suggestions(direction: int) -> void:
 			_suggestion_index = _current_suggestions.size() - 1
 
 	_show_suggestions()
+
+## Navigates through command history.
+func _navigate_history(direction: int) -> void:
+	if _command_history.is_empty():
+		return
+
+	_is_navigating_history = true
+
+	if direction == -1: # UP
+		if _history_index == -1:
+			_history_stash = input.text
+			_history_index = _command_history.size() - 1
+		else:
+			_history_index = max(0, _history_index - 1)
+	else: # DOWN
+		if _history_index == -1:
+			_is_navigating_history = false
+			return
+
+		_history_index += 1
+		if _history_index >= _command_history.size():
+			_history_index = -1
+			input.text = _history_stash
+			input.set_caret_column(input.text.length())
+			_update_suggestions()
+			_is_navigating_history = false
+			return
+
+	input.text = _command_history[_history_index]
+	input.set_caret_column(input.text.length())
+	_update_suggestions()
+	_is_navigating_history = false
