@@ -95,14 +95,28 @@ func _add_enemy_entry_from_data(p_entry_name: String, p_enemy_data: Dictionary) 
 	
 	var enemy_obj: Node = scene_res.instantiate()
 	if enemy_obj:
+		var stats_dict: Dictionary = {
+			"ENCYCLOPEDIA.STATS.HEALTH": str(p_enemy_data.get("max_health", 0.0)),
+			"ENCYCLOPEDIA.STATS.SPEED": "%.1f" % p_enemy_data.get("speed", 0.0),
+			"ENCYCLOPEDIA.STATS.REWARD": str(p_enemy_data.get("reward", 0))
+		}
+		
+		# Add extra stats if they exist (e.g. for Big Daddy)
+		if p_enemy_data.has("extra"):
+			var extra: Dictionary = p_enemy_data["extra"]
+			if extra.has("shoot_range"): stats_dict["ENCYCLOPEDIA.STATS.RANGE"] = str(extra["shoot_range"])
+			if extra.has("fire_rate"): stats_dict["ENCYCLOPEDIA.STATS.FIRERATE"] = "%.1f" % extra["fire_rate"]
+			if extra.has("tower_disable_duration"): stats_dict["ENCYCLOPEDIA.STATS.DISABLE_DURATION"] = "%.1fs" % extra["tower_disable_duration"]
+			if extra.has("pre_attack_delay"): stats_dict["ENCYCLOPEDIA.STATS.PRE_ATTACK"] = "%.1fs" % extra["pre_attack_delay"]
+			if extra.has("attack_duration"): stats_dict["ENCYCLOPEDIA.STATS.ATTACK_DURATION"] = "%.1fs" % extra["attack_duration"]
+			if extra.has("post_attack_delay"): stats_dict["ENCYCLOPEDIA.STATS.POST_ATTACK"] = "%.1fs" % extra["post_attack_delay"]
+			if extra.has("attack_cooldown"): stats_dict["ENCYCLOPEDIA.STATS.COOLDOWN"] = "%.1fs" % extra["attack_cooldown"]
+
 		_entries.append({
 			"name": p_entry_name,
 			"type": "ENEMIES",
 			"sprite": _get_sprite_from_instance(enemy_obj),
-			"stats": {
-				"ENCYCLOPEDIA.STATS.HEALTH": str(p_enemy_data.get("max_health", 0.0)),
-				"ENCYCLOPEDIA.STATS.SPEED": "%.1f" % p_enemy_data.get("speed", 0.0)
-			}
+			"stats": stats_dict
 		})
 		enemy_obj.queue_free()
 
