@@ -7,22 +7,18 @@ extends IEnemy
 @export_subgroup("Shooting Configuration")
 ## The projectile scene to be instantiated by the enemy
 @export var projectile_scene: PackedScene = null
-## The shooting range of the enemy
-@export var shoot_range: float = 150.0
-## The fire rate of the enemy (shots per second)
-@export var fire_rate: float = 0.5
-## The duration in seconds that a tower is disabled when hit by a projectile
-@export var tower_disable_duration: float = 3.0
+## Runtime stats loaded from StatsDB (JSON); defaults kept neutral here
+var shoot_range: float = 0.0
+var fire_rate: float = 0.0
+var tower_disable_duration: float = 0.0
 
 @export_subgroup("Attack Cycle Configuration")
-## Time to wait before starting an attack after detecting a target.
-@export var pre_attack_delay: float = 1.0
-## Duration of the attack phase (shooting).
-@export var attack_duration: float = 1.0
-## Time to wait after an attack before resuming movement.
-@export var post_attack_delay: float = 1.0
-## Cooldown time between full attack cycles.
-@export var attack_cooldown: float = 5.0
+## Runtime stats loaded from StatsDB (JSON); defaults kept neutral here
+var pre_attack_delay: float = 0.0
+var attack_duration: float = 0.0
+var post_attack_delay: float = 0.0
+var attack_cooldown: float = 0.0
+
 
 # Onready variables
 ## The area 2D node for the enemy to detect towers in range
@@ -56,6 +52,7 @@ var current_target: Node2D = null
 
 
 func _ready() -> void:
+	_apply_extra_stats_override()
 	super._ready() # Call the parent class's _ready function
 
 	# Ensure nodes are ready before connecting signals or configuring them
@@ -101,6 +98,30 @@ func _ready() -> void:
 
 	# Initial check for targets already in range
 	_find_new_target()
+
+
+func _apply_extra_stats_override() -> void:
+	if enemy_id.is_empty() or stats_db == null:
+		return
+	if not stats_db.has_enemy(enemy_id):
+		return
+	var data: Dictionary = stats_db.get_enemy(enemy_id)
+	var extra: Dictionary = data.get("extra", {})
+	Log.trace(Log.Level.INFO, "Applying big_daddy extra stats from StatsDB: %s" % extra)
+	if extra.has("shoot_range"):
+		shoot_range = float(extra["shoot_range"])
+	if extra.has("fire_rate"):
+		fire_rate = float(extra["fire_rate"])
+	if extra.has("tower_disable_duration"):
+		tower_disable_duration = float(extra["tower_disable_duration"])
+	if extra.has("pre_attack_delay"):
+		pre_attack_delay = float(extra["pre_attack_delay"])
+	if extra.has("attack_duration"):
+		attack_duration = float(extra["attack_duration"])
+	if extra.has("post_attack_delay"):
+		post_attack_delay = float(extra["post_attack_delay"])
+	if extra.has("attack_cooldown"):
+		attack_cooldown = float(extra["attack_cooldown"])
 
 
 func _physics_process(delta: float) -> void:
