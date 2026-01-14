@@ -102,22 +102,8 @@ height = 36.0
 [node name="Bat02" instance=ExtResource("1_yt4jj")]
 position = Vector2(0, -16)
 bullet_scene = ExtResource("2_pv1tv")
-bullet_stats = {
-"aoe_duration": 0.0,
-"aoe_range": 0.0,
-"aoe_tick": 0.0,
-"damage": 0.0,
-"damage_multiplier": 0.0,
-"dot_damage": 0.0,
-"piercing": 0.0,
-"piercing_reduction": 0.0,
-"speed": 0.0
-}
-cost = 50
-fire_rate = 1.5
-level = 1
-shoot_range = 150.0
 available_upgrade = Array[PackedScene]([ExtResource("3_sq6hj")])
+tower_id = "bat_02"
 
 [node name="AnimatedSprite2D" parent="." index="0"]
 sprite_frames = SubResource("SpriteFrames_ynjgg")
