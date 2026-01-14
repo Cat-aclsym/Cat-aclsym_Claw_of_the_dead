@@ -135,6 +135,9 @@ func _handle_tab_completion() -> void:
 	_complete_suggestion()
 
 func _complete_suggestion() -> void:
+	if _suggestion_index == -1 and not _current_suggestions.is_empty():
+		_suggestion_index = 0
+
 	if _suggestion_index >= 0 and _suggestion_index < _current_suggestions.size():
 		input.text = _current_suggestions[_suggestion_index] + " "
 		input.set_caret_column(input.text.length())
