@@ -49,13 +49,20 @@ mouse_filter = 2
 layout_mode = 2
 mouse_filter = 2
 
-[node name="SectionLabel" type="Label" parent="GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/TopLineHBoxContainer"]
-texture_filter = 5
+[node name="CategoryHBoxContainer" type="HBoxContainer" parent="GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/TopLineHBoxContainer"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 20
+
+[node name="TowersButton" type="Button" parent="GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/TopLineHBoxContainer/CategoryHBoxContainer"]
 layout_mode = 2
 theme = ExtResource("4_theme")
-theme_type_variation = &"HeaderMedium"
-theme_override_font_sizes/font_size = 28
-text = "ENCYCLOPEDIA.TITLE"
+text = "ENCYCLOPEDIA.SECTION.TOWERS"
+
+[node name="EnemiesButton" type="Button" parent="GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/TopLineHBoxContainer/CategoryHBoxContainer"]
+layout_mode = 2
+theme = ExtResource("4_theme")
+text = "ENCYCLOPEDIA.SECTION.ENEMIES"
 
 [node name="AspectRatioContainer" type="AspectRatioContainer" parent="GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/TopLineHBoxContainer"]
 layout_mode = 2

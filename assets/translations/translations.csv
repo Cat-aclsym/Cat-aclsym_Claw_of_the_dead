@@ -33,6 +33,8 @@ ENCYCLOPEDIA.STATS.POST_ATTACK,Post-attack,Post-attaque
 ENCYCLOPEDIA.STATS.COOLDOWN,Cooldown,Récupération
 ENCYCLOPEDIA.SECTION.TOWERS,Towers,Tours
 ENCYCLOPEDIA.SECTION.ENEMIES,Enemies,Ennemis
+ENCYCLOPEDIA.CATEGORY.COMBAT,Combat,Combat
+ENCYCLOPEDIA.CATEGORY.ECONOMY,Economy,Économie
 TOWER.1.NAME,Bat Tower,Tour Chauve-souris
 TOWER.2.NAME,Strong Bat,Chauve-souris Puissante
 TOWER.FIRE.NAME,Fire Tower,Tour de Feu

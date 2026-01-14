@@ -9,18 +9,26 @@ signal menu_close
 @onready var close_button: TextureButton = $GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/TopLineHBoxContainer/AspectRatioContainer/CloseTextureButton
 @onready var prev_button: TextureButton = $GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/NavigationHBoxContainer/PrevButton
 @onready var next_button: TextureButton = $GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/NavigationHBoxContainer/NextButton
+@onready var towers_button: Button = $GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/TopLineHBoxContainer/CategoryHBoxContainer/TowersButton
+@onready var enemies_button: Button = $GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/TopLineHBoxContainer/CategoryHBoxContainer/EnemiesButton
 @onready var sprite_rect: TextureRect = $GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/ContentHBoxContainer/LeftPageVBox/SpriteAspectRatio/SpriteRect
 @onready var name_label: Label = $GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/ContentHBoxContainer/LeftPageVBox/NameLabel
 @onready var stats_grid: GridContainer = $GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/ContentHBoxContainer/RightPageVBox/StatsGrid
 @onready var section_label: Label = $GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/TopLineHBoxContainer/SectionLabel
 
-var _entries: Array[Dictionary] = []
+var _all_entries: Dictionary = {
+	"TOWERS": [],
+	"ENEMIES": []
+}
+var _current_category: String = "TOWERS"
 var _current_index: int = 0
 
 @onready var signals: Array[Dictionary] = [
 	{SignalUtil.WHO: close_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_close_pressed},
 	{SignalUtil.WHO: prev_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_prev_pressed},
 	{SignalUtil.WHO: next_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_next_pressed},
+	{SignalUtil.WHO: towers_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_category_pressed.bind("TOWERS")},
+	{SignalUtil.WHO: enemies_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_category_pressed.bind("ENEMIES")},
 ]
 
 func _ready() -> void:
@@ -73,7 +81,7 @@ func _add_tower_entry_from_data(p_entry_name: String, p_tower_data: Dictionary) 
 
 	var tower_obj: Node = scene_res.instantiate()
 	if tower_obj:
-		_entries.append({
+		_all_entries["TOWERS"].append({
 			"name": p_entry_name,
 			"type": "TOWERS",
 			"sprite": _get_sprite_from_instance(tower_obj),
@@ -112,7 +120,7 @@ func _add_enemy_entry_from_data(p_entry_name: String, p_enemy_data: Dictionary) 
 			if extra.has("post_attack_delay"): stats_dict["ENCYCLOPEDIA.STATS.POST_ATTACK"] = "%.1fs" % extra["post_attack_delay"]
 			if extra.has("attack_cooldown"): stats_dict["ENCYCLOPEDIA.STATS.COOLDOWN"] = "%.1fs" % extra["attack_cooldown"]
 
-		_entries.append({
+		_all_entries["ENEMIES"].append({
 			"name": p_entry_name,
 			"type": "ENEMIES",
 			"sprite": _get_sprite_from_instance(enemy_obj),
@@ -132,11 +140,11 @@ func _get_sprite_from_instance(p_node: Node) -> Texture2D:
 	return null
 
 func _update_display() -> void:
-	if _entries.is_empty(): return
+	var entries: Array = _all_entries.get(_current_category, [])
+	if entries.is_empty(): return
 
-	var entry: Dictionary = _entries[_current_index]
+	var entry: Dictionary = entries[_current_index]
 	name_label.text = entry["name"]
-	section_label.text = "ENCYCLOPEDIA.SECTION." + entry["type"]
 	sprite_rect.texture = entry["sprite"] as Texture2D
 
 	# Clear stats
@@ -145,18 +153,61 @@ func _update_display() -> void:
 
 	# Add stats
 	var stats: Dictionary = entry["stats"]
-	for stat_key in stats:
-		var label_key: Label = Label.new()
-		label_key.text = stat_key
-		label_key.theme_type_variation = "HeaderSmall"
-		stats_grid.add_child(label_key)
 
-		var label_val: Label = Label.new()
-		label_val.text = stats[stat_key]
-		stats_grid.add_child(label_val)
+	# Determine if we should group
+	var combat_keys: Array = ["ENCYCLOPEDIA.STATS.DAMAGE", "ENCYCLOPEDIA.STATS.FIRERATE", "ENCYCLOPEDIA.STATS.RANGE", "ENCYCLOPEDIA.STATS.HEALTH", "ENCYCLOPEDIA.STATS.SPEED", "ENCYCLOPEDIA.STATS.DISABLE_DURATION", "ENCYCLOPEDIA.STATS.PRE_ATTACK", "ENCYCLOPEDIA.STATS.ATTACK_DURATION", "ENCYCLOPEDIA.STATS.POST_ATTACK", "ENCYCLOPEDIA.STATS.COOLDOWN"]
+	var economy_keys: Array = ["ENCYCLOPEDIA.STATS.COST", "ENCYCLOPEDIA.STATS.REWARD"]
 
-	prev_button.visible = _current_index > 0
-	next_button.visible = _current_index < _entries.size() - 1
+	var combat_stats: Dictionary = {}
+	var economy_stats: Dictionary = {}
+
+	for k in stats:
+		if k in combat_keys: combat_stats[k] = stats[k]
+		elif k in economy_keys: economy_stats[k] = stats[k]
+
+	if not combat_stats.is_empty():
+		_add_stat_category_header("ENCYCLOPEDIA.CATEGORY.COMBAT")
+		for k in combat_stats: _add_stat_row(k, combat_stats[k])
+
+	if not economy_stats.is_empty():
+		_add_stat_category_header("ENCYCLOPEDIA.CATEGORY.ECONOMY")
+		for k in economy_stats: _add_stat_row(k, economy_stats[k])
+
+	# Fixed positioning for buttons: use modulate to keep layout space
+	prev_button.modulate.a = 1.0 if _current_index > 0 else 0.0
+	prev_button.disabled = _current_index == 0
+
+	next_button.modulate.a = 1.0 if _current_index < entries.size() - 1 else 0.0
+	next_button.disabled = _current_index >= entries.size() - 1
+
+	# Update category buttons visual state
+	towers_button.disabled = (_current_category == "TOWERS")
+	enemies_button.disabled = (_current_category == "ENEMIES")
+
+func _add_stat_category_header(p_text: String) -> void:
+	var header: Label = Label.new()
+	header.text = p_text
+	header.theme_type_variation = "HeaderSmall"
+	header.add_theme_font_size_override("font_size", 20)
+	header.add_theme_color_override("font_color", Color.CHARTREUSE)
+	stats_grid.add_child(header)
+	stats_grid.add_child(Control.new()) # Empty space for the second column
+
+func _add_stat_row(p_key: String, p_val: String) -> void:
+	var label_key: Label = Label.new()
+	label_key.text = p_key
+	label_key.add_theme_font_size_override("font_size", 16)
+	stats_grid.add_child(label_key)
+
+	var label_val: Label = Label.new()
+	label_val.text = p_val
+	label_val.add_theme_font_size_override("font_size", 16)
+	stats_grid.add_child(label_val)
+
+func _on_category_pressed(p_category: String) -> void:
+	_current_category = p_category
+	_current_index = 0
+	_update_display()
 
 func _on_prev_pressed() -> void:
 	if _current_index > 0:
@@ -164,6 +215,7 @@ func _on_prev_pressed() -> void:
 		_update_display()
 
 func _on_next_pressed() -> void:
-	if _current_index < _entries.size() - 1:
+	var entries: Array = _all_entries.get(_current_category, [])
+	if _current_index < entries.size() - 1:
 		_current_index += 1
 		_update_display()
