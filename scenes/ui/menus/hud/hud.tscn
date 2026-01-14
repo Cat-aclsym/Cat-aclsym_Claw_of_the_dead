@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://b5630xr4v607r"]
+[gd_scene load_steps=14 format=3 uid="uid://b5630xr4v607r"]
 
 [ext_resource type="Script" uid="uid://cc06prch72skr" path="res://scenes/ui/menus/hud/hud.gd" id="1_cuep3"]
 [ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="2_jel3x"]
@@ -12,6 +12,25 @@
 [ext_resource type="Script" uid="uid://b5mbfrr7vwpj7" path="res://scenes/ui/menus/hud/new_wave_count.gd" id="9_o6rym"]
 [ext_resource type="Texture2D" uid="uid://do48sldu5a83i" path="res://assets/ui/icons/Button Build.svg" id="10_sc2vu"]
 [ext_resource type="Texture2D" uid="uid://c2uqlay1r2d1d" path="res://assets/ui/icons/Button Cancel.svg" id="12_5jyti"]
+[ext_resource type="Texture2D" uid="uid://cav0yvhu6o3d0" path="res://assets/ui/icons/Button Skip.svg" id="13_hn23h"]
+
+[sub_resource type="Animation" id="1"]
+resource_name = "skip_active"
+length = 1.0
+loop = true
+step = 0.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("SkipButton:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.16, 0.33, 0.5, 0.66, 0.83, 1),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [Color(1, 0.4, 0.4, 1), Color(1, 1, 0.4, 1), Color(0.5, 1, 0.5, 1), Color(0.4, 1, 1, 1), Color(0.4, 0.6, 1, 1), Color(0.8, 0.4, 1, 1), Color(1, 0.4, 0.8, 1)]
+}
 
 [node name="HUD" type="Control"]
 texture_filter = 6
@@ -241,3 +260,33 @@ texture_normal = ExtResource("10_sc2vu")
 texture_pressed = ExtResource("12_5jyti")
 ignore_texture_size = true
 stretch_mode = 5
+
+[node name="SkipMarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 2
+anchor_left = 0.0
+anchor_top = 1.0
+anchor_right = 0.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = -112.0
+offset_right = 130.0
+offset_bottom = -22.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_bottom = 10
+
+[node name="SkipButton" type="TextureButton" parent="SkipMarginContainer"]
+custom_minimum_size = Vector2(110, 90)
+layout_mode = 2
+toggle_mode = true
+texture_normal = ExtResource("13_hn23h")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="SkipAnimationPlayer" type="AnimationPlayer" parent="SkipMarginContainer"]
+root_node = NodePath("..")
+libraries = {}
+autoplay = ""
+anims/skip_active = SubResource("1")

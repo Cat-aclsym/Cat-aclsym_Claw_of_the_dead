@@ -7,6 +7,9 @@ extends Control
 
 const PAUSE_MENU: PackedScene = preload("res://scenes/ui/menus/pause/pause.tscn")
 const TOWER_SELECTION_MENU: PackedScene = preload("res://scenes/ui/menus/tower_selection/tower_selection.tscn")
+const DEFAULT_TIME_SCALE: float = 1.0
+const SKIP_TIME_SCALE: float = 3.0
+const SKIP_COLOR_INACTIVE: Color = Color(1.0, 1.0, 1.0, 1.0)
 
 ## The flag indicating if the HUD is ready to display.
 var _is_ready: bool = false
@@ -26,10 +29,13 @@ var _is_ready: bool = false
 ## HUD buttons
 @onready var pause_button: TextureButton = $MarginContainer/PauseButton
 @onready var tower_selection_button: TextureButton = $TowerSelectionMarginContainer/TowerSelectionButton
+@onready var skip_time_scale_button: TextureButton = $SkipMarginContainer/SkipButton
+@onready var skip_animation_player: AnimationPlayer = $SkipMarginContainer/SkipAnimationPlayer
 
 @onready var signals: Array[Dictionary] = [
 	{SignalUtil.WHO: pause_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_pause_button_pressed},
-	{SignalUtil.WHO: tower_selection_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_tower_selection_button_pressed}
+	{SignalUtil.WHO: tower_selection_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_tower_selection_button_pressed},
+	{SignalUtil.WHO: skip_time_scale_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_skip_time_scale_button_pressed}
 ]
 
 # core
@@ -39,11 +45,13 @@ func _ready() -> void:
 	assert(waves_rich_text_label != null, "waves_rich_text_label node not found")
 	assert(health_texture_progress_bar != null, "health_texture_progress_bar node not found")
 	assert(tower_selection_button != null, "tower_selection_button node not found")
+	assert(skip_time_scale_button != null, "skip_time_scale_button node not found")
 
 	Global.hud = self
 	hide()
 
 	SignalUtil.connects(signals)
+	_apply_time_scale(DEFAULT_TIME_SCALE, false)
 
 func _process(_delta: float) -> void:
 	if not _is_ready:
@@ -68,7 +76,7 @@ func load_ui() -> void:
 
 	_is_ready = true
 	visible = true
-	SignalUtil.connects([ {SignalUtil.WHO: ILevel.current_level, SignalUtil.WHAT: "stats_updated", SignalUtil.TO: _update}])
+	SignalUtil.connects([{SignalUtil.WHO: ILevel.current_level, SignalUtil.WHAT: "stats_updated", SignalUtil.TO: _update}])
 	_update()
 
 ## Cleans up and hides the HUD interface.
@@ -95,8 +103,24 @@ func _on_pause_button_pressed() -> void:
 ## Handles the tower selection button press event.
 ## [br]Creates and shows the tower selection menu.
 func _on_tower_selection_button_pressed() -> void:
-	if Global.ui.get_node("TowerSelection") == null :
+	if Global.ui.get_node("TowerSelection") == null:
 		var tower_selection_menu_instance: TowerSelection = TOWER_SELECTION_MENU.instantiate()
 		Global.ui.add_child(tower_selection_menu_instance)
-	else :
+	else:
 		Global.ui.get_node("TowerSelection").queue_free()
+
+## Handles the skip speed button press event.
+func _on_skip_time_scale_button_pressed() -> void:
+	var is_fast: bool = skip_time_scale_button.button_pressed
+	var target_scale: float = SKIP_TIME_SCALE if is_fast else DEFAULT_TIME_SCALE
+	_apply_time_scale(target_scale, is_fast)
+
+## Applies the requested time scale and updates button state.
+func _apply_time_scale(time_scale: float, is_fast: bool) -> void:
+	Engine.time_scale = time_scale
+	skip_time_scale_button.button_pressed = is_fast
+	if is_fast:
+		skip_animation_player.play("skip_active")
+	else:
+		skip_animation_player.stop()
+		skip_time_scale_button.modulate = SKIP_COLOR_INACTIVE
