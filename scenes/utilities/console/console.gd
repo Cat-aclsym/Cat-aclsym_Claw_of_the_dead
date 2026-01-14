@@ -5,9 +5,12 @@
 ## Supports custom commands and colored output.
 class_name Console extends Control
 
-const COMMANDS_DIRECTORY: String = "res://scripts/commands"
-const CONSOLE_COLOR_ERROR: String = "#fb4934"
-const CONSOLE_COLOR_DEBUG: String = "#689d6a"
+## Directory where command scripts are located
+@export_dir var commands_directory: String = "res://scripts/commands"
+## Color for error messages
+@export var color_error: Color = Color("#fb4934")
+## Color for debug messages
+@export var color_debug: Color = Color("#689d6a")
 
 @onready var output: RichTextLabel = %Output
 @onready var input: TextEdit = %Input
@@ -47,8 +50,14 @@ func push_text(text: String, save: bool = true) -> void:
 
 
 ## Pushes colored text to the console output.
-func push_color(text: String, color: String) -> void:
-	var colored_text: String = "[color=%s]%s[/color]" % [color, text]
+func push_color(text: String, color_val: Variant) -> void:
+	var color_str: String = ""
+	if color_val is Color:
+		color_str = "#" + color_val.to_html(false)
+	else:
+		color_str = str(color_val)
+
+	var colored_text: String = "[color=%s]%s[/color]" % [color_str, text]
 
 	push_text(colored_text, false)
 	if Global.debug:
@@ -57,12 +66,12 @@ func push_color(text: String, color: String) -> void:
 
 ## Pushes an error message in red color.
 func push_error(text: String) -> void:
-	push_color(text, CONSOLE_COLOR_ERROR)
+	push_color(text, color_error)
 
 
 ## Pushes a debug message in green color.
 func push_debug(text: String) -> void:
-	push_color(text, CONSOLE_COLOR_DEBUG)
+	push_color(text, color_debug)
 
 
 ## Executes a command string in the console.
@@ -78,8 +87,8 @@ func push_command(command: String) -> void:
 
 # Private functions
 func _load_available_commands() -> void:
-	var cmd_dir := DirAccess.open(COMMANDS_DIRECTORY)
-	assert(cmd_dir != null, "Failed to open commands directory")
+	var cmd_dir := DirAccess.open(commands_directory)
+	assert(cmd_dir != null, "Failed to open commands directory: " + commands_directory)
 
 	for path in cmd_dir.get_files():
 		if path.ends_with(".gd"):
@@ -168,7 +177,7 @@ func _complete_suggestion() -> void:
 	input.set_caret_column(input.text.length())
 
 	# Stay open if command has arguments
-	var cmd_path := "%s/%s.gd" % [COMMANDS_DIRECTORY, completed_command]
+	var cmd_path := "%s/%s.gd" % [commands_directory, completed_command]
 	var has_args := false
 	if FileAccess.file_exists(cmd_path):
 		var cmd_script = load(cmd_path)
@@ -231,18 +240,36 @@ func _update_suggestions() -> void:
 						if cmd_name.begins_with(current_input):
 							_current_suggestions.append(cmd_name)
 				ICommand.Types.ARG_TOWER:
-					for tower_type in ITower.TowerType.keys():
-						if tower_type.begins_with(current_input.to_upper()):
-							_current_suggestions.append(tower_type)
+					var tower_script = load("res://scenes/gameplay/entities/tower/i_tower.gd")
+					if tower_script and tower_script.has_source_code():
+						var tower_types = tower_script.get_script_constant_map().get("TowerType")
+						if tower_types:
+							for tower_type in tower_types.keys():
+								if tower_type.begins_with(current_input.to_upper()):
+									_current_suggestions.append(tower_type)
 				ICommand.Types.ARG_ENEMY:
-					for enemy_type in IEnemy.EnemyType.keys():
-						if enemy_type.begins_with(current_input.to_upper()):
-							_current_suggestions.append(enemy_type)
+					var enemy_script = load("res://scenes/gameplay/entities/enemy/i_enemy.gd")
+					if enemy_script and enemy_script.has_source_code():
+						var enemy_types = enemy_script.get_script_constant_map().get("EnemyType")
+						if enemy_types:
+							for enemy_type in enemy_types.keys():
+								if enemy_type.begins_with(current_input.to_upper()):
+									_current_suggestions.append(enemy_type)
 				ICommand.Types.ARG_ENUM:
 					var enum_values: Array = current_arg_def.get("enum_values", [])
 					for value in enum_values:
 						if value.begins_with(current_input):
 							_current_suggestions.append(value)
+				ICommand.Types.ARG_INGAME_TOWER:
+					var ilevel_script = load("res://scenes/gameplay/world/level/i_level.gd")
+					var itower_script = load("res://scenes/gameplay/entities/tower/i_tower.gd")
+					if ilevel_script and itower_script:
+						var current_lvl = ilevel_script.get("current_level")
+						if current_lvl and current_lvl.get("map"):
+							for child in current_lvl.get("map").get_children():
+								if child.get_script() == itower_script:
+									if child.name.begins_with(current_input):
+										_current_suggestions.append(child.name)
 				_:
 					pass
 	else:
@@ -376,13 +403,13 @@ func _process_command(command: String) -> void:
 	push_error("%d" % err)
 
 func _find_command(command_token: String, silent: bool = false) -> ICommand:
-	var cmd_dir := DirAccess.open(COMMANDS_DIRECTORY)
+	var cmd_dir := DirAccess.open(commands_directory)
 	assert(cmd_dir != null, "Failed to open commands directory")
 
 	var cmd_paths: PackedStringArray = cmd_dir.get_files()
 	for path in cmd_paths:
 		if path == command_token + ".gd":
-			return load("%s/%s" % [COMMANDS_DIRECTORY, path]).new()
+			return load("%s/%s" % [commands_directory, path]).new()
 
 	if not silent:
 		push_error("No command named '%s'" % command_token)

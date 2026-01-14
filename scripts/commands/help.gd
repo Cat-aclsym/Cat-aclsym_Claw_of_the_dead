@@ -18,7 +18,7 @@ func get_args() -> Array[Dictionary]:
 func _execute(console: Console, args: Array) -> int:
 	if not args.is_empty():
 		var cmd_name: String = args[0]
-		var cmd_path := "%s/%s.gd" % [Console.COMMANDS_DIRECTORY, cmd_name]
+		var cmd_path := "%s/%s.gd" % [console.commands_directory, cmd_name]
 
 		if FileAccess.file_exists(cmd_path):
 			var cmd_script := load(cmd_path)
@@ -54,7 +54,7 @@ func _execute(console: Console, args: Array) -> int:
 		console.push_error("Command '%s' not found." % cmd_name)
 		return ERR_UNKNOWN_BEHAVIOR
 
-	var cmd_dir := DirAccess.open(Console.COMMANDS_DIRECTORY)
+	var cmd_dir := DirAccess.open(console.commands_directory)
 	assert(cmd_dir != null, "Failed to open commands directory")
 
 	var cmd_paths: PackedStringArray = cmd_dir.get_files()
@@ -64,7 +64,7 @@ func _execute(console: Console, args: Array) -> int:
 		if not path.ends_with(".gd"):
 			continue
 
-		var cmd_script := load("%s/%s" % [Console.COMMANDS_DIRECTORY, path])
+		var cmd_script := load("%s/%s" % [console.commands_directory, path])
 		if not cmd_script:
 			continue
 

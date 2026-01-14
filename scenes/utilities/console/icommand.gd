@@ -20,6 +20,7 @@ enum Types {
 	ARG_TOWER = 6,
 	ARG_ENEMY = 7,
 	ARG_ENUM = 8,
+	ARG_INGAME_TOWER = 9,
 }
 
 
@@ -100,6 +101,8 @@ func type_to_string(t: ICommand.Types) -> String:
 			return "enemy"
 		Types.ARG_ENUM:
 			return "enum"
+		Types.ARG_INGAME_TOWER:
+			return "ingame_tower"
 		_:
 			return "unknown"
 
@@ -127,7 +130,7 @@ func _validate_type(in_string: String, in_type: ICommand.Types) -> bool:
 			return true
 		Types.ARG_BOOL:
 			return in_string == "true" or in_string == "false"
-		Types.ARG_COMMAND, Types.ARG_TOWER, Types.ARG_ENEMY, Types.ARG_ENUM:
+		Types.ARG_COMMAND, Types.ARG_TOWER, Types.ARG_ENEMY, Types.ARG_ENUM, Types.ARG_INGAME_TOWER:
 			return true
 		_:
 			return false

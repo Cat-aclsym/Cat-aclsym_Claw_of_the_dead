@@ -11,7 +11,7 @@ func description() -> String:
 
 func get_args() -> Array[Dictionary]:
 	return [
-		{"name": "tower_name", "type": Types.ARG_TOWER},
+		{"name": "tower_name", "type": Types.ARG_INGAME_TOWER},
 		{"name": "path", "type": Types.ARG_INT, "optional": true}
 	]
 
