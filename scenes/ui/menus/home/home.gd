@@ -36,7 +36,7 @@ func _ready() -> void:
 func _on_play_button_pressed() -> void:
 	gui_margin_container.visible = false
 
-	_levels_menu_instance = _levels_menu.instantiate()
+	_levels_menu_instance = _levels_menu.instantiate() as LevelSelectionMenu
 	add_child(_levels_menu_instance)
 
 	SignalUtil.connects([
@@ -48,7 +48,7 @@ func _on_play_button_pressed() -> void:
 ## [br]Shows the options menu and sets up its callback.
 func _on_parameter_button_pressed() -> void:
 	gui_margin_container.visible = false
-	_option_menu_instance = _option_menu.instantiate()
+	_option_menu_instance = _option_menu.instantiate() as Options
 	add_child(_option_menu_instance)
 	_option_menu_instance.menu_close.connect(_on_menu_close.bind(_option_menu_instance))
 
@@ -56,7 +56,7 @@ func _on_parameter_button_pressed() -> void:
 ## [br]Shows the encyclopedia menu and sets up its callback.
 func _on_encyclopedia_button_pressed() -> void:
 	gui_margin_container.visible = false
-	_encyclopedia_menu_instance = _encyclopedia_menu.instantiate()
+	_encyclopedia_menu_instance = _encyclopedia_menu.instantiate() as Encyclopedia
 	add_child(_encyclopedia_menu_instance)
 	_encyclopedia_menu_instance.menu_close.connect(_on_menu_close.bind(_encyclopedia_menu_instance))
 
