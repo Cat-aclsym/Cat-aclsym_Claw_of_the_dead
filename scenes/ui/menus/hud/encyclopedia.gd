@@ -7,8 +7,8 @@ extends Control
 signal menu_close
 
 @onready var close_button: TextureButton = $GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/TopLineHBoxContainer/AspectRatioContainer/CloseTextureButton
-@onready var prev_button: Button = $GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/NavigationHBoxContainer/PrevButton
-@onready var next_button: Button = $GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/NavigationHBoxContainer/NextButton
+@onready var prev_button: TextureButton = $GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/NavigationHBoxContainer/PrevButton
+@onready var next_button: TextureButton = $GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/NavigationHBoxContainer/NextButton
 @onready var sprite_rect: TextureRect = $GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/ContentHBoxContainer/LeftPageVBox/SpriteAspectRatio/SpriteRect
 @onready var name_label: Label = $GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/ContentHBoxContainer/LeftPageVBox/NameLabel
 @onready var stats_grid: GridContainer = $GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/ContentHBoxContainer/RightPageVBox/StatsGrid
@@ -37,7 +37,7 @@ func _initialize_entries() -> void:
 		"bat_01": "TOWER.1.NAME",
 		"bat_02": "TOWER.2.NAME"
 	}
-	
+
 	var enemy_name_mapping: Dictionary = {
 		"default_zombie": "ENEMY.DEFAULT.NAME",
 		"damage_zombie": "ENEMY.FAT.NAME",
@@ -52,7 +52,7 @@ func _initialize_entries() -> void:
 		var tower_data: Dictionary = StatsDB.get_tower(tower_id)
 		var entry_name: String = tower_name_mapping.get(tower_id, tower_id.to_upper() + ".NAME")
 		_add_tower_entry_from_data(entry_name, tower_data)
-	
+
 	# Enemies from StatsDB
 	var enemy_ids: Array = StatsDB.get_enemy_ids()
 	for enemy_id_item in enemy_ids:
@@ -64,13 +64,13 @@ func _initialize_entries() -> void:
 func _add_tower_entry_from_data(p_entry_name: String, p_tower_data: Dictionary) -> void:
 	var scene_path: String = p_tower_data.get("scene", "")
 	if not ResourceLoader.exists(scene_path): return
-	
+
 	var base_stats: Dictionary = p_tower_data.get("base", {})
 	var bullet_stats: Dictionary = base_stats.get("bullet_stats", {})
-	
+
 	var scene_res: PackedScene = load(scene_path) as PackedScene
 	if not scene_res: return
-	
+
 	var tower_obj: Node = scene_res.instantiate()
 	if tower_obj:
 		_entries.append({
@@ -89,10 +89,10 @@ func _add_tower_entry_from_data(p_entry_name: String, p_tower_data: Dictionary) 
 func _add_enemy_entry_from_data(p_entry_name: String, p_enemy_data: Dictionary) -> void:
 	var scene_path: String = p_enemy_data.get("scene", "")
 	if not ResourceLoader.exists(scene_path): return
-	
+
 	var scene_res: PackedScene = load(scene_path) as PackedScene
 	if not scene_res: return
-	
+
 	var enemy_obj: Node = scene_res.instantiate()
 	if enemy_obj:
 		var stats_dict: Dictionary = {
@@ -100,7 +100,7 @@ func _add_enemy_entry_from_data(p_entry_name: String, p_enemy_data: Dictionary) 
 			"ENCYCLOPEDIA.STATS.SPEED": "%.1f" % p_enemy_data.get("speed", 0.0),
 			"ENCYCLOPEDIA.STATS.REWARD": str(p_enemy_data.get("reward", 0))
 		}
-		
+
 		# Add extra stats if they exist (e.g. for Big Daddy)
 		if p_enemy_data.has("extra"):
 			var extra: Dictionary = p_enemy_data["extra"]
@@ -133,16 +133,16 @@ func _get_sprite_from_instance(p_node: Node) -> Texture2D:
 
 func _update_display() -> void:
 	if _entries.is_empty(): return
-	
+
 	var entry: Dictionary = _entries[_current_index]
 	name_label.text = entry["name"]
 	section_label.text = "ENCYCLOPEDIA.SECTION." + entry["type"]
 	sprite_rect.texture = entry["sprite"] as Texture2D
-	
+
 	# Clear stats
 	for child in stats_grid.get_children():
 		child.queue_free()
-	
+
 	# Add stats
 	var stats: Dictionary = entry["stats"]
 	for stat_key in stats:
@@ -150,11 +150,11 @@ func _update_display() -> void:
 		label_key.text = stat_key
 		label_key.theme_type_variation = "HeaderSmall"
 		stats_grid.add_child(label_key)
-		
+
 		var label_val: Label = Label.new()
 		label_val.text = stats[stat_key]
 		stats_grid.add_child(label_val)
-	
+
 	prev_button.visible = _current_index > 0
 	next_button.visible = _current_index < _entries.size() - 1
 
