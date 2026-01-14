@@ -6,7 +6,7 @@ extends ICommand
 
 # Public functions
 func description() -> String:
-	return "Set time scale"
+	return "Adjusts the game's simulation speed (1.0 is normal speed)."
 
 
 func get_args() -> Array[Dictionary]:

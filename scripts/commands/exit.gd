@@ -7,7 +7,7 @@ extends ICommand
 
 # Public functions
 func description() -> String:
-	return "Exit game."
+	return "Closes the game and terminates the application."
 
 
 # Private functions

@@ -6,7 +6,7 @@ extends ICommand
 
 # Public functions
 func description() -> String:
-	return "Upgrade a tower."
+	return "Upgrades the specified tower along a chosen path."
 
 
 func get_args() -> Array[Dictionary]:

@@ -7,11 +7,46 @@ extends ICommand
 
 # Public functions
 func description() -> String:
-	return "Display all commands with their description."
+	return "Lists all available commands or shows detailed info for a specific one."
+
+
+func get_args() -> Array[Dictionary]:
+	return [{"name": "command", "type": Types.ARG_STRING, "optional": true}]
 
 
 # Private functions
-func _execute(console: Console, _args: Array) -> int:
+func _execute(console: Console, args: Array) -> int:
+	if not args.is_empty():
+		var cmd_name: String = args[0]
+		var cmd_path := "%s/%s.gd" % [Console.COMMANDS_DIRECTORY, cmd_name]
+
+		if FileAccess.file_exists(cmd_path):
+			var cmd_script := load(cmd_path)
+			if cmd_script:
+				var cmd: ICommand = cmd_script.new()
+				var message: String = "> %s" % cmd_name
+
+				var defined_args := cmd.get_args()
+				if not defined_args.is_empty():
+					for arg in defined_args:
+						var arg_name: String = arg.get("name", "arg")
+						var type_str: String = cmd.type_to_string(arg.get("type", 0))
+						if arg.get("optional", false):
+							message += " [%s: %s]" % [arg_name, type_str]
+						else:
+							message += " <%s: %s>" % [arg_name, type_str]
+				else:
+					for arg_type in cmd.expected_args_types():
+						var type_str: String = cmd.type_to_string(arg_type)
+						message += " <%s>" % type_str
+
+				console.push_text(message)
+				console.push_text("Description: %s" % cmd.description())
+				return OK
+
+		console.push_error("Command '%s' not found." % cmd_name)
+		return ERR_UNKNOWN_BEHAVIOR
+
 	var cmd_dir := DirAccess.open(Console.COMMANDS_DIRECTORY)
 	assert(cmd_dir != null, "Failed to open commands directory")
 

@@ -7,7 +7,7 @@ extends ICommand
 
 # Public functions
 func description() -> String:
-	return "Set font size of debug console."
+	return "Adjusts the font size of the console interface text."
 
 
 func get_args() -> Array[Dictionary]:

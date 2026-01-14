@@ -238,7 +238,7 @@ func _show_suggestions() -> void:
 	if full_input.ends_with(" "):
 		current_arg_index += 1
 
-	var suggestions_text := "[code][font_size=14]"
+	var suggestions_text := "[code][font_size=12]"
 	for i in range(_current_suggestions.size()):
 		var cmd_token := _current_suggestions[i]
 		var is_selected := (i == _suggestion_index)

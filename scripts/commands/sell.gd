@@ -6,7 +6,7 @@ extends ICommand
 
 # Public functions
 func description() -> String:
-	return "Sell a tower."
+	return "Sells the specified tower and refunds a portion of its cost."
 
 
 func get_args() -> Array[Dictionary]:

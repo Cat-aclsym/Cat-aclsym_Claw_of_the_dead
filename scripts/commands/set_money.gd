@@ -7,7 +7,7 @@ extends ICommand
 
 # Public functions
 func description() -> String:
-	return "Set in game money."
+	return "Sets the current amount of coins available to the player."
 
 
 func get_args() -> Array[Dictionary]:

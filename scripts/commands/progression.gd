@@ -6,7 +6,7 @@ extends ICommand
 
 # Public functions
 func description() -> String:
-	return "Manage game progression."
+	return "Manages game progression, allowing to reset, unlock levels, or complete challenges."
 
 
 func get_args() -> Array[Dictionary]:

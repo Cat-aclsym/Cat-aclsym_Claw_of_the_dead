@@ -7,7 +7,7 @@ extends ICommand
 
 # Public functions
 func description() -> String:
-	return "Set game resolution."
+	return "Changes the game window resolution to the specified width and height."
 
 
 func get_args() -> Array[Dictionary]:
