@@ -3,6 +3,7 @@
 class_name Encyclopedia
 extends Control
 
+
 ## Signal emitted when the menu is closed
 signal menu_close
 
@@ -14,7 +15,7 @@ signal menu_close
 @onready var sprite_rect: TextureRect = $GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/ContentHBoxContainer/LeftPageVBox/SpriteAspectRatio/SpriteRect
 @onready var name_label: Label = $GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/ContentHBoxContainer/LeftPageVBox/NameLabel
 @onready var stats_grid: GridContainer = $GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/ContentHBoxContainer/RightPageVBox/StatsGrid
-@onready var section_label: Label = $GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/TopLineHBoxContainer/SectionLabel
+
 
 var _all_entries: Dictionary = {
 	"TOWERS": [],
@@ -22,6 +23,11 @@ var _all_entries: Dictionary = {
 }
 var _current_category: String = "TOWERS"
 var _current_index: int = 0
+
+# Animation state
+var _current_anim_data: Dictionary = {}
+var _anim_timer: float = 0.0
+var _anim_frame: int = 0
 
 @onready var signals: Array[Dictionary] = [
 	{SignalUtil.WHO: close_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_close_pressed},
@@ -76,76 +82,112 @@ func _add_tower_entry_from_data(p_entry_name: String, p_tower_data: Dictionary) 
 	var base_stats: Dictionary = p_tower_data.get("base", {})
 	var bullet_stats: Dictionary = base_stats.get("bullet_stats", {})
 
-	var scene_res: PackedScene = load(scene_path) as PackedScene
-	if not scene_res: return
-
-	var tower_obj: Node = scene_res.instantiate()
-	if tower_obj:
-		_all_entries["TOWERS"].append({
-			"name": p_entry_name,
-			"type": "TOWERS",
-			"sprite": _get_sprite_from_instance(tower_obj),
-			"stats": {
-				"ENCYCLOPEDIA.STATS.COST": str(base_stats.get("cost", 0)),
-				"ENCYCLOPEDIA.STATS.FIRERATE": "%.1f" % base_stats.get("fire_rate", 0.0),
-				"ENCYCLOPEDIA.STATS.RANGE": str(base_stats.get("shoot_range", 0.0)),
-				"ENCYCLOPEDIA.STATS.DAMAGE": str(bullet_stats.get("damage", 0.0))
-			}
-		})
-		tower_obj.queue_free()
+	_all_entries["TOWERS"].append({
+		"name": p_entry_name,
+		"type": "TOWERS",
+		"scene_path": scene_path,
+		"sprite": null,
+		"stats": {
+			"ENCYCLOPEDIA.STATS.COST": str(base_stats.get("cost", 0)),
+			"ENCYCLOPEDIA.STATS.FIRERATE": "%.1f" % base_stats.get("fire_rate", 0.0),
+			"ENCYCLOPEDIA.STATS.RANGE": str(base_stats.get("shoot_range", 0.0)),
+			"ENCYCLOPEDIA.STATS.DAMAGE": str(bullet_stats.get("damage", 0.0))
+		}
+	})
 
 func _add_enemy_entry_from_data(p_entry_name: String, p_enemy_data: Dictionary) -> void:
 	var scene_path: String = p_enemy_data.get("scene", "")
 	if not ResourceLoader.exists(scene_path): return
 
-	var scene_res: PackedScene = load(scene_path) as PackedScene
-	if not scene_res: return
+	var stats_dict: Dictionary = {
+		"ENCYCLOPEDIA.STATS.HEALTH": str(p_enemy_data.get("max_health", 0.0)),
+		"ENCYCLOPEDIA.STATS.SPEED": "%.1f" % p_enemy_data.get("speed", 0.0),
+		"ENCYCLOPEDIA.STATS.REWARD": str(p_enemy_data.get("reward", 0))
+	}
 
-	var enemy_obj: Node = scene_res.instantiate()
-	if enemy_obj:
-		var stats_dict: Dictionary = {
-			"ENCYCLOPEDIA.STATS.HEALTH": str(p_enemy_data.get("max_health", 0.0)),
-			"ENCYCLOPEDIA.STATS.SPEED": "%.1f" % p_enemy_data.get("speed", 0.0),
-			"ENCYCLOPEDIA.STATS.REWARD": str(p_enemy_data.get("reward", 0))
-		}
+	# Add extra stats if they exist (e.g. for Big Daddy)
+	if p_enemy_data.has("extra"):
+		var extra: Dictionary = p_enemy_data["extra"]
+		if extra.has("shoot_range"): stats_dict["ENCYCLOPEDIA.STATS.RANGE"] = str(extra["shoot_range"])
+		if extra.has("fire_rate"): stats_dict["ENCYCLOPEDIA.STATS.FIRERATE"] = "%.1f" % extra["fire_rate"]
+		if extra.has("tower_disable_duration"): stats_dict["ENCYCLOPEDIA.STATS.DISABLE_DURATION"] = "%.1fs" % extra["tower_disable_duration"]
+		if extra.has("pre_attack_delay"): stats_dict["ENCYCLOPEDIA.STATS.PRE_ATTACK"] = "%.1fs" % extra["pre_attack_delay"]
+		if extra.has("attack_duration"): stats_dict["ENCYCLOPEDIA.STATS.ATTACK_DURATION"] = "%.1fs" % extra["attack_duration"]
+		if extra.has("post_attack_delay"): stats_dict["ENCYCLOPEDIA.STATS.POST_ATTACK"] = "%.1fs" % extra["post_attack_delay"]
+		if extra.has("attack_cooldown"): stats_dict["ENCYCLOPEDIA.STATS.COOLDOWN"] = "%.1fs" % extra["attack_cooldown"]
 
-		# Add extra stats if they exist (e.g. for Big Daddy)
-		if p_enemy_data.has("extra"):
-			var extra: Dictionary = p_enemy_data["extra"]
-			if extra.has("shoot_range"): stats_dict["ENCYCLOPEDIA.STATS.RANGE"] = str(extra["shoot_range"])
-			if extra.has("fire_rate"): stats_dict["ENCYCLOPEDIA.STATS.FIRERATE"] = "%.1f" % extra["fire_rate"]
-			if extra.has("tower_disable_duration"): stats_dict["ENCYCLOPEDIA.STATS.DISABLE_DURATION"] = "%.1fs" % extra["tower_disable_duration"]
-			if extra.has("pre_attack_delay"): stats_dict["ENCYCLOPEDIA.STATS.PRE_ATTACK"] = "%.1fs" % extra["pre_attack_delay"]
-			if extra.has("attack_duration"): stats_dict["ENCYCLOPEDIA.STATS.ATTACK_DURATION"] = "%.1fs" % extra["attack_duration"]
-			if extra.has("post_attack_delay"): stats_dict["ENCYCLOPEDIA.STATS.POST_ATTACK"] = "%.1fs" % extra["post_attack_delay"]
-			if extra.has("attack_cooldown"): stats_dict["ENCYCLOPEDIA.STATS.COOLDOWN"] = "%.1fs" % extra["attack_cooldown"]
+	_all_entries["ENEMIES"].append({
+		"name": p_entry_name,
+		"type": "ENEMIES",
+		"scene_path": scene_path,
+		"sprite": null,
+		"stats": stats_dict
+	})
 
-		_all_entries["ENEMIES"].append({
-			"name": p_entry_name,
-			"type": "ENEMIES",
-			"sprite": _get_sprite_from_instance(enemy_obj),
-			"stats": stats_dict
-		})
-		enemy_obj.queue_free()
+func _process(delta: float) -> void:
+	if not _current_anim_data.is_empty() and _current_anim_data.get("frames"):
+		var frames: SpriteFrames = _current_anim_data["frames"]
+		var anim: StringName = _current_anim_data["animation"]
+		var fps: float = _current_anim_data["fps"]
 
-func _get_sprite_from_instance(p_node: Node) -> Texture2D:
+		if fps > 0:
+			_anim_timer += delta
+			var frame_duration: float = 1.0 / fps
+			if _anim_timer >= frame_duration:
+				_anim_timer = 0.0
+				var count: int = frames.get_frame_count(anim)
+				if count > 0:
+					_anim_frame = (_anim_frame + 1) % count
+					sprite_rect.texture = frames.get_frame_texture(anim, _anim_frame)
+
+func _get_sprite_from_instance(p_node: Node) -> Dictionary:
+	var data: Dictionary = {
+		"texture": null,
+		"frames": null,
+		"animation": &"",
+		"fps": 5.0
+	}
 	if p_node.has_node("AnimatedSprite2D"):
 		var anim_sprite: AnimatedSprite2D = p_node.get_node("AnimatedSprite2D") as AnimatedSprite2D
 		if anim_sprite.sprite_frames:
-			var anim: String = "idle" if anim_sprite.sprite_frames.has_animation("idle") else anim_sprite.sprite_frames.get_animation_names()[0]
-			return anim_sprite.sprite_frames.get_frame_texture(anim, 0)
+			var animation_names: PackedStringArray = anim_sprite.sprite_frames.get_animation_names()
+			if not animation_names.is_empty():
+				var anim: String = "idle" if anim_sprite.sprite_frames.has_animation("idle") else str(animation_names[0])
+				data["texture"] = anim_sprite.sprite_frames.get_frame_texture(anim, 0)
+				data["frames"] = anim_sprite.sprite_frames
+				data["animation"] = StringName(anim)
+				data["fps"] = anim_sprite.sprite_frames.get_animation_speed(anim)
 	elif p_node.has_node("Sprite2D"):
 		var sprite_2d: Sprite2D = p_node.get_node("Sprite2D") as Sprite2D
-		return sprite_2d.texture
-	return null
+		data["texture"] = sprite_2d.texture
+	return data
 
 func _update_display() -> void:
 	var entries: Array = _all_entries.get(_current_category, [])
 	if entries.is_empty(): return
 
 	var entry: Dictionary = entries[_current_index]
+
+	# Lazy load sprite and cache it
+	if entry.get("sprite") == null:
+		var scene_path: String = entry.get("scene_path", "")
+		if not scene_path.is_empty() and ResourceLoader.exists(scene_path):
+			var scene_res: PackedScene = load(scene_path) as PackedScene
+			if scene_res:
+				var obj: Node = scene_res.instantiate()
+				if obj:
+					entry["sprite"] = _get_sprite_from_instance(obj)
+					obj.queue_free()
+
+	_current_anim_data = entry.get("sprite", {})
+	_anim_timer = 0.0
+	_anim_frame = 0
+
 	name_label.text = entry["name"]
-	sprite_rect.texture = entry["sprite"] as Texture2D
+	if _current_anim_data.has("texture"):
+		sprite_rect.texture = _current_anim_data["texture"]
+	else:
+		sprite_rect.texture = null
 
 	# Clear stats
 	for child in stats_grid.get_children():
