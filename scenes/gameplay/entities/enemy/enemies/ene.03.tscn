@@ -49,8 +49,7 @@ size = Vector2(44, 66)
 
 [node name="Rat" instance=ExtResource("1_dhx8w")]
 position = Vector2(0, -10)
-max_health = 10.0
-speed = 100.0
+enemy_id = "rat"
 type = 3
 
 [node name="AnimatedSprite2D" parent="." index="0"]

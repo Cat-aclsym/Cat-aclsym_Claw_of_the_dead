@@ -11,6 +11,8 @@ signal die
 ## [param effect] The name of the effect to trigger
 signal camera_effect(effect: String)
 
+
+# Enums
 ## Possible states for the enemy
 enum EnemyState {
 	DEAD,  ## Enemy is dead
@@ -41,6 +43,8 @@ enum DamageType {
 	FIRE,
 }
 
+
+# Constants
 const ANIM_FADE_OUT := "fade_out"
 const ANIM_WALK_UP := "walk_up"
 const ANIM_WALK_DOWN := "walk_down"
@@ -52,19 +56,23 @@ const DAMAGES: Dictionary = {
 	DamageType.FIRE: {"color": Color(1.0, 0.3, 0.1, 1)},
 }
 
-@export var max_health: float = 20.0
-@export var speed: float = 30.0
+
+# Exported variables
+@export var enemy_id: String = ""
 @export var type: EnemyType = EnemyType.DEFAULT
 
+# Public variables
 var active_poison_timers: Array[Dictionary] = []
 var current_animation: String = ""
 var direction: EnemyDirection = EnemyDirection.UP_RIGHT
 var health: float
 var is_already_dead: bool = false
+var max_health: float = 0.0
 var path: Path2D = null
 var path_follow: PathFollow2D = null
 var poison_timer_execution_count: int = 0
 var previous_position: Vector2 = Vector2.ZERO
+var speed: float = 0.0
 var state: EnemyState = EnemyState.FOLLOW_PATH
 
 ## Must be placed first as it is used in other onready variables
@@ -76,9 +84,12 @@ var state: EnemyState = EnemyState.FOLLOW_PATH
 @onready var path_points_size: int = path.curve.point_count
 @onready var poison_particle: GPUParticles2D = $GPUParticles2D
 @onready var popup_score_spawner: PopupSpawner = $PopupScoreSpawner
+@onready var stats_db = get_node("/root/StatsDB")
 
-# core
+
+# Built-in functions
 func _ready() -> void:
+	_apply_stats_override()
 	if type == EnemyType.FAT or type == EnemyType.BIG_DADDY:
 		camera_effect.connect(Global.camera.handle_effect)
 		camera_effect.emit('shake')
@@ -93,6 +104,7 @@ func _ready() -> void:
 
 	# Force initial animation to match direction
 	_walk()
+
 
 func _physics_process(delta: float) -> void:
 	if is_already_dead or Global.paused:
@@ -112,7 +124,8 @@ func _physics_process(delta: float) -> void:
 
 	poison_particle.emitting = not active_poison_timers.is_empty()
 
-# public
+
+# Public functions
 ## Apply damage to the enemy
 ## [br]
 ## [param damage] Amount of damage to apply
@@ -128,6 +141,7 @@ func take_damage(damage: float, damage_type: DamageType) -> void:
 	else:
 		health -= damage
 
+
 ## Update enemy position along its path
 ## [br]
 ## [param delta] Time since last frame
@@ -141,6 +155,7 @@ func follow_path(delta: float) -> void:
 	# Always update direction, regardless of path position
 	_update_direction()
 	_walk()
+
 
 ## Add a poison effect to the enemy
 ## [br]
@@ -164,7 +179,8 @@ func add_poison_effect(damage: float, total_execution: int, interval: float) -> 
 
 	poison_timer.timeout.connect(func(): _on_poison_timer_timeout(poison_timer))
 
-# private
+
+# Private functions
 ## Apply a damage effect to the enemy sprite
 func _damage_effect(color: Color) -> void:
 	sprite.modulate = color
@@ -293,6 +309,22 @@ func _path_finished_state() -> void:
 		ILevel.current_level.health = 0
 	else:
 		ILevel.current_level.health -= ceil(health / 2)
+
+
+func _apply_stats_override() -> void:
+	if enemy_id.is_empty() or stats_db == null:
+		return
+	if not stats_db.has_enemy(enemy_id):
+		Log.trace(Log.Level.ERROR, "StatsDB missing enemy id: %s" % enemy_id)
+		return
+	var data: Dictionary = stats_db.get_enemy(enemy_id)
+	Log.trace(Log.Level.INFO, "Applying enemy stats from StatsDB for %s: %s" % [enemy_id, data])
+	var hp = data.get("max_health", null)
+	var spd = data.get("speed", null)
+	if hp != null:
+		max_health = float(hp)
+	if spd != null:
+		speed = float(spd)
 
 ## Update the z-index of the enemy based on its position
 func _update_z_index() -> void:
