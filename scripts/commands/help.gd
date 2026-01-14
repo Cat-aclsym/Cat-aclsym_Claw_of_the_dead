@@ -11,7 +11,7 @@ func description() -> String:
 
 
 func get_args() -> Array[Dictionary]:
-	return [{"name": "command", "type": Types.ARG_STRING, "optional": true}]
+	return [{"name": "command", "type": Types.ARG_COMMAND, "optional": true}]
 
 
 # Private functions
@@ -30,7 +30,14 @@ func _execute(console: Console, args: Array) -> int:
 				if not defined_args.is_empty():
 					for arg in defined_args:
 						var arg_name: String = arg.get("name", "arg")
-						var type_str: String = cmd.type_to_string(arg.get("type", 0))
+						var arg_type: int = arg.get("type", 0)
+						var type_str: String = cmd.type_to_string(arg_type)
+
+						if arg_type == ICommand.Types.ARG_ENUM:
+							var enum_values: Array = arg.get("enum_values", [])
+							if not enum_values.is_empty():
+								type_str = "|".join(enum_values)
+
 						if arg.get("optional", false):
 							message += " [%s: %s]" % [arg_name, type_str]
 						else:

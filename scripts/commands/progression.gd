@@ -11,7 +11,7 @@ func description() -> String:
 
 func get_args() -> Array[Dictionary]:
 	return [
-		{"name": "action", "type": Types.ARG_STRING},
+		{"name": "action", "type": Types.ARG_ENUM, "enum_values": ["reset", "unlock", "challenge"]},
 		{"name": "level", "type": Types.ARG_STRING, "optional": true},
 		{"name": "id", "type": Types.ARG_STRING, "optional": true}
 	]

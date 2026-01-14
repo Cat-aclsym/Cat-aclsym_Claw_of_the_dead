@@ -10,7 +10,7 @@ func description() -> String:
 
 
 func get_args() -> Array[Dictionary]:
-	return [{"name": "tower_name", "type": Types.ARG_STRING}]
+	return [{"name": "tower_name", "type": Types.ARG_TOWER}]
 
 
 # Private functions
