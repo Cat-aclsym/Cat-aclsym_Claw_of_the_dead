@@ -301,6 +301,14 @@ func _update_suggestions() -> void:
 								if child.get_script() == itower_script:
 									if child.name.begins_with(current_input):
 										_current_suggestions.append(child.name)
+				ICommand.Types.ARG_LEVEL:
+					var level_dir := DirAccess.open("res://resources/levels/")
+					if level_dir:
+						for file_name in level_dir.get_files():
+							if file_name.ends_with(".json"):
+								var level_id := file_name.trim_suffix(".json")
+								if level_id.begins_with(current_input):
+									_current_suggestions.append(level_id)
 				_:
 					pass
 	else:
