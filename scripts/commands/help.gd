@@ -18,6 +18,8 @@ func get_args() -> Array[Dictionary]:
 func _execute(console: Console, args: Array) -> int:
 	if not args.is_empty():
 		var cmd_name: String = args[0]
+		if cmd_name.ends_with(".gd"):
+			cmd_name = cmd_name.trim_suffix(".gd")
 		var cmd_path := "%s/%s.gd" % [console.commands_directory, cmd_name]
 
 		if FileAccess.file_exists(cmd_path):

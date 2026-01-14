@@ -48,20 +48,11 @@ func _execute(console: Console, args: Array) -> int:
 	if Global.ui:
 		Global.ui.start_level()
 
-	# Hide home menu if it's visible (optional but good for UX)
-	# Assuming there's a reference to it or we can find it
-	var root = console.get_tree().get_root()
-	var ui = root.get_node_or_null("Main/HUD") # Main is the root in main.tscn usually
-	# Actually main.tscn is the scene runner.
-
-	# Close console automatically? Usually not, but let's at least push a message
-	console.push_text("Loading level: %s" % level_id)
-
-	# If we are in the home menu, we should probably hide it
-	# In ui.tscn, HomeMenu is a child of UI.
+	# Hide home menu if visible
 	if Global.ui:
 		var home_menu = Global.ui.get_node_or_null("HomeMenu")
 		if home_menu:
 			home_menu.visible = false
 
+	console.push_text("Level loaded: %s" % level_id)
 	return OK

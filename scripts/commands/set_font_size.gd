@@ -17,7 +17,9 @@ func get_args() -> Array[Dictionary]:
 # Private functions
 func _execute(console: Console, args: Array) -> int:
 	var new_size: int = int(args[0])
-	assert(new_size > 0, "Font size must be positive")
+	if new_size <= 0:
+		console.push_error("Font size must be positive")
+		return ERR_UNKNOWN_BEHAVIOR
 
 	console.input.add_theme_font_size_override("font_size", new_size)
 	console.output.add_theme_font_size_override("bold_italics_font_size", new_size)

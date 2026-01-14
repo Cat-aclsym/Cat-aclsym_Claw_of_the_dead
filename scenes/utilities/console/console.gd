@@ -133,7 +133,7 @@ func _on_input_text_changed() -> void:
 	if _suggestion_index >= 0 and (Input.is_action_just_pressed("ui_focus_next") or Input.is_key_pressed(KEY_TAB)):
 		return
 
-	# Reset history index if user types something manual
+	# Reset history index if user types something manually
 	if not _is_navigating_history and _history_index != -1:
 		_history_index = -1
 
@@ -215,8 +215,7 @@ func _complete_suggestion() -> void:
 		var cmd_script = load(cmd_path)
 		if cmd_script:
 			var cmd_instance: ICommand = cmd_script.new()
-			if cmd_instance.has_method("get_args"):
-				has_args = not cmd_instance.get_args().is_empty()
+			has_args = not cmd_instance.get_args().is_empty()
 
 	if has_args:
 		# Recalculate suggestions for the new command text
@@ -269,7 +268,7 @@ func _update_suggestions() -> void:
 							var tower_types = tower_script.get_script_constant_map().get("TowerType")
 							if tower_types:
 								for tower_type in tower_types.keys():
-									if tower_type.begins_with(current_input.to_upper()):
+									if tower_type.to_lower().begins_with(current_input.to_lower()):
 										_current_suggestions.append(tower_type)
 					ICommand.Types.ARG_ENEMY:
 						var enemy_script = load("res://scenes/gameplay/entities/enemy/i_enemy.gd")
@@ -277,7 +276,7 @@ func _update_suggestions() -> void:
 							var enemy_types = enemy_script.get_script_constant_map().get("EnemyType")
 							if enemy_types:
 								for enemy_type in enemy_types.keys():
-									if enemy_type.begins_with(current_input.to_upper()):
+									if enemy_type.to_lower().begins_with(current_input.to_lower()):
 										_current_suggestions.append(enemy_type)
 					ICommand.Types.ARG_ENUM:
 						var enum_values: Array = current_arg_def.get("enum_values", [])
@@ -288,9 +287,9 @@ func _update_suggestions() -> void:
 						var ilevel_script = load("res://scenes/gameplay/world/level/i_level.gd")
 						var itower_script = load("res://scenes/gameplay/entities/tower/i_tower.gd")
 						if ilevel_script and itower_script:
-							var current_lvl = ilevel_script.get("current_level")
-							if current_lvl and current_lvl.get("map"):
-								for child in current_lvl.get("map").get_children():
+							var current_lvl = ilevel_script.current_level
+							if current_lvl and current_lvl.map:
+								for child in current_lvl.map.get_children():
 									if child.get_script() == itower_script:
 										if child.name.to_lower().begins_with(current_input.to_lower()):
 											_current_suggestions.append(child.name)
