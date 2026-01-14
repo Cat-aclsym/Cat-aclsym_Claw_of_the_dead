@@ -240,8 +240,9 @@ func _update_suggestions() -> void:
 		return
 
 	var command_prefix := parts[0]
-	var is_typing_args := parts.size() > 1 or full_input.ends_with(" ")
-	var args_typed := parts.size() - 1
+	var has_trailing_space := full_input.ends_with(" ")
+	var is_typing_args := parts.size() > 1 or has_trailing_space
+	var args_typed := parts.size() - 1 if has_trailing_space else parts.size() - 2
 	var args_def: Array = []
 
 	if is_typing_args:
@@ -249,71 +250,63 @@ func _update_suggestions() -> void:
 		if cmd:
 			args_def = cmd.get_args()
 			if not args_def.is_empty():
-				if full_input.ends_with(" "):
-					if args_typed >= args_def.size():
-						_clear_suggestions()
-						return
-				else:
-					if args_typed > args_def.size():
-						_clear_suggestions()
-						return
+				if args_typed >= args_def.size():
+					_clear_suggestions()
+					return
 
-	if is_typing_args:
-		var cmd := _find_command(command_prefix, true)
-		if cmd and args_typed < args_def.size():
-			var current_arg_def: Dictionary = args_def[args_typed]
-			var arg_type: int = current_arg_def.get("type", 0)
-			var current_input := parts[-1] if not full_input.ends_with(" ") else ""
+				var current_arg_def: Dictionary = args_def[args_typed]
+				var arg_type: int = current_arg_def.get("type", 0)
+				var current_input := parts[-1] if not has_trailing_space else ""
 
-			match arg_type:
-				ICommand.Types.ARG_COMMAND:
-					for cmd_name in _available_commands:
-						if cmd_name.begins_with(current_input):
-							_current_suggestions.append(cmd_name)
-				ICommand.Types.ARG_TOWER:
-					var tower_script = load("res://scenes/gameplay/entities/tower/i_tower.gd")
-					if tower_script and tower_script.has_source_code():
-						var tower_types = tower_script.get_script_constant_map().get("TowerType")
-						if tower_types:
-							for tower_type in tower_types.keys():
-								if tower_type.begins_with(current_input.to_upper()):
-									_current_suggestions.append(tower_type)
-				ICommand.Types.ARG_ENEMY:
-					var enemy_script = load("res://scenes/gameplay/entities/enemy/i_enemy.gd")
-					if enemy_script and enemy_script.has_source_code():
-						var enemy_types = enemy_script.get_script_constant_map().get("EnemyType")
-						if enemy_types:
-							for enemy_type in enemy_types.keys():
-								if enemy_type.begins_with(current_input.to_upper()):
-									_current_suggestions.append(enemy_type)
-				ICommand.Types.ARG_ENUM:
-					var enum_values: Array = current_arg_def.get("enum_values", [])
-					for value in enum_values:
-						if value.begins_with(current_input):
-							_current_suggestions.append(value)
-				ICommand.Types.ARG_INGAME_TOWER:
-					var ilevel_script = load("res://scenes/gameplay/world/level/i_level.gd")
-					var itower_script = load("res://scenes/gameplay/entities/tower/i_tower.gd")
-					if ilevel_script and itower_script:
-						var current_lvl = ilevel_script.get("current_level")
-						if current_lvl and current_lvl.get("map"):
-							for child in current_lvl.get("map").get_children():
-								if child.get_script() == itower_script:
-									if child.name.begins_with(current_input):
-										_current_suggestions.append(child.name)
-				ICommand.Types.ARG_LEVEL:
-					var level_dir := DirAccess.open("res://resources/levels/")
-					if level_dir:
-						for file_name in level_dir.get_files():
-							if file_name.ends_with(".json"):
-								var level_id := file_name.trim_suffix(".json")
-								if level_id.begins_with(current_input):
-									_current_suggestions.append(level_id)
-				_:
-					pass
+				match arg_type:
+					ICommand.Types.ARG_COMMAND:
+						for cmd_name in _available_commands:
+							if cmd_name.to_lower().begins_with(current_input.to_lower()):
+								_current_suggestions.append(cmd_name)
+					ICommand.Types.ARG_TOWER:
+						var tower_script = load("res://scenes/gameplay/entities/tower/i_tower.gd")
+						if tower_script and tower_script.has_source_code():
+							var tower_types = tower_script.get_script_constant_map().get("TowerType")
+							if tower_types:
+								for tower_type in tower_types.keys():
+									if tower_type.begins_with(current_input.to_upper()):
+										_current_suggestions.append(tower_type)
+					ICommand.Types.ARG_ENEMY:
+						var enemy_script = load("res://scenes/gameplay/entities/enemy/i_enemy.gd")
+						if enemy_script and enemy_script.has_source_code():
+							var enemy_types = enemy_script.get_script_constant_map().get("EnemyType")
+							if enemy_types:
+								for enemy_type in enemy_types.keys():
+									if enemy_type.begins_with(current_input.to_upper()):
+										_current_suggestions.append(enemy_type)
+					ICommand.Types.ARG_ENUM:
+						var enum_values: Array = current_arg_def.get("enum_values", [])
+						for value in enum_values:
+							if value.to_lower().begins_with(current_input.to_lower()):
+								_current_suggestions.append(value)
+					ICommand.Types.ARG_INGAME_TOWER:
+						var ilevel_script = load("res://scenes/gameplay/world/level/i_level.gd")
+						var itower_script = load("res://scenes/gameplay/entities/tower/i_tower.gd")
+						if ilevel_script and itower_script:
+							var current_lvl = ilevel_script.get("current_level")
+							if current_lvl and current_lvl.get("map"):
+								for child in current_lvl.get("map").get_children():
+									if child.get_script() == itower_script:
+										if child.name.to_lower().begins_with(current_input.to_lower()):
+											_current_suggestions.append(child.name)
+					ICommand.Types.ARG_LEVEL:
+						var level_dir := DirAccess.open("res://resources/levels/")
+						if level_dir:
+							for file_name in level_dir.get_files():
+								if file_name.ends_with(".json"):
+									var level_id := file_name.trim_suffix(".json")
+									if level_id.to_lower().begins_with(current_input.to_lower()):
+										_current_suggestions.append(level_id)
+					_:
+						pass
 	else:
 		for cmd in _available_commands:
-			if cmd.begins_with(command_prefix):
+			if cmd.to_lower().begins_with(command_prefix.to_lower()):
 				_current_suggestions.append(cmd)
 
 	_current_suggestions.sort()
