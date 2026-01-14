@@ -102,14 +102,6 @@ func _listen_inputs() -> void:
 			visible = false
 		return
 
-	if Input.is_action_just_pressed("ui_up"):
-		_navigate_suggestions(-1)
-		return
-
-	if Input.is_action_just_pressed("ui_down"):
-		_navigate_suggestions(1)
-		return
-
 	if Input.is_action_just_pressed("console_push"):
 		push_command(input.text)
 		input.text = ""
@@ -129,6 +121,12 @@ func _on_input_gui_input(event: InputEvent) -> void:
 			get_viewport().set_input_as_handled()
 		elif event.keycode == KEY_SPACE and event.ctrl_pressed:
 			_update_suggestions()
+			get_viewport().set_input_as_handled()
+		elif not _current_suggestions.is_empty() and (event.keycode == KEY_UP or event.keycode == KEY_DOWN):
+			if event.keycode == KEY_UP:
+				_navigate_suggestions(-1)
+			else:
+				_navigate_suggestions(1)
 			get_viewport().set_input_as_handled()
 
 func _handle_tab_completion() -> void:
@@ -152,9 +150,17 @@ func _complete_suggestion() -> void:
 	var is_typing_args := parts.size() > 1 or (full_input.ends_with(" ") and not full_input.is_empty())
 
 	if is_typing_args:
-		# If we are typing args, we only switch the selected suggestion in the list
-		# but we don't change the command name in the input
-		_show_suggestions()
+		var completed_value := _current_suggestions[_suggestion_index]
+
+		# Replace last part or add to input
+		if full_input.ends_with(" "):
+			input.text = full_input + completed_value + " "
+		else:
+			parts[-1] = completed_value
+			input.text = " ".join(parts) + " "
+
+		input.set_caret_column(input.text.length())
+		_update_suggestions()
 		return
 
 	var completed_command := _current_suggestions[_suggestion_index]
@@ -195,13 +201,14 @@ func _update_suggestions() -> void:
 
 	var command_prefix := parts[0]
 	var is_typing_args := parts.size() > 1 or full_input.ends_with(" ")
+	var args_typed := parts.size() - 1
+	var args_def: Array = []
 
 	if is_typing_args:
 		var cmd := _find_command(command_prefix, true)
 		if cmd:
-			var args_def := cmd.get_args()
+			args_def = cmd.get_args()
 			if not args_def.is_empty():
-				var args_typed := parts.size() - 1
 				if full_input.ends_with(" "):
 					if args_typed >= args_def.size():
 						_clear_suggestions()
@@ -211,17 +218,45 @@ func _update_suggestions() -> void:
 						_clear_suggestions()
 						return
 
-	for cmd in _available_commands:
-		if is_typing_args:
-			# If we are typing arguments, only suggest the exact command match
-			if cmd == command_prefix:
-				_current_suggestions.append(cmd)
-		else:
-			# If we are typing the command, suggest everything that starts with it
+	if is_typing_args:
+		var cmd := _find_command(command_prefix, true)
+		if cmd and args_typed < args_def.size():
+			var current_arg_def: Dictionary = args_def[args_typed]
+			var arg_type: int = current_arg_def.get("type", 0)
+			var current_input := parts[-1] if not full_input.ends_with(" ") else ""
+
+			match arg_type:
+				ICommand.Types.ARG_COMMAND:
+					for cmd_name in _available_commands:
+						if cmd_name.begins_with(current_input):
+							_current_suggestions.append(cmd_name)
+				ICommand.Types.ARG_TOWER:
+					for tower_type in ITower.TowerType.keys():
+						if tower_type.begins_with(current_input.to_upper()):
+							_current_suggestions.append(tower_type)
+				ICommand.Types.ARG_ENEMY:
+					for enemy_type in IEnemy.EnemyType.keys():
+						if enemy_type.begins_with(current_input.to_upper()):
+							_current_suggestions.append(enemy_type)
+				ICommand.Types.ARG_ENUM:
+					var enum_values: Array = current_arg_def.get("enum_values", [])
+					for value in enum_values:
+						if value.begins_with(current_input):
+							_current_suggestions.append(value)
+				_:
+					pass
+	else:
+		for cmd in _available_commands:
 			if cmd.begins_with(command_prefix):
 				_current_suggestions.append(cmd)
 
+	_current_suggestions.sort()
+
 	if not _current_suggestions.is_empty():
+		_suggestion_index = 0
+		_show_suggestions()
+	elif is_typing_args:
+		# Show signature even without suggestions when typing args
 		_show_suggestions()
 	else:
 		_clear_suggestions()
@@ -238,61 +273,81 @@ func _show_suggestions() -> void:
 	if full_input.ends_with(" "):
 		current_arg_index += 1
 
+	var is_typing_args := parts_no_empty.size() > 1 or (full_input.ends_with(" ") and not full_input.is_empty())
+	var command_prefix := parts_no_empty[0] if not parts_no_empty.is_empty() else ""
+
 	var suggestions_text := "[code][font_size=12]"
+
+	# Display suggestion list
 	for i in range(_current_suggestions.size()):
-		var cmd_token := _current_suggestions[i]
+		var suggestion_token := _current_suggestions[i]
 		var is_selected := (i == _suggestion_index)
 		var line := ("→ " if is_selected else "  ")
 
 		if is_selected:
 			line += "[b]"
 
-		line += cmd_token
-
-		# Try to show arguments hint
-		var cmd_path := "%s/%s.gd" % [COMMANDS_DIRECTORY, cmd_token]
-		if FileAccess.file_exists(cmd_path):
-			var cmd_script = load(cmd_path)
-			if cmd_script:
-				var cmd_instance: ICommand = cmd_script.new()
-				if cmd_instance.has_method("get_args"):
-					var args: Array = cmd_instance.get_args()
-					if not args.is_empty():
-						for j in range(args.size()):
-							var arg_def: Dictionary = args[j]
-							var arg_name: String = arg_def.get("name", "arg")
-							var type_str: String = cmd_instance.type_to_string(arg_def.get("type", 0))
-							var is_current_arg := (j + 1 == current_arg_index)
-
-							var arg_text := ""
-							if arg_def.get("optional", false):
-								arg_text = " [%s: %s]" % [arg_name, type_str]
-							else:
-								arg_text = " <%s: %s>" % [arg_name, type_str]
-
-							if is_current_arg:
-								line += "[b][u]" + arg_text + "[/u][/b]"
-							else:
-								line += arg_text
-					else:
-						# Fallback for commands not updated yet
-						var old_args := cmd_instance.expected_args_types()
-						for j in range(old_args.size()):
-							var type_enum := old_args[j]
-							var is_current_arg := (j + 1 == current_arg_index)
-							var arg_text := " <%s>" % cmd_instance.type_to_string(type_enum)
-							if is_current_arg:
-								line += "[b][u]" + arg_text + "[/u][/b]"
-							else:
-								line += arg_text
+		line += suggestion_token
 
 		if is_selected:
 			line += "[/b]"
 
 		suggestions_text += line + "\n"
+
+	# Display command signature
+	if is_typing_args and not command_prefix.is_empty():
+		# When typing arguments, show signature with current arg highlighted
+		var cmd := _find_command(command_prefix, true)
+		if cmd:
+			var signature := _build_signature(cmd, command_prefix, current_arg_index)
+			if not signature.is_empty():
+				suggestions_text += "\n" + signature
+	else:
+		# When listing commands, show signature of selected command
+		if _suggestion_index >= 0 and _suggestion_index < _current_suggestions.size():
+			var selected_cmd_name := _current_suggestions[_suggestion_index]
+			var cmd := _find_command(selected_cmd_name, true)
+			if cmd:
+				var signature := _build_signature(cmd, selected_cmd_name, -1)
+				if not signature.is_empty():
+					suggestions_text += "\n" + signature
+
 	suggestions_text += "[/font_size][/code]"
 	suggestions_label.text = suggestions_text
 	suggestions_label.show()
+
+func _build_signature(cmd: ICommand, command_name: String, current_arg_index: int) -> String:
+	var cmd_args := cmd.get_args()
+	var signature := "  " + command_name
+
+	for j in range(cmd_args.size()):
+		var arg_def: Dictionary = cmd_args[j]
+		var arg_name: String = arg_def.get("name", "arg")
+		var arg_type: int = arg_def.get("type", 0)
+		var type_str: String = _get_type_string(cmd, arg_def, arg_type)
+		var is_current_arg := (j + 1 == current_arg_index)
+
+		var arg_text := ""
+		if arg_def.get("optional", false):
+			arg_text = " [%s: %s]" % [arg_name, type_str]
+		else:
+			arg_text = " <%s: %s>" % [arg_name, type_str]
+
+		if is_current_arg:
+			signature += "[b][u]" + arg_text + "[/u][/b]"
+		else:
+			signature += arg_text
+
+	signature += "  — " + cmd.description()
+	return signature
+
+func _get_type_string(cmd: ICommand, arg_def: Dictionary, arg_type: int) -> String:
+	var type_str: String = cmd.type_to_string(arg_type)
+	if arg_type == ICommand.Types.ARG_ENUM:
+		var enum_values: Array = arg_def.get("enum_values", [])
+		if not enum_values.is_empty():
+			type_str = "|".join(enum_values)
+	return type_str
 
 func _clear_suggestions() -> void:
 	_current_suggestions.clear()

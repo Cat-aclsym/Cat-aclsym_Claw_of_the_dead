@@ -16,6 +16,10 @@ enum Types {
 	ARG_INT = 2,
 	ARG_FLOAT = 3,
 	ARG_STRING = 4,
+	ARG_COMMAND = 5,
+	ARG_TOWER = 6,
+	ARG_ENEMY = 7,
+	ARG_ENUM = 8,
 }
 
 
@@ -36,6 +40,7 @@ func expected_args_types() -> Array[ICommand.Types]:
 ## - "name": String (Argument name)
 ## - "type": ICommand.Types (Argument type)
 ## - "optional": bool (Whether the argument is optional, default false)
+## - "enum_values": Array[String] (For ARG_ENUM, the list of valid values)
 func get_args() -> Array[Dictionary]:
 	return []
 
@@ -63,7 +68,7 @@ func execute(console: Console, args: Array) -> int:
 
 		for i in range(args.size()):
 			var arg_def := defined_args[i]
-			if not _validate_type(args[i], arg_def.get("type", Types.ARG_UNKNOWN)):
+			if not _validate_type_with_def(args[i], arg_def):
 				return ERR_INVALID_ARGS_TYPES
 
 	elif not is_variable_args():
@@ -87,6 +92,14 @@ func type_to_string(t: ICommand.Types) -> String:
 			return "string"
 		Types.ARG_BOOL:
 			return "bool"
+		Types.ARG_COMMAND:
+			return "command"
+		Types.ARG_TOWER:
+			return "tower"
+		Types.ARG_ENEMY:
+			return "enemy"
+		Types.ARG_ENUM:
+			return "enum"
 		_:
 			return "unknown"
 
@@ -114,5 +127,19 @@ func _validate_type(in_string: String, in_type: ICommand.Types) -> bool:
 			return true
 		Types.ARG_BOOL:
 			return in_string == "true" or in_string == "false"
+		Types.ARG_COMMAND, Types.ARG_TOWER, Types.ARG_ENEMY, Types.ARG_ENUM:
+			return true
 		_:
 			return false
+
+
+func _validate_type_with_def(in_string: String, arg_def: Dictionary) -> bool:
+	var in_type: ICommand.Types = arg_def.get("type", Types.ARG_UNKNOWN)
+
+	if in_type == Types.ARG_ENUM:
+		var enum_values: Array = arg_def.get("enum_values", [])
+		if enum_values.is_empty():
+			return true
+		return in_string in enum_values
+
+	return _validate_type(in_string, in_type)
