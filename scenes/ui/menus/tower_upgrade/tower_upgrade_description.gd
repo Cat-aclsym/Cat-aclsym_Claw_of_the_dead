@@ -8,17 +8,14 @@ extends Control
 const NUM_GAUGE_SQUARES: int = 4
 const SQUARE_SPACING: float = 5.0
 const GAUGE_TEXTURES := {
-	1: preload("res://assets/ui/icons/Gauge Level 1.svg"),
-	2: preload("res://assets/ui/icons/Gauge Level 2.svg"),
-	3: preload("res://assets/ui/icons/Gauge Level 3.svg"),
-	4: preload("res://assets/ui/icons/Gauge Level 4.svg"),
+	1: preload("res://assets/ui/iconsMenu/stat_colored.svg"),
+	2: preload("res://assets/ui/iconsMenu/stat.svg"),
 }
 
 ## Reference to the tower being upgraded
 var tower: ITower
 
 @onready var upgrade_title_label: Label = $UpgradeDescriptionTextureRect/MarginContainer/UpgradeDescriptionVBoxContainer/UpgradeTitleLabel
-@onready var upgrade_description_label: Label = $UpgradeDescriptionTextureRect/MarginContainer/UpgradeDescriptionVBoxContainer/UpgradeDescriptionLabel
 @onready var attack_gauge_container: HBoxContainer = $UpgradeDescriptionTextureRect/MarginContainer/UpgradeDescriptionVBoxContainer/Node/VBoxContainer/AspectRatioContainer2/AttackSpeedHBoxContainer
 @onready var attack_speed_gauge_container: HBoxContainer = $UpgradeDescriptionTextureRect/MarginContainer/UpgradeDescriptionVBoxContainer/Node/VBoxContainer/AspectRatioContainer/AttackSpeedHBoxContainer
 @onready var _panel: Control = $UpgradeDescriptionTextureRect
@@ -46,8 +43,7 @@ func setup(p_tower: ITower, upgrade_scene: PackedScene) -> void:
 	var tower_name = _get_tower_name()
 	
 	# Set title and description
-	upgrade_title_label.text = tower_name
-	upgrade_description_label.text = "XTOWER.XUPGRADE.DESCRIPTION"
+	#upgrade_title_label.text = tower_name
 	
 	# Calculate maximum stats for the current tower branch
 	_calculate_max_stats(upgrade_scene)
@@ -164,20 +160,20 @@ func _update_gauge_with_values(container: HBoxContainer, current_value: float, m
 	level = clamp(level, 1, 4)
 
 	# Find gauge bar (second TextureRect) and icon (first TextureRect)
-	var texture_rects: Array = []
-	for child in container.get_children():
-		if child is TextureRect:
-			texture_rects.append(child)
+	#var texture_rects: Array = []
+	#for child in container.get_children():
+		#if child is TextureRect:
+			#texture_rects.append(child)
 	
-	if texture_rects.size() >= 2:
-		var gauge_bar: TextureRect = texture_rects[1]
-		if GAUGE_TEXTURES.has(level):
-			gauge_bar.texture = GAUGE_TEXTURES[level]
+	#if texture_rects.size() >= 2:
+		#var gauge_bar: TextureRect = texture_rects[1]
+		#if GAUGE_TEXTURES.has(level):
+			#gauge_bar.texture = GAUGE_TEXTURES[level]
 	
 	# Ensure a right-side label exists (and not stacked repeatedly)
-	for child in container.get_children():
-		if child is Label:
-			child.queue_free()
+	#for child in container.get_children():
+		#if child is Label:
+			#child.queue_free()
 	
 	var value_label := Label.new()
 	value_label.text = label_text
@@ -188,4 +184,4 @@ func _update_gauge_with_values(container: HBoxContainer, current_value: float, m
 	value_label.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	
 	# Add label to the end of the HBox (after icon and gauge)
-	container.add_child(value_label)
+	#container.add_child(value_label)
