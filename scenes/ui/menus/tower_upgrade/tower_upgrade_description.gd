@@ -21,6 +21,7 @@ var tower: ITower
 @onready var upgrade_description_label: Label = $UpgradeDescriptionTextureRect/MarginContainer/UpgradeDescriptionVBoxContainer/UpgradeDescriptionLabel
 @onready var attack_gauge_container: HBoxContainer = $UpgradeDescriptionTextureRect/MarginContainer/UpgradeDescriptionVBoxContainer/Node/VBoxContainer/AspectRatioContainer2/AttackSpeedHBoxContainer
 @onready var attack_speed_gauge_container: HBoxContainer = $UpgradeDescriptionTextureRect/MarginContainer/UpgradeDescriptionVBoxContainer/Node/VBoxContainer/AspectRatioContainer/AttackSpeedHBoxContainer
+@onready var _panel: Control = $UpgradeDescriptionTextureRect
 
 # Private variables
 var _max_damage: float = 0.0
@@ -29,6 +30,12 @@ var _max_shoot_range: float = 0.0
 # Core methods
 func _ready() -> void:
 	pass
+
+func _input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.pressed:
+		var mouse_pos: Vector2 = get_global_mouse_position()
+		if _panel == null or not _panel.get_global_rect().has_point(mouse_pos):
+			queue_free()
 
 ## Initializes the upgrade description with tower and upgrade data
 func setup(p_tower: ITower, upgrade_scene: PackedScene) -> void:
@@ -67,10 +74,10 @@ func setup(p_tower: ITower, upgrade_scene: PackedScene) -> void:
 ## Gets the tower name based on the tower's scene name and level
 func _get_tower_name() -> String:
 	# Get the scene path from the instance's owner scene
-	var scene_file_path: String = tower.scene_file_path
+	var tower_scene_path: String = tower.scene_file_path
 	
 	# Extract the tower type from the path (e.g., "bat_01" from "res://scenes/.../bat_01.tscn")
-	var scene_name: String = scene_file_path.get_file().trim_suffix(".tscn").to_lower()
+	var scene_name: String = tower_scene_path.get_file().trim_suffix(".tscn").to_lower()
 	
 	# Map tower types to translation keys
 	var tower_translation_keys = {
@@ -182,4 +189,3 @@ func _update_gauge_with_values(container: HBoxContainer, current_value: float, m
 	
 	# Add label to the end of the HBox (after icon and gauge)
 	container.add_child(value_label)
-

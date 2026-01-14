@@ -1,4 +1,4 @@
-class_name TowerUpgradeMenu
+class_name RadialTowerUpgradeMenu
 extends Control
 
 var radius: int = 120
@@ -19,6 +19,7 @@ var shape_scale: float = 0.0:
 @onready var buttons: Control = $Buttons
 @onready var sell_button: TextureButton = $Buttons/SellTextureButton
 @onready var upgrade_button: TextureButton = $Buttons/UpgradeTextureButton
+@onready var info_button: TextureButton = $Buttons/InfoTextureButton
 @onready var close_button: TextureButton = $Buttons/CloseTextureButton
 
 @onready var sell_label: Label = sell_button.find_child("ValueLabel") as Label
@@ -27,6 +28,7 @@ var shape_scale: float = 0.0:
 
 @onready var signals: Array[Dictionary] = [
 	{SignalUtil.WHO: close_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_close_button_pressed},
+	{SignalUtil.WHO: info_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_info_button_pressed},
 	{SignalUtil.WHO: upgrade_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_upgrade_button_pressed},
 	{SignalUtil.WHO: sell_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_sell_button_pressed}
 ]
@@ -148,6 +150,23 @@ func _on_upgrade_button_pressed():
 func _on_sell_button_pressed():
 	tower.sell_tower()
 	hide_menu()
+
+
+func _on_info_button_pressed():
+	if tower == null or tower.available_upgrade.is_empty():
+		return
+	var desc_scene: PackedScene = load("res://scenes/ui/menus/tower_upgrade/tower_upgrade_description.tscn")
+	if desc_scene == null:
+		Log.trace(Log.Level.ERROR, "Failed to load tower upgrade description scene")
+		return
+	if Global.hud != null and Global.hud.find_child("TowerUpgradeDescription", true, false) != null:
+		return
+	var desc_instance: TowerUpgradeDescription = desc_scene.instantiate()
+	if Global.hud != null:
+		Global.hud.add_child(desc_instance)
+	else:
+		add_child(desc_instance)
+	desc_instance.setup(tower, tower.available_upgrade[0])
 
 
 func _on_tween_finished():
