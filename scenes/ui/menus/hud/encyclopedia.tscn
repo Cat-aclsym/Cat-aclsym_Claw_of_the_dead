@@ -1,0 +1,144 @@
+[gd_scene load_steps=7 format=3 uid="uid://divtcu2mbquip"]
+
+[ext_resource type="Script" uid="uid://boqaeq5svhocn" path="res://scenes/ui/menus/hud/encyclopedia.gd" id="1_ency"]
+[ext_resource type="Texture2D" uid="uid://bel17gs3ijyb1" path="res://assets/environment/backgrounds/Fond Menu 02@2x.png" id="2_bg"]
+[ext_resource type="Texture2D" uid="uid://0lgpu16nkbho" path="res://assets/ui/icons/Button Close.svg" id="3_close"]
+[ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="4_theme"]
+[ext_resource type="Texture2D" uid="uid://deyl1aq0mjdi1" path="res://assets/ui/icons/left.svg" id="5_left"]
+[ext_resource type="Texture2D" uid="uid://b25uthfv5ggd2" path="res://assets/ui/icons/right.svg" id="6_right"]
+
+[node name="Encyclopedia" type="Control"]
+texture_filter = 6
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_ency")
+
+[node name="GuiMarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.05
+anchor_top = 0.05
+anchor_right = 0.95
+anchor_bottom = 0.95
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="BackgroundTextureRect" type="TextureRect" parent="GuiMarginContainer"]
+layout_mode = 2
+texture = ExtResource("2_bg")
+expand_mode = 1
+
+[node name="MenuMarginContainer" type="MarginContainer" parent="GuiMarginContainer"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 40
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 40
+theme_override_constants/margin_bottom = 20
+
+[node name="MainVBoxContainer" type="VBoxContainer" parent="GuiMarginContainer/MenuMarginContainer"]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="TopLineHBoxContainer" type="HBoxContainer" parent="GuiMarginContainer/MenuMarginContainer/MainVBoxContainer"]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="CategoryHBoxContainer" type="HBoxContainer" parent="GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/TopLineHBoxContainer"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 20
+
+[node name="TowersButton" type="Button" parent="GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/TopLineHBoxContainer/CategoryHBoxContainer"]
+layout_mode = 2
+theme = ExtResource("4_theme")
+text = "ENCYCLOPEDIA.SECTION.TOWERS"
+
+[node name="EnemiesButton" type="Button" parent="GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/TopLineHBoxContainer/CategoryHBoxContainer"]
+layout_mode = 2
+theme = ExtResource("4_theme")
+text = "ENCYCLOPEDIA.SECTION.ENEMIES"
+
+[node name="AspectRatioContainer" type="AspectRatioContainer" parent="GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/TopLineHBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+alignment_horizontal = 2
+alignment_vertical = 0
+
+[node name="CloseTextureButton" type="TextureButton" parent="GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/TopLineHBoxContainer/AspectRatioContainer"]
+texture_filter = 6
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+texture_normal = ExtResource("3_close")
+ignore_texture_size = true
+stretch_mode = 4
+
+[node name="ContentHBoxContainer" type="HBoxContainer" parent="GuiMarginContainer/MenuMarginContainer/MainVBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+theme_override_constants/separation = 50
+
+[node name="LeftPageVBox" type="VBoxContainer" parent="GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/ContentHBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+alignment = 1
+
+[node name="SpriteAspectRatio" type="AspectRatioContainer" parent="GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/ContentHBoxContainer/LeftPageVBox"]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+
+[node name="SpriteRect" type="TextureRect" parent="GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/ContentHBoxContainer/LeftPageVBox/SpriteAspectRatio"]
+texture_filter = 1
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="NameLabel" type="Label" parent="GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/ContentHBoxContainer/LeftPageVBox"]
+layout_mode = 2
+theme = ExtResource("4_theme")
+theme_type_variation = &"HeaderMedium"
+text = "ITEM NAME"
+horizontal_alignment = 1
+
+[node name="RightPageVBox" type="VBoxContainer" parent="GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/ContentHBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+alignment = 1
+
+[node name="StatsGrid" type="GridContainer" parent="GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/ContentHBoxContainer/RightPageVBox"]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_constants/h_separation = 20
+theme_override_constants/v_separation = 10
+columns = 2
+
+[node name="NavigationHBoxContainer" type="HBoxContainer" parent="GuiMarginContainer/MenuMarginContainer/MainVBoxContainer"]
+layout_mode = 2
+mouse_filter = 2
+alignment = 2
+
+[node name="PrevButton" type="TextureButton" parent="GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/NavigationHBoxContainer"]
+texture_filter = 6
+custom_minimum_size = Vector2(45, 50)
+layout_mode = 2
+texture_normal = ExtResource("5_left")
+ignore_texture_size = true
+stretch_mode = 4
+
+[node name="NextButton" type="TextureButton" parent="GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/NavigationHBoxContainer"]
+texture_filter = 6
+custom_minimum_size = Vector2(45, 50)
+layout_mode = 2
+texture_normal = ExtResource("6_right")
+ignore_texture_size = true
+stretch_mode = 4
