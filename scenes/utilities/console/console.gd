@@ -24,6 +24,8 @@ func _ready() -> void:
 	_load_available_commands()
 	suggestions_label.hide()
 
+	push_command("help")
+
 	# Connect signals
 	SignalUtil.connects([
 		{SignalUtil.WHO: input, SignalUtil.WHAT: "text_changed", SignalUtil.TO: _on_input_text_changed}
