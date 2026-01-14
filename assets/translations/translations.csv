@@ -16,4 +16,31 @@ ENDGAMEMENU.LIFESTATISTIC.LABEL,%s,%s
 ENDGAMEMENU.TIMESTATISTIC.LABEL,%s,%s
 ENDGAMEMENU.LEVEL.TITLE.WIN,Victory,Victoire
 ENDGAMEMENU.LEVEL.TITLE.LOOSE,Defeat,Défaite
-HOME.COPYRIGHT,© [2024] A7 Studio. All rights reserved. Trademark.,© [2024] A7 Studio. Tous droits réservés. Marque déposée.
+HOME.COPYRIGHT,"© [2024] A7 Studio. All rights reserved. Trademark.","© [2024] A7 Studio. Tous droits réservés. Marque déposée."
+HOME.ENCYCLOPEDIA.BUTTON,Encyclopedia,Encyclopédie
+ENCYCLOPEDIA.TITLE,Encyclopedia,Encyclopédie
+ENCYCLOPEDIA.STATS.HEALTH,Health,Vie
+ENCYCLOPEDIA.STATS.SPEED,Speed,Vitesse
+ENCYCLOPEDIA.STATS.DAMAGE,Damage,Dégâts
+ENCYCLOPEDIA.STATS.RANGE,Range,Portée
+ENCYCLOPEDIA.STATS.FIRERATE,Fire Rate,Cadence
+ENCYCLOPEDIA.STATS.COST,Cost,Coût
+ENCYCLOPEDIA.STATS.REWARD,Reward,Récompense
+ENCYCLOPEDIA.STATS.DISABLE_DURATION,Stun Duration,Durée d'étourdissement
+ENCYCLOPEDIA.STATS.PRE_ATTACK,Pre-attack,Pré-attaque
+ENCYCLOPEDIA.STATS.ATTACK_DURATION,Attack Duration,Durée d'attaque
+ENCYCLOPEDIA.STATS.POST_ATTACK,Post-attack,Post-attaque
+ENCYCLOPEDIA.STATS.COOLDOWN,Cooldown,Récupération
+ENCYCLOPEDIA.SECTION.TOWERS,Towers,Tours
+ENCYCLOPEDIA.SECTION.ENEMIES,Enemies,Ennemis
+ENCYCLOPEDIA.CATEGORY.COMBAT,Combat,Combat
+ENCYCLOPEDIA.CATEGORY.ECONOMY,Economy,Économie
+TOWER.1.NAME,Bat Tower,Tour Chauve-souris
+TOWER.2.NAME,Strong Bat,Chauve-souris Puissante
+TOWER.FIRE.NAME,Fire Tower,Tour de Feu
+TOWER.MULTISHOT.NAME,Multi-Shot,Multi-tirs
+TOWER.PIERCING.NAME,Piercing,Perforant
+ENEMY.RAT.NAME,Rat,Rat
+ENEMY.DEFAULT.NAME,Zombie,Zombie
+ENEMY.FAT.NAME,Fat Zombie,Zombie Gras
+ENEMY.BIGDADDY.NAME,Big Daddy,Big Daddy
