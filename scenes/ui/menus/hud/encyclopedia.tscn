@@ -1,6 +1,6 @@
-[gd_scene load_steps=5 format=3 uid="uid://doml7biiq8g2o"]
+[gd_scene load_steps=5 format=3 uid="uid://divtcu2mbquip"]
 
-[ext_resource type="Script" uid="uid://boqaeq5svhocn" path="res://scenes/ui/menus/hud/encyclopedia.gd" id="1_ency"]
+[ext_resource type="Script" path="res://scenes/ui/menus/hud/encyclopedia.gd" id="1_ency"]
 [ext_resource type="Texture2D" uid="uid://bel17gs3ijyb1" path="res://assets/environment/backgrounds/Fond Menu 02@2x.png" id="2_bg"]
 [ext_resource type="Texture2D" uid="uid://0lgpu16nkbho" path="res://assets/ui/icons/Button Close.svg" id="3_close"]
 [ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="4_theme"]
@@ -88,7 +88,7 @@ size_flags_vertical = 3
 mouse_filter = 2
 
 [node name="SpriteRect" type="TextureRect" parent="GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/ContentHBoxContainer/LeftPageVBox/SpriteAspectRatio"]
-texture_filter = 6
+texture_filter = 1
 layout_mode = 2
 expand_mode = 1
 stretch_mode = 5
