@@ -15,19 +15,19 @@ const SKIP_COLOR_INACTIVE: Color = Color(1.0, 1.0, 1.0, 1.0)
 var _is_ready: bool = false
 
 ## Resources with values nodes
-@onready var coins_rich_text_label: Label = $HUDMarginContainer/HUDVBoxContainer/CoinsWavesMarginContainer/CoinsWavesHBoxContainer/CoinsTextureRect/MarginContainer/CoinsLabel
-@onready var health_rich_text_label: Label = $HUDMarginContainer/HUDVBoxContainer/HeartTextureRect/HealthMarginContainer/MarginContainer/HealthTextureProgressBar/HealthLabel
-@onready var waves_rich_text_label: Label = $HUDMarginContainer/HUDVBoxContainer/CoinsWavesMarginContainer/CoinsWavesHBoxContainer/WavesTextureRect/MarginContainer/WavesLabel
+@onready var coins_rich_text_label: Label = %HUDVBoxContainer/CoinsWavesMarginContainer/CoinsWavesHBoxContainer/CoinsTextureRect/MarginContainer/CoinsLabel
+@onready var health_rich_text_label: Label = %HUDVBoxContainer/HeartTextureRect/HealthMarginContainer/MarginContainer/HealthTextureProgressBar/HealthLabel
+@onready var waves_rich_text_label: Label = %HUDVBoxContainer/CoinsWavesMarginContainer/CoinsWavesHBoxContainer/WavesTextureRect/MarginContainer/WavesLabel
 @onready var default_coins_text: String = coins_rich_text_label.text
 @onready var default_health_text: String = health_rich_text_label.text
 @onready var default_waves_text: String = waves_rich_text_label.text
 
 ## Nodes for resources display
-@onready var health_texture_progress_bar: TextureProgressBar = $HUDMarginContainer/HUDVBoxContainer/HeartTextureRect/HealthMarginContainer/MarginContainer/HealthTextureProgressBar
+@onready var health_texture_progress_bar: TextureProgressBar = %HUDVBoxContainer/HeartTextureRect/HealthMarginContainer/MarginContainer/HealthTextureProgressBar
 @onready var new_wave_count_label: Label = $NewWaveCountLabel
 
 ## HUD buttons
-@onready var pause_button: TextureButton = $MarginContainer/PauseButton
+@onready var pause_button: TextureButton = $PauseMarginContainer/PauseButton
 @onready var tower_selection_button: TextureButton = $TowerSelectionMarginContainer/TowerSelectionButton
 @onready var skip_time_scale_button: TextureButton = $SkipMarginContainer/SkipButton
 @onready var skip_animation_player: AnimationPlayer = $SkipMarginContainer/SkipAnimationPlayer

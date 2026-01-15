@@ -4,15 +4,37 @@
 ## Handles restart level, go to next level and return home.
 class_name EndGame
 extends Control
+## Manages the win screen interface and UI interactions.
+##
+## Displays level statistics (time, life) and challenge results.
+## Handles navigation back to menus or next level.
+
+# Constants
+const CONDITION_TODO: Texture2D = preload("res://assets/ui/level_selection/window/condition_todo.svg")
+const CONDITION_DONE: Texture2D = preload("res://assets/ui/level_selection/window/condition_done.svg")
+
+
+# Public variables
+## Elapsed time text for display.
+var elapsed_time_text: String
+## Elapsed seconds.
+var elapsed_time_seconds: int
+## Elapsed minutes.
+var elapsed_time_minutes: int
+
 
 # Onready Variables
+@onready var title_label: Label = $GUIMarginContainer/BackgroundTextureRect/MarginContainer/VBoxContainer/TitleLabel
+@onready var end_game_image: TextureRect = $GUIMarginContainer/BackgroundTextureRect/MarginContainer/VBoxContainer/TextureRect
+@onready var challenges_vbox: VBoxContainer = $GUIMarginContainer/BackgroundTextureRect/MarginContainer/VBoxContainer/ChallengesVBoxContainer
+
 @onready var time_label: Label = $GUIMarginContainer/BackgroundTextureRect/MarginContainer/VBoxContainer/HBoxContainer/TimeAspectRatioContainer/TimeHBoxContainer/TimeStatisticLabel
 @onready var life_label: Label = $GUIMarginContainer/BackgroundTextureRect/MarginContainer/VBoxContainer/HBoxContainer/LifeAspectRatioContainer/LifeHBoxContainer/LifeStatisticLabel
-@onready var title_label: Label = $GUIMarginContainer/BackgroundTextureRect/MarginContainer/VBoxContainer/TitleLabel
+
 @onready var home_button: TextureButton = $GUIMarginContainer/BackgroundTextureRect/MarginContainer/VBoxContainer/ButtonsHBoxContainer/HomeButtonAspectRatioContainer/HomeTextureButton
 @onready var restart_button: TextureButton = $GUIMarginContainer/BackgroundTextureRect/MarginContainer/VBoxContainer/ButtonsHBoxContainer/RestartButtonAspectRatioContainer/RestartTextureButton
 @onready var next_button: TextureButton = $GUIMarginContainer/BackgroundTextureRect/MarginContainer/VBoxContainer/ButtonsHBoxContainer/NextButtonAspectRatioContainer/NextTextureButton
-@onready var end_game_image: TextureRect = $GUIMarginContainer/BackgroundTextureRect/MarginContainer/VBoxContainer/TextureRect
+
 @onready var default_time_text: String = time_label.text
 @onready var default_health_text: String = life_label.text
 
@@ -22,18 +44,14 @@ extends Control
 	{SignalUtil.WHO: next_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_next_texture_button_pressed}
 ]
 
-## Elapsed time from the start to the end of the level in text format for display purpose
-var elapsed_time_text: String
 
-## Elapsed seconds from the start to the end of the level (minus the minutes if any)
-var elapsed_time_seconds: int
+# Built-in functions
+func _ready() -> void:
+	SignalUtil.connects(signals)
 
-## Elapsed minutes from the start to the end of the level
-var elapsed_time_minutes: int
 
-# Core
-
-# public
+# Public functions
+## Initializes the end game screen with victory or defeat state.
 func init(victory: bool) -> void:
 	if Global.ui.get_node("TowerSelection") :
 		Global.ui.get_node("TowerSelection").queue_free()
@@ -66,7 +84,34 @@ func init(victory: bool) -> void:
 		end_game_image.texture = ResourceLoader.load("res://assets/ui/icons/Defeat.svg")
 		next_button.get_parent().visible = false
 
+	_display_challenges()
 	SignalUtil.connects(signals)
+
+
+func _display_challenges() -> void:
+	for child in challenges_vbox.get_children():
+		child.queue_free()
+
+	var active_challenges := ChallengeManager.get_active_challenges()
+	for challenge in active_challenges:
+		var hbox := HBoxContainer.new()
+		hbox.alignment = BoxContainer.ALIGNMENT_CENTER
+		hbox.add_theme_constant_override("separation", 15)
+
+		var icon_rect := TextureRect.new()
+		icon_rect.custom_minimum_size = Vector2(30, 30)
+		icon_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		icon_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		icon_rect.texture = CONDITION_DONE if challenge.is_completed else CONDITION_TODO
+
+		var label := Label.new()
+		label.text = tr(challenge.title) + ": " + tr(challenge.description)
+		label.add_theme_font_override("font", load("res://assets/ui/fonts/dotgothic/DotGothic16-Regular.ttf"))
+		label.add_theme_font_size_override("font_size", 20)
+
+		hbox.add_child(icon_rect)
+		hbox.add_child(label)
+		challenges_vbox.add_child(hbox)
 
 
 # private

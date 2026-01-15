@@ -115,6 +115,11 @@ layout_mode = 2
 size_flags_horizontal = 3
 text = "ENDGAMEMENU.LIFESTATISTIC.LABEL"
 
+[node name="ChallengesVBoxContainer" type="VBoxContainer" parent="GUIMarginContainer/BackgroundTextureRect/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+alignment = 1
+
 [node name="ButtonsHBoxContainer" type="HBoxContainer" parent="GUIMarginContainer/BackgroundTextureRect/MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
