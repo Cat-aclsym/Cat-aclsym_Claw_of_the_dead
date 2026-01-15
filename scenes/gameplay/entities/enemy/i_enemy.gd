@@ -91,6 +91,7 @@ var state: EnemyState = EnemyState.FOLLOW_PATH
 
 # Built-in functions
 func _ready() -> void:
+	add_to_group("enemies")
 	_apply_stats_override()
 	if type == EnemyType.FAT or type == EnemyType.BIG_DADDY:
 		camera_effect.connect(Global.camera.handle_effect)

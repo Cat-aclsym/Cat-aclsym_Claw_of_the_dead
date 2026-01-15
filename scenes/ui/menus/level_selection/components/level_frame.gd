@@ -59,6 +59,10 @@ func _load_challenges() -> void:
 		return
 
 	var file := FileAccess.open(level_path, FileAccess.READ)
+	if not file:
+		challenges_container.visible = false
+		return
+
 	var content := file.get_as_text()
 	var json: Variant = JSON.parse_string(content)
 

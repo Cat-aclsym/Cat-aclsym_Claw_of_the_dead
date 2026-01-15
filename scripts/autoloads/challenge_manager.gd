@@ -18,6 +18,9 @@ var active_level_id: String = ""
 ## Initializes challenges for a specific level.
 func start_level_challenges(level_id: String) -> void:
 	active_level_id = level_id
+	for c in active_challenges:
+		if is_instance_valid(c):
+			c.queue_free()
 	active_challenges.clear()
 
 	# Load level config to find challenges
@@ -99,6 +102,9 @@ func _load_challenge(c_id: String) -> void:
 	var file := FileAccess.open(path, FileAccess.READ)
 	var content := file.get_as_text()
 	var data: Variant = JSON.parse_string(content)
+	if data == null:
+		Log.trace(Log.Level.ERROR, "Failed to parse challenge JSON: %s" % path)
+		return
 
 	var script_path: String = data.get("script", "res://scripts/challenges/challenge.gd")
 	var script: GDScript = load(script_path)
@@ -112,4 +118,5 @@ func _load_challenge(c_id: String) -> void:
 		data.get("difficulty")
 	)
 
+	add_child(challenge_instance)
 	active_challenges.append(challenge_instance)
