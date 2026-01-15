@@ -1,11 +1,13 @@
-[gd_scene load_steps=8 format=3 uid="uid://divtcu2mbquip"]
+[gd_scene load_steps=10 format=3 uid="uid://divtcu2mbquip"]
 
 [ext_resource type="Script" uid="uid://boqaeq5svhocn" path="res://scenes/ui/menus/hud/encyclopedia.gd" id="1_ency"]
 [ext_resource type="Texture2D" uid="uid://mshwayfrielr" path="res://assets/ui/huds/encyclopedie_ennemis.png" id="2_bg_ennemis"]
 [ext_resource type="Texture2D" uid="uid://0lgpu16nkbho" path="res://assets/ui/icons/Button Close.svg" id="3_close"]
 [ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="4_theme"]
+[ext_resource type="FontFile" uid="uid://ddo3rokwsadq0" path="res://assets/ui/fonts/dotgothic/DotGothic16-Regular.ttf" id="5_font"]
 [ext_resource type="Texture2D" uid="uid://sdmr73qrumef" path="res://assets/ui/icons/encyclopedia_left.png" id="5_fwnpo"]
 [ext_resource type="Texture2D" uid="uid://bdi8iy6d6hp61" path="res://assets/ui/icons/encyclopedia_right.png" id="6_5dtmo"]
+[ext_resource type="Texture2D" uid="uid://bmtlovs16utgc" path="res://assets/ui/icons/encyclopedia_bottom.png" id="7_scroll_arrow"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_bg"]
 atlas = ExtResource("2_bg_ennemis")
@@ -123,6 +125,8 @@ unique_name_in_owner = true
 layout_mode = 2
 theme = ExtResource("4_theme")
 theme_type_variation = &"HeaderMedium"
+theme_override_fonts/font = ExtResource("5_font")
+theme_override_font_sizes/font_size = 48
 text = "ITEM NAME"
 horizontal_alignment = 1
 
@@ -135,6 +139,8 @@ mouse_filter = 2
 unique_name_in_owner = true
 texture_filter = 1
 layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
 expand_mode = 1
 stretch_mode = 5
 
@@ -142,23 +148,51 @@ stretch_mode = 5
 layout_mode = 0
 offset_left = 356.0
 offset_top = -21.0
-offset_right = 699.0
+offset_right = 698.0
 offset_bottom = 405.0
 mouse_filter = 2
 alignment = 1
 
-[node name="StatsGrid" type="GridContainer" parent="GuiMarginContainer/MenuLayout/ContentLayout/RightPageVBox"]
+[node name="StatsScroll" type="ScrollContainer" parent="GuiMarginContainer/MenuLayout/ContentLayout/RightPageVBox"]
+layout_mode = 2
+size_flags_vertical = 3
+follow_focus = true
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 3
+
+[node name="StatsMargin" type="MarginContainer" parent="GuiMarginContainer/MenuLayout/ContentLayout/RightPageVBox/StatsScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="StatsGrid" type="GridContainer" parent="GuiMarginContainer/MenuLayout/ContentLayout/RightPageVBox/StatsScroll/StatsMargin"]
 unique_name_in_owner = true
 layout_mode = 2
-size_flags_horizontal = 4
+size_flags_horizontal = 3
 size_flags_vertical = 4
-theme_override_constants/h_separation = 20
-theme_override_constants/v_separation = 10
+mouse_filter = 2
+theme_override_constants/h_separation = 40
+theme_override_constants/v_separation = 20
 columns = 2
+
+[node name="ScrollIndicator" type="TextureRect" parent="GuiMarginContainer/MenuLayout/ContentLayout/RightPageVBox"]
+unique_name_in_owner = true
+visible = false
+modulate = Color(1, 1, 1, 0.705882)
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+size_flags_horizontal = 4
+texture = ExtResource("7_scroll_arrow")
+expand_mode = 1
+stretch_mode = 5
 
 [node name="PrevButton" type="TextureButton" parent="GuiMarginContainer/MenuLayout"]
 unique_name_in_owner = true
-texture_filter = 6
+texture_filter = 1
 custom_minimum_size = Vector2(45, 50)
 layout_mode = 1
 anchors_preset = 2
@@ -175,7 +209,7 @@ stretch_mode = 4
 
 [node name="NextButton" type="TextureButton" parent="GuiMarginContainer/MenuLayout"]
 unique_name_in_owner = true
-texture_filter = 6
+texture_filter = 1
 custom_minimum_size = Vector2(45, 50)
 layout_mode = 1
 anchors_preset = 3
