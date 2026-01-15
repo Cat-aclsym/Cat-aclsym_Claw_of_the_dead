@@ -283,16 +283,20 @@ func _update_ui_elements() -> void:
 
 	name_label.text = entry["name"]
 	
-	# Dynamic font size for the name label if it's too long
+	# More aggressive dynamic font size for the name label to avoid overlap
 	var name_len: int = name_label.text.length()
-	if name_len > 25:
-		name_label.add_theme_font_size_override("font_size", 24)
-	elif name_len > 20:
+	if name_len > 22:
+		name_label.add_theme_font_size_override("font_size", 20)
+	elif name_len > 18:
+		name_label.add_theme_font_size_override("font_size", 26)
+	elif name_len > 14:
 		name_label.add_theme_font_size_override("font_size", 32)
-	elif name_len > 15:
+	elif name_len > 10:
 		name_label.add_theme_font_size_override("font_size", 40)
 	else:
 		name_label.add_theme_font_size_override("font_size", 48)
+	
+	name_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 
 	if _current_anim_data.has("texture") and _current_anim_data["texture"] != null:
 		sprite_rect.texture = _current_anim_data["texture"]
