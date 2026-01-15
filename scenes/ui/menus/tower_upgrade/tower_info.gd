@@ -1,7 +1,7 @@
 ## © [2024] A7 Studio. All rights reserved. Trademark.
 ##
 ## Manages the display of tower upgrade statistics with dynamic gauge bars.
-class_name TowerUpgradeDescription
+class_name TowerInfo
 extends Control
 
 ## Reference to the tower being upgraded

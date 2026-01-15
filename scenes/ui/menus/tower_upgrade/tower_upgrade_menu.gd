@@ -1,118 +1,142 @@
+## © [2024] A7 Studio. All rights reserved. Trademark.
+##
+## Manages the display of tower upgrade statistics with dynamic gauge bars.
 class_name TowerUpgradeMenu
 extends Control
 
-var description_instance: TowerUpgradeDescription
-# Public variables
-var sell_price: int
+## Reference to the tower being upgraded
 var tower: ITower
-var upgrade_price: int
+var upgrade_scene: PackedScene
 
-@onready var stats_db = get_node("/root/StatsDB")
-@onready var close_button: TextureButton = $VBoxContainer/CloseAspectRatioContainer/CloseTextureButton
-@onready var sell_button: TextureButton = $VBoxContainer/HBoxContainer/SellAspectRatioContainer/SellTextureButton
-@onready var sell_label: Label = $VBoxContainer/HBoxContainer/SellAspectRatioContainer/SellLabel
-@onready var upgrade_button: TextureButton = $VBoxContainer/HBoxContainer/UpgradeAspectRatioContainer/UpgradeTextureButton
-@onready var upgrade_label: Label = $VBoxContainer/HBoxContainer/UpgradeAspectRatioContainer/UpgradeLabel
+@onready var _attack_damage_container: Control = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/VBoxContainer/AspectRatioContainer2
+@onready var _attack_damage_progress_bar: TextureProgressBar = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/VBoxContainer/AspectRatioContainer2/AttackSpeedHBoxContainer/TextureProgressBar
+@onready var _attack_range_container: Control = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/VBoxContainer/AspectRatioContainer3
+@onready var _attack_range_progress_bar: TextureProgressBar = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/VBoxContainer/AspectRatioContainer3/AttackRangeHBoxContainer/TextureProgressBar
+@onready var _attack_speed_container: Control = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/VBoxContainer/AspectRatioContainer
+@onready var _attack_speed_progress_bar: TextureProgressBar = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/VBoxContainer/AspectRatioContainer/AttackSpeedHBoxContainer/TextureProgressBar
+@onready var _cancel_button: Button = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/ButtonsHBoxContainer/CancelButton
+@onready var _confirm_button: Button = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/ButtonsHBoxContainer/ConfirmButton
+@onready var _panel: Control = $UpgradeDescriptionTextureRect
+@onready var _upgrade_title_label: Label = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/UpgradeTitleLabel
+
 @onready var signals: Array[Dictionary] = [
-	{SignalUtil.WHO: close_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_close_button_pressed},
-	{SignalUtil.WHO: upgrade_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_upgrade_button_pressed},
-	{SignalUtil.WHO: sell_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_sell_button_pressed}
+	{SignalUtil.WHO: _cancel_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_cancel_button_pressed},
+	{SignalUtil.WHO: _confirm_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_confirm_button_pressed}
 ]
 
+# Private variables
+var _max_damage: float = 0.0
+var _max_fire_rate: float = 0.0
+var _max_shoot_range: float = 0.0
 
-# Built-in functions
-# Called when the node enters the scene tree for the first time.
+# Core methods
 func _ready() -> void:
-	tower = get_parent() as ITower
-	sell_price = tower.sell_price
-	sell_label.text = str(sell_price)+"$"
-	if !tower.available_upgrade.is_empty():
-		upgrade_price = _resolve_upgrade_price(tower.available_upgrade[0])
-		upgrade_label.text = str(upgrade_price)+"$"
-		_load_upgrade_description(tower.available_upgrade[0])
-		upg.queue_free()
-	else:
-		upgrade_button.disabled = true
-		# Change upgrade button to gray rbg #525252
-		upgrade_button.modulate = Color(0.325, 0.325, 0.325)  # Gray color
-		upgrade_label.text = "MAX"
-
-	# Connect to level stats updates to refresh button state when coins change
-	if ILevel.current_level:
-		ILevel.current_level.stats_updated.connect(_on_level_stats_updated)
-
-	# Update button state initially
-	_update_upgrade_button_state()
-
 	SignalUtil.connects(signals)
 
-## Loads and displays the upgrade description panel
-func _load_upgrade_description(upgrade_scene: PackedScene) -> void:
-	var description_scene: PackedScene = load("res://scenes/ui/menus/tower_upgrade/tower_upgrade_description.tscn")
-	if description_scene == null:
-		Log.trace(Log.Level.ERROR, "Failed to load tower upgrade description scene")
+func _input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.pressed:
+		var mouse_pos: Vector2 = get_global_mouse_position()
+		if _panel == null or not _panel.get_global_rect().has_point(mouse_pos):
+			queue_free()
+
+## Initializes the upgrade description with tower and upgrade data
+func setup(p_tower: ITower, p_upgrade_scene: PackedScene) -> void:
+	tower = p_tower
+	upgrade_scene = p_upgrade_scene
+	var upgrade: IUpgrade = upgrade_scene.instantiate()
+	
+	# Set title and confirm price
+	_confirm_button.text = "Confirmer - %d" % upgrade.price
+	_upgrade_title_label.text = _get_upgrade_title()
+	
+	# Calculate maximum stats for the current tower branch
+	_calculate_max_stats(upgrade_scene)
+	
+	# Debug: Print stats
+	# Get base bullet damage
+	var bullet_base_damage = 0.0
+	if tower.bullet_scene != null:
+		var bullet_instance: IBullet = tower.bullet_scene.instantiate()
+		bullet_base_damage = float(bullet_instance.damage)
+		bullet_instance.queue_free()
+	
+	var current_damage = bullet_base_damage + tower.bullet_stats.get("damage", 0.0) + upgrade.bullet_stats.get("damage", 0.0)
+	var current_fire_rate = tower.fire_rate + upgrade.tower_stats.get("fire_rate", 0.0)
+	var current_range = tower.shoot_range + upgrade.tower_stats.get("shoot_range", 0.0)
+	Log.trace(Log.Level.DEBUG, "Current Damage: %.1f / Max: %.1f" % [current_damage, _max_damage])
+	Log.trace(Log.Level.DEBUG, "Current Fire Rate: %.2f / Max: %.2f" % [current_fire_rate, _max_fire_rate])
+	Log.trace(Log.Level.DEBUG, "Current Range: %.1f / Max: %.1f" % [current_range, _max_shoot_range])
+	
+	# Update gauge bars based on current and future stats
+	_update_damage_gauge(upgrade)
+	_update_fire_rate_gauge(upgrade)
+	_update_range_gauge(upgrade)
+	
+	upgrade.queue_free()
+
+## Gets the upgrade title based on the current tower level
+func _get_upgrade_title() -> String:
+	var next_level: int = 1
+	if tower != null:
+		next_level = tower.level + 1
+	return "Améliorer au niveau %d" % next_level
+
+
+## Calculates the maximum stats available in the upgrade chain
+func _calculate_max_stats(_upgrade_scene: PackedScene) -> void:
+	_max_damage = _attack_damage_progress_bar.max_value
+	_max_fire_rate = _attack_speed_progress_bar.max_value
+	_max_shoot_range = _attack_range_progress_bar.max_value
+
+## Updates the damage gauge bar with colored squares
+func _update_damage_gauge(upgrade: IUpgrade) -> void:
+	_attack_damage_container.visible = upgrade.bullet_stats.get("damage", 0.0) != 0.0
+	if not _attack_damage_container.visible:
 		return
 
-	description_instance = description_scene.instantiate()
+	# Get base bullet damage
+	var bullet_base_damage = 0.0
+	if tower.bullet_scene != null:
+		var bullet_instance: IBullet = tower.bullet_scene.instantiate()
+		bullet_base_damage = float(bullet_instance.damage)
+		bullet_instance.queue_free()
+	
+	# Calculate total damage including tower upgrades and bullet damage
+	var current_damage = bullet_base_damage + tower.bullet_stats.get("damage", 0.0) + upgrade.bullet_stats.get("damage", 0.0)
+	_update_gauge_with_values(_attack_damage_progress_bar, current_damage, _max_damage, "%.0f / %.0f" % [current_damage, _max_damage])
 
-	# Add to the global HUD instead of to the tower, so it stays fixed on screen
-	if Global.hud != null:
-		Global.hud.add_child(description_instance)
-	else:
-		add_child(description_instance)
-
-	# Pass the tower instance and find its scene by checking the scene tree
-	description_instance.setup(tower, upgrade_scene)
-
-
-# Private functions
-## Updates the visual state of the upgrade button based on available coins
-func _update_upgrade_button_state() -> void:
-	# Only check money if there's an upgrade available
-	if tower.available_upgrade.is_empty():
+## Updates the fire rate gauge bar with colored squares
+func _update_fire_rate_gauge(upgrade: IUpgrade) -> void:
+	_attack_speed_container.visible = upgrade.tower_stats.get("fire_rate", 0.0) != 0.0
+	if not _attack_speed_container.visible:
 		return
 
-	var can_afford: bool = ILevel.current_level.coins >= upgrade_price
+	var current_fire_rate = tower.fire_rate + upgrade.tower_stats.get("fire_rate", 0.0)
+	_update_gauge_with_values(_attack_speed_progress_bar, current_fire_rate, _max_fire_rate, "%.2f / %.2f" % [current_fire_rate, _max_fire_rate])
 
-	if can_afford:
-		upgrade_button.modulate = Color(1.0, 1.0, 1.0)  # White (enabled)
-		upgrade_button.disabled = false
-	else:
-		upgrade_button.modulate = Color(0.325, 0.325, 0.325)  # Gray (disabled)
-		upgrade_button.disabled = true
+## Updates the range gauge bar with colored squares
+func _update_range_gauge(upgrade: IUpgrade) -> void:
+	_attack_range_container.visible = upgrade.tower_stats.get("shoot_range", 0.0) != 0.0
+	if not _attack_range_container.visible:
+		return
 
+	var current_range = tower.shoot_range + upgrade.tower_stats.get("shoot_range", 0.0)
+	_update_gauge_with_values(_attack_range_progress_bar, current_range, _max_shoot_range, "%.0f / %.0f" % [current_range, _max_shoot_range])
 
-func _on_close_button_pressed():
-	# Disconnect from level stats when closing
-	if ILevel.current_level and ILevel.current_level.stats_updated.is_connected(_on_level_stats_updated):
-		ILevel.current_level.stats_updated.disconnect(_on_level_stats_updated)
+## Updates gauge with current and max values displayed as text and dynamic gauge texture
+func _update_gauge_with_values(progress_bar: TextureProgressBar, current_value: float, max_value: float, label_text: String) -> void:
+	var bar_range: float = max(progress_bar.max_value - progress_bar.min_value, 1.0)
+	var normalized: float = 0.0
+	if max_value > 0.0:
+		normalized = clamp(current_value / max_value, 0.0, 1.0)
+	progress_bar.value = progress_bar.min_value + (bar_range * normalized)
+	progress_bar.tooltip_text = label_text
+
+# Signal handlers
+func _on_cancel_button_pressed() -> void:
 	queue_free()
 
-
-func _on_level_stats_updated() -> void:
-	_update_upgrade_button_state()
-
-
-func _on_sell_button_pressed():
-	tower.sell_tower()
+func _on_confirm_button_pressed() -> void:
+	if tower != null and upgrade_scene != null:
+		tower.start_upgrade(upgrade_scene)
 	queue_free()
-
-
-func _on_upgrade_button_pressed():
-	tower.start_upgrade(tower.available_upgrade[0])
-	_on_close_button_pressed()
-
-
-func _resolve_upgrade_price(upgrade_scene: PackedScene) -> int:
-	if upgrade_scene == null:
-		return 0
-	var upgrade_path: String = upgrade_scene.resource_path
-	if not upgrade_path.is_empty() and stats_db != null:
-		var upgrade_id: String = stats_db.upgrade_id_from_scene(upgrade_path)
-		if not upgrade_id.is_empty():
-			var upgrade_data: Dictionary = stats_db.get_upgrade(upgrade_id)
-			var price = upgrade_data.get("price", null)
-			if price != null:
-				return int(price)
-	var upg: IUpgrade = upgrade_scene.instantiate()
-	return upg.price

@@ -15,7 +15,7 @@ region = Rect2(0, 0, 270, 0)
 atlas = ExtResource("5_nogh4")
 region = Rect2(0, 0, 270, 0)
 
-[node name="TowerUpgradeDescription" type="Control"]
+[node name="TowerInfo" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0

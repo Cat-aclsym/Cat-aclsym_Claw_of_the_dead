@@ -143,7 +143,20 @@ func _on_close_button_pressed():
 
 
 func _on_upgrade_button_pressed():
-	tower.start_upgrade(tower.available_upgrade[0])
+	if tower == null or tower.available_upgrade.is_empty():
+		return
+	var upgrade_menu_scene: PackedScene = load("res://scenes/ui/menus/tower_upgrade/tower_upgrade_menu.tscn")
+	if upgrade_menu_scene == null:
+		Log.trace(Log.Level.ERROR, "Failed to load tower upgrade menu scene")
+		return
+	if Global.hud != null and Global.hud.find_child("TowerUpgradeMenu", true, false) != null:
+		return
+	var upgrade_menu_instance: TowerUpgradeMenu = upgrade_menu_scene.instantiate()
+	if Global.hud != null:
+		Global.hud.add_child(upgrade_menu_instance)
+	else:
+		add_child(upgrade_menu_instance)
+	upgrade_menu_instance.setup(tower, tower.available_upgrade[0])
 	hide_menu()
 
 
@@ -159,9 +172,9 @@ func _on_info_button_pressed():
 	if desc_scene == null:
 		Log.trace(Log.Level.ERROR, "Failed to load tower upgrade description scene")
 		return
-	if Global.hud != null and Global.hud.find_child("TowerUpgradeDescription", true, false) != null:
+	if Global.hud != null and Global.hud.find_child("TowerInfo", true, false) != null:
 		return
-	var desc_instance: TowerUpgradeDescription = desc_scene.instantiate()
+	var desc_instance: TowerInfo = desc_scene.instantiate()
 	if Global.hud != null:
 		Global.hud.add_child(desc_instance)
 	else:
