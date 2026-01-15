@@ -3,8 +3,8 @@
 [ext_resource type="Script" uid="uid://dfdt3ady1wp2a" path="res://scenes/ui/menus/tower_upgrade/tower_upgrade_description.gd" id="0_script"]
 [ext_resource type="Texture2D" uid="uid://c8b8irfugbxdj" path="res://assets/environment/backgrounds/Fond Menu 02.svg" id="1_so8lf"]
 [ext_resource type="Texture2D" uid="uid://bbucgkj5y4nmf" path="res://assets/ui/icons/Icon Attack.svg" id="3_cm8xc"]
-[ext_resource type="Texture2D" uid="uid://d3skmu0ec5drs" path="res://assets/ui/iconsMenu/stat.svg" id="4_eta7d"]
-[ext_resource type="Texture2D" uid="uid://ctac302j2notv" path="res://assets/ui/iconsMenu/stat_colored.svg" id="4_nogh4"]
+[ext_resource type="Texture2D" uid="uid://cc52yv0tyg62i" path="res://assets/ui/icons/Stat Tick Grey.svg" id="4_eta7d"]
+[ext_resource type="Texture2D" uid="uid://dn0dco750oti3" path="res://assets/ui/icons/Stat Tick Red.svg" id="5_nogh4"]
 [ext_resource type="Texture2D" uid="uid://do5m6onbun8lf" path="res://assets/ui/icons/Icon Attack Speed.svg" id="6_b8lf3"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_nogh4"]
@@ -12,7 +12,7 @@ atlas = ExtResource("4_eta7d")
 region = Rect2(0, 0, 270, 0)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_sqe8u"]
-atlas = ExtResource("4_nogh4")
+atlas = ExtResource("5_nogh4")
 region = Rect2(0, 0, 270, 0)
 
 [node name="TowerUpgradeDescription" type="Control"]

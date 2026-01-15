@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ctac302j2notv"
-path="res://.godot/imported/stat_colored.svg-ef05cc65944d1eeda4bcffa993e0254a.ctex"
+uid="uid://cc52yv0tyg62i"
+path="res://.godot/imported/Stat Tick Grey.svg-371a272a5692ceccd87dc46d379b1cf5.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ui/iconsMenu/stat_colored.svg"
-dest_files=["res://.godot/imported/stat_colored.svg-ef05cc65944d1eeda4bcffa993e0254a.ctex"]
+source_file="res://assets/ui/icons/Stat Tick Grey.svg"
+dest_files=["res://.godot/imported/Stat Tick Grey.svg-371a272a5692ceccd87dc46d379b1cf5.ctex"]
 
 [params]
 
