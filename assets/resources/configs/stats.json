@@ -3,6 +3,7 @@
 	"bat_01": {
 	  "scene": "res://scenes/gameplay/entities/tower/towers/bat_01.tscn",
 	  "name": "Arbre à chat'rché",
+	  "level": 1,
 	  "base": {
 		"cost": 50,
 		"fire_rate": 1.5,
@@ -26,6 +27,7 @@
 	"bat_02": {
 	  "scene": "res://scenes/gameplay/entities/tower/towers/bat_02.tscn",
 	  "name": "Tour Cataboom",
+	  "level": 1,
 	  "base": {
 		"cost": 50,
 		"fire_rate": 1.5,

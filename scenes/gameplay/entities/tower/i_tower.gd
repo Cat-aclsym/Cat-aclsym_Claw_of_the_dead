@@ -188,8 +188,6 @@ func start_upgrade(upgradeScene: PackedScene) -> void:
 func apply_upgrade() -> void:
 	var upgrade: IUpgrade = pending_upgrade.instantiate()
 
-	# Log.trace(Log.Level.DEBUG, "Applying upgrade: {0}".format([pending_upgrade]))
-
 	if upgrade.changes["tower_stat"]:
 		_apply_tower_stat_changes(upgrade)
 
@@ -225,6 +223,7 @@ func apply_upgrade() -> void:
 	available_upgrade = upgrade.next_upgrades
 	sell_price += ceil(upgrade.price / 2.0)
 	update_dependent_properties()
+	level += 1
 	state = TowerState.ACTIVE
 	emit_signal("upgrade_completed")
 
@@ -292,6 +291,7 @@ func _apply_base_stats_override() -> void:
 		return
 	var data: Dictionary = stats_db.get_tower(tower_id)
 	var base: Dictionary = data.get("base", {})
+	level = stats_db.get_tower_level(tower_id)
 	Log.trace(Log.Level.INFO, "Applying tower stats from StatsDB for %s: %s" % [tower_id, base])
 	if base.has("cost"):
 		cost = int(base["cost"])

@@ -31,6 +31,11 @@ func get_tower_name(id: String) -> String:
 	return tower.get("name", "") if not tower.is_empty() else ""
 
 
+func get_tower_level(id: String) -> int:
+	var tower: Dictionary = get_tower(id)
+	return tower.get("level", 1) if not tower.is_empty() else 1
+
+
 func get_upgrade(id: String) -> Dictionary:
 	return _data.get("upgrades", {}).get(id, {})
 
