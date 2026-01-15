@@ -26,6 +26,11 @@ func get_tower(id: String) -> Dictionary:
 	return _data.get("towers", {}).get(id, {})
 
 
+func get_tower_name(id: String) -> String:
+	var tower: Dictionary = get_tower(id)
+	return tower.get("name", "") if not tower.is_empty() else ""
+
+
 func get_upgrade(id: String) -> Dictionary:
 	return _data.get("upgrades", {}).get(id, {})
 

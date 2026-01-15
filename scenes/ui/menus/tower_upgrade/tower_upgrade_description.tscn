@@ -79,7 +79,8 @@ stretch_mode = 5
 [node name="TextureProgressBar" type="TextureProgressBar" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/VBoxContainer/AspectRatioContainer2/AttackSpeedHBoxContainer"]
 texture_repeat = 2
 layout_mode = 2
-step = 10.0
+max_value = 200.0
+step = 20.0
 texture_under = SubResource("AtlasTexture_nogh4")
 texture_progress = SubResource("AtlasTexture_sqe8u")
 
@@ -103,6 +104,8 @@ stretch_mode = 5
 [node name="TextureProgressBar" type="TextureProgressBar" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/VBoxContainer/AspectRatioContainer/AttackSpeedHBoxContainer"]
 texture_repeat = 2
 layout_mode = 2
+max_value = 200.0
+step = 20.0
 texture_under = SubResource("AtlasTexture_nogh4")
 texture_progress = SubResource("AtlasTexture_sqe8u")
 
@@ -125,5 +128,7 @@ stretch_mode = 5
 [node name="TextureProgressBar" type="TextureProgressBar" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/VBoxContainer/AspectRatioContainer3/AttackRangeHBoxContainer"]
 texture_repeat = 2
 layout_mode = 2
+max_value = 200.0
+step = 20.0
 texture_under = SubResource("AtlasTexture_nogh4")
 texture_progress = SubResource("AtlasTexture_sqe8u")
