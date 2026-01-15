@@ -1,19 +1,15 @@
-[gd_scene load_steps=9 format=3 uid="uid://ds0xkohs1fv3w"]
+[gd_scene load_steps=5 format=3 uid="uid://ds0xkohs1fv3w"]
 
 [ext_resource type="Script" uid="uid://dfdt3ady1wp2a" path="res://scenes/ui/menus/tower_upgrade/tower_info.gd" id="0_script"]
-[ext_resource type="Texture2D" uid="uid://c8b8irfugbxdj" path="res://assets/environment/backgrounds/Fond Menu 02.svg" id="1_so8lf"]
-[ext_resource type="Texture2D" uid="uid://bbucgkj5y4nmf" path="res://assets/ui/icons/Icon Attack.svg" id="3_cm8xc"]
-[ext_resource type="Texture2D" uid="uid://cc52yv0tyg62i" path="res://assets/ui/icons/Stat Tick Grey.svg" id="4_eta7d"]
-[ext_resource type="Texture2D" uid="uid://dn0dco750oti3" path="res://assets/ui/icons/Stat Tick Red.svg" id="5_nogh4"]
-[ext_resource type="Texture2D" uid="uid://do5m6onbun8lf" path="res://assets/ui/icons/Icon Attack Speed.svg" id="6_b8lf3"]
+[ext_resource type="Texture2D" uid="uid://c5jwmpccl40pb" path="res://assets/environment/backgrounds/Fond Menu 01.svg" id="2_mxka5"]
+[ext_resource type="FontFile" uid="uid://ddo3rokwsadq0" path="res://assets/ui/fonts/dotgothic/DotGothic16-Regular.ttf" id="3_mxka5"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_nogh4"]
-atlas = ExtResource("4_eta7d")
-region = Rect2(0, 0, 270, 0)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_sqe8u"]
-atlas = ExtResource("5_nogh4")
-region = Rect2(0, 0, 270, 0)
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_j0qm1"]
+texture = ExtResource("2_mxka5")
+texture_margin_left = 20.0
+texture_margin_top = 30.0
+texture_margin_right = 20.0
+texture_margin_bottom = 30.0
 
 [node name="TowerInfo" type="Control"]
 layout_mode = 3
@@ -25,110 +21,31 @@ grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("0_script")
 
-[node name="UpgradeDescriptionTextureRect" type="TextureRect" parent="."]
+[node name="PanelContainer" type="PanelContainer" parent="."]
 layout_mode = 1
-anchors_preset = -1
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 322.0
 offset_top = 184.0
-offset_right = -310.0
-offset_bottom = -176.0
+offset_right = -303.0
+offset_bottom = -273.0
 grow_horizontal = 2
-grow_vertical = 0
-scale = Vector2(1, 1.01351)
-size_flags_horizontal = 3
+grow_vertical = 2
 mouse_filter = 2
-texture = ExtResource("1_so8lf")
-expand_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_j0qm1")
 
-[node name="UpgradeDescriptionVBoxContainer" type="VBoxContainer" parent="UpgradeDescriptionTextureRect"]
+[node name="UpgradeDescriptionVBoxContainer" type="VBoxContainer" parent="PanelContainer"]
 layout_mode = 2
-offset_left = 9.0
-offset_top = 8.0
-offset_right = 517.0
-offset_bottom = 279.0
 
-[node name="UpgradeTitleLabel" type="Label" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer"]
+[node name="UpgradeTitleLabel" type="Label" parent="PanelContainer/UpgradeDescriptionVBoxContainer"]
 layout_mode = 2
-size_flags_vertical = 1
+size_flags_horizontal = 4
 size_flags_stretch_ratio = 0.3
+theme_override_fonts/font = ExtResource("3_mxka5")
 text = "XTOWER.XUPGRADE.TITLE"
 
-[node name="VBoxContainer" type="VBoxContainer" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/UpgradeDescriptionVBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_constants/separation = 27
-
-[node name="AspectRatioContainer2" type="AspectRatioContainer" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/VBoxContainer"]
-layout_mode = 2
-ratio = 6.0
-alignment_horizontal = 0
-
-[node name="AttackSpeedHBoxContainer" type="HBoxContainer" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/VBoxContainer/AspectRatioContainer2"]
-layout_mode = 2
 theme_override_constants/separation = 16
-
-[node name="AttackSpeedIconTextureRect" type="TextureRect" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/VBoxContainer/AspectRatioContainer2/AttackSpeedHBoxContainer"]
-custom_minimum_size = Vector2(48, 48)
-layout_mode = 2
-texture = ExtResource("3_cm8xc")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="TextureProgressBar" type="TextureProgressBar" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/VBoxContainer/AspectRatioContainer2/AttackSpeedHBoxContainer"]
-texture_repeat = 2
-layout_mode = 2
-max_value = 200.0
-step = 20.0
-texture_under = SubResource("AtlasTexture_nogh4")
-texture_progress = SubResource("AtlasTexture_sqe8u")
-
-[node name="AspectRatioContainer" type="AspectRatioContainer" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/VBoxContainer"]
-layout_mode = 2
-ratio = 6.0
-alignment_horizontal = 0
-
-[node name="AttackSpeedHBoxContainer" type="HBoxContainer" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/VBoxContainer/AspectRatioContainer"]
-layout_mode = 2
-theme_override_constants/separation = 16
-
-[node name="AttackSpeedIconTextureRect" type="TextureRect" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/VBoxContainer/AspectRatioContainer/AttackSpeedHBoxContainer"]
-modulate = Color(5.77569e-06, 0.952787, 0.98701, 1)
-custom_minimum_size = Vector2(48, 48)
-layout_mode = 2
-texture = ExtResource("6_b8lf3")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="TextureProgressBar" type="TextureProgressBar" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/VBoxContainer/AspectRatioContainer/AttackSpeedHBoxContainer"]
-texture_repeat = 2
-layout_mode = 2
-max_value = 200.0
-step = 20.0
-texture_under = SubResource("AtlasTexture_nogh4")
-texture_progress = SubResource("AtlasTexture_sqe8u")
-
-[node name="AspectRatioContainer3" type="AspectRatioContainer" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/VBoxContainer"]
-layout_mode = 2
-ratio = 6.0
-alignment_horizontal = 0
-
-[node name="AttackRangeHBoxContainer" type="HBoxContainer" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/VBoxContainer/AspectRatioContainer3"]
-layout_mode = 2
-theme_override_constants/separation = 16
-
-[node name="AttackRangeTextureRect" type="TextureRect" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/VBoxContainer/AspectRatioContainer3/AttackRangeHBoxContainer"]
-custom_minimum_size = Vector2(48, 48)
-layout_mode = 2
-texture = ExtResource("6_b8lf3")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="TextureProgressBar" type="TextureProgressBar" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/VBoxContainer/AspectRatioContainer3/AttackRangeHBoxContainer"]
-texture_repeat = 2
-layout_mode = 2
-max_value = 200.0
-step = 20.0
-texture_under = SubResource("AtlasTexture_nogh4")
-texture_progress = SubResource("AtlasTexture_sqe8u")

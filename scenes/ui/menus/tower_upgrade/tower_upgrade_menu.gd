@@ -8,15 +8,12 @@ extends Control
 var tower: ITower
 var upgrade_scene: PackedScene
 
-@onready var _attack_damage_container: Control = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/VBoxContainer/AspectRatioContainer2
-@onready var _attack_damage_progress_bar: TextureProgressBar = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/VBoxContainer/AspectRatioContainer2/AttackSpeedHBoxContainer/TextureProgressBar
-@onready var _attack_range_container: Control = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/VBoxContainer/AspectRatioContainer3
-@onready var _attack_range_progress_bar: TextureProgressBar = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/VBoxContainer/AspectRatioContainer3/AttackRangeHBoxContainer/TextureProgressBar
-@onready var _attack_speed_container: Control = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/VBoxContainer/AspectRatioContainer
-@onready var _attack_speed_progress_bar: TextureProgressBar = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/VBoxContainer/AspectRatioContainer/AttackSpeedHBoxContainer/TextureProgressBar
-@onready var _cancel_button: Button = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/ButtonsHBoxContainer/CancelButton
-@onready var _confirm_button: Button = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/ButtonsHBoxContainer/ConfirmButton
+@onready var _cancel_button: TextureButton = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/ButtonsHBoxContainer/CancelButton
+@onready var _cancel_label: Label = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/ButtonsHBoxContainer/CancelButton/Label
+@onready var _confirm_button: TextureButton = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/ButtonsHBoxContainer/ConfirmButton
+@onready var _confirm_label: Label = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/ButtonsHBoxContainer/ConfirmButton/Label
 @onready var _panel: Control = $UpgradeDescriptionTextureRect
+@onready var _stats_container: VBoxContainer = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/VBoxContainer
 @onready var _upgrade_title_label: Label = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/UpgradeTitleLabel
 
 @onready var signals: Array[Dictionary] = [
@@ -24,10 +21,12 @@ var upgrade_scene: PackedScene
 	{SignalUtil.WHO: _confirm_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_confirm_button_pressed}
 ]
 
-# Private variables
-var _max_damage: float = 0.0
-var _max_fire_rate: float = 0.0
-var _max_shoot_range: float = 0.0
+# Preloaded resources
+const ICON_TEXTURE: Texture2D = preload("res://assets/ui/icons/Icon Attack.svg")
+const STAT_BAR_SCENE: PackedScene = preload("res://scenes/ui/menus/tower_upgrade/stat_bar.tscn")
+
+# Constants
+const MAX_STAT_VALUE: float = 200.0
 
 # Core methods
 func _ready() -> void:
@@ -46,31 +45,44 @@ func setup(p_tower: ITower, p_upgrade_scene: PackedScene) -> void:
 	var upgrade: IUpgrade = upgrade_scene.instantiate()
 	
 	# Set title and confirm price
-	_confirm_button.text = "Confirmer - %d" % upgrade.price
+	_confirm_label.text = "%d golds" % upgrade.price
 	_upgrade_title_label.text = _get_upgrade_title()
 	
-	# Calculate maximum stats for the current tower branch
-	_calculate_max_stats(upgrade_scene)
+	# Check if player has enough money
+	if ILevel.current_level != null and ILevel.current_level.coins < upgrade.price:
+		_confirm_button.disabled = true
+		_confirm_button.modulate = Color(0.5, 0.5, 0.5)  # Gray out the button
+	else:
+		_confirm_button.disabled = false
+		_confirm_button.modulate = Color(1.0, 1.0, 1.0)  # Normal color
 	
-	# Debug: Print stats
-	# Get base bullet damage
-	var bullet_base_damage = 0.0
-	if tower.bullet_scene != null:
-		var bullet_instance: IBullet = tower.bullet_scene.instantiate()
-		bullet_base_damage = float(bullet_instance.damage)
-		bullet_instance.queue_free()
+	# Clear existing stat displays (keep only the template)
+	for child in _stats_container.get_children():
+		child.queue_free()
 	
-	var current_damage = bullet_base_damage + tower.bullet_stats.get("damage", 0.0) + upgrade.bullet_stats.get("damage", 0.0)
-	var current_fire_rate = tower.fire_rate + upgrade.tower_stats.get("fire_rate", 0.0)
-	var current_range = tower.shoot_range + upgrade.tower_stats.get("shoot_range", 0.0)
-	Log.trace(Log.Level.DEBUG, "Current Damage: %.1f / Max: %.1f" % [current_damage, _max_damage])
-	Log.trace(Log.Level.DEBUG, "Current Fire Rate: %.2f / Max: %.2f" % [current_fire_rate, _max_fire_rate])
-	Log.trace(Log.Level.DEBUG, "Current Range: %.1f / Max: %.1f" % [current_range, _max_shoot_range])
+	# Create dynamic stat displays for tower stats
+	for stat_name in upgrade.tower_stats.keys():
+		var stat_change: float = upgrade.tower_stats[stat_name]
+		
+		# Skip level stat
+		if stat_name == "level":
+			continue
+		
+		# Skip projectile_count if resulting value would be 1 or less
+		if stat_name == "projectile_count":
+			var current_value: float = _get_current_stat_value(stat_name, true)
+			var new_value: float = current_value + stat_change
+			if new_value <= 1.0:
+				continue
+		
+		if stat_change != 0.0:
+			_create_stat_display(stat_name, stat_change, true)
 	
-	# Update gauge bars based on current and future stats
-	_update_damage_gauge(upgrade)
-	_update_fire_rate_gauge(upgrade)
-	_update_range_gauge(upgrade)
+	# Create dynamic stat displays for bullet stats
+	for stat_name in upgrade.bullet_stats.keys():
+		var stat_change: float = upgrade.bullet_stats[stat_name]
+		if stat_change != 0.0:
+			_create_stat_display(stat_name, stat_change, false)
 	
 	upgrade.queue_free()
 
@@ -81,56 +93,39 @@ func _get_upgrade_title() -> String:
 		next_level = tower.level + 1
 	return "Améliorer au niveau %d" % next_level
 
-
-## Calculates the maximum stats available in the upgrade chain
-func _calculate_max_stats(_upgrade_scene: PackedScene) -> void:
-	_max_damage = _attack_damage_progress_bar.max_value
-	_max_fire_rate = _attack_speed_progress_bar.max_value
-	_max_shoot_range = _attack_range_progress_bar.max_value
-
-## Updates the damage gauge bar with colored squares
-func _update_damage_gauge(upgrade: IUpgrade) -> void:
-	_attack_damage_container.visible = upgrade.bullet_stats.get("damage", 0.0) != 0.0
-	if not _attack_damage_container.visible:
-		return
-
-	# Get base bullet damage
-	var bullet_base_damage = 0.0
-	if tower.bullet_scene != null:
-		var bullet_instance: IBullet = tower.bullet_scene.instantiate()
-		bullet_base_damage = float(bullet_instance.damage)
-		bullet_instance.queue_free()
+## Creates a stat display for a given stat
+func _create_stat_display(stat_name: String, stat_change: float, is_tower_stat: bool) -> void:
+	# Get current and new values
+	var current_value: float = _get_current_stat_value(stat_name, is_tower_stat)
+	var new_value: float = current_value + stat_change
 	
-	# Calculate total damage including tower upgrades and bullet damage
-	var current_damage = bullet_base_damage + tower.bullet_stats.get("damage", 0.0) + upgrade.bullet_stats.get("damage", 0.0)
-	_update_gauge_with_values(_attack_damage_progress_bar, current_damage, _max_damage, "%.0f / %.0f" % [current_damage, _max_damage])
+	# Instantiate the stat bar scene
+	var stat_bar: StatBar = STAT_BAR_SCENE.instantiate()
+	_stats_container.add_child(stat_bar)
+	
+	# Setup the stat bar with data
+	stat_bar.setup(stat_name, current_value, new_value, ICON_TEXTURE, MAX_STAT_VALUE)
 
-## Updates the fire rate gauge bar with colored squares
-func _update_fire_rate_gauge(upgrade: IUpgrade) -> void:
-	_attack_speed_container.visible = upgrade.tower_stats.get("fire_rate", 0.0) != 0.0
-	if not _attack_speed_container.visible:
-		return
-
-	var current_fire_rate = tower.fire_rate + upgrade.tower_stats.get("fire_rate", 0.0)
-	_update_gauge_with_values(_attack_speed_progress_bar, current_fire_rate, _max_fire_rate, "%.2f / %.2f" % [current_fire_rate, _max_fire_rate])
-
-## Updates the range gauge bar with colored squares
-func _update_range_gauge(upgrade: IUpgrade) -> void:
-	_attack_range_container.visible = upgrade.tower_stats.get("shoot_range", 0.0) != 0.0
-	if not _attack_range_container.visible:
-		return
-
-	var current_range = tower.shoot_range + upgrade.tower_stats.get("shoot_range", 0.0)
-	_update_gauge_with_values(_attack_range_progress_bar, current_range, _max_shoot_range, "%.0f / %.0f" % [current_range, _max_shoot_range])
-
-## Updates gauge with current and max values displayed as text and dynamic gauge texture
-func _update_gauge_with_values(progress_bar: TextureProgressBar, current_value: float, max_value: float, label_text: String) -> void:
-	var bar_range: float = max(progress_bar.max_value - progress_bar.min_value, 1.0)
-	var normalized: float = 0.0
-	if max_value > 0.0:
-		normalized = clamp(current_value / max_value, 0.0, 1.0)
-	progress_bar.value = progress_bar.min_value + (bar_range * normalized)
-	progress_bar.tooltip_text = label_text
+## Gets the current value of a stat
+func _get_current_stat_value(stat_name: String, is_tower_stat: bool) -> float:
+	if is_tower_stat:
+		# Tower stats
+		if stat_name in tower:
+			var value = tower.get(stat_name)
+			return float(value) if value != null else 0.0
+	else:
+		# Bullet stats
+		if stat_name == "damage":
+			var base_damage: float = 0.0
+			if tower.bullet_scene != null:
+				var bullet_instance: IBullet = tower.bullet_scene.instantiate()
+				base_damage = float(bullet_instance.damage)
+				bullet_instance.queue_free()
+			return base_damage + tower.bullet_stats.get("damage", 0.0)
+		else:
+			return tower.bullet_stats.get(stat_name, 0.0)
+	
+	return 0.0
 
 # Signal handlers
 func _on_cancel_button_pressed() -> void:
