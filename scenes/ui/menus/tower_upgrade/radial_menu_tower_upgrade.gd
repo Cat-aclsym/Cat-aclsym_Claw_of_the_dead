@@ -155,7 +155,7 @@ func _on_sell_button_pressed():
 func _on_info_button_pressed():
 	if tower == null or tower.available_upgrade.is_empty():
 		return
-	var desc_scene: PackedScene = load("res://scenes/ui/menus/tower_upgrade/tower_upgrade_description.tscn")
+	var desc_scene: PackedScene = load("res://scenes/ui/menus/tower_upgrade/tower_info.tscn")
 	if desc_scene == null:
 		Log.trace(Log.Level.ERROR, "Failed to load tower upgrade description scene")
 		return

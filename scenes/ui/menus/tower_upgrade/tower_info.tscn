@@ -1,6 +1,6 @@
 [gd_scene load_steps=9 format=3 uid="uid://ds0xkohs1fv3w"]
 
-[ext_resource type="Script" uid="uid://dfdt3ady1wp2a" path="res://scenes/ui/menus/tower_upgrade/tower_upgrade_description.gd" id="0_script"]
+[ext_resource type="Script" uid="uid://dfdt3ady1wp2a" path="res://scenes/ui/menus/tower_upgrade/tower_info.gd" id="0_script"]
 [ext_resource type="Texture2D" uid="uid://c8b8irfugbxdj" path="res://assets/environment/backgrounds/Fond Menu 02.svg" id="1_so8lf"]
 [ext_resource type="Texture2D" uid="uid://bbucgkj5y4nmf" path="res://assets/ui/icons/Icon Attack.svg" id="3_cm8xc"]
 [ext_resource type="Texture2D" uid="uid://cc52yv0tyg62i" path="res://assets/ui/icons/Stat Tick Grey.svg" id="4_eta7d"]
