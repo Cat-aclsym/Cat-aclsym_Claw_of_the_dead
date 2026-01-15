@@ -183,12 +183,29 @@ columns = 2
 unique_name_in_owner = true
 visible = false
 modulate = Color(1, 1, 1, 0.705882)
+texture_filter = 1
 custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
 size_flags_horizontal = 4
 texture = ExtResource("7_scroll_arrow")
 expand_mode = 1
 stretch_mode = 5
+
+[node name="ScrollIndicatorTop" type="TextureRect" parent="GuiMarginContainer/MenuLayout/ContentLayout"]
+unique_name_in_owner = true
+visible = false
+modulate = Color(1, 1, 1, 0.705882)
+texture_filter = 1
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 0
+offset_left = 507.0
+offset_top = -35.0
+offset_right = 547.0
+offset_bottom = 5.0
+texture = ExtResource("7_scroll_arrow")
+expand_mode = 1
+stretch_mode = 5
+flip_v = true
 
 [node name="PrevButton" type="TextureButton" parent="GuiMarginContainer/MenuLayout"]
 unique_name_in_owner = true

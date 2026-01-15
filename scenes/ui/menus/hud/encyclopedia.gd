@@ -17,6 +17,7 @@ signal menu_close
 @onready var stats_grid: GridContainer = %StatsGrid
 @onready var stats_scroll: ScrollContainer = $GuiMarginContainer/MenuLayout/ContentLayout/RightPageVBox/StatsScroll
 @onready var scroll_indicator: TextureRect = %ScrollIndicator
+@onready var scroll_indicator_top: TextureRect = %ScrollIndicatorTop
 @onready var content_layout: Control = %ContentLayout
 @onready var background_texture: TextureRect = %BackgroundTexture
 
@@ -173,17 +174,25 @@ func _process(delta: float) -> void:
 			_update_ui_elements()
 		return
 
-	# Floating animation for scroll indicator
+	# Floating animation for scroll indicators
+	var float_offset: float = sin(Time.get_ticks_msec() * 0.005) * 5.0
+	var scroll_v_bar := stats_scroll.get_v_scroll_bar()
+	
 	if scroll_indicator.visible:
-		var float_offset: float = sin(Time.get_ticks_msec() * 0.005) * 5.0
 		scroll_indicator.position.y = stats_scroll.position.y + stats_scroll.size.y - scroll_indicator.size.y + float_offset
-		
 		# Hide if reached bottom
-		var scroll_v_bar := stats_scroll.get_v_scroll_bar()
 		if scroll_v_bar.value >= (scroll_v_bar.max_value - scroll_v_bar.page - 10):
 			scroll_indicator.modulate.a = lerp(scroll_indicator.modulate.a, 0.0, delta * 10.0)
 		else:
 			scroll_indicator.modulate.a = lerp(scroll_indicator.modulate.a, 0.7, delta * 10.0)
+
+	if scroll_indicator_top.visible:
+		scroll_indicator_top.position.y = stats_scroll.position.y - 10 + float_offset
+		# Hide if reached top
+		if scroll_v_bar.value <= 10:
+			scroll_indicator_top.modulate.a = lerp(scroll_indicator_top.modulate.a, 0.0, delta * 10.0)
+		else:
+			scroll_indicator_top.modulate.a = lerp(scroll_indicator_top.modulate.a, 0.7, delta * 10.0)
 
 	if not _current_anim_data.is_empty() and _current_anim_data.get("frames"):
 		var frames: SpriteFrames = _current_anim_data["frames"]
@@ -370,12 +379,23 @@ func _update_ui_elements() -> void:
 	get_tree().process_frame.connect(_check_scroll_indicator, CONNECT_ONE_SHOT)
 
 func _check_scroll_indicator() -> void:
+	if not is_instance_valid(scroll_indicator) or not is_instance_valid(scroll_indicator_top): return
+	
 	# Force a layout update to get correct values
 	stats_grid.get_parent().queue_sort() 
 	var v_bar := stats_scroll.get_v_scroll_bar()
 	# Strict check: only show if the total content height is greater than the scroll area height
-	scroll_indicator.visible = v_bar.max_value > stats_scroll.size.y
-	scroll_indicator.modulate.a = 0.7 if scroll_indicator.visible else 0.0
+	var can_scroll = v_bar.max_value > stats_scroll.size.y
+	scroll_indicator.visible = can_scroll
+	scroll_indicator_top.visible = can_scroll
+	
+	if can_scroll:
+		# Initial alpha based on position
+		scroll_indicator.modulate.a = 0.7 if v_bar.value < (v_bar.max_value - v_bar.page - 10) else 0.0
+		scroll_indicator_top.modulate.a = 0.7 if v_bar.value > 10 else 0.0
+	else:
+		scroll_indicator.modulate.a = 0.0
+		scroll_indicator_top.modulate.a = 0.0
 
 func _add_stat_category_header(p_text: String) -> void:
 	var header: Label = Label.new()
