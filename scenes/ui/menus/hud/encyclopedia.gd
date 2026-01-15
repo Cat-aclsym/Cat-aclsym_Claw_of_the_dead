@@ -283,15 +283,18 @@ func _update_ui_elements() -> void:
 
 	name_label.text = entry["name"]
 	
-	# More aggressive dynamic font size for the name label to avoid overlap
-	var name_len: int = name_label.text.length()
-	if name_len > 22:
+	# Get actual translated length for font size calculation
+	var displayed_name: String = tr(entry["name"])
+	var name_len: int = displayed_name.length()
+	
+	# More relaxed font size scaling based on actual displayed text
+	if name_len > 28:
 		name_label.add_theme_font_size_override("font_size", 20)
-	elif name_len > 18:
+	elif name_len > 22:
 		name_label.add_theme_font_size_override("font_size", 26)
-	elif name_len > 14:
+	elif name_len > 18:
 		name_label.add_theme_font_size_override("font_size", 32)
-	elif name_len > 10:
+	elif name_len > 14:
 		name_label.add_theme_font_size_override("font_size", 40)
 	else:
 		name_label.add_theme_font_size_override("font_size", 48)
