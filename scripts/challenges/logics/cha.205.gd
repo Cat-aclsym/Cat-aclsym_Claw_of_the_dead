@@ -7,7 +7,7 @@ extends Challenge
 
 
 # Constants
-const MAX_SECONDS: int = 180 # 3 minutes
+const TARGET_TIME_LIMIT_SECONDS: int = 180 # 3 minutes
 
 
 # Public functions
@@ -17,4 +17,4 @@ func check_completion() -> bool:
 		return false
 
 	var elapsed: float = floor(ILevel.current_level.end_time - ILevel.current_level.start_time)
-	return elapsed < MAX_SECONDS
+	return elapsed < TARGET_TIME_LIMIT_SECONDS

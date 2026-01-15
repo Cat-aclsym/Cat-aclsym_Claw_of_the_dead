@@ -47,7 +47,7 @@ ENEMY.BIGDADDY.NAME,Big Daddy,Big Daddy
 CHALLENGE.CHA.000.NAME,Victory,Vaincre
 CHALLENGE.CHA.000.DESC,Finish the level.,Finir le niveau.
 CHALLENGE.CHA.001.NAME,Untouchable,Intouchable
-CHALLENGE.CHA.001.DESC,Finish the level without taking damage.,Finir le niveau sans prendre aucun dégâts.
+CHALLENGE.CHA.001.DESC,Finish the level without taking damage.,Finir le niveau sans prendre de dégâts.
 CHALLENGE.CHA.002.NAME,No trap,No trap
 CHALLENGE.CHA.002.DESC,Do not use traps.,Ne pas utiliser de pièges.
 CHALLENGE.CHA.003.NAME,Unique Tower,Tour unique
@@ -57,21 +57,21 @@ CHALLENGE.CHA.004.DESC,Kill 10 rats with fire.,Tuez 10 rats par le feu.
 CHALLENGE.CHA.005.NAME,No Traps,Sans les pièges
 CHALLENGE.CHA.005.DESC,No trap must be placed.,Aucun piège ne doit être posé.
 CHALLENGE.CHA.006.NAME,One Tower One Kill,Une tour un mort
-CHALLENGE.CHA.006.DESC,Every tower must kill at least one enemy.,Chaque tour placée doit au moins éliminer un ennemie.
+CHALLENGE.CHA.006.DESC,Every tower must kill at least one enemy.,Chaque tour placée doit au moins éliminer un ennemi.
 CHALLENGE.CHA.101.NAME,Versatile,Versatile
 CHALLENGE.CHA.101.DESC,Limit one of each tower type.,Un seul exemplaire pour chaque tour ne peut être posé sur la carte.
 CHALLENGE.CHA.102.NAME,Safety Distance,Distance de sécurité
 CHALLENGE.CHA.102.DESC,No tower should be in range of another.,Aucune tour ne doit être dans le champ de tir d'une autre.
 CHALLENGE.CHA.103.NAME,Half-Half,Moitié moitié
-CHALLENGE.CHA.103.DESC,No enemy must reach halfway.,Ne laisser aucun ennemie atteindre plus de la moitié du chemin.
+CHALLENGE.CHA.103.DESC,No enemy must reach halfway.,Ne laisser aucun ennemi atteindre plus de la moitié du chemin.
 CHALLENGE.CHA.104.NAME,Some Rats,Quelques rats
-CHALLENGE.CHA.104.DESC,Let exactly N rats pass.,Laisser passer exactement N rats dans la base.
+CHALLENGE.CHA.104.DESC,Let exactly N rats pass.,Laisser passer exactement N rats jusqu'à la base.
 CHALLENGE.CHA.105.NAME,Three in One,Trois dans un
 CHALLENGE.CHA.105.DESC,Boss must be hit by every trap type.,"Le boss doit subir au moins un fois chaque type de piège (actif, passif, limité)."
 CHALLENGE.CHA.106.NAME,Survive,Survivre
 CHALLENGE.CHA.106.DESC,Survive until the end.,Survivre jusqu'à la fin.
 CHALLENGE.CHA.201.NAME,Sample,Echantillon
-CHALLENGE.CHA.201.DESC,Let one of each enemy type pass.,Laissez passez un unique membre de chaque type d'ennemie.
+CHALLENGE.CHA.201.DESC,Let one of each enemy type pass.,Laissez passer un unique membre de chaque type d'ennemi.
 CHALLENGE.CHA.202.NAME,On the Edge,Sur le fil
 CHALLENGE.CHA.202.DESC,Finish with 1 HP.,Finir le niveau avec un unique PV.
 CHALLENGE.CHA.203.NAME,Not One More,Pas un de plus

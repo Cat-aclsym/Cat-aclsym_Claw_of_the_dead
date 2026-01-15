@@ -18,7 +18,7 @@ func start_monitoring() -> void:
 
 
 ## Notifies the challenge about a tower placement.
-func on_tower_placed(tower: Node) -> void:
+func on_tower_placed(tower: ITower) -> void:
 	var t_id: String = tower.scene_file_path
 
 	if _first_tower_type == "":

@@ -78,7 +78,6 @@ func init(victory: bool) -> void:
 
 
 # Private functions
-# Private functions
 func _display_challenges() -> void:
 	for child in challenges_vbox.get_children():
 		child.queue_free()

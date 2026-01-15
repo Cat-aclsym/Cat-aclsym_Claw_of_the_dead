@@ -7,7 +7,10 @@ extends Challenge
 
 # Public functions
 ## Notifies the challenge that a tower has been placed.
-func on_tower_placed(tower: Node) -> void:
+func on_tower_placed(tower: ITower) -> void:
+	if not (tower is ITower):
+		return
+
 	# Check distance with all other towers
 	if not ILevel.current_level or not ILevel.current_level.map:
 		return
