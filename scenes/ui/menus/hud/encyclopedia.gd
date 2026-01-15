@@ -282,6 +282,7 @@ func _update_ui_elements() -> void:
 	_anim_frame = 0
 
 	name_label.text = entry["name"]
+	name_label.add_theme_color_override("font_color", Color("5d2e2b"))
 	
 	# Get actual translated length for font size calculation
 	var displayed_name: String = tr(entry["name"])
@@ -385,7 +386,7 @@ func _add_stat_category_header(p_text: String) -> void:
 	header.autowrap_mode = TextServer.AUTOWRAP_OFF # No wrap for headers
 	header.add_theme_font_override("font", _font)
 	header.add_theme_font_size_override("font_size", _current_header_font_size)
-	header.add_theme_color_override("font_color", Color.CHARTREUSE)
+	header.add_theme_color_override("font_color", Color("5d2e2b"))
 	stats_grid.add_child(header)
 	
 	var spacer := Control.new()
@@ -408,6 +409,7 @@ func _add_stat_row(p_key: String, p_val: String) -> void:
 	label_key.autowrap_mode = TextServer.AUTOWRAP_OFF
 	label_key.add_theme_font_override("font", _font)
 	label_key.add_theme_font_size_override("font_size", _current_stat_font_size)
+	label_key.add_theme_color_override("font_color", Color("874c2b"))
 	key_container.add_child(label_key)
 	
 	# Force label to take its content size
@@ -426,6 +428,7 @@ func _add_stat_row(p_key: String, p_val: String) -> void:
 	label_val.autowrap_mode = TextServer.AUTOWRAP_OFF
 	label_val.add_theme_font_override("font", _font)
 	label_val.add_theme_font_size_override("font_size", _current_stat_font_size)
+	label_val.add_theme_color_override("font_color", Color("a87355"))
 	stats_grid.add_child(label_val)
 
 func _animate_marquee(p_label: Label, p_container: Control) -> void:
