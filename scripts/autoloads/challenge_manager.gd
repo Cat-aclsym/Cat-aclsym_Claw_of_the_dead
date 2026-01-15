@@ -1,4 +1,4 @@
-## © [2024] A7 Studio. All rights reserved. Trademark.
+## © [2026] A7 Studio. All rights reserved. Trademark.
 
 extends Node
 ## Manages active level challenges and coordinates event notifications.
@@ -7,7 +7,6 @@ extends Node
 ## relays gameplay events (damage, tower placement) to monitoring challenges.
 
 # Signals
-signal challenge_status_updated(challenge_id: String, status: bool)
 signal challenges_loaded()
 
 # Public variables
@@ -113,15 +112,4 @@ func _load_challenge(c_id: String) -> void:
 		data.get("difficulty")
 	)
 
-	challenge_instance.completed.connect(_on_challenge_completed)
-	challenge_instance.failed.connect(_on_challenge_failed)
-
 	active_challenges.append(challenge_instance)
-
-
-func _on_challenge_completed(c_id: String) -> void:
-	challenge_status_updated.emit(c_id, true)
-
-
-func _on_challenge_failed(c_id: String) -> void:
-	challenge_status_updated.emit(c_id, false)
