@@ -1,37 +1,41 @@
-## © [2024] A7 Studio. All rights reserved. Trademark.
-## @experimental
-class_name LevelFrame extends Control
+## © [2026] A7 Studio. All rights reserved. Trademark.
+
+class_name LevelFrame
+extends Control
+## Manages the level detail preview in the level selection menu.
 
 signal start_level(level: ILevel)
 
+# Constants
+const CONDITION_DONE: Texture2D = preload("res://assets/ui/level_selection/window/condition_done.svg")
+const CONDITION_TODO: Texture2D = preload("res://assets/ui/level_selection/window/condition_todo.svg")
+const LVL_DESC: String = "desc"
 const LVL_IDEN: String = "id"
 const LVL_NAME: String = "name"
-const LVL_DESC: String = "desc"
 
-@export var level_id: String = "lev.XX"
+# Variables
 @export var arc_title: String
+@export var level_id: String = "lev.XX"
 
-var level: ILevel
 var arc_texture: Texture2D
+var level: ILevel
 
-@onready var description_label: Label = $PanelContainer/MarginContainer/VBoxContainer/DescriptionLabel
-@onready var level_name_label: Label = $PanelContainer/MarginContainer/VBoxContainer/HeaderContainer/LevelNameLabel
-@onready var play_button: TextureButton = $PanelContainer/MarginContainer/VBoxContainer/FooterContainer/PlayButton
-@onready var challenges_container: VBoxContainer = $PanelContainer/MarginContainer/VBoxContainer/FooterContainer/ChallengesContainer
-
-const CONDITION_TODO: Texture2D = preload("res://assets/ui/level_selection/window/condition_todo.svg")
-const CONDITION_DONE: Texture2D = preload("res://assets/ui/level_selection/window/condition_done.svg")
+@onready var challenges_container: VBoxContainer = $LevelPanelContainer/LevelMarginContainer/LevelVBoxContainer/FooterHBoxContainer/ChallengesContainer
+@onready var description_label: Label = $LevelPanelContainer/LevelMarginContainer/LevelVBoxContainer/DescriptionLabel
+@onready var level_name_label: Label = $LevelPanelContainer/LevelMarginContainer/LevelVBoxContainer/HeaderHBoxContainer/LevelNameLabel
+@onready var play_button: TextureButton = $LevelPanelContainer/LevelMarginContainer/LevelVBoxContainer/FooterHBoxContainer/PlayButton
 
 @onready var signals: Array[Dictionary] = [
 	{SignalUtil.WHO: play_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_play_button_pressed}
 ]
 
-# core
+
+# Built-in functions
 func _ready() -> void:
 	configure()
 
 
-# public
+# Public functions
 func configure() -> void:
 	var level_scene := load("res://scenes/gameplay/world/level/levels/%s.tscn" % level_id)
 	level = level_scene.instantiate()
@@ -46,7 +50,7 @@ func configure() -> void:
 	SignalUtil.connects(signals)
 
 
-# private
+# Private functions
 func _load_challenges() -> void:
 	# Load level config to find challenges
 	var level_path := "res://resources/levels/%s.json" % level_id
@@ -77,9 +81,16 @@ func _load_challenges() -> void:
 		else:
 			challenge_node.visible = false
 
+
+func _on_play_button_pressed() -> void:
+	Log.trace(Log.Level.DEBUG, "Playing level [%s]" % level_name_label.text)
+	start_level.emit(level)
+
+
 func _setup_challenge_ui(node: HBoxContainer, c_id: String, is_completed: bool) -> void:
-	var indicator: TextureRect = node.get_node("Indicator")
-	var label: Label = node.get_node("Label")
+	var challenge_index: int = node.get_index() + 1
+	var indicator: TextureRect = node.get_node("Challenge%dIndicator" % challenge_index)
+	var label: Label = node.get_node("Challenge%dLabel" % challenge_index)
 
 	indicator.texture = CONDITION_DONE if is_completed else CONDITION_TODO
 
@@ -98,15 +109,3 @@ func _setup_challenge_ui(node: HBoxContainer, c_id: String, is_completed: bool) 
 			label.text = c_id
 	else:
 		label.text = c_id
-
-
-
-# signal
-func _on_play_button_pressed() -> void:
-	Log.trace(Log.Level.DEBUG, "Playing level [%s]" % level_name_label.text)
-	start_level.emit(level)
-
-# event
-
-
-# setget

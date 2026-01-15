@@ -22,7 +22,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource("1_2fktc")
 
-[node name="PanelContainer" type="PanelContainer" parent="."]
+[node name="LevelPanelContainer" type="PanelContainer" parent="."]
 layout_mode = 1
 anchors_preset = -1
 anchor_right = 1.0
@@ -31,35 +31,35 @@ offset_top = 75.0
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxTexture_3ndqc")
 
-[node name="MarginContainer" type="MarginContainer" parent="PanelContainer"]
+[node name="LevelMarginContainer" type="MarginContainer" parent="LevelPanelContainer"]
 layout_mode = 2
 theme_override_constants/margin_left = 32
 theme_override_constants/margin_top = 32
 theme_override_constants/margin_right = 32
 theme_override_constants/margin_bottom = 32
 
-[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer"]
+[node name="LevelVBoxContainer" type="VBoxContainer" parent="LevelPanelContainer/LevelMarginContainer"]
 layout_mode = 2
 theme_override_constants/separation = -16
 alignment = 1
 
-[node name="HeaderContainer" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer"]
+[node name="HeaderHBoxContainer" type="HBoxContainer" parent="LevelPanelContainer/LevelMarginContainer/LevelVBoxContainer"]
 layout_mode = 2
 
-[node name="LevelNameLabel" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/HeaderContainer"]
+[node name="LevelNameLabel" type="Label" parent="LevelPanelContainer/LevelMarginContainer/LevelVBoxContainer/HeaderHBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_fonts/font = ExtResource("2_indkb")
 theme_override_font_sizes/font_size = 40
 text = "LevelTitle"
 
-[node name="CatIconTextureRect" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer/HeaderContainer"]
+[node name="CatIconTextureRect" type="TextureRect" parent="LevelPanelContainer/LevelMarginContainer/LevelVBoxContainer/HeaderHBoxContainer"]
 custom_minimum_size = Vector2(80, 70)
 layout_mode = 2
 texture = ExtResource("2_4j8i8")
 stretch_mode = 5
 
-[node name="DescriptionLabel" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer"]
+[node name="DescriptionLabel" type="Label" parent="LevelPanelContainer/LevelMarginContainer/LevelVBoxContainer"]
 custom_minimum_size = Vector2(300, 25)
 layout_mode = 2
 size_flags_vertical = 2
@@ -70,29 +70,29 @@ horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 2
 
-[node name="EmptyControl" type="Control" parent="PanelContainer/MarginContainer/VBoxContainer"]
+[node name="FooterSpacer" type="Control" parent="LevelPanelContainer/LevelMarginContainer/LevelVBoxContainer"]
 custom_minimum_size = Vector2(0, 64)
 layout_mode = 2
 
-[node name="FooterContainer" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer"]
+[node name="FooterHBoxContainer" type="HBoxContainer" parent="LevelPanelContainer/LevelMarginContainer/LevelVBoxContainer"]
 layout_mode = 2
 
-[node name="ChallengesContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/FooterContainer"]
+[node name="ChallengesContainer" type="VBoxContainer" parent="LevelPanelContainer/LevelMarginContainer/LevelVBoxContainer/FooterHBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 10
 alignment = 1
 
-[node name="Challenge1" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/FooterContainer/ChallengesContainer"]
+[node name="Challenge1" type="HBoxContainer" parent="LevelPanelContainer/LevelMarginContainer/LevelVBoxContainer/FooterHBoxContainer/ChallengesContainer"]
 layout_mode = 2
 
-[node name="Indicator" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer/FooterContainer/ChallengesContainer/Challenge1"]
+[node name="Challenge1Indicator" type="TextureRect" parent="LevelPanelContainer/LevelMarginContainer/LevelVBoxContainer/FooterHBoxContainer/ChallengesContainer/Challenge1"]
 layout_mode = 2
 size_flags_vertical = 4
 texture = ExtResource("4_klwmy")
 stretch_mode = 5
 
-[node name="Label" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/FooterContainer/ChallengesContainer/Challenge1"]
+[node name="Challenge1Label" type="Label" parent="LevelPanelContainer/LevelMarginContainer/LevelVBoxContainer/FooterHBoxContainer/ChallengesContainer/Challenge1"]
 custom_minimum_size = Vector2(200, 20)
 layout_mode = 2
 size_flags_horizontal = 3
@@ -102,16 +102,16 @@ text = "challenge 1"
 vertical_alignment = 1
 autowrap_mode = 3
 
-[node name="Challenge2" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/FooterContainer/ChallengesContainer"]
+[node name="Challenge2" type="HBoxContainer" parent="LevelPanelContainer/LevelMarginContainer/LevelVBoxContainer/FooterHBoxContainer/ChallengesContainer"]
 layout_mode = 2
 
-[node name="Indicator" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer/FooterContainer/ChallengesContainer/Challenge2"]
+[node name="Challenge2Indicator" type="TextureRect" parent="LevelPanelContainer/LevelMarginContainer/LevelVBoxContainer/FooterHBoxContainer/ChallengesContainer/Challenge2"]
 layout_mode = 2
 size_flags_vertical = 4
 texture = ExtResource("4_klwmy")
 stretch_mode = 5
 
-[node name="Label" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/FooterContainer/ChallengesContainer/Challenge2"]
+[node name="Challenge2Label" type="Label" parent="LevelPanelContainer/LevelMarginContainer/LevelVBoxContainer/FooterHBoxContainer/ChallengesContainer/Challenge2"]
 custom_minimum_size = Vector2(200, 20)
 layout_mode = 2
 size_flags_horizontal = 3
@@ -121,16 +121,16 @@ text = "challenge 2"
 vertical_alignment = 1
 autowrap_mode = 3
 
-[node name="Challenge3" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/FooterContainer/ChallengesContainer"]
+[node name="Challenge3" type="HBoxContainer" parent="LevelPanelContainer/LevelMarginContainer/LevelVBoxContainer/FooterHBoxContainer/ChallengesContainer"]
 layout_mode = 2
 
-[node name="Indicator" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer/FooterContainer/ChallengesContainer/Challenge3"]
+[node name="Challenge3Indicator" type="TextureRect" parent="LevelPanelContainer/LevelMarginContainer/LevelVBoxContainer/FooterHBoxContainer/ChallengesContainer/Challenge3"]
 layout_mode = 2
 size_flags_vertical = 4
 texture = ExtResource("4_klwmy")
 stretch_mode = 5
 
-[node name="Label" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/FooterContainer/ChallengesContainer/Challenge3"]
+[node name="Challenge3Label" type="Label" parent="LevelPanelContainer/LevelMarginContainer/LevelVBoxContainer/FooterHBoxContainer/ChallengesContainer/Challenge3"]
 custom_minimum_size = Vector2(200, 20)
 layout_mode = 2
 size_flags_horizontal = 3
@@ -140,7 +140,7 @@ text = "challenge 3"
 vertical_alignment = 1
 autowrap_mode = 3
 
-[node name="PlayButton" type="TextureButton" parent="PanelContainer/MarginContainer/VBoxContainer/FooterContainer"]
+[node name="PlayButton" type="TextureButton" parent="LevelPanelContainer/LevelMarginContainer/LevelVBoxContainer/FooterHBoxContainer"]
 custom_minimum_size = Vector2(100, 87.5)
 layout_mode = 2
 texture_normal = ExtResource("5_w1l1s")

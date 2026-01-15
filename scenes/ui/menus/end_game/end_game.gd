@@ -1,7 +1,5 @@
-## © [2025] A7 Studio. All rights reserved. Trademark.
-##
-## Manages the win screen interface and UI interactions.
-## Handles restart level, go to next level and return home.
+## © [2026] A7 Studio. All rights reserved. Trademark.
+
 class_name EndGame
 extends Control
 ## Manages the win screen interface and UI interactions.
@@ -10,33 +8,26 @@ extends Control
 ## Handles navigation back to menus or next level.
 
 # Constants
-const CONDITION_TODO: Texture2D = preload("res://assets/ui/level_selection/window/condition_todo.svg")
 const CONDITION_DONE: Texture2D = preload("res://assets/ui/level_selection/window/condition_done.svg")
+const CONDITION_TODO: Texture2D = preload("res://assets/ui/level_selection/window/condition_todo.svg")
 
 
-# Public variables
-## Elapsed time text for display.
-var elapsed_time_text: String
-## Elapsed seconds.
-var elapsed_time_seconds: int
-## Elapsed minutes.
+# Variables
 var elapsed_time_minutes: int
+var elapsed_time_seconds: int
+var elapsed_time_text: String
 
+@onready var challenges_vbox: VBoxContainer = $GUIMarginContainer/BackgroundTextureRect/ContentMarginContainer/VBoxContainerMain/ChallengesVBoxContainer
+@onready var end_game_image: TextureRect = $GUIMarginContainer/BackgroundTextureRect/ContentMarginContainer/VBoxContainerMain/ResultIconTextureRect
+@onready var home_button: TextureButton = $GUIMarginContainer/BackgroundTextureRect/ContentMarginContainer/VBoxContainerMain/ButtonsHBoxContainer/HomeButtonAspectRatioContainer/HomeTextureButton
+@onready var life_label: Label = $GUIMarginContainer/BackgroundTextureRect/ContentMarginContainer/VBoxContainerMain/StatsHBoxContainer/LifeAspectRatioContainer/LifeHBoxContainer/LifeStatisticLabel
+@onready var next_button: TextureButton = $GUIMarginContainer/BackgroundTextureRect/ContentMarginContainer/VBoxContainerMain/ButtonsHBoxContainer/NextButtonAspectRatioContainer/NextTextureButton
+@onready var restart_button: TextureButton = $GUIMarginContainer/BackgroundTextureRect/ContentMarginContainer/VBoxContainerMain/ButtonsHBoxContainer/RestartButtonAspectRatioContainer/RestartTextureButton
+@onready var time_label: Label = $GUIMarginContainer/BackgroundTextureRect/ContentMarginContainer/VBoxContainerMain/StatsHBoxContainer/TimeAspectRatioContainer/TimeHBoxContainer/TimeStatisticLabel
+@onready var title_label: Label = $GUIMarginContainer/BackgroundTextureRect/ContentMarginContainer/VBoxContainerMain/TitleLabel
 
-# Onready Variables
-@onready var title_label: Label = $GUIMarginContainer/BackgroundTextureRect/MarginContainer/VBoxContainer/TitleLabel
-@onready var end_game_image: TextureRect = $GUIMarginContainer/BackgroundTextureRect/MarginContainer/VBoxContainer/TextureRect
-@onready var challenges_vbox: VBoxContainer = $GUIMarginContainer/BackgroundTextureRect/MarginContainer/VBoxContainer/ChallengesVBoxContainer
-
-@onready var time_label: Label = $GUIMarginContainer/BackgroundTextureRect/MarginContainer/VBoxContainer/HBoxContainer/TimeAspectRatioContainer/TimeHBoxContainer/TimeStatisticLabel
-@onready var life_label: Label = $GUIMarginContainer/BackgroundTextureRect/MarginContainer/VBoxContainer/HBoxContainer/LifeAspectRatioContainer/LifeHBoxContainer/LifeStatisticLabel
-
-@onready var home_button: TextureButton = $GUIMarginContainer/BackgroundTextureRect/MarginContainer/VBoxContainer/ButtonsHBoxContainer/HomeButtonAspectRatioContainer/HomeTextureButton
-@onready var restart_button: TextureButton = $GUIMarginContainer/BackgroundTextureRect/MarginContainer/VBoxContainer/ButtonsHBoxContainer/RestartButtonAspectRatioContainer/RestartTextureButton
-@onready var next_button: TextureButton = $GUIMarginContainer/BackgroundTextureRect/MarginContainer/VBoxContainer/ButtonsHBoxContainer/NextButtonAspectRatioContainer/NextTextureButton
-
-@onready var default_time_text: String = time_label.text
 @onready var default_health_text: String = life_label.text
+@onready var default_time_text: String = time_label.text
 
 @onready var signals: Array[Dictionary] = [
 	{SignalUtil.WHO: home_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_home_texture_button_pressed},
@@ -65,8 +56,7 @@ func init(victory: bool) -> void:
 
 	elapsed_time_seconds = floor(ILevel.current_level.end_time - ILevel.current_level.start_time)
 	elapsed_time_minutes = floor(elapsed_time_seconds / 60.)
-	# Log.trace(Log.Level.DEBUG, str(elapsed_time_minutes))
-	# Log.trace(Log.Level.DEBUG, str(elapsed_time_seconds))
+
 	if elapsed_time_seconds > 60:
 		elapsed_time_seconds = elapsed_time_seconds - (elapsed_time_minutes * 60)
 		elapsed_time_text = str(elapsed_time_minutes) + "m " + str(elapsed_time_seconds) + "s"
@@ -85,9 +75,10 @@ func init(victory: bool) -> void:
 		next_button.get_parent().visible = false
 
 	_display_challenges()
-	SignalUtil.connects(signals)
 
 
+# Private functions
+# Private functions
 func _display_challenges() -> void:
 	for child in challenges_vbox.get_children():
 		child.queue_free()
@@ -113,27 +104,12 @@ func _display_challenges() -> void:
 		hbox.add_child(label)
 		challenges_vbox.add_child(hbox)
 
-
-# private
-## Restarts the current level with fresh state.
-## [br]Creates a new instance of the current level and initializes it.
-func _on_restart_texture_button_pressed() -> void:
-	var current_level := ILevel.current_level
-	var level_scene: PackedScene = load(current_level.get_scene_file_path())
-
-	current_level.queue_free()
-	await current_level.tree_exited
-
-	var new_level: ILevel = level_scene.instantiate()
-	get_tree().get_root().add_child(new_level)
-	new_level.start_level()
-	Global.ui.start_level()
-
+func _on_home_texture_button_pressed() -> void:
+	get_tree().change_scene_to_file("res://scenes/main.tscn")
+	ILevel.current_level.queue_free()
 	Global.paused = false
-	queue_free()
 
 
-## Returns to the main menu and cleans up the current level.
 func _on_next_texture_button_pressed() -> void:
 	var current_level := ILevel.current_level
 	var next_level_id := ProgressionManager.get_next_level_id(current_level.level_id)
@@ -159,8 +135,17 @@ func _on_next_texture_button_pressed() -> void:
 	queue_free()
 
 
-## Returns to the main menu and cleans up the current level.
-func _on_home_texture_button_pressed() -> void:
-	get_tree().change_scene_to_file("res://scenes/main.tscn")
-	ILevel.current_level.queue_free()
+func _on_restart_texture_button_pressed() -> void:
+	var current_level := ILevel.current_level
+	var level_scene: PackedScene = load(current_level.get_scene_file_path())
+
+	current_level.queue_free()
+	await current_level.tree_exited
+
+	var new_level: ILevel = level_scene.instantiate()
+	get_tree().get_root().add_child(new_level)
+	new_level.start_level()
+	Global.ui.start_level()
+
 	Global.paused = false
+	queue_free()
