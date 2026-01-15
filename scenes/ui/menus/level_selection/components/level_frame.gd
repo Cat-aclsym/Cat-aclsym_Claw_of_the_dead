@@ -21,8 +21,8 @@ var arc_texture: Texture2D
 var level: ILevel
 
 @onready var challenges_container: VBoxContainer = $LevelPanelContainer/LevelMarginContainer/LevelVBoxContainer/FooterHBoxContainer/ChallengesContainer
-@onready var description_label: Label = $LevelPanelContainer/LevelMarginContainer/LevelVBoxContainer/DescriptionLabel
-@onready var level_name_label: Label = $LevelPanelContainer/LevelMarginContainer/LevelVBoxContainer/HeaderHBoxContainer/LevelNameLabel
+@onready var description_label: Label = $LevelPanelContainer/LevelMarginContainer/LevelVBoxContainer/TopVBoxContainer/DescriptionLabel
+@onready var level_name_label: Label = $LevelPanelContainer/LevelMarginContainer/LevelVBoxContainer/TopVBoxContainer/HeaderHBoxContainer/LevelNameLabel
 @onready var play_button: TextureButton = $LevelPanelContainer/LevelMarginContainer/LevelVBoxContainer/FooterHBoxContainer/PlayButton
 
 @onready var signals: Array[Dictionary] = [
