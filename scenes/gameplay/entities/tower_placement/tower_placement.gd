@@ -86,10 +86,13 @@ func _ready() -> void:
 	visible = false
 	place_hud.visible = false
 	SignalUtil.connects(signals)
-	
+
 	# Connect to level stats updates to refresh button state when coins change
 	if ILevel.current_level:
-		ILevel.current_level.stats_updated.connect(_on_level_stats_updated)
+		var level_signals: Array[Dictionary] = [
+			{SignalUtil.WHO: ILevel.current_level, SignalUtil.WHAT: "stats_updated", SignalUtil.TO: _on_level_stats_updated}
+		]
+		SignalUtil.connects(level_signals)
 
 func _unhandled_input(event: InputEvent) -> void:
 	if _state == CursorState.BUILD:
@@ -105,7 +108,7 @@ func change_state(new_state: CursorState, args: Array = []) -> void:
 			trigger_state_idle.emit()
 			_state = new_state
 			visible = false
-			
+
 			# Re-enable tower buttons
 			_set_all_tower_buttons_enabled(true)
 		CursorState.BUILD:
@@ -118,14 +121,14 @@ func change_state(new_state: CursorState, args: Array = []) -> void:
 			trigger_state_build.emit()
 			_state = new_state
 			visible = true
-			
+
 			# Connect to level stats if not already connected
 			if ILevel.current_level and not ILevel.current_level.stats_updated.is_connected(_on_level_stats_updated):
 				ILevel.current_level.stats_updated.connect(_on_level_stats_updated)
-			
+
 			# Disable tower buttons to prevent interference
 			_set_all_tower_buttons_enabled(false)
-			
+
 			_state_build(args[0] as ITower)
 
 		CursorState.UPGRADE:
@@ -159,7 +162,7 @@ func _set_cursor_position(pos: Vector2 = get_global_mouse_position()) -> void:
 	cursor.visible = true
 	place_hud.visible = true
 	place_hud.position = local_pos
-	
+
 	# Move the placement area hitbox to follow the cursor
 	placement_area.position = local_pos
 
@@ -179,7 +182,7 @@ func _state_build(tower: ITower = null) -> void:
 	var is_buildable := _is_buildable(_tower.position)
 	_tower.modulate = COLOR_OK if is_buildable else COLOR_KO
 	_update_place_button_state(is_buildable)
-	
+
 	# Allow the tower button to work during placement for range preview
 	# Disable only the hover box to prevent interference
 	if _tower.hover_box and _tower.hover_box.get_parent():
@@ -194,28 +197,28 @@ func _state_build(tower: ITower = null) -> void:
 func _is_position_on_path(pos: Vector2) -> bool:
 	"""Check if the placement area at a given position would overlap with any enemy path.
 	Uses a 25x25 box (the placement area size) to check collision with paths.
-	
+
 	Args:
 		pos: The world position where to check placement
-	
+
 	Returns:
 		true if the placement area would collide with a path, false otherwise
 	"""
 	if not ILevel.current_level or not ILevel.current_level.map:
 		return false
-	
+
 	var paths: Array[Path2D] = ILevel.current_level.map.paths
 	var placement_half_size: float = 12.5  # Half of 25x25 placement box
-	
+
 	# Check distance to each path
 	for path in paths:
 		var closest_point = path.curve.get_closest_point(path.to_local(pos))
 		var distance = pos.distance_to(path.to_global(closest_point))
-		
+
 		# If distance is less than placement box size, it's overlapping
 		if distance < placement_half_size:
 			return true
-	
+
 	return false
 
 ## Handles the build state input events, such as mouse clicks and drags
@@ -279,6 +282,7 @@ func _build() -> void:
 	new_tower.modulate = Color(1, 1, 1, 1)
 	new_tower.name = "t%d" % tower_count
 	ILevel.current_level.map.add_child(new_tower)
+	ChallengeManager.notify_tower_placed(new_tower)
 	tower_count += 1
 
 	ILevel.current_level.coins -= _tower.cost
@@ -320,7 +324,7 @@ func _update_place_button_state(can_build: bool) -> void:
 func _set_all_tower_buttons_enabled(enabled: bool) -> void:
 	if not ILevel.current_level or not ILevel.current_level.map:
 		return
-	
+
 	var towers := get_tree().get_nodes_in_group("towers")
 	for tower_body in towers:
 		if tower_body.get_parent() is ITower:
