@@ -3,5 +3,5 @@
   "name": "CHALLENGE.CHA.005.NAME",
   "description": "CHALLENGE.CHA.005.DESC",
   "difficulty": "Easy",
-  "script": "res://scripts/challenges/logics/cha.002.gd"
+  "script": "res://scripts/challenges/logics/impossible.gd"
 }

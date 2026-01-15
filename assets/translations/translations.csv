@@ -54,10 +54,8 @@ CHALLENGE.CHA.003.NAME,Unique Tower,Tour unique
 CHALLENGE.CHA.003.DESC,Use only one type of tower.,Utilisez un seul même type de tour.
 CHALLENGE.CHA.004.NAME,By Fire,Par le feu
 CHALLENGE.CHA.004.DESC,Kill 10 rats with fire.,Tuez 10 rats par le feu.
-CHALLENGE.CHA.005.NAME,No Traps,Sans les pièges
-CHALLENGE.CHA.005.DESC,No trap must be placed.,Aucun piège ne doit être posé.
-CHALLENGE.CHA.006.NAME,One Tower One Kill,Une tour un mort
-CHALLENGE.CHA.006.DESC,Every tower must kill at least one enemy.,Chaque tour placée doit au moins éliminer un ennemi.
+CHALLENGE.CHA.005.NAME,One Tower One Kill,Une tour un mort
+CHALLENGE.CHA.005.DESC,Every tower must kill at least one enemy.,Chaque tour placée doit au moins éliminer un ennemi.
 CHALLENGE.CHA.101.NAME,Versatile,Versatile
 CHALLENGE.CHA.101.DESC,Limit one of each tower type.,Un seul exemplaire pour chaque tour ne peut être posé sur la carte.
 CHALLENGE.CHA.102.NAME,Safety Distance,Distance de sécurité
@@ -76,7 +74,7 @@ CHALLENGE.CHA.202.NAME,On the Edge,Sur le fil
 CHALLENGE.CHA.202.DESC,Finish with 1 HP.,Finir le niveau avec un unique PV.
 CHALLENGE.CHA.203.NAME,Not One More,Pas un de plus
 CHALLENGE.CHA.203.DESC,Max N buildings per wave.,Finir chaque vague avec un maximum de N bâtiments.
-CHALLENGE.CHA.204.NAME,I Love Traps,I love traps
+CHALLENGE.CHA.204.NAME,I love traps,J'adore les pièges
 CHALLENGE.CHA.204.DESC,Use only traps.,Finir le niveau en utilisant uniquement des pièges.
-CHALLENGE.CHA.205.NAME,Fast and Furious,Fast and furious
+CHALLENGE.CHA.205.NAME,Fast and Furious,Fast and Furious
 CHALLENGE.CHA.205.DESC,Finish in less than N seconds.,Finir le niveau en moins de N secondes.
