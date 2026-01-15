@@ -1,4 +1,4 @@
-## © 2024 A7 Studio. All rights reserved. Trademark.
+## © 2026 A7 Studio. All rights reserved. Trademark.
 ##
 ## A utility class for handling signal connections in a structured way.
 ## Provides a centralized approach to connect signals using a dictionary format.
@@ -50,14 +50,3 @@ static func connects(signals: Array[Dictionary]) -> void:
 		# 		"callback": signal_info[TO]
 		# 	})
 		# )
-
-# private
-
-
-# signal
-
-
-# event
-
-
-# setget

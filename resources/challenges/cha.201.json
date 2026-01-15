@@ -1,0 +1,7 @@
+{
+  "id": "cha.201",
+  "name": "CHALLENGE.CHA.201.NAME",
+  "description": "CHALLENGE.CHA.201.DESC",
+  "difficulty": "Hard",
+  "script": "res://scripts/challenges/logics/impossible.gd"
+}

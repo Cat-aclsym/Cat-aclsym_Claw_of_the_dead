@@ -67,6 +67,7 @@ var current_animation: String = ""
 var direction: EnemyDirection = EnemyDirection.UP_RIGHT
 var health: float
 var is_already_dead: bool = false
+var last_damage_type: DamageType = DamageType.DEFAULT
 var max_health: float = 0.0
 var path: Path2D = null
 var path_follow: PathFollow2D = null
@@ -80,6 +81,7 @@ var state: EnemyState = EnemyState.FOLLOW_PATH
 
 @onready var anim_player: AnimationPlayer = $AnimationPlayer
 @onready var collision_shape: CollisionShape2D = $CollisionShape2D
+@onready var health_bar: EnemyHealthBar = $HealthBar
 @onready var old_modulate: Color = sprite.modulate
 @onready var path_points_size: int = path.curve.point_count
 @onready var poison_particle: GPUParticles2D = $GPUParticles2D
@@ -89,6 +91,7 @@ var state: EnemyState = EnemyState.FOLLOW_PATH
 
 # Built-in functions
 func _ready() -> void:
+	add_to_group("enemies")
 	_apply_stats_override()
 	if type == EnemyType.FAT or type == EnemyType.BIG_DADDY:
 		camera_effect.connect(Global.camera.handle_effect)
@@ -130,16 +133,24 @@ func _physics_process(delta: float) -> void:
 ## [br]
 ## [param damage] Amount of damage to apply
 ## [param damage_type] Type of damage being applied
-func take_damage(damage: float, damage_type: DamageType) -> void:
+func take_damage(damage: float, damage_type: DamageType, source: Variant = null) -> void:
 	if is_already_dead:
 		return
 
+	last_damage_type = damage_type
 	_damage_effect(DAMAGES[damage_type]["color"])
+
+	if source:
+		ChallengeManager.notify_enemy_hit(self, source)
+
 	if health - damage <= 0:
 		health = 0.0
 		state = EnemyState.DEAD
 	else:
 		health -= damage
+
+	if health_bar:
+		health_bar.update_health(health, max_health)
 
 
 ## Update enemy position along its path
@@ -279,6 +290,7 @@ func _disappear() -> void:
 		return
 
 	die.emit()
+	ChallengeManager.notify_enemy_died(self, last_damage_type)
 	# anim_player.play(ANIM_FADE_OUT)  # Remove the comment when the animation is implemented
 	is_already_dead = true
 	collision_shape.set_deferred("disabled", true)

@@ -1,22 +1,23 @@
-## © [2025] A7 Studio. All rights reserved. Trademark.
+## © [2024] A7 Studio. All rights reserved. Trademark.
 ##
 ## Manages game progression via console.
 extends ICommand
 
-# public
-func command_token() -> String:
-	return "progression"
 
+# Public functions
 func description() -> String:
-	return "Manage game progression. Usage: progression [reset|unlock <level>|challenge <level> <number>]"
+	return "Manages game progression, allowing to reset, unlock levels, or complete challenges."
 
-func expected_args_types() -> Array[ICommand.Types]:
-	return [] # Not used when is_variable_args returns true
 
-func is_variable_args() -> bool:
-	return true
+func get_args() -> Array[Dictionary]:
+	return [
+		{"name": "action", "type": Types.ARG_ENUM, "enum_values": ["reset", "unlock", "challenge"]},
+		{"name": "level_id", "type": Types.ARG_LEVEL, "optional": true},
+		{"name": "challenge_id", "type": Types.ARG_STRING, "optional": true}
+	]
 
-# private
+
+# Private functions
 func _execute(console: Console, args: Array) -> int:
 	if args.is_empty():
 		console.push_error("Missing subcommand. Usage: progression [reset|unlock|challenge]")

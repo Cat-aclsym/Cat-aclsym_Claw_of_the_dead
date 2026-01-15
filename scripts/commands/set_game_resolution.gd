@@ -5,20 +5,19 @@
 extends ICommand
 
 
-# public
-func command_token() -> String:
-	return "set_game_resolution"
-
-
+# Public functions
 func description() -> String:
-	return "Set game resolution. set_game_resolution width height"
+	return "Changes the game window resolution to the specified width and height."
 
 
-func expected_args_types() -> Array[ICommand.Types]:
-	return [ICommand.Types.ARG_INT, ICommand.Types.ARG_INT]
+func get_args() -> Array[Dictionary]:
+	return [
+		{"name": "width", "type": Types.ARG_INT},
+		{"name": "height", "type": Types.ARG_INT}
+	]
 
 
-# private
+# Private functions
 func _execute(console: Console, args: Array) -> int:
 	var width: int = int(args[0])
 	var height: int = int(args[1])

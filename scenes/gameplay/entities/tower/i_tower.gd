@@ -33,6 +33,7 @@ enum TowerType {
 	DEBUG_PIERCING, ## The debug piercing tower
 }
 
+
 # Exported variables
 @export_subgroup("Bullet Configuration")
 ## The bullet scene to be instantiated by the tower
