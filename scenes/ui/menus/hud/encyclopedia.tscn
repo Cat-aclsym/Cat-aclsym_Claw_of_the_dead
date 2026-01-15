@@ -1,11 +1,15 @@
-[gd_scene load_steps=7 format=3 uid="uid://divtcu2mbquip"]
+[gd_scene load_steps=8 format=3 uid="uid://divtcu2mbquip"]
 
 [ext_resource type="Script" uid="uid://boqaeq5svhocn" path="res://scenes/ui/menus/hud/encyclopedia.gd" id="1_ency"]
-[ext_resource type="Texture2D" uid="uid://lgelewgo5yxv" path="res://assets/ui/huds/encyclopedie.png" id="2_fwnpo"]
+[ext_resource type="Texture2D" uid="uid://mshwayfrielr" path="res://assets/ui/huds/encyclopedie_ennemis.png" id="2_bg_ennemis"]
 [ext_resource type="Texture2D" uid="uid://0lgpu16nkbho" path="res://assets/ui/icons/Button Close.svg" id="3_close"]
 [ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="4_theme"]
 [ext_resource type="Texture2D" uid="uid://sdmr73qrumef" path="res://assets/ui/icons/encyclopedia_left.png" id="5_fwnpo"]
 [ext_resource type="Texture2D" uid="uid://bdi8iy6d6hp61" path="res://assets/ui/icons/encyclopedia_right.png" id="6_5dtmo"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bg"]
+atlas = ExtResource("2_bg_ennemis")
+region = Rect2(0, 0, 1396, 832)
 
 [node name="Encyclopedia" type="Control"]
 texture_filter = 6
@@ -17,23 +21,36 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_ency")
 
-[node name="GuiMarginContainer" type="MarginContainer" parent="."]
+[node name="BackgroundContainer" type="AspectRatioContainer" parent="."]
 layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.05
-anchor_top = 0.05
-anchor_right = 0.95
-anchor_bottom = 0.95
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+ratio = 1.7
 
-[node name="BackgroundTextureRect" type="TextureRect" parent="GuiMarginContainer"]
+[node name="BackgroundTexture" type="TextureRect" parent="BackgroundContainer"]
+unique_name_in_owner = true
 texture_filter = 1
 layout_mode = 2
-texture = ExtResource("2_fwnpo")
+texture = SubResource("AtlasTexture_bg")
 expand_mode = 1
 stretch_mode = 5
+
+[node name="GuiMarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 40
+theme_override_constants/margin_top = 40
+theme_override_constants/margin_right = 40
+theme_override_constants/margin_bottom = 40
 
 [node name="MenuLayout" type="Control" parent="GuiMarginContainer"]
 layout_mode = 2
@@ -42,20 +59,20 @@ mouse_filter = 2
 [node name="TowersButton" type="TextureButton" parent="GuiMarginContainer/MenuLayout"]
 unique_name_in_owner = true
 layout_mode = 0
-offset_left = 298.0
-offset_top = 44.0
-offset_right = 360.0
-offset_bottom = 100.0
+offset_left = 291.0
+offset_top = 10.0
+offset_right = 363.0
+offset_bottom = 72.0
 ignore_texture_size = true
 stretch_mode = 0
 
 [node name="EnemiesButton" type="TextureButton" parent="GuiMarginContainer/MenuLayout"]
 unique_name_in_owner = true
 layout_mode = 0
-offset_left = 228.0
-offset_top = 44.0
-offset_right = 293.0
-offset_bottom = 101.0
+offset_left = 213.0
+offset_top = 10.0
+offset_right = 285.0
+offset_bottom = 72.0
 ignore_texture_size = true
 stretch_mode = 0
 
@@ -67,16 +84,17 @@ layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -118.0
-offset_top = 45.0
-offset_right = -78.0
-offset_bottom = 85.0
+offset_left = -54.0
+offset_top = 4.0
+offset_right = -14.0
+offset_bottom = 44.0
 grow_horizontal = 0
 texture_normal = ExtResource("3_close")
 ignore_texture_size = true
 stretch_mode = 4
 
 [node name="ContentLayout" type="Control" parent="GuiMarginContainer/MenuLayout"]
+unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -93,10 +111,10 @@ mouse_filter = 2
 
 [node name="LeftPageVBox" type="VBoxContainer" parent="GuiMarginContainer/MenuLayout/ContentLayout"]
 layout_mode = 0
-offset_left = -5.0
-offset_top = 11.0
-offset_right = 313.0
-offset_bottom = 375.0
+offset_left = -43.0
+offset_top = -21.0
+offset_right = 300.0
+offset_bottom = 408.0
 mouse_filter = 2
 alignment = 1
 
@@ -122,10 +140,10 @@ stretch_mode = 5
 
 [node name="RightPageVBox" type="VBoxContainer" parent="GuiMarginContainer/MenuLayout/ContentLayout"]
 layout_mode = 0
-offset_left = 339.0
-offset_top = 11.0
-offset_right = 616.0
-offset_bottom = 375.0
+offset_left = 356.0
+offset_top = -21.0
+offset_right = 699.0
+offset_bottom = 405.0
 mouse_filter = 2
 alignment = 1
 
@@ -146,10 +164,10 @@ layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
-offset_left = 203.4
-offset_top = -145.4
-offset_right = 248.4
-offset_bottom = -95.4
+offset_left = 185.0
+offset_top = -116.0
+offset_right = 230.0
+offset_bottom = -66.0
 grow_vertical = 0
 texture_normal = ExtResource("5_fwnpo")
 ignore_texture_size = true
@@ -165,10 +183,10 @@ anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -272.6
-offset_top = -148.4
-offset_right = -227.6
-offset_bottom = -98.4
+offset_left = -209.0
+offset_top = -116.0
+offset_right = -164.0
+offset_bottom = -66.0
 grow_horizontal = 0
 grow_vertical = 0
 texture_normal = ExtResource("6_5dtmo")

@@ -15,6 +15,8 @@ signal menu_close
 @onready var sprite_rect: TextureRect = %SpriteRect
 @onready var name_label: Label = %NameLabel
 @onready var stats_grid: GridContainer = %StatsGrid
+@onready var content_layout: Control = %ContentLayout
+@onready var background_texture: TextureRect = %BackgroundTexture
 
 
 var _all_entries: Dictionary = {
@@ -29,6 +31,16 @@ var _current_anim_data: Dictionary = {}
 var _anim_timer: float = 0.0
 var _anim_frame: int = 0
 
+# Page turn animation
+var _is_turning_page: bool = false
+var _page_anim_timer: float = 0.0
+var _page_anim_duration: float = 0.3
+var _page_anim_direction: int = 1 # 1 for forward, -1 for reverse
+var _page_total_frames: int = 10
+var _frame_width: int = 1396 # Largeur d'une frame (1396w)
+var _frame_height: int = 832 # Hauteur d'une frame (832h)
+var _frames_per_row: int = 8
+
 @onready var signals: Array[Dictionary] = [
 	{SignalUtil.WHO: close_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_close_pressed},
 	{SignalUtil.WHO: prev_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_prev_pressed},
@@ -39,10 +51,12 @@ var _anim_frame: int = 0
 
 func _ready() -> void:
 	_initialize_entries()
-	_update_display()
+	_update_background_texture()
+	_update_display(false) # Start without animation
 	SignalUtil.connects(signals)
 
 func _on_close_pressed() -> void:
+	if _is_turning_page: return
 	menu_close.emit()
 
 func _initialize_entries() -> void:
@@ -125,6 +139,25 @@ func _add_enemy_entry_from_data(p_entry_name: String, p_enemy_data: Dictionary) 
 	})
 
 func _process(delta: float) -> void:
+	if _is_turning_page:
+		_page_anim_timer += delta
+		var progress: float = clamp(_page_anim_timer / _page_anim_duration, 0.0, 1.0)
+		
+		# Calculate frame index
+		var frame_idx: int
+		if _page_anim_direction == 1:
+			frame_idx = int(progress * (_page_total_frames - 1))
+		else:
+			frame_idx = int((1.0 - progress) * (_page_total_frames - 1))
+		
+		_set_background_frame(frame_idx)
+		
+		if progress >= 1.0:
+			_is_turning_page = false
+			content_layout.visible = true
+			_update_ui_elements()
+		return
+
 	if not _current_anim_data.is_empty() and _current_anim_data.get("frames"):
 		var frames: SpriteFrames = _current_anim_data["frames"]
 		var anim: StringName = _current_anim_data["animation"]
@@ -162,7 +195,42 @@ func _get_sprite_from_instance(p_node: Node) -> Dictionary:
 		data["texture"] = sprite_2d.texture
 	return data
 
-func _update_display() -> void:
+func _update_background_texture() -> void:
+	var texture_path: String = ""
+	if _current_category == "TOWERS":
+		texture_path = "res://assets/ui/huds/encyclopedie_tours.png"
+	else:
+		texture_path = "res://assets/ui/huds/encyclopedie_ennemis.png"
+	
+	if ResourceLoader.exists(texture_path):
+		var tex: Texture2D = load(texture_path)
+		var atlas: AtlasTexture = background_texture.texture as AtlasTexture
+		if atlas:
+			atlas.atlas = tex
+			_set_background_frame(0)
+
+func _set_background_frame(p_frame: int) -> void:
+	var atlas: AtlasTexture = background_texture.texture as AtlasTexture
+	if not atlas: return
+	
+	var row: int = p_frame / _frames_per_row
+	var col: int = p_frame % _frames_per_row
+	atlas.region = Rect2(col * _frame_width, row * _frame_height, _frame_width, _frame_height)
+
+func _update_display(p_animate: bool = true, p_direction: int = 1) -> void:
+	if p_animate:
+		_is_turning_page = true
+		_page_anim_timer = 0.0
+		_page_anim_direction = p_direction
+		content_layout.visible = false
+		_set_background_frame(0 if p_direction == 1 else _page_total_frames - 1)
+	else:
+		_is_turning_page = false
+		content_layout.visible = true
+		_set_background_frame(0)
+		_update_ui_elements()
+
+func _update_ui_elements() -> void:
 	var entries: Array = _all_entries.get(_current_category, [])
 	if entries.is_empty(): return
 
@@ -250,17 +318,23 @@ func _add_stat_row(p_key: String, p_val: String) -> void:
 	stats_grid.add_child(label_val)
 
 func _on_category_pressed(p_category: String) -> void:
+	if _is_turning_page: return
+	if _current_category == p_category: return
+	
 	_current_category = p_category
 	_current_index = 0
-	_update_display()
+	_update_background_texture()
+	_update_display(true, 1) # Animate forward for category switch
 
 func _on_prev_pressed() -> void:
+	if _is_turning_page: return
 	if _current_index > 0:
 		_current_index -= 1
-		_update_display()
+		_update_display(true, -1) # Animate reverse
 
 func _on_next_pressed() -> void:
+	if _is_turning_page: return
 	var entries: Array = _all_entries.get(_current_category, [])
 	if _current_index < entries.size() - 1:
 		_current_index += 1
-		_update_display()
+		_update_display(true, 1) # Animate forward
