@@ -1,11 +1,11 @@
 [gd_scene load_steps=7 format=3 uid="uid://divtcu2mbquip"]
 
 [ext_resource type="Script" uid="uid://boqaeq5svhocn" path="res://scenes/ui/menus/hud/encyclopedia.gd" id="1_ency"]
-[ext_resource type="Texture2D" uid="uid://bel17gs3ijyb1" path="res://assets/environment/backgrounds/Fond Menu 02@2x.png" id="2_bg"]
+[ext_resource type="Texture2D" uid="uid://lgelewgo5yxv" path="res://assets/ui/huds/encyclopedie.png" id="2_fwnpo"]
 [ext_resource type="Texture2D" uid="uid://0lgpu16nkbho" path="res://assets/ui/icons/Button Close.svg" id="3_close"]
 [ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="4_theme"]
-[ext_resource type="Texture2D" uid="uid://deyl1aq0mjdi1" path="res://assets/ui/icons/left.svg" id="5_left"]
-[ext_resource type="Texture2D" uid="uid://b25uthfv5ggd2" path="res://assets/ui/icons/right.svg" id="6_right"]
+[ext_resource type="Texture2D" uid="uid://sdmr73qrumef" path="res://assets/ui/icons/encyclopedia_left.png" id="5_fwnpo"]
+[ext_resource type="Texture2D" uid="uid://bdi8iy6d6hp61" path="res://assets/ui/icons/encyclopedia_right.png" id="6_5dtmo"]
 
 [node name="Encyclopedia" type="Control"]
 texture_filter = 6
@@ -29,116 +29,148 @@ grow_vertical = 2
 mouse_filter = 2
 
 [node name="BackgroundTextureRect" type="TextureRect" parent="GuiMarginContainer"]
+texture_filter = 1
 layout_mode = 2
-texture = ExtResource("2_bg")
+texture = ExtResource("2_fwnpo")
 expand_mode = 1
+stretch_mode = 5
 
-[node name="MenuMarginContainer" type="MarginContainer" parent="GuiMarginContainer"]
-layout_mode = 2
-mouse_filter = 2
-theme_override_constants/margin_left = 40
-theme_override_constants/margin_top = 20
-theme_override_constants/margin_right = 40
-theme_override_constants/margin_bottom = 20
-
-[node name="MainVBoxContainer" type="VBoxContainer" parent="GuiMarginContainer/MenuMarginContainer"]
+[node name="MenuLayout" type="Control" parent="GuiMarginContainer"]
 layout_mode = 2
 mouse_filter = 2
 
-[node name="TopLineHBoxContainer" type="HBoxContainer" parent="GuiMarginContainer/MenuMarginContainer/MainVBoxContainer"]
-layout_mode = 2
-mouse_filter = 2
+[node name="TowersButton" type="TextureButton" parent="GuiMarginContainer/MenuLayout"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 298.0
+offset_top = 44.0
+offset_right = 360.0
+offset_bottom = 100.0
+ignore_texture_size = true
+stretch_mode = 0
 
-[node name="CategoryHBoxContainer" type="HBoxContainer" parent="GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/TopLineHBoxContainer"]
-layout_mode = 2
-mouse_filter = 2
-theme_override_constants/separation = 20
+[node name="EnemiesButton" type="TextureButton" parent="GuiMarginContainer/MenuLayout"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 228.0
+offset_top = 44.0
+offset_right = 293.0
+offset_bottom = 101.0
+ignore_texture_size = true
+stretch_mode = 0
 
-[node name="TowersButton" type="Button" parent="GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/TopLineHBoxContainer/CategoryHBoxContainer"]
-layout_mode = 2
-theme = ExtResource("4_theme")
-text = "ENCYCLOPEDIA.SECTION.TOWERS"
-
-[node name="EnemiesButton" type="Button" parent="GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/TopLineHBoxContainer/CategoryHBoxContainer"]
-layout_mode = 2
-theme = ExtResource("4_theme")
-text = "ENCYCLOPEDIA.SECTION.ENEMIES"
-
-[node name="AspectRatioContainer" type="AspectRatioContainer" parent="GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/TopLineHBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-mouse_filter = 2
-alignment_horizontal = 2
-alignment_vertical = 0
-
-[node name="CloseTextureButton" type="TextureButton" parent="GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/TopLineHBoxContainer/AspectRatioContainer"]
+[node name="CloseTextureButton" type="TextureButton" parent="GuiMarginContainer/MenuLayout"]
+unique_name_in_owner = true
 texture_filter = 6
 custom_minimum_size = Vector2(40, 40)
-layout_mode = 2
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -118.0
+offset_top = 45.0
+offset_right = -78.0
+offset_bottom = 85.0
+grow_horizontal = 0
 texture_normal = ExtResource("3_close")
 ignore_texture_size = true
 stretch_mode = 4
 
-[node name="ContentHBoxContainer" type="HBoxContainer" parent="GuiMarginContainer/MenuMarginContainer/MainVBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 3
+[node name="ContentLayout" type="Control" parent="GuiMarginContainer/MenuLayout"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -317.0
+offset_top = -178.5
+offset_right = 342.0
+offset_bottom = 202.5
+grow_horizontal = 2
+grow_vertical = 2
 mouse_filter = 2
-theme_override_constants/separation = 50
 
-[node name="LeftPageVBox" type="VBoxContainer" parent="GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/ContentHBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
+[node name="LeftPageVBox" type="VBoxContainer" parent="GuiMarginContainer/MenuLayout/ContentLayout"]
+layout_mode = 0
+offset_left = -5.0
+offset_top = 11.0
+offset_right = 313.0
+offset_bottom = 375.0
 mouse_filter = 2
 alignment = 1
 
-[node name="SpriteAspectRatio" type="AspectRatioContainer" parent="GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/ContentHBoxContainer/LeftPageVBox"]
-layout_mode = 2
-size_flags_vertical = 3
-mouse_filter = 2
-
-[node name="SpriteRect" type="TextureRect" parent="GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/ContentHBoxContainer/LeftPageVBox/SpriteAspectRatio"]
-texture_filter = 1
-layout_mode = 2
-expand_mode = 1
-stretch_mode = 5
-
-[node name="NameLabel" type="Label" parent="GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/ContentHBoxContainer/LeftPageVBox"]
+[node name="NameLabel" type="Label" parent="GuiMarginContainer/MenuLayout/ContentLayout/LeftPageVBox"]
+unique_name_in_owner = true
 layout_mode = 2
 theme = ExtResource("4_theme")
 theme_type_variation = &"HeaderMedium"
 text = "ITEM NAME"
 horizontal_alignment = 1
 
-[node name="RightPageVBox" type="VBoxContainer" parent="GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/ContentHBoxContainer"]
+[node name="SpriteAspectRatio" type="AspectRatioContainer" parent="GuiMarginContainer/MenuLayout/ContentLayout/LeftPageVBox"]
 layout_mode = 2
-size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 2
+
+[node name="SpriteRect" type="TextureRect" parent="GuiMarginContainer/MenuLayout/ContentLayout/LeftPageVBox/SpriteAspectRatio"]
+unique_name_in_owner = true
+texture_filter = 1
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="RightPageVBox" type="VBoxContainer" parent="GuiMarginContainer/MenuLayout/ContentLayout"]
+layout_mode = 0
+offset_left = 339.0
+offset_top = 11.0
+offset_right = 616.0
+offset_bottom = 375.0
 mouse_filter = 2
 alignment = 1
 
-[node name="StatsGrid" type="GridContainer" parent="GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/ContentHBoxContainer/RightPageVBox"]
+[node name="StatsGrid" type="GridContainer" parent="GuiMarginContainer/MenuLayout/ContentLayout/RightPageVBox"]
+unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 4
 size_flags_vertical = 4
 theme_override_constants/h_separation = 20
 theme_override_constants/v_separation = 10
 columns = 2
 
-[node name="NavigationHBoxContainer" type="HBoxContainer" parent="GuiMarginContainer/MenuMarginContainer/MainVBoxContainer"]
-layout_mode = 2
-mouse_filter = 2
-alignment = 2
-
-[node name="PrevButton" type="TextureButton" parent="GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/NavigationHBoxContainer"]
+[node name="PrevButton" type="TextureButton" parent="GuiMarginContainer/MenuLayout"]
+unique_name_in_owner = true
 texture_filter = 6
 custom_minimum_size = Vector2(45, 50)
-layout_mode = 2
-texture_normal = ExtResource("5_left")
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 203.4
+offset_top = -145.4
+offset_right = 248.4
+offset_bottom = -95.4
+grow_vertical = 0
+texture_normal = ExtResource("5_fwnpo")
 ignore_texture_size = true
 stretch_mode = 4
 
-[node name="NextButton" type="TextureButton" parent="GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/NavigationHBoxContainer"]
+[node name="NextButton" type="TextureButton" parent="GuiMarginContainer/MenuLayout"]
+unique_name_in_owner = true
 texture_filter = 6
 custom_minimum_size = Vector2(45, 50)
-layout_mode = 2
-texture_normal = ExtResource("6_right")
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -272.6
+offset_top = -148.4
+offset_right = -227.6
+offset_bottom = -98.4
+grow_horizontal = 0
+grow_vertical = 0
+texture_normal = ExtResource("6_5dtmo")
 ignore_texture_size = true
 stretch_mode = 4

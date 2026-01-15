@@ -7,21 +7,21 @@ extends Control
 ## Signal emitted when the menu is closed
 signal menu_close
 
-@onready var close_button: TextureButton = $GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/TopLineHBoxContainer/AspectRatioContainer/CloseTextureButton
-@onready var prev_button: TextureButton = $GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/NavigationHBoxContainer/PrevButton
-@onready var next_button: TextureButton = $GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/NavigationHBoxContainer/NextButton
-@onready var towers_button: Button = $GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/TopLineHBoxContainer/CategoryHBoxContainer/TowersButton
-@onready var enemies_button: Button = $GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/TopLineHBoxContainer/CategoryHBoxContainer/EnemiesButton
-@onready var sprite_rect: TextureRect = $GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/ContentHBoxContainer/LeftPageVBox/SpriteAspectRatio/SpriteRect
-@onready var name_label: Label = $GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/ContentHBoxContainer/LeftPageVBox/NameLabel
-@onready var stats_grid: GridContainer = $GuiMarginContainer/MenuMarginContainer/MainVBoxContainer/ContentHBoxContainer/RightPageVBox/StatsGrid
+@onready var close_button: TextureButton = %CloseTextureButton
+@onready var prev_button: TextureButton = %PrevButton
+@onready var next_button: TextureButton = %NextButton
+@onready var towers_button: TextureButton = %TowersButton
+@onready var enemies_button: TextureButton = %EnemiesButton
+@onready var sprite_rect: TextureRect = %SpriteRect
+@onready var name_label: Label = %NameLabel
+@onready var stats_grid: GridContainer = %StatsGrid
 
 
 var _all_entries: Dictionary = {
 	"TOWERS": [],
 	"ENEMIES": []
 }
-var _current_category: String = "TOWERS"
+var _current_category: String = "ENEMIES"
 var _current_index: int = 0
 
 # Animation state
@@ -230,6 +230,7 @@ func _add_stat_category_header(p_text: String) -> void:
 	var header: Label = Label.new()
 	header.text = p_text
 	header.theme_type_variation = "HeaderSmall"
+	header.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	header.add_theme_font_size_override("font_size", 20)
 	header.add_theme_color_override("font_color", Color.CHARTREUSE)
 	stats_grid.add_child(header)
@@ -238,11 +239,13 @@ func _add_stat_category_header(p_text: String) -> void:
 func _add_stat_row(p_key: String, p_val: String) -> void:
 	var label_key: Label = Label.new()
 	label_key.text = p_key
+	label_key.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	label_key.add_theme_font_size_override("font_size", 16)
 	stats_grid.add_child(label_key)
 
 	var label_val: Label = Label.new()
 	label_val.text = p_val
+	label_val.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	label_val.add_theme_font_size_override("font_size", 16)
 	stats_grid.add_child(label_val)
 
