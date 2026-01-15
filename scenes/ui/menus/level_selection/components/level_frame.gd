@@ -102,6 +102,8 @@ func _setup_challenge_ui(node: HBoxContainer, c_id: String, is_completed: bool) 
 	var path := "res://resources/challenges/%s.json" % c_id
 	if FileAccess.file_exists(path):
 		var file := FileAccess.open(path, FileAccess.READ)
+		if not file:
+			return
 		var content := file.get_as_text()
 		var data: Variant = JSON.parse_string(content)
 		if data:

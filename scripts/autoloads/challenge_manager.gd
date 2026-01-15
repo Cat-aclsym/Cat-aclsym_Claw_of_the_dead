@@ -82,10 +82,10 @@ func notify_enemy_hit(enemy: IEnemy, source: Variant) -> void:
 
 
 ## Notifies challenges about an enemy death.
-func notify_enemy_died(enemy: IEnemy, damage_type: IEnemy.DamageType) -> void:
+func notify_enemy_died(enemy: IEnemy, damage_type: IEnemy.DamageType, source: Variant = null) -> void:
 	for c in active_challenges:
 		if c.has_method("on_enemy_died"):
-			c.on_enemy_died(enemy, damage_type)
+			c.on_enemy_died(enemy, damage_type, source)
 
 
 ## Returns currently active challenges.
@@ -100,6 +100,9 @@ func _load_challenge(c_id: String) -> void:
 		return
 
 	var file := FileAccess.open(path, FileAccess.READ)
+	if not file:
+		Log.trace(Log.Level.ERROR, "Failed to open challenge file: %s" % path)
+		return
 	var content := file.get_as_text()
 	var data: Variant = JSON.parse_string(content)
 	if data == null:

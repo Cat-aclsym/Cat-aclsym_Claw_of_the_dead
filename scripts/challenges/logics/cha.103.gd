@@ -6,10 +6,23 @@ extends Challenge
 ## No enemy must reach halfway through the path.
 
 
+# Constants
+const CHECK_INTERVAL: int = 5  # Check every 5 frames for performance
+
+
+# Private variables
+var _frame_counter: int = 0
+
+
 # Built-in functions
 func _process(_delta: float) -> void:
 	if is_failed or is_completed:
 		return
+
+	_frame_counter += 1
+	if _frame_counter < CHECK_INTERVAL:
+		return
+	_frame_counter = 0
 
 	var enemies: Array[Node] = get_tree().get_nodes_in_group("enemies")
 	for enemy in enemies:
