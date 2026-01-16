@@ -11,17 +11,18 @@ const ERR_UNKNOWN_BEHAVIOR: int = -3
 
 ## Enumerates the supported argument types for console commands.
 enum Types {
-	ARG_UNKNOWN = 0,
-	ARG_BOOL = 1,
-	ARG_INT = 2,
-	ARG_FLOAT = 3,
-	ARG_STRING = 4,
-	ARG_COMMAND = 5,
-	ARG_TOWER = 6,
-	ARG_ENEMY = 7,
-	ARG_ENUM = 8,
-	ARG_INGAME_TOWER = 9,
-	ARG_LEVEL = 10,
+	ARG_BOOL,
+	ARG_CHALLENGE,
+	ARG_COMMAND,
+	ARG_ENEMY,
+	ARG_ENUM,
+	ARG_FLOAT,
+	ARG_INGAME_TOWER,
+	ARG_INT,
+	ARG_LEVEL,
+	ARG_STRING,
+	ARG_TOWER,
+	ARG_UNKNOWN,
 }
 
 
@@ -93,6 +94,8 @@ func type_to_string(t: ICommand.Types) -> String:
 			return "ingame_tower"
 		Types.ARG_LEVEL:
 			return "level"
+		Types.ARG_CHALLENGE:
+			return "challenge"
 		_:
 			return "unknown"
 
@@ -105,15 +108,15 @@ func _execute(_console: Console, _args: Array) -> int:
 
 func _validate_type(in_string: String, in_type: ICommand.Types) -> bool:
 	match in_type:
-		Types.ARG_INT:
-			return in_string.is_valid_int()
-		Types.ARG_FLOAT:
-			return in_string.is_valid_float()
-		Types.ARG_STRING:
-			return true
 		Types.ARG_BOOL:
 			return in_string == "true" or in_string == "false"
-		Types.ARG_COMMAND, Types.ARG_TOWER, Types.ARG_ENEMY, Types.ARG_ENUM, Types.ARG_INGAME_TOWER, Types.ARG_LEVEL:
+		Types.ARG_FLOAT:
+			return in_string.is_valid_float()
+		Types.ARG_INT:
+			return in_string.is_valid_int()
+		Types.ARG_STRING:
+			return true
+		Types.ARG_COMMAND, Types.ARG_TOWER, Types.ARG_ENEMY, Types.ARG_ENUM, Types.ARG_INGAME_TOWER, Types.ARG_LEVEL, Types.ARG_CHALLENGE:
 			return true
 		_:
 			return false

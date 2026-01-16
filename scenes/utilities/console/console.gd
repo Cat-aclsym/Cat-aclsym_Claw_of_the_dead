@@ -311,18 +311,18 @@ func _update_suggestions() -> void:
 				var current_input := parts[-1] if not has_trailing_space else ""
 
 				match arg_type:
+					ICommand.Types.ARG_CHALLENGE:
+						var challenge_dir := DirAccess.open("res://resources/challenges/")
+						if challenge_dir:
+							for file_name in challenge_dir.get_files():
+								if file_name.ends_with(".json"):
+									var challenge_id := file_name.trim_suffix(".json")
+									if challenge_id.to_lower().begins_with(current_input.to_lower()):
+										_current_suggestions.append(challenge_id)
 					ICommand.Types.ARG_COMMAND:
 						for cmd_name in _available_commands:
 							if cmd_name.to_lower().begins_with(current_input.to_lower()):
 								_current_suggestions.append(cmd_name)
-					ICommand.Types.ARG_TOWER:
-						var tower_script = load("res://scenes/gameplay/entities/tower/i_tower.gd")
-						if tower_script and tower_script.has_source_code():
-							var tower_types = tower_script.get_script_constant_map().get("TowerType")
-							if tower_types:
-								for tower_type in tower_types.keys():
-									if tower_type.to_lower().begins_with(current_input.to_lower()):
-										_current_suggestions.append(tower_type)
 					ICommand.Types.ARG_ENEMY:
 						var enemy_script = load("res://scenes/gameplay/entities/enemy/i_enemy.gd")
 						if enemy_script and enemy_script.has_source_code():
@@ -354,6 +354,14 @@ func _update_suggestions() -> void:
 									var level_id := file_name.trim_suffix(".json")
 									if level_id.to_lower().begins_with(current_input.to_lower()):
 										_current_suggestions.append(level_id)
+					ICommand.Types.ARG_TOWER:
+						var tower_script = load("res://scenes/gameplay/entities/tower/i_tower.gd")
+						if tower_script and tower_script.has_source_code():
+							var tower_types = tower_script.get_script_constant_map().get("TowerType")
+							if tower_types:
+								for tower_type in tower_types.keys():
+									if tower_type.to_lower().begins_with(current_input.to_lower()):
+										_current_suggestions.append(tower_type)
 					_:
 						pass
 	else:
