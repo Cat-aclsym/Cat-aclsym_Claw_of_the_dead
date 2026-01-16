@@ -205,9 +205,8 @@ func _init_default_data() -> void:
 		data.levels["lev.01"] = LevelData.new()
 	data.levels["lev.01"].unlocked = true
 
-	# Unlock all towers by default
-	for tower_type in ITower.TowerType.values():
-		var tid := str(tower_type)
+	# Unlock all towers by default from StatsDB config
+	for tid in StatsDB.get_tower_ids():
 		if not data.towers.has(tid):
 			data.towers[tid] = TowerData.new()
 		data.towers[tid].unlocked = true

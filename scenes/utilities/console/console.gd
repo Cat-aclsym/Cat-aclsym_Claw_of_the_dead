@@ -325,13 +325,9 @@ func _update_suggestions() -> void:
 							if cmd_name.to_lower().begins_with(current_input.to_lower()):
 								_current_suggestions.append(cmd_name)
 					ICommand.Types.ARG_ENEMY:
-						var enemy_dir := DirAccess.open("res://scenes/gameplay/entities/enemy/enemies/")
-						if enemy_dir:
-							for file_name in enemy_dir.get_files():
-								if file_name.ends_with(".tscn"):
-									var enemy_id := file_name.trim_suffix(".tscn")
-									if enemy_id.to_lower().begins_with(current_input.to_lower()):
-										_current_suggestions.append(enemy_id)
+						for enemy_id in StatsDB.get_enemy_ids():
+							if enemy_id.to_lower().begins_with(current_input.to_lower()):
+								_current_suggestions.append(enemy_id)
 					ICommand.Types.ARG_ENUM:
 						var enum_values: Array = current_arg_def.get("enum_values", [])
 						for value in enum_values:
@@ -356,13 +352,9 @@ func _update_suggestions() -> void:
 									if level_id.to_lower().begins_with(current_input.to_lower()):
 										_current_suggestions.append(level_id)
 					ICommand.Types.ARG_TOWER:
-						var tower_dir := DirAccess.open("res://scenes/gameplay/entities/tower/towers/")
-						if tower_dir:
-							for file_name in tower_dir.get_files():
-								if file_name.ends_with(".tscn"):
-									var tower_id := file_name.trim_suffix(".tscn")
-									if tower_id.to_lower().begins_with(current_input.to_lower()):
-										_current_suggestions.append(tower_id)
+						for tower_id in StatsDB.get_tower_ids():
+							if tower_id.to_lower().begins_with(current_input.to_lower()):
+								_current_suggestions.append(tower_id)
 					_:
 						pass
 	else:
