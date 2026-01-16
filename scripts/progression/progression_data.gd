@@ -1,10 +1,13 @@
-## © [2025] A7 Studio. All rights reserved. Trademark.
+## © [2026] A7 Studio. All rights reserved. Trademark.
 
 class_name ProgressionData
 extends RefCounted
 ## Root data class for the entire game progression and settings.
 
 # Public variables
+## Dictionary mapping enemy IDs (String) to EnemyData objects.
+var enemies: Dictionary = {}
+
 ## Dictionary mapping level IDs (String) to LevelData objects.
 var levels: Dictionary = {}
 
