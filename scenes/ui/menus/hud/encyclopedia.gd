@@ -65,14 +65,6 @@ var _page_total_frames: int = 10
 @onready var scroll_indicator: TextureRect = %ScrollIndicator
 ## Visual indicator for upward scrolling.
 @onready var scroll_indicator_top: TextureRect = %ScrollIndicatorTop
-## List of signal connections for UI elements.
-@onready var signals: Array[Dictionary] = [
-	{SignalUtil.TO: _on_close_pressed, SignalUtil.WHAT: "pressed", SignalUtil.WHO: close_button},
-	{SignalUtil.TO: _on_category_pressed.bind("ENEMIES"), SignalUtil.WHAT: "pressed", SignalUtil.WHO: enemies_button},
-	{SignalUtil.TO: _on_next_pressed, SignalUtil.WHAT: "pressed", SignalUtil.WHO: next_button},
-	{SignalUtil.TO: _on_prev_pressed, SignalUtil.WHAT: "pressed", SignalUtil.WHO: prev_button},
-	{SignalUtil.TO: _on_category_pressed.bind("TOWERS"), SignalUtil.WHAT: "pressed", SignalUtil.WHO: towers_button},
-]
 ## Texture rect displaying the entity's visual.
 @onready var sprite_rect: TextureRect = %SpriteRect
 ## Grid container for entity statistics.
@@ -81,6 +73,15 @@ var _page_total_frames: int = 10
 @onready var stats_scroll: ScrollContainer = $GuiMarginContainer/MenuLayout/ContentLayout/RightPageVBox/StatsScroll
 ## Button to switch to the towers category.
 @onready var towers_button: TextureButton = %TowersButton
+
+## List of signal connections for UI elements, must be last because it uses onready vars.
+@onready var signals: Array[Dictionary] = [
+	{SignalUtil.TO: _on_close_pressed, SignalUtil.WHAT: "pressed", SignalUtil.WHO: close_button},
+	{SignalUtil.TO: _on_category_pressed.bind("ENEMIES"), SignalUtil.WHAT: "pressed", SignalUtil.WHO: enemies_button},
+	{SignalUtil.TO: _on_next_pressed, SignalUtil.WHAT: "pressed", SignalUtil.WHO: next_button},
+	{SignalUtil.TO: _on_prev_pressed, SignalUtil.WHAT: "pressed", SignalUtil.WHO: prev_button},
+	{SignalUtil.TO: _on_category_pressed.bind("TOWERS"), SignalUtil.WHAT: "pressed", SignalUtil.WHO: towers_button},
+]
 
 
 ## Updates the page turn animation and scroll indicators.
