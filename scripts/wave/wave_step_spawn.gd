@@ -19,9 +19,11 @@ func exec() -> void:
 	if not ScenesLoader.enemies_scene.has(enemy_id):
 		ScenesLoader.enemies_scene[enemy_id] = load("res://scenes/gameplay/entities/enemy/enemies/%s.tscn" % enemy_id)
 
-	ProgressionManager.mark_enemy_seen(enemy_id)
-
 	var enemy: IEnemy = ScenesLoader.enemies_scene[enemy_id].instantiate()
+
+	if not enemy.enemy_id.is_empty():
+		ProgressionManager.mark_enemy_seen(enemy.enemy_id)
+
 	enemy.connect("die", ILevel.current_level._on_enemy_die)
 	EnemySpawner.spawn_enemy(ILevel.current_level.map.paths[spawner_index], enemy)
 	ILevel.current_level._on_enemy_spawn() # ! ILevel owns and contains WaveStep class, see it as a friend class

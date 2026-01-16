@@ -63,10 +63,24 @@ func get_next_level_id(current_id: String) -> String:
 	return ""
 
 
+## Checks if an enemy has been seen.
+func is_enemy_seen(enemy_id: String) -> bool:
+	if data.enemies.has(enemy_id):
+		return data.enemies[enemy_id].seen
+	return false
+
+
 ## Checks if a level is unlocked.
 func is_level_unlocked(level_id: String) -> bool:
 	if data.levels.has(level_id):
 		return data.levels[level_id].unlocked
+	return false
+
+
+## Checks if a tower is unlocked.
+func is_tower_unlocked(tower_id: String) -> bool:
+	if data.towers.has(tower_id):
+		return data.towers[tower_id].unlocked
 	return false
 
 
