@@ -27,12 +27,8 @@ ChallengeManager="*res://scripts/autoloads/challenge_manager.gd"
 
 [dialogic]
 
-directories/dch_directory={
-"character1": "res://assets/narrative/character1.dch"
-}
-directories/dtl_directory={
-"example": "res://assets/narrative/example.dtl"
-}
+directories/dch_directory={}
+directories/dtl_directory={}
 text/default_speed=0.05
 text/skippable=true
 text/autoadvance_delay=1.0
