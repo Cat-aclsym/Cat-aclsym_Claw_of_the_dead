@@ -11,10 +11,36 @@ func description() -> String:
 
 func get_args() -> Array[Dictionary]:
 	return [
-		{"name": "action", "type": Types.ARG_ENUM, "enum_values": ["challenge", "reset", "show", "unlock"]},
-		{"name": "arg1", "type": Types.ARG_STRING, "optional": true},
-		{"name": "arg2", "type": Types.ARG_STRING, "optional": true}
+		{"name": "action", "type": Types.ARG_ENUM, "enum_values": ["challenge", "reset", "show", "unlock"]}
 	]
+
+
+func get_args_dynamic(current_args: Array) -> Array[Dictionary]:
+	var action_arg := {"name": "action", "type": Types.ARG_ENUM, "enum_values": ["challenge", "reset", "show", "unlock"]}
+
+	if current_args.is_empty():
+		return [action_arg]
+
+	var args: Array[Dictionary] = [action_arg]
+	var subcommand: String = current_args[0]
+
+	match subcommand:
+		"challenge":
+			args.append({"name": "level_id", "type": Types.ARG_LEVEL})
+			args.append({"name": "challenge_id", "type": Types.ARG_CHALLENGE})
+		"unlock":
+			args.append({"name": "type", "type": Types.ARG_ENUM, "enum_values": ["enemy", "level", "tower"]})
+			if current_args.size() > 1:
+				var type: String = current_args[1]
+				match type:
+					"enemy":
+						args.append({"name": "enemy_id", "type": Types.ARG_ENEMY})
+					"level":
+						args.append({"name": "level_id", "type": Types.ARG_LEVEL})
+					"tower":
+						args.append({"name": "tower_id", "type": Types.ARG_TOWER})
+
+	return args
 
 
 # Private functions
