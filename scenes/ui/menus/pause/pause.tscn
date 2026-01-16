@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://bumh57lmx1jlc"]
+[gd_scene load_steps=12 format=3 uid="uid://bumh57lmx1jlc"]
 
 [ext_resource type="Script" uid="uid://3ll1mp07j5h1" path="res://scenes/ui/menus/pause/pause.gd" id="1_i4s0k"]
 [ext_resource type="Texture2D" uid="uid://c8b8irfugbxdj" path="res://assets/environment/backgrounds/Fond Menu 02.svg" id="2_70uiq"]
@@ -10,6 +10,7 @@
 [ext_resource type="Texture2D" uid="uid://bftxjalenxriu" path="res://assets/ui/icons/Button Music Off.svg" id="8_f8w4k"]
 [ext_resource type="Texture2D" uid="uid://b72djafe25kjf" path="res://assets/ui/icons/Button Sound On.svg" id="9_yy2d7"]
 [ext_resource type="Texture2D" uid="uid://sn02kb1pfkvd" path="res://assets/ui/icons/Button Sound Off.svg" id="10_dy38s"]
+[ext_resource type="Texture2D" uid="uid://ct6wwvh8a1bow" path="res://assets/ui/icons/Button Encyclopedia.svg" id="11_clue"]
 
 [node name="PauseMenu" type="Control"]
 layout_mode = 3
@@ -96,6 +97,13 @@ stretch_mode = 5
 custom_minimum_size = Vector2(100, 87.5)
 layout_mode = 2
 texture_normal = ExtResource("6_ol8q3")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="EncyclopediaButton" type="TextureButton" parent="Panel/MarginContainer/PanelContainer/CenterContainer/VBoxContainer/ButtonLayer"]
+custom_minimum_size = Vector2(100, 87.5)
+layout_mode = 2
+texture_normal = ExtResource("11_clue")
 ignore_texture_size = true
 stretch_mode = 5
 
