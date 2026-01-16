@@ -42,7 +42,7 @@ static func connects(signals: Array[Dictionary]) -> void:
 
 		var emitter: Object = signal_info[WHO]
 		if emitter == null:
-			Log.trace(Log.Level.ERROR, "SignalUtil: null emitter for signal '%s'" % signal_info.get(WHAT, ""))
+			Log.trace(Log.Level.ERROR, "SignalUtil: null emitter for signal '%s' connected to '%s'" % [signal_info.get(WHAT, ""), signal_info.get(TO, "")])
 			continue
 
 		emitter.connect(signal_info[WHAT], signal_info[TO])
