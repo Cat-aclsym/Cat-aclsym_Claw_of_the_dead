@@ -6,21 +6,21 @@ extends ICommand
 
 # Public functions
 func description() -> String:
-	return "Manages game progression, allowing to reset, unlock levels, complete challenges, or show data."
+	return "Manages game progression, allowing to reset, unlock levels/enemies/towers, complete challenges, or show data."
 
 
 func get_args() -> Array[Dictionary]:
 	return [
 		{"name": "action", "type": Types.ARG_ENUM, "enum_values": ["challenge", "reset", "show", "unlock"]},
-		{"name": "level_id", "type": Types.ARG_LEVEL, "optional": true},
-		{"name": "challenge_id", "type": Types.ARG_STRING, "optional": true}
+		{"name": "arg1", "type": Types.ARG_STRING, "optional": true},
+		{"name": "arg2", "type": Types.ARG_STRING, "optional": true}
 	]
 
 
 # Private functions
 func _execute(console: Console, args: Array) -> int:
 	if args.is_empty():
-		console.push_error("Missing subcommand. Usage: progression [reset|unlock|challenge]")
+		console.push_error("Missing subcommand. Usage: progression [challenge|reset|show|unlock]")
 		return OK
 
 	var subcommand: String = args[0]
@@ -42,15 +42,25 @@ func _execute(console: Console, args: Array) -> int:
 			var json_text: String = JSON.stringify(data, "\t")
 			console.push_text(json_text)
 		"unlock":
-			if args.size() < 2:
-				console.push_error("Usage: progression unlock <level_id>")
+			if args.size() < 3:
+				console.push_error("Usage: progression unlock <level|enemy|tower> <id>")
 				return OK
-			var level_id: String = args[1]
-			if not ProgressionManager.data.levels.has(level_id):
-				ProgressionManager.data.levels[level_id] = LevelData.new()
-			ProgressionManager.data.levels[level_id].unlocked = true
-			ProgressionManager.save_game()
-			console.push_text("Unlocked level: " + level_id)
+
+			var type: String = args[1]
+			var id: String = args[2]
+
+			match type:
+				"enemy":
+					ProgressionManager.mark_enemy_seen(id)
+					console.push_text("Marked enemy as seen: " + id)
+				"level":
+					ProgressionManager.unlock_level(id)
+					console.push_text("Unlocked level: " + id)
+				"tower":
+					ProgressionManager.unlock_tower(id)
+					console.push_text("Unlocked tower: " + id)
+				_:
+					console.push_error("Unknown type: " + type + ". Expected: level, enemy, tower")
 		_:
 			console.push_error("Unknown subcommand: " + subcommand)
 

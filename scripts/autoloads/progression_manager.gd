@@ -178,6 +178,15 @@ func save_game() -> void:
 	Log.trace(Log.Level.DEBUG, "Game saved to %s (absolute: %s)" % [SAVE_PATH, file.get_path_absolute()])
 
 
+## Unlocks a level by ID.
+func unlock_level(level_id: String) -> void:
+	if not data.levels.has(level_id):
+		data.levels[level_id] = LevelData.new()
+
+	data.levels[level_id].unlocked = true
+	save_game()
+
+
 ## Unlocks a tower by ID.
 func unlock_tower(tower_id: String) -> void:
 	if not data.towers.has(tower_id):
