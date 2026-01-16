@@ -55,6 +55,7 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+mouse_filter = 2
 script = ExtResource("1_vvhre")
 
 [node name="MainLayout" type="VBoxContainer" parent="."]
@@ -64,6 +65,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 theme_override_constants/separation = 0
 
 [node name="Output" type="RichTextLabel" parent="MainLayout"]
@@ -82,6 +84,7 @@ theme_override_styles/focus = SubResource("StyleBoxFlat_65kwq")
 theme_override_styles/normal = SubResource("StyleBoxFlat_7ygnh")
 bbcode_enabled = true
 scroll_following = true
+mouse_filter = 2
 
 [node name="Input" type="TextEdit" parent="MainLayout"]
 unique_name_in_owner = true
@@ -93,6 +96,7 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_dp306")
 placeholder_text = "Command..."
 scroll_past_end_of_file = true
 scroll_fit_content_height = true
+mouse_filter = 2
 
 [node name="SuggestionsLayout" type="VBoxContainer" parent="."]
 layout_mode = 1
@@ -105,6 +109,7 @@ offset_right = 201.0
 offset_bottom = -48.0
 grow_vertical = 0
 alignment = 2
+mouse_filter = 2
 
 [node name="Suggestions" type="RichTextLabel" parent="SuggestionsLayout"]
 unique_name_in_owner = true

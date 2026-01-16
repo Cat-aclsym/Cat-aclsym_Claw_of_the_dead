@@ -1,4 +1,4 @@
-## © [2024] A7 Studio. All rights reserved. Trademark.
+## © [2026] A7 Studio. All rights reserved. Trademark.
 ##
 ## In-game debug console for executing commands and displaying output.
 ## Provides a command-line interface for debugging and development purposes.
@@ -23,11 +23,17 @@ var _command_history: Array[String] = []
 var _history_index: int = -1
 var _history_stash: String = ""
 var _is_navigating_history: bool = false
+var _is_output_manual_scroll: bool = false
 
 # Built-in functions
 func _ready() -> void:
 	Global.console = self
+	set_process_input(true)
 	input.grab_focus()
+	output.scroll_active = true
+	output.scroll_following = false
+	output.selection_enabled = true
+	output.mouse_filter = Control.MOUSE_FILTER_STOP
 	_load_available_commands()
 	suggestions_label.hide()
 	suggestions_label.autowrap_mode = TextServer.AUTOWRAP_OFF
@@ -44,10 +50,28 @@ func _process(_delta: float) -> void:
 	_listen_inputs()
 
 
+func _input(event: InputEvent) -> void:
+	if not visible:
+		return
+
+	if event is InputEventMouseButton and event.pressed:
+		if event.button_index == MOUSE_BUTTON_WHEEL_UP or event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
+			_scroll_output_wheel(event.button_index)
+			get_viewport().set_input_as_handled()
+			return
+
+		if event.button_index == MOUSE_BUTTON_LEFT:
+			input.grab_focus()
+			get_viewport().set_input_as_handled()
+			return
+
+
 # Public functions
 ## Pushes text to the console output.
 func push_text(text: String, save: bool = true) -> void:
-	output.text += "%s\n" % text
+	output.append_text("%s\n" % text)
+	if not _is_output_manual_scroll:
+		output.scroll_to_line(output.get_line_count())
 
 	if Global.debug and save:
 		Log.save_message(text)
@@ -128,6 +152,24 @@ func _listen_inputs() -> void:
 		_clear_suggestions()
 		return
 
+## Scrolls the output and updates follow state.
+func _scroll_output(amount: float) -> void:
+	var scroll := output.get_v_scroll_bar()
+	if not scroll:
+		return
+	scroll.value = clamp(scroll.value + amount, scroll.min_value, scroll.max_value)
+	var at_bottom := scroll.value >= scroll.max_value - scroll.page - 1.0
+	_is_output_manual_scroll = not at_bottom
+
+## Handles mouse wheel scrolling for the output.
+func _scroll_output_wheel(button_index: int) -> void:
+	var scroll := output.get_v_scroll_bar()
+	if not scroll:
+		return
+	var amount := scroll.page / 5.0 if scroll.page > 0 else 50.0
+	var delta := -amount if button_index == MOUSE_BUTTON_WHEEL_UP else amount
+	_scroll_output(delta)
+
 ## Callback triggered when console input text changes.
 func _on_input_text_changed() -> void:
 	if _suggestion_index >= 0 and (Input.is_action_just_pressed("ui_focus_next") or Input.is_key_pressed(KEY_TAB)):
@@ -138,6 +180,7 @@ func _on_input_text_changed() -> void:
 		_history_index = -1
 
 	_update_suggestions()
+
 
 ## Callback triggered on console input GUI events.
 func _on_input_gui_input(event: InputEvent) -> void:
@@ -154,6 +197,16 @@ func _on_input_gui_input(event: InputEvent) -> void:
 			else:
 				_navigate_suggestions(1)
 			get_viewport().set_input_as_handled()
+		elif event.keycode == KEY_PAGEUP or event.keycode == KEY_PAGEDOWN:
+			var scroll := output.get_v_scroll_bar()
+			var amount := scroll.page if scroll.page > 0 else 200.0
+			var delta := -amount if event.keycode == KEY_PAGEUP else amount
+			_scroll_output(delta)
+			input.accept_event()
+		elif (event.keycode == KEY_UP or event.keycode == KEY_DOWN) and event.ctrl_pressed:
+			var delta := -40.0 if event.keycode == KEY_UP else 40.0
+			_scroll_output(delta)
+			input.accept_event()
 		elif (event.keycode == KEY_UP or event.keycode == KEY_DOWN):
 			# History navigation: allowed if empty input OR already navigating history
 			if input.text.strip_edges().is_empty() or _history_index != -1:
