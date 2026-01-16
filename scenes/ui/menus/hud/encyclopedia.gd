@@ -151,9 +151,10 @@ func _ready() -> void:
 
 
 ## Adds an enemy entry to the internal dictionary.
+## [param p_id] The unique ID from StatsDB.
 ## [param p_entry_name] The translated name of the enemy.
 ## [param p_enemy_data] The raw data from StatsDB.
-func _add_enemy_entry_from_data(p_entry_name: String, p_enemy_data: Dictionary) -> void:
+func _add_enemy_entry_from_data(p_id: String, p_entry_name: String, p_enemy_data: Dictionary) -> void:
 	var scene_path: String = p_enemy_data.get("scene", "")
 	if not ResourceLoader.exists(scene_path): return
 
@@ -174,6 +175,7 @@ func _add_enemy_entry_from_data(p_entry_name: String, p_enemy_data: Dictionary) 
 		if extra.has("attack_cooldown"): stats_dict["ENCYCLOPEDIA.STATS.COOLDOWN"] = "%.1fs" % extra["attack_cooldown"]
 
 	_all_entries["ENEMIES"].append({
+		"id": p_id,
 		"name": p_entry_name,
 		"scene_path": scene_path,
 		"sprite": null,
@@ -240,9 +242,10 @@ func _add_stat_row(p_key: String, p_val: String) -> void:
 
 
 ## Adds a tower entry to the internal dictionary.
+## [param p_id] The unique ID from StatsDB.
 ## [param p_entry_name] The translated name of the tower.
 ## [param p_tower_data] The raw data from StatsDB.
-func _add_tower_entry_from_data(p_entry_name: String, p_tower_data: Dictionary) -> void:
+func _add_tower_entry_from_data(p_id: String, p_entry_name: String, p_tower_data: Dictionary) -> void:
 	var scene_path: String = p_tower_data.get("scene", "")
 	if not ResourceLoader.exists(scene_path): return
 
@@ -250,6 +253,7 @@ func _add_tower_entry_from_data(p_entry_name: String, p_tower_data: Dictionary) 
 	var bullet_stats: Dictionary = base_stats.get("bullet_stats", {})
 
 	_all_entries["TOWERS"].append({
+		"id": p_id,
 		"name": p_entry_name,
 		"scene_path": scene_path,
 		"sprite": null,
@@ -347,14 +351,14 @@ func _initialize_entries() -> void:
 		var tower_id: String = tower_id_item as String
 		var tower_data: Dictionary = StatsDB.get_tower(tower_id)
 		var entry_name: String = tower_name_mapping.get(tower_id, tower_id.to_upper() + ".NAME")
-		_add_tower_entry_from_data(entry_name, tower_data)
+		_add_tower_entry_from_data(tower_id, entry_name, tower_data)
 
 	var enemy_ids: Array = StatsDB.get_enemy_ids()
 	for enemy_id_item in enemy_ids:
 		var enemy_id: String = enemy_id_item as String
 		var enemy_data: Dictionary = StatsDB.get_enemy(enemy_id)
 		var entry_name: String = enemy_name_mapping.get(enemy_id, enemy_id.to_upper() + ".NAME")
-		_add_enemy_entry_from_data(entry_name, enemy_data)
+		_add_enemy_entry_from_data(enemy_id, entry_name, enemy_data)
 
 
 ## Switches the current category.
@@ -443,6 +447,39 @@ func _update_ui_elements() -> void:
 
 	var entry: Dictionary = entries[_current_index]
 
+	var is_discovered: bool = false
+	if _current_category == "TOWERS":
+		is_discovered = ProgressionManager.is_tower_unlocked(entry["id"])
+	else:
+		is_discovered = ProgressionManager.is_enemy_seen(entry["id"])
+
+	# Clear previous stats
+	for child in stats_grid.get_children():
+		child.queue_free()
+
+	if not is_discovered:
+		_current_anim_data = {}
+		_anim_timer = 0.0
+		_anim_frame = 0
+
+		name_label.text = "?"
+		name_label.add_theme_color_override("font_color", Color("5d2e2b"))
+		name_label.add_theme_font_size_override("font_size", 120)
+		name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+
+		sprite_rect.texture = null
+		sprite_rect.custom_minimum_size = Vector2.ZERO
+
+		_add_stat_category_header("ENCYCLOPEDIA.NOT_DISCOVERED")
+
+		prev_button.modulate.a = 1.0 if _current_index > 0 else 0.0
+		prev_button.disabled = _current_index == 0
+		next_button.modulate.a = 1.0 if _current_index < entries.size() - 1 else 0.0
+		next_button.disabled = _current_index >= entries.size() - 1
+		towers_button.disabled = (_current_category == "TOWERS")
+		enemies_button.disabled = (_current_category == "ENEMIES")
+		return
+
 	if entry.get("sprite") == null:
 		var scene_path: String = entry.get("scene_path", "")
 		if not scene_path.is_empty() and ResourceLoader.exists(scene_path):
@@ -483,9 +520,6 @@ func _update_ui_elements() -> void:
 	else:
 		sprite_rect.texture = null
 		sprite_rect.custom_minimum_size = Vector2.ZERO
-
-	for child in stats_grid.get_children():
-		child.queue_free()
 
 	stats_scroll.scroll_vertical = 0
 
