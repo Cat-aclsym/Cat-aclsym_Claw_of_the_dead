@@ -42,6 +42,12 @@ func get_args() -> Array[Dictionary]:
 	return []
 
 
+## Returns an array of argument definitions based on already typed arguments.
+## Override this if the arguments depend on previous ones (subcommands).
+func get_args_dynamic(_current_args: Array) -> Array[Dictionary]:
+	return get_args()
+
+
 ## Returns true if the command accepts a variable number of arguments.
 ## If true, argument count validation is skipped.
 func is_variable_args() -> bool:
@@ -52,7 +58,7 @@ func is_variable_args() -> bool:
 ##
 ## Returns [constant OK] on success or an error code on failure.
 func execute(console: Console, args: Array) -> int:
-	var defined_args := get_args()
+	var defined_args := get_args_dynamic(args)
 
 	if not defined_args.is_empty():
 		var required_count := 0

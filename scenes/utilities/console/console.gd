@@ -300,14 +300,15 @@ func _update_suggestions() -> void:
 	if is_typing_args:
 		var cmd := _find_command(command_prefix, true)
 		if cmd:
-			args_def = cmd.get_args()
+			var current_args := parts.slice(1, parts.size() - 1 if not has_trailing_space else parts.size())
+			args_def = cmd.get_args_dynamic(current_args)
 			if not args_def.is_empty():
 				if args_typed >= args_def.size():
 					_clear_suggestions()
 					return
 
 				var current_arg_def: Dictionary = args_def[args_typed]
-				var arg_type: int = current_arg_def.get("type", 0)
+				var arg_type: int = current_arg_def.get("type", ICommand.Types.ARG_UNKNOWN)
 				var current_input := parts[-1] if not has_trailing_space else ""
 
 				match arg_type:
@@ -395,6 +396,7 @@ func _show_suggestions() -> void:
 
 	var is_typing_args := parts_no_empty.size() > 1 or (full_input.ends_with(" ") and not full_input.is_empty())
 	var command_prefix := parts_no_empty[0] if not parts_no_empty.is_empty() else ""
+	var typed_args := parts_no_empty.slice(1, parts_no_empty.size() - 1 if not full_input.ends_with(" ") else parts_no_empty.size())
 
 	var suggestions_text := "[code][font_size=12]"
 
@@ -419,7 +421,7 @@ func _show_suggestions() -> void:
 		# When typing arguments, show signature with current arg highlighted
 		var cmd := _find_command(command_prefix, true)
 		if cmd:
-			var signature := _build_signature(cmd, command_prefix, current_arg_index)
+			var signature := _build_signature(cmd, command_prefix, current_arg_index, typed_args)
 			if not signature.is_empty():
 				suggestions_text += "\n" + signature
 	else:
@@ -428,7 +430,7 @@ func _show_suggestions() -> void:
 			var selected_cmd_name := _current_suggestions[_suggestion_index]
 			var cmd := _find_command(selected_cmd_name, true)
 			if cmd:
-				var signature := _build_signature(cmd, selected_cmd_name, -1)
+				var signature := _build_signature(cmd, selected_cmd_name, -1, [])
 				if not signature.is_empty():
 					suggestions_text += "\n" + signature
 
@@ -437,14 +439,14 @@ func _show_suggestions() -> void:
 	suggestions_label.show()
 
 ## Builds a rich text signature for the given command.
-func _build_signature(cmd: ICommand, command_name: String, current_arg_index: int) -> String:
-	var cmd_args := cmd.get_args()
+func _build_signature(cmd: ICommand, command_name: String, current_arg_index: int, current_args: Array) -> String:
+	var cmd_args := cmd.get_args_dynamic(current_args)
 	var signature := "  " + command_name
 
 	for j in range(cmd_args.size()):
 		var arg_def: Dictionary = cmd_args[j]
 		var arg_name: String = arg_def.get("name", "arg")
-		var arg_type: int = arg_def.get("type", 0)
+		var arg_type: int = arg_def.get("type", ICommand.Types.ARG_UNKNOWN)
 		var type_str: String = _get_type_string(cmd, arg_def, arg_type)
 		var is_current_arg := (j + 1 == current_arg_index)
 
