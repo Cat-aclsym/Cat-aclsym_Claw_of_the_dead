@@ -7,11 +7,11 @@ extends Control
 ## Reference to the tower being upgraded
 var tower: ITower
 
-@onready var _panel: Control = $UpgradeDescriptionTextureRect
-@onready var _stats_container: VBoxContainer = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/StatsScrollContainer/VBoxContainer
-@onready var _stats_scroll: ScrollContainer = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/StatsScrollContainer
+@onready var _panel: Control = $InfoPanel
+@onready var _stats_container: VBoxContainer = $InfoPanel/InfoVBoxContainer/StatsScrollContainer/StatsVBoxContainer
+@onready var _stats_scroll: ScrollContainer = $InfoPanel/InfoVBoxContainer/StatsScrollContainer
 @onready var _stats_db: Node = get_node("/root/StatsDB")
-@onready var _upgrade_title_label: Label = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/UpgradeTitleLabel
+@onready var _tower_title_label: Label = $InfoPanel/InfoVBoxContainer/TowerTitleLabel
 
 # Preloaded resources
 const ICON_TEXTURE: Texture2D = preload("res://assets/ui/icons/Icon Attack.svg")
@@ -22,7 +22,7 @@ const MAX_STAT_VALUE: float = 200.0
 
 # Core methods
 func _ready() -> void:
-	pass
+	Global.paused = true
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed:
@@ -37,6 +37,10 @@ func _unhandled_input(event: InputEvent) -> void:
 	if inside_panel and (event is InputEventMouseButton or (event is InputEventMouseMotion and event.button_mask != 0)):
 		get_viewport().set_input_as_handled()
 
+
+func _exit_tree() -> void:
+	Global.paused = false
+
 ## Initializes the info display with tower data
 func setup(p_tower: ITower, _upgrade_scene: PackedScene = null) -> void:
 	tower = p_tower
@@ -45,7 +49,7 @@ func setup(p_tower: ITower, _upgrade_scene: PackedScene = null) -> void:
 	var tower_name = _get_tower_name()
 	
 	# Set title and description
-	_upgrade_title_label.text = tower_name
+	_tower_title_label.text = tower_name
 	
 	# Clear existing stat displays
 	for child in _stats_container.get_children():
