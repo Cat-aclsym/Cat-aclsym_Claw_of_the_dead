@@ -23,6 +23,16 @@ grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("1_53bwk")
 
+[node name="DimOverlay" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 0.5)
+
 [node name="UpgradeDescriptionTextureRect" type="PanelContainer" parent="."]
 layout_mode = 1
 anchors_preset = 8
