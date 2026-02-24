@@ -15,7 +15,8 @@ var _current_upgrade_index: int = 0
 @onready var _confirm_button: TextureButton = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/ButtonsHBoxContainer/ConfirmButton
 @onready var _confirm_label: Label = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/ButtonsHBoxContainer/ConfirmButton/Label
 @onready var _panel: Control = $UpgradeDescriptionTextureRect
-@onready var _stats_container: VBoxContainer = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/VBoxContainer
+@onready var _stats_container: VBoxContainer = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/StatsScrollContainer/VBoxContainer
+@onready var _stats_scroll: ScrollContainer = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/StatsScrollContainer
 @onready var _upgrade_title_label: Label = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/UpgradeTitleLabel
 @onready var _tabs_container: HBoxContainer = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/TabsHBoxContainer
 @onready var _option1_button: Button = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/TabsHBoxContainer/UpgradeOption1Button
@@ -38,12 +39,24 @@ const MAX_STAT_VALUE: float = 200.0
 # Core methods
 func _ready() -> void:
 	SignalUtil.connects(signals)
+	Global.paused = true
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed:
 		var mouse_pos: Vector2 = get_global_mouse_position()
 		if _panel == null or not _panel.get_global_rect().has_point(mouse_pos):
 			queue_free()
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	var mouse_pos: Vector2 = get_global_mouse_position()
+	var inside_panel: bool = _panel != null and _panel.get_global_rect().has_point(mouse_pos)
+	if inside_panel and (event is InputEventMouseButton or (event is InputEventMouseMotion and event.button_mask != 0)):
+		get_viewport().set_input_as_handled()
+
+
+func _exit_tree() -> void:
+	Global.paused = false
 
 ## Initializes the upgrade description with tower and one or more upgrade options
 func setup(p_tower: ITower, p_upgrades: Array[PackedScene]) -> void:
@@ -81,6 +94,8 @@ func _refresh_upgrade_view() -> void:
 	for child in _stats_container.get_children():
 		child.queue_free()
 
+	var displayed_stats: int = 0
+
 	# Create dynamic stat displays for tower stats
 	for stat_name in upgrade.tower_stats.keys():
 		var stat_change: float = upgrade.tower_stats[stat_name]
@@ -98,12 +113,16 @@ func _refresh_upgrade_view() -> void:
 
 		if stat_change != 0.0:
 			_create_stat_display(stat_name, stat_change, true)
+			displayed_stats += 1
 
 	# Create dynamic stat displays for bullet stats
 	for stat_name in upgrade.bullet_stats.keys():
 		var stat_change: float = upgrade.bullet_stats[stat_name]
 		if stat_change != 0.0:
 			_create_stat_display(stat_name, stat_change, false)
+			displayed_stats += 1
+
+	_update_scroll_mode(displayed_stats)
 
 	upgrade.queue_free()
 
@@ -189,3 +208,12 @@ func _on_option2_button_pressed() -> void:
 		return
 	_current_upgrade_index = 1
 	_refresh_upgrade_view()
+
+
+func _update_scroll_mode(displayed_stats: int) -> void:
+	if _stats_scroll == null:
+		return
+	if displayed_stats > 2:
+		_stats_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
+	else:
+		_stats_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED

@@ -8,7 +8,8 @@ extends Control
 var tower: ITower
 
 @onready var _panel: Control = $UpgradeDescriptionTextureRect
-@onready var _stats_container: VBoxContainer = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/VBoxContainer
+@onready var _stats_container: VBoxContainer = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/StatsScrollContainer/VBoxContainer
+@onready var _stats_scroll: ScrollContainer = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/StatsScrollContainer
 @onready var _stats_db: Node = get_node("/root/StatsDB")
 @onready var _upgrade_title_label: Label = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/UpgradeTitleLabel
 
@@ -28,6 +29,13 @@ func _input(event: InputEvent) -> void:
 		var mouse_pos: Vector2 = get_global_mouse_position()
 		if _panel == null or not _panel.get_global_rect().has_point(mouse_pos):
 			queue_free()
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	var mouse_pos: Vector2 = get_global_mouse_position()
+	var inside_panel: bool = _panel != null and _panel.get_global_rect().has_point(mouse_pos)
+	if inside_panel and (event is InputEventMouseButton or (event is InputEventMouseMotion and event.button_mask != 0)):
+		get_viewport().set_input_as_handled()
 
 ## Initializes the info display with tower data
 func setup(p_tower: ITower, _upgrade_scene: PackedScene = null) -> void:
@@ -59,6 +67,8 @@ func setup(p_tower: ITower, _upgrade_scene: PackedScene = null) -> void:
 	_display_bullet_stat("aoe_tick")
 	_display_bullet_stat("damage_multiplier")
 	_display_bullet_stat("dot_damage")
+
+	_update_scroll_mode(_stats_container.get_child_count())
 
 ## Gets the tower name based on the tower's scene name and level
 func _get_tower_name() -> String:
@@ -118,3 +128,12 @@ func _create_stat_display(stat_name: String, current_value: float) -> void:
 	
 	# Setup the stat bar with data (current value displayed, no "new" value for info display)
 	stat_bar.setup(stat_name, 0.0, current_value, ICON_TEXTURE, MAX_STAT_VALUE)
+
+
+func _update_scroll_mode(displayed_stats: int) -> void:
+	if _stats_scroll == null:
+		return
+	if displayed_stats > 2:
+		_stats_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
+	else:
+		_stats_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
