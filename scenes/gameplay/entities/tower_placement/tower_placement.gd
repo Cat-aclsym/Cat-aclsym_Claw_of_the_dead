@@ -23,6 +23,7 @@ const BUTTON_COLOR_DISABLED := Color(0.5, 0.5, 0.5, 0.6)
 const UP_OFFSET := Vector2i(-1, -1)
 const RIGHT_OFFSET := Vector2i(0, -1)
 const LEFT_OFFSET := Vector2i(-1, 0)
+const VALID_SOURCE_ID: int = 0 # Ground Grass
 const VALID_TILES: Array[Vector2i] = [
 	Vector2i(0, 0)
 ]
@@ -325,7 +326,7 @@ func _is_buildable(pos: Vector2) -> bool:
 
 	var tm_pos: Vector2i = tm_ref.local_to_map(pos)
 
-	if not tm_ref.get_cell_atlas_coords(0, tm_pos) in VALID_TILES or tm_pos in _invalid_cells:
+	if tm_ref.get_cell_source_id(0, tm_pos) != VALID_SOURCE_ID or not tm_ref.get_cell_atlas_coords(0, tm_pos) in VALID_TILES or tm_pos in _invalid_cells:
 		return false
 
 	if tm_ref.get_cell_atlas_coords(1, tm_pos) != Vector2i(-1, -1):

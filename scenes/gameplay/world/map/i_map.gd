@@ -138,7 +138,7 @@ func _create_visual_indicator(tile_pos: Vector2i, modifier: Dictionary) -> void:
 
 func _is_tile_buildable(coords: Vector2i) -> bool:
 	# 1. Check if the base tile is valid
-	if not tilemap.get_cell_atlas_coords(0, coords) in TowerPlacement.VALID_TILES:
+	if tilemap.get_cell_source_id(0, coords) != TowerPlacement.VALID_SOURCE_ID or not tilemap.get_cell_atlas_coords(0, coords) in TowerPlacement.VALID_TILES:
 		return false
 	
 	# 2. Check if there are obstacles on layer 1 (Water Rays, etc.)
