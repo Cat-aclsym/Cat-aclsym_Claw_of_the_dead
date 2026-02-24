@@ -156,7 +156,7 @@ func _on_upgrade_button_pressed():
 		Global.hud.add_child(upgrade_menu_instance)
 	else:
 		add_child(upgrade_menu_instance)
-	upgrade_menu_instance.setup(tower, tower.available_upgrade[0])
+	upgrade_menu_instance.setup(tower, tower.available_upgrade)
 	hide_menu()
 
 
