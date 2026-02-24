@@ -60,6 +60,12 @@ var sell_price: int = 0
 ## The shooting range of the tower (overridden at runtime)
 var shoot_range: float = 0.0
 
+## Multiplier for gold rewards when this tower kills an enemy
+var reward_multiplier: float = 1.0
+
+## Dictionary of modifiers applied to this tower (stat_name -> multiplier)
+var _special_modifiers: Dictionary = {}
+
 @export_subgroup("Upgrades")
 ## The upgrade array to store upgrades that are applied in the tower
 @export var available_upgrade: Array[PackedScene]
@@ -162,6 +168,10 @@ func fire() -> void:
 		bullet_instance.direction = rotated_direction
 		bullet_instance.rotation = rotated_direction.angle()
 		bullet_instance.target = enemy_position
+		
+		# Set tower owner to allow reward multiplier logic
+		if "tower_owner" in bullet_instance:
+			bullet_instance.tower_owner = self
 
 		_apply_bullet_modifications(bullet_instance)
 		add_child(bullet_instance)
@@ -238,6 +248,62 @@ func update_dependent_properties() -> void:
 			fire_rate_timer.start()
 
 	_update_z_index()
+
+## Applies special modifiers from a map tile
+func apply_special_modifier(modifiers: Dictionary) -> void:
+	for stat in modifiers.keys():
+		_special_modifiers[stat] = modifiers[stat]
+	
+	# Re-apply base stats first to avoid stacking multipliers incorrectly
+	_apply_base_stats_override()
+	
+	# Apply modifiers to basic tower stats
+	if _special_modifiers.has("fire_rate"):
+		fire_rate *= _special_modifiers["fire_rate"]
+	if _special_modifiers.has("shoot_range"):
+		shoot_range *= _special_modifiers["shoot_range"]
+	if _special_modifiers.has("reward_multiplier"):
+		reward_multiplier *= _special_modifiers["reward_multiplier"]
+	
+	# Apply modifiers to bullet stats
+	if _special_modifiers.has("damage") and bullet_stats.has("damage"):
+		bullet_stats["damage"] = int(bullet_stats["damage"] * _special_modifiers["damage"])
+		
+	Log.trace(Log.Level.INFO, "Tower {0} stats updated with modifiers: {1}".format([name, _special_modifiers]))
+	_apply_special_visual_effect(modifiers)
+	update_dependent_properties()
+
+## Applies a visual effect to the tower based on the modifier
+func _apply_special_visual_effect(modifier: Dictionary) -> void:
+	if not modifier.has("color"):
+		return
+		
+	var effect_color = modifier["color"]
+	effect_color.a = 1.0 # Force full opacity for the color tint
+	
+	# Create a dedicated tween for the visual effect
+	var tween = create_tween().set_loops()
+	
+	# Pulse only the color between normal (White) and the modifier color (Solid Tint)
+	# No scale/zoom effect as requested
+	if animated_sprite_2d:
+		tween.tween_property(animated_sprite_2d, "modulate", effect_color, 1.0).set_trans(Tween.TRANS_SINE)
+		tween.tween_property(animated_sprite_2d, "modulate", Color.WHITE, 1.0).set_trans(Tween.TRANS_SINE)
+	elif sprite_2d:
+		tween.tween_property(sprite_2d, "modulate", effect_color, 1.0).set_trans(Tween.TRANS_SINE)
+		tween.tween_property(sprite_2d, "modulate", Color.WHITE, 1.0).set_trans(Tween.TRANS_SINE)
+	else:
+		# Fallback to the whole node
+		tween.tween_property(self, "modulate", effect_color, 1.0).set_trans(Tween.TRANS_SINE)
+		tween.tween_property(self, "modulate", Color.WHITE, 1.0).set_trans(Tween.TRANS_SINE)
+	
+	# Add a small scale effect to the whole tower as well
+	if modifier["label"].ends_with("-"):
+		var malus_tween = create_tween()
+		malus_tween.tween_property(self, "scale", Vector2(0.85, 0.85), 0.3).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	else:
+		var bonus_tween = create_tween()
+		bonus_tween.tween_property(self, "scale", Vector2(1.15, 1.15), 0.3).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 
 ## Builds the tower
 func build_tower() -> void:

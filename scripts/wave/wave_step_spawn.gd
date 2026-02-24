@@ -15,9 +15,10 @@ func exec() -> void:
 		ScenesLoader.enemies_scene[enemy_id] = load("res://scenes/gameplay/entities/enemy/enemies/%s.tscn" % enemy_id)
 
 	var enemy: IEnemy = ScenesLoader.enemies_scene[enemy_id].instantiate()
-	enemy.connect("die", ILevel.current_level._on_enemy_die)
-	EnemySpawner.spawn_enemy(ILevel.current_level.map.paths[spawner_index], enemy)
-	ILevel.current_level._on_enemy_spawn() # ! ILevel owns and contains WaveStep class, see it as a friend class
+	var level = ILevel.current_level
+	enemy.connect("die", level._on_enemy_die)
+	EnemySpawner.spawn_enemy(level.map.paths[spawner_index], enemy)
+	level._on_enemy_spawn() # ! ILevel owns and contains WaveStep class, see it as a friend class
 	_data[WaveStep.COUNT] -= 1
 
 
