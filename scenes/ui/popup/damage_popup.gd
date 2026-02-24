@@ -12,6 +12,8 @@ var is_critical: bool = false
 
 # Private variables
 @onready var _label: Label = $Label
+var _is_rainbow: bool = false
+var _hue: float = 0.0
 
 # Built-in functions
 func _ready() -> void:
@@ -19,11 +21,16 @@ func _ready() -> void:
 	z_index = 4096
 	z_as_relative = false
 	
-	_label.text = str(round(amount))
+	var rounded_amount = round(amount)
+	_label.text = str(rounded_amount)
 	_label.modulate = color
 	
+	# Rainbow effect trigger
+	if rounded_amount == 67:
+		_is_rainbow = true
+	
 	# Scale and position setup
-	if is_critical:
+	if is_critical and not _is_rainbow:
 		_label.modulate = Color.YELLOW
 	
 	# Initial position and setup
@@ -51,3 +58,8 @@ func _ready() -> void:
 	
 	# 5. Cleanup
 	tween.tween_callback(queue_free)
+
+func _process(delta: float) -> void:
+	if _is_rainbow:
+		_hue = fmod(_hue + delta * 2.0, 1.0)
+		_label.modulate = Color.from_hsv(_hue, 0.8, 1.0)
