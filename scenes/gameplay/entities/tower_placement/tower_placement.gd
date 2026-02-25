@@ -60,6 +60,7 @@ var _invalid_cells: Array[Vector2i] = []
 var _is_dragging: bool = false
 var _is_holding_click: bool = false
 var _is_move_tower_available: bool = true
+var _last_tm_pos: Vector2i = Vector2i(-1, -1)
 var _state: CursorState = CursorState.IDLE
 var _tower: ITower = null
 
@@ -180,7 +181,25 @@ func _state_build(tower: ITower = null) -> void:
 		_tower.position = cursor.position - Vector2(0, 16)
 		add_child(_tower)
 
+		# Ensure range is visible during placement preview (instantly)
+		_tower.show_range(true, false)
+
 	_tower.position = cursor.position - Vector2(0, 16)
+	var tm_pos: Vector2i = tm_ref.local_to_map(cursor.global_position)
+	
+	# Update special modifiers in real-time based on current tile
+	if tm_pos != _last_tm_pos:
+		_last_tm_pos = tm_pos
+		var current_level = ILevel.current_level
+		if current_level and current_level.map:
+			var map = current_level.map
+			if map.special_tiles.has(tm_pos):
+				var modifier = map.special_tiles[tm_pos]
+				_tower.apply_special_modifier(modifier)
+			else:
+				# Clear modifiers if the tile is not special
+				_tower.apply_special_modifier({})
+
 	var is_buildable := _is_buildable(cursor.position)
 	_tower.modulate = COLOR_OK if is_buildable else COLOR_KO
 	_update_place_button_state(is_buildable)
@@ -272,8 +291,17 @@ func _state_upgrade() -> void:
 func _cancel_build() -> void:
 	cursor.visible = false
 	place_hud.visible = false
-	_tower.queue_free()
-	_tower = null
+	if _tower:
+		var t := _tower
+		_tower = null # Clear reference immediately
+		t.show_range(false, true)
+		
+		# Fade out the tower preview smoothly
+		var tween = create_tween()
+		tween.tween_property(t, "modulate:a", 0.0, 0.2)
+		tween.tween_callback(t.queue_free)
+		
+	_last_tm_pos = Vector2i(-1, -1)
 	change_state(CursorState.IDLE)
 
 func _build() -> void:
@@ -286,6 +314,7 @@ func _build() -> void:
 	var new_tower: ITower = _tower.duplicate()
 	new_tower.state = ITower.TowerState.ACTIVE
 	new_tower.modulate = Color(1, 1, 1, 1) # Ensure the tower is fully opaque when placed
+	new_tower.show_range(false, false) # Hide range instantly on the placed tower
 	new_tower.name = "t%d" % tower_count
 	
 	var current_level = ILevel.current_level

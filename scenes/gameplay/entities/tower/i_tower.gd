@@ -112,6 +112,9 @@ var target: IEnemy
 var target_type: TargetType
 ## The pending upgrade to be applied
 var pending_upgrade: PackedScene
+var _pulse_tween: Tween = null
+var _scale_tween: Tween = null
+var _range_tween: Tween = null
 @onready var stats_db = get_node("/root/StatsDB")
 @export var tower_id: String = ""
 
@@ -122,6 +125,8 @@ func _ready() -> void:
 	sell_price = ceil(cost / 2.0)
 	hover_box.z_index = 3
 	update_dependent_properties()
+	# Sync range visibility with selected state (especially for duplicated towers)
+	show_range(selected, false)
 	if animated_sprite_2d and animated_sprite_2d.sprite_frames and animated_sprite_2d.sprite_frames.has_animation("idle"):
 		animated_sprite_2d.play("idle")
 	SignalUtil.connects(signals)
@@ -254,8 +259,11 @@ func update_dependent_properties() -> void:
 
 ## Applies special modifiers from a map tile
 func apply_special_modifier(modifiers: Dictionary) -> void:
-	for stat in modifiers.keys():
-		_special_modifiers[stat] = modifiers[stat]
+	if modifiers.is_empty():
+		_special_modifiers.clear()
+	else:
+		for stat in modifiers.keys():
+			_special_modifiers[stat] = modifiers[stat]
 	
 	# Re-apply base stats first to avoid stacking multipliers incorrectly
 	_apply_base_stats_override()
@@ -278,35 +286,64 @@ func apply_special_modifier(modifiers: Dictionary) -> void:
 
 ## Applies a visual effect to the tower based on the modifier
 func _apply_special_visual_effect(modifier: Dictionary) -> void:
+	if _pulse_tween:
+		_pulse_tween.kill()
+		_pulse_tween = null
+	if _scale_tween:
+		_scale_tween.kill()
+		_scale_tween = null
+	
+	# Reset visual state if no modifier or no color
 	if not modifier.has("color"):
+		if animated_sprite_2d:
+			animated_sprite_2d.modulate = Color.WHITE
+			animated_sprite_2d.scale = Vector2(1, 1)
+		elif sprite_2d:
+			sprite_2d.modulate = Color.WHITE
+			sprite_2d.scale = Vector2(1, 1)
+		else:
+			self.modulate = Color.WHITE
+			self.scale = Vector2(1, 1)
 		return
 		
 	var effect_color = modifier["color"]
 	effect_color.a = 1.0 # Force full opacity for the color tint
 	
 	# Create a dedicated tween for the visual effect
-	var tween = create_tween().set_loops()
+	_pulse_tween = create_tween().set_loops()
 	
 	# Pulse only the color between normal (White) and the modifier color (Solid Tint)
 	# No scale/zoom effect as requested
 	if animated_sprite_2d:
-		tween.tween_property(animated_sprite_2d, "modulate", effect_color, 1.0).set_trans(Tween.TRANS_SINE)
-		tween.tween_property(animated_sprite_2d, "modulate", Color.WHITE, 1.0).set_trans(Tween.TRANS_SINE)
+		_pulse_tween.tween_property(animated_sprite_2d, "modulate", effect_color, 1.0).set_trans(Tween.TRANS_SINE)
+		_pulse_tween.tween_property(animated_sprite_2d, "modulate", Color.WHITE, 1.0).set_trans(Tween.TRANS_SINE)
 	elif sprite_2d:
-		tween.tween_property(sprite_2d, "modulate", effect_color, 1.0).set_trans(Tween.TRANS_SINE)
-		tween.tween_property(sprite_2d, "modulate", Color.WHITE, 1.0).set_trans(Tween.TRANS_SINE)
+		_pulse_tween.tween_property(sprite_2d, "modulate", effect_color, 1.0).set_trans(Tween.TRANS_SINE)
+		_pulse_tween.tween_property(sprite_2d, "modulate", Color.WHITE, 1.0).set_trans(Tween.TRANS_SINE)
 	else:
 		# Fallback to the whole node
-		tween.tween_property(self, "modulate", effect_color, 1.0).set_trans(Tween.TRANS_SINE)
-		tween.tween_property(self, "modulate", Color.WHITE, 1.0).set_trans(Tween.TRANS_SINE)
+		_pulse_tween.tween_property(self, "modulate", effect_color, 1.0).set_trans(Tween.TRANS_SINE)
+		_pulse_tween.tween_property(self, "modulate", Color.WHITE, 1.0).set_trans(Tween.TRANS_SINE)
 	
-	# Add a small scale effect to the whole tower as well
-	if modifier["label"].ends_with("-"):
-		var malus_tween = create_tween()
-		malus_tween.tween_property(self, "scale", Vector2(0.85, 0.85), 0.3).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	# Add a small scale effect only to the tower sprite
+	_scale_tween = create_tween()
+	var target_sprite: Node2D = null
+	if animated_sprite_2d:
+		target_sprite = animated_sprite_2d
+	elif sprite_2d:
+		target_sprite = sprite_2d
+	
+	if target_sprite:
+		if modifier["label"].ends_with("-"):
+			_scale_tween.tween_property(target_sprite, "scale", Vector2(0.85, 0.85), 0.3).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+		else:
+			_scale_tween.tween_property(target_sprite, "scale", Vector2(1.15, 1.15), 0.3).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	else:
-		var bonus_tween = create_tween()
-		bonus_tween.tween_property(self, "scale", Vector2(1.15, 1.15), 0.3).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+		# Fallback to the whole node if no sprite is found
+		if modifier["label"].ends_with("-"):
+			_scale_tween.tween_property(self, "scale", Vector2(0.85, 0.85), 0.3).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+		else:
+			_scale_tween.tween_property(self, "scale", Vector2(1.15, 1.15), 0.3).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 
 ## Builds the tower
 func build_tower() -> void:
@@ -318,18 +355,47 @@ func sell_tower() -> void:
 	queue_free()
 
 # Private methods
-## Animates the range display based on the selected state
-func _animate_range_display() -> void:
-	var target_scale := Vector2(1, 1) if selected else Vector2(0, 0)
-	polygon_2d.visible = selected
-	var size: float = 0
-	while size < 1:
-		polygon_2d.scale = lerp(polygon_2d.scale, target_scale, size)
-		await get_tree().create_timer(0.01).timeout
-		size += 0.1
+## Animates the range display
+func show_range(p_show: bool, smooth: bool = true) -> void:
+	selected = p_show
+	
+	# If not in tree yet, the @onready variables aren't initialized.
+	# We just set the state and return; visuals will be handled by the scene's default state
+	# or subsequent calls once ready.
+	if not is_node_ready() or polygon_2d == null or outline == null:
+		return
 
-	if selected:
+	if _range_tween:
+		_range_tween.kill()
+	
+	if p_show:
+		selected = true
+		polygon_2d.visible = true
+		outline.visible = true
+		if smooth:
+			_range_tween = create_tween().set_parallel(true)
+			_range_tween.tween_property(polygon_2d, "scale", Vector2(1, 1), 0.2).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+			_range_tween.tween_property(outline, "scale", Vector2(1, 1), 0.2).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		else:
+			polygon_2d.scale = Vector2(1, 1)
+			outline.scale = Vector2(1, 1)
 		_color_variation()
+	else:
+		selected = false
+		if smooth:
+			_range_tween = create_tween().set_parallel(true)
+			_range_tween.tween_property(polygon_2d, "scale", Vector2(0, 0), 0.2).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+			_range_tween.tween_property(outline, "scale", Vector2(0, 0), 0.2).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+			_range_tween.set_parallel(false)
+			_range_tween.tween_callback(func(): 
+				polygon_2d.visible = false
+				outline.visible = false
+			)
+		else:
+			polygon_2d.scale = Vector2(0, 0)
+			outline.scale = Vector2(0, 0)
+			polygon_2d.visible = false
+			outline.visible = false
 
 func _apply_tower_stat_changes(upgrade: IUpgrade) -> void:
 	for stat in upgrade.tower_stats.keys():
@@ -471,7 +537,7 @@ func _get_random_target():
 ## Function to interpolate between two values.
 func _color_variation() -> void:
 	## Check if the tower is selected
-	if not selected or _cancel_animations:
+	if not selected or _cancel_animations or polygon_2d == null:
 		return
 	## Set the initial lerp state to 1
 	var lerp_state: float = 1
@@ -512,26 +578,12 @@ func _on_area_2d_area_exited(area: Area2D) -> void:
 func _on_tower_hover_box_mouse_entered() -> void:
 	if _menu_open:
 		return
-	selected = true
-	polygon_2d.visible = true
-	outline.visible = true
-	var size: float = 0
-	while size < 1:
-		polygon_2d.scale = lerp(polygon_2d.scale, Vector2(1, 1), size)
-		await get_tree().create_timer(0.01).timeout
-		size += 0.1
-		_color_variation()
+	show_range(true)
 
 func _on_tower_hover_box_mouse_exited() -> void:
-	selected = false
-	_cancel_animations = false
-	var size: float = 0
-	while size < 1:
-		polygon_2d.scale = lerp(polygon_2d.scale, Vector2(0, 0), size)
-		await get_tree().create_timer(0.01).timeout
-		size += 0.1
-	polygon_2d.visible = false
-	outline.visible = false
+	if _menu_open:
+		return
+	show_range(false)
 
 func _on_timer_timeout() -> void:
 	$ProgressBar.value += 1
@@ -559,14 +611,12 @@ func _on_tower_pressed() -> void:
 	tower_upgrade_menu_instance.position = position
 	tower_upgrade_menu_instance.name = "TowerUpgrade"
 	self.add_child(tower_upgrade_menu_instance)
-	# Hide the selection frame when clicked
+	
+	# Keep range visible while menu is open
 	_menu_open = true
-	_cancel_animations = true
-	polygon_2d.visible = false
-	outline.visible = false
-	polygon_2d.scale = Vector2(0, 0)
-	selected = false
+	show_range(true)
+	
 	# Hide the menu when closed
 	await tower_upgrade_menu_instance.tree_exited
 	_menu_open = false
-	_cancel_animations = false
+	show_range(false)
