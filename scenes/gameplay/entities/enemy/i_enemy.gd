@@ -51,9 +51,9 @@ const ANIM_WALK_DOWN := "walk_down"
 
 ## Damage configuration for different damage types
 const DAMAGES: Dictionary = {
-	DamageType.DEFAULT: {"color": Color(0.7, 0.5, 0.5, 1)},
-	DamageType.POISON: {"color": Color(0.7, 0.5, 0.7, 1)},
-	DamageType.FIRE: {"color": Color(1.0, 0.3, 0.1, 1)},
+	DamageType.DEFAULT: {"color": Color(1.0, 1.0, 1.0, 1)}, # White for better visibility
+	DamageType.POISON: {"color": Color(0.4, 1.0, 0.4, 1)}, # Brighter green
+	DamageType.FIRE: {"color": Color(1.0, 0.6, 0.2, 1)},   # Brighter orange/fire
 }
 
 
@@ -143,6 +143,9 @@ func take_damage(damage: float, damage_type: DamageType, source: Variant = null)
 	last_damage_type = damage_type
 	last_source = source
 	_damage_effect(DAMAGES[damage_type]["color"])
+	
+	if popup_score_spawner:
+		popup_score_spawner.display_damage(damage, DAMAGES[damage_type]["color"])
 
 	if source:
 		ChallengeManager.notify_enemy_hit(self, source)
