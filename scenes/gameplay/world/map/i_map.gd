@@ -71,11 +71,44 @@ func _generate_special_tiles() -> void:
 	
 	Log.trace(Log.Level.INFO, "Found {0} buildable tiles for special tiles".format([buildable_tiles.size()]))
 	
-	if buildable_tiles.size() < 6:
-		Log.trace(Log.Level.WARN, "Not enough buildable tiles for special tiles")
+	if paths.is_empty():
+		Log.trace(Log.Level.WARN, "No enemy paths defined, cannot place special tiles near paths")
 		return
 	
-	buildable_tiles.shuffle()
+	var origin := tilemap.map_to_local(Vector2i.ZERO)
+	var neighbor := tilemap.map_to_local(Vector2i(1, 0))
+	var tile_step_distance: float = origin.distance_to(neighbor)
+	if tile_step_distance <= 0.0:
+		tile_step_distance = 32.0
+	
+	var min_distance_to_path: float = tile_step_distance * 1.0
+	var max_distance_to_path: float = tile_step_distance * 2.0
+	
+	var near_path_tiles: Array[Vector2i] = []
+	for coords in buildable_tiles:
+		var world_pos := tilemap.map_to_local(coords)
+		var min_distance := INF
+		
+		for path in paths:
+			if path.curve:
+				var closest_point = path.curve.get_closest_point(path.to_local(world_pos))
+				var distance = world_pos.distance_to(path.to_global(closest_point))
+				if distance < min_distance:
+					min_distance = distance
+		
+		if min_distance >= min_distance_to_path and min_distance <= max_distance_to_path:
+			near_path_tiles.append(coords)
+	
+	Log.trace(
+		Log.Level.INFO,
+		"Found {0} tiles at 2-3 tiles distance from paths for special tiles".format([near_path_tiles.size()])
+	)
+	
+	if near_path_tiles.size() < 6:
+		Log.trace(Log.Level.WARN, "Not enough tiles near paths for special tiles")
+		return
+	
+	near_path_tiles.shuffle()
 	
 	var bonus_types = [
 		{"fire_rate": 1.3, "color": Color(0.2, 1.0, 0.2, 0.5), "label": "SPEED+"},
@@ -91,7 +124,7 @@ func _generate_special_tiles() -> void:
 	
 	# Place 3 bonuses
 	for i in range(3):
-		var tile_pos = buildable_tiles.pop_back()
+		var tile_pos = near_path_tiles.pop_back()
 		var modifier = bonus_types[i % bonus_types.size()]
 		special_tiles[tile_pos] = modifier
 		_create_visual_indicator(tile_pos, modifier)
@@ -99,7 +132,7 @@ func _generate_special_tiles() -> void:
 		
 	# Place 3 maluses
 	for i in range(3):
-		var tile_pos = buildable_tiles.pop_back()
+		var tile_pos = near_path_tiles.pop_back()
 		var modifier = malus_types[i % malus_types.size()]
 		special_tiles[tile_pos] = modifier
 		_create_visual_indicator(tile_pos, modifier)
