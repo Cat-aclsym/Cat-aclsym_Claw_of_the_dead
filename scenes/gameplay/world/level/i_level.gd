@@ -39,6 +39,7 @@ var health: int = 20: set = _set_health
 
 # Private Variables
 var _enemies_alive: int = 0
+var _time_scale_before_pause: float = 1.0
 
 
 @onready var popup_spawner: PopupSpawner = $PopupSpawner
@@ -189,7 +190,7 @@ func _on_state_defeat(_args = []) -> bool:
 
 func _on_state_pause(_args = []) -> bool:
 	Log.trace(Log.Level.INFO, "Entering PAUSE state.")
-	get_tree().paused = true
+	_time_scale_before_pause = Engine.time_scale if Engine.time_scale > 0 else 1.0
 	Engine.time_scale = 0
 	Log.trace(Log.Level.INFO, "Game paused")
 	return true
@@ -222,6 +223,25 @@ func _on_enemy_die() -> void:
 
 func _on_enemy_spawn() -> void:
 	_enemies_alive += 1
+
+
+## Applies pause (time_scale = 0) when the state machine cannot transition directly.
+func request_pause() -> void:
+	_time_scale_before_pause = Engine.time_scale if Engine.time_scale > 0 else 1.0
+	Engine.time_scale = 0
+
+
+## Restores time scale without state transition.
+func request_resume() -> void:
+	Engine.time_scale = _time_scale_before_pause
+
+
+## Resumes the game from pause state.
+## [br]Restores time scale, then transitions back to current wave if in PAUSE state.
+func resume_from_pause() -> void:
+	request_resume()
+	if state_machine.get_current_state().name == STATE_PAUSE:
+		state_machine.toggle_state(STATE_WAVE % current_wave)
 
 
 ## Update player's coin count
