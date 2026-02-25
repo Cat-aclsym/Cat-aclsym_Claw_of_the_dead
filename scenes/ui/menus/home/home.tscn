@@ -1,12 +1,13 @@
-[gd_scene load_steps=10 format=3 uid="uid://cqfsr6yjn6hm8"]
+[gd_scene load_steps=11 format=3 uid="uid://cqfsr6yjn6hm8"]
 
 [ext_resource type="Script" uid="uid://cibbgvfpeyya0" path="res://scenes/ui/menus/home/home.gd" id="1_dvove"]
-[ext_resource type="Texture2D" uid="uid://dbhkk633ispub" path="res://assets/ui/buttons/Bouton Bleu@2x.png" id="3_0g4o3"]
+[ext_resource type="Texture2D" uid="uid://deifsvtkdkqo1" path="res://assets/ui/buttons/Bouton Bleu.svg" id="3_0g4o3"]
 [ext_resource type="Texture2D" uid="uid://bsir4xrig5yqd" path="res://assets/ui/icons/LogoChatVertFonce.png" id="3_gislx"]
 [ext_resource type="Texture2D" uid="uid://c2pj8fxbv5usu" path="res://assets/ui/icons/LogoTypoBlancTransp.png" id="4_aa1tm"]
 [ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="4_ay1j5"]
-[ext_resource type="Texture2D" uid="uid://cdaralngqjlvk" path="res://assets/ui/buttons/Bouton Vert@2x.png" id="5_db01i"]
+[ext_resource type="Texture2D" uid="uid://nsf3nkto3p0t" path="res://assets/ui/buttons/Bouton Vert.svg" id="5_db01i"]
 [ext_resource type="Texture2D" uid="uid://cvut87og2mth" path="res://assets/ui/buttons/Bouton orange.svg" id="6_tu8js"]
+[ext_resource type="Texture2D" uid="uid://c1f4e2f8oknku" path="res://assets/ui/icons/exclamation.png" id="7_exclamation"]
 
 [sub_resource type="Gradient" id="Gradient_p68sa"]
 interpolation_mode = 2
@@ -99,24 +100,20 @@ stretch_mode = 5
 [node name="HomeScreenVBoxContainer" type="VBoxContainer" parent="GuiMarginContainer/GuiHBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
+theme_override_constants/separation = 20
+alignment = 1
 
-[node name="PlayMarginContainer" type="MarginContainer" parent="GuiMarginContainer/GuiHBoxContainer/HomeScreenVBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-size_flags_stretch_ratio = 2.5
-theme_override_constants/margin_left = 10
-theme_override_constants/margin_top = 40
-theme_override_constants/margin_right = 10
-
-[node name="PlayButton" type="TextureButton" parent="GuiMarginContainer/GuiHBoxContainer/HomeScreenVBoxContainer/PlayMarginContainer"]
+[node name="PlayButton" type="TextureButton" parent="GuiMarginContainer/GuiHBoxContainer/HomeScreenVBoxContainer"]
+unique_name_in_owner = true
 texture_filter = 6
+custom_minimum_size = Vector2(500, 160)
 layout_mode = 2
-size_flags_vertical = 3
+size_flags_horizontal = 4
 texture_normal = ExtResource("3_0g4o3")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="PlayLabel" type="Label" parent="GuiMarginContainer/GuiHBoxContainer/HomeScreenVBoxContainer/PlayMarginContainer/PlayButton"]
+[node name="PlayLabel" type="Label" parent="GuiMarginContainer/GuiHBoxContainer/HomeScreenVBoxContainer/PlayButton"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -133,21 +130,34 @@ horizontal_alignment = 1
 vertical_alignment = 1
 uppercase = true
 
-[node name="EncyclopediaMarginContainer" type="MarginContainer" parent="GuiMarginContainer/GuiHBoxContainer/HomeScreenVBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-theme_override_constants/margin_left = 60
-theme_override_constants/margin_right = 50
-
-[node name="EncyclopediaButton" type="TextureButton" parent="GuiMarginContainer/GuiHBoxContainer/HomeScreenVBoxContainer/EncyclopediaMarginContainer"]
+[node name="EncyclopediaButton" type="TextureButton" parent="GuiMarginContainer/GuiHBoxContainer/HomeScreenVBoxContainer"]
+unique_name_in_owner = true
 texture_filter = 6
+custom_minimum_size = Vector2(350, 110)
 layout_mode = 2
-size_flags_vertical = 3
+size_flags_horizontal = 4
 texture_normal = ExtResource("6_tu8js")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="EncyclopediaLabel" type="Label" parent="GuiMarginContainer/GuiHBoxContainer/HomeScreenVBoxContainer/EncyclopediaMarginContainer/EncyclopediaButton"]
+[node name="EncyclopediaExclamation" type="TextureRect" parent="GuiMarginContainer/GuiHBoxContainer/HomeScreenVBoxContainer/EncyclopediaButton"]
+unique_name_in_owner = true
+visible = false
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -20.0
+offset_top = -10.0
+offset_right = 10.0
+offset_bottom = 20.0
+grow_horizontal = 0
+texture = ExtResource("7_exclamation")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="EncyclopediaLabel" type="Label" parent="GuiMarginContainer/GuiHBoxContainer/HomeScreenVBoxContainer/EncyclopediaButton"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -164,21 +174,17 @@ horizontal_alignment = 1
 vertical_alignment = 1
 uppercase = true
 
-[node name="SettingsMarginContainer" type="MarginContainer" parent="GuiMarginContainer/GuiHBoxContainer/HomeScreenVBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-theme_override_constants/margin_left = 60
-theme_override_constants/margin_right = 50
-
-[node name="SettingsButton" type="TextureButton" parent="GuiMarginContainer/GuiHBoxContainer/HomeScreenVBoxContainer/SettingsMarginContainer"]
+[node name="SettingsButton" type="TextureButton" parent="GuiMarginContainer/GuiHBoxContainer/HomeScreenVBoxContainer"]
+unique_name_in_owner = true
 texture_filter = 6
+custom_minimum_size = Vector2(350, 110)
 layout_mode = 2
-size_flags_vertical = 3
+size_flags_horizontal = 4
 texture_normal = ExtResource("5_db01i")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="SettingsLabel" type="Label" parent="GuiMarginContainer/GuiHBoxContainer/HomeScreenVBoxContainer/SettingsMarginContainer/SettingsButton"]
+[node name="SettingsLabel" type="Label" parent="GuiMarginContainer/GuiHBoxContainer/HomeScreenVBoxContainer/SettingsButton"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0

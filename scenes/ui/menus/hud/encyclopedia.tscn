@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://divtcu2mbquip"]
+[gd_scene load_steps=11 format=3 uid="uid://divtcu2mbquip"]
 
 [ext_resource type="Script" uid="uid://boqaeq5svhocn" path="res://scenes/ui/menus/hud/encyclopedia.gd" id="1_ency"]
 [ext_resource type="Texture2D" uid="uid://mshwayfrielr" path="res://assets/ui/huds/encyclopedie_ennemis.png" id="2_bg_ennemis"]
@@ -8,6 +8,7 @@
 [ext_resource type="Texture2D" uid="uid://sdmr73qrumef" path="res://assets/ui/icons/encyclopedia_left.png" id="5_fwnpo"]
 [ext_resource type="Texture2D" uid="uid://bdi8iy6d6hp61" path="res://assets/ui/icons/encyclopedia_right.png" id="6_5dtmo"]
 [ext_resource type="Texture2D" uid="uid://bmtlovs16utgc" path="res://assets/ui/icons/encyclopedia_bottom.png" id="7_scroll_arrow"]
+[ext_resource type="Texture2D" uid="uid://c1f4e2f8oknku" path="res://assets/ui/icons/exclamation.png" id="8_exclamation"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_bg"]
 atlas = ExtResource("2_bg_ennemis")
@@ -41,24 +42,7 @@ texture = SubResource("AtlasTexture_bg")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="GuiMarginContainer" type="MarginContainer" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-theme_override_constants/margin_left = 40
-theme_override_constants/margin_top = 40
-theme_override_constants/margin_right = 40
-theme_override_constants/margin_bottom = 40
-
-[node name="MenuLayout" type="Control" parent="GuiMarginContainer"]
-layout_mode = 2
-mouse_filter = 2
-
-[node name="TowersButton" type="TextureButton" parent="GuiMarginContainer/MenuLayout"]
+[node name="TowersButton" type="TextureButton" parent="BackgroundContainer/BackgroundTexture"]
 unique_name_in_owner = true
 layout_mode = 0
 offset_left = 291.0
@@ -68,7 +52,24 @@ offset_bottom = 72.0
 ignore_texture_size = true
 stretch_mode = 0
 
-[node name="EnemiesButton" type="TextureButton" parent="GuiMarginContainer/MenuLayout"]
+[node name="TowersExclamation" type="TextureRect" parent="BackgroundContainer/BackgroundTexture/TowersButton"]
+unique_name_in_owner = true
+visible = false
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -15.0
+offset_top = 30.0
+offset_right = 15.0
+offset_bottom = 60.0
+grow_horizontal = 0
+texture = ExtResource("8_exclamation")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="EnemiesButton" type="TextureButton" parent="BackgroundContainer/BackgroundTexture"]
 unique_name_in_owner = true
 layout_mode = 0
 offset_left = 213.0
@@ -78,6 +79,36 @@ offset_bottom = 72.0
 ignore_texture_size = true
 stretch_mode = 0
 
+[node name="EnemiesExclamation" type="TextureRect" parent="BackgroundContainer/BackgroundTexture/EnemiesButton"]
+unique_name_in_owner = true
+visible = false
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -15.0
+offset_top = 30.0
+offset_right = 15.0
+offset_bottom = 60.0
+grow_horizontal = 0
+texture = ExtResource("8_exclamation")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="GuiMarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="MenuLayout" type="Control" parent="GuiMarginContainer"]
+layout_mode = 2
+mouse_filter = 2
+
 [node name="CloseTextureButton" type="TextureButton" parent="GuiMarginContainer/MenuLayout"]
 unique_name_in_owner = true
 texture_filter = 6
@@ -86,10 +117,10 @@ layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -54.0
-offset_top = 4.0
-offset_right = -14.0
-offset_bottom = 44.0
+offset_left = -100.0
+offset_top = 20.0
+offset_right = -60.0
+offset_bottom = 60.0
 grow_horizontal = 0
 texture_normal = ExtResource("3_close")
 ignore_texture_size = true
@@ -130,17 +161,27 @@ theme_override_font_sizes/font_size = 48
 text = "ITEM NAME"
 horizontal_alignment = 1
 
-[node name="SpriteAspectRatio" type="AspectRatioContainer" parent="GuiMarginContainer/MenuLayout/ContentLayout/LeftPageVBox"]
-layout_mode = 2
-size_flags_vertical = 3
-mouse_filter = 2
-
-[node name="SpriteRect" type="TextureRect" parent="GuiMarginContainer/MenuLayout/ContentLayout/LeftPageVBox/SpriteAspectRatio"]
+[node name="SpriteRect" type="TextureRect" parent="GuiMarginContainer/MenuLayout/ContentLayout/LeftPageVBox"]
 unique_name_in_owner = true
 texture_filter = 1
 layout_mode = 2
-size_flags_horizontal = 3
 size_flags_vertical = 3
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ItemExclamation" type="TextureRect" parent="GuiMarginContainer/MenuLayout/ContentLayout/LeftPageVBox/SpriteRect"]
+unique_name_in_owner = true
+visible = false
+texture_filter = 1
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -40.0
+offset_bottom = 40.0
+grow_horizontal = 0
+texture = ExtResource("8_exclamation")
 expand_mode = 1
 stretch_mode = 5
 
@@ -212,13 +253,16 @@ unique_name_in_owner = true
 texture_filter = 1
 custom_minimum_size = Vector2(45, 50)
 layout_mode = 1
-anchors_preset = 2
+anchors_preset = 7
+anchor_left = 0.5
 anchor_top = 1.0
+anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = 185.0
-offset_top = -116.0
-offset_right = 230.0
-offset_bottom = -66.0
+offset_left = -310.0
+offset_top = -145.0
+offset_right = -265.0
+offset_bottom = -95.0
+grow_horizontal = 2
 grow_vertical = 0
 texture_normal = ExtResource("5_fwnpo")
 ignore_texture_size = true
@@ -229,16 +273,16 @@ unique_name_in_owner = true
 texture_filter = 1
 custom_minimum_size = Vector2(45, 50)
 layout_mode = 1
-anchors_preset = 3
-anchor_left = 1.0
+anchors_preset = 7
+anchor_left = 0.5
 anchor_top = 1.0
-anchor_right = 1.0
+anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -209.0
-offset_top = -116.0
-offset_right = -164.0
-offset_bottom = -66.0
-grow_horizontal = 0
+offset_left = 265.0
+offset_top = -145.0
+offset_right = 310.0
+offset_bottom = -95.0
+grow_horizontal = 2
 grow_vertical = 0
 texture_normal = ExtResource("6_5dtmo")
 ignore_texture_size = true

@@ -49,31 +49,21 @@ var _page_total_frames: int = 10
 
 ## Background texture used for the encyclopedia pages.
 @onready var background_texture: TextureRect = %BackgroundTexture
-## Button to close the encyclopedia.
 @onready var close_button: TextureButton = %CloseTextureButton
-## Layout containing the main encyclopedia content.
 @onready var content_layout: Control = %ContentLayout
-## Button to switch to the enemies category.
 @onready var enemies_button: TextureButton = %EnemiesButton
-## Label for the entity name.
+@onready var enemies_exclamation: TextureRect = %EnemiesExclamation
+@onready var item_exclamation: TextureRect = %ItemExclamation
 @onready var name_label: Label = %NameLabel
-## Button to view the next entity.
 @onready var next_button: TextureButton = %NextButton
-## Button to view the previous entity.
 @onready var prev_button: TextureButton = %PrevButton
-## Visual indicator for downward scrolling.
 @onready var scroll_indicator: TextureRect = %ScrollIndicator
-## Visual indicator for upward scrolling.
 @onready var scroll_indicator_top: TextureRect = %ScrollIndicatorTop
-## Texture rect displaying the entity's visual.
 @onready var sprite_rect: TextureRect = %SpriteRect
-## Grid container for entity statistics.
 @onready var stats_grid: GridContainer = %StatsGrid
-## Scroll container for the stats grid.
 @onready var stats_scroll: ScrollContainer = $GuiMarginContainer/MenuLayout/ContentLayout/RightPageVBox/StatsScroll
-## Button to switch to the towers category.
 @onready var towers_button: TextureButton = %TowersButton
-
+@onready var towers_exclamation: TextureRect = %TowersExclamation
 ## List of signal connections for UI elements, must be last because it uses onready vars.
 @onready var signals: Array[Dictionary] = [
 	{SignalUtil.TO: _on_close_pressed, SignalUtil.WHAT: "pressed", SignalUtil.WHO: close_button},
@@ -424,6 +414,12 @@ func _update_background_texture() -> void:
 			_set_background_frame(0)
 
 
+## Updates visibility of category exclamation marks.
+func _update_category_exclamations() -> void:
+	enemies_exclamation.visible = ProgressionManager.has_unseen_encyclopedia_enemies()
+	towers_exclamation.visible = ProgressionManager.has_unseen_encyclopedia_towers()
+
+
 ## Starts the page turn animation or updates the display instantly.
 ## [param p_animate] Whether to use an animation.
 ## [param p_direction] Animation direction (1 or -1).
@@ -451,8 +447,20 @@ func _update_ui_elements() -> void:
 	var is_discovered: bool = false
 	if _current_category == "TOWERS":
 		is_discovered = ProgressionManager.is_tower_unlocked(entry["id"])
+		if is_discovered:
+			item_exclamation.visible = not ProgressionManager.is_tower_encyclopedia_seen(entry["id"])
+			ProgressionManager.mark_tower_encyclopedia_seen(entry["id"])
+		else:
+			item_exclamation.visible = false
 	else:
 		is_discovered = ProgressionManager.is_enemy_seen(entry["id"])
+		if is_discovered:
+			item_exclamation.visible = not ProgressionManager.is_enemy_encyclopedia_seen(entry["id"])
+			ProgressionManager.mark_enemy_encyclopedia_seen(entry["id"])
+		else:
+			item_exclamation.visible = false
+
+	_update_category_exclamations()
 
 	# Clear previous stats
 	for child in stats_grid.get_children():
