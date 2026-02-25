@@ -1,4 +1,4 @@
-## © [2024] A7 Studio. All rights reserved. Trademark.
+## © [2026] A7 Studio. All rights reserved. Trademark.
 ##
 ## Handles tower placement mechanics in the game.
 ## [br]
@@ -23,6 +23,7 @@ const BUTTON_COLOR_DISABLED := Color(0.5, 0.5, 0.5, 0.6)
 const UP_OFFSET := Vector2i(-1, -1)
 const RIGHT_OFFSET := Vector2i(0, -1)
 const LEFT_OFFSET := Vector2i(-1, 0)
+## Base TileMap constraints for tower placement
 const VALID_SOURCE_ID: int = 0 # Ground Grass
 const VALID_TILES: Array[Vector2i] = [
 	Vector2i(0, 0)
@@ -180,7 +181,7 @@ func _state_build(tower: ITower = null) -> void:
 		add_child(_tower)
 
 	_tower.position = cursor.position - Vector2(0, 16)
-	var is_buildable := _is_buildable(_tower.position)
+	var is_buildable := _is_buildable(cursor.position)
 	_tower.modulate = COLOR_OK if is_buildable else COLOR_KO
 	_update_place_button_state(is_buildable)
 
@@ -192,7 +193,7 @@ func _state_build(tower: ITower = null) -> void:
 		hover_area.monitorable = false
 		hover_area.input_pickable = false
 	# Use the placement area position (cursor position) for validation, not the tower position
-	_tower.modulate = COLOR_OK if _is_buildable(cursor.position) else COLOR_KO
+	_tower.modulate = COLOR_OK if is_buildable else COLOR_KO
 
 ## Check if the placement area overlaps with any enemy path
 func _is_position_on_path(pos: Vector2) -> bool:
@@ -276,7 +277,7 @@ func _cancel_build() -> void:
 	change_state(CursorState.IDLE)
 
 func _build() -> void:
-	if not _is_buildable(_tower.position):
+	if not _is_buildable(cursor.position):
 		# Log.trace(Log.Level.DEBUG, "Cannot build tower at position: {0}".format([_tower.position]))
 		return
 
@@ -326,7 +327,16 @@ func _is_buildable(pos: Vector2) -> bool:
 
 	var tm_pos: Vector2i = tm_ref.local_to_map(pos)
 
-	if tm_ref.get_cell_source_id(0, tm_pos) != VALID_SOURCE_ID or not tm_ref.get_cell_atlas_coords(0, tm_pos) in VALID_TILES or tm_pos in _invalid_cells:
+	if tm_pos in _invalid_cells:
+		return false
+
+	# Only allow tiles coming from valid TileSet sources and specific atlas coordinates
+	var source_id: int = tm_ref.get_cell_source_id(0, tm_pos)
+	if source_id != VALID_SOURCE_ID:
+		return false
+
+	var atlas_coords: Vector2i = tm_ref.get_cell_atlas_coords(0, tm_pos)
+	if not atlas_coords in VALID_TILES:
 		return false
 
 	if tm_ref.get_cell_atlas_coords(1, tm_pos) != Vector2i(-1, -1):
@@ -384,5 +394,6 @@ func _on_button_mouse_exited() -> void:
 func _on_level_stats_updated() -> void:
 	# Update button state when coins change during tower placement
 	if _state == CursorState.BUILD and _tower:
-		var is_buildable := _is_buildable(_tower.position)
+		var is_buildable := _is_buildable(cursor.position)
+		_tower.modulate = COLOR_OK if is_buildable else COLOR_KO
 		_update_place_button_state(is_buildable)
