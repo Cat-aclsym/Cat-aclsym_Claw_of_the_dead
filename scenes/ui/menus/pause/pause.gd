@@ -6,7 +6,8 @@ class_name Pause
 extends Control
 
 # Onready Variables
-@onready var encyclopedia_button: TextureButton = $Panel/MarginContainer/PanelContainer/CenterContainer/VBoxContainer/ButtonLayer/EncyclopediaButton
+@onready var encyclopedia_button: TextureButton = %EncyclopediaButton
+@onready var encyclopedia_exclamation: TextureRect = %EncyclopediaExclamation
 @onready var home_button: TextureButton = $Panel/MarginContainer/PanelContainer/CenterContainer/VBoxContainer/ButtonLayer/HomeButton
 @onready var margin_container: MarginContainer = $Panel/MarginContainer
 @onready var music_button: TextureButton = $Panel/MarginContainer/PanelContainer/CenterContainer/VBoxContainer/TopLeftIcon/MusicButton
@@ -26,10 +27,12 @@ extends Control
 # core
 func _ready() -> void:
 	assert(encyclopedia_button != null, "encyclopedia_button node not found")
+	assert(encyclopedia_exclamation != null, "encyclopedia_exclamation node not found")
 	assert(home_button != null, "home_button node not found")
 	assert(restart_button != null, "restart_button node not found")
 	assert(play_button != null, "play_button node not found")
 	SignalUtil.connects(signals)
+	_update_encyclopedia_notification()
 
 # private
 ## Handles the encyclopedia button press event.
@@ -41,6 +44,7 @@ func _on_encyclopedia_button_pressed() -> void:
 	encyclopedia_instance.menu_close.connect(func():
 		encyclopedia_instance.queue_free()
 		margin_container.visible = true
+		_update_encyclopedia_notification()
 	)
 
 ## Returns to the main menu and cleans up the current level.
@@ -65,6 +69,11 @@ func _on_restart_button_pressed() -> void:
 
 	Global.paused = false
 	queue_free()
+
+## Updates the encyclopedia notification icon visibility.
+func _update_encyclopedia_notification() -> void:
+	encyclopedia_exclamation.visible = ProgressionManager.has_unseen_encyclopedia_enemies() or ProgressionManager.has_unseen_encyclopedia_towers()
+
 
 # signals
 ## Resumes the game by unpausing and closing the menu.
