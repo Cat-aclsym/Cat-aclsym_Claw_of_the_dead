@@ -13,7 +13,7 @@
 [ext_resource type="Texture2D" uid="uid://do48sldu5a83i" path="res://assets/ui/icons/Button Build.svg" id="10_sc2vu"]
 [ext_resource type="Texture2D" uid="uid://c2uqlay1r2d1d" path="res://assets/ui/icons/Button Cancel.svg" id="12_5jyti"]
 [ext_resource type="Texture2D" uid="uid://dn8ksi7radij3" path="res://assets/ui/icons/Button Skip.svg" id="13_hn23h"]
-[ext_resource type="Script" path="res://scenes/ui/menus/hud/hud_challenges.gd" id="14_ch001"]
+[ext_resource type="Script" uid="uid://bsx181lfajvum" path="res://scenes/ui/menus/hud/hud_challenges.gd" id="14_ch001"]
 
 [sub_resource type="Animation" id="1"]
 resource_name = "skip_active"
