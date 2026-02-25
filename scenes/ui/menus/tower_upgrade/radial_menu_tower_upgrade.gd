@@ -1,4 +1,4 @@
-class_name TowerUpgradeMenu
+class_name RadialTowerUpgradeMenu
 extends Control
 
 var radius: int = 120
@@ -19,6 +19,7 @@ var shape_scale: float = 0.0:
 @onready var buttons: Control = $Buttons
 @onready var sell_button: TextureButton = $Buttons/SellTextureButton
 @onready var upgrade_button: TextureButton = $Buttons/UpgradeTextureButton
+@onready var info_button: TextureButton = $Buttons/InfoTextureButton
 @onready var close_button: TextureButton = $Buttons/CloseTextureButton
 
 @onready var sell_label: Label = sell_button.find_child("ValueLabel") as Label
@@ -27,6 +28,7 @@ var shape_scale: float = 0.0:
 
 @onready var signals: Array[Dictionary] = [
 	{SignalUtil.WHO: close_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_close_button_pressed},
+	{SignalUtil.WHO: info_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_info_button_pressed},
 	{SignalUtil.WHO: upgrade_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_upgrade_button_pressed},
 	{SignalUtil.WHO: sell_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_sell_button_pressed}
 ]
@@ -65,8 +67,21 @@ func _ready() -> void:
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed:
 		var mouse_pos: Vector2 = get_global_mouse_position()
-		if not buttons.get_global_rect().has_point(mouse_pos):
+		if not _get_menu_bounds_rect().has_point(mouse_pos):
 			hide_menu()
+
+
+func _get_menu_bounds_rect() -> Rect2:
+	var bounds: Rect2 = Rect2()
+	for b in buttons.get_children():
+		if b is Control:
+			var r: Rect2 = Rect2(b.global_position, b.size * b.scale)
+			if bounds.size == Vector2.ZERO:
+				bounds = r
+			else:
+				bounds = bounds.merge(r)
+	var padding: float = 8.0
+	return bounds.grow(padding)
 
 
 func _draw() -> void:
@@ -141,13 +156,44 @@ func _on_close_button_pressed():
 
 
 func _on_upgrade_button_pressed():
-	tower.start_upgrade(tower.available_upgrade[0])
+	if tower == null or tower.available_upgrade.is_empty():
+		return
+	var upgrade_menu_scene: PackedScene = load("res://scenes/ui/menus/tower_upgrade/tower_upgrade_menu.tscn")
+	if upgrade_menu_scene == null:
+		Log.trace(Log.Level.ERROR, "Failed to load tower upgrade menu scene")
+		return
+	if Global.hud != null and Global.hud.find_child("TowerUpgradeMenu", true, false) != null:
+		return
+	var upgrade_menu_instance: TowerUpgradeMenu = upgrade_menu_scene.instantiate()
+	if Global.hud != null:
+		Global.hud.add_child(upgrade_menu_instance)
+	else:
+		add_child(upgrade_menu_instance)
+	upgrade_menu_instance.setup(tower, tower.available_upgrade)
 	hide_menu()
 
 
 func _on_sell_button_pressed():
 	tower.sell_tower()
 	hide_menu()
+
+
+func _on_info_button_pressed():
+	if tower == null:
+		return
+	var desc_scene: PackedScene = load("res://scenes/ui/menus/tower_upgrade/tower_info.tscn")
+	if desc_scene == null:
+		Log.trace(Log.Level.ERROR, "Failed to load tower upgrade description scene")
+		return
+	if Global.hud != null and Global.hud.find_child("TowerInfo", true, false) != null:
+		return
+	var desc_instance: TowerInfo = desc_scene.instantiate()
+	if Global.hud != null:
+		Global.hud.add_child(desc_instance)
+	else:
+		add_child(desc_instance)
+	var upgrade_scene: PackedScene = tower.available_upgrade[0] if not tower.available_upgrade.is_empty() else null
+	desc_instance.setup(tower, upgrade_scene)
 
 
 func _on_tween_finished():

@@ -60,6 +60,12 @@ var sell_price: int = 0
 ## The shooting range of the tower (overridden at runtime)
 var shoot_range: float = 0.0
 
+## Multiplier for gold rewards when this tower kills an enemy
+var reward_multiplier: float = 1.0
+
+## Dictionary of modifiers applied to this tower (stat_name -> multiplier)
+var _special_modifiers: Dictionary = {}
+
 @export_subgroup("Upgrades")
 ## The upgrade array to store upgrades that are applied in the tower
 @export var available_upgrade: Array[PackedScene]
@@ -96,6 +102,10 @@ var enemy_array: Array[IEnemy]
 var selected: bool = false
 ## The state of the tower
 var state: TowerState = TowerState.ACTIVE
+## Flag to cancel ongoing animations
+var _cancel_animations: bool = false
+## Flag to ignore hover interactions when menu is open
+var _menu_open: bool = false
 ## The target of the tower
 var target: IEnemy
 ## The type of target the tower will shoot at
@@ -162,6 +172,10 @@ func fire() -> void:
 		bullet_instance.direction = rotated_direction
 		bullet_instance.rotation = rotated_direction.angle()
 		bullet_instance.target = enemy_position
+		
+		# Set tower owner to allow reward multiplier logic
+		if "tower_owner" in bullet_instance:
+			bullet_instance.tower_owner = self
 
 		_apply_bullet_modifications(bullet_instance)
 		add_child(bullet_instance)
@@ -184,8 +198,6 @@ func start_upgrade(upgradeScene: PackedScene) -> void:
 ## Applies the pending upgrade to the tower
 func apply_upgrade() -> void:
 	var upgrade: IUpgrade = pending_upgrade.instantiate()
-
-	# Log.trace(Log.Level.DEBUG, "Applying upgrade: {0}".format([pending_upgrade]))
 
 	if upgrade.changes["tower_stat"]:
 		_apply_tower_stat_changes(upgrade)
@@ -222,6 +234,7 @@ func apply_upgrade() -> void:
 	available_upgrade = upgrade.next_upgrades
 	sell_price += ceil(upgrade.price / 2.0)
 	update_dependent_properties()
+	level += 1
 	state = TowerState.ACTIVE
 	emit_signal("upgrade_completed")
 
@@ -238,6 +251,62 @@ func update_dependent_properties() -> void:
 			fire_rate_timer.start()
 
 	_update_z_index()
+
+## Applies special modifiers from a map tile
+func apply_special_modifier(modifiers: Dictionary) -> void:
+	for stat in modifiers.keys():
+		_special_modifiers[stat] = modifiers[stat]
+	
+	# Re-apply base stats first to avoid stacking multipliers incorrectly
+	_apply_base_stats_override()
+	
+	# Apply modifiers to basic tower stats
+	if _special_modifiers.has("fire_rate"):
+		fire_rate *= _special_modifiers["fire_rate"]
+	if _special_modifiers.has("shoot_range"):
+		shoot_range *= _special_modifiers["shoot_range"]
+	if _special_modifiers.has("reward_multiplier"):
+		reward_multiplier *= _special_modifiers["reward_multiplier"]
+	
+	# Apply modifiers to bullet stats
+	if _special_modifiers.has("damage") and bullet_stats.has("damage"):
+		bullet_stats["damage"] = int(bullet_stats["damage"] * _special_modifiers["damage"])
+		
+	Log.trace(Log.Level.INFO, "Tower {0} stats updated with modifiers: {1}".format([name, _special_modifiers]))
+	_apply_special_visual_effect(modifiers)
+	update_dependent_properties()
+
+## Applies a visual effect to the tower based on the modifier
+func _apply_special_visual_effect(modifier: Dictionary) -> void:
+	if not modifier.has("color"):
+		return
+		
+	var effect_color = modifier["color"]
+	effect_color.a = 1.0 # Force full opacity for the color tint
+	
+	# Create a dedicated tween for the visual effect
+	var tween = create_tween().set_loops()
+	
+	# Pulse only the color between normal (White) and the modifier color (Solid Tint)
+	# No scale/zoom effect as requested
+	if animated_sprite_2d:
+		tween.tween_property(animated_sprite_2d, "modulate", effect_color, 1.0).set_trans(Tween.TRANS_SINE)
+		tween.tween_property(animated_sprite_2d, "modulate", Color.WHITE, 1.0).set_trans(Tween.TRANS_SINE)
+	elif sprite_2d:
+		tween.tween_property(sprite_2d, "modulate", effect_color, 1.0).set_trans(Tween.TRANS_SINE)
+		tween.tween_property(sprite_2d, "modulate", Color.WHITE, 1.0).set_trans(Tween.TRANS_SINE)
+	else:
+		# Fallback to the whole node
+		tween.tween_property(self, "modulate", effect_color, 1.0).set_trans(Tween.TRANS_SINE)
+		tween.tween_property(self, "modulate", Color.WHITE, 1.0).set_trans(Tween.TRANS_SINE)
+	
+	# Add a small scale effect to the whole tower as well
+	if modifier["label"].ends_with("-"):
+		var malus_tween = create_tween()
+		malus_tween.tween_property(self, "scale", Vector2(0.85, 0.85), 0.3).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	else:
+		var bonus_tween = create_tween()
+		bonus_tween.tween_property(self, "scale", Vector2(1.15, 1.15), 0.3).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 
 ## Builds the tower
 func build_tower() -> void:
@@ -264,6 +333,8 @@ func _animate_range_display() -> void:
 
 func _apply_tower_stat_changes(upgrade: IUpgrade) -> void:
 	for stat in upgrade.tower_stats.keys():
+		if stat == "level":
+			continue
 		if self.get(stat):
 			Log.trace(Log.Level.DEBUG, "Modifying stat: {0} by {1}".format([stat, upgrade.tower_stats[stat]]))
 			self.set(stat, self.get(stat) + upgrade.tower_stats[stat])
@@ -289,6 +360,7 @@ func _apply_base_stats_override() -> void:
 		return
 	var data: Dictionary = stats_db.get_tower(tower_id)
 	var base: Dictionary = data.get("base", {})
+	level = stats_db.get_tower_level(tower_id)
 	Log.trace(Log.Level.INFO, "Applying tower stats from StatsDB for %s: %s" % [tower_id, base])
 	if base.has("cost"):
 		cost = int(base["cost"])
@@ -399,23 +471,24 @@ func _get_random_target():
 ## Function to interpolate between two values.
 func _color_variation() -> void:
 	## Check if the tower is selected
-	if not selected:
+	if not selected or _cancel_animations:
 		return
 	## Set the initial lerp state to 1
 	var lerp_state: float = 1
 	## Loop to interpolate the color of the range polygon
-	while lerp_state > 0:
+	while lerp_state > 0 and not _cancel_animations:
 		polygon_2d.color = lerp(Color(color, 0.3), Color(color, 0), 1-lerp_state)
 		await get_tree().create_timer(0.02).timeout
 		lerp_state -= 0.05
 	## Loop to interpolate the color of the range polygon
-	while lerp_state < 1:
+	while lerp_state < 1 and not _cancel_animations:
 		polygon_2d.color = lerp(Color(color, 0), Color(color, 0.3), lerp_state)
 		await get_tree().create_timer(0.02).timeout
 		lerp_state += 0.05
 
-	## Call the function to interpolate the color of the range polygon
-	_color_variation()
+	if not _cancel_animations:
+		## Call the function to interpolate the color of the range polygon
+		_color_variation()
 
 ## Function to check the z position of the tower and adapt the z index of the tower.
 func _update_z_index() -> void:
@@ -437,7 +510,11 @@ func _on_area_2d_area_exited(area: Area2D) -> void:
 		area.queue_free()
 
 func _on_tower_hover_box_mouse_entered() -> void:
+	if _menu_open:
+		return
 	selected = true
+	polygon_2d.visible = true
+	outline.visible = true
 	var size: float = 0
 	while size < 1:
 		polygon_2d.scale = lerp(polygon_2d.scale, Vector2(1, 1), size)
@@ -447,11 +524,14 @@ func _on_tower_hover_box_mouse_entered() -> void:
 
 func _on_tower_hover_box_mouse_exited() -> void:
 	selected = false
+	_cancel_animations = false
 	var size: float = 0
 	while size < 1:
 		polygon_2d.scale = lerp(polygon_2d.scale, Vector2(0, 0), size)
 		await get_tree().create_timer(0.01).timeout
 		size += 0.1
+	polygon_2d.visible = false
+	outline.visible = false
 
 func _on_timer_timeout() -> void:
 	$ProgressBar.value += 1
@@ -479,3 +559,14 @@ func _on_tower_pressed() -> void:
 	tower_upgrade_menu_instance.position = position
 	tower_upgrade_menu_instance.name = "TowerUpgrade"
 	self.add_child(tower_upgrade_menu_instance)
+	# Hide the selection frame when clicked
+	_menu_open = true
+	_cancel_animations = true
+	polygon_2d.visible = false
+	outline.visible = false
+	polygon_2d.scale = Vector2(0, 0)
+	selected = false
+	# Hide the menu when closed
+	await tower_upgrade_menu_instance.tree_exited
+	_menu_open = false
+	_cancel_animations = false

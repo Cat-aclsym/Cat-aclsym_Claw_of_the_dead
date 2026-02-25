@@ -73,17 +73,20 @@ layout_mode = 2
 offset_right = 489.0
 offset_bottom = 217.0
 size_flags_horizontal = 3
+mouse_filter = 2
 theme_override_constants/margin_left = 15
 theme_override_constants/margin_top = 15
 
 [node name="HUDHBoxContainer" type="HBoxContainer" parent="HUDMarginContainer"]
 layout_mode = 2
+mouse_filter = 2
 theme_override_constants/separation = 30
 
 [node name="HUDVBoxContainer" type="VBoxContainer" parent="HUDMarginContainer/HUDHBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
+mouse_filter = 2
 theme_override_constants/separation = 10
 alignment = 2
 
@@ -159,10 +162,12 @@ vertical_alignment = 1
 [node name="CoinsWavesMarginContainer" type="MarginContainer" parent="HUDMarginContainer/HUDHBoxContainer/HUDVBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
+mouse_filter = 2
 
 [node name="CoinsWavesHBoxContainer" type="HBoxContainer" parent="HUDMarginContainer/HUDHBoxContainer/HUDVBoxContainer/CoinsWavesMarginContainer"]
 layout_mode = 2
 size_flags_vertical = 3
+mouse_filter = 2
 theme_override_constants/separation = 10
 
 [node name="CoinsTextureRect" type="TextureRect" parent="HUDMarginContainer/HUDHBoxContainer/HUDVBoxContainer/CoinsWavesMarginContainer/CoinsWavesHBoxContainer"]
@@ -291,6 +296,7 @@ theme_override_constants/margin_left = 20
 theme_override_constants/margin_bottom = 10
 
 [node name="SkipButton" type="TextureButton" parent="SkipMarginContainer"]
+modulate = Color(1, 0.4, 0.4, 1)
 custom_minimum_size = Vector2(110, 90)
 layout_mode = 2
 toggle_mode = true

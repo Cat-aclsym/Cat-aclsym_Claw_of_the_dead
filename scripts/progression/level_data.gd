@@ -1,4 +1,4 @@
-## © [2025] A7 Studio. All rights reserved. Trademark.
+## © [2026] A7 Studio. All rights reserved. Trademark.
 
 class_name LevelData
 extends RefCounted
@@ -14,11 +14,11 @@ var unlocked: bool = false
 ## Converts the object to a dictionary for serialization.
 func save() -> Dictionary:
 	return {
-		"unlocked": unlocked,
-		"challenges_completed": challenges_completed
+		"challenges_completed": challenges_completed,
+		"unlocked": unlocked
 	}
 
 ## Populates the object from a dictionary.
 func from_dictionary(data: Dictionary) -> void:
-	unlocked = data.get("unlocked", false)
 	challenges_completed.assign(data.get("challenges_completed", []))
+	unlocked = data.get("unlocked", false)

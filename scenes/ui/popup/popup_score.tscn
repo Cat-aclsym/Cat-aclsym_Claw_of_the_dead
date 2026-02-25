@@ -103,6 +103,6 @@ vertical_alignment = 1
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="FloatingNumbers"]
 libraries = {
-"": SubResource("AnimationLibrary_an5og")
+&"": SubResource("AnimationLibrary_an5og")
 }
 autoplay = "popup"
