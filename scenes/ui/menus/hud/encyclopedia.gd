@@ -421,9 +421,21 @@ func _update_background_texture() -> void:
 
 
 ## Updates visibility of category exclamation marks.
+## Only considers entries actually displayed in the encyclopedia, ignoring orphaned save data.
 func _update_category_exclamations() -> void:
-	enemies_exclamation.visible = ProgressionManager.has_unseen_encyclopedia_enemies()
-	towers_exclamation.visible = ProgressionManager.has_unseen_encyclopedia_towers()
+	var has_unseen_enemies: bool = false
+	for entry in _all_entries["ENEMIES"]:
+		if ProgressionManager.is_enemy_seen(entry["id"]) and not ProgressionManager.is_enemy_encyclopedia_seen(entry["id"]):
+			has_unseen_enemies = true
+			break
+	enemies_exclamation.visible = has_unseen_enemies
+
+	var has_unseen_towers: bool = false
+	for entry in _all_entries["TOWERS"]:
+		if ProgressionManager.is_tower_unlocked(entry["id"]) and not ProgressionManager.is_tower_encyclopedia_seen(entry["id"]):
+			has_unseen_towers = true
+			break
+	towers_exclamation.visible = has_unseen_towers
 
 
 ## Starts the page turn animation or updates the display instantly.
@@ -461,7 +473,8 @@ func _update_ui_elements() -> void:
 	else:
 		is_discovered = ProgressionManager.is_enemy_seen(entry["id"])
 		if is_discovered:
-			item_exclamation.visible = not ProgressionManager.is_enemy_encyclopedia_seen(entry["id"])
+			var was_seen: bool = ProgressionManager.is_enemy_encyclopedia_seen(entry["id"])
+			item_exclamation.visible = not was_seen
 			ProgressionManager.mark_enemy_encyclopedia_seen(entry["id"])
 		else:
 			item_exclamation.visible = false
