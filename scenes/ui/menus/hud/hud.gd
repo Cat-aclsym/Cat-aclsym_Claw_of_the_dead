@@ -7,6 +7,7 @@ extends Control
 ## Handles resource displays, wave counters, and construction menu.
 
 # Constants
+const CHALLENGES_MENU: PackedScene = preload("res://scenes/ui/menus/hud/challenges_menu.tscn")
 const DEFAULT_TIME_SCALE: float = 1.0
 const PAUSE_MENU: PackedScene = preload("res://scenes/ui/menus/pause/pause.tscn")
 const SKIP_COLOR_INACTIVE: Color = Color(1.0, 1.0, 1.0, 1.0)
@@ -14,6 +15,7 @@ const SKIP_TIME_SCALE: float = 3.0
 const TOWER_SELECTION_MENU: PackedScene = preload("res://scenes/ui/menus/tower_selection/tower_selection.tscn")
 
 # Variables
+@onready var challenges_button: TextureButton = $ChallengesMarginContainer/ChallengesButton
 @onready var coins_rich_text_label: Label = %HUDVBoxContainer/CoinsWavesMarginContainer/CoinsWavesHBoxContainer/CoinsTextureRect/MarginContainer/CoinsLabel
 @onready var health_rich_text_label: Label = %HUDVBoxContainer/HeartTextureRect/HealthMarginContainer/MarginContainer/HealthTextureProgressBar/HealthLabel
 @onready var health_texture_progress_bar: TextureProgressBar = %HUDVBoxContainer/HeartTextureRect/HealthMarginContainer/MarginContainer/HealthTextureProgressBar
@@ -29,6 +31,7 @@ const TOWER_SELECTION_MENU: PackedScene = preload("res://scenes/ui/menus/tower_s
 @onready var default_waves_text: String = waves_rich_text_label.text
 
 @onready var signals: Array[Dictionary] = [
+	{SignalUtil.WHO: challenges_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_challenges_button_pressed},
 	{SignalUtil.WHO: pause_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_pause_button_pressed},
 	{SignalUtil.WHO: skip_time_scale_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_skip_time_scale_button_pressed},
 	{SignalUtil.WHO: tower_selection_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_tower_selection_button_pressed}
@@ -39,6 +42,7 @@ var _is_ready: bool = false
 
 # Built-in functions
 func _ready() -> void:
+	assert(challenges_button != null, "challenges_button node not found")
 	assert(coins_rich_text_label != null, "coins_rich_text_label node not found")
 	assert(health_rich_text_label != null, "health_rich_text_label node not found")
 	assert(waves_rich_text_label != null, "waves_rich_text_label node not found")
@@ -95,6 +99,15 @@ func _apply_time_scale(time_scale: float, is_fast: bool) -> void:
 	else:
 		skip_animation_player.stop()
 		skip_time_scale_button.modulate = SKIP_COLOR_INACTIVE
+
+
+func _on_challenges_button_pressed() -> void:
+	var existing := Global.ui.get_node_or_null("ChallengesMenu")
+	if existing != null:
+		(existing as ChallengesMenu).close()
+	else:
+		var menu := CHALLENGES_MENU.instantiate() as ChallengesMenu
+		Global.ui.add_child(menu)
 
 
 func _on_pause_button_pressed() -> void:
