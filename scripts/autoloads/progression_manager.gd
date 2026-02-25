@@ -63,6 +63,29 @@ func get_next_level_id(current_id: String) -> String:
 	return ""
 
 
+## Checks if there are any enemies that haven't been seen in the encyclopedia.
+func has_unseen_encyclopedia_enemies() -> bool:
+	for id in data.enemies:
+		if data.enemies[id].seen and not data.enemies[id].encyclopedia_seen:
+			return true
+	return false
+
+
+## Checks if there are any towers that haven't been seen in the encyclopedia.
+func has_unseen_encyclopedia_towers() -> bool:
+	for id in data.towers:
+		if data.towers[id].unlocked and not data.towers[id].encyclopedia_seen:
+			return true
+	return false
+
+
+## Checks if an enemy has been seen in the encyclopedia.
+func is_enemy_encyclopedia_seen(enemy_id: String) -> bool:
+	if data.enemies.has(enemy_id):
+		return data.enemies[enemy_id].encyclopedia_seen
+	return false
+
+
 ## Checks if an enemy has been seen.
 func is_enemy_seen(enemy_id: String) -> bool:
 	if data.enemies.has(enemy_id):
@@ -74,6 +97,13 @@ func is_enemy_seen(enemy_id: String) -> bool:
 func is_level_unlocked(level_id: String) -> bool:
 	if data.levels.has(level_id):
 		return data.levels[level_id].unlocked
+	return false
+
+
+## Checks if a tower has been seen in the encyclopedia.
+func is_tower_encyclopedia_seen(tower_id: String) -> bool:
+	if data.towers.has(tower_id):
+		return data.towers[tower_id].encyclopedia_seen
 	return false
 
 
@@ -133,6 +163,17 @@ func load_game() -> void:
 	Log.trace(Log.Level.DEBUG, "Game loaded from %s (absolute: %s)" % [SAVE_PATH, file.get_path_absolute()])
 
 
+## Marks an enemy as seen in the encyclopedia.
+func mark_enemy_encyclopedia_seen(enemy_id: String) -> void:
+	if not data.enemies.has(enemy_id):
+		data.enemies[enemy_id] = EnemyData.new()
+
+	if not data.enemies[enemy_id].encyclopedia_seen:
+		data.enemies[enemy_id].encyclopedia_seen = true
+		Log.trace(Log.Level.DEBUG, "Enemy seen in encyclopedia: " + enemy_id)
+		save_game()
+
+
 ## Marks an enemy as seen / discovered.
 func mark_enemy_seen(enemy_id: String) -> void:
 	if not data.enemies.has(enemy_id):
@@ -141,6 +182,17 @@ func mark_enemy_seen(enemy_id: String) -> void:
 	if not data.enemies[enemy_id].seen:
 		data.enemies[enemy_id].seen = true
 		Log.trace(Log.Level.DEBUG, "New enemy discovered: " + enemy_id)
+		save_game()
+
+
+## Marks a tower as seen in the encyclopedia.
+func mark_tower_encyclopedia_seen(tower_id: String) -> void:
+	if not data.towers.has(tower_id):
+		data.towers[tower_id] = TowerData.new()
+
+	if not data.towers[tower_id].encyclopedia_seen:
+		data.towers[tower_id].encyclopedia_seen = true
+		Log.trace(Log.Level.DEBUG, "Tower seen in encyclopedia: " + tower_id)
 		save_game()
 
 
@@ -159,10 +211,13 @@ func save_game() -> void:
 		Log.trace(Log.Level.ERROR, "Failed to save game to %s" % SAVE_PATH)
 		return
 
-	# Save Parameters
-	var params_data: Dictionary = data.parameters.save()
-	params_data["type"] = "parameters"
-	file.store_var(params_data)
+	# Save Enemies
+	for id in data.enemies:
+		var enemy_obj: EnemyData = data.enemies[id]
+		var enemy_data: Dictionary = enemy_obj.save()
+		enemy_data["type"] = "enemy"
+		enemy_data["id"] = id
+		file.store_var(enemy_data)
 
 	# Save Levels
 	for id in data.levels:
@@ -172,6 +227,11 @@ func save_game() -> void:
 		level_data["id"] = id
 		file.store_var(level_data)
 
+	# Save Parameters
+	var params_data: Dictionary = data.parameters.save()
+	params_data["type"] = "parameters"
+	file.store_var(params_data)
+
 	# Save Towers
 	for id in data.towers:
 		var tower_obj: TowerData = data.towers[id]
@@ -179,14 +239,6 @@ func save_game() -> void:
 		tower_data["type"] = "tower"
 		tower_data["id"] = id
 		file.store_var(tower_data)
-
-	# Save Enemies
-	for id in data.enemies:
-		var enemy_obj: EnemyData = data.enemies[id]
-		var enemy_data: Dictionary = enemy_obj.save()
-		enemy_data["type"] = "enemy"
-		enemy_data["id"] = id
-		file.store_var(enemy_data)
 
 	file.close()
 	Log.trace(Log.Level.DEBUG, "Game saved to %s (absolute: %s)" % [SAVE_PATH, file.get_path_absolute()])
