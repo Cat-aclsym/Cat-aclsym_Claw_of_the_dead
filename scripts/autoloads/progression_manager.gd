@@ -64,16 +64,22 @@ func get_next_level_id(current_id: String) -> String:
 
 
 ## Checks if there are any enemies that haven't been seen in the encyclopedia.
+## Only considers IDs currently known by StatsDB to avoid stale save data entries.
 func has_unseen_encyclopedia_enemies() -> bool:
+	var known_ids: Array = StatsDB.get_enemy_ids()
 	for id in data.enemies:
+		if id not in known_ids: continue
 		if data.enemies[id].seen and not data.enemies[id].encyclopedia_seen:
 			return true
 	return false
 
 
 ## Checks if there are any towers that haven't been seen in the encyclopedia.
+## Only considers IDs currently known by StatsDB to avoid stale save data entries.
 func has_unseen_encyclopedia_towers() -> bool:
+	var known_ids: Array = StatsDB.get_tower_ids()
 	for id in data.towers:
+		if id not in known_ids: continue
 		if data.towers[id].unlocked and not data.towers[id].encyclopedia_seen:
 			return true
 	return false
@@ -161,6 +167,7 @@ func load_game() -> void:
 	file.close()
 	apply_settings()
 	Log.trace(Log.Level.DEBUG, "Game loaded from %s (absolute: %s)" % [SAVE_PATH, file.get_path_absolute()])
+	Log.trace(Log.Level.DEBUG, "Data: %s" % data.save())
 
 
 ## Marks an enemy as seen in the encyclopedia.
