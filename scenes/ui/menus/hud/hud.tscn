@@ -11,9 +11,9 @@
 [ext_resource type="Texture2D" uid="uid://bcga3gamtf11v" path="res://assets/ui/huds/Waves@2x.png" id="8_ewojn"]
 [ext_resource type="Script" uid="uid://b5mbfrr7vwpj7" path="res://scenes/ui/menus/hud/new_wave_count.gd" id="9_o6rym"]
 [ext_resource type="Texture2D" uid="uid://do48sldu5a83i" path="res://assets/ui/icons/Button Build.svg" id="10_sc2vu"]
+[ext_resource type="Texture2D" uid="uid://bcj0nqyx7o5kh" path="res://assets/ui/icons/Bouton Challenges.svg" id="11_5r146"]
 [ext_resource type="Texture2D" uid="uid://c2uqlay1r2d1d" path="res://assets/ui/icons/Button Cancel.svg" id="12_5jyti"]
 [ext_resource type="Texture2D" uid="uid://dn8ksi7radij3" path="res://assets/ui/icons/Button Skip.svg" id="13_hn23h"]
-[ext_resource type="Texture2D" uid="uid://d0la3b5reh1og" path="res://assets/ui/icons/Button Announce.svg" id="14_ch001"]
 
 [sub_resource type="Animation" id="1"]
 resource_name = "skip_active"
@@ -265,7 +265,7 @@ theme_override_constants/margin_right = 20
 [node name="ChallengesButton" type="TextureButton" parent="ChallengesMarginContainer"]
 custom_minimum_size = Vector2(110, 90)
 layout_mode = 2
-texture_normal = ExtResource("14_ch001")
+texture_normal = ExtResource("11_5r146")
 ignore_texture_size = true
 stretch_mode = 5
 
