@@ -23,6 +23,8 @@ const MAX_STAT_VALUE: float = 200.0
 # Core methods
 func _ready() -> void:
 	Global.paused = true
+	if ILevel.current_level != null:
+		ILevel.current_level.request_pause()
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed:
@@ -40,27 +42,29 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _exit_tree() -> void:
 	Global.paused = false
+	if ILevel.current_level != null:
+		ILevel.current_level.request_resume()
 
 ## Initializes the info display with tower data
 func setup(p_tower: ITower, _upgrade_scene: PackedScene = null) -> void:
 	tower = p_tower
-	
+
 	# Get tower name based on scene name
 	var tower_name = _get_tower_name()
-	
+
 	# Set title and description
 	_tower_title_label.text = tower_name
-	
+
 	# Clear existing stat displays
 	for child in _stats_container.get_children():
 		child.queue_free()
-	
+
 	# Display all current tower stats (excluding level)
 	_display_tower_stat("fire_rate")
 	_display_tower_stat("shoot_range")
 	_display_tower_stat("projectile_count")
 	_display_tower_stat("spread_angle")
-	
+
 	# Display all current bullet stats
 	_display_bullet_stat("damage")
 	_display_bullet_stat("speed")
@@ -99,18 +103,18 @@ func _display_tower_stat(stat_name: String) -> void:
 	if stat_name in tower:
 		var value = tower.get(stat_name)
 		var float_value: float = float(value) if value != null else 0.0
-		
+
 		# Exception: don't show projectile_count if it's 1 (single arrow)
 		if stat_name == "projectile_count" and float_value <= 1.0:
 			return
-		
+
 		if float_value != 0.0:
 			_create_stat_display(stat_name, float_value)
 
 ## Displays a bullet stat if it's not zero
 func _display_bullet_stat(stat_name: String) -> void:
 	var value: float = 0.0
-	
+
 	if stat_name == "damage":
 		var base_damage: float = 0.0
 		if tower.bullet_scene != null:
@@ -120,7 +124,7 @@ func _display_bullet_stat(stat_name: String) -> void:
 		value = base_damage + tower.bullet_stats.get("damage", 0.0)
 	else:
 		value = tower.bullet_stats.get(stat_name, 0.0)
-	
+
 	if value != 0.0:
 		_create_stat_display(stat_name, value)
 
@@ -129,7 +133,7 @@ func _create_stat_display(stat_name: String, current_value: float) -> void:
 	# Instantiate the stat bar scene
 	var stat_bar: StatBar = STAT_BAR_SCENE.instantiate()
 	_stats_container.add_child(stat_bar)
-	
+
 	# Setup the stat bar with data (current value displayed, no "new" value for info display)
 	stat_bar.setup(stat_name, 0.0, current_value, ICON_TEXTURE, MAX_STAT_VALUE)
 

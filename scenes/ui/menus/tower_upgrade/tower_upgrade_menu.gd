@@ -40,6 +40,8 @@ const MAX_STAT_VALUE: float = 200.0
 func _ready() -> void:
 	SignalUtil.connects(signals)
 	Global.paused = true
+	if ILevel.current_level != null:
+		ILevel.current_level.request_pause()
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed:
@@ -57,6 +59,8 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _exit_tree() -> void:
 	Global.paused = false
+	if ILevel.current_level != null:
+		ILevel.current_level.request_resume()
 
 ## Initializes the upgrade description with tower and one or more upgrade options
 func setup(p_tower: ITower, p_upgrades: Array[PackedScene]) -> void:
@@ -143,11 +147,11 @@ func _create_stat_display(stat_name: String, stat_change: float, is_tower_stat: 
 	# Get current and new values
 	var current_value: float = _get_current_stat_value(stat_name, is_tower_stat)
 	var new_value: float = current_value + stat_change
-	
+
 	# Instantiate the stat bar scene
 	var stat_bar: StatBar = STAT_BAR_SCENE.instantiate()
 	_stats_container.add_child(stat_bar)
-	
+
 	# Setup the stat bar with data
 	stat_bar.setup(stat_name, current_value, new_value, ICON_TEXTURE, MAX_STAT_VALUE, true)
 
@@ -169,7 +173,7 @@ func _get_current_stat_value(stat_name: String, is_tower_stat: bool) -> float:
 			return base_damage + tower.bullet_stats.get("damage", 0.0)
 		else:
 			return tower.bullet_stats.get(stat_name, 0.0)
-	
+
 	return 0.0
 
 # Signal handlers
