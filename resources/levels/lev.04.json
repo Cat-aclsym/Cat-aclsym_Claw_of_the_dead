@@ -1,35 +1,235 @@
 {
-  "status": "done",
-  "waves": [
-	[
-	  {
-		"enemy_id": "ene.01",
-		"count": 2,
-		"spawner": 0
-	  },
-	  {
-		"wait_s": 5
-	  },
-	  {
-		"enemy_id": "ene.01",
-		"count": 1,
-		"spawner": 0
-	  }
-	],
-	[
-	  {
-		"enemy_id": "ene.01",
-		"count": 2,
-		"spawner": 0
-	  },
-	  {
-		"wait_s": 3
-	  },
-	  {
-		"enemy_id": "ene.01",
-		"count": 1,
-		"spawner": 0
-	  }
+	"status": "done",
+	"description": "Dynamic paths test level - tests multi-path spawning with wave-based path activation",
+	"waves": [
+		[
+			{ "wait_s": 2 },
+			{
+				"enemy_id": "ene.01",
+				"count": 3,
+				"spawner": 0
+			},
+			{ "wait_s": 1 },
+			{
+				"enemy_id": "ene.01",
+				"count": 2,
+				"spawner": 0
+			},
+			{ "wait_s": 3 }
+		],
+		[
+			{ "wait_s": 1 },
+			{
+				"enemy_id": "ene.01",
+				"count": 4,
+				"spawner": 0
+			},
+			{ "wait_s": 1 },
+			{
+				"enemy_id": "ene.02",
+				"count": 2,
+				"spawner": 0
+			},
+			{ "wait_s": 3 }
+		],
+		[
+			{ "wait_s": 1 },
+			{
+				"enemy_id": "ene.01",
+				"count": 3,
+				"spawner": 0
+			},
+			{
+				"enemy_id": "ene.01",
+				"count": 3,
+				"spawner": 1
+			},
+			{ "wait_s": 1 },
+			{
+				"enemy_id": "ene.02",
+				"count": 2,
+				"spawner": -1
+			},
+			{ "wait_s": 3 }
+		],
+		[
+			{ "wait_s": 1 },
+			{
+				"enemy_id": "ene.01",
+				"count": 4,
+				"spawner": -1
+			},
+			{ "wait_s": 1 },
+			{
+				"enemy_id": "ene.02",
+				"count": 3,
+				"spawner": 0
+			},
+			{
+				"enemy_id": "ene.02",
+				"count": 3,
+				"spawner": 1
+			},
+			{ "wait_s": 3 }
+		],
+		[
+			{ "wait_s": 1 },
+			{
+				"enemy_id": "ene.01",
+				"count": 3,
+				"spawner": 0
+			},
+			{
+				"enemy_id": "ene.01",
+				"count": 3,
+				"spawner": 1
+			},
+			{
+				"enemy_id": "ene.01",
+				"count": 3,
+				"spawner": 2
+			},
+			{ "wait_s": 1 },
+			{
+				"enemy_id": "ene.03",
+				"count": 2,
+				"spawner": -1
+			},
+			{ "wait_s": 3 }
+		],
+		[
+			{ "wait_s": 1 },
+			{
+				"enemy_id": "ene.01",
+				"count": 5,
+				"spawner": -1
+			},
+			{ "wait_s": 1 },
+			{
+				"enemy_id": "ene.02",
+				"count": 4,
+				"spawner": -1
+			},
+			{ "wait_s": 1 },
+			{
+				"enemy_id": "ene.03",
+				"count": 3,
+				"spawner": -1
+			},
+			{ "wait_s": 3 }
+		],
+		[
+			{ "wait_s": 1 },
+			{
+				"enemy_id": "ene.01",
+				"count": 4,
+				"spawner": 1
+			},
+			{
+				"enemy_id": "ene.01",
+				"count": 4,
+				"spawner": 2
+			},
+			{
+				"enemy_id": "ene.01",
+				"count": 4,
+				"spawner": 3
+			},
+			{ "wait_s": 2 },
+			{
+				"enemy_id": "ene.02",
+				"count": 3,
+				"spawner": -1
+			},
+			{
+				"enemy_id": "ene.03",
+				"count": 2,
+				"spawner": -1
+			},
+			{ "wait_s": 3 }
+		],
+		[
+			{ "wait_s": 1 },
+			{
+				"enemy_id": "ene.01",
+				"count": 6,
+				"spawner": -1
+			},
+			{ "wait_s": 1 },
+			{
+				"enemy_id": "ene.02",
+				"count": 5,
+				"spawner": -1
+			},
+			{ "wait_s": 2 },
+			{
+				"enemy_id": "ene.03",
+				"count": 4,
+				"spawner": -1
+			},
+			{ "wait_s": 3 }
+		],
+		[
+			{ "wait_s": 1 },
+			{
+				"enemy_id": "ene.01",
+				"count": 4,
+				"spawner": 0
+			},
+			{
+				"enemy_id": "ene.01",
+				"count": 4,
+				"spawner": 1
+			},
+			{
+				"enemy_id": "ene.01",
+				"count": 4,
+				"spawner": 2
+			},
+			{
+				"enemy_id": "ene.01",
+				"count": 4,
+				"spawner": 4
+			},
+			{ "wait_s": 2 },
+			{
+				"enemy_id": "ene.02",
+				"count": 5,
+				"spawner": -1
+			},
+			{
+				"enemy_id": "ene.03",
+				"count": 3,
+				"spawner": -1
+			},
+			{ "wait_s": 3 }
+		],
+		[
+			{ "wait_s": 1 },
+			{
+				"enemy_id": "ene.01",
+				"count": 8,
+				"spawner": -1
+			},
+			{ "wait_s": 2 },
+			{
+				"enemy_id": "ene.02",
+				"count": 6,
+				"spawner": -1
+			},
+			{ "wait_s": 2 },
+			{
+				"enemy_id": "ene.03",
+				"count": 5,
+				"spawner": -1
+			},
+			{ "wait_s": 3 },
+			{
+				"enemy_id": "big_daddy",
+				"count": 1,
+				"spawner": -1
+			},
+			{ "wait_s": 5 }
+		]
 	]
-  ]
 }
