@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://vlso8mb8xhhp"
-path="res://.godot/imported/Star Gold.svg-d7ca963bcc909eb88e139cb7b976e969.ctex"
+uid="uid://deyl1aq0mjdi1"
+path="res://.godot/imported/left.svg-6b86d69cfbc33d7098ad1fc3c7993493.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ui/icons/Star Gold.svg"
-dest_files=["res://.godot/imported/Star Gold.svg-d7ca963bcc909eb88e139cb7b976e969.ctex"]
+source_file="res://assets/ui/icons/left.svg"
+dest_files=["res://.godot/imported/left.svg-6b86d69cfbc33d7098ad1fc3c7993493.ctex"]
 
 [params]
 
@@ -32,6 +32,6 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
-svg/scale=5.0
+svg/scale=1.0
 editor/scale_with_editor_scale=false
 editor/convert_colors_with_editor_theme=false

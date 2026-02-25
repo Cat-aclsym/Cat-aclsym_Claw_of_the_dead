@@ -83,7 +83,7 @@ func _get_menu_bounds_rect() -> Rect2:
 	var padding: float = 8.0
 	return bounds.grow(padding)
 
-		
+
 func _draw() -> void:
 	draw_outline(5 + buttons.get_child_count())
 
@@ -140,7 +140,7 @@ func hide_menu():
 func draw_outline(segments: int) -> void:
 	if segments < 3 or shape_scale <= 0.0:
 		return
-	
+
 	var current_radius := radius * shape_scale
 
 	var points: Array[Vector2] = []

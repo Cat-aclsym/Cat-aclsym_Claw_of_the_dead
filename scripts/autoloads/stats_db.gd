@@ -44,6 +44,14 @@ func get_enemy(id: String) -> Dictionary:
 	return _data.get("enemies", {}).get(id, {})
 
 
+func get_tower_ids() -> Array:
+	return _data.get("towers", {}).keys()
+
+
+func get_enemy_ids() -> Array:
+	return _data.get("enemies", {}).keys()
+
+
 func get_upgrade_ids_for_tower(id: String) -> Array:
 	return get_tower(id).get("upgrades", []) if has_tower(id) else []
 

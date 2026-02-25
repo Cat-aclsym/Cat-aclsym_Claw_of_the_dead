@@ -22,3 +22,65 @@ TOWER.BAT_02.NAME,AOE Tower,Tour AOE
 TOWER.LEVEL.DISPLAY,%s - lvl %d,%s - niv %d
 TOWER.UPGRADE.PRICE,%d golds,%d pièces d'or
 TOWER.UPGRADE.TITLE,Upgrade to level %d,Améliorer au niveau %d
+HOME.ENCYCLOPEDIA.BUTTON,Encyclopedia,Encyclopédie
+ENCYCLOPEDIA.TITLE,Encyclopedia,Encyclopédie
+ENCYCLOPEDIA.STATS.HEALTH,Health,Vie
+ENCYCLOPEDIA.STATS.SPEED,Speed,Vitesse
+ENCYCLOPEDIA.STATS.DAMAGE,Damage,Dégâts
+ENCYCLOPEDIA.STATS.RANGE,Range,Portée
+ENCYCLOPEDIA.STATS.FIRERATE,Fire Rate,Cadence
+ENCYCLOPEDIA.STATS.COST,Cost,Coût
+ENCYCLOPEDIA.STATS.REWARD,Reward,Récompense
+ENCYCLOPEDIA.STATS.DISABLE_DURATION,Stun Duration,Durée d'étourdissement
+ENCYCLOPEDIA.STATS.PRE_ATTACK,Pre-attack,Pré-attaque
+ENCYCLOPEDIA.STATS.ATTACK_DURATION,Attack Duration,Durée d'attaque
+ENCYCLOPEDIA.STATS.POST_ATTACK,Post-attack,Post-attaque
+ENCYCLOPEDIA.STATS.COOLDOWN,Cooldown,Récupération
+ENCYCLOPEDIA.SECTION.TOWERS,Towers,Tours
+ENCYCLOPEDIA.SECTION.ENEMIES,Enemies,Ennemis
+ENCYCLOPEDIA.CATEGORY.COMBAT,Combat,Combat
+ENCYCLOPEDIA.CATEGORY.ECONOMY,Economy,Économie
+ENCYCLOPEDIA.NOT_DISCOVERED,NOT DISCOVERED,NON DÉCOUVERT
+TOWER.1.NAME,Bat Tower,Tour Chauve-souris
+TOWER.2.NAME,Strong Bat,Chauve-souris Puissante
+TOWER.FIRE.NAME,Fire Tower,Tour de Feu
+TOWER.MULTISHOT.NAME,Multi-Shot,Multi-tirs
+TOWER.PIERCING.NAME,Piercing,Perforant
+ENEMY.RAT.NAME,Rat,Rat
+ENEMY.DEFAULT.NAME,Zombie,Zombie
+ENEMY.FAT.NAME,Fat Zombie,Zombie Gras
+ENEMY.BIGDADDY.NAME,Big Daddy,Big Daddy
+CHALLENGE.CHA.000.NAME,Victory,Vaincre
+CHALLENGE.CHA.000.DESC,Finish the level.,Finir le niveau.
+CHALLENGE.CHA.001.NAME,Untouchable,Intouchable
+CHALLENGE.CHA.001.DESC,Finish the level without taking damage.,Finir le niveau sans prendre de dégâts.
+CHALLENGE.CHA.002.NAME,No trap,No trap
+CHALLENGE.CHA.002.DESC,Do not use traps.,Ne pas utiliser de pièges.
+CHALLENGE.CHA.003.NAME,Unique Tower,Tour unique
+CHALLENGE.CHA.003.DESC,Use only one type of tower.,Utilisez un seul même type de tour.
+CHALLENGE.CHA.004.NAME,By Fire,Par le feu
+CHALLENGE.CHA.004.DESC,Kill 10 rats with fire.,Tuez 10 rats par le feu.
+CHALLENGE.CHA.005.NAME,One Tower One Kill,Une tour un mort
+CHALLENGE.CHA.005.DESC,Every tower must kill at least one enemy.,Chaque tour placée doit au moins éliminer un ennemi.
+CHALLENGE.CHA.101.NAME,Versatile,Versatile
+CHALLENGE.CHA.101.DESC,Limit one of each tower type.,Un seul exemplaire pour chaque tour ne peut être posé sur la carte.
+CHALLENGE.CHA.102.NAME,Safety Distance,Distance de sécurité
+CHALLENGE.CHA.102.DESC,No tower should be in range of another.,Aucune tour ne doit être dans le champ de tir d'une autre.
+CHALLENGE.CHA.103.NAME,Half-Half,Moitié moitié
+CHALLENGE.CHA.103.DESC,No enemy must reach halfway.,Ne laisser aucun ennemi atteindre plus de la moitié du chemin.
+CHALLENGE.CHA.104.NAME,Some Rats,Quelques rats
+CHALLENGE.CHA.104.DESC,Let exactly N rats pass.,Laisser passer exactement N rats jusqu'à la base.
+CHALLENGE.CHA.105.NAME,Three in One,Trois dans un
+CHALLENGE.CHA.105.DESC,Boss must be hit by every trap type.,"Le boss doit subir au moins un fois chaque type de piège (actif, passif, limité)."
+CHALLENGE.CHA.106.NAME,Survive,Survivre
+CHALLENGE.CHA.106.DESC,Survive until the end.,Survivre jusqu'à la fin.
+CHALLENGE.CHA.201.NAME,Sample,Echantillon
+CHALLENGE.CHA.201.DESC,Let one of each enemy type pass.,Laissez passer un unique membre de chaque type d'ennemi.
+CHALLENGE.CHA.202.NAME,On the Edge,Sur le fil
+CHALLENGE.CHA.202.DESC,Finish with 1 HP.,Finir le niveau avec un unique PV.
+CHALLENGE.CHA.203.NAME,Not One More,Pas un de plus
+CHALLENGE.CHA.203.DESC,Max N buildings per wave.,Finir chaque vague avec un maximum de N bâtiments.
+CHALLENGE.CHA.204.NAME,I love traps,J'adore les pièges
+CHALLENGE.CHA.204.DESC,Use only traps.,Finir le niveau en utilisant uniquement des pièges.
+CHALLENGE.CHA.205.NAME,Fast and Furious,Fast and Furious
+CHALLENGE.CHA.205.DESC,Finish in less than N seconds.,Finir le niveau en moins de N secondes.

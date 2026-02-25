@@ -1,40 +1,44 @@
 ## © [2024] A7 Studio. All rights reserved. Trademark.
+##
+## Command to upgrade a tower in the current level.
 extends ICommand
 
-# public
-## Return le nom de la command
-func command_token() -> String:
-	return "up_tower"
 
-
-## Return descript de la command
+# Public functions
 func description() -> String:
-	return "Upgrade a tower. Pass the tower's name and the upgrade path (default 1, higher if available). e.g up_tower tower_1 1"
+	return "Upgrades the specified tower along a chosen path."
 
 
-## Return une list des types d'arguments attendu. e.g [ICommand.Types.ARG_INT, ICommand.Types.ARG_INT]
-func expected_args_types() -> Array[ICommand.Types]:
-	return [ICommand.Types.ARG_STRING, ICommand.Types.ARG_INT]
+func get_args() -> Array[Dictionary]:
+	return [
+		{"name": "tower_name", "type": Types.ARG_INGAME_TOWER},
+		{"name": "path", "type": Types.ARG_INT, "optional": true}
+	]
 
 
-# private
-## Method éxécuté lors de l'appel de la commande.
-## Rajouter '_' derrière `console` ou `args` si ils ne sont pas utilisées
-## Return <0 en cas d'erreur
+# Private functions
 func _execute(console: Console, args: Array) -> int:
+	if not ILevel.current_level:
+		console.push_error("You must be in a level to use this command.")
+		return ERR_UNKNOWN_BEHAVIOR
 
 	var tower_name: String = args[0]
-	var upgrade_path: int = int(args[1])
+	var upgrade_path: int = int(args[1]) if args.size() > 1 else 1
 
 	var tower: ITower = ILevel.current_level.map.get_tower_by_name(tower_name)
 	if not tower:
-		console.push_error("Tower not found")
-		return ERR_UNCONFIGURED
+		console.push_error("Tower '%s' not found." % tower_name)
+		return ERR_UNKNOWN_BEHAVIOR
 
-	if not tower.available_upgrade:
-		console.push_error("No upgrades available for this tower")
-		return ERR_UNCONFIGURED
+	if tower.available_upgrade.is_empty():
+		console.push_error("No upgrades available for this tower.")
+		return ERR_UNKNOWN_BEHAVIOR
 
-	tower.start_upgrade(tower.available_upgrade[upgrade_path-1])
+	if upgrade_path < 1 or upgrade_path > tower.available_upgrade.size():
+		console.push_error("Invalid upgrade path: %d." % upgrade_path)
+		return ERR_UNKNOWN_BEHAVIOR
+
+	tower.start_upgrade(tower.available_upgrade[upgrade_path - 1])
+	console.push_text("Upgrading tower: %s (Path %d)" % [tower_name, upgrade_path])
 
 	return OK

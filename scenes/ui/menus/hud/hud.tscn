@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://b5630xr4v607r"]
+[gd_scene load_steps=17 format=3 uid="uid://b5630xr4v607r"]
 
 [ext_resource type="Script" uid="uid://cc06prch72skr" path="res://scenes/ui/menus/hud/hud.gd" id="1_cuep3"]
 [ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="2_jel3x"]
@@ -12,12 +12,12 @@
 [ext_resource type="Script" uid="uid://b5mbfrr7vwpj7" path="res://scenes/ui/menus/hud/new_wave_count.gd" id="9_o6rym"]
 [ext_resource type="Texture2D" uid="uid://do48sldu5a83i" path="res://assets/ui/icons/Button Build.svg" id="10_sc2vu"]
 [ext_resource type="Texture2D" uid="uid://c2uqlay1r2d1d" path="res://assets/ui/icons/Button Cancel.svg" id="12_5jyti"]
-[ext_resource type="Texture2D" uid="uid://cav0yvhu6o3d0" path="res://assets/ui/icons/Button Skip.svg" id="13_hn23h"]
+[ext_resource type="Texture2D" uid="uid://dn8ksi7radij3" path="res://assets/ui/icons/Button Skip.svg" id="13_hn23h"]
+[ext_resource type="Script" uid="uid://bsx181lfajvum" path="res://scenes/ui/menus/hud/hud_challenges.gd" id="14_ch001"]
 
 [sub_resource type="Animation" id="1"]
 resource_name = "skip_active"
-length = 1.0
-loop = true
+loop_mode = 1
 step = 0.0
 tracks/0/type = "value"
 tracks/0/imported = false
@@ -32,6 +32,11 @@ tracks/0/keys = {
 "values": [Color(1, 0.4, 0.4, 1), Color(1, 1, 0.4, 1), Color(0.5, 1, 0.5, 1), Color(0.4, 1, 1, 1), Color(0.4, 0.6, 1, 1), Color(0.8, 0.4, 1, 1), Color(1, 0.4, 0.8, 1)]
 }
 
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_0gj16"]
+_data = {
+&"skip_active": SubResource("1")
+}
+
 [node name="HUD" type="Control"]
 texture_filter = 6
 layout_mode = 3
@@ -43,7 +48,7 @@ grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("1_cuep3")
 
-[node name="MarginContainer" type="MarginContainer" parent="."]
+[node name="PauseMarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
@@ -55,7 +60,7 @@ mouse_filter = 2
 theme_override_constants/margin_top = 20
 theme_override_constants/margin_right = 20
 
-[node name="PauseButton" type="TextureButton" parent="MarginContainer"]
+[node name="PauseButton" type="TextureButton" parent="PauseMarginContainer"]
 custom_minimum_size = Vector2(80, 65)
 layout_mode = 2
 texture_normal = ExtResource("2_meysh")
@@ -64,29 +69,32 @@ stretch_mode = 5
 
 [node name="HUDMarginContainer" type="MarginContainer" parent="."]
 custom_minimum_size = Vector2(0, 135)
-layout_mode = 1
-anchors_preset = -1
-anchor_right = 0.3
-anchor_bottom = 0.3
-offset_right = 30.4
-offset_bottom = 25.6
+layout_mode = 2
+offset_right = 489.0
+offset_bottom = 217.0
 size_flags_horizontal = 3
 theme_override_constants/margin_left = 15
 theme_override_constants/margin_top = 15
 
-[node name="HUDVBoxContainer" type="VBoxContainer" parent="HUDMarginContainer"]
+[node name="HUDHBoxContainer" type="HBoxContainer" parent="HUDMarginContainer"]
 layout_mode = 2
+theme_override_constants/separation = 30
+
+[node name="HUDVBoxContainer" type="VBoxContainer" parent="HUDMarginContainer/HUDHBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
 theme_override_constants/separation = 10
 alignment = 2
 
-[node name="HeartTextureRect" type="TextureRect" parent="HUDMarginContainer/HUDVBoxContainer"]
+[node name="HeartTextureRect" type="TextureRect" parent="HUDMarginContainer/HUDHBoxContainer/HUDVBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 texture = ExtResource("2_neukb")
 expand_mode = 3
 stretch_mode = 4
 
-[node name="HealthMarginContainer" type="MarginContainer" parent="HUDMarginContainer/HUDVBoxContainer/HeartTextureRect"]
+[node name="HealthMarginContainer" type="MarginContainer" parent="HUDMarginContainer/HUDHBoxContainer/HUDVBoxContainer/HeartTextureRect"]
 layout_mode = 1
 anchors_preset = -1
 anchor_top = 0.2
@@ -96,35 +104,35 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/margin_left = 30
 
-[node name="BottomHealthTextureRect" type="TextureRect" parent="HUDMarginContainer/HUDVBoxContainer/HeartTextureRect/HealthMarginContainer"]
+[node name="BottomHealthTextureRect" type="TextureRect" parent="HUDMarginContainer/HUDHBoxContainer/HUDVBoxContainer/HeartTextureRect/HealthMarginContainer"]
 z_index = -1
 z_as_relative = false
 layout_mode = 2
 texture = ExtResource("3_g6v8d")
 expand_mode = 2
 
-[node name="ShadowHealthMarginContainer" type="MarginContainer" parent="HUDMarginContainer/HUDVBoxContainer/HeartTextureRect/HealthMarginContainer"]
+[node name="ShadowHealthMarginContainer" type="MarginContainer" parent="HUDMarginContainer/HUDHBoxContainer/HUDVBoxContainer/HeartTextureRect/HealthMarginContainer"]
 layout_mode = 2
 theme_override_constants/margin_left = 5
 theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = -5
 theme_override_constants/margin_bottom = -10
 
-[node name="ShadowHealthTextureRect" type="TextureRect" parent="HUDMarginContainer/HUDVBoxContainer/HeartTextureRect/HealthMarginContainer/ShadowHealthMarginContainer"]
+[node name="ShadowHealthTextureRect" type="TextureRect" parent="HUDMarginContainer/HUDHBoxContainer/HUDVBoxContainer/HeartTextureRect/HealthMarginContainer/ShadowHealthMarginContainer"]
 z_index = -2
 z_as_relative = false
 layout_mode = 2
 texture = ExtResource("4_4h2ri")
 expand_mode = 2
 
-[node name="MarginContainer" type="MarginContainer" parent="HUDMarginContainer/HUDVBoxContainer/HeartTextureRect/HealthMarginContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="HUDMarginContainer/HUDHBoxContainer/HUDVBoxContainer/HeartTextureRect/HealthMarginContainer"]
 layout_mode = 2
 theme_override_constants/margin_left = 8
 theme_override_constants/margin_top = 8
 theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 8
 
-[node name="HealthTextureProgressBar" type="TextureProgressBar" parent="HUDMarginContainer/HUDVBoxContainer/HeartTextureRect/HealthMarginContainer/MarginContainer"]
+[node name="HealthTextureProgressBar" type="TextureProgressBar" parent="HUDMarginContainer/HUDHBoxContainer/HUDVBoxContainer/HeartTextureRect/HealthMarginContainer/MarginContainer"]
 z_index = -1
 z_as_relative = false
 layout_mode = 2
@@ -134,16 +142,13 @@ rounded = true
 nine_patch_stretch = true
 texture_progress = ExtResource("5_hukgj")
 
-[node name="HealthLabel" type="Label" parent="HUDMarginContainer/HUDVBoxContainer/HeartTextureRect/HealthMarginContainer/MarginContainer/HealthTextureProgressBar"]
+[node name="HealthLabel" type="Label" parent="HUDMarginContainer/HUDHBoxContainer/HUDVBoxContainer/HeartTextureRect/HealthMarginContainer/MarginContainer/HealthTextureProgressBar"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = 5.0
-offset_bottom = 5.0
 grow_horizontal = 2
 grow_vertical = 2
-size_flags_horizontal = 4
 theme = ExtResource("2_jel3x")
 theme_type_variation = &"UILabel"
 theme_override_font_sizes/font_size = 24
@@ -151,23 +156,23 @@ text = "INGAMEHUD.HEALTH.LABEL"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="CoinsWavesMarginContainer" type="MarginContainer" parent="HUDMarginContainer/HUDVBoxContainer"]
+[node name="CoinsWavesMarginContainer" type="MarginContainer" parent="HUDMarginContainer/HUDHBoxContainer/HUDVBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="CoinsWavesHBoxContainer" type="HBoxContainer" parent="HUDMarginContainer/HUDVBoxContainer/CoinsWavesMarginContainer"]
+[node name="CoinsWavesHBoxContainer" type="HBoxContainer" parent="HUDMarginContainer/HUDHBoxContainer/HUDVBoxContainer/CoinsWavesMarginContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 10
 
-[node name="CoinsTextureRect" type="TextureRect" parent="HUDMarginContainer/HUDVBoxContainer/CoinsWavesMarginContainer/CoinsWavesHBoxContainer"]
+[node name="CoinsTextureRect" type="TextureRect" parent="HUDMarginContainer/HUDHBoxContainer/HUDVBoxContainer/CoinsWavesMarginContainer/CoinsWavesHBoxContainer"]
 texture_filter = 6
 layout_mode = 2
 texture = ExtResource("7_1sk4j")
 expand_mode = 3
 stretch_mode = 4
 
-[node name="MarginContainer" type="MarginContainer" parent="HUDMarginContainer/HUDVBoxContainer/CoinsWavesMarginContainer/CoinsWavesHBoxContainer/CoinsTextureRect"]
+[node name="MarginContainer" type="MarginContainer" parent="HUDMarginContainer/HUDHBoxContainer/HUDVBoxContainer/CoinsWavesMarginContainer/CoinsWavesHBoxContainer/CoinsTextureRect"]
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
@@ -181,7 +186,7 @@ grow_horizontal = 2
 grow_vertical = 0
 theme_override_constants/margin_bottom = 10
 
-[node name="CoinsLabel" type="Label" parent="HUDMarginContainer/HUDVBoxContainer/CoinsWavesMarginContainer/CoinsWavesHBoxContainer/CoinsTextureRect/MarginContainer"]
+[node name="CoinsLabel" type="Label" parent="HUDMarginContainer/HUDHBoxContainer/HUDVBoxContainer/CoinsWavesMarginContainer/CoinsWavesHBoxContainer/CoinsTextureRect/MarginContainer"]
 texture_filter = 1
 layout_mode = 2
 size_flags_vertical = 1
@@ -191,14 +196,14 @@ text = "INGAMEHUD.COINS.LABEL"
 horizontal_alignment = 1
 vertical_alignment = 2
 
-[node name="WavesTextureRect" type="TextureRect" parent="HUDMarginContainer/HUDVBoxContainer/CoinsWavesMarginContainer/CoinsWavesHBoxContainer"]
+[node name="WavesTextureRect" type="TextureRect" parent="HUDMarginContainer/HUDHBoxContainer/HUDVBoxContainer/CoinsWavesMarginContainer/CoinsWavesHBoxContainer"]
 texture_filter = 6
 layout_mode = 2
 texture = ExtResource("8_ewojn")
 expand_mode = 3
 stretch_mode = 4
 
-[node name="MarginContainer" type="MarginContainer" parent="HUDMarginContainer/HUDVBoxContainer/CoinsWavesMarginContainer/CoinsWavesHBoxContainer/WavesTextureRect"]
+[node name="MarginContainer" type="MarginContainer" parent="HUDMarginContainer/HUDHBoxContainer/HUDVBoxContainer/CoinsWavesMarginContainer/CoinsWavesHBoxContainer/WavesTextureRect"]
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
@@ -212,7 +217,7 @@ grow_horizontal = 2
 grow_vertical = 0
 theme_override_constants/margin_bottom = 10
 
-[node name="WavesLabel" type="Label" parent="HUDMarginContainer/HUDVBoxContainer/CoinsWavesMarginContainer/CoinsWavesHBoxContainer/WavesTextureRect/MarginContainer"]
+[node name="WavesLabel" type="Label" parent="HUDMarginContainer/HUDHBoxContainer/HUDVBoxContainer/CoinsWavesMarginContainer/CoinsWavesHBoxContainer/WavesTextureRect/MarginContainer"]
 layout_mode = 2
 size_flags_vertical = 1
 theme = ExtResource("2_jel3x")
@@ -220,6 +225,16 @@ theme_type_variation = &"UILabel"
 text = "INGAMEHUD.WAVES.LABEL"
 horizontal_alignment = 1
 vertical_alignment = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="HUDMarginContainer/HUDHBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_constants/margin_top = 30
+
+[node name="ChallengesHBoxContainer" type="HBoxContainer" parent="HUDMarginContainer/HUDHBoxContainer/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 4
+script = ExtResource("14_ch001")
 
 [node name="NewWaveCountLabel" type="Label" parent="."]
 visible = false
@@ -264,9 +279,7 @@ stretch_mode = 5
 [node name="SkipMarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1
 anchors_preset = 2
-anchor_left = 0.0
 anchor_top = 1.0
-anchor_right = 0.0
 anchor_bottom = 1.0
 offset_left = 20.0
 offset_top = -112.0
@@ -286,7 +299,6 @@ ignore_texture_size = true
 stretch_mode = 5
 
 [node name="SkipAnimationPlayer" type="AnimationPlayer" parent="SkipMarginContainer"]
-root_node = NodePath("..")
-libraries = {}
-autoplay = ""
-anims/skip_active = SubResource("1")
+libraries = {
+&"": SubResource("AnimationLibrary_0gj16")
+}

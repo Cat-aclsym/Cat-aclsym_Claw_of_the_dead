@@ -1,4 +1,9 @@
 {
+	"challenges": [
+		"cha.000",
+		"cha.001",
+		"cha.002"
+	],
 	"status": "done",
 	"waves": [
 	  [
@@ -208,4 +213,3 @@
 	  ]
 	]
   }
-  

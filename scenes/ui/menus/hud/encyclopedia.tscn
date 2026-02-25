@@ -1,0 +1,289 @@
+[gd_scene load_steps=11 format=3 uid="uid://divtcu2mbquip"]
+
+[ext_resource type="Script" uid="uid://boqaeq5svhocn" path="res://scenes/ui/menus/hud/encyclopedia.gd" id="1_ency"]
+[ext_resource type="Texture2D" uid="uid://mshwayfrielr" path="res://assets/ui/huds/encyclopedie_ennemis.png" id="2_bg_ennemis"]
+[ext_resource type="Texture2D" uid="uid://0lgpu16nkbho" path="res://assets/ui/icons/Button Close.svg" id="3_close"]
+[ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="4_theme"]
+[ext_resource type="FontFile" uid="uid://ddo3rokwsadq0" path="res://assets/ui/fonts/dotgothic/DotGothic16-Regular.ttf" id="5_font"]
+[ext_resource type="Texture2D" uid="uid://sdmr73qrumef" path="res://assets/ui/icons/encyclopedia_left.png" id="5_fwnpo"]
+[ext_resource type="Texture2D" uid="uid://bdi8iy6d6hp61" path="res://assets/ui/icons/encyclopedia_right.png" id="6_5dtmo"]
+[ext_resource type="Texture2D" uid="uid://bmtlovs16utgc" path="res://assets/ui/icons/encyclopedia_bottom.png" id="7_scroll_arrow"]
+[ext_resource type="Texture2D" uid="uid://c1f4e2f8oknku" path="res://assets/ui/icons/exclamation.png" id="8_exclamation"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bg"]
+atlas = ExtResource("2_bg_ennemis")
+region = Rect2(0, 0, 1396, 832)
+
+[node name="Encyclopedia" type="Control"]
+texture_filter = 6
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_ency")
+
+[node name="BackgroundContainer" type="AspectRatioContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+ratio = 1.7
+
+[node name="BackgroundTexture" type="TextureRect" parent="BackgroundContainer"]
+unique_name_in_owner = true
+texture_filter = 1
+layout_mode = 2
+texture = SubResource("AtlasTexture_bg")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="TowersButton" type="TextureButton" parent="BackgroundContainer/BackgroundTexture"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 291.0
+offset_top = 10.0
+offset_right = 363.0
+offset_bottom = 72.0
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="TowersExclamation" type="TextureRect" parent="BackgroundContainer/BackgroundTexture/TowersButton"]
+unique_name_in_owner = true
+visible = false
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -15.0
+offset_top = 30.0
+offset_right = 15.0
+offset_bottom = 60.0
+grow_horizontal = 0
+texture = ExtResource("8_exclamation")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="EnemiesButton" type="TextureButton" parent="BackgroundContainer/BackgroundTexture"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 213.0
+offset_top = 10.0
+offset_right = 285.0
+offset_bottom = 72.0
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="EnemiesExclamation" type="TextureRect" parent="BackgroundContainer/BackgroundTexture/EnemiesButton"]
+unique_name_in_owner = true
+visible = false
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -15.0
+offset_top = 30.0
+offset_right = 15.0
+offset_bottom = 60.0
+grow_horizontal = 0
+texture = ExtResource("8_exclamation")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="GuiMarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="MenuLayout" type="Control" parent="GuiMarginContainer"]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="CloseTextureButton" type="TextureButton" parent="GuiMarginContainer/MenuLayout"]
+unique_name_in_owner = true
+texture_filter = 6
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -100.0
+offset_top = 20.0
+offset_right = -60.0
+offset_bottom = 60.0
+grow_horizontal = 0
+texture_normal = ExtResource("3_close")
+ignore_texture_size = true
+stretch_mode = 4
+
+[node name="ContentLayout" type="Control" parent="GuiMarginContainer/MenuLayout"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -317.0
+offset_top = -178.5
+offset_right = 342.0
+offset_bottom = 202.5
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="LeftPageVBox" type="VBoxContainer" parent="GuiMarginContainer/MenuLayout/ContentLayout"]
+layout_mode = 0
+offset_left = -43.0
+offset_top = -21.0
+offset_right = 300.0
+offset_bottom = 408.0
+mouse_filter = 2
+alignment = 1
+
+[node name="NameLabel" type="Label" parent="GuiMarginContainer/MenuLayout/ContentLayout/LeftPageVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme = ExtResource("4_theme")
+theme_type_variation = &"HeaderMedium"
+theme_override_fonts/font = ExtResource("5_font")
+theme_override_font_sizes/font_size = 48
+text = "ITEM NAME"
+horizontal_alignment = 1
+
+[node name="SpriteRect" type="TextureRect" parent="GuiMarginContainer/MenuLayout/ContentLayout/LeftPageVBox"]
+unique_name_in_owner = true
+texture_filter = 1
+layout_mode = 2
+size_flags_vertical = 3
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ItemExclamation" type="TextureRect" parent="GuiMarginContainer/MenuLayout/ContentLayout/LeftPageVBox/SpriteRect"]
+unique_name_in_owner = true
+visible = false
+texture_filter = 1
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -40.0
+offset_bottom = 40.0
+grow_horizontal = 0
+texture = ExtResource("8_exclamation")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="RightPageVBox" type="VBoxContainer" parent="GuiMarginContainer/MenuLayout/ContentLayout"]
+layout_mode = 0
+offset_left = 356.0
+offset_top = -21.0
+offset_right = 698.0
+offset_bottom = 405.0
+mouse_filter = 2
+alignment = 1
+
+[node name="StatsScroll" type="ScrollContainer" parent="GuiMarginContainer/MenuLayout/ContentLayout/RightPageVBox"]
+layout_mode = 2
+size_flags_vertical = 3
+follow_focus = true
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 3
+
+[node name="StatsMargin" type="MarginContainer" parent="GuiMarginContainer/MenuLayout/ContentLayout/RightPageVBox/StatsScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="StatsGrid" type="GridContainer" parent="GuiMarginContainer/MenuLayout/ContentLayout/RightPageVBox/StatsScroll/StatsMargin"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+mouse_filter = 2
+theme_override_constants/h_separation = 40
+theme_override_constants/v_separation = 20
+columns = 2
+
+[node name="ScrollIndicator" type="TextureRect" parent="GuiMarginContainer/MenuLayout/ContentLayout/RightPageVBox"]
+unique_name_in_owner = true
+visible = false
+modulate = Color(1, 1, 1, 0.705882)
+texture_filter = 1
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+size_flags_horizontal = 4
+texture = ExtResource("7_scroll_arrow")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ScrollIndicatorTop" type="TextureRect" parent="GuiMarginContainer/MenuLayout/ContentLayout"]
+unique_name_in_owner = true
+visible = false
+modulate = Color(1, 1, 1, 0.705882)
+texture_filter = 1
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 0
+offset_left = 507.0
+offset_top = -35.0
+offset_right = 547.0
+offset_bottom = 5.0
+texture = ExtResource("7_scroll_arrow")
+expand_mode = 1
+stretch_mode = 5
+flip_v = true
+
+[node name="PrevButton" type="TextureButton" parent="GuiMarginContainer/MenuLayout"]
+unique_name_in_owner = true
+texture_filter = 1
+custom_minimum_size = Vector2(45, 50)
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -310.0
+offset_top = -145.0
+offset_right = -265.0
+offset_bottom = -95.0
+grow_horizontal = 2
+grow_vertical = 0
+texture_normal = ExtResource("5_fwnpo")
+ignore_texture_size = true
+stretch_mode = 4
+
+[node name="NextButton" type="TextureButton" parent="GuiMarginContainer/MenuLayout"]
+unique_name_in_owner = true
+texture_filter = 1
+custom_minimum_size = Vector2(45, 50)
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = 265.0
+offset_top = -145.0
+offset_right = 310.0
+offset_bottom = -95.0
+grow_horizontal = 2
+grow_vertical = 0
+texture_normal = ExtResource("6_5dtmo")
+ignore_texture_size = true
+stretch_mode = 4

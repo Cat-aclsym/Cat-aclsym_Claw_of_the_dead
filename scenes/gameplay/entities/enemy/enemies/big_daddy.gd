@@ -147,9 +147,9 @@ func _physics_process(delta: float) -> void:
 	match _current_attack_cycle_state:
 		AttackCycleState.PRE_ATTACK, AttackCycleState.ATTACKING, AttackCycleState.POST_ATTACK:
 			should_move = false
-		_: 
+		_:
 			should_move = true
-	
+
 	if should_move:
 		super._physics_process(delta)
 
@@ -168,12 +168,12 @@ func _on_pre_attack_timer_timeout() -> void:
 	Log.trace(Log.Level.DEBUG, "BigDaddy: Pre-attack delay finished. Starting ATTACKING.")
 	_current_attack_cycle_state = AttackCycleState.ATTACKING
 	_attack_duration_timer.start(attack_duration)
-	if fire_rate > 0 and fire_rate_timer: 
+	if fire_rate > 0 and fire_rate_timer:
 		fire_rate_timer.start()
 
 func _on_attack_duration_timer_timeout() -> void:
 	if _current_attack_cycle_state != AttackCycleState.ATTACKING:
-		return 
+		return
 	Log.trace(Log.Level.DEBUG, "BigDaddy: Attack duration finished. Starting POST_ATTACK.")
 	_current_attack_cycle_state = AttackCycleState.POST_ATTACK
 	_post_attack_timer.start(post_attack_delay)
@@ -240,7 +240,7 @@ func _find_new_target() -> void:
 		if dist_sq < min_dist_sq:
 			min_dist_sq = dist_sq
 			closest_tower_body = detected_body
-	
+
 	current_target = closest_tower_body # current_target is the body (e.g. "TowerBody")
 
 	if old_target_body != current_target:
@@ -299,23 +299,23 @@ func _shoot() -> void:
 	var bullet_container = get_tree().get_first_node_in_group("bullet_container")
 	if bullet_container:
 		bullet_container.add_child(projectile)
-		projectile.z_index = 100 
-	elif get_parent(): 
+		projectile.z_index = 100
+	elif get_parent():
 		get_parent().add_child(projectile)
 		Log.trace(Log.Level.WARN, "BigDaddy: 'bullet_container' group not found. Adding projectile to get_parent().")
 	else:
 		Log.trace(Log.Level.ERROR, "BigDaddy: Cannot add projectile, no parent and no bullet_container.")
 		projectile.queue_free()
 		return
-			
-	projectile.global_position = global_position 
-	if is_instance_valid(current_target): 
+
+	projectile.global_position = global_position
+	if is_instance_valid(current_target):
 		var direction_to_target = global_position.direction_to(current_target.global_position)
 		projectile.rotation = direction_to_target.angle()
 
 		if projectile.has_method("init"):
-			projectile.init(direction_to_target, tower_disable_duration) 
-		elif projectile.has_meta("direction"): 
+			projectile.init(direction_to_target, tower_disable_duration)
+		elif projectile.has_meta("direction"):
 			projectile.set_meta("direction", direction_to_target)
 	else:
 		Log.trace(Log.Level.WARN, "BigDaddy: Target became invalid right before setting projectile direction.")
@@ -337,11 +337,11 @@ func _shoot() -> void:
 
 func _on_range_area_body_entered(body: Node2D) -> void:
 	# Log.trace(Log.Level.DEBUG, "BigDaddy: Range area body entered: %s" % body.name) # Can be verbose
-	if body.is_in_group("towers"): 
+	if body.is_in_group("towers"):
 		if not body in towers_in_range:
 			towers_in_range.append(body)
 			Log.trace(Log.Level.DEBUG, "BigDaddy: Tower '%s' entered range. Total in range: %s" % [body.name, towers_in_range.size()])
-			if not current_target: 
+			if not current_target:
 				_find_new_target()
 
 
@@ -349,6 +349,6 @@ func _on_range_area_body_exited(body: Node2D) -> void:
 	if body in towers_in_range:
 		towers_in_range.erase(body)
 		Log.trace(Log.Level.DEBUG, "BigDaddy: Tower '%s' exited range. Total in range: %s" % [body.name, towers_in_range.size()])
-		if body == current_target: 
-			current_target = null 
+		if body == current_target:
+			current_target = null
 			_find_new_target()
