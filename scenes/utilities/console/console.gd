@@ -1,4 +1,4 @@
-## © [2024] A7 Studio. All rights reserved. Trademark.
+## © [2026] A7 Studio. All rights reserved. Trademark.
 ##
 ## In-game debug console for executing commands and displaying output.
 ## Provides a command-line interface for debugging and development purposes.
@@ -23,11 +23,17 @@ var _command_history: Array[String] = []
 var _history_index: int = -1
 var _history_stash: String = ""
 var _is_navigating_history: bool = false
+var _is_output_manual_scroll: bool = false
 
 # Built-in functions
 func _ready() -> void:
 	Global.console = self
+	set_process_input(true)
 	input.grab_focus()
+	output.scroll_active = true
+	output.scroll_following = false
+	output.selection_enabled = true
+	output.mouse_filter = Control.MOUSE_FILTER_STOP
 	_load_available_commands()
 	suggestions_label.hide()
 	suggestions_label.autowrap_mode = TextServer.AUTOWRAP_OFF
@@ -44,10 +50,28 @@ func _process(_delta: float) -> void:
 	_listen_inputs()
 
 
+func _input(event: InputEvent) -> void:
+	if not visible:
+		return
+
+	if event is InputEventMouseButton and event.pressed:
+		if event.button_index == MOUSE_BUTTON_WHEEL_UP or event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
+			_scroll_output_wheel(event.button_index)
+			get_viewport().set_input_as_handled()
+			return
+
+		if event.button_index == MOUSE_BUTTON_LEFT:
+			input.grab_focus()
+			get_viewport().set_input_as_handled()
+			return
+
+
 # Public functions
 ## Pushes text to the console output.
 func push_text(text: String, save: bool = true) -> void:
-	output.text += "%s\n" % text
+	output.append_text("%s\n" % text)
+	if not _is_output_manual_scroll:
+		output.scroll_to_line(output.get_line_count())
 
 	if Global.debug and save:
 		Log.save_message(text)
@@ -128,6 +152,24 @@ func _listen_inputs() -> void:
 		_clear_suggestions()
 		return
 
+## Scrolls the output and updates follow state.
+func _scroll_output(amount: float) -> void:
+	var scroll := output.get_v_scroll_bar()
+	if not scroll:
+		return
+	scroll.value = clamp(scroll.value + amount, scroll.min_value, scroll.max_value)
+	var at_bottom := scroll.value >= scroll.max_value - scroll.page - 1.0
+	_is_output_manual_scroll = not at_bottom
+
+## Handles mouse wheel scrolling for the output.
+func _scroll_output_wheel(button_index: int) -> void:
+	var scroll := output.get_v_scroll_bar()
+	if not scroll:
+		return
+	var amount := scroll.page / 5.0 if scroll.page > 0 else 50.0
+	var delta := -amount if button_index == MOUSE_BUTTON_WHEEL_UP else amount
+	_scroll_output(delta)
+
 ## Callback triggered when console input text changes.
 func _on_input_text_changed() -> void:
 	if _suggestion_index >= 0 and (Input.is_action_just_pressed("ui_focus_next") or Input.is_key_pressed(KEY_TAB)):
@@ -138,6 +180,7 @@ func _on_input_text_changed() -> void:
 		_history_index = -1
 
 	_update_suggestions()
+
 
 ## Callback triggered on console input GUI events.
 func _on_input_gui_input(event: InputEvent) -> void:
@@ -154,6 +197,16 @@ func _on_input_gui_input(event: InputEvent) -> void:
 			else:
 				_navigate_suggestions(1)
 			get_viewport().set_input_as_handled()
+		elif event.keycode == KEY_PAGEUP or event.keycode == KEY_PAGEDOWN:
+			var scroll := output.get_v_scroll_bar()
+			var amount := scroll.page if scroll.page > 0 else 200.0
+			var delta := -amount if event.keycode == KEY_PAGEUP else amount
+			_scroll_output(delta)
+			input.accept_event()
+		elif (event.keycode == KEY_UP or event.keycode == KEY_DOWN) and event.ctrl_pressed:
+			var delta := -40.0 if event.keycode == KEY_UP else 40.0
+			_scroll_output(delta)
+			input.accept_event()
 		elif (event.keycode == KEY_UP or event.keycode == KEY_DOWN):
 			# History navigation: allowed if empty input OR already navigating history
 			if input.text.strip_edges().is_empty() or _history_index != -1:
@@ -247,37 +300,34 @@ func _update_suggestions() -> void:
 	if is_typing_args:
 		var cmd := _find_command(command_prefix, true)
 		if cmd:
-			args_def = cmd.get_args()
+			var current_args := parts.slice(1, parts.size() - 1 if not has_trailing_space else parts.size())
+			args_def = cmd.get_args_dynamic(current_args)
 			if not args_def.is_empty():
 				if args_typed >= args_def.size():
 					_clear_suggestions()
 					return
 
 				var current_arg_def: Dictionary = args_def[args_typed]
-				var arg_type: int = current_arg_def.get("type", 0)
+				var arg_type: int = current_arg_def.get("type", ICommand.Types.ARG_UNKNOWN)
 				var current_input := parts[-1] if not has_trailing_space else ""
 
 				match arg_type:
+					ICommand.Types.ARG_CHALLENGE:
+						var challenge_dir := DirAccess.open("res://resources/challenges/")
+						if challenge_dir:
+							for file_name in challenge_dir.get_files():
+								if file_name.ends_with(".json"):
+									var challenge_id := file_name.trim_suffix(".json")
+									if challenge_id.to_lower().begins_with(current_input.to_lower()):
+										_current_suggestions.append(challenge_id)
 					ICommand.Types.ARG_COMMAND:
 						for cmd_name in _available_commands:
 							if cmd_name.to_lower().begins_with(current_input.to_lower()):
 								_current_suggestions.append(cmd_name)
-					ICommand.Types.ARG_TOWER:
-						var tower_script = load("res://scenes/gameplay/entities/tower/i_tower.gd")
-						if tower_script and tower_script.has_source_code():
-							var tower_types = tower_script.get_script_constant_map().get("TowerType")
-							if tower_types:
-								for tower_type in tower_types.keys():
-									if tower_type.to_lower().begins_with(current_input.to_lower()):
-										_current_suggestions.append(tower_type)
 					ICommand.Types.ARG_ENEMY:
-						var enemy_script = load("res://scenes/gameplay/entities/enemy/i_enemy.gd")
-						if enemy_script and enemy_script.has_source_code():
-							var enemy_types = enemy_script.get_script_constant_map().get("EnemyType")
-							if enemy_types:
-								for enemy_type in enemy_types.keys():
-									if enemy_type.to_lower().begins_with(current_input.to_lower()):
-										_current_suggestions.append(enemy_type)
+						for enemy_id in StatsDB.get_enemy_ids():
+							if enemy_id.to_lower().begins_with(current_input.to_lower()):
+								_current_suggestions.append(enemy_id)
 					ICommand.Types.ARG_ENUM:
 						var enum_values: Array = current_arg_def.get("enum_values", [])
 						for value in enum_values:
@@ -301,6 +351,10 @@ func _update_suggestions() -> void:
 									var level_id := file_name.trim_suffix(".json")
 									if level_id.to_lower().begins_with(current_input.to_lower()):
 										_current_suggestions.append(level_id)
+					ICommand.Types.ARG_TOWER:
+						for tower_id in StatsDB.get_tower_ids():
+							if tower_id.to_lower().begins_with(current_input.to_lower()):
+								_current_suggestions.append(tower_id)
 					_:
 						pass
 	else:
@@ -334,6 +388,7 @@ func _show_suggestions() -> void:
 
 	var is_typing_args := parts_no_empty.size() > 1 or (full_input.ends_with(" ") and not full_input.is_empty())
 	var command_prefix := parts_no_empty[0] if not parts_no_empty.is_empty() else ""
+	var typed_args := parts_no_empty.slice(1, parts_no_empty.size() - 1 if not full_input.ends_with(" ") else parts_no_empty.size())
 
 	var suggestions_text := "[code][font_size=12]"
 
@@ -358,7 +413,7 @@ func _show_suggestions() -> void:
 		# When typing arguments, show signature with current arg highlighted
 		var cmd := _find_command(command_prefix, true)
 		if cmd:
-			var signature := _build_signature(cmd, command_prefix, current_arg_index)
+			var signature := _build_signature(cmd, command_prefix, current_arg_index, typed_args)
 			if not signature.is_empty():
 				suggestions_text += "\n" + signature
 	else:
@@ -367,7 +422,7 @@ func _show_suggestions() -> void:
 			var selected_cmd_name := _current_suggestions[_suggestion_index]
 			var cmd := _find_command(selected_cmd_name, true)
 			if cmd:
-				var signature := _build_signature(cmd, selected_cmd_name, -1)
+				var signature := _build_signature(cmd, selected_cmd_name, -1, [])
 				if not signature.is_empty():
 					suggestions_text += "\n" + signature
 
@@ -376,14 +431,14 @@ func _show_suggestions() -> void:
 	suggestions_label.show()
 
 ## Builds a rich text signature for the given command.
-func _build_signature(cmd: ICommand, command_name: String, current_arg_index: int) -> String:
-	var cmd_args := cmd.get_args()
+func _build_signature(cmd: ICommand, command_name: String, current_arg_index: int, current_args: Array) -> String:
+	var cmd_args := cmd.get_args_dynamic(current_args)
 	var signature := "  " + command_name
 
 	for j in range(cmd_args.size()):
 		var arg_def: Dictionary = cmd_args[j]
 		var arg_name: String = arg_def.get("name", "arg")
-		var arg_type: int = arg_def.get("type", 0)
+		var arg_type: int = arg_def.get("type", ICommand.Types.ARG_UNKNOWN)
 		var type_str: String = _get_type_string(cmd, arg_def, arg_type)
 		var is_current_arg := (j + 1 == current_arg_index)
 
