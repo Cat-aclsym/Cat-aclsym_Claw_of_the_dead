@@ -1,7 +1,7 @@
 [gd_scene load_steps=8 format=3 uid="uid://cqe6sjyhnpfci"]
 
 [ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="1_ox1tf"]
-[ext_resource type="Texture2D" uid="uid://dbhkk633ispub" path="res://assets/ui/buttons/Bouton Bleu@2x.png" id="2_26l8s"]
+[ext_resource type="Texture2D" uid="uid://deifsvtkdkqo1" path="res://assets/ui/buttons/Bouton Bleu.svg" id="2_26l8s"]
 
 [sub_resource type="FontVariation" id="FontVariation_qup1q"]
 variation_embolden = 2.0
@@ -129,6 +129,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 
 [node name="TextureRect" type="TextureRect" parent="CenterContainer"]
 custom_minimum_size = Vector2(370, 117)

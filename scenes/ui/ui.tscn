@@ -1,10 +1,11 @@
-[gd_scene load_steps=6 format=3 uid="uid://7a3coyl5og1a"]
+[gd_scene load_steps=7 format=3 uid="uid://7a3coyl5og1a"]
 
 [ext_resource type="PackedScene" uid="uid://bumh57lmx1jlc" path="res://scenes/ui/menus/pause/pause.tscn" id="1_1svi5"]
 [ext_resource type="Script" uid="uid://ddn3xis5ythcp" path="res://scenes/ui/ui.gd" id="1_550fr"]
 [ext_resource type="PackedScene" uid="uid://cqfsr6yjn6hm8" path="res://scenes/ui/menus/home/home.tscn" id="3_2jvje"]
 [ext_resource type="PackedScene" uid="uid://b5630xr4v607r" path="res://scenes/ui/menus/hud/hud.tscn" id="4_2u4wi"]
 [ext_resource type="PackedScene" uid="uid://wyaikwouv3ik" path="res://scenes/utilities/console/console.tscn" id="5_g5c75"]
+[ext_resource type="Script" uid="uid://3ll1mp07j5h1" path="res://scenes/ui/menus/pause/pause.gd" id="6_pfayw"]
 
 [node name="UI" type="CanvasLayer"]
 script = ExtResource("1_550fr")
@@ -13,7 +14,6 @@ script = ExtResource("1_550fr")
 process_mode = 3
 visible = false
 offset_right = 59.0
-offset_bottom = 31.0
 text = "PAUSE.TITLE"
 
 [node name="Console" parent="." instance=ExtResource("5_g5c75")]
@@ -26,8 +26,16 @@ z_index = 4096
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
-[node name="MenuPause" parent="." instance=ExtResource("1_1svi5")]
+[node name="MenuPause" type="Control" parent="." instance=ExtResource("1_1svi5")]
 visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_bottom = 4.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("6_pfayw")
 
 [node name="PauseButton2" type="Button" parent="."]
 process_mode = 3

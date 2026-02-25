@@ -27,7 +27,7 @@ func check_completion() -> bool:
 
 
 ## Notifies the challenge about an enemy death.
-func on_enemy_died(_enemy: IEnemy, damage_type: IEnemy.DamageType) -> void:
+func on_enemy_died(_enemy: IEnemy, damage_type: IEnemy.DamageType, _source: Variant = null) -> void:
 	if damage_type == IEnemy.DamageType.FIRE:
 		_fire_kills += 1
 		if _fire_kills >= TARGET_KILLS:
