@@ -1,4 +1,4 @@
-## © [2024] A7 Studio. All rights reserved. Trademark.
+## © [2026] A7 Studio. All rights reserved. Trademark.
 ##
 ## Handles tower placement mechanics in the game.
 ## [br]
@@ -179,7 +179,7 @@ func _state_build(tower: ITower = null) -> void:
 		add_child(_tower)
 
 	_tower.position = cursor.position - Vector2(0, 16)
-	var is_buildable := _is_buildable(_tower.position)
+	var is_buildable := _is_buildable(cursor.position)
 	_tower.modulate = COLOR_OK if is_buildable else COLOR_KO
 	_update_place_button_state(is_buildable)
 
@@ -191,7 +191,7 @@ func _state_build(tower: ITower = null) -> void:
 		hover_area.monitorable = false
 		hover_area.input_pickable = false
 	# Use the placement area position (cursor position) for validation, not the tower position
-	_tower.modulate = COLOR_OK if _is_buildable(cursor.position) else COLOR_KO
+	_tower.modulate = COLOR_OK if is_buildable else COLOR_KO
 
 ## Check if the placement area overlaps with any enemy path
 func _is_position_on_path(pos: Vector2) -> bool:
@@ -271,7 +271,7 @@ func _cancel_build() -> void:
 	change_state(CursorState.IDLE)
 
 func _build() -> void:
-	if not _is_buildable(_tower.position):
+	if not _is_buildable(cursor.position):
 		# Log.trace(Log.Level.DEBUG, "Cannot build tower at position: {0}".format([_tower.position]))
 		return
 
@@ -353,5 +353,6 @@ func _on_button_mouse_exited() -> void:
 func _on_level_stats_updated() -> void:
 	# Update button state when coins change during tower placement
 	if _state == CursorState.BUILD and _tower:
-		var is_buildable := _is_buildable(_tower.position)
+		var is_buildable := _is_buildable(cursor.position)
+		_tower.modulate = COLOR_OK if is_buildable else COLOR_KO
 		_update_place_button_state(is_buildable)
