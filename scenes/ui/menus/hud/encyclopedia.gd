@@ -38,6 +38,8 @@ var _frame_width: int = 1396
 var _frames_per_row: int = 8
 ## Flag indicating if a page turn animation is in progress.
 var _is_turning_page: bool = false
+## Active marquee tweens for cleanup when stats grid is rebuilt.
+var _marquee_tweens: Array[Tween] = []
 ## Direction of the page turn (1 forward, -1 backward).
 var _page_anim_direction: int = 1
 ## Duration of the page turn animation.
@@ -264,6 +266,9 @@ func _add_tower_entry_from_data(p_id: String, p_entry_name: String, p_tower_data
 func _animate_marquee(p_label: Label, p_container: Control) -> void:
 	await get_tree().process_frame
 
+	if not is_instance_valid(p_label) or not is_instance_valid(p_container):
+		return
+
 	var text_width: float = p_label.get_combined_minimum_size().x
 	var container_width: float = p_container.size.x
 
@@ -271,11 +276,12 @@ func _animate_marquee(p_label: Label, p_container: Control) -> void:
 		var scroll_dist: float = text_width - container_width + 20
 		var duration: float = scroll_dist / 30.0
 
-		var tween = create_tween().set_loops().set_parallel(false)
+		var tween := create_tween().set_loops().set_parallel(false)
 		tween.tween_interval(1.5)
 		tween.tween_property(p_label, "position:x", -scroll_dist, duration).set_trans(Tween.TRANS_LINEAR)
 		tween.tween_interval(1.5)
 		tween.tween_property(p_label, "position:x", 0.0, duration).set_trans(Tween.TRANS_LINEAR)
+		_marquee_tweens.append(tween)
 
 
 ## Checks if scroll indicators should be visible.
@@ -462,7 +468,11 @@ func _update_ui_elements() -> void:
 
 	_update_category_exclamations()
 
-	# Clear previous stats
+	for tween in _marquee_tweens:
+		if is_instance_valid(tween):
+			tween.kill()
+	_marquee_tweens.clear()
+
 	for child in stats_grid.get_children():
 		child.queue_free()
 
