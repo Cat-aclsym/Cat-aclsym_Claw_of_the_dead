@@ -1,4 +1,4 @@
-﻿keys,en,fr
+keys,en,fr
 SETTINGS.TEXT.LABEL,Settings,Paramètres
 SOCIALS.TEXT.LABEL,Socials,Réseaux sociaux
 MISC.TEXT.LABEL,Misc.,Divers
@@ -16,7 +16,12 @@ ENDGAMEMENU.LIFESTATISTIC.LABEL,%s,%s
 ENDGAMEMENU.TIMESTATISTIC.LABEL,%s,%s
 ENDGAMEMENU.LEVEL.TITLE.WIN,Victory,Victoire
 ENDGAMEMENU.LEVEL.TITLE.LOOSE,Defeat,Défaite
-HOME.COPYRIGHT,"© [2024] A7 Studio. All rights reserved. Trademark.","© [2024] A7 Studio. Tous droits réservés. Marque déposée."
+HOME.COPYRIGHT,© [2024] A7 Studio. All rights reserved. Trademark.,© [2024] A7 Studio. Tous droits réservés. Marque déposée.
+TOWER.BAT_01.NAME,Cat Tree,Arbre à Chat'rchés
+TOWER.BAT_02.NAME,AOE Tower,Tour AOE
+TOWER.LEVEL.DISPLAY,%s - lvl %d,%s - niv %d
+TOWER.UPGRADE.PRICE,%d golds,%d pièces d'or
+TOWER.UPGRADE.TITLE,Upgrade to level %d,Améliorer au niveau %d
 HOME.ENCYCLOPEDIA.BUTTON,Encyclopedia,Encyclopédie
 ENCYCLOPEDIA.TITLE,Encyclopedia,Encyclopédie
 ENCYCLOPEDIA.STATS.HEALTH,Health,Vie

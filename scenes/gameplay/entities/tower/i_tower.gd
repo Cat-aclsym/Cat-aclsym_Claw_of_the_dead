@@ -96,6 +96,10 @@ var enemy_array: Array[IEnemy]
 var selected: bool = false
 ## The state of the tower
 var state: TowerState = TowerState.ACTIVE
+## Flag to cancel ongoing animations
+var _cancel_animations: bool = false
+## Flag to ignore hover interactions when menu is open
+var _menu_open: bool = false
 ## The target of the tower
 var target: IEnemy
 ## The type of target the tower will shoot at
@@ -185,8 +189,6 @@ func start_upgrade(upgradeScene: PackedScene) -> void:
 func apply_upgrade() -> void:
 	var upgrade: IUpgrade = pending_upgrade.instantiate()
 
-	# Log.trace(Log.Level.DEBUG, "Applying upgrade: {0}".format([pending_upgrade]))
-
 	if upgrade.changes["tower_stat"]:
 		_apply_tower_stat_changes(upgrade)
 
@@ -222,6 +224,7 @@ func apply_upgrade() -> void:
 	available_upgrade = upgrade.next_upgrades
 	sell_price += ceil(upgrade.price / 2.0)
 	update_dependent_properties()
+	level += 1
 	state = TowerState.ACTIVE
 	emit_signal("upgrade_completed")
 
@@ -264,6 +267,8 @@ func _animate_range_display() -> void:
 
 func _apply_tower_stat_changes(upgrade: IUpgrade) -> void:
 	for stat in upgrade.tower_stats.keys():
+		if stat == "level":
+			continue
 		if self.get(stat):
 			Log.trace(Log.Level.DEBUG, "Modifying stat: {0} by {1}".format([stat, upgrade.tower_stats[stat]]))
 			self.set(stat, self.get(stat) + upgrade.tower_stats[stat])
@@ -289,6 +294,7 @@ func _apply_base_stats_override() -> void:
 		return
 	var data: Dictionary = stats_db.get_tower(tower_id)
 	var base: Dictionary = data.get("base", {})
+	level = stats_db.get_tower_level(tower_id)
 	Log.trace(Log.Level.INFO, "Applying tower stats from StatsDB for %s: %s" % [tower_id, base])
 	if base.has("cost"):
 		cost = int(base["cost"])
@@ -399,23 +405,24 @@ func _get_random_target():
 ## Function to interpolate between two values.
 func _color_variation() -> void:
 	## Check if the tower is selected
-	if not selected:
+	if not selected or _cancel_animations:
 		return
 	## Set the initial lerp state to 1
 	var lerp_state: float = 1
 	## Loop to interpolate the color of the range polygon
-	while lerp_state > 0:
+	while lerp_state > 0 and not _cancel_animations:
 		polygon_2d.color = lerp(Color(color, 0.3), Color(color, 0), 1-lerp_state)
 		await get_tree().create_timer(0.02).timeout
 		lerp_state -= 0.05
 	## Loop to interpolate the color of the range polygon
-	while lerp_state < 1:
+	while lerp_state < 1 and not _cancel_animations:
 		polygon_2d.color = lerp(Color(color, 0), Color(color, 0.3), lerp_state)
 		await get_tree().create_timer(0.02).timeout
 		lerp_state += 0.05
 
-	## Call the function to interpolate the color of the range polygon
-	_color_variation()
+	if not _cancel_animations:
+		## Call the function to interpolate the color of the range polygon
+		_color_variation()
 
 ## Function to check the z position of the tower and adapt the z index of the tower.
 func _update_z_index() -> void:
@@ -437,7 +444,11 @@ func _on_area_2d_area_exited(area: Area2D) -> void:
 		area.queue_free()
 
 func _on_tower_hover_box_mouse_entered() -> void:
+	if _menu_open:
+		return
 	selected = true
+	polygon_2d.visible = true
+	outline.visible = true
 	var size: float = 0
 	while size < 1:
 		polygon_2d.scale = lerp(polygon_2d.scale, Vector2(1, 1), size)
@@ -447,11 +458,14 @@ func _on_tower_hover_box_mouse_entered() -> void:
 
 func _on_tower_hover_box_mouse_exited() -> void:
 	selected = false
+	_cancel_animations = false
 	var size: float = 0
 	while size < 1:
 		polygon_2d.scale = lerp(polygon_2d.scale, Vector2(0, 0), size)
 		await get_tree().create_timer(0.01).timeout
 		size += 0.1
+	polygon_2d.visible = false
+	outline.visible = false
 
 func _on_timer_timeout() -> void:
 	$ProgressBar.value += 1
@@ -479,3 +493,14 @@ func _on_tower_pressed() -> void:
 	tower_upgrade_menu_instance.position = position
 	tower_upgrade_menu_instance.name = "TowerUpgrade"
 	self.add_child(tower_upgrade_menu_instance)
+	# Hide the selection frame when clicked
+	_menu_open = true
+	_cancel_animations = true
+	polygon_2d.visible = false
+	outline.visible = false
+	polygon_2d.scale = Vector2(0, 0)
+	selected = false
+	# Hide the menu when closed
+	await tower_upgrade_menu_instance.tree_exited
+	_menu_open = false
+	_cancel_animations = false

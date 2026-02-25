@@ -1,7 +1,17 @@
-[gd_scene load_steps=3 format=3 uid="uid://b2smroj1exbjv"]
+[gd_scene load_steps=7 format=3 uid="uid://xukck3ogg7bs"]
 
-[ext_resource type="PackedScene" uid="uid://bl1lywmexedvo" path="res://scenes/ui/menus/tower_upgrade/radial_menu_tower_upgrade.tscn" id="1_2l2an"]
-[ext_resource type="PackedScene" uid="uid://ds0xkohs1fv3w" path="res://scenes/ui/menus/tower_upgrade/tower_upgrade_description.tscn" id="2_7mhmu"]
+[ext_resource type="Script" uid="uid://de5b23g7wdtx6" path="res://scenes/ui/menus/tower_upgrade/tower_upgrade_menu.gd" id="1_53bwk"]
+[ext_resource type="Texture2D" uid="uid://c5jwmpccl40pb" path="res://assets/environment/backgrounds/Fond Menu 01.svg" id="2_wrblu"]
+[ext_resource type="FontFile" uid="uid://ddo3rokwsadq0" path="res://assets/ui/fonts/dotgothic/DotGothic16-Regular.ttf" id="3_uyu61"]
+[ext_resource type="Texture2D" uid="uid://nsf3nkto3p0t" path="res://assets/ui/buttons/Bouton Vert.svg" id="7_wrblu"]
+[ext_resource type="Texture2D" uid="uid://cvut87og2mth" path="res://assets/ui/buttons/Bouton orange.svg" id="8_u7ot3"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_u7ot3"]
+texture = ExtResource("2_wrblu")
+expand_margin_left = 20.0
+expand_margin_top = 30.0
+expand_margin_right = 20.0
+expand_margin_bottom = 30.0
 
 [node name="TowerUpgradeMenu" type="Control"]
 layout_mode = 3
@@ -10,33 +20,119 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-pivot_offset = Vector2(145, 324)
+mouse_filter = 2
+script = ExtResource("1_53bwk")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="."]
+[node name="DimOverlay" type="ColorRect" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 0.5)
 
-[node name="AspectRatioContainer" type="AspectRatioContainer" parent="HBoxContainer"]
+[node name="UpgradeDescriptionTextureRect" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = -200.0
+offset_right = 300.0
+offset_bottom = 200.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_u7ot3")
+
+[node name="UpgradeDescriptionVBoxContainer" type="VBoxContainer" parent="UpgradeDescriptionTextureRect"]
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="UpgradeTitleLabel" type="Label" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 1
+size_flags_stretch_ratio = 0.2
+theme_override_fonts/font = ExtResource("3_uyu61")
+text = "Améliorer au niveau X"
+
+[node name="TabsHBoxContainer" type="HBoxContainer" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_stretch_ratio = 0.35
-ratio = 1.5
-stretch_mode = 0
+theme_override_constants/separation = 10
+alignment = 1
 
-[node name="TowerUpgrade" parent="HBoxContainer/AspectRatioContainer" instance=ExtResource("1_2l2an")]
+[node name="UpgradeOption1Button" type="Button" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/TabsHBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3_uyu61")
+text = "Option 1"
+
+[node name="UpgradeOption2Button" type="Button" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/TabsHBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3_uyu61")
+text = "Option 2"
+
+[node name="StatsScrollContainer" type="ScrollContainer" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer"]
+custom_minimum_size = Vector2(0, 250)
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_stretch_ratio = 16.27
+size_flags_vertical = 3
+follow_focus = true
+horizontal_scroll_mode = 0
 
-[node name="AspectRatioContainer2" type="AspectRatioContainer" parent="HBoxContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/StatsScrollContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 16
+
+[node name="ButtonsHBoxContainer" type="HBoxContainer" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
-ratio = 2.0
+theme_override_constants/separation = 20
+alignment = 1
 
-[node name="TowerUpgradeDescription" parent="HBoxContainer/AspectRatioContainer2" instance=ExtResource("2_7mhmu")]
+[node name="ConfirmButton" type="TextureButton" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/ButtonsHBoxContainer"]
+custom_minimum_size = Vector2(200, 65)
 layout_mode = 2
-size_flags_horizontal = 3
+texture_normal = ExtResource("7_wrblu")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/ButtonsHBoxContainer/ConfirmButton"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -60.0
+offset_top = 4.0
+offset_right = 60.0
+offset_bottom = 48.0
+grow_horizontal = 2
+theme_override_fonts/font = ExtResource("3_uyu61")
+text = "Confirmer"
+
+[node name="CancelButton" type="TextureButton" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/ButtonsHBoxContainer"]
+custom_minimum_size = Vector2(200, 65)
+layout_mode = 2
+texture_normal = ExtResource("8_u7ot3")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/ButtonsHBoxContainer/CancelButton"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -52.5
+offset_top = 4.0
+offset_right = 52.5
+offset_bottom = 48.0
+grow_horizontal = 2
+theme_override_fonts/font = ExtResource("3_uyu61")
+text = "Annuler"
