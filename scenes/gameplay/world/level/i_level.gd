@@ -35,7 +35,7 @@ var end_time: float
 
 # stats
 var coins: int = 50: set = _set_coins
-var health: int = 2000000: set = _set_health
+var health: int = 20: set = _set_health
 
 # Private Variables
 var _enemies_alive: int = 0
@@ -63,7 +63,7 @@ func start_level() -> void:
 	start_time = Time.get_unix_time_from_system()
 	popup_spawner.wave("Wave %s" % [current_wave+1])
 
-	# Notifier la map de la première vague pour les événements dynamiques
+	# Notify the map of the wave start for dynamic events
 	if map:
 		map.notify_wave_start(current_wave)
 
