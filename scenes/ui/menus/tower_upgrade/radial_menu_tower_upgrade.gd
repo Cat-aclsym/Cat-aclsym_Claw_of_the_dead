@@ -67,8 +67,21 @@ func _ready() -> void:
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed:
 		var mouse_pos: Vector2 = get_global_mouse_position()
-		if not buttons.get_global_rect().has_point(mouse_pos):
+		if not _get_menu_bounds_rect().has_point(mouse_pos):
 			hide_menu()
+
+
+func _get_menu_bounds_rect() -> Rect2:
+	var bounds: Rect2 = Rect2()
+	for b in buttons.get_children():
+		if b is Control:
+			var r: Rect2 = Rect2(b.global_position, b.size * b.scale)
+			if bounds.size == Vector2.ZERO:
+				bounds = r
+			else:
+				bounds = bounds.merge(r)
+	var padding: float = 8.0
+	return bounds.grow(padding)
 
 		
 func _draw() -> void:
@@ -166,7 +179,7 @@ func _on_sell_button_pressed():
 
 
 func _on_info_button_pressed():
-	if tower == null or tower.available_upgrade.is_empty():
+	if tower == null:
 		return
 	var desc_scene: PackedScene = load("res://scenes/ui/menus/tower_upgrade/tower_info.tscn")
 	if desc_scene == null:
@@ -179,7 +192,8 @@ func _on_info_button_pressed():
 		Global.hud.add_child(desc_instance)
 	else:
 		add_child(desc_instance)
-	desc_instance.setup(tower, tower.available_upgrade[0])
+	var upgrade_scene: PackedScene = tower.available_upgrade[0] if not tower.available_upgrade.is_empty() else null
+	desc_instance.setup(tower, upgrade_scene)
 
 
 func _on_tween_finished():
