@@ -23,8 +23,9 @@ const BUTTON_COLOR_DISABLED := Color(0.5, 0.5, 0.5, 0.6)
 const UP_OFFSET := Vector2i(-1, -1)
 const RIGHT_OFFSET := Vector2i(0, -1)
 const LEFT_OFFSET := Vector2i(-1, 0)
-const VALID_TILES: Array[Vector2i] = [
-	Vector2i(0, 0)
+## List of valid TileMap source IDs for tower placement (only grass layer)
+const VALID_TILE_SOURCES: Array[int] = [
+	0
 ]
 
 ## Get the initial position for a new tower based on camera view
@@ -299,7 +300,14 @@ func _is_buildable(pos: Vector2) -> bool:
 
 	var tm_pos: Vector2i = tm_ref.local_to_map(pos)
 
-	if not tm_ref.get_cell_atlas_coords(0, tm_pos) in VALID_TILES or tm_pos in _invalid_cells:
+	if tm_pos in _invalid_cells:
+		return false
+
+	# Only allow tiles coming from valid TileSet sources (e.g. grass, not sand/rock)
+	var source_id: int = tm_ref.get_cell_source_id(0, tm_pos)
+	if source_id == -1:
+		return false
+	if not source_id in VALID_TILE_SOURCES:
 		return false
 
 	if tm_ref.get_cell_atlas_coords(1, tm_pos) != Vector2i(-1, -1):
