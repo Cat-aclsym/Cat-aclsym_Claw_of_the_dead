@@ -20,10 +20,20 @@ var special_tiles: Dictionary = {}
 func _ready() -> void:
 	_load_paths()
 
-	Global.cursor.tm_ref = tilemap
+	var placement_system = Global.get("cursor")
+	if placement_system:
+		placement_system.tm_ref = tilemap
+	else:
+		# If cursor is not yet initialized, wait a frame
+		call_deferred("_assign_tilemap_to_cursor")
 	
 	# Generate special tiles immediately
 	_generate_special_tiles()
+
+func _assign_tilemap_to_cursor() -> void:
+	var placement_system = Global.get("cursor")
+	if placement_system:
+		placement_system.tm_ref = tilemap
 
 #public
 func get_tower_by_name(tower_name: String) -> ITower:

@@ -112,6 +112,8 @@ var target: IEnemy
 var target_type: TargetType
 ## The pending upgrade to be applied
 var pending_upgrade: PackedScene
+## The tile position of the tower on the map
+var tile_pos: Vector2i
 var _pulse_tween: Tween = null
 var _scale_tween: Tween = null
 var _range_tween: Tween = null
@@ -127,6 +129,10 @@ func _ready() -> void:
 	update_dependent_properties()
 	# Sync range visibility with selected state (especially for duplicated towers)
 	show_range(selected, false)
+	
+	if state == TowerState.ACTIVE:
+		call_deferred("_register_with_cursor")
+		
 	if animated_sprite_2d and animated_sprite_2d.sprite_frames and animated_sprite_2d.sprite_frames.has_animation("idle"):
 		animated_sprite_2d.play("idle")
 	SignalUtil.connects(signals)
@@ -352,7 +358,23 @@ func build_tower() -> void:
 ## Sells the tower
 func sell_tower() -> void:
 	ILevel.current_level.coins += sell_price
+	var placement_system = Global.get("cursor")
+	if placement_system:
+		placement_system.remove_invalid_cell(tile_pos)
 	queue_free()
+
+func _register_with_cursor() -> void:
+	if not is_inside_tree():
+		return
+		
+	# Safe access to Global.cursor to avoid assertion if it's not yet set
+	var placement_system = Global.get("cursor")
+	if placement_system:
+		if tile_pos == Vector2i.ZERO:
+			if placement_system.tm_ref:
+				# Use global position to ensure correct map conversion
+				tile_pos = placement_system.tm_ref.local_to_map(placement_system.tm_ref.to_local(global_position))
+		placement_system.add_invalid_cell(tile_pos)
 
 # Private methods
 ## Animates the range display

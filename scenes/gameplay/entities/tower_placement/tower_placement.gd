@@ -320,6 +320,7 @@ func _build() -> void:
 	var current_level = ILevel.current_level
 	# Use global position to ensure we get the correct tile regardless of local offsets
 	var tm_pos: Vector2i = tm_ref.local_to_map(tm_ref.to_local(cursor.global_position))
+	new_tower.tile_pos = tm_pos
 	
 	if current_level and current_level.map:
 		var map = current_level.map
@@ -344,8 +345,6 @@ func _build() -> void:
 	tower_count += 1
 
 	ILevel.current_level.coins -= _tower.cost
-
-	_invalid_cells.append(tm_pos)
 
 	_cancel_build()
 	_is_move_tower_available = true
@@ -426,3 +425,15 @@ func _on_level_stats_updated() -> void:
 		var is_buildable := _is_buildable(cursor.position)
 		_tower.modulate = COLOR_OK if is_buildable else COLOR_KO
 		_update_place_button_state(is_buildable)
+
+## Removes a cell from the invalid cells list, allowing new towers to be built there
+func remove_invalid_cell(tm_pos: Vector2i) -> void:
+	if tm_pos in _invalid_cells:
+		_invalid_cells.erase(tm_pos)
+		Log.trace(Log.Level.INFO, "Cell {0} is now free for building".format([tm_pos]))
+
+## Adds a cell to the invalid cells list
+func add_invalid_cell(tm_pos: Vector2i) -> void:
+	if not tm_pos in _invalid_cells:
+		_invalid_cells.append(tm_pos)
+		Log.trace(Log.Level.INFO, "Cell {0} is now occupied".format([tm_pos]))
