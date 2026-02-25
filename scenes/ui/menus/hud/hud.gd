@@ -35,6 +35,11 @@ const TOWER_SELECTION_MENU: PackedScene = preload("res://scenes/ui/menus/tower_s
 ]
 
 var _is_ready: bool = false
+var _last_coins: int = 0
+
+const DOTGOTHIC_FONT: Font = preload("res://assets/ui/fonts/dotgothic/DotGothic16-Regular.ttf")
+const POPUP_SCORE_SCENE: PackedScene = preload("res://scenes/ui/popup/popup_score.tscn")
+var coin_icon_texture: Texture2D = load("res://assets/ui/huds/Coin.png")
 
 
 # Built-in functions
@@ -59,12 +64,6 @@ func _process(_delta: float) -> void:
 	if not visible:
 		show()
 
-	coins_rich_text_label.text = tr(default_coins_text) % ILevel.current_level.coins
-	health_rich_text_label.text = tr(default_health_text) % (str(ILevel.current_level.health) + "/20")
-	health_texture_progress_bar.value = ILevel.current_level.health
-	var current_wave: int = ILevel.current_level.current_wave + 1
-	waves_rich_text_label.text = tr(default_waves_text) % current_wave
-
 
 # Public functions
 ## Initializes and displays the HUD interface.
@@ -75,6 +74,7 @@ func load_ui() -> void:
 
 	_is_ready = true
 	visible = true
+	_last_coins = ILevel.current_level.coins
 	SignalUtil.connects([{SignalUtil.WHO: ILevel.current_level, SignalUtil.WHAT: "stats_updated", SignalUtil.TO: _update}])
 	_update()
 
@@ -83,7 +83,8 @@ func load_ui() -> void:
 func unload_ui() -> void:
 	_is_ready = false
 	visible = false
-	ILevel.current_level.disconnect("stats_updated", _update)
+	if ILevel.current_level:
+		ILevel.current_level.disconnect("stats_updated", _update)
 
 
 # Private functions
@@ -118,6 +119,82 @@ func _on_tower_selection_button_pressed() -> void:
 		Global.ui.get_node("TowerSelection").queue_free()
 
 
+func _trigger_coin_effects(amount: int) -> void:
+	# Bounce effect on the coins label
+	var tween: Tween = create_tween()
+	coins_rich_text_label.pivot_offset = coins_rich_text_label.size / 2
+	tween.tween_property(coins_rich_text_label, "scale", Vector2(1.2, 1.2), 0.1).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	tween.tween_property(coins_rich_text_label, "scale", Vector2(1.0, 1.0), 0.1).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	
+	# Floating notification (+X$)
+	var popup = POPUP_SCORE_SCENE.instantiate()
+	var label: Label = popup.get_node("FloatingNumbers/Label")
+	
+	# Configure label with requested style
+	label.add_theme_font_override("font", DOTGOTHIC_FONT)
+	label.add_theme_font_size_override("font_size", 24)
+	label.add_theme_color_override("font_outline_color", Color.BLACK)
+	label.add_theme_constant_override("outline_size", 6)
+	label.text = "+%d$" % amount
+	label.self_modulate = Color(1, 1, 1, 1)
+	
+	# Add to HUD to keep it in screen space
+	add_child(popup)
+	
+	# Initial position: centered on the coin label
+	popup.global_position = coins_rich_text_label.global_position + Vector2(coins_rich_text_label.size.x / 2, -10)
+	
+	# Physics simulation (Arc movement with gravity and slight random direction)
+	var random_x = randf_range(-10, 10) # Even more vertical
+	var jump_height = randf_range(30, 45)
+	var duration = 0.75 # Match the popup animation length
+	
+	var movement_tween = create_tween().set_parallel(true)
+	# Horizontal movement
+	movement_tween.tween_property(popup, "position:x", popup.position.x + random_x, duration).set_trans(Tween.TRANS_LINEAR)
+	
+	# Vertical movement (arc simulating gravity)
+	var vertical_tween = create_tween()
+	vertical_tween.tween_property(popup, "position:y", popup.position.y - jump_height, duration * 0.4).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	vertical_tween.tween_property(popup, "position:y", popup.position.y + 15, duration * 0.6).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	
+	# Coins Explosion effect
+	_spawn_coin_explosion(popup.global_position)
+
+
+func _spawn_coin_explosion(start_pos: Vector2) -> void:
+	if coin_icon_texture == null:
+		return
+	var num_coins = randi_range(5, 10)
+	for i in range(num_coins):
+		var coin = Sprite2D.new()
+		coin.texture = coin_icon_texture
+		coin.scale = Vector2(0.15, 0.15)
+		add_child(coin)
+		coin.global_position = start_pos
+		
+		var angle = randf_range(-PI * 0.8, -PI * 0.2) # Mostly upwards explosion
+		var distance = randf_range(40, 80) # Increased travel distance
+		var target_pos = start_pos + Vector2(cos(angle), sin(angle)) * distance
+		
+		var coin_tween = create_tween().set_parallel(true)
+		coin_tween.tween_property(coin, "global_position", target_pos, 0.5).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		coin_tween.tween_property(coin, "modulate:a", 0.0, 0.5).set_delay(0.2)
+		coin_tween.tween_property(coin, "scale", Vector2.ZERO, 0.5).set_ease(Tween.EASE_IN)
+		coin_tween.finished.connect(coin.queue_free)
+
+
 func _update() -> void:
 	if !_is_ready:
 		return
+		
+	var current_coins = ILevel.current_level.coins
+	if current_coins > _last_coins:
+		_trigger_coin_effects(current_coins - _last_coins)
+	_last_coins = current_coins
+
+	coins_rich_text_label.text = tr(default_coins_text) % current_coins
+	health_rich_text_label.text = tr(default_health_text) % (str(ILevel.current_level.health) + "/20")
+	health_texture_progress_bar.value = ILevel.current_level.health
+	var current_wave: int = ILevel.current_level.current_wave + 1
+	waves_rich_text_label.text = tr(default_waves_text) % current_wave
