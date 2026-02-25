@@ -319,7 +319,6 @@ func _dead_state() -> void:
 		money_reward = int(money_reward * last_source.tower_owner.reward_multiplier)
 		
 	ILevel.current_level.coins += money_reward
-	popup_score_spawner.score("+%s$" % [money_reward])
 	_disappear()
 
 ## Handle the enemy reaching the end of its path
