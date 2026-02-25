@@ -14,6 +14,7 @@
 [ext_resource type="Texture2D" uid="uid://bcj0nqyx7o5kh" path="res://assets/ui/icons/Bouton Challenges.svg" id="11_5r146"]
 [ext_resource type="Texture2D" uid="uid://c2uqlay1r2d1d" path="res://assets/ui/icons/Button Cancel.svg" id="12_5jyti"]
 [ext_resource type="Texture2D" uid="uid://dn8ksi7radij3" path="res://assets/ui/icons/Button Skip.svg" id="13_hn23h"]
+[ext_resource type="Script" uid="uid://bsx181lfajvum" path="res://scenes/ui/menus/hud/hud_challenges.gd" id="14_ch001"]
 
 [sub_resource type="Animation" id="1"]
 resource_name = "skip_active"

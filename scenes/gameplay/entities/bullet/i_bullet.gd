@@ -32,6 +32,8 @@ extends Area2D
 var direction: Vector2
 ## Final destination point for the bullet
 var target: Vector2
+## The tower that fired this bullet
+var tower_owner: ITower = null
 
 # private
 ## Initial damage value to calculate percentage reduction
@@ -347,7 +349,7 @@ func _on_body_entered(body: Node2D) -> void:
 		Global.console.push_debug("Bullet hit enemy at position: " + str(global_position))
 
 	# Apply base damage
-	enemy.take_damage(damage, IEnemy.DamageType.DEFAULT)
+	enemy.take_damage(damage, IEnemy.DamageType.DEFAULT, self)
 
 	# Create blood splash effect at impact point
 	if hit_effect_enabled:
