@@ -1,0 +1,54 @@
+[gd_scene load_steps=2 format=3 uid="uid://bx7mk3qpj5n8d"]
+
+[ext_resource type="Script" uid="uid://bnsnygnk8fopi" path="res://scenes/ui/menus/hud/challenge_card.gd" id="1_card"]
+
+[node name="Margin" type="MarginContainer"]
+offset_top = 1.0
+offset_right = 298.0
+offset_bottom = 94.0
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 10
+script = ExtResource("1_card")
+
+[node name="VBox" type="VBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Row" type="HBoxContainer" parent="VBox"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="StatusIcon" type="TextureRect" parent="VBox/Row"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(26, 26)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="TitleLabel" type="Label" parent="VBox/Row"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"UILabel"
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 20
+text = "Kill all enemies"
+
+[node name="DiffLabel" type="Label" parent="VBox/Row"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"UILabel"
+theme_override_font_sizes/font_size = 16
+text = "Easy"
+
+[node name="DescLabel" type="Label" parent="VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"UILabel"
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 17
+text = "Kill all enemies"
+autowrap_mode = 3

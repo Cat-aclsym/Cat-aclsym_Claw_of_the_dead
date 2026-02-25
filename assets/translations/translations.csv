@@ -84,3 +84,8 @@ CHALLENGE.CHA.204.NAME,I love traps,J'adore les pièges
 CHALLENGE.CHA.204.DESC,Use only traps.,Finir le niveau en utilisant uniquement des pièges.
 CHALLENGE.CHA.205.NAME,Fast and Furious,Fast and Furious
 CHALLENGE.CHA.205.DESC,Finish in less than N seconds.,Finir le niveau en moins de N secondes.
+CHALLENGES.PANEL.TITLE,Challenges,Défis
+CHALLENGE.DIFFICULTY.EASY,Easy,Facile
+CHALLENGE.DIFFICULTY.HARD,Hard,Difficile
+CHALLENGE.DIFFICULTY.IMPOSSIBLE,Impossible,Impossible
+CHALLENGE.DIFFICULTY.MEDIUM,Medium,Moyen
