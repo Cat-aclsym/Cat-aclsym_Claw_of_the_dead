@@ -143,7 +143,7 @@ func take_damage(damage: float, damage_type: DamageType, source: Variant = null)
 	last_damage_type = damage_type
 	last_source = source
 	_damage_effect(DAMAGES[damage_type]["color"])
-	
+
 	if popup_score_spawner:
 		popup_score_spawner.display_damage(damage, DAMAGES[damage_type]["color"])
 
@@ -313,11 +313,11 @@ func _dead_state() -> void:
 		return
 
 	var money_reward: int = 10
-	
+
 	# Apply reward multiplier if the killer was a tower
 	if last_source is IBullet and last_source.tower_owner != null:
 		money_reward = int(money_reward * last_source.tower_owner.reward_multiplier)
-		
+
 	ILevel.current_level.coins += money_reward
 	_disappear()
 
