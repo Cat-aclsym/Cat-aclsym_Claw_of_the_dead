@@ -137,12 +137,19 @@ enemy_id = "damage_zombie"
 type = 1
 
 [node name="AnimatedSprite2D" parent="." index="0"]
+position = Vector2(1, -4)
 sprite_frames = SubResource("SpriteFrames_7k5ey")
 animation = &"walk_down"
 
 [node name="CollisionShape2D" parent="." index="2"]
-position = Vector2(0, 0)
+position = Vector2(0, 3)
 shape = SubResource("RectangleShape2D_o17gm")
 
+[node name="GPUParticles2D" parent="." index="3"]
+position = Vector2(1, -4)
+
 [node name="PopupScoreSpawner" parent="." index="4"]
-position = Vector2(0, -28)
+position = Vector2(0, -24)
+
+[node name="HealthBar" parent="." index="5"]
+position = Vector2(0, -30)
