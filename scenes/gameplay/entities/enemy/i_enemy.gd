@@ -88,6 +88,9 @@ var state: EnemyState = EnemyState.FOLLOW_PATH
 @onready var popup_score_spawner: PopupSpawner = $PopupScoreSpawner
 @onready var stats_db = get_node("/root/StatsDB")
 
+## Store the last source of damage
+var last_source: Variant = null
+
 
 # Built-in functions
 func _ready() -> void:
@@ -138,6 +141,7 @@ func take_damage(damage: float, damage_type: DamageType, source: Variant = null)
 		return
 
 	last_damage_type = damage_type
+	last_source = source
 	_damage_effect(DAMAGES[damage_type]["color"])
 
 	if source:
@@ -306,6 +310,11 @@ func _dead_state() -> void:
 		return
 
 	var money_reward: int = 10
+	
+	# Apply reward multiplier if the killer was a tower
+	if last_source is IBullet and last_source.tower_owner != null:
+		money_reward = int(money_reward * last_source.tower_owner.reward_multiplier)
+		
 	ILevel.current_level.coins += money_reward
 	popup_score_spawner.score("+%s$" % [money_reward])
 	_disappear()

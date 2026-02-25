@@ -23,6 +23,7 @@ const BUTTON_COLOR_DISABLED := Color(0.5, 0.5, 0.5, 0.6)
 const UP_OFFSET := Vector2i(-1, -1)
 const RIGHT_OFFSET := Vector2i(0, -1)
 const LEFT_OFFSET := Vector2i(-1, 0)
+const VALID_SOURCE_ID: int = 0 # Ground Grass
 const VALID_TILES: Array[Vector2i] = [
 	Vector2i(0, 0)
 ]
@@ -204,10 +205,14 @@ func _is_position_on_path(pos: Vector2) -> bool:
 	Returns:
 		true if the placement area would collide with a path, false otherwise
 	"""
-	if not ILevel.current_level or not ILevel.current_level.map:
+	if not ILevel.current_level:
+		return false
+	
+	var level = ILevel.current_level
+	if not "map" in level or not level.map:
 		return false
 
-	var paths: Array[Path2D] = ILevel.current_level.map.paths
+	var paths: Array[Path2D] = level.map.paths
 	var placement_half_size: float = 12.5  # Half of 25x25 placement box
 
 	# Check distance to each path
@@ -279,15 +284,37 @@ func _build() -> void:
 
 	var new_tower: ITower = _tower.duplicate()
 	new_tower.state = ITower.TowerState.ACTIVE
-	new_tower.modulate = Color(1, 1, 1, 1)
+	new_tower.modulate = Color(1, 1, 1, 1) # Ensure the tower is fully opaque when placed
 	new_tower.name = "t%d" % tower_count
-	ILevel.current_level.map.add_child(new_tower)
+	
+	var current_level = ILevel.current_level
+	# Use global position to ensure we get the correct tile regardless of local offsets
+	var tm_pos: Vector2i = tm_ref.local_to_map(tm_ref.to_local(cursor.global_position))
+	
+	if current_level and current_level.map:
+		var map = current_level.map
+		map.add_child(new_tower)
+		
+		# Apply special tile modifiers if they exist at this position
+		Log.trace(Log.Level.DEBUG, "Checking special tile at {0}. Total special tiles: {1}".format([tm_pos, map.special_tiles.size()]))
+		if map.special_tiles.has(tm_pos):
+			var modifier = map.special_tiles[tm_pos]
+			new_tower.apply_special_modifier(modifier)
+			Log.trace(Log.Level.INFO, "Applied special modifier {0} to tower at {1}".format([modifier["label"], tm_pos]))
+		else:
+			# Log a bit more info to debug why it's not finding it
+			if map.special_tiles.size() > 0:
+				var first_tile = map.special_tiles.keys()[0]
+				Log.trace(Log.Level.DEBUG, "No special tile at {0}. Example special tile at {1}".format([tm_pos, first_tile]))
+	else:
+		# Fallback if map is not directly accessible via current_level
+		get_parent().add_child(new_tower)
+
 	ChallengeManager.notify_tower_placed(new_tower)
 	tower_count += 1
 
 	ILevel.current_level.coins -= _tower.cost
 
-	var tm_pos: Vector2i = tm_ref.local_to_map(new_tower.position)
 	_invalid_cells.append(tm_pos)
 
 	_cancel_build()
@@ -299,7 +326,7 @@ func _is_buildable(pos: Vector2) -> bool:
 
 	var tm_pos: Vector2i = tm_ref.local_to_map(pos)
 
-	if not tm_ref.get_cell_atlas_coords(0, tm_pos) in VALID_TILES or tm_pos in _invalid_cells:
+	if tm_ref.get_cell_source_id(0, tm_pos) != VALID_SOURCE_ID or not tm_ref.get_cell_atlas_coords(0, tm_pos) in VALID_TILES or tm_pos in _invalid_cells:
 		return false
 
 	if tm_ref.get_cell_atlas_coords(1, tm_pos) != Vector2i(-1, -1):
@@ -322,7 +349,11 @@ func _update_place_button_state(can_build: bool) -> void:
 
 ## Enables or disables all tower buttons and hover boxes to prevent interference during placement
 func _set_all_tower_buttons_enabled(enabled: bool) -> void:
-	if not ILevel.current_level or not ILevel.current_level.map:
+	if not ILevel.current_level:
+		return
+
+	var level = ILevel.current_level
+	if not "map" in level or not level.map:
 		return
 
 	var towers := get_tree().get_nodes_in_group("towers")
