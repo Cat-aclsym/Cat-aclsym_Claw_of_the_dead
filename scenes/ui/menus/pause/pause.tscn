@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://bumh57lmx1jlc"]
+[gd_scene load_steps=13 format=3 uid="uid://bumh57lmx1jlc"]
 
 [ext_resource type="Script" uid="uid://3ll1mp07j5h1" path="res://scenes/ui/menus/pause/pause.gd" id="1_i4s0k"]
 [ext_resource type="Texture2D" uid="uid://c8b8irfugbxdj" path="res://assets/environment/backgrounds/Fond Menu 02.svg" id="2_70uiq"]
@@ -10,6 +10,8 @@
 [ext_resource type="Texture2D" uid="uid://bftxjalenxriu" path="res://assets/ui/icons/Button Music Off.svg" id="8_f8w4k"]
 [ext_resource type="Texture2D" uid="uid://b72djafe25kjf" path="res://assets/ui/icons/Button Sound On.svg" id="9_yy2d7"]
 [ext_resource type="Texture2D" uid="uid://sn02kb1pfkvd" path="res://assets/ui/icons/Button Sound Off.svg" id="10_dy38s"]
+[ext_resource type="Texture2D" path="res://assets/ui/icons/Button Encyclopedia.svg" id="11_clue"]
+[ext_resource type="Texture2D" path="res://assets/ui/icons/exclamation.png" id="12_excl"]
 
 [node name="PauseMenu" type="Control"]
 layout_mode = 3
@@ -97,6 +99,30 @@ custom_minimum_size = Vector2(100, 87.5)
 layout_mode = 2
 texture_normal = ExtResource("6_ol8q3")
 ignore_texture_size = true
+stretch_mode = 5
+
+[node name="EncyclopediaButton" type="TextureButton" parent="Panel/MarginContainer/PanelContainer/CenterContainer/VBoxContainer/ButtonLayer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(100, 87.5)
+layout_mode = 2
+texture_normal = ExtResource("11_clue")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="EncyclopediaExclamation" type="TextureRect" parent="Panel/MarginContainer/PanelContainer/CenterContainer/VBoxContainer/ButtonLayer/EncyclopediaButton"]
+unique_name_in_owner = true
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -20.0
+offset_top = -10.0
+offset_right = 10.0
+offset_bottom = 20.0
+grow_horizontal = 0
+texture = ExtResource("12_excl")
+expand_mode = 1
 stretch_mode = 5
 
 [node name="TopLeftIcon" type="HBoxContainer" parent="Panel/MarginContainer/PanelContainer/CenterContainer/VBoxContainer"]

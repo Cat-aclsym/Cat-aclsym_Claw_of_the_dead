@@ -78,7 +78,7 @@ func _refresh_upgrade_view() -> void:
 	var upgrade: IUpgrade = upgrade_scene.instantiate()
 
 	# Set title and confirm price
-	_confirm_label.text = "%d golds" % upgrade.price
+	_confirm_label.text = tr("TOWER.UPGRADE.PRICE") % upgrade.price
 	_upgrade_title_label.text = _get_upgrade_title(upgrade)
 	_set_active_tab_button(_current_upgrade_index)
 
@@ -136,7 +136,7 @@ func _get_upgrade_title(upgrade: IUpgrade) -> String:
 	if tower != null:
 		next_level = tower.level + delta_level
 
-	return "Améliorer au niveau %d" % next_level
+	return tr("TOWER.UPGRADE.TITLE") % next_level
 
 ## Creates a stat display for a given stat
 func _create_stat_display(stat_name: String, stat_change: float, is_tower_stat: bool) -> void:
@@ -149,7 +149,7 @@ func _create_stat_display(stat_name: String, stat_change: float, is_tower_stat: 
 	_stats_container.add_child(stat_bar)
 	
 	# Setup the stat bar with data
-	stat_bar.setup(stat_name, current_value, new_value, ICON_TEXTURE, MAX_STAT_VALUE)
+	stat_bar.setup(stat_name, current_value, new_value, ICON_TEXTURE, MAX_STAT_VALUE, true)
 
 ## Gets the current value of a stat
 func _get_current_stat_value(stat_name: String, is_tower_stat: bool) -> float:

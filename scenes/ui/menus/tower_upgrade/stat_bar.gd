@@ -9,7 +9,7 @@ extends HBoxContainer
 @onready var _stat_name_label: Label = $VBoxContainer/HBoxContainer/StatName
 
 ## Sets up the stat bar with the given data
-func setup(stat_name: String, current_value: float, new_value: float, icon: Texture2D, max_value: float = 200.0) -> void:
+func setup(stat_name: String, current_value: float, new_value: float, icon: Texture2D, max_value: float = 200.0, show_change: bool = false) -> void:
 	# Set icon
 	if icon != null:
 		_icon.texture = icon
@@ -23,12 +23,10 @@ func setup(stat_name: String, current_value: float, new_value: float, icon: Text
 	
 	# Set tooltip
 	var tooltip: String
-	if current_value == 0.0:
-		# Display only current value (used for info display)
-		tooltip = "%s: %.2f" % [_stat_name_label.text, new_value]
-	else:
-		# Display change (used for upgrade display)
+	if show_change:
 		tooltip = "%s: %.2f → %.2f" % [_stat_name_label.text, current_value, new_value]
+	else:
+		tooltip = "%s: %.2f" % [_stat_name_label.text, new_value]
 	_progress_bar.tooltip_text = tooltip
 
 ## Formats stat name for display

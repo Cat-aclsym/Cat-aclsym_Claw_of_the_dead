@@ -266,6 +266,8 @@ func _animate_range_display() -> void:
 
 func _apply_tower_stat_changes(upgrade: IUpgrade) -> void:
 	for stat in upgrade.tower_stats.keys():
+		if stat == "level":
+			continue
 		if self.get(stat):
 			Log.trace(Log.Level.DEBUG, "Modifying stat: {0} by {1}".format([stat, upgrade.tower_stats[stat]]))
 			self.set(stat, self.get(stat) + upgrade.tower_stats[stat])
