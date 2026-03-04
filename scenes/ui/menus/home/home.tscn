@@ -49,9 +49,11 @@ modulate = Color(1, 1, 1, 0.352941)
 texture_filter = 6
 layout_mode = 2
 offset_left = -238.0
-offset_top = -321.0
-offset_right = 990.0
-offset_bottom = 912.0
+offset_top = -214.0
+offset_right = 995.0
+offset_bottom = 713.0
+grow_horizontal = 2
+grow_vertical = 2
 texture = ExtResource("3_gislx")
 expand_mode = 2
 stretch_mode = 4
@@ -105,7 +107,6 @@ alignment = 1
 
 [node name="PlayButton" type="TextureButton" parent="GuiMarginContainer/GuiHBoxContainer/HomeScreenVBoxContainer"]
 unique_name_in_owner = true
-texture_filter = 6
 custom_minimum_size = Vector2(500, 160)
 layout_mode = 2
 size_flags_horizontal = 4
@@ -132,7 +133,6 @@ uppercase = true
 
 [node name="EncyclopediaButton" type="TextureButton" parent="GuiMarginContainer/GuiHBoxContainer/HomeScreenVBoxContainer"]
 unique_name_in_owner = true
-texture_filter = 6
 custom_minimum_size = Vector2(350, 110)
 layout_mode = 2
 size_flags_horizontal = 4
@@ -175,7 +175,6 @@ uppercase = true
 
 [node name="SettingsButton" type="TextureButton" parent="GuiMarginContainer/GuiHBoxContainer/HomeScreenVBoxContainer"]
 unique_name_in_owner = true
-texture_filter = 6
 custom_minimum_size = Vector2(350, 110)
 layout_mode = 2
 size_flags_horizontal = 4
