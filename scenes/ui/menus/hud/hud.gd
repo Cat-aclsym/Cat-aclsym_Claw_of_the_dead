@@ -8,8 +8,11 @@ extends Control
 
 # Constants
 const CHALLENGES_MENU: PackedScene = preload("res://scenes/ui/menus/hud/challenges_menu.tscn")
+const COINT_ICON_TEXTURE: Texture2D = preload("res://assets/ui/huds/Coin.png")
 const DEFAULT_TIME_SCALE: float = 1.0
+const DOTGOTHIC_FONT: Font = preload("res://assets/ui/fonts/dotgothic/DotGothic16-Regular.ttf")
 const PAUSE_MENU: PackedScene = preload("res://scenes/ui/menus/pause/pause.tscn")
+const POPUP_SCORE_SCENE: PackedScene = preload("res://scenes/ui/popup/popup_score.tscn")
 const SKIP_COLOR_INACTIVE: Color = Color(1.0, 1.0, 1.0, 1.0)
 const SKIP_TIME_SCALE: float = 3.0
 const TOWER_SELECTION_MENU: PackedScene = preload("res://scenes/ui/menus/tower_selection/tower_selection.tscn")
@@ -39,11 +42,6 @@ const TOWER_SELECTION_MENU: PackedScene = preload("res://scenes/ui/menus/tower_s
 
 var _is_ready: bool = false
 var _last_coins: int = 0
-
-const DOTGOTHIC_FONT: Font = preload("res://assets/ui/fonts/dotgothic/DotGothic16-Regular.ttf")
-const POPUP_SCORE_SCENE: PackedScene = preload("res://scenes/ui/popup/popup_score.tscn")
-var coin_icon_texture: Texture2D = load("res://assets/ui/huds/Coin.png")
-
 
 # Built-in functions
 func _ready() -> void:
@@ -138,11 +136,11 @@ func _trigger_coin_effects(amount: int) -> void:
 	coins_rich_text_label.pivot_offset = coins_rich_text_label.size / 2
 	tween.tween_property(coins_rich_text_label, "scale", Vector2(1.2, 1.2), 0.1).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	tween.tween_property(coins_rich_text_label, "scale", Vector2(1.0, 1.0), 0.1).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
-	
+
 	# Floating notification (+X$)
 	var popup = POPUP_SCORE_SCENE.instantiate()
 	var label: Label = popup.get_node("FloatingNumbers/Label")
-	
+
 	# Configure label with requested style
 	label.add_theme_font_override("font", DOTGOTHIC_FONT)
 	label.add_theme_font_size_override("font_size", 24)
@@ -150,46 +148,46 @@ func _trigger_coin_effects(amount: int) -> void:
 	label.add_theme_constant_override("outline_size", 6)
 	label.text = "+%d$" % amount
 	label.self_modulate = Color(1, 1, 1, 1)
-	
+
 	# Add to HUD to keep it in screen space
 	add_child(popup)
-	
+
 	# Initial position: centered on the coin label
 	popup.global_position = coins_rich_text_label.global_position + Vector2(coins_rich_text_label.size.x / 2, -10)
-	
+
 	# Physics simulation (Arc movement with gravity and slight random direction)
 	var random_x = randf_range(-10, 10) # Even more vertical
 	var jump_height = randf_range(30, 45)
 	var duration = 0.75 # Match the popup animation length
-	
+
 	var movement_tween = create_tween().set_parallel(true)
 	# Horizontal movement
 	movement_tween.tween_property(popup, "position:x", popup.position.x + random_x, duration).set_trans(Tween.TRANS_LINEAR)
-	
+
 	# Vertical movement (arc simulating gravity)
 	var vertical_tween = create_tween()
 	vertical_tween.tween_property(popup, "position:y", popup.position.y - jump_height, duration * 0.4).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	vertical_tween.tween_property(popup, "position:y", popup.position.y + 15, duration * 0.6).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
-	
+
 	# Coins Explosion effect
 	_spawn_coin_explosion(popup.global_position)
 
 
 func _spawn_coin_explosion(start_pos: Vector2) -> void:
-	if coin_icon_texture == null:
+	if COINT_ICON_TEXTURE == null:
 		return
 	var num_coins = randi_range(5, 10)
 	for i in range(num_coins):
 		var coin = Sprite2D.new()
-		coin.texture = coin_icon_texture
+		coin.texture = COINT_ICON_TEXTURE
 		coin.scale = Vector2(0.15, 0.15)
 		add_child(coin)
 		coin.global_position = start_pos
-		
+
 		var angle = randf_range(-PI * 0.8, -PI * 0.2) # Mostly upwards explosion
 		var distance = randf_range(40, 80) # Increased travel distance
 		var target_pos = start_pos + Vector2(cos(angle), sin(angle)) * distance
-		
+
 		var coin_tween = create_tween().set_parallel(true)
 		coin_tween.tween_property(coin, "global_position", target_pos, 0.5).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 		coin_tween.tween_property(coin, "modulate:a", 0.0, 0.5).set_delay(0.2)
@@ -200,7 +198,7 @@ func _spawn_coin_explosion(start_pos: Vector2) -> void:
 func _update() -> void:
 	if !_is_ready:
 		return
-		
+
 	var current_coins = ILevel.current_level.coins
 	if current_coins > _last_coins:
 		_trigger_coin_effects(current_coins - _last_coins)
