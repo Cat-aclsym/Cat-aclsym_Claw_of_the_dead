@@ -11,7 +11,6 @@ var _upgrades: Array[PackedScene] = []
 var _current_upgrade_index: int = 0
 
 @onready var _cancel_button: TextureButton = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/ButtonsHBoxContainer/CancelButton
-@onready var _cancel_label: Label = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/ButtonsHBoxContainer/CancelButton/Label
 @onready var _confirm_button: TextureButton = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/ButtonsHBoxContainer/ConfirmButton
 @onready var _confirm_label: Label = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/ButtonsHBoxContainer/ConfirmButton/Label
 @onready var _panel: Control = $UpgradeDescriptionTextureRect
@@ -143,11 +142,11 @@ func _create_stat_display(stat_name: String, stat_change: float, is_tower_stat: 
 	# Get current and new values
 	var current_value: float = _get_current_stat_value(stat_name, is_tower_stat)
 	var new_value: float = current_value + stat_change
-	
+
 	# Instantiate the stat bar scene
 	var stat_bar: StatBar = STAT_BAR_SCENE.instantiate()
 	_stats_container.add_child(stat_bar)
-	
+
 	# Setup the stat bar with data
 	stat_bar.setup(stat_name, current_value, new_value, ICON_TEXTURE, MAX_STAT_VALUE, true)
 
@@ -169,7 +168,7 @@ func _get_current_stat_value(stat_name: String, is_tower_stat: bool) -> float:
 			return base_damage + tower.bullet_stats.get("damage", 0.0)
 		else:
 			return tower.bullet_stats.get(stat_name, 0.0)
-	
+
 	return 0.0
 
 # Signal handlers
