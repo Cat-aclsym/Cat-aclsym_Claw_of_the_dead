@@ -334,7 +334,7 @@ func _dead_state() -> void:
 		Log.trace(Log.Level.ERROR, "Current level is null, aborting.")
 		return
 
-	var money_reward: int = 10
+	var money_reward: int = 15
 
 	# Apply reward multiplier if the killer was a tower
 	if last_source is IBullet and last_source.tower_owner != null:

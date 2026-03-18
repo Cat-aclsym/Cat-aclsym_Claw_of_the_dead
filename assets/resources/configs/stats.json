@@ -202,8 +202,8 @@
   "enemies": {
 	"default_zombie": {
 	  "scene": "res://scenes/gameplay/entities/enemy/enemies/ene.01.tscn",
-	  "max_health": 20.0,
-	  "speed": 45.0,
+	  "max_health": 25.0,
+	  "speed": 40.0,
 	  "reward": 10
 	},
 	"damage_zombie": {
@@ -214,8 +214,8 @@
 	},
 	"rat": {
 	  "scene": "res://scenes/gameplay/entities/enemy/enemies/ene.03.tscn",
-	  "max_health": 10.0,
-	  "speed": 100.0,
+	  "max_health": 15.0,
+	  "speed": 75.0,
 	  "reward": 10
 	},
 	"big_daddy": {
