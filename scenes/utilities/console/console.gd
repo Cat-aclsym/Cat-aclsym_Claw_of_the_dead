@@ -93,6 +93,9 @@ func push_color(text: String, color_val: Variant) -> void:
 
 
 ## Pushes an error message in red color.
+func push_error(text: String) -> void:
+	push_error_(text)
+
 func push_error_(text: String) -> void:
 	push_color(text, CONSOLE_COLOR_ERROR)
 
