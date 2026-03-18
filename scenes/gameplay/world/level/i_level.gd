@@ -195,6 +195,7 @@ func _on_state_pause(_args = []) -> bool:
 	Log.trace(Log.Level.INFO, "Entering PAUSE state.")
 	_time_scale_before_pause = Engine.time_scale if Engine.time_scale > 0 else 1.0
 	Engine.time_scale = 0
+	Global.paused = true
 	Log.trace(Log.Level.INFO, "Game paused")
 	return true
 
@@ -228,22 +229,18 @@ func _on_enemy_spawn() -> void:
 	_enemies_alive += 1
 
 
-## Applies pause (time_scale = 0) when the state machine cannot transition directly.
-func request_pause() -> void:
-	_time_scale_before_pause = Engine.time_scale if Engine.time_scale > 0 else 1.0
-	Engine.time_scale = 0
-
-
-## Restores time scale without state transition.
-func request_resume() -> void:
-	Engine.time_scale = _time_scale_before_pause
+## Sets the game to paused state, affecting both time scale and state machine.
+func pause() -> void:
+	if state_machine.get_current_state().name != STATE_PAUSE:
+		state_machine.toggle_state(STATE_PAUSE)
 
 
 ## Resumes the game from pause state.
 ## [br]Restores time scale, then transitions back to current wave if in PAUSE state.
 func resume_from_pause() -> void:
-	request_resume()
 	if state_machine.get_current_state().name == STATE_PAUSE:
+		Engine.time_scale = _time_scale_before_pause
+		Global.paused = false
 		state_machine.toggle_state(STATE_WAVE % current_wave)
 
 

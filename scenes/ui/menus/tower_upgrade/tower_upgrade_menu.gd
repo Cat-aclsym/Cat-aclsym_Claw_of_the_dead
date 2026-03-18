@@ -40,7 +40,7 @@ func _ready() -> void:
 	SignalUtil.connects(signals)
 	Global.paused = true
 	if ILevel.current_level != null:
-		ILevel.current_level.request_pause()
+		ILevel.current_level.pause()
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed:
@@ -59,7 +59,7 @@ func _unhandled_input(event: InputEvent) -> void:
 func _exit_tree() -> void:
 	Global.paused = false
 	if ILevel.current_level != null:
-		ILevel.current_level.request_resume()
+		ILevel.current_level.resume_from_pause()
 
 ## Initializes the upgrade description with tower and one or more upgrade options
 func setup(p_tower: ITower, p_upgrades: Array[PackedScene]) -> void:
