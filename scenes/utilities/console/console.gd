@@ -5,6 +5,12 @@
 ## Supports custom commands and colored output.
 class_name Console extends Control
 
+
+const COMMANDS_DIRECTORY: String = "res://scripts/commands"
+const CONSOLE_COLOR_ERROR: String = "#fb4934"
+const CONSOLE_COLOR_DEBUG: String = "#689d6a"
+
+
 ## Directory where command scripts are located
 @export_dir var commands_directory: String = "res://scripts/commands"
 ## Color for error messages
@@ -91,11 +97,8 @@ func push_color(text: String, color_val: Variant) -> void:
 	if Global.debug:
 		Log.save_message(text)
 
-
-## Pushes an error message in red color.
-func push_error(text: String) -> void:
-	push_color(text, color_error)
-
+func push_error_(text: String) -> void:
+	push_color(text, CONSOLE_COLOR_ERROR)
 
 ## Pushes a debug message in green color.
 func push_debug(text: String) -> void:
@@ -491,7 +494,7 @@ func _process_command(command: String) -> void:
 	if err == OK:
 		return
 
-	push_error("%d" % err)
+	push_error_("%d" % err)
 
 ## Finds a command script in the commands directory.
 func _find_command(command_token: String, silent: bool = false) -> ICommand:
@@ -504,7 +507,7 @@ func _find_command(command_token: String, silent: bool = false) -> ICommand:
 			return load("%s/%s" % [commands_directory, path]).new()
 
 	if not silent:
-		push_error("No command named '%s'" % command_token)
+		push_error_("No command named '%s'" % command_token)
 	return null
 
 ## Navigates up/down in the suggestions list.

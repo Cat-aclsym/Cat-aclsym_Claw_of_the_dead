@@ -18,7 +18,7 @@ func get_args() -> Array[Dictionary]:
 func _execute(console: Console, args: Array) -> int:
 	var new_size: int = int(args[0])
 	if new_size <= 0:
-		console.push_error("Font size must be positive")
+		console.push_error_("Font size must be positive")
 		return ERR_UNKNOWN_BEHAVIOR
 
 	console.input.add_theme_font_size_override("font_size", new_size)

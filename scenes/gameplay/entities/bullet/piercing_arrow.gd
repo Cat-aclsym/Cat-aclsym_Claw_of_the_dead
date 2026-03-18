@@ -47,7 +47,7 @@ func _create_spark_particle_texture() -> Texture2D:
 	image.fill(Color(0, 0, 0, 0))
 	
 	# Center of the image
-	var center := Vector2(image_size / 2, image_size / 2)
+	var center := Vector2(image_size / 2., image_size / 2.)
 	
 	# Draw a small 4-pointed star
 	var points := PackedVector2Array([

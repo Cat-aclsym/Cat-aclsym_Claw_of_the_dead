@@ -25,12 +25,12 @@ func _execute(console: Console, args: Array) -> int:
 	var level_path := "res://scenes/gameplay/world/level/levels/%s.tscn" % level_id
 
 	if not FileAccess.file_exists(level_path):
-		console.push_error("Level scene not found: %s" % level_path)
+		console.push_error_("Level scene not found: %s" % level_path)
 		return ERR_UNKNOWN_BEHAVIOR
 
 	var level_scene = load(level_path)
 	if not level_scene:
-		console.push_error("Failed to load level scene: %s" % level_path)
+		console.push_error_("Failed to load level scene: %s" % level_path)
 		return ERR_UNKNOWN_BEHAVIOR
 
 	# Cleanup current level if it exists

@@ -12,7 +12,7 @@
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_bg"]
 atlas = ExtResource("2_bg_ennemis")
-region = Rect2(0, 0, 1396, 832)
+region = Rect2(0, 0, 349, 208)
 
 [node name="Encyclopedia" type="Control"]
 texture_filter = 6

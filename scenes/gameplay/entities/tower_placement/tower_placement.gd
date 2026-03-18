@@ -180,6 +180,7 @@ func _state_build(tower: ITower = null) -> void:
 		_tower.state = ITower.TowerState.BUILDING
 		_tower.position = cursor.position - Vector2(0, 16)
 		add_child(_tower)
+		tower.free()
 
 		# Ensure range is visible during placement preview (instantly)
 		_tower.show_range(true, false)
