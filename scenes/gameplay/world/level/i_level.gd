@@ -1,4 +1,4 @@
-## © [2024] A7 Studio. All rights reserved. Trademark.
+## © [2026] A7 Studio. All rights reserved. Trademark.
 ## Level script that manages map, waves, state transitions, and enemy spawning.
 class_name ILevel extends Node2D
 
@@ -42,8 +42,8 @@ var _enemies_alive: int = 0
 var _time_scale_before_pause: float = 1.0
 
 
-@onready var popup_spawner: PopupSpawner = $PopupSpawner
 @onready var clock: Clock = $Clock
+@onready var popup_spawner: PopupSpawner = $PopupSpawner
 
 # core
 ## Custom ticker callback
@@ -166,25 +166,28 @@ func _on_state_wave(_args = []) -> bool:
 
 	return true
 
+func _on_level_end(_args = []) -> void:
+	clock.stop()
 
-func _on_state_victory(_args = []) -> bool:
-	Log.trace(Log.Level.INFO, "Entering VICTORY state.")
-	ChallengeManager.check_victory_conditions()
 	end_time = Time.get_unix_time_from_system()
 	var end_game_menu_instance: EndGame = ScenesLoader.END_GAME_MENU.instantiate()
 	Global.ui.add_child(end_game_menu_instance)
 	end_game_menu_instance.init(true)
 	state_machine.toggle_state(STATE_END)
+
+
+func _on_state_victory(_args = []) -> bool:
+	Log.trace(Log.Level.INFO, "Entering VICTORY state.")
+	ChallengeManager.check_victory_conditions()
+
+	_on_level_end()
 	return true
 
 
 func _on_state_defeat(_args = []) -> bool:
 	Log.trace(Log.Level.INFO, "Entering DEFEAT state.")
-	end_time = Time.get_unix_time_from_system()
-	var end_game_menu_instance: EndGame = ScenesLoader.END_GAME_MENU.instantiate()
-	Global.ui.add_child(end_game_menu_instance)
-	end_game_menu_instance.init(false)
-	state_machine.toggle_state(STATE_END)
+
+	_on_level_end()
 	return true
 
 
