@@ -5,6 +5,12 @@
 ## Supports custom commands and colored output.
 class_name Console extends Control
 
+
+const COMMANDS_DIRECTORY: String = "res://scripts/commands"
+const CONSOLE_COLOR_ERROR: String = "#fb4934"
+const CONSOLE_COLOR_DEBUG: String = "#689d6a"
+
+
 ## Directory where command scripts are located
 @export_dir var commands_directory: String = "res://scripts/commands"
 ## Color for error messages
