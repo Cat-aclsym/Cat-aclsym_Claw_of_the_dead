@@ -76,7 +76,6 @@ func _on_play_button_pressed() -> void:
 	add_child(_levels_menu_instance)
 
 	SignalUtil.connects([
-		{SignalUtil.WHO: _levels_menu_instance, SignalUtil.WHAT: "menu_close", SignalUtil.TO: _on_menu_close},
 		{SignalUtil.WHO: _levels_menu_instance, SignalUtil.WHAT: "level_selected", SignalUtil.TO: _on_level_selected},
 	])
 
