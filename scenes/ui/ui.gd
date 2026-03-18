@@ -1,4 +1,4 @@
-## © [2024] A7 Studio. All rights reserved. Trademark.
+## © [2026] A7 Studio. All rights reserved. Trademark.
 ##
 ## Manages the game's user interface elements including HUD and pause menu.
 ## This class handles the initialization and management of UI components such as the pause menu, HUD, and pause button functionality.
@@ -9,12 +9,10 @@ extends CanvasLayer
 var _initialized: bool = false
 
 @onready var hud: HUD = $HUD
-@onready var pause_button: Button = $PauseButton
 
 # core
 func _ready() -> void:
 	assert(hud != null, "hud node not found")
-	assert(pause_button != null, "pause_button node not found")
 
 	Global.ui = self
 	_initialized = true
