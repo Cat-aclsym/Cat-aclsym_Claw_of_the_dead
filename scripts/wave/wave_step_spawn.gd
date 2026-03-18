@@ -1,8 +1,6 @@
 ## © [2026] A7 Studio. All rights reserved. Trademark.
 
-class_name WaveStepSpawn
-extends WaveStep
-## A wave step that spawns a number of enemies of a specific type.
+class_name WaveStepSpawn extends WaveStep
 
 
 # core
@@ -11,7 +9,6 @@ func _init(in_data: Dictionary) -> void:
 
 
 # public
-## Executes the spawn logic, instantiating an enemy and placing it on a path.
 func exec() -> void:
 	var enemy_id: String = _data[WaveStep.ENEMY_ID]
 	var spawner_index: int = _data[WaveStep.SPAWNER]
@@ -20,17 +17,44 @@ func exec() -> void:
 		ScenesLoader.enemies_scene[enemy_id] = load("res://scenes/gameplay/entities/enemy/enemies/%s.tscn" % enemy_id)
 
 	var enemy: IEnemy = ScenesLoader.enemies_scene[enemy_id].instantiate()
-	var level = ILevel.current_level
+	enemy.connect("die", ILevel.current_level._on_enemy_die)
 
-	if not enemy.enemy_id.is_empty():
-		ProgressionManager.mark_enemy_seen(enemy.enemy_id)
+	# Use active paths for dynamic spawning
+	var map: IMap = ILevel.current_level.map
+	var spawn_path: Path2D = null
 
-	enemy.connect("die", level._on_enemy_die)
-	EnemySpawner.spawn_enemy(level.map.paths[spawner_index], enemy)
-	level._on_enemy_spawn() # ! ILevel owns and contains WaveStep class, see it as a friend class
+	if spawner_index == -1:
+		# -1 means use random active path
+		spawn_path = map.get_random_active_path()
+	elif spawner_index >= 0 and spawner_index < map.active_paths.size():
+		# Use specific active path index
+		spawn_path = map.active_paths[spawner_index]
+	else:
+		# Fallback: use random active path if index is out of bounds
+		spawn_path = map.get_random_active_path()
+
+	if spawn_path == null:
+		Log.trace(Log.Level.ERROR, "No valid path available for spawning!")
+		return
+
+	EnemySpawner.spawn_enemy(spawn_path, enemy)
+	ILevel.current_level._on_enemy_spawn() # ! ILevel owns and contains WaveStep class, see it as a friend class
 	_data[WaveStep.COUNT] -= 1
 
 
-## Returns true if all enemies for this step have been spawned.
 func is_over() -> bool:
 	return _data[WaveStep.COUNT] == 0
+
+
+# private
+
+
+# signal
+
+
+# event
+
+
+# setget
+
+
