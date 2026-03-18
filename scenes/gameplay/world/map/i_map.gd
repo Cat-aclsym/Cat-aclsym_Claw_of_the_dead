@@ -19,6 +19,7 @@ var special_tiles: Dictionary = {}
 # core
 func _ready() -> void:
 	_load_paths()
+	_create_path_indicators()
 
 	var placement_system = Global.get("cursor")
 	if placement_system:
@@ -48,12 +49,37 @@ func get_tower_by_name(tower_name: String) -> ITower:
 
 ## Loads path nodes from the Paths node
 func _load_paths() -> void:
-	# Log.trace(Log.Level.DEBUG, "Loading mappaths");
+	if not has_node("Paths"):
+		Log.trace(Log.Level.WARN, "No Paths node found in map")
+		return
+		
 	var children: Array[Node] = $Paths.get_children()
 
 	for child in children:
 		if (child is Path2D):
 			paths.append(child as Path2D)
+
+func _create_path_indicators() -> void:
+	for path in paths:
+		var curve = path.curve
+		if curve.get_point_count() < 2:
+			continue
+		
+		# Start point
+		var start_pos = path.to_global(curve.get_point_position(0))
+		_instantiate_indicator(start_pos, Color(0.1, 0.9, 0.1), PathIndicator.PointType.START)
+		
+		# End point
+		var end_pos = path.to_global(curve.get_point_position(curve.get_point_count() - 1))
+		_instantiate_indicator(end_pos, Color(0.9, 0.1, 0.1), PathIndicator.PointType.END)
+
+func _instantiate_indicator(global_pos: Vector2, color: Color, type: PathIndicator.PointType) -> void:
+	var indicator = PathIndicator.new()
+	indicator.position = to_local(global_pos)
+	indicator.base_color = color
+	indicator.type = type
+	indicator.z_index = 1 # Above the ground tiles
+	add_child(indicator)
 
 func _generate_special_tiles() -> void:
 	if not tilemap:
