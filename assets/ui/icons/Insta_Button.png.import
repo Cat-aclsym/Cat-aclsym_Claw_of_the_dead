@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://buwbrphq0wr4f"
-path="res://.godot/imported/Button Discord.png-fdaf5fc9eb0ee7c0a9c2214f2cdb5214.ctex"
+uid="uid://lseoebwf3mgg"
+path="res://.godot/imported/Insta_Button.png-6873d28f7155f01d0a1abe437ab0f823.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ui/icons/Button Discord.png"
-dest_files=["res://.godot/imported/Button Discord.png-fdaf5fc9eb0ee7c0a9c2214f2cdb5214.ctex"]
+source_file="res://assets/ui/icons/Insta_Button.png"
+dest_files=["res://.godot/imported/Insta_Button.png-6873d28f7155f01d0a1abe437ab0f823.ctex"]
 
 [params]
 

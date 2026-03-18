@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://calb1m2wmghd8"
-path="res://.godot/imported/Button Discord.svg-5389dfa638f5c4272868b3a9d68a5c3b.ctex"
+uid="uid://yo1kyblhvyb3"
+path="res://.godot/imported/Mail_Button.png-387799c96258e5a411e3b51729b46c93.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ui/icons/Button Discord.svg"
-dest_files=["res://.godot/imported/Button Discord.svg-5389dfa638f5c4272868b3a9d68a5c3b.ctex"]
+source_file="res://assets/ui/icons/Mail_Button.png"
+dest_files=["res://.godot/imported/Mail_Button.png-387799c96258e5a411e3b51729b46c93.ctex"]
 
 [params]
 
@@ -32,6 +32,3 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
-svg/scale=5.0
-editor/scale_with_editor_scale=false
-editor/convert_colors_with_editor_theme=false
