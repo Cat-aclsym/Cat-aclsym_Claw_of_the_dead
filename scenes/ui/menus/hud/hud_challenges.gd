@@ -6,7 +6,7 @@ extends HBoxContainer
 
 # Constants
 const ICON_DONE: Texture2D = preload("res://assets/ui/icons/Star.png")
-const ICON_TODO: Texture2D = preload("res://assets/ui/level_selection/window/condition_todo.svg")
+const ICON_TODO: Texture2D = preload("res://assets/ui/icons/Star_Empty.png")
 
 
 # Variables

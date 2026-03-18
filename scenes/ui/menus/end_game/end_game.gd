@@ -9,7 +9,7 @@ extends Control
 
 # Constants
 const CONDITION_DONE: Texture2D = preload("res://assets/ui/icons/Star.png")
-const CONDITION_TODO: Texture2D = preload("res://assets/ui/level_selection/window/condition_todo.svg")
+const CONDITION_TODO: Texture2D = preload("res://assets/ui/icons/Star_Empty.png")
 
 
 # Variables
