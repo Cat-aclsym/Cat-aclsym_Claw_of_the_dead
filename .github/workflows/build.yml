@@ -1,0 +1,53 @@
+name: Build Cat'aclysm Android APK
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v6
+
+      - name: Setup Java
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Setup Godot
+        uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.4.0
+          use-dotnet: false
+
+      - name: Setup Android export template
+        run: |
+          mkdir -p ~/.config/godot/export_templates/4.4.stable
+          wget -q https://github.com/godotengine/godot/releases/download/4.4-stable/Godot_v4.4-stable_export_templates.tpz
+          unzip -q Godot_v4.4-stable_export_templates.tpz
+          mv templates/* ~/.config/godot/export_templates/4.4.stable/
+
+      - name: Decode keystore
+        run: |
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > ~/Cataclysm.keystore
+
+      - name: Build APK
+        run: |
+          godot --headless --export-release "Android" build/Cataclysm.apk \
+            --export-pack \
+            -- \
+            --keystore ~/Cataclysm.keystore \
+            --keystore-pass "${{ secrets.KEYSTORE_PASSWORD }}" \
+            --key-alias "Cataclysm" \
+            --key-pass "${{ secrets.KEY_PASSWORD }}"
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: Cataclysm-apk
+          path: build/Cataclysm.apk
