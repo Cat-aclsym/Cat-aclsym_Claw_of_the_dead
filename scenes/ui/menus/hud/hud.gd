@@ -8,7 +8,7 @@ extends Control
 
 # Constants
 const CHALLENGES_MENU: PackedScene = preload("res://scenes/ui/menus/hud/challenges_menu.tscn")
-const COINT_ICON_TEXTURE: Texture2D = preload("res://assets/ui/huds/Coin.png")
+const COIN_ICON_TEXTURE: Texture2D = preload("res://assets/ui/huds/Coin.png")
 const DEFAULT_TIME_SCALE: float = 1.0
 const DOTGOTHIC_FONT: Font = preload("res://assets/ui/fonts/dotgothic/DotGothic16-Regular.ttf")
 const PAUSE_MENU: PackedScene = preload("res://scenes/ui/menus/pause/pause.tscn")
@@ -174,12 +174,12 @@ func _trigger_coin_effects(amount: int) -> void:
 
 
 func _spawn_coin_explosion(start_pos: Vector2) -> void:
-	if COINT_ICON_TEXTURE == null:
+	if COIN_ICON_TEXTURE == null:
 		return
 	var num_coins = randi_range(5, 10)
 	for i in range(num_coins):
 		var coin = Sprite2D.new()
-		coin.texture = COINT_ICON_TEXTURE
+		coin.texture = COIN_ICON_TEXTURE
 		coin.scale = Vector2(0.15, 0.15)
 		add_child(coin)
 		coin.global_position = start_pos
