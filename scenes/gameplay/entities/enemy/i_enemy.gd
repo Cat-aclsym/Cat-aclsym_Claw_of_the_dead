@@ -206,9 +206,6 @@ func _damage_effect(color: Color) -> void:
 	if not is_instance_valid(sprite) or not is_inside_tree():
 		return
 
-	# Log for debug
-	Log.trace(Log.Level.DEBUG, "Enemy _damage_effect called for %s with color %s" % [name, color])
-
 	if _damage_tween:
 		_damage_tween.kill()
 
