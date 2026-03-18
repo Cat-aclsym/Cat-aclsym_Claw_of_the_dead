@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://sn02kb1pfkvd"
-path="res://.godot/imported/Button Sound Off.svg-f9c652000238fa28d638bbf94a40c24f.ctex"
+uid="uid://dnqjm4l5ol2c8"
+path="res://.godot/imported/Sound_Off_Button.png-7ba5ade8244a3d3ec7dd5bc342960bfd.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ui/icons/Button Sound Off.svg"
-dest_files=["res://.godot/imported/Button Sound Off.svg-f9c652000238fa28d638bbf94a40c24f.ctex"]
+source_file="res://assets/ui/icons/Sound_Off_Button.png"
+dest_files=["res://.godot/imported/Sound_Off_Button.png-7ba5ade8244a3d3ec7dd5bc342960bfd.ctex"]
 
 [params]
 
@@ -32,6 +32,3 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
-svg/scale=5.0
-editor/scale_with_editor_scale=false
-editor/convert_colors_with_editor_theme=false

@@ -7,7 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://lyhp13rlx7r1" path="res://assets/ui/icons/Music_Button.png" id="4_jywym"]
 [ext_resource type="Texture2D" uid="uid://bftxjalenxriu" path="res://assets/ui/icons/Button Music Off.svg" id="6_2o3v8"]
 [ext_resource type="Texture2D" uid="uid://5vx07x57xqmc" path="res://assets/ui/icons/Sound_Button.png" id="6_168q2"]
-[ext_resource type="Texture2D" uid="uid://sn02kb1pfkvd" path="res://assets/ui/icons/Button Sound Off.svg" id="8_0pr6m"]
+[ext_resource type="Texture2D" uid="uid://dnqjm4l5ol2c8" path="res://assets/ui/icons/Sound_Off_Button.png" id="8_0pr6m"]
 [ext_resource type="Texture2D" uid="uid://dpa7u6bojjqvn" path="res://assets/ui/icons/English_Button.png" id="8_iii62"]
 [ext_resource type="Texture2D" uid="uid://lseoebwf3mgg" path="res://assets/ui/icons/Insta_Button.png" id="9_vb5lp"]
 [ext_resource type="Texture2D" uid="uid://okkqp50is0im" path="res://assets/ui/icons/X_Button.png" id="10_droxh"]
