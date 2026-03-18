@@ -5,10 +5,14 @@
 class_name IMap
 extends Node2D
 
+var BONUS_TILE_SCENE: PackedScene = load("res://scenes/gameplay/world/map/bonus_tile.tscn") as PackedScene
+var PATH_INDICATOR_SCRIPT: Script = load("res://scenes/gameplay/world/map/path_indicator.gd") as Script
 const SPECIAL_TILE_DEBUG_COLOR: Color = Color(0.2, 0.4, 1.0, 0.55)
 const SPECIAL_TILE_DEBUG_EXCLUSION_COLOR: Color = Color(1.0, 0.2, 0.2, 0.35)
 const SPECIAL_TILE_MAX_DISTANCE_TILES: float = 2.0
 const SPECIAL_TILE_MIN_DISTANCE_BETWEEN_TILES: float = 2.0
+const PATH_INDICATOR_END_TYPE: int = 1
+const PATH_INDICATOR_START_TYPE: int = 0
 
 @export var debug_show_spawnable_special_tiles: bool = false
 @export_range(0.0, 100.0, 0.1) var special_tile_percentage: float = 2.0
@@ -78,17 +82,17 @@ func _create_path_indicators() -> void:
 
 		# Start point
 		var start_pos = path.to_global(curve.get_point_position(0))
-		_instantiate_indicator(start_pos, Color(0.1, 0.9, 0.1), PathIndicator.PointType.START)
+		_instantiate_indicator(start_pos, Color(0.1, 0.9, 0.1), PATH_INDICATOR_START_TYPE)
 
 		# End point
 		var end_pos = path.to_global(curve.get_point_position(curve.get_point_count() - 1))
-		_instantiate_indicator(end_pos, Color(0.9, 0.1, 0.1), PathIndicator.PointType.END)
+		_instantiate_indicator(end_pos, Color(0.9, 0.1, 0.1), PATH_INDICATOR_END_TYPE)
 
-func _instantiate_indicator(global_pos: Vector2, color: Color, type: PathIndicator.PointType) -> void:
-	var indicator = PathIndicator.new()
+func _instantiate_indicator(global_pos: Vector2, color: Color, point_type: int) -> void:
+	var indicator = PATH_INDICATOR_SCRIPT.new()
 	indicator.position = to_local(global_pos)
 	indicator.base_color = color
-	indicator.type = type
+	indicator.type = point_type
 	indicator.z_index = 1 # Above the ground tiles
 	add_child(indicator)
 
@@ -184,7 +188,7 @@ func _generate_special_tiles() -> void:
 		var tile_pos = selected_special_tiles.pop_back()
 		var modifier = bonus_types[i % bonus_types.size()]
 		special_tiles[tile_pos] = modifier
-		_create_visual_indicator(tile_pos, modifier)
+		_create_bonus_visual_indicator(tile_pos, modifier)
 		if debug_show_spawnable_special_tiles:
 			_show_debug_exclusion_tiles_around(tile_pos)
 		Log.trace(Log.Level.INFO, "Generated bonus tile at {0}: {1}".format([tile_pos, modifier["label"]]))
@@ -193,7 +197,7 @@ func _generate_special_tiles() -> void:
 		var tile_pos = selected_special_tiles.pop_back()
 		var modifier = malus_types[i % malus_types.size()]
 		special_tiles[tile_pos] = modifier
-		_create_visual_indicator(tile_pos, modifier)
+		_create_malus_visual_indicator(tile_pos, modifier)
 		if debug_show_spawnable_special_tiles:
 			_show_debug_exclusion_tiles_around(tile_pos)
 		Log.trace(Log.Level.INFO, "Generated malus tile at {0}: {1}".format([tile_pos, modifier["label"]]))
@@ -280,16 +284,26 @@ func _show_debug_spawnable_special_tiles(spawnable_tiles: Array[Vector2i]) -> vo
 	for tile_pos in spawnable_tiles:
 		_create_debug_tile_overlay(tile_pos, SPECIAL_TILE_DEBUG_COLOR, _debug_spawnable_overlays)
 
-func _create_visual_indicator(tile_pos: Vector2i, modifier: Dictionary) -> void:
-	var world_pos = tilemap.map_to_local(tile_pos)
+func _create_bonus_visual_indicator(tile_pos: Vector2i, modifier: Dictionary) -> void:
+	var bonus_tile = BONUS_TILE_SCENE.instantiate()
+	var world_pos: Vector2 = tilemap.map_to_local(tile_pos)
+	var label_text: String = modifier["label"]
+	var tint: Color = modifier["color"]
+
+	bonus_tile.position = world_pos
+	bonus_tile.configure(label_text, tint)
+	add_child(bonus_tile)
+
+func _create_malus_visual_indicator(tile_pos: Vector2i, modifier: Dictionary) -> void:
+	var world_pos: Vector2 = tilemap.map_to_local(tile_pos)
 
 	# Create a diamond shape that matches the isometric tile (64x32)
-	var poly = Polygon2D.new()
-	var half_width = 32.0
-	var half_height = 16.0
+	var poly := Polygon2D.new()
+	var half_width := 32.0
+	var half_height := 16.0
 
 	# Points for the diamond shape
-	var points = PackedVector2Array([
+	var points := PackedVector2Array([
 		Vector2(0, -half_height), # Top
 		Vector2(half_width, 0),   # Right
 		Vector2(0, half_height),  # Bottom
