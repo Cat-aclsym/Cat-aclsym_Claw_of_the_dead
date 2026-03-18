@@ -1,9 +1,9 @@
 [gd_scene load_steps=8 format=3 uid="uid://dx5t3ko8f6o27"]
 
 [ext_resource type="Script" uid="uid://sygwjr1lq6o5" path="res://scenes/ui/menus/level_selection/components/level_frame.gd" id="1_2fktc"]
-[ext_resource type="Texture2D" uid="uid://i56p8suhd7fe" path="res://assets/ui/level_selection/window/frame.svg" id="1_qgd5p"]
 [ext_resource type="Texture2D" uid="uid://bi5awqgar5hx3" path="res://assets/ui/level_selection/window/icon_100.svg" id="2_4j8i8"]
 [ext_resource type="FontFile" uid="uid://ddo3rokwsadq0" path="res://assets/ui/fonts/dotgothic/DotGothic16-Regular.ttf" id="2_indkb"]
+[ext_resource type="Texture2D" uid="uid://c8b8irfugbxdj" path="res://assets/environment/backgrounds/Fond Menu 02.svg" id="2_kbiyt"]
 [ext_resource type="Texture2D" uid="uid://bgv0uyh2tbaec" path="res://assets/ui/level_selection/window/condition_todo.svg" id="4_klwmy"]
 [ext_resource type="Texture2D" uid="uid://dnfx1s3hrkmcy" path="res://assets/ui/level_selection/window/bt_play.svg" id="5_w1l1s"]
 
@@ -12,7 +12,7 @@ content_margin_left = 16.0
 content_margin_top = 16.0
 content_margin_right = 16.0
 content_margin_bottom = 16.0
-texture = ExtResource("1_qgd5p")
+texture = ExtResource("2_kbiyt")
 
 [node name="LevelFrame" type="Control"]
 modulate = Color(1, 1, 1, 0.784314)

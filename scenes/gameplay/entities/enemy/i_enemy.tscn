@@ -88,7 +88,6 @@ script = ExtResource("1_ppg1n")
 type = null
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-animation = &""
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 active = false
