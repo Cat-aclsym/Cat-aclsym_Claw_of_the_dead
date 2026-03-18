@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://tl0lutmd6hq7"
-path="res://.godot/imported/Barre de vie - Jauge@2x.png-097ed3c341e5765e21edc78d7bdff4e0.ctex"
+uid="uid://lyhp13rlx7r1"
+path="res://.godot/imported/Music_Button.png-2f3fa7a5c88f9ba7c9a0513a620e46d6.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ui/huds/Barre de vie - Jauge@2x.png"
-dest_files=["res://.godot/imported/Barre de vie - Jauge@2x.png-097ed3c341e5765e21edc78d7bdff4e0.ctex"]
+source_file="res://assets/ui/icons/Music_Button.png"
+dest_files=["res://.godot/imported/Music_Button.png-2f3fa7a5c88f9ba7c9a0513a620e46d6.ctex"]
 
 [params]
 

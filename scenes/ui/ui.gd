@@ -8,13 +8,14 @@ extends CanvasLayer
 ## Flag indicating if the UI has been initialized
 var _initialized: bool = false
 
-@onready var hud: HUD = $HUD
+@onready var hud = get_node("HUD")
 
 # core
 func _ready() -> void:
-	assert(hud != null, "hud node not found")
-
 	Global.ui = self
+	if hud == null:
+		Log.trace(Log.Level.FATAL, "UI : HUD node is null! Children: %s" % str(get_children()))
+	assert(hud != null, "hud node not found")
 	_initialized = true
 
 # public

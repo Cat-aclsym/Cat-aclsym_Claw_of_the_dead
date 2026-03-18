@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b72djafe25kjf"
-path="res://.godot/imported/Button Sound On.svg-b4120e299dc678684133986d3887f231.ctex"
+uid="uid://c3eyakb4oxqkc"
+path="res://.godot/imported/Build_Button.png-a105b6aa35862cc1708bdc8acc91422f.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ui/icons/Button Sound On.svg"
-dest_files=["res://.godot/imported/Button Sound On.svg-b4120e299dc678684133986d3887f231.ctex"]
+source_file="res://assets/ui/icons/Build_Button.png"
+dest_files=["res://.godot/imported/Build_Button.png-a105b6aa35862cc1708bdc8acc91422f.ctex"]
 
 [params]
 
@@ -32,6 +32,3 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
-svg/scale=5.0
-editor/scale_with_editor_scale=false
-editor/convert_colors_with_editor_theme=false

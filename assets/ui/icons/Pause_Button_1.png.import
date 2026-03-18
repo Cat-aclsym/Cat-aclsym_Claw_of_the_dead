@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dg0hpeoeleiff"
-path="res://.godot/imported/Coins@2x.png-19b1ac8ca0e7e20f529adfddf98baef3.ctex"
+uid="uid://bnlogkwjp75g2"
+path="res://.godot/imported/Pause_Button_1.png-5d0e3e1ac0778a476bd51d4d18e748ce.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ui/huds/Coins@2x.png"
-dest_files=["res://.godot/imported/Coins@2x.png-19b1ac8ca0e7e20f529adfddf98baef3.ctex"]
+source_file="res://assets/ui/icons/Pause_Button_1.png"
+dest_files=["res://.godot/imported/Pause_Button_1.png-5d0e3e1ac0778a476bd51d4d18e748ce.ctex"]
 
 [params]
 

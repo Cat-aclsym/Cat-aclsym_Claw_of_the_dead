@@ -6,6 +6,7 @@
 [ext_resource type="FontFile" uid="uid://ddo3rokwsadq0" path="res://assets/ui/fonts/dotgothic/DotGothic16-Regular.ttf" id="4_b47p3"]
 
 [node name="LevelIndicator" type="TextureButton"]
+texture_filter = 1
 texture_normal = ExtResource("1_aq3t4")
 texture_disabled = ExtResource("2_yn7g2")
 script = ExtResource("3_07itj")

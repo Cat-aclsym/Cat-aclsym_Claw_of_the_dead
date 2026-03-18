@@ -8,7 +8,7 @@ extends Control
 ## Handles navigation back to menus or next level.
 
 # Constants
-const CONDITION_DONE: Texture2D = preload("res://assets/ui/level_selection/window/condition_done.svg")
+const CONDITION_DONE: Texture2D = preload("res://assets/ui/icons/Star.png")
 const CONDITION_TODO: Texture2D = preload("res://assets/ui/level_selection/window/condition_todo.svg")
 
 
@@ -44,11 +44,11 @@ func _ready() -> void:
 # Public functions
 ## Initializes the end game screen with victory or defeat state.
 func init(victory: bool) -> void:
-	var tower_selection := Global.ui.get_node_or_null("TowerSelection")
+	var tower_selection = Global.ui.get_node_or_null("TowerSelection")
 	if tower_selection:
 		tower_selection.queue_free()
 
-	var tower_selection_button := Global.hud.get_node_or_null("TowerSelectionMarginContainer/TowerSelectionButton")
+	var tower_selection_button = Global.hud.get_node_or_null("TowerSelectionMarginContainer/TowerSelectionButton")
 	if tower_selection_button:
 		tower_selection_button.set_pressed_no_signal(false)
 

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bm6k4rajx0ffb"
-path="res://.godot/imported/condition_done.svg-282508b48fa924abcbff7814864c1d93.ctex"
+uid="uid://c05no70ptjqya"
+path="res://.godot/imported/Health_Heart.png-da91e0ecbee4f1009f616a81ab3f03db.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ui/level_selection/window/condition_done.svg"
-dest_files=["res://.godot/imported/condition_done.svg-282508b48fa924abcbff7814864c1d93.ctex"]
+source_file="res://assets/ui/huds/Health_Heart.png"
+dest_files=["res://.godot/imported/Health_Heart.png-da91e0ecbee4f1009f616a81ab3f03db.ctex"]
 
 [params]
 
@@ -32,6 +32,3 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
-svg/scale=2.0
-editor/scale_with_editor_scale=false
-editor/convert_colors_with_editor_theme=false

@@ -9,8 +9,8 @@ extends Node
 var camera: Camera = null: get = _get_camera
 var console: Console = null: get = _get_console
 var cursor: TowerPlacement = null: get = _get_cursor
-var hud: HUD = null: get = _get_hud
-var ui: UI = null: get = _get_ui
+var hud: Node = null: get = _get_hud
+var ui: Node = null: get = _get_ui
 var paused: bool = false
 
 ## Represents the current game release status
@@ -51,10 +51,10 @@ func _get_console() -> Console:
 	# NOTE : Console can be null in some cases
 	return console
 
-func _get_ui() -> UI:
+func _get_ui() -> Node:
 	if _initialized: assert(ui != null, "UI is null")
 	return ui
 
-func _get_hud() -> HUD:
+func _get_hud() -> Node:
 	if _initialized: assert(hud != null, "HUD is null")
 	return hud

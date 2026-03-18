@@ -9,7 +9,7 @@ const DIFFICULTY_COLORS: Dictionary = {
 	"Impossible": Color(0.75, 0.25, 0.85),
 	"Medium": Color(0.9, 0.7, 0.2),
 }
-const ICON_DONE: Texture2D = preload("res://assets/ui/level_selection/window/condition_done.svg")
+const ICON_DONE: Texture2D = preload("res://assets/ui/icons/Star.png")
 const ICON_TODO: Texture2D = preload("res://assets/ui/level_selection/window/condition_todo.svg")
 
 @onready var desc_label: Label = %DescLabel

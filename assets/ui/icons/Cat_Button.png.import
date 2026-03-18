@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bcga3gamtf11v"
-path="res://.godot/imported/Waves@2x.png-475a46b4f215494dff3ef80139e68986.ctex"
+uid="uid://c8tt36yijwktt"
+path="res://.godot/imported/Cat_Button.png-3b8145c13bff2a2fba77e2ca1e64a1a8.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ui/huds/Waves@2x.png"
-dest_files=["res://.godot/imported/Waves@2x.png-475a46b4f215494dff3ef80139e68986.ctex"]
+source_file="res://assets/ui/icons/Cat_Button.png"
+dest_files=["res://.godot/imported/Cat_Button.png-3b8145c13bff2a2fba77e2ca1e64a1a8.ctex"]
 
 [params]
 

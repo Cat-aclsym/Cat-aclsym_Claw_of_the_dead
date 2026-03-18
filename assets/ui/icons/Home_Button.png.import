@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dksoj327amr1a"
-path="res://.godot/imported/Button Home Menu.svg-fa01dde36083c298481c7ee921dd105b.ctex"
+uid="uid://b7734rs8y770c"
+path="res://.godot/imported/Home_Button.png-267a997ab4d6219ecad141e207f5df50.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ui/icons/Button Home Menu.svg"
-dest_files=["res://.godot/imported/Button Home Menu.svg-fa01dde36083c298481c7ee921dd105b.ctex"]
+source_file="res://assets/ui/icons/Home_Button.png"
+dest_files=["res://.godot/imported/Home_Button.png-267a997ab4d6219ecad141e207f5df50.ctex"]
 
 [params]
 
@@ -32,6 +32,3 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
-svg/scale=5.0
-editor/scale_with_editor_scale=false
-editor/convert_colors_with_editor_theme=false

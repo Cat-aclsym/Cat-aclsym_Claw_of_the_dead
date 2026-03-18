@@ -5,7 +5,7 @@ extends HBoxContainer
 ## HUD component displaying current level challenge status icons.
 
 # Constants
-const ICON_DONE: Texture2D = preload("res://assets/ui/level_selection/window/condition_done.svg")
+const ICON_DONE: Texture2D = preload("res://assets/ui/icons/Star.png")
 const ICON_TODO: Texture2D = preload("res://assets/ui/level_selection/window/condition_todo.svg")
 
 
