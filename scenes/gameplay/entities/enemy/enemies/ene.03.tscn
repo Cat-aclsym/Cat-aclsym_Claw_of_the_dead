@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://b01fv7yq6ie7c"]
+[gd_scene load_steps=9 format=3 uid="uid://c320vbgx83xlc"]
 
 [ext_resource type="PackedScene" uid="uid://tmlcshxut7kv" path="res://scenes/gameplay/entities/enemy/i_enemy.tscn" id="1_dhx8w"]
 [ext_resource type="Texture2D" uid="uid://cfxkadf64p7m6" path="res://assets/gameplay/enemies/Zombie_Deliverer.png" id="2_1oooy"]
