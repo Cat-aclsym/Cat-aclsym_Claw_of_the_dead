@@ -1,7 +1,8 @@
-[gd_scene load_steps=6 format=3 uid="uid://besrv3mghbx31"]
+[gd_scene load_steps=9 format=3 uid="uid://besrv3mghbx31"]
 
 [ext_resource type="Script" uid="uid://d06pd8s8pbgp3" path="res://scenes/gameplay/world/map/bonus_tile.gd" id="1_bonus_tile_script"]
 [ext_resource type="Texture2D" uid="uid://dfp1oi72vjlt" path="res://assets/environment/tile_effects/bonus.png" id="2_bonus_tile_texture"]
+[ext_resource type="Texture2D" uid="uid://bfvtlhbglxal1" path="res://assets/environment/tile_effects/bonus-ground.png" id="3_bonus_ground_texture"]
 
 [sub_resource type="Curve" id="Curve_shpuu"]
 _data = [Vector2(0, 0.8), 0.0, -1.2, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
@@ -10,18 +11,40 @@ point_count = 2
 [sub_resource type="CurveTexture" id="CurveTexture_v3ehn"]
 curve = SubResource("Curve_shpuu")
 
+[sub_resource type="Curve" id="Curve_v3ehn"]
+_data = [Vector2(0, 0.202247), 0.0, 0.937243, 0, 0, Vector2(0.994444, 0), -1.01124, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_s2plb"]
+curve = SubResource("Curve_v3ehn")
+
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_s2plb"]
 particle_flag_disable_z = true
-gravity = Vector3(0, -50, 0)
+gravity = Vector3(0, -40, 0)
 alpha_curve = SubResource("CurveTexture_v3ehn")
+emission_curve = SubResource("CurveTexture_s2plb")
 
 [node name="BonusTile" type="Node2D"]
 script = ExtResource("1_bonus_tile_script")
 
-[node name="GPUParticles2D" type="GPUParticles2D" parent="."]
-amount = 6
+[node name="BonusGround" type="Sprite2D" parent="."]
+texture = ExtResource("3_bonus_ground_texture")
+
+[node name="BonusParticlesBehind" type="GPUParticles2D" parent="."]
+z_index = -16
+amount = 4
 texture = ExtResource("2_bonus_tile_texture")
-lifetime = 1.5
+lifetime = 2.0
+preprocess = 1.5
+fixed_fps = 60
+local_coords = true
+process_material = SubResource("ParticleProcessMaterial_s2plb")
+
+[node name="BonusParticlesFront" type="GPUParticles2D" parent="."]
+z_index = 16
+amount = 4
+texture = ExtResource("2_bonus_tile_texture")
+lifetime = 2.0
 preprocess = 1.5
 fixed_fps = 60
 local_coords = true
