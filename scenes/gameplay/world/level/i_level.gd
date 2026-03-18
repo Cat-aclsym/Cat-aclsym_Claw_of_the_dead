@@ -58,6 +58,7 @@ func start_level() -> void:
 	ILevel.current_level = self
 	_init_map()
 	_load_waves()
+	ChallengeManager.start_level_challenges(level_id)
 	_build_state_machine()
 	state_machine.toggle_initial_state()
 	start_time = Time.get_unix_time_from_system()
@@ -167,6 +168,7 @@ func _on_state_wave(_args = []) -> bool:
 
 func _on_state_victory(_args = []) -> bool:
 	Log.trace(Log.Level.INFO, "Entering VICTORY state.")
+	ChallengeManager.check_victory_conditions()
 	end_time = Time.get_unix_time_from_system()
 	var end_game_menu_instance: EndGame = ScenesLoader.END_GAME_MENU.instantiate()
 	Global.ui.add_child(end_game_menu_instance)
@@ -203,6 +205,10 @@ func _on_state_error(_args = []) -> bool:
 func _set_health(new_value: int) -> void:
 	if health <= 0:
 		return
+
+	if new_value < health:
+		ChallengeManager.notify_damage(health - new_value)
+
 	health = new_value
 	stats_updated.emit()
 

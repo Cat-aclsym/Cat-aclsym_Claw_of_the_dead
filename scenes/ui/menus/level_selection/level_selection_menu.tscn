@@ -71,7 +71,7 @@ script = ExtResource("1_3d0bw")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
-"": SubResource("AnimationLibrary_djou2")
+&"": SubResource("AnimationLibrary_djou2")
 }
 
 [node name="BackgroundTextureRect" type="TextureRect" parent="."]
@@ -133,57 +133,57 @@ texture_normal = ExtResource("4_cs7f2")
 [node name="LevelFrame1" parent="MarginContainer/VBoxContainer/BodyContainer" instance=ExtResource("5_x0b1a")]
 layout_mode = 2
 size_flags_vertical = 1
-level_id = "lev.01"
 arc_title = "Chat'lanques de Nyarseille"
+level_id = "lev.01"
 
 [node name="LevelFrame2" parent="MarginContainer/VBoxContainer/BodyContainer" instance=ExtResource("5_x0b1a")]
 visible = false
 layout_mode = 2
 size_flags_vertical = 1
-level_id = "lev.02"
 arc_title = "Chat'lanques de Nyarseille"
+level_id = "lev.02"
 
 [node name="LevelFrame3" parent="MarginContainer/VBoxContainer/BodyContainer" instance=ExtResource("5_x0b1a")]
 visible = false
 layout_mode = 2
 size_flags_vertical = 1
-level_id = "lev.03"
 arc_title = "Chat'lanques de Nyarseille"
+level_id = "lev.03"
 
 [node name="LevelFrame4" parent="MarginContainer/VBoxContainer/BodyContainer" instance=ExtResource("5_x0b1a")]
 visible = false
 layout_mode = 2
 size_flags_vertical = 1
-level_id = "lev.04"
 arc_title = "Chat'lanques de Nyarseille"
+level_id = "lev.04"
 
 [node name="LevelFrame5" parent="MarginContainer/VBoxContainer/BodyContainer" instance=ExtResource("5_x0b1a")]
 visible = false
 layout_mode = 2
 size_flags_vertical = 1
-level_id = "lev.05"
 arc_title = "Chat'lanques de Nyarseille"
+level_id = "lev.05"
 
 [node name="LevelFrame6" parent="MarginContainer/VBoxContainer/BodyContainer" instance=ExtResource("5_x0b1a")]
 visible = false
 layout_mode = 2
 size_flags_vertical = 1
-level_id = "lev.06"
 arc_title = "La mer Nyaditerranée"
+level_id = "lev.06"
 
 [node name="LevelFrame7" parent="MarginContainer/VBoxContainer/BodyContainer" instance=ExtResource("5_x0b1a")]
 visible = false
 layout_mode = 2
 size_flags_vertical = 1
-level_id = "lev.07"
 arc_title = "La mer Nyaditerranée"
+level_id = "lev.07"
 
 [node name="LevelFrame8" parent="MarginContainer/VBoxContainer/BodyContainer" instance=ExtResource("5_x0b1a")]
 visible = false
 layout_mode = 2
 size_flags_vertical = 1
-level_id = "lev.08"
 arc_title = "La mer Nyaditerranée"
+level_id = "lev.08"
 
 [node name="LockedFrame" type="CenterContainer" parent="MarginContainer/VBoxContainer/BodyContainer"]
 visible = false
@@ -222,6 +222,7 @@ size_flags_horizontal = 3
 [node name="Label" type="Label" parent="MarginContainer/VBoxContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
+theme_override_fonts/font = ExtResource("3_kbg2u")
 text = "Niveaux"
 horizontal_alignment = 1
 vertical_alignment = 2

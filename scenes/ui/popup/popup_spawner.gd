@@ -1,10 +1,11 @@
-## © [2024] A7 Studio. All rights reserved. Trademark.
+## © [2026] A7 Studio. All rights reserved. Trademark.
 ##
 ## Manages popup elements like score and wave notifications in the game.
 class_name PopupSpawner
 extends Marker2D
 
 # Exported Variables
+@export var damage_popup_node: PackedScene
 @export var popup_node: PackedScene
 
 # core
@@ -12,6 +13,28 @@ func _ready() -> void:
 	assert(popup_node != null, "popup_node scene not assigned")
 
 # public
+## Spawns a damage popup at the current position.
+## [br]
+## [param amount] The amount of damage to display
+## [param color] The color of the damage text
+## [param is_critical] Whether the damage is a critical hit
+func display_damage(amount: float, color: Color = Color.WHITE, is_critical: bool = false) -> void:
+	if damage_popup_node == null:
+		return
+		
+	var damage_popup: DamagePopup = damage_popup_node.instantiate()
+	damage_popup.amount = amount
+	damage_popup.color = color
+	damage_popup.is_critical = is_critical
+	
+	# Use global_position of the spawner
+	damage_popup.global_position = global_position
+	
+	# Add to the root scene to avoid being affected by enemy movement/rotation
+	get_tree().current_scene.add_child(damage_popup)
+	
+	Log.trace(Log.Level.DEBUG, "Spawning damage popup: %s at %s" % [amount, global_position])
+
 ## Spawns a score popup at the current position.
 ## [br]The popup will move upward and display the given text.
 ## [param text] The score value to display

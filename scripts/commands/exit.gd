@@ -5,17 +5,12 @@
 extends ICommand
 
 
-# public
-func command_token() -> String:
-	return "exit"
-
-
+# Public functions
 func description() -> String:
-	return "Exit game."
+	return "Closes the game and terminates the application."
 
 
-# private
+# Private functions
 func _execute(console: Console, _args: Array) -> int:
 	console.get_tree().quit()
-	queue_free()
-	return ERR_UNKNOWN_BEHAVIOR
+	return OK

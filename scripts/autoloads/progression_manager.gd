@@ -1,6 +1,7 @@
-## © [2025] A7 Studio. All rights reserved. Trademark.
+## © [2026] A7 Studio. All rights reserved. Trademark.
 
 extends Node
+## Manages persistent game progression, settings, and player discoveries.
 
 # Constants
 const SAVE_PATH: String = "user://progression.dat"
@@ -13,36 +14,111 @@ func _ready() -> void:
 	load_game()
 
 # Public functions
-## Saves the current progression to disk.
-func save_game() -> void:
-	var file := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
-	if not file:
-		Log.trace(Log.Level.ERROR, "Failed to save game to %s" % SAVE_PATH)
-		return
+## Applies the current settings to the game.
+func apply_settings() -> void:
+	# Set language
+	TranslationServer.set_locale(data.parameters.language)
 
-	# Save Parameters
-	var params_data: Dictionary = data.parameters.save()
-	params_data["type"] = "parameters"
-	file.store_var(params_data)
+	# Set audio volumes
+	var music_vol: float = 0.0 if data.parameters.music_enabled else -80.0
+	var sound_vol: float = 0.0 if data.parameters.sound_enabled else -80.0
+	SoundManager.change_volume("music", music_vol)
+	SoundManager.change_volume("sfx", sound_vol)
 
-	# Save Levels
-	for id in data.levels:
-		var level_obj: LevelData = data.levels[id]
-		var level_data: Dictionary = level_obj.save()
-		level_data["type"] = "level"
-		level_data["id"] = id
-		file.store_var(level_data)
 
-	# Save Towers
+## Marks a challenge as completed for a level.
+func complete_challenge(level_id: String, challenge_id: String) -> void:
+	if not data.levels.has(level_id):
+		data.levels[level_id] = LevelData.new()
+
+	var level_data: LevelData = data.levels[level_id]
+	if not challenge_id in level_data.challenges_completed:
+		level_data.challenges_completed.append(challenge_id)
+		save_game()
+
+
+## Marks a level as completed and unlocks the next one.
+func complete_level(level_id: String) -> void:
+	# Unlock the next level
+	var next_level_id := get_next_level_id(level_id)
+	if not next_level_id.is_empty():
+		if not data.levels.has(next_level_id):
+			data.levels[next_level_id] = LevelData.new()
+		data.levels[next_level_id].unlocked = true
+		Log.trace(Log.Level.DEBUG, "Unlocked next level: " + next_level_id)
+
+	save_game()
+
+
+## Returns the ID of the next level based on the given current level ID.
+## If the current ID does not match the expected format (e.g., "lev.01"), returns an empty string.
+func get_next_level_id(current_id: String) -> String:
+	var regex := RegEx.new()
+	regex.compile("lev\\.(\\d+)")
+	var result: RegExMatch = regex.search(current_id)
+	if result:
+		var num := int(result.get_string(1))
+		var next_num := num + 1
+		return "lev.%02d" % next_num
+	return ""
+
+
+## Checks if there are any enemies that haven't been seen in the encyclopedia.
+## Only considers IDs currently known by StatsDB to avoid stale save data entries.
+func has_unseen_encyclopedia_enemies() -> bool:
+	var known_ids: Array = StatsDB.get_enemy_ids()
+	for id in data.enemies:
+		if id not in known_ids: continue
+		if data.enemies[id].seen and not data.enemies[id].encyclopedia_seen:
+			return true
+	return false
+
+
+## Checks if there are any towers that haven't been seen in the encyclopedia.
+## Only considers IDs currently known by StatsDB to avoid stale save data entries.
+func has_unseen_encyclopedia_towers() -> bool:
+	var known_ids: Array = StatsDB.get_tower_ids()
 	for id in data.towers:
-		var tower_obj: TowerData = data.towers[id]
-		var tower_data: Dictionary = tower_obj.save()
-		tower_data["type"] = "tower"
-		tower_data["id"] = id
-		file.store_var(tower_data)
+		if id not in known_ids: continue
+		if data.towers[id].unlocked and not data.towers[id].encyclopedia_seen:
+			return true
+	return false
 
-	file.close()
-	Log.trace(Log.Level.DEBUG, "Game saved to %s (absolute: %s)" % [SAVE_PATH, file.get_path_absolute()])
+
+## Checks if an enemy has been seen in the encyclopedia.
+func is_enemy_encyclopedia_seen(enemy_id: String) -> bool:
+	if data.enemies.has(enemy_id):
+		return data.enemies[enemy_id].encyclopedia_seen
+	return false
+
+
+## Checks if an enemy has been seen.
+func is_enemy_seen(enemy_id: String) -> bool:
+	if data.enemies.has(enemy_id):
+		return data.enemies[enemy_id].seen
+	return false
+
+
+## Checks if a level is unlocked.
+func is_level_unlocked(level_id: String) -> bool:
+	if data.levels.has(level_id):
+		return data.levels[level_id].unlocked
+	return false
+
+
+## Checks if a tower has been seen in the encyclopedia.
+func is_tower_encyclopedia_seen(tower_id: String) -> bool:
+	if data.towers.has(tower_id):
+		return data.towers[tower_id].encyclopedia_seen
+	return false
+
+
+## Checks if a tower is unlocked.
+func is_tower_unlocked(tower_id: String) -> bool:
+	if data.towers.has(tower_id):
+		return data.towers[tower_id].unlocked
+	return false
+
 
 ## Loads the progression from disk.
 func load_game() -> void:
@@ -70,13 +146,18 @@ func load_game() -> void:
 			continue
 
 		match node_data["type"]:
-			"parameters":
-				data.parameters.from_dictionary(node_data)
+			"enemy":
+				var id: String = node_data["id"]
+				if not data.enemies.has(id):
+					data.enemies[id] = EnemyData.new()
+				data.enemies[id].from_dictionary(node_data)
 			"level":
 				var id: String = node_data["id"]
 				if not data.levels.has(id):
 					data.levels[id] = LevelData.new()
 				data.levels[id].from_dictionary(node_data)
+			"parameters":
+				data.parameters.from_dictionary(node_data)
 			"tower":
 				var id: String = node_data["id"]
 				if not data.towers.has(id):
@@ -86,6 +167,41 @@ func load_game() -> void:
 	file.close()
 	apply_settings()
 	Log.trace(Log.Level.DEBUG, "Game loaded from %s (absolute: %s)" % [SAVE_PATH, file.get_path_absolute()])
+	Log.trace(Log.Level.DEBUG, "Data: %s" % data.save())
+
+
+## Marks an enemy as seen in the encyclopedia.
+func mark_enemy_encyclopedia_seen(enemy_id: String) -> void:
+	if not data.enemies.has(enemy_id):
+		data.enemies[enemy_id] = EnemyData.new()
+
+	if not data.enemies[enemy_id].encyclopedia_seen:
+		data.enemies[enemy_id].encyclopedia_seen = true
+		Log.trace(Log.Level.DEBUG, "Enemy seen in encyclopedia: " + enemy_id)
+		save_game()
+
+
+## Marks an enemy as seen / discovered.
+func mark_enemy_seen(enemy_id: String) -> void:
+	if not data.enemies.has(enemy_id):
+		data.enemies[enemy_id] = EnemyData.new()
+
+	if not data.enemies[enemy_id].seen:
+		data.enemies[enemy_id].seen = true
+		Log.trace(Log.Level.DEBUG, "New enemy discovered: " + enemy_id)
+		save_game()
+
+
+## Marks a tower as seen in the encyclopedia.
+func mark_tower_encyclopedia_seen(tower_id: String) -> void:
+	if not data.towers.has(tower_id):
+		data.towers[tower_id] = TowerData.new()
+
+	if not data.towers[tower_id].encyclopedia_seen:
+		data.towers[tower_id].encyclopedia_seen = true
+		Log.trace(Log.Level.DEBUG, "Tower seen in encyclopedia: " + tower_id)
+		save_game()
+
 
 ## Resets progression to default state.
 func reset_progression() -> void:
@@ -94,27 +210,55 @@ func reset_progression() -> void:
 	save_game()
 	Log.trace(Log.Level.DEBUG, "Progression reset to default.")
 
-## Marks a level as completed and unlocks the next one.
-func complete_level(level_id: String) -> void:
-	# Unlock the next level
-	var next_level_id := get_next_level_id(level_id)
-	if not next_level_id.is_empty():
-		if not data.levels.has(next_level_id):
-			data.levels[next_level_id] = LevelData.new()
-		data.levels[next_level_id].unlocked = true
-		Log.trace(Log.Level.DEBUG, "Unlocked next level: " + next_level_id)
 
-	save_game()
+## Saves the current progression to disk.
+func save_game() -> void:
+	var file := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
+	if not file:
+		Log.trace(Log.Level.ERROR, "Failed to save game to %s" % SAVE_PATH)
+		return
 
-## Marks a challenge as completed for a level.
-func complete_challenge(level_id: String, challenge_id: String) -> void:
+	# Save Enemies
+	for id in data.enemies:
+		var enemy_obj: EnemyData = data.enemies[id]
+		var enemy_data: Dictionary = enemy_obj.save()
+		enemy_data["type"] = "enemy"
+		enemy_data["id"] = id
+		file.store_var(enemy_data)
+
+	# Save Levels
+	for id in data.levels:
+		var level_obj: LevelData = data.levels[id]
+		var level_data: Dictionary = level_obj.save()
+		level_data["type"] = "level"
+		level_data["id"] = id
+		file.store_var(level_data)
+
+	# Save Parameters
+	var params_data: Dictionary = data.parameters.save()
+	params_data["type"] = "parameters"
+	file.store_var(params_data)
+
+	# Save Towers
+	for id in data.towers:
+		var tower_obj: TowerData = data.towers[id]
+		var tower_data: Dictionary = tower_obj.save()
+		tower_data["type"] = "tower"
+		tower_data["id"] = id
+		file.store_var(tower_data)
+
+	file.close()
+	Log.trace(Log.Level.DEBUG, "Game saved to %s (absolute: %s)" % [SAVE_PATH, file.get_path_absolute()])
+
+
+## Unlocks a level by ID.
+func unlock_level(level_id: String) -> void:
 	if not data.levels.has(level_id):
 		data.levels[level_id] = LevelData.new()
 
-	var level_data: LevelData = data.levels[level_id]
-	if not challenge_id in level_data.challenges_completed:
-		level_data.challenges_completed.append(challenge_id)
-		save_game()
+	data.levels[level_id].unlocked = true
+	save_game()
+
 
 ## Unlocks a tower by ID.
 func unlock_tower(tower_id: String) -> void:
@@ -123,36 +267,6 @@ func unlock_tower(tower_id: String) -> void:
 
 	data.towers[tower_id].unlocked = true
 	save_game()
-
-## Checks if a level is unlocked.
-func is_level_unlocked(level_id: String) -> bool:
-	if data.levels.has(level_id):
-		return data.levels[level_id].unlocked
-	return false
-
-## Applies the current settings to the game.
-func apply_settings() -> void:
-	# Set language
-	TranslationServer.set_locale(data.parameters.language)
-
-	# Set audio volumes
-	var music_vol: float = 0.0 if data.parameters.music_enabled else -80.0
-	var sound_vol: float = 0.0 if data.parameters.sound_enabled else -80.0
-	SoundManager.change_volume("music", music_vol)
-	SoundManager.change_volume("sfx", sound_vol)
-
-
-## Returns the ID of the next level based on the given current level ID.
-## If the current ID does not match the expected format (e.g., "lev.01"), returns an empty string.
-func get_next_level_id(current_id: String) -> String:
-	var regex := RegEx.new()
-	regex.compile("lev\\.(\\d+)")
-	var result: RegExMatch = regex.search(current_id)
-	if result:
-		var num := int(result.get_string(1))
-		var next_num := num + 1
-		return "lev.%02d" % next_num
-	return ""
 
 # Private functions
 func _init_default_data() -> void:
@@ -164,9 +278,8 @@ func _init_default_data() -> void:
 		data.levels["lev.01"] = LevelData.new()
 	data.levels["lev.01"].unlocked = true
 
-	# Unlock all towers by default
-	for tower_type in ITower.TowerType.values():
-		var tid := str(tower_type)
+	# Unlock all towers by default from StatsDB config
+	for tid in StatsDB.get_tower_ids():
 		if not data.towers.has(tid):
 			data.towers[tid] = TowerData.new()
 		data.towers[tid].unlocked = true

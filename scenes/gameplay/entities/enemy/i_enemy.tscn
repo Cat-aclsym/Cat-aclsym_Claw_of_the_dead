@@ -4,6 +4,8 @@
 [ext_resource type="Texture2D" uid="uid://bggy3ygaq6c4t" path="res://assets/gameplay/enemies/poison_animation.png" id="2_tjt82"]
 [ext_resource type="Script" uid="uid://bpx6dilajh058" path="res://scenes/ui/popup/popup_spawner.gd" id="3_6sxxp"]
 [ext_resource type="PackedScene" uid="uid://jv7q286fh1vn" path="res://scenes/ui/popup/popup_score.tscn" id="4_7dtc1"]
+[ext_resource type="PackedScene" uid="uid://dg48m2b1x4p3k" path="res://scenes/ui/popup/damage_popup.tscn" id="5_damage"]
+[ext_resource type="PackedScene" uid="uid://cn4qe5ywb3vjh" path="res://scenes/gameplay/entities/enemy/health_bar.tscn" id="5_healthbar"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_csqu7"]
 
@@ -109,4 +111,8 @@ process_material = SubResource("ParticleProcessMaterial_aqjwg")
 [node name="PopupScoreSpawner" type="Marker2D" parent="."]
 position = Vector2(0, -16)
 script = ExtResource("3_6sxxp")
+damage_popup_node = ExtResource("5_damage")
 popup_node = ExtResource("4_7dtc1")
+
+[node name="HealthBar" parent="." instance=ExtResource("5_healthbar")]
+position = Vector2(0, -32)
