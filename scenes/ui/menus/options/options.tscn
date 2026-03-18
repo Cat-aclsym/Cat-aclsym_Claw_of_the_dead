@@ -13,9 +13,9 @@
 [ext_resource type="Texture2D" uid="uid://okkqp50is0im" path="res://assets/ui/icons/X_Button.png" id="10_droxh"]
 [ext_resource type="Texture2D" uid="uid://dfv62c4uf2jdw" path="res://assets/ui/icons/French_Button.png" id="11_3w6fj"]
 [ext_resource type="Texture2D" uid="uid://bdggwdxr5c810" path="res://assets/ui/icons/Discord_Button.png" id="11_ioidm"]
-[ext_resource type="Texture2D" uid="uid://d0la3b5reh1og" path="res://assets/ui/icons/Button Announce.svg" id="12_esjhy"]
-[ext_resource type="Texture2D" uid="uid://bu1f55q3ahnnw" path="res://assets/ui/icons/Button Confidentiality.svg" id="13_gyr4v"]
-[ext_resource type="Texture2D" uid="uid://d4lwyslhi65m3" path="res://assets/ui/icons/Button Email.svg" id="14_ib5pc"]
+[ext_resource type="Texture2D" uid="uid://chnjmnn6vuygx" path="res://assets/ui/icons/Report_Button.png" id="12_esjhy"]
+[ext_resource type="Texture2D" uid="uid://bbq17gtg7gqky" path="res://assets/ui/icons/Shield_Button.png" id="13_gyr4v"]
+[ext_resource type="Texture2D" uid="uid://yo1kyblhvyb3" path="res://assets/ui/icons/Mail_Button.png" id="14_ib5pc"]
 
 [node name="OptionMenu" type="Control"]
 texture_filter = 1
