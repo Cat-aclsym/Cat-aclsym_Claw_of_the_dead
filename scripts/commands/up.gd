@@ -19,7 +19,7 @@ func get_args() -> Array[Dictionary]:
 # Private functions
 func _execute(console: Console, args: Array) -> int:
 	if not ILevel.current_level:
-		console.push_error("You must be in a level to use this command.")
+		console.push_error_("You must be in a level to use this command.")
 		return ERR_UNKNOWN_BEHAVIOR
 
 	var tower_name: String = args[0]
@@ -28,15 +28,15 @@ func _execute(console: Console, args: Array) -> int:
 	var level = ILevel.current_level
 	var tower: ITower = level.map.get_tower_by_name(tower_name)
 	if not tower:
-		console.push_error("Tower '%s' not found." % tower_name)
+		console.push_error_("Tower '%s' not found." % tower_name)
 		return ERR_UNKNOWN_BEHAVIOR
 
 	if tower.available_upgrade.is_empty():
-		console.push_error("No upgrades available for this tower.")
+		console.push_error_("No upgrades available for this tower.")
 		return ERR_UNKNOWN_BEHAVIOR
 
 	if upgrade_path < 1 or upgrade_path > tower.available_upgrade.size():
-		console.push_error("Invalid upgrade path: %d." % upgrade_path)
+		console.push_error_("Invalid upgrade path: %d." % upgrade_path)
 		return ERR_UNKNOWN_BEHAVIOR
 
 	tower.start_upgrade(tower.available_upgrade[upgrade_path - 1])

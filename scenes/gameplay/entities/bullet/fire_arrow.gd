@@ -73,7 +73,7 @@ func _physics_process(delta: float) -> void:
 		super._physics_process(delta)
 
 # public
-func _on_impact_effect(enemy: IEnemy, impact_position: Vector2) -> void:
+func _on_impact_effect(_enemy: IEnemy, impact_position: Vector2) -> void:
 	# Don't call super - we want burning area instead of explosion
 	_create_explosion_effect(impact_position)
 	_activate_burning_area()

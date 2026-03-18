@@ -17,12 +17,12 @@ func get_args() -> Array[Dictionary]:
 # Private functions
 func _execute(console: Console, args: Array) -> int:
 	if not ILevel.current_level:
-		console.push_error("You must be in a level to use this command.")
+		console.push_error_("You must be in a level to use this command.")
 		return ERR_UNKNOWN_BEHAVIOR
 
 	var amount: int = int(args[0])
 	if amount < 0:
-		console.push_error("Money amount cannot be negative.")
+		console.push_error_("Money amount cannot be negative.")
 		return ERR_UNKNOWN_BEHAVIOR
 
 	ILevel.current_level.coins = amount

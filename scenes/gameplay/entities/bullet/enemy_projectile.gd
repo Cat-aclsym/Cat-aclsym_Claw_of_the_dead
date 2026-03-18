@@ -62,15 +62,15 @@ func _on_body_entered(body: Node2D) -> void:
 	# 	 queue_free() 
 
 
-func _spawn_impact_particles(position: Vector2) -> void:
+func _spawn_impact_particles(pos: Vector2) -> void:
 	"""Creates bubble particles at the impact point.
 	
 	Args:
-		position: The global position where particles will appear
+		pos: The global position where particles will appear
 	"""
 	# Create a particles node
 	var particles = CPUParticles2D.new()  # Using CPUParticles2D instead of GPUParticles2D
-	particles.position = position
+	particles.position = pos
 	particles.z_index = 100  # Ensure particles appear above other elements
 	
 	# Get scene tree root to add particles at top level
