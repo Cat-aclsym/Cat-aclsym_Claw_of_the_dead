@@ -2,13 +2,10 @@
 
 [ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="1_ox1tf"]
 [ext_resource type="Texture2D" uid="uid://deifsvtkdkqo1" path="res://assets/ui/buttons/Bouton Bleu.svg" id="2_26l8s"]
-
-[sub_resource type="FontVariation" id="FontVariation_qup1q"]
-variation_embolden = 2.0
-spacing_glyph = 2
+[ext_resource type="FontVariation" path="res://assets/ui/fonts/dotgothic/dotgothic_bold_variation.tres" id="3_variation"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_wiubb"]
-font = SubResource("FontVariation_qup1q")
+font = ExtResource("3_variation")
 font_size = 57
 font_color = Color(0.137255, 0.215686, 0.223529, 1)
 outline_color = Color(0.137255, 0.215686, 0.223529, 1)

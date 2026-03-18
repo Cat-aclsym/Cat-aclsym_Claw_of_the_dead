@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://b5630xr4v607r"]
+[gd_scene load_steps=17 format=3 uid="uid://b5630xr4v607r"]
 
 [ext_resource type="Script" uid="uid://cc06prch72skr" path="res://scenes/ui/menus/hud/hud.gd" id="1_cuep3"]
 [ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="2_jel3x"]
@@ -13,6 +13,7 @@
 [ext_resource type="Texture2D" uid="uid://ccis5avg2eshj" path="res://assets/ui/icons/Trophey_Button.png" id="11_5r146"]
 [ext_resource type="Texture2D" uid="uid://c2uqlay1r2d1d" path="res://assets/ui/icons/Button Cancel.svg" id="12_5jyti"]
 [ext_resource type="Texture2D" uid="uid://85fepmd06xnd" path="res://assets/ui/icons/Fast_Forward_Button.png" id="13_hn23h"]
+[ext_resource type="FontVariation" uid="uid://c5y1j2k3l4m5n" path="res://assets/ui/fonts/dotgothic/dotgothic_variation.tres" id="14_variation"]
 
 [sub_resource type="Animation" id="1"]
 resource_name = "skip_active"
@@ -243,6 +244,7 @@ offset_bottom = 72.0
 grow_horizontal = 0
 theme = ExtResource("2_jel3x")
 theme_type_variation = &"HeaderSmall"
+theme_override_fonts/font = ExtResource("14_variation")
 theme_override_font_sizes/font_size = 25
 text = "New wave in XX.XX s"
 script = ExtResource("9_o6rym")
