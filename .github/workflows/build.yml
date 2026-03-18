@@ -41,6 +41,10 @@ jobs:
         run: |
           sed -i '/package\/signed=true/a keystore\/release="\/root\/Cataclysm.keystore"\nkeystore\/release_password="${{ secrets.KEYSTORE_PASSWORD }}"\nkeystore\/release_user="Cataclysm"' export_presets.cfg
 
+      - name: Import project
+        run: |
+          godot --headless --import || true
+
       - name: Build APK
         run: |
           mkdir -p exports
