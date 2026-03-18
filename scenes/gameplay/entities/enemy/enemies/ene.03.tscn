@@ -53,14 +53,20 @@ enemy_id = "rat"
 type = 3
 
 [node name="AnimatedSprite2D" parent="." index="0"]
+position = Vector2(0, -5)
 sprite_frames = SubResource("SpriteFrames_ojixu")
 animation = &"walk_up"
-frame_progress = 0.448919
 offset = Vector2(0, -16)
 
 [node name="CollisionShape2D" parent="." index="2"]
-position = Vector2(0, -4)
+position = Vector2(0, -18)
 shape = SubResource("RectangleShape2D_6dscd")
 
+[node name="GPUParticles2D" parent="." index="3"]
+position = Vector2(0, -19)
+
 [node name="PopupScoreSpawner" parent="." index="4"]
-position = Vector2(0, -22)
+position = Vector2(0, -41)
+
+[node name="HealthBar" parent="." index="5"]
+position = Vector2(0, -51)

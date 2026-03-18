@@ -110,8 +110,8 @@ func _on_challenges_button_pressed() -> void:
 
 
 func _on_pause_button_pressed() -> void:
-	if not Global.paused:
-		Global.paused = true
+	if not Global.paused and ILevel.current_level != null:
+		ILevel.current_level.pause()
 		var pause_menu_instance: Pause = PAUSE_MENU.instantiate()
 		Global.ui.add_child(pause_menu_instance)
 
