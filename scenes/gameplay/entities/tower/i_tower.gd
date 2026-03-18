@@ -78,7 +78,7 @@ var shoot_range: float = 0.0
 @onready var polygon_2d: Polygon2D = $Polygon2D
 ## The sprite 2D node for the tower to display the tower model
 @onready var animated_sprite_2d: AnimatedSprite2D = $AnimatedSprite2D
-@onready var sprite_2d: Sprite2D = $Sprite2D
+# @onready var sprite_2d: Sprite2D = $Sprite2D
 ## The button node for the tower to interact with
 @onready var button: Button = $Button
 

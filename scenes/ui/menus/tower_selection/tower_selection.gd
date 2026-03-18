@@ -21,7 +21,7 @@ func _ready():
 	construction_menu.visible = true
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
+func _process(_delta: float):
 	if is_queued_for_deletion():
 		toggle_build_menu()
 

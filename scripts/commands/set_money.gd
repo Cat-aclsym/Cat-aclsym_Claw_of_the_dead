@@ -21,7 +21,7 @@ func expected_args_types() -> Array[ICommand.Types]:
 # private
 func _execute(console: Console, args: Array) -> int:
 	if not ILevel.current_level:
-		console.push_error("You must be in a level to use this method")
+		console.push_error_("You must be in a level to use this method")
 		return ERR_UNCONFIGURED
 
 	var amount: int = int(args[0])

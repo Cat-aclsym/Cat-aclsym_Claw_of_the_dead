@@ -62,7 +62,7 @@ func _ready() -> void:
 	assert(range_area and range_collision_shape and range_collision_shape.shape is CircleShape2D)
 	Log.trace(Log.Level.INFO, "BigDaddy: Setting range to %s" % shoot_range)
 	range_collision_shape.shape.radius = shoot_range
-	range_area.body_entered.connect(_on_range_area_body_entered)
+	# range_area.body_entered.connect(_on_range_area_body_entered) # already connected in IEnemy
 	range_area.body_exited.connect(_on_range_area_body_exited)
 
 	# Configure Fire Rate Timer (DO NOT START IT HERE. It's controlled by attack cycle)

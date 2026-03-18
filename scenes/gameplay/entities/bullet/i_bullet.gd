@@ -134,7 +134,7 @@ func _create_star_particle_texture() -> Texture2D:
 	image.fill(Color(0, 0, 0, 0))
 	
 	# Center point
-	var center := Vector2(image_size / 2, image_size / 2)
+	var center := Vector2(image_size / 2., image_size / 2.)
 	
 	# Draw 4-pointed star
 	var points := PackedVector2Array([
@@ -159,11 +159,11 @@ func _draw_thick_line(image: Image, from: Vector2, to: Vector2, color: Color, th
 	_draw_line(image, from, to, color)
 	
 	# Add thickness by drawing parallel lines
-	var half_thick := thickness / 2
+	var half_thick := thickness / 2.
 	
 	# Calculate the perpendicular vector to the line
-	var direction := (to - from).normalized()
-	var perpendicular := Vector2(-direction.y, direction.x)
+	var dir: Vector2 = (to - from).normalized()
+	var perpendicular := Vector2(-dir.y, dir.x)
 	
 	# Draw parallel lines to create thickness
 	for i in range(1, half_thick + 1):
@@ -177,8 +177,8 @@ func _draw_thick_line(image: Image, from: Vector2, to: Vector2, color: Color, th
 	
 	# Round the ends
 	if thickness > 1:
-		_draw_circle(image, from, half_thick, color)
-		_draw_circle(image, to, half_thick, color)
+		_draw_circle(image, from, floor(half_thick), color)
+		_draw_circle(image, to, floor(half_thick), color)
 
 
 func _draw_line(image: Image, from: Vector2, to: Vector2, color: Color) -> void:
@@ -235,8 +235,8 @@ func _create_hit_particle_texture() -> Texture2D:
 	image.fill(Color(0, 0, 0, 0))
 	
 	# Draw a filled circle to simulate blood drops
-	var center := Vector2(image_size / 2, image_size / 2)
-	var radius := image_size / 2 - 1
+	var center := Vector2(image_size / 2., image_size / 2.)
+	var radius := image_size / 2. - 1
 	
 	for x in range(image_size):
 		for y in range(image_size):

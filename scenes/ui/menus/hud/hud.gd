@@ -103,11 +103,11 @@ func _on_pause_button_pressed() -> void:
 ## Handles the tower selection button press event.
 ## [br]Creates and shows the tower selection menu.
 func _on_tower_selection_button_pressed() -> void:
-	if Global.ui.get_node("TowerSelection") == null:
-		var tower_selection_menu_instance: TowerSelection = TOWER_SELECTION_MENU.instantiate()
-		Global.ui.add_child(tower_selection_menu_instance)
-	else:
+	if Global.ui.has_node("TowerSelection"):
 		Global.ui.get_node("TowerSelection").queue_free()
+		return
+	var tower_selection_menu_instance: TowerSelection = TOWER_SELECTION_MENU.instantiate()
+	Global.ui.add_child(tower_selection_menu_instance)
 
 ## Handles the skip speed button press event.
 func _on_skip_time_scale_button_pressed() -> void:

@@ -64,7 +64,7 @@ func push_color(text: String, color: String) -> void:
 		Log.save_message(text)
 
 ## Pushes an error message in red color.
-func push_error(text: String) -> void:
+func push_error_(text: String) -> void:
 	push_color(text, CONSOLE_COLOR_ERROR)
 
 ## Pushes a debug message in green color.
@@ -191,7 +191,7 @@ func _process_command(command: String) -> void:
 	if err == OK:
 		return
 
-	push_error("%d" % err)
+	push_error_("%d" % err)
 
 func _find_command(command_token: String) -> ICommand:
 	var cmd_dir := DirAccess.open(COMMANDS_DIRECTORY)
@@ -202,7 +202,7 @@ func _find_command(command_token: String) -> ICommand:
 		if path == command_token + ".gd":
 			return load("%s/%s" % [COMMANDS_DIRECTORY, path]).new()
 
-	push_error("No command named '%s'" % command_token)
+	push_error_("No command named '%s'" % command_token)
 	return null
 
 func _navigate_suggestions(direction: int) -> void:

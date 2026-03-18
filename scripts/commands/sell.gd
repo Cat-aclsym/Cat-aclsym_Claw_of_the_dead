@@ -27,11 +27,11 @@ func _execute(console: Console, args: Array) -> int:
 
 	var tower: ITower = ILevel.current_level.map.get_tower_by_name(tower_name)
 	if not tower:
-		console.push_error("Tower not found")
+		console.push_error_("Tower not found")
 		return ERR_UNCONFIGURED
 
 	if not tower.available_upgrade:
-		console.push_error("No upgrades available for this tower")
+		console.push_error_("No upgrades available for this tower")
 		return ERR_UNCONFIGURED
 
 	tower.sell_tower()

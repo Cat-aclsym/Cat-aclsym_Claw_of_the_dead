@@ -174,6 +174,7 @@ func _state_build(tower: ITower = null) -> void:
 		_tower.state = ITower.TowerState.BUILDING
 		_tower.position = cursor.position - Vector2(0, 16)
 		add_child(_tower)
+		tower.free()
 
 	_tower.position = cursor.position - Vector2(0, 16)
 	var is_buildable := _is_buildable(_tower.position)
@@ -188,7 +189,7 @@ func _state_build(tower: ITower = null) -> void:
 		hover_area.monitorable = false
 		hover_area.input_pickable = false
 	# Use the placement area position (cursor position) for validation, not the tower position
-	_tower.modulate = COLOR_OK if _is_buildable(cursor.position) else COLOR_KO
+	_tower.modulate = COLOR_OK if is_buildable else COLOR_KO
 
 ## Check if the placement area overlaps with any enemy path
 func _is_position_on_path(pos: Vector2) -> bool:

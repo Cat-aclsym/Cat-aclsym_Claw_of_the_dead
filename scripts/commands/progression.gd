@@ -19,7 +19,7 @@ func is_variable_args() -> bool:
 # private
 func _execute(console: Console, args: Array) -> int:
 	if args.is_empty():
-		console.push_error("Missing subcommand. Usage: progression [reset|unlock|challenge]")
+		console.push_error_("Missing subcommand. Usage: progression [reset|unlock|challenge]")
 		return OK
 
 	var subcommand: String = args[0]
@@ -31,7 +31,7 @@ func _execute(console: Console, args: Array) -> int:
 
 		"unlock":
 			if args.size() < 2:
-				console.push_error("Usage: progression unlock <level_id>")
+				console.push_error_("Usage: progression unlock <level_id>")
 				return OK
 			var level_id: String = args[1]
 			if not ProgressionManager.data.levels.has(level_id):
@@ -42,7 +42,7 @@ func _execute(console: Console, args: Array) -> int:
 
 		"challenge":
 			if args.size() < 3:
-				console.push_error("Usage: progression challenge <level_id> <challenge_id>")
+				console.push_error_("Usage: progression challenge <level_id> <challenge_id>")
 				return OK
 			var level_id: String = args[1]
 			var challenge_id: String = args[2]
@@ -50,6 +50,6 @@ func _execute(console: Console, args: Array) -> int:
 			console.push_text("Completed challenge " + challenge_id + " for level " + level_id)
 
 		_:
-			console.push_error("Unknown subcommand: " + subcommand)
+			console.push_error_("Unknown subcommand: " + subcommand)
 
 	return OK

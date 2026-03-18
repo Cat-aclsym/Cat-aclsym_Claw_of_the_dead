@@ -73,7 +73,7 @@ func _physics_process(delta: float) -> void:
 
 # public
 ## Virtual method called when impact occurs - override in child classes
-func _on_impact_effect(enemy: IEnemy, impact_position: Vector2) -> void:
+func _on_impact_effect(_enemy: IEnemy, impact_position: Vector2) -> void:
 	# Default behavior: create explosion effect
 	if explosion_effect_enabled:
 		_create_explosion_effect(impact_position)
