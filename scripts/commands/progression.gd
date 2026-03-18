@@ -46,7 +46,7 @@ func get_args_dynamic(current_args: Array) -> Array[Dictionary]:
 # Private functions
 func _execute(console: Console, args: Array) -> int:
 	if args.is_empty():
-		console.push_error("Missing subcommand. Usage: progression [challenge|reset|show|unlock]")
+		console.push_error_("Missing subcommand. Usage: progression [challenge|reset|show|unlock]")
 		return OK
 
 	var subcommand: String = args[0]
@@ -69,7 +69,7 @@ func _execute(console: Console, args: Array) -> int:
 			console.push_text(json_text)
 		"unlock":
 			if args.size() < 3:
-				console.push_error("Usage: progression unlock <level|enemy|tower> <id>")
+				console.push_error_("Usage: progression unlock <level|enemy|tower> <id>")
 				return OK
 
 			var type: String = args[1]
@@ -86,8 +86,8 @@ func _execute(console: Console, args: Array) -> int:
 					ProgressionManager.unlock_tower(id)
 					console.push_text("Unlocked tower: " + id)
 				_:
-					console.push_error("Unknown type: " + type + ". Expected: level, enemy, tower")
+					console.push_error_("Unknown type: " + type + ". Expected: level, enemy, tower")
 		_:
-			console.push_error("Unknown subcommand: " + subcommand)
+			console.push_error_("Unknown subcommand: " + subcommand)
 
 	return OK

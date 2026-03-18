@@ -19,7 +19,7 @@ func get_args() -> Array[Dictionary]:
 # Private functions
 func _execute(console: Console, args: Array) -> int:
 	if not ILevel.current_level:
-		console.push_error("You must be in a level to use this command.")
+		console.push_error_("You must be in a level to use this command.")
 		return ERR_UNKNOWN_BEHAVIOR
 
 	var tower_name: String = args[0]

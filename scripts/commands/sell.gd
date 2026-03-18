@@ -16,7 +16,7 @@ func get_args() -> Array[Dictionary]:
 # Private functions
 func _execute(console: Console, args: Array) -> int:
 	if not ILevel.current_level:
-		console.push_error("You must be in a level to use this command.")
+		console.push_error_("You must be in a level to use this command.")
 		return ERR_UNKNOWN_BEHAVIOR
 
 	var tower_name: String = args[0]
@@ -25,7 +25,7 @@ func _execute(console: Console, args: Array) -> int:
 
 	if not tower:
 		console.push_error_("Tower '%s' not found." % tower_name)
-	return ERR_UNKNOWN_BEHAVIOR
+		return ERR_UNKNOWN_BEHAVIOR
 
 	tower.sell_tower()
 	console.push_text("Sold tower: %s" % tower_name)
