@@ -7,7 +7,7 @@
 [ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="6_8ptoc"]
 [ext_resource type="Texture2D" uid="uid://b7734rs8y770c" path="res://assets/ui/icons/Home_Button.png" id="6_ol8q3"]
 [ext_resource type="Texture2D" uid="uid://lyhp13rlx7r1" path="res://assets/ui/icons/Music_Button.png" id="7_gxx80"]
-[ext_resource type="Texture2D" uid="uid://bftxjalenxriu" path="res://assets/ui/icons/Button Music Off.svg" id="8_f8w4k"]
+[ext_resource type="Texture2D" uid="uid://bomhxmoxwsuiu" path="res://assets/ui/icons/Music_Off_Button.png" id="8_f8w4k"]
 [ext_resource type="Texture2D" uid="uid://5vx07x57xqmc" path="res://assets/ui/icons/Sound_Button.png" id="9_yy2d7"]
 [ext_resource type="Texture2D" path="res://assets/ui/icons/Sound_Off_Button.png" id="10_dy38s"]
 [ext_resource type="Texture2D" uid="uid://v4ol57tfife6" path="res://assets/ui/icons/Encyclopedia_Button.png" id="11_clue"]
@@ -142,6 +142,7 @@ ignore_texture_size = true
 stretch_mode = 5
 
 [node name="SoundButton" type="TextureButton" parent="Panel/MarginContainer/PanelContainer/CenterContainer/VBoxContainer/TopLeftIcon"]
+texture_filter = 1
 custom_minimum_size = Vector2(80, 70)
 layout_mode = 2
 toggle_mode = true
