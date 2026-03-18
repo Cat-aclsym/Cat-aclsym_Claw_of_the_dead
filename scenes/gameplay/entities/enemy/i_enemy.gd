@@ -366,7 +366,7 @@ func _dead_state() -> void:
 		Log.trace(Log.Level.ERROR, "Current level is null, aborting.")
 		return
 
-	var money_reward: int = 10
+	var money_reward: int = 15
 
 	# Apply reward multiplier when the killing [IBullet] was fired by a tower ([member IBullet.tower_owner]).
 	# [code]last_source[/code] may already be freed (bullet [method queue_free] after hit) — check validity before [code]is[/code].
