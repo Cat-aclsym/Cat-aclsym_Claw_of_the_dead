@@ -1,15 +1,25 @@
-## © [2024] A7 Studio. All rights reserved. Trademark.
+## © [2026] A7 Studio. All rights reserved. Trademark.
 ##
 ## Base class for game maps. Manages tile-based map layout.
 ## @tutorial: See map_1.tscn for implementation example
 class_name IMap
 extends Node2D
 
+const SPECIAL_TILE_DEBUG_COLOR: Color = Color(0.2, 0.4, 1.0, 0.55)
+const SPECIAL_TILE_DEBUG_EXCLUSION_COLOR: Color = Color(1.0, 0.2, 0.2, 0.35)
+const SPECIAL_TILE_MAX_DISTANCE_TILES: float = 2.0
+const SPECIAL_TILE_MIN_DISTANCE_BETWEEN_TILES: float = 2.0
+
+@export var debug_show_spawnable_special_tiles: bool = false
+
 ## Reference to the TileMap node for map layout
 @export var tilemap: TileMap
 
 ## Array of paths that enemies can follow
 var paths: Array[Path2D] = []
+
+var _debug_exclusion_overlays: Array[Node2D] = []
+var _debug_spawnable_overlays: Array[Node2D] = []
 
 ## Dictionary of special tiles (position -> modifier data)
 var special_tiles: Dictionary = {}
@@ -19,6 +29,7 @@ var special_tiles: Dictionary = {}
 # core
 func _ready() -> void:
 	_load_paths()
+	_create_path_indicators()
 
 	var placement_system = Global.get("cursor")
 	if placement_system:
@@ -48,12 +59,37 @@ func get_tower_by_name(tower_name: String) -> ITower:
 
 ## Loads path nodes from the Paths node
 func _load_paths() -> void:
-	# Log.trace(Log.Level.DEBUG, "Loading mappaths");
+	if not has_node("Paths"):
+		Log.trace(Log.Level.WARN, "No Paths node found in map")
+		return
+		
 	var children: Array[Node] = $Paths.get_children()
 
 	for child in children:
 		if (child is Path2D):
 			paths.append(child as Path2D)
+
+func _create_path_indicators() -> void:
+	for path in paths:
+		var curve = path.curve
+		if curve.get_point_count() < 2:
+			continue
+		
+		# Start point
+		var start_pos = path.to_global(curve.get_point_position(0))
+		_instantiate_indicator(start_pos, Color(0.1, 0.9, 0.1), PathIndicator.PointType.START)
+		
+		# End point
+		var end_pos = path.to_global(curve.get_point_position(curve.get_point_count() - 1))
+		_instantiate_indicator(end_pos, Color(0.9, 0.1, 0.1), PathIndicator.PointType.END)
+
+func _instantiate_indicator(global_pos: Vector2, color: Color, type: PathIndicator.PointType) -> void:
+	var indicator = PathIndicator.new()
+	indicator.position = to_local(global_pos)
+	indicator.base_color = color
+	indicator.type = type
+	indicator.z_index = 1 # Above the ground tiles
+	add_child(indicator)
 
 func _generate_special_tiles() -> void:
 	if not tilemap:
@@ -71,11 +107,47 @@ func _generate_special_tiles() -> void:
 	
 	Log.trace(Log.Level.INFO, "Found {0} buildable tiles for special tiles".format([buildable_tiles.size()]))
 	
-	if buildable_tiles.size() < 6:
-		Log.trace(Log.Level.WARN, "Not enough buildable tiles for special tiles")
+	if paths.is_empty():
+		Log.trace(Log.Level.WARN, "No enemy paths defined, cannot place special tiles near paths")
+		return
+
+	var spawnable_tiles := _get_spawnable_special_tiles(buildable_tiles)
+	
+	Log.trace(
+		Log.Level.INFO,
+		"Found {0} tiles at <= 3 tiles distance from paths for special tiles".format([spawnable_tiles.size()])
+	)
+
+	if debug_show_spawnable_special_tiles:
+		_show_debug_spawnable_special_tiles(spawnable_tiles)
+	else:
+		_clear_debug_exclusion_tiles()
+		_clear_debug_spawnable_special_tiles()
+	
+	if spawnable_tiles.size() < 6:
+		Log.trace(Log.Level.WARN, "Not enough tiles near paths for special tiles")
 		return
 	
-	buildable_tiles.shuffle()
+	spawnable_tiles.shuffle()
+
+	special_tiles.clear()
+	_clear_debug_exclusion_tiles()
+
+	var selected_special_tiles: Array[Vector2i] = []
+	for candidate in spawnable_tiles:
+		if not _is_special_tile_spawnable(candidate, selected_special_tiles):
+			continue
+		
+		selected_special_tiles.append(candidate)
+		if selected_special_tiles.size() >= 6:
+			break
+	
+	if selected_special_tiles.size() < 6:
+		Log.trace(
+			Log.Level.WARN,
+			"Not enough tiles to place special tiles with min separation (%s)".format([SPECIAL_TILE_MIN_DISTANCE_BETWEEN_TILES])
+		)
+		return
 	
 	var bonus_types = [
 		{"fire_rate": 1.3, "color": Color(0.2, 1.0, 0.2, 0.5), "label": "SPEED+"},
@@ -91,19 +163,105 @@ func _generate_special_tiles() -> void:
 	
 	# Place 3 bonuses
 	for i in range(3):
-		var tile_pos = buildable_tiles.pop_back()
+		var tile_pos = selected_special_tiles.pop_back()
 		var modifier = bonus_types[i % bonus_types.size()]
 		special_tiles[tile_pos] = modifier
 		_create_visual_indicator(tile_pos, modifier)
+		if debug_show_spawnable_special_tiles:
+			_show_debug_exclusion_tiles_around(tile_pos)
 		Log.trace(Log.Level.INFO, "Generated bonus tile at {0}: {1}".format([tile_pos, modifier["label"]]))
 		
 	# Place 3 maluses
 	for i in range(3):
-		var tile_pos = buildable_tiles.pop_back()
+		var tile_pos = selected_special_tiles.pop_back()
 		var modifier = malus_types[i % malus_types.size()]
 		special_tiles[tile_pos] = modifier
 		_create_visual_indicator(tile_pos, modifier)
+		if debug_show_spawnable_special_tiles:
+			_show_debug_exclusion_tiles_around(tile_pos)
 		Log.trace(Log.Level.INFO, "Generated malus tile at {0}: {1}".format([tile_pos, modifier["label"]]))
+
+func _is_special_tile_spawnable(candidate: Vector2i, already_selected: Array[Vector2i]) -> bool:
+	for other in already_selected:
+		if candidate.distance_to(other) < SPECIAL_TILE_MIN_DISTANCE_BETWEEN_TILES:
+			return false
+	return true
+
+func _clear_debug_exclusion_tiles() -> void:
+	for node in _debug_exclusion_overlays:
+		if is_instance_valid(node):
+			node.queue_free()
+	_debug_exclusion_overlays.clear()
+
+func _show_debug_exclusion_tiles_around(center: Vector2i) -> void:
+	# Draw an exclusion disk of radius < 2 around the special tile (in tile units)
+	var radius := int(ceil(SPECIAL_TILE_MIN_DISTANCE_BETWEEN_TILES))
+	for dx in range(-radius, radius + 1):
+		for dy in range(-radius, radius + 1):
+			var coords := center + Vector2i(dx, dy)
+			if coords == center:
+				continue
+			if center.distance_to(coords) < SPECIAL_TILE_MIN_DISTANCE_BETWEEN_TILES:
+				_create_debug_tile_overlay(coords, SPECIAL_TILE_DEBUG_EXCLUSION_COLOR, _debug_exclusion_overlays)
+
+func _get_spawnable_special_tiles(buildable_tiles: Array[Vector2i]) -> Array[Vector2i]:
+	var origin := tilemap.map_to_local(Vector2i.ZERO)
+	var neighbor := tilemap.map_to_local(Vector2i(1, 0))
+	var tile_step_distance: float = origin.distance_to(neighbor)
+	if tile_step_distance <= 0.0:
+		tile_step_distance = 32.0
+	
+	var max_distance_to_path: float = tile_step_distance * SPECIAL_TILE_MAX_DISTANCE_TILES
+	
+	var spawnable_tiles: Array[Vector2i] = []
+	for coords in buildable_tiles:
+		var world_pos := tilemap.map_to_local(coords)
+		var min_distance := INF
+		
+		for path in paths:
+			if not path.curve:
+				continue
+			
+			var closest_point := path.curve.get_closest_point(path.to_local(world_pos))
+			var distance := world_pos.distance_to(path.to_global(closest_point))
+			if distance < min_distance:
+				min_distance = distance
+		
+		if min_distance <= max_distance_to_path:
+			spawnable_tiles.append(coords)
+	
+	return spawnable_tiles
+
+func _clear_debug_spawnable_special_tiles() -> void:
+	for node in _debug_spawnable_overlays:
+		if is_instance_valid(node):
+			node.queue_free()
+	_debug_spawnable_overlays.clear()
+
+func _create_debug_tile_overlay(tile_pos: Vector2i, color: Color, overlays: Array[Node2D]) -> void:
+	var world_pos := tilemap.map_to_local(tile_pos)
+	
+	var poly := Polygon2D.new()
+	var half_height := 16.0
+	var half_width := 32.0
+	var points := PackedVector2Array([
+		Vector2(0, -half_height),
+		Vector2(half_width, 0),
+		Vector2(0, half_height),
+		Vector2(-half_width, 0),
+	])
+	
+	poly.color = color
+	poly.polygon = points
+	poly.position = world_pos
+	poly.z_index = 0
+	add_child(poly)
+	overlays.append(poly)
+
+func _show_debug_spawnable_special_tiles(spawnable_tiles: Array[Vector2i]) -> void:
+	_clear_debug_spawnable_special_tiles()
+	for tile_pos in spawnable_tiles:
+		_create_debug_tile_overlay(tile_pos, SPECIAL_TILE_DEBUG_COLOR, _debug_spawnable_overlays)
 
 func _create_visual_indicator(tile_pos: Vector2i, modifier: Dictionary) -> void:
 	var world_pos = tilemap.map_to_local(tile_pos)
