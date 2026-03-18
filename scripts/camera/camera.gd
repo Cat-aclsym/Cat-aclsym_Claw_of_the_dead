@@ -71,7 +71,7 @@ func handle_drag(event: InputEventScreenDrag) -> void:
 
 ## Handles camera effects
 func handle_effect(effect: String) -> void:
-    Log.trace(Log.Level.DEBUG, "Playing '%s' camera effect" % effect)
+    # Log.trace(Log.Level.DEBUG, "Playing '%s' camera effect" % effect)
     match effect:
         "shake":
             shake_camera()

@@ -1,4 +1,4 @@
-## © 2024 A7 Studio. All rights reserved. Trademark.
+## © [2026] A7 Studio. All rights reserved. Trademark.
 ##
 ## A utility class for handling signal connections in a structured way.
 ## Provides a centralized approach to connect signals using a dictionary format.
@@ -40,24 +40,18 @@ static func connects(signals: Array[Dictionary]) -> void:
 			"Signal dictionary must contain a '{0}' key".format([TO])
 		)
 
-		signal_info[WHO].connect(signal_info[WHAT], signal_info[TO])
+		var emitter: Object = signal_info[WHO]
+		if emitter == null:
+			Log.trace(Log.Level.ERROR, "SignalUtil: null emitter for signal '%s' connected to '%s'" % [signal_info.get(WHAT, ""), signal_info.get(TO, "")])
+			continue
 
-		Log.trace(
-			Log.Level.DEBUG,
-			"Connecting signal {node}.{signal} to {callback}".format({
-				"node": signal_info[WHO],
-				"signal": signal_info[WHAT],
-				"callback": signal_info[TO]
-			})
-		)
+		emitter.connect(signal_info[WHAT], signal_info[TO])
 
-# private
-
-
-# signal
-
-
-# event
-
-
-# setget
+		# Log.trace(
+		# 	Log.Level.DEBUG,
+		# 	"Connecting signal {node}.{signal} to {callback}".format({
+		# 		"node": signal_info[WHO],
+		# 		"signal": signal_info[WHAT],
+		# 		"callback": signal_info[TO]
+		# 	})
+		# )

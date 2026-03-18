@@ -1,0 +1,140 @@
+[gd_scene load_steps=20 format=3 uid="uid://b44e1fg0djni3"]
+
+[ext_resource type="PackedScene" uid="uid://064cnqw4xlus" path="res://scenes/gameplay/entities/tower/i_tower.tscn" id="1_yt4jj"]
+[ext_resource type="PackedScene" uid="uid://nfkadjkkl" path="res://scenes/gameplay/entities/bullet/aoe_arrow.tscn" id="2_pv1tv"]
+[ext_resource type="Texture2D" uid="uid://comglet8s7g5i" path="res://assets/gameplay/towers/tower_2_LVL_1.png" id="3_ke6be"]
+[ext_resource type="PackedScene" uid="uid://bpqwahx4p4lmu" path="res://scenes/gameplay/entities/upgrade/bat_02/bat_02_02.tscn" id="3_sq6hj"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uuih4"]
+atlas = ExtResource("3_ke6be")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lkbtq"]
+atlas = ExtResource("3_ke6be")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_po86j"]
+atlas = ExtResource("3_ke6be")
+region = Rect2(128, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_46xyu"]
+atlas = ExtResource("3_ke6be")
+region = Rect2(192, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_u3wgy"]
+atlas = ExtResource("3_ke6be")
+region = Rect2(256, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1qkae"]
+atlas = ExtResource("3_ke6be")
+region = Rect2(320, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fivy4"]
+atlas = ExtResource("3_ke6be")
+region = Rect2(384, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lrdsg"]
+atlas = ExtResource("3_ke6be")
+region = Rect2(448, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mpphq"]
+atlas = ExtResource("3_ke6be")
+region = Rect2(512, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_631dl"]
+atlas = ExtResource("3_ke6be")
+region = Rect2(576, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_eunfx"]
+atlas = ExtResource("3_ke6be")
+region = Rect2(640, 0, 64, 64)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_ynjgg"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_uuih4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lkbtq")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_po86j")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_46xyu")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_u3wgy")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1qkae")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fivy4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lrdsg")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mpphq")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_631dl")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_eunfx")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 8.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_jmpep"]
+radius = 314.23
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_7wfw0"]
+radius = 16.0
+height = 36.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_hnqt7"]
+
+[node name="Bat02" instance=ExtResource("1_yt4jj")]
+position = Vector2(0, -16)
+bullet_scene = ExtResource("2_pv1tv")
+available_upgrade = Array[PackedScene]([ExtResource("3_sq6hj")])
+tower_id = "bat_02"
+
+[node name="AnimatedSprite2D" parent="." index="0"]
+sprite_frames = SubResource("SpriteFrames_ynjgg")
+animation = &"idle"
+
+[node name="CollisionShape2D" parent="Area2D" index="0"]
+position = Vector2(4.76837e-07, 16)
+rotation = 0.567232
+skew = 0.436332
+shape = SubResource("CircleShape2D_jmpep")
+
+[node name="Polygon2D" parent="." index="3"]
+visible = true
+scale = Vector2(1e-05, 1e-05)
+
+[node name="Line2D" type="Line2D" parent="Polygon2D" index="0"]
+
+[node name="CollisionShape2D" parent="TowerHoverBox" index="0"]
+position = Vector2(0, 8)
+rotation = 1.5708
+shape = SubResource("CapsuleShape2D_7wfw0")
+
+[node name="TowerBody2" type="StaticBody2D" parent="." index="7" groups=["towers"]]
+collision_layer = 256
+collision_mask = 0
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="TowerBody" index="0"]
+shape = SubResource("CircleShape2D_hnqt7")
+
+[connection signal="area_exited" from="Area2D" to="." method="_on_area_2d_area_exited"]
+[connection signal="body_entered" from="Area2D" to="." method="_on_area_2d_body_entered"]
+[connection signal="body_exited" from="Area2D" to="." method="_on_area_2d_body_exited"]
+[connection signal="mouse_entered" from="TowerHoverBox" to="." method="_on_tower_hover_box_mouse_entered"]
+[connection signal="mouse_exited" from="TowerHoverBox" to="." method="_on_tower_hover_box_mouse_exited"]

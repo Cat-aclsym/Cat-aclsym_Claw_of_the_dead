@@ -1,0 +1,147 @@
+[gd_scene load_steps=21 format=3 uid="uid://cwfmo22dls551"]
+
+[ext_resource type="PackedScene" uid="uid://tmlcshxut7kv" path="res://scenes/gameplay/entities/enemy/i_enemy.tscn" id="1_rsmel"]
+[ext_resource type="Texture2D" uid="uid://it5nrej70nlf" path="res://assets/gameplay/enemies/Zombie_lOM_Base-Sheet.png" id="2_04mla"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_f06cf"]
+atlas = ExtResource("2_04mla")
+region = Rect2(0, 0, 64, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jl5fc"]
+atlas = ExtResource("2_04mla")
+region = Rect2(64, 0, 64, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_klesq"]
+atlas = ExtResource("2_04mla")
+region = Rect2(128, 0, 64, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jca8d"]
+atlas = ExtResource("2_04mla")
+region = Rect2(192, 0, 64, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_r6hg1"]
+atlas = ExtResource("2_04mla")
+region = Rect2(256, 0, 64, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ffbpk"]
+atlas = ExtResource("2_04mla")
+region = Rect2(320, 0, 64, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tfp07"]
+atlas = ExtResource("2_04mla")
+region = Rect2(384, 0, 64, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sou28"]
+atlas = ExtResource("2_04mla")
+region = Rect2(448, 0, 64, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kxpgj"]
+atlas = ExtResource("2_04mla")
+region = Rect2(0, 128, 64, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7pk0l"]
+atlas = ExtResource("2_04mla")
+region = Rect2(64, 128, 64, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0x4l5"]
+atlas = ExtResource("2_04mla")
+region = Rect2(128, 128, 64, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_paxga"]
+atlas = ExtResource("2_04mla")
+region = Rect2(192, 128, 64, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fmstq"]
+atlas = ExtResource("2_04mla")
+region = Rect2(256, 128, 64, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wtfnd"]
+atlas = ExtResource("2_04mla")
+region = Rect2(320, 128, 64, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_epbg5"]
+atlas = ExtResource("2_04mla")
+region = Rect2(384, 128, 64, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ns2ac"]
+atlas = ExtResource("2_04mla")
+region = Rect2(448, 128, 64, 128)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_onmu7"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_f06cf")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jl5fc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_klesq")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jca8d")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_r6hg1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ffbpk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tfp07")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_sou28")
+}],
+"loop": true,
+"name": &"walk_down",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kxpgj")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7pk0l")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0x4l5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_paxga")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fmstq")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wtfnd")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_epbg5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ns2ac")
+}],
+"loop": true,
+"name": &"walk_up",
+"speed": 8.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_iaady"]
+size = Vector2(23, 61.4118)
+
+[node name="DefaultZombie" instance=ExtResource("1_rsmel")]
+position = Vector2(0, -16)
+enemy_id = "default_zombie"
+
+[node name="AnimatedSprite2D" parent="." index="0"]
+sprite_frames = SubResource("SpriteFrames_onmu7")
+animation = &"walk_up"
+
+[node name="CollisionShape2D" parent="." index="2"]
+position = Vector2(0, 0)
+shape = SubResource("RectangleShape2D_iaady")
+
+[node name="GPUParticles2D" parent="." index="3"]
+visible = false

@@ -1,6 +1,6 @@
-[gd_scene load_steps=11 format=3 uid="uid://ddcvda2tcbdq8"]
+[gd_scene load_steps=12 format=3 uid="uid://ddcvda2tcbdq8"]
 
-[ext_resource type="Script" path="res://scenes/gameplay/entities/tower_placement/tower_placement.gd" id="1_3aclw"]
+[ext_resource type="Script" uid="uid://du3smf4s8h4d2" path="res://scenes/gameplay/entities/tower_placement/tower_placement.gd" id="1_3aclw"]
 [ext_resource type="Texture2D" uid="uid://dn7sa2jf2kvor" path="res://assets/environment/grid_placement/moving_arrow.png" id="2_8yjt0"]
 [ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="3_bj1wi"]
 [ext_resource type="Texture2D" uid="uid://do48sldu5a83i" path="res://assets/ui/icons/Button Build.svg" id="4_updrk"]
@@ -42,6 +42,9 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_bapwk"]
+size = Vector2(14, 14)
+
 [node name="TowerPlacement" type="Node2D"]
 script = ExtResource("1_3aclw")
 
@@ -50,10 +53,19 @@ sprite_frames = SubResource("SpriteFrames_o400i")
 autoplay = "default"
 offset = Vector2(0, -3)
 
+[node name="Area2D" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+shape = SubResource("RectangleShape2D_bapwk")
+
 [node name="PlaceHUD" type="Control" parent="."]
+z_index = 4096
 layout_mode = 3
 anchors_preset = 0
 scale = Vector2(0.5, 0.5)
+mouse_filter = 1
 
 [node name="HBoxContainer" type="HBoxContainer" parent="PlaceHUD"]
 layout_mode = 0
@@ -67,6 +79,7 @@ theme_override_constants/separation = 8
 alignment = 1
 
 [node name="PlaceButton" type="TextureButton" parent="PlaceHUD/HBoxContainer"]
+z_index = 1
 custom_minimum_size = Vector2(80, 70)
 layout_mode = 2
 size_flags_horizontal = 0
@@ -77,6 +90,7 @@ ignore_texture_size = true
 stretch_mode = 4
 
 [node name="CancelPlaceButton" type="TextureButton" parent="PlaceHUD/HBoxContainer"]
+z_index = 1
 custom_minimum_size = Vector2(80, 70)
 layout_mode = 2
 size_flags_horizontal = 0

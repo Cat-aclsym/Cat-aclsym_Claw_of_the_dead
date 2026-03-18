@@ -11,6 +11,8 @@ signal die
 ## [param effect] The name of the effect to trigger
 signal camera_effect(effect: String)
 
+
+# Enums
 ## Possible states for the enemy
 enum EnemyState {
 	DEAD,  ## Enemy is dead
@@ -38,50 +40,77 @@ enum EnemyType {
 enum DamageType {
 	DEFAULT,
 	POISON,
+	FIRE,
 }
 
+
+# Constants
 const ANIM_FADE_OUT := "fade_out"
 const ANIM_WALK_UP := "walk_up"
 const ANIM_WALK_DOWN := "walk_down"
 
 ## Damage configuration for different damage types
 const DAMAGES: Dictionary = {
-	DamageType.DEFAULT: {"color": Color(0.7, 0.5, 0.5, 1)},
-	DamageType.POISON: {"color": Color(0.7, 0.5, 0.7, 1)}
+	DamageType.DEFAULT: {"color": Color(1.0, 1.0, 1.0, 1)}, # White for better visibility
+	DamageType.POISON: {"color": Color(0.4, 1.0, 0.4, 1)}, # Brighter green
+	DamageType.FIRE: {"color": Color(1.0, 0.6, 0.2, 1)},   # Brighter orange/fire
 }
 
-@export var max_health: float = 20.0
-@export var speed: float = 30.0
+
+# Exported variables
+@export var enemy_id: String = ""
 @export var type: EnemyType = EnemyType.DEFAULT
 
+# Public variables
 var active_poison_timers: Array[Dictionary] = []
-var current_point_id: int = 0
+var current_animation: String = ""
 var direction: EnemyDirection = EnemyDirection.UP_RIGHT
 var health: float
 var is_already_dead: bool = false
+var last_damage_type: DamageType = DamageType.DEFAULT
+var max_health: float = 0.0
 var path: Path2D = null
 var path_follow: PathFollow2D = null
 var poison_timer_execution_count: int = 0
+var previous_position: Vector2 = Vector2.ZERO
+var speed: float = 0.0
 var state: EnemyState = EnemyState.FOLLOW_PATH
 
 ## Must be placed first as it is used in other onready variables
-@onready var sprite: Sprite2D = $Sprite2D
+@onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
 
 @onready var anim_player: AnimationPlayer = $AnimationPlayer
 @onready var collision_shape: CollisionShape2D = $CollisionShape2D
+@onready var health_bar: EnemyHealthBar = $HealthBar
 @onready var old_modulate: Color = sprite.modulate
 @onready var path_points_size: int = path.curve.point_count
 @onready var poison_particle: GPUParticles2D = $GPUParticles2D
 @onready var popup_score_spawner: PopupSpawner = $PopupScoreSpawner
+@onready var stats_db = get_node("/root/StatsDB")
 
-# core
+## Store the last source of damage
+var last_source: Variant = null
+
+
+# Built-in functions
 func _ready() -> void:
-	if type == EnemyType.FAT:
+	add_to_group("enemies")
+	_apply_stats_override()
+	if type == EnemyType.FAT or type == EnemyType.BIG_DADDY:
 		camera_effect.connect(Global.camera.handle_effect)
 		camera_effect.emit('shake')
 
 	health = max_health
-	_set_path_direction()
+
+	# Wait one frame to ensure PathFollow2D is properly positioned
+	await get_tree().process_frame
+
+	# Initialize previous position and direction correctly
+	previous_position = path_follow.global_position
+
+	# Force initial animation to match direction
+	_walk()
+
 
 func _physics_process(delta: float) -> void:
 	if is_already_dead or Global.paused:
@@ -101,21 +130,35 @@ func _physics_process(delta: float) -> void:
 
 	poison_particle.emitting = not active_poison_timers.is_empty()
 
-# public
+
+# Public functions
 ## Apply damage to the enemy
 ## [br]
 ## [param damage] Amount of damage to apply
 ## [param damage_type] Type of damage being applied
-func take_damage(damage: float, damage_type: DamageType) -> void:
+func take_damage(damage: float, damage_type: DamageType, source: Variant = null) -> void:
 	if is_already_dead:
 		return
 
+	last_damage_type = damage_type
+	last_source = source
 	_damage_effect(DAMAGES[damage_type]["color"])
+	
+	if popup_score_spawner:
+		popup_score_spawner.display_damage(damage, DAMAGES[damage_type]["color"])
+
+	if source:
+		ChallengeManager.notify_enemy_hit(self, source)
+
 	if health - damage <= 0:
 		health = 0.0
 		state = EnemyState.DEAD
 	else:
 		health -= damage
+
+	if health_bar:
+		health_bar.update_health(health, max_health)
+
 
 ## Update enemy position along its path
 ## [br]
@@ -126,8 +169,11 @@ func follow_path(delta: float) -> void:
 		return
 
 	path_follow.set_progress(path_follow.get_progress() + (speed * delta))
+
+	# Always update direction, regardless of path position
 	_update_direction()
 	_walk()
+
 
 ## Add a poison effect to the enemy
 ## [br]
@@ -151,55 +197,99 @@ func add_poison_effect(damage: float, total_execution: int, interval: float) -> 
 
 	poison_timer.timeout.connect(func(): _on_poison_timer_timeout(poison_timer))
 
-# private
+
+# Private functions
 ## Apply a damage effect to the enemy sprite
 func _damage_effect(color: Color) -> void:
 	sprite.modulate = color
 	await get_tree().create_timer(0.1).timeout
 	sprite.modulate = old_modulate
 
-## Set the direction of the enemy based on the path
-func _set_path_direction() -> void:
-	var x_pos_difference: float = path.curve.get_point_position(current_point_id).x - path.curve.get_point_position(current_point_id + 1).x
-	var y_pos_difference: float = path.curve.get_point_position(current_point_id).y - path.curve.get_point_position(current_point_id + 1).y
-
-	var is_going_up := y_pos_difference > 0
-	var is_going_down := y_pos_difference < 0
-	var is_going_right := x_pos_difference < 0
-	var is_going_left := x_pos_difference > 0
-
-	if is_going_right:
-		direction = EnemyDirection.DOWN_RIGHT if is_going_down else EnemyDirection.UP_RIGHT
-	elif is_going_left:
-		direction = EnemyDirection.DOWN_LEFT if is_going_down else EnemyDirection.UP_LEFT
-
-## Update the direction of the enemy based on the path
+## Update the direction of the enemy based on movement
 func _update_direction() -> void:
-	if current_point_id == path_points_size - 2:
-		return
+	var current_pos: Vector2 = path_follow.global_position
+	var movement: Vector2 = current_pos - previous_position
 
-	if (round(path_follow.position) == round(path.curve.get_point_position(current_point_id + 1)) and
-		path.curve.get_closest_point(path_follow.position) != path.curve.get_point_position(current_point_id)):
-		current_point_id += 1
-		_set_path_direction()
+	# Check actual movement with low threshold
+	if movement.length() > 0.1:
+		_determine_direction_from_movement(movement)
+
+	# Look ahead on path when near the end
+	elif path_follow.get_progress_ratio() > 0.85:
+		_check_direction_ahead()
+
+	# Store current position for next frame
+	previous_position = current_pos
+
+## Determine direction based on movement vector
+func _determine_direction_from_movement(movement: Vector2) -> void:
+	# Use angle-based direction detection for precision
+	var angle: float = movement.angle()
+
+	# Convert angle to direction
+	if angle >= -PI/8 and angle < PI/8:  # Right
+		direction = EnemyDirection.UP_RIGHT
+	elif angle >= PI/8 and angle < 3*PI/8:  # Down-right
+		direction = EnemyDirection.DOWN_RIGHT
+	elif angle >= 3*PI/8 and angle < 5*PI/8:  # Down
+		direction = EnemyDirection.DOWN_RIGHT
+	elif angle >= 5*PI/8 and angle < 7*PI/8:  # Down-left
+		direction = EnemyDirection.DOWN_LEFT
+	elif angle >= 7*PI/8 or angle < -7*PI/8:  # Left
+		direction = EnemyDirection.UP_LEFT
+	elif angle >= -7*PI/8 and angle < -5*PI/8:  # Up-left
+		direction = EnemyDirection.UP_LEFT
+	elif angle >= -5*PI/8 and angle < -3*PI/8:  # Up
+		direction = EnemyDirection.UP_RIGHT
+	elif angle >= -3*PI/8 and angle < -PI/8:  # Up-right
+		direction = EnemyDirection.UP_RIGHT
+
+## Look ahead on the path to detect upcoming direction changes
+func _check_direction_ahead() -> void:
+	var current_progress := path_follow.get_progress()
+	var look_ahead_distance := 15.0
+
+	# Look ahead on path
+	var original_progress := path_follow.get_progress()
+	path_follow.set_progress(current_progress + look_ahead_distance)
+	var ahead_pos := path_follow.global_position
+	path_follow.set_progress(original_progress)
+
+	var look_ahead_movement := ahead_pos - path_follow.global_position
+
+	if look_ahead_movement.length() > 1.0:
+		_determine_direction_from_movement(look_ahead_movement)
 
 ## Update the enemy sprite animation based on the direction
 func _walk() -> void:
+	var target_animation: String
+	var should_flip: bool
+
 	match direction:
 		EnemyDirection.UP_RIGHT:
-			sprite.flip_h = false
-			anim_player.play(ANIM_WALK_UP)
+			target_animation = ANIM_WALK_UP
+			should_flip = true
 		EnemyDirection.UP_LEFT:
-			sprite.flip_h = true
-			anim_player.play(ANIM_WALK_UP)
+			target_animation = ANIM_WALK_UP
+			should_flip = false
 		EnemyDirection.DOWN_RIGHT:
-			sprite.flip_h = false
-			anim_player.play(ANIM_WALK_DOWN)
+			target_animation = ANIM_WALK_DOWN
+			should_flip = true
 		EnemyDirection.DOWN_LEFT:
-			sprite.flip_h = true
-			anim_player.play(ANIM_WALK_DOWN)
+			target_animation = ANIM_WALK_DOWN
+			should_flip = false
 		_:
 			Log.trace(Log.Level.WARN, "{0}::_walk() direction does not match EnemyDirection enum".format([name]))
+			return
+
+	# Only change animation if it's different from current one to prevent stuttering
+	if current_animation != target_animation:
+		sprite.play(target_animation)
+		current_animation = target_animation
+
+	# Only change flip if necessary to prevent stuttering
+	if sprite.flip_h != should_flip:
+		sprite.flip_h = should_flip
 
 ## Make the enemy disappear, then remove it from the scene
 func _disappear() -> void:
@@ -207,11 +297,12 @@ func _disappear() -> void:
 		return
 
 	die.emit()
-	anim_player.play(ANIM_FADE_OUT)
+	ChallengeManager.notify_enemy_died(self, last_damage_type)
+	# anim_player.play(ANIM_FADE_OUT)  # Remove the comment when the animation is implemented
 	is_already_dead = true
 	collision_shape.set_deferred("disabled", true)
 
-	await anim_player.animation_finished
+	# await anim_player.animation_finished # Remove the comment when the animation is implemented
 	queue_free()
 	path_follow.queue_free()
 
@@ -222,8 +313,12 @@ func _dead_state() -> void:
 		return
 
 	var money_reward: int = 10
+	
+	# Apply reward multiplier if the killer was a tower
+	if last_source is IBullet and last_source.tower_owner != null:
+		money_reward = int(money_reward * last_source.tower_owner.reward_multiplier)
+		
 	ILevel.current_level.coins += money_reward
-	popup_score_spawner.score("+%s$" % [money_reward])
 	_disappear()
 
 ## Handle the enemy reaching the end of its path
@@ -237,6 +332,22 @@ func _path_finished_state() -> void:
 		ILevel.current_level.health = 0
 	else:
 		ILevel.current_level.health -= ceil(health / 2)
+
+
+func _apply_stats_override() -> void:
+	if enemy_id.is_empty() or stats_db == null:
+		return
+	if not stats_db.has_enemy(enemy_id):
+		Log.trace(Log.Level.ERROR, "StatsDB missing enemy id: %s" % enemy_id)
+		return
+	var data: Dictionary = stats_db.get_enemy(enemy_id)
+	Log.trace(Log.Level.INFO, "Applying enemy stats from StatsDB for %s: %s" % [enemy_id, data])
+	var hp = data.get("max_health", null)
+	var spd = data.get("speed", null)
+	if hp != null:
+		max_health = float(hp)
+	if spd != null:
+		speed = float(spd)
 
 ## Update the z-index of the enemy based on its position
 func _update_z_index() -> void:

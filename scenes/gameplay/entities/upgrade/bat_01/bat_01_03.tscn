@@ -5,5 +5,24 @@
 [ext_resource type="PackedScene" uid="uid://cte40it072jpm" path="res://scenes/gameplay/entities/upgrade/bat_01/bat_01_b_04.tscn" id="3_ob27h"]
 
 [node name="UpgradeFirstTower2" instance=ExtResource("1_heffx")]
+changes = {
+"bullet_model": false,
+"bullet_stat": true,
+"tower_model": false,
+"tower_stat": true
+}
+bullet_stats = {
+"aoe_range": 0.0,
+"damage": 2.0,
+"pierce_count": 0.0,
+"pierce_reduction": 0.0,
+"speed": 0.0
+}
+tower_stats = {
+"fire_rate": 0.0,
+"level": 1,
+"projectile_count": 0,
+"shoot_range": 0.0,
+"spread_angle": 0.0
+}
 next_upgrades = Array[PackedScene]([ExtResource("2_mqbe6"), ExtResource("3_ob27h")])
-price = 100

@@ -65,21 +65,21 @@ static func trace(level: Log.Level, args: Variant) -> void:
 	if level == Level.DEBUG and not Global.debug:
 		return
 
-	var prefix_1: String = ""
+	var prefix_stack: String = ""
 	var stack: Array[Dictionary] = get_stack()
 
 	# Stack can be empty when the game is not running from Godot engine
 	if not stack.is_empty():
 		var execution_line := stack[1]
-		prefix_1 = "{0}::{1}@{2}".format([
-			execution_line["source"],
+		prefix_stack = "{0}::{1}@{2}".format([
+			execution_line["source"].get_file(),
 			execution_line["line"],
 			execution_line["function"],
 		])
 
 	var time: Dictionary = Time.get_time_dict_from_system()
 	var milliseconds: int = Time.get_ticks_msec() % 1000
-	var prefix_2 := "{0} {1}:{2}:{3}.{4}".format([
+	var prefix_level_time := "{0} {1}:{2}:{3}.{4}".format([
 		PREFIXS[level],
 		time["hour"],
 		time["minute"],
@@ -89,8 +89,8 @@ static func trace(level: Log.Level, args: Variant) -> void:
 
 	var text: String = _format_args(args)
 	var output := "{1} - {0} - {2}".format([
-		prefix_1,
-		prefix_2,
+		prefix_stack,
+		prefix_level_time,
 		text,
 	])
 

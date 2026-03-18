@@ -1,0 +1,31 @@
+[gd_scene load_steps=3 format=3 uid="uid://2qg5t1x8h72s"]
+
+[ext_resource type="Script" uid="uid://s5ymor4txuxp" path="res://scenes/watcher/watcher.gd" id="1_y5ft3"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fhcge"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(0.277528, 0.277528, 0.277528, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0, 0, 0, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[node name="Watcher" type="PanelContainer"]
+z_index = 4096
+z_as_relative = false
+offset_right = 265.0
+offset_bottom = 42.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_fhcge")
+script = ExtResource("1_y5ft3")
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 2
+text = "variable : value"

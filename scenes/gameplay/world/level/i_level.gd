@@ -1,230 +1,230 @@
-
-## © 2024 A7 Studio. All rights reserved. Trademark.
-## Base class for all game levels. Manages level state, resources, and map loading.
-
+## © [2024] A7 Studio. All rights reserved. Trademark.
+## Level script that manages map, waves, state transitions, and enemy spawning.
 class_name ILevel extends Node2D
 
-
-## Signals for game state changes
 signal stats_updated
 
-# Constants for state names
+# Constants
 const STATE_CONFIGURING: String = "CONFIGURING"
-const STATE_PLAYING: String = "PLAYING"
 const STATE_VICTORY: String = "VICTORY"
 const STATE_DEFEAT: String = "DEFEAT"
 const STATE_ERROR: String = "ERROR"
 const STATE_PAUSE: String = "PAUSE"
-const END_GAME_MENU: PackedScene = preload("res://scenes/ui/menus/end_game/end_game.tscn")
+const STATE_WAVE: String = "WAVE_%d"
+const STATE_WAVE_0: String = "WAVE_0"
+const STATE_END: String = "END"
 
-## Reference to currently active level instance
+# Exported Variables
+@export var level_id: String = "lev.XX"
+@export var level_name: String
+@export var level_description: String
+@export var arc_id: String = "arc.XX"
+@export var map_scene: PackedScene
+
+# Public Variables
 static var current_level: ILevel = null
 
-## Scene containing the map layout and wave data
-@export var map_scene: PackedScene = null
-
-## Store the time when the level started
+var enemies_scene: Dictionary = {}
+var state_machine: StateMachine
+var map: IMap = null
+var waves: Array[Wave] = []
+var current_step: WaveStep = null
+var current_wave: int = 0
 var start_time: float
-
-## Store the time when the level ended
 var end_time: float
 
-## StateMachine handling the level logic
-var state_machine: StateMachine
+# stats
+var coins: int = 50: set = _set_coins
+var health: int = 20: set = _set_health
 
-## Current coin count for purchasing towers
-var coins: int = 75:
-	set = _set_coins
+# Private Variables
+var _enemies_alive: int = 0
 
-## Current player health points
-var health: int = 20:
-	set = _set_health
 
-## Reference to the active map instance
-var map: IMap = null
-
-## Metadata containing level configuration
-var metadata: LevelMetadata = null
-
-## Current state of the level
-var current_state: String
-
-## Last state of the level
-var last_state: String = ""
+@onready var popup_spawner: PopupSpawner = $PopupSpawner
+@onready var clock: Clock = $Clock
 
 # core
-func _ready() -> void:
-	if map_scene != null:
-		var new_map = map_scene.instantiate()
-		add_child(new_map)
-		map = new_map
-		Log.trace(Log.Level.INFO, "ILevel.gd: Map instance created and added to the level")
-		if map.has_signal("victory"):
-			SignalUtil.connects([ {SignalUtil.WHO: map, SignalUtil.WHAT: "victory", SignalUtil.TO: _on_victory}])
-
-	else:
-		Log.trace(Log.Level.ERROR, "ILevel.gd: map_scene is null. Cannot initialize map.")
-
-	_build_state_machine()
-	state_machine.toggle_initial_state()
-	start_time = Time.get_unix_time_from_system()
-
-func _physics_process(delta: float) -> void:
-	current_state = state_machine.get_current_state().name
-	if current_state != last_state:
-		state_machine.handle_current_state([delta])
-		last_state = current_state
+## Custom ticker callback
+func _process_tick() -> void:
+	assert(state_machine)
+	state_machine.handle_current_state([])
 
 
 # public
-## Initializes the level with provided metadata
-func initialize(meta: LevelMetadata) -> void:
-	metadata = meta.duplicate()
-	Log.trace(Log.Level.INFO, "Level initializing [{0}] : {1}".format([metadata.id, metadata.level_name]))
-	_load_map()
+## Starts the level by initializing map, waves, and state machine.
+func start_level() -> void:
+	position = Vector2i.ZERO
+	ILevel.current_level = self
+	_init_map()
+	_load_waves()
+	ChallengeManager.start_level_challenges(level_id)
+	_build_state_machine()
+	state_machine.toggle_initial_state()
+	start_time = Time.get_unix_time_from_system()
+	popup_spawner.wave("Wave %s" % [current_wave+1])
 
-## Starts the next wave of enemies
-func start_new_wave() -> void:
-	pass
-
-# private
-## Updates coin count and emits stats_updated signal
-func _set_health(new_value: int) -> void:
-	if health <= 0:
-		return
-	health = new_value
-	stats_updated.emit()
-
-	if health <= 0 and state_machine.transition_to(STATE_DEFEAT):
-		Log.trace(Log.Level.INFO, "Player defeated.")
-
-## Update player's coin count
-func _set_coins(new_value: int) -> void:
-	coins = new_value
-	stats_updated.emit()
+	clock.subscribe(_process_tick, 5)
+	clock.start()
 
 
-## Loads and initializes the map scene
-func _load_map() -> void:
-	var new_map: Node = map_scene.instantiate()
-	add_child(new_map)
-
-	Global.cursor.map_ref = map
-	if map.has_signal("wave_complete"):
-		SignalUtil.connects([
-			{SignalUtil.WHO: map, SignalUtil.WHAT: "wave_complete", SignalUtil.TO: _on_wave_complete}
-		])
-		Log.trace(Log.Level.INFO, "Connected 'wave_complete' signal from IMap to ILevel.")
-	else:
-		Log.trace(Log.Level.ERROR, "IMap does not have 'wave_complete' signal.")
+# privates
+func _init_map() -> void:
+	assert(map_scene != null, "Map scene is null. Cannot instantiate map.")
+	map = map_scene.instantiate()
+	add_child(map)
+	Log.trace(Log.Level.INFO, "Map instance created and added to the level.")
 
 
-## Builds the state machine
+func _load_waves() -> void:
+	var filepath: String = "res://resources/levels/%s.json" % level_id
+	var file := FileAccess.open(filepath, FileAccess.READ)
+	assert(file != null, "Failed to open wave file: %s" % filepath)
+
+	var raw_content: String = file.get_as_text()
+	file.close()
+	var parsed = JSON.parse_string(raw_content)
+	assert(parsed != null and parsed.has("waves"), "Failed to parse waves or missing 'waves' key in JSON.")
+
+	for wave in parsed["waves"]:
+		waves.append(Wave.new(wave))
+
+
 func _build_state_machine() -> void:
-	var builder: StateMachineBuilder = StateMachineBuilder.new()
+	var builder := StateMachineBuilder.new()
+	builder.build_initial_state(STATE_CONFIGURING, _on_state_configuring)
+	builder.build_state(STATE_VICTORY, _on_state_victory)
+	builder.build_state(STATE_DEFEAT, _on_state_defeat)
+	builder.build_state(STATE_ERROR, _on_state_error)
+	builder.build_state(STATE_PAUSE, _on_state_pause)
+	builder.build_state(STATE_END)
 
-	builder.build_initial_state(STATE_CONFIGURING, _on_configuring)
-	builder.build_state(STATE_PLAYING, _on_playing)
-	builder.build_state(STATE_VICTORY, _on_victory)
-	builder.build_state(STATE_DEFEAT, _on_defeat)
-	builder.build_state(STATE_ERROR, _on_error)
-	builder.build_state(STATE_PAUSE, _on_pause)
+	for i in waves.size():
+		builder.build_state(STATE_WAVE % i, _on_state_wave)
 
-	builder.build_transition(STATE_CONFIGURING, STATE_PLAYING)
-	builder.build_transition(STATE_PLAYING, STATE_VICTORY)
-	builder.build_transition(STATE_PLAYING, STATE_DEFEAT)
+	for i in waves.size():
+		builder.build_transition(STATE_WAVE % i, STATE_CONFIGURING)
+		builder.build_transition(STATE_WAVE % i, STATE_DEFEAT)
+		builder.build_transition(STATE_WAVE % i, STATE_PAUSE)
+		builder.build_transition(STATE_WAVE % i, STATE_ERROR)
+		builder.build_transition(STATE_PAUSE, STATE_WAVE % i)
+		builder.build_transition(STATE_WAVE % i, STATE_VICTORY if i == waves.size() - 1 else STATE_WAVE % (i + 1))
+
+	builder.build_transition(STATE_CONFIGURING, STATE_WAVE_0)
 	builder.build_transition(STATE_CONFIGURING, STATE_DEFEAT)
-	builder.build_transition(STATE_ERROR, STATE_CONFIGURING)
+	builder.build_transition(STATE_CONFIGURING, STATE_ERROR)
 	builder.build_transition(STATE_DEFEAT, STATE_PAUSE)
-	builder.build_transition(STATE_PAUSE, STATE_PLAYING)
-	builder.build_transition(STATE_VICTORY, STATE_CONFIGURING)
 	builder.build_transition(STATE_DEFEAT, STATE_ERROR)
-
+	builder.build_transition(STATE_VICTORY, STATE_CONFIGURING)
+	builder.build_transition(STATE_VICTORY, STATE_ERROR)
+	builder.build_transition(STATE_VICTORY, STATE_END)
+	builder.build_transition(STATE_DEFEAT, STATE_END)
 
 	state_machine = builder.build()
-	Log.trace(Log.Level.INFO, "State Machine built. Initial State: %s" % state_machine.get_current_state().name)
+	Log.trace(Log.Level.INFO, "State machine built. Initial state: %s" % state_machine.get_current_state().name)
 
-## Getter current state
-func get_current_state() -> String:
-	return state_machine.get_current_state().name if state_machine else STATE_CONFIGURING
 
-## State: Configuring
-func _on_configuring(args = []) -> bool:
-	var delta: float = args[0] if args.size() > 0 else 0.0
-	Log.trace(Log.Level.INFO, "Entering CONFIGURING state. Delta: %s" % delta)
-	Log.trace(Log.Level.INFO, "Configuration complete. Transitioning to PLAYING...")
-	var success: bool = state_machine.toggle_state(STATE_PLAYING)
-	if not success:
-		Log.trace(Log.Level.ERROR, "Transition to PLAYING failed.")
-		return false
+func _next_wave() -> void:
+	waves.pop_front() # NOTE : may shit later with save system
 
-	return true
+	if waves.is_empty() and current_step == null:
+		state_machine.toggle_state(STATE_VICTORY)
+		return
+	current_wave += 1
+	popup_spawner.wave("Wave %s" % [current_wave+1])
+	state_machine.toggle_state(STATE_WAVE % current_wave)
 
-var has_logged_playing: bool = false
 
-## State: Playing
-func _on_playing(args = []) -> bool:
-	var delta: float = args[0] if args.size() > 0 else 0.0
-	if not has_logged_playing:
-		Log.trace(Log.Level.INFO, "Entering PLAYING state with delta: %s" % delta)
-		has_logged_playing = true
+func _next_step() -> void:
+	current_step = waves.front().pop()
 
+
+# states
+func _on_state_configuring(_args = []) -> bool:
+	state_machine.toggle_state(STATE_WAVE_0)
 	return true
 
 
-## State: Victory
-func _on_victory(args = []) -> bool:
-	var last_wave: bool = args[0] if args.size() > 0 and args[0] is bool else true
+func _on_state_wave(_args = []) -> bool:
+	var wave: Wave = waves.front()
+
+	# if no more steps and no enemy alive -> trigger next wave
+	if (wave == null or wave.peak() == null) and _enemies_alive == 0 and current_step == null:
+		_next_wave()
+		return true
+
+	# if no current step -> tigger next step
+	if current_step == null:
+		_next_step()
+		return true
+
+	# execute current step then check if it is over
+	current_step.exec()
+	if current_step.is_over():
+		_next_step()
+
+	return true
+
+
+func _on_state_victory(_args = []) -> bool:
+	Log.trace(Log.Level.INFO, "Entering VICTORY state.")
+	ChallengeManager.check_victory_conditions()
 	end_time = Time.get_unix_time_from_system()
-	var end_game_menu_instance: EndGame = END_GAME_MENU.instantiate()
+	var end_game_menu_instance: EndGame = ScenesLoader.END_GAME_MENU.instantiate()
 	Global.ui.add_child(end_game_menu_instance)
-	Log.trace(Log.Level.INFO, "Entering VICTORY state. Last wave: %s" % last_wave)
-
+	end_game_menu_instance.init(true)
+	state_machine.toggle_state(STATE_END)
 	return true
 
-## State: Defeat
-func _on_defeat(args = []) -> bool:
+
+func _on_state_defeat(_args = []) -> bool:
 	Log.trace(Log.Level.INFO, "Entering DEFEAT state.")
 	end_time = Time.get_unix_time_from_system()
-	var end_game_menu_instance: EndGame = END_GAME_MENU.instantiate()
+	var end_game_menu_instance: EndGame = ScenesLoader.END_GAME_MENU.instantiate()
 	Global.ui.add_child(end_game_menu_instance)
-
+	end_game_menu_instance.init(false)
+	state_machine.toggle_state(STATE_END)
 	return true
 
-### State: Pause
-func _on_pause(args = []) -> bool:
-	Log.trace(Log.Level.INFO, "Entering PAUSE state")
+
+func _on_state_pause(_args = []) -> bool:
+	Log.trace(Log.Level.INFO, "Entering PAUSE state.")
 	get_tree().paused = true
 	Engine.time_scale = 0
 	Log.trace(Log.Level.INFO, "Game paused")
 	return true
 
-## State: Error
-func _on_error(args = []) -> bool:
-	Log.trace(Log.Level.ERROR, "Entering ERROR state")
-	if state_machine.toggle_state(STATE_CONFIGURING):
-		Log.trace(Log.Level.INFO, "Successfully transitioned from ERROR to CONFIGURING")
-		return true
-	else:
-		Log.trace(Log.Level.ERROR, "Map does not have 'wave_complete' signal.")
-		Log.trace(Log.Level.ERROR, "Transition to CONFIGURING failed from ERROR")
-		return false
 
-func _on_wave_complete(last_wave: bool) -> void:
-	Log.trace(Log.Level.INFO, "Wave complete signal received. Last wave: %s" % last_wave)
+func _on_state_error(_args = []) -> bool:
+	Log.trace(Log.Level.ERROR, "Entering ERROR state.")
+	return false
 
-	if last_wave:
-		Log.trace(Log.Level.INFO, "All waved passed. transition to VICTORY")
-		if state_machine.toggle_state(STATE_VICTORY):
-			Log.trace(Log.Level.INFO, "transition to VICTORY succeed")
-		else:
-			Log.trace(Log.Level.ERROR, "can't passed to victory")
 
-## Returns a tower instance by name
-func get_tower_by_name(name: String) -> ITower:
-	for child in map.get_children():
-		if child is ITower:
-			var tower: ITower = child as ITower
-			if tower.name == name:
-				return tower
-	return null
+# setget
+## Updates coin count and emits stats_updated signal
+func _set_health(new_value: int) -> void:
+	if health <= 0:
+		return
+
+	if new_value < health:
+		ChallengeManager.notify_damage(health - new_value)
+
+	health = new_value
+	stats_updated.emit()
+
+	if health <= 0 and state_machine.toggle_state(STATE_DEFEAT):
+		Log.trace(Log.Level.INFO, "Player defeated.")
+
+
+func _on_enemy_die() -> void:
+	_enemies_alive -= 1
+
+
+func _on_enemy_spawn() -> void:
+	_enemies_alive += 1
+
+
+## Update player's coin count
+func _set_coins(new_value: int) -> void:
+	coins = new_value
+	stats_updated.emit()

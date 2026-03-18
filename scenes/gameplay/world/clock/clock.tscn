@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3 uid="uid://chxjyy0li4wc4"]
+
+[ext_resource type="Script" uid="uid://k25brxhglihc" path="res://scenes/gameplay/world/clock/clock.gd" id="1_u0mj8"]
+
+[node name="Clock" type="Node"]
+script = ExtResource("1_u0mj8")
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 0.1
