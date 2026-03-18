@@ -66,7 +66,7 @@ func _spawn_impact_particles(pos: Vector2) -> void:
 	"""Creates bubble particles at the impact point.
 	
 	Args:
-		position: The global position where particles will appear
+		pos: The global position where particles will appear
 	"""
 	# Create a particles node
 	var particles = CPUParticles2D.new()  # Using CPUParticles2D instead of GPUParticles2D
