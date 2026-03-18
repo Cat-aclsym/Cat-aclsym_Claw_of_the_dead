@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - develop
 
 jobs:
   build:
@@ -11,10 +12,10 @@ jobs:
 
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: Setup Java
-        uses: actions/setup-java@v6
+        uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 21
@@ -36,18 +37,17 @@ jobs:
         run: |
           echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > ~/Cataclysm.keystore
 
+      - name: Configure keystore in export presets
+        run: |
+          sed -i '/package\/signed=true/a keystore\/release="\/root\/Cataclysm.keystore"\nkeystore\/release_password="${{ secrets.KEYSTORE_PASSWORD }}"\nkeystore\/release_user="Cataclysm"' export_presets.cfg
+
       - name: Build APK
         run: |
-          godot --headless --export-release "Android" build/Cataclysm.apk \
-            --export-pack \
-            -- \
-            --keystore ~/Cataclysm.keystore \
-            --keystore-pass "${{ secrets.KEYSTORE_PASSWORD }}" \
-            --key-alias "Cataclysm" \
-            --key-pass "${{ secrets.KEY_PASSWORD }}"
+          mkdir -p exports
+          godot --headless --export-release "Android" exports/Cataclysm.apk
 
       - name: Upload APK artifact
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v4
         with:
           name: Cataclysm-apk
-          path: build/Cataclysm.apk
+          path: exports/Cataclysm.apk
