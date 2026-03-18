@@ -31,9 +31,9 @@ var _current_stat_font_size: int = 32
 ## Base font used for text.
 var _font: Font = preload("res://assets/ui/fonts/dotgothic/DotGothic16-Regular.ttf")
 ## Height of a background animation frame.
-var _frame_height: int = 832
+var _frame_height: int = 208
 ## Width of a background animation frame.
-var _frame_width: int = 1396
+var _frame_width: int = 349
 ## Number of frames per row in the background atlas.
 var _frames_per_row: int = 8
 ## Flag indicating if a page turn animation is in progress.

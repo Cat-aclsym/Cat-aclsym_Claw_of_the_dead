@@ -1,6 +1,6 @@
 [gd_scene load_steps=11 format=3 uid="uid://divtcu2mbquip"]
 
-[ext_resource type="Script" path="res://scenes/ui/menus/hud/encyclopedia.gd" id="1_ency"]
+[ext_resource type="Script" uid="uid://boqaeq5svhocn" path="res://scenes/ui/menus/hud/encyclopedia.gd" id="1_ency"]
 [ext_resource type="Texture2D" uid="uid://mshwayfrielr" path="res://assets/ui/huds/encyclopedie_ennemis.png" id="2_bg_ennemis"]
 [ext_resource type="Texture2D" uid="uid://0lgpu16nkbho" path="res://assets/ui/icons/Button Close.svg" id="3_close"]
 [ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="4_theme"]
@@ -12,7 +12,7 @@
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_bg"]
 atlas = ExtResource("2_bg_ennemis")
-region = Rect2(0, 0, 1396, 832)
+region = Rect2(0, 0, 349, 208)
 
 [node name="Encyclopedia" type="Control"]
 texture_filter = 6
