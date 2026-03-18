@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bcj0nqyx7o5kh"
-path="res://.godot/imported/Bouton Challenges.svg-8c60dde0137c9e837d79a82896586bfc.ctex"
+uid="uid://ccis5avg2eshj"
+path="res://.godot/imported/Trophey_Button.png-a21b1b61cd6b60e428c177eecca16367.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ui/icons/Bouton Challenges.svg"
-dest_files=["res://.godot/imported/Bouton Challenges.svg-8c60dde0137c9e837d79a82896586bfc.ctex"]
+source_file="res://assets/ui/icons/Trophey_Button.png"
+dest_files=["res://.godot/imported/Trophey_Button.png-a21b1b61cd6b60e428c177eecca16367.ctex"]
 
 [params]
 
@@ -32,6 +32,3 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
-svg/scale=3.0
-editor/scale_with_editor_scale=false
-editor/convert_colors_with_editor_theme=false

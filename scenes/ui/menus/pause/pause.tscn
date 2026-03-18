@@ -10,7 +10,7 @@
 [ext_resource type="Texture2D" uid="uid://bftxjalenxriu" path="res://assets/ui/icons/Button Music Off.svg" id="8_f8w4k"]
 [ext_resource type="Texture2D" uid="uid://5vx07x57xqmc" path="res://assets/ui/icons/Sound_Button.png" id="9_yy2d7"]
 [ext_resource type="Texture2D" uid="uid://sn02kb1pfkvd" path="res://assets/ui/icons/Button Sound Off.svg" id="10_dy38s"]
-[ext_resource type="Texture2D" uid="uid://ct6wwvh8a1bow" path="res://assets/ui/icons/Button Encyclopedia.svg" id="11_clue"]
+[ext_resource type="Texture2D" uid="uid://v4ol57tfife6" path="res://assets/ui/icons/Encyclopedia_Button.png" id="11_clue"]
 [ext_resource type="Texture2D" uid="uid://c1f4e2f8oknku" path="res://assets/ui/icons/exclamation.png" id="12_excl"]
 
 [node name="PauseMenu" type="Control"]

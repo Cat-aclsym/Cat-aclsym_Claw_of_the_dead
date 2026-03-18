@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ct6wwvh8a1bow"
-path="res://.godot/imported/Button Encyclopedia.svg-0eafdf96a0ef8e89416057f8a728e465.ctex"
+uid="uid://dfv62c4uf2jdw"
+path="res://.godot/imported/French_Button.png-50881d1cb2ba6e5c84313f239f91e916.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ui/icons/Button Encyclopedia.svg"
-dest_files=["res://.godot/imported/Button Encyclopedia.svg-0eafdf96a0ef8e89416057f8a728e465.ctex"]
+source_file="res://assets/ui/icons/French_Button.png"
+dest_files=["res://.godot/imported/French_Button.png-50881d1cb2ba6e5c84313f239f91e916.ctex"]
 
 [params]
 
@@ -32,6 +32,3 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
-svg/scale=1.0
-editor/scale_with_editor_scale=false
-editor/convert_colors_with_editor_theme=false

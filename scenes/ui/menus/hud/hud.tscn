@@ -10,7 +10,7 @@
 [ext_resource type="Texture2D" uid="uid://c8tt36yijwktt" path="res://assets/ui/icons/Cat_Button.png" id="8_ewojn"]
 [ext_resource type="Script" uid="uid://b5mbfrr7vwpj7" path="res://scenes/ui/menus/hud/new_wave_count.gd" id="9_o6rym"]
 [ext_resource type="Texture2D" uid="uid://c3eyakb4oxqkc" path="res://assets/ui/icons/Build_Button.png" id="10_sc2vu"]
-[ext_resource type="Texture2D" uid="uid://bcj0nqyx7o5kh" path="res://assets/ui/icons/Bouton Challenges.svg" id="11_5r146"]
+[ext_resource type="Texture2D" uid="uid://ccis5avg2eshj" path="res://assets/ui/icons/Trophey_Button.png" id="11_5r146"]
 [ext_resource type="Texture2D" uid="uid://c2uqlay1r2d1d" path="res://assets/ui/icons/Button Cancel.svg" id="12_5jyti"]
 [ext_resource type="Texture2D" uid="uid://85fepmd06xnd" path="res://assets/ui/icons/Fast_Forward_Button.png" id="13_hn23h"]
 
@@ -262,6 +262,7 @@ grow_vertical = 0
 theme_override_constants/margin_right = 20
 
 [node name="ChallengesButton" type="TextureButton" parent="ChallengesMarginContainer"]
+texture_filter = 1
 custom_minimum_size = Vector2(110, 90)
 layout_mode = 2
 texture_normal = ExtResource("11_5r146")
