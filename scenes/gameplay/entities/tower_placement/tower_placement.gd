@@ -185,16 +185,18 @@ func _state_build(tower: Node2D = null) -> void:
 			(_tower as ITower).state = ITower.TowerState.BUILDING
 			# Ensure range is visible during placement preview (instantly)
 			(_tower as ITower).show_range(true, false)
+			_tower.position = cursor.position - Vector2(0, 16)
 		elif _tower is ITrap:
 			(_tower as ITrap).state = ITrap.TrapState.BUILDING
-		_tower.position = cursor.position - Vector2(0, 16)
+			_tower.position = cursor.position
 		add_child(_tower)
 		tower.free()
 
 	if _tower == null:
 		return
 
-	_tower.position = cursor.position - Vector2(0, 16)
+	var placement_offset := Vector2(0, 16) if _tower is ITower else Vector2.ZERO
+	_tower.position = cursor.position - placement_offset
 	var tm_pos: Vector2i = tm_ref.local_to_map(cursor.global_position)
 
 	# Update special modifiers in real-time based on current tile
@@ -205,8 +207,9 @@ func _state_build(tower: Node2D = null) -> void:
 			var map = current_level.map
 			if map.special_tiles.has(tm_pos):
 				var modifier = map.special_tiles[tm_pos]
-				_tower.apply_special_modifier(modifier)
-			else:
+				if "apply_special_modifier" in _tower:
+					_tower.apply_special_modifier(modifier)
+			elif "apply_special_modifier" in _tower:
 				# Clear modifiers if the tile is not special
 				_tower.apply_special_modifier({})
 
@@ -215,9 +218,9 @@ func _state_build(tower: Node2D = null) -> void:
 	_update_place_button_state(is_buildable)
 
 	# Allow the tower button to work during placement for range preview
-	# Disable only the hover box to prevent interference
-	if _tower.hover_box and _tower.hover_box.get_parent():
-		var hover_area: Area2D = _tower.hover_box.get_parent()
+	# Disable only the hover box to prevent interference (towers only)
+	if _tower is ITower and (_tower as ITower).hover_box and (_tower as ITower).hover_box.get_parent():
+		var hover_area: Area2D = (_tower as ITower).hover_box.get_parent()
 		hover_area.monitoring = false
 		hover_area.monitorable = false
 		hover_area.input_pickable = false
@@ -304,7 +307,8 @@ func _cancel_build() -> void:
 	if _tower:
 		var t := _tower
 		_tower = null # Clear reference immediately
-		t.show_range(false, true)
+		if t is ITower:
+			(t as ITower).show_range(false, true)
 
 		# Fade out the tower preview smoothly
 		var tween = create_tween()
@@ -400,8 +404,9 @@ func _is_trap_buildable(pos: Vector2) -> bool:
 
 	var tm_pos := tm_ref.local_to_map(pos)
 
-	# Only allow traps on valid atlas coordinates
-	if not tm_ref.get_cell_atlas_coords(0, tm_pos) in TRAP_VALID_TILES:
+	# Only allow traps directly on the enemy path
+	# (uses current path system instead of old TileSet atlas coords)
+	if not _is_position_on_path(pos):
 		return false
 
 	if tm_pos in _invalid_cells:

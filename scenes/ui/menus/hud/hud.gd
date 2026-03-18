@@ -121,7 +121,7 @@ func _on_skip_time_scale_button_pressed() -> void:
 
 
 func _on_tower_selection_button_pressed() -> void:
-	if Global.ui.get_node("TowerSelection") == null:
+	if Global.ui.get_node_or_null("TowerSelection") == null:
 		var tower_selection_menu_instance: TowerSelection = TOWER_SELECTION_MENU.instantiate()
 		Global.ui.add_child(tower_selection_menu_instance)
 	else:

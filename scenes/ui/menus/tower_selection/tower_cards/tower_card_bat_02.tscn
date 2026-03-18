@@ -1,6 +1,6 @@
 [gd_scene load_steps=9 format=3 uid="uid://6kkbpbexa8ec"]
 
-[ext_resource type="Script" uid="uid://b3yu61ipsc8r0" path="res://scenes/ui/menus/tower_selection/tower_cards/tower_card.gd" id="1_mguwc"]
+[ext_resource type="Script" uid="uid://e0qqc3xugp8k" path="res://scenes/ui/menus/tower_selection/tower_cards/build_card.gd" id="1_mguwc"]
 [ext_resource type="PackedScene" uid="uid://b44e1fg0djni3" path="res://scenes/gameplay/entities/tower/towers/bat_02.tscn" id="2_ffbe5"]
 [ext_resource type="Texture2D" uid="uid://85310xv6g30a" path="res://assets/ui/tower_cards/Construction Tower Title.svg" id="2_p1nic"]
 [ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="3_xl830"]
@@ -23,7 +23,7 @@ grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource("1_mguwc")
-tower = ExtResource("2_ffbe5")
+entity = ExtResource("2_ffbe5")
 
 [node name="CardVBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 1

@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://uyg8jfudgsjx"]
+[gd_scene load_steps=5 format=3 uid="uid://exow1un82cir"]
 
 [ext_resource type="PackedScene" uid="uid://064cnqw4xlus" path="res://scenes/gameplay/entities/tower/i_tower.tscn" id="1_ecq02"]
 [ext_resource type="PackedScene" uid="uid://dg161722x21wu" path="res://scenes/gameplay/entities/bullet/fire_arrow.tscn" id="2_oklm3"]

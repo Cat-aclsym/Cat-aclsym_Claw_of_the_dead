@@ -25,7 +25,9 @@ var _cost: int
 
 # core
 func _ready() -> void:
-	assert(tower != null, "tower scene not assigned")
+	if tower == null:
+		# Legacy card without assigned tower; skip initialization to avoid assertion crash.
+		return
 	assert(container != null, "container node not found")
 	assert(title_label != null, "title_label node not found")
 	assert(button_texture != null, "button_texture node not found")

@@ -1,10 +1,14 @@
-[gd_scene load_steps=9 format=3 uid="uid://n3whw75fypkc"]
+[gd_scene load_steps=13 format=3 uid="uid://n3whw75fypkc"]
 
 [ext_resource type="Script" uid="uid://b4kvii87dw7yj" path="res://scenes/ui/menus/tower_selection/tower_selection.gd" id="1_1guy3"]
 [ext_resource type="Texture2D" uid="uid://c8eh0l6o5swnq" path="res://assets/ui/background/Construction Background.svg" id="2_tcv0b"]
 [ext_resource type="PackedScene" uid="uid://3noiaamd0p84" path="res://scenes/ui/menus/tower_selection/tower_cards/tower_card_bat_01.tscn" id="3_60iow"]
 [ext_resource type="PackedScene" uid="uid://6kkbpbexa8ec" path="res://scenes/ui/menus/tower_selection/tower_cards/tower_card_bat_02.tscn" id="5_aw86t"]
-[ext_resource type="PackedScene" uid="uid://cq705nqdp8fnw" path="res://scenes/gameplay/entities/tower/towers/bat_01.tscn" id="7_n8eii"]
+[ext_resource type="PackedScene" uid="uid://cq705nqdp8fnw" path="res://scenes/gameplay/entities/tower/towers/bat_01.tscn" id="7_bat01"]
+[ext_resource type="PackedScene" uid="uid://b2qklmpagmiaj" path="res://scenes/ui/menus/tower_selection/tower_cards/build_card_bear_trap.tscn" id="8_bear_trap_card"]
+[ext_resource type="PackedScene" uid="uid://b4qxkgw2yvnxr" path="res://scenes/gameplay/entities/trap/traps/bear_trap.tscn" id="9_bear_trap"]
+[ext_resource type="PackedScene" uid="uid://cekitu5ltqrp7" path="res://scenes/gameplay/entities/trap/traps/slow_trap.tscn" id="10_slow_trap"]
+[ext_resource type="PackedScene" uid="uid://b2qklmpag4poo" path="res://scenes/ui/menus/tower_selection/tower_cards/build_card_slow_trap.tscn" id="11_slow_trap_card"]
 
 [sub_resource type="Animation" id="Animation_fpn5b"]
 length = 0.35
@@ -71,7 +75,7 @@ stretch_mode = 1
 
 [node name="TowerCardBat01" parent="MarginContainer/BackgroundTextureRect/TowerListMarginContainer/HBoxContainer/Bat01AspectRatioContainer" instance=ExtResource("3_60iow")]
 layout_mode = 2
-tower = ExtResource("7_n8eii")
+entity = ExtResource("7_bat01")
 
 [node name="Bat02AspectRatioContainer" type="AspectRatioContainer" parent="MarginContainer/BackgroundTextureRect/TowerListMarginContainer/HBoxContainer"]
 layout_mode = 2
@@ -79,6 +83,22 @@ stretch_mode = 1
 
 [node name="TowerCardBat02" parent="MarginContainer/BackgroundTextureRect/TowerListMarginContainer/HBoxContainer/Bat02AspectRatioContainer" instance=ExtResource("5_aw86t")]
 layout_mode = 2
+
+[node name="BearTrapAspectRatioContainer" type="AspectRatioContainer" parent="MarginContainer/BackgroundTextureRect/TowerListMarginContainer/HBoxContainer"]
+layout_mode = 2
+stretch_mode = 1
+
+[node name="TowerCardBearTrap" parent="MarginContainer/BackgroundTextureRect/TowerListMarginContainer/HBoxContainer/BearTrapAspectRatioContainer" instance=ExtResource("8_bear_trap_card")]
+layout_mode = 2
+entity = ExtResource("9_bear_trap")
+
+[node name="SlowTrapAspectRatioContainer" type="AspectRatioContainer" parent="MarginContainer/BackgroundTextureRect/TowerListMarginContainer/HBoxContainer"]
+layout_mode = 2
+stretch_mode = 1
+
+[node name="TowerCardSlowTrap" parent="MarginContainer/BackgroundTextureRect/TowerListMarginContainer/HBoxContainer/SlowTrapAspectRatioContainer" instance=ExtResource("11_slow_trap_card")]
+layout_mode = 2
+entity = ExtResource("10_slow_trap")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 root_node = NodePath("../MarginContainer")
