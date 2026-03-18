@@ -106,6 +106,7 @@ window/stretch/aspect="keep_height"
 
 [editor]
 
+run/main_run_args="--verbose"
 naming/scene_name_casing=1
 naming/script_name_casing=2
 

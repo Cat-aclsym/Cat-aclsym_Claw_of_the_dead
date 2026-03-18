@@ -36,7 +36,7 @@ func _execute(console: Console, args: Array) -> int:
 
 				return OK
 
-		console.push_error("Command '%s' not found." % cmd_name)
+		console.push_error_("Command '%s' not found." % cmd_name)
 		return ERR_UNKNOWN_BEHAVIOR
 
 	var cmd_dir := DirAccess.open(console.commands_directory)

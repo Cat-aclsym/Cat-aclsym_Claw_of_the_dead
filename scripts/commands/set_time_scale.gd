@@ -17,7 +17,7 @@ func get_args() -> Array[Dictionary]:
 func _execute(console: Console, args: Array) -> int:
 	var timescale: float = float(args[0])
 	if timescale <= 0.0:
-		console.push_error("Time scale must be positive.")
+		console.push_error_("Time scale must be positive.")
 		return ERR_UNKNOWN_BEHAVIOR
 
 	Engine.time_scale = timescale

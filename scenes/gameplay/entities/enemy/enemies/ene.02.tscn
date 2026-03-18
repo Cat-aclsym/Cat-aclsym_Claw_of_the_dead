@@ -134,7 +134,6 @@ size = Vector2(22, 63)
 [node name="DamageZombie" instance=ExtResource("1_pdmcd")]
 position = Vector2(0, -27)
 enemy_id = "damage_zombie"
-type = 1
 
 [node name="AnimatedSprite2D" parent="." index="0"]
 position = Vector2(1, -4)
