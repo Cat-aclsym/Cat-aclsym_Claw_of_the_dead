@@ -129,10 +129,10 @@ func _ready() -> void:
 	update_dependent_properties()
 	# Sync range visibility with selected state (especially for duplicated towers)
 	show_range(selected, false)
-	
+
 	if state == TowerState.ACTIVE:
 		call_deferred("_register_with_cursor")
-		
+
 	if animated_sprite_2d and animated_sprite_2d.sprite_frames and animated_sprite_2d.sprite_frames.has_animation("idle"):
 		animated_sprite_2d.play("idle")
 	SignalUtil.connects(signals)
@@ -183,7 +183,7 @@ func fire() -> void:
 		bullet_instance.direction = rotated_direction
 		bullet_instance.rotation = rotated_direction.angle()
 		bullet_instance.target = enemy_position
-		
+
 		# Set tower owner to allow reward multiplier logic
 		if "tower_owner" in bullet_instance:
 			bullet_instance.tower_owner = self
@@ -270,10 +270,10 @@ func apply_special_modifier(modifiers: Dictionary) -> void:
 	else:
 		for stat in modifiers.keys():
 			_special_modifiers[stat] = modifiers[stat]
-	
+
 	# Re-apply base stats first to avoid stacking multipliers incorrectly
 	_apply_base_stats_override()
-	
+
 	# Apply modifiers to basic tower stats
 	if _special_modifiers.has("fire_rate"):
 		fire_rate *= _special_modifiers["fire_rate"]
@@ -281,11 +281,11 @@ func apply_special_modifier(modifiers: Dictionary) -> void:
 		shoot_range *= _special_modifiers["shoot_range"]
 	if _special_modifiers.has("reward_multiplier"):
 		reward_multiplier *= _special_modifiers["reward_multiplier"]
-	
+
 	# Apply modifiers to bullet stats
 	if _special_modifiers.has("damage") and bullet_stats.has("damage"):
 		bullet_stats["damage"] = int(bullet_stats["damage"] * _special_modifiers["damage"])
-		
+
 	Log.trace(Log.Level.INFO, "Tower {0} stats updated with modifiers: {1}".format([name, _special_modifiers]))
 	_apply_special_visual_effect(modifiers)
 	update_dependent_properties()
@@ -298,7 +298,7 @@ func _apply_special_visual_effect(modifier: Dictionary) -> void:
 	if _scale_tween:
 		_scale_tween.kill()
 		_scale_tween = null
-	
+
 	# Reset visual state if no modifier or no color
 	if not modifier.has("color"):
 		if animated_sprite_2d:
@@ -311,13 +311,13 @@ func _apply_special_visual_effect(modifier: Dictionary) -> void:
 			self.modulate = Color.WHITE
 			self.scale = Vector2(1, 1)
 		return
-		
+
 	var effect_color = modifier["color"]
 	effect_color.a = 1.0 # Force full opacity for the color tint
-	
+
 	# Create a dedicated tween for the visual effect
 	_pulse_tween = create_tween().set_loops()
-	
+
 	# Pulse only the color between normal (White) and the modifier color (Solid Tint)
 	# No scale/zoom effect as requested
 	if animated_sprite_2d:
@@ -330,7 +330,7 @@ func _apply_special_visual_effect(modifier: Dictionary) -> void:
 		# Fallback to the whole node
 		_pulse_tween.tween_property(self, "modulate", effect_color, 1.0).set_trans(Tween.TRANS_SINE)
 		_pulse_tween.tween_property(self, "modulate", Color.WHITE, 1.0).set_trans(Tween.TRANS_SINE)
-	
+
 	# Add a small scale effect only to the tower sprite
 	_scale_tween = create_tween()
 	var target_sprite: Node2D = null
@@ -338,7 +338,7 @@ func _apply_special_visual_effect(modifier: Dictionary) -> void:
 		target_sprite = animated_sprite_2d
 	elif sprite_2d:
 		target_sprite = sprite_2d
-	
+
 	if target_sprite:
 		if modifier["label"].ends_with("-"):
 			_scale_tween.tween_property(target_sprite, "scale", Vector2(0.85, 0.85), 0.3).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
@@ -366,7 +366,7 @@ func sell_tower() -> void:
 func _register_with_cursor() -> void:
 	if not is_inside_tree():
 		return
-		
+
 	# Safe access to Global.cursor to avoid assertion if it's not yet set
 	var placement_system = Global.get("cursor")
 	if placement_system:
@@ -380,7 +380,7 @@ func _register_with_cursor() -> void:
 ## Animates the range display
 func show_range(p_show: bool, smooth: bool = true) -> void:
 	selected = p_show
-	
+
 	# If not in tree yet, the @onready variables aren't initialized.
 	# We just set the state and return; visuals will be handled by the scene's default state
 	# or subsequent calls once ready.
@@ -389,7 +389,7 @@ func show_range(p_show: bool, smooth: bool = true) -> void:
 
 	if _range_tween:
 		_range_tween.kill()
-	
+
 	if p_show:
 		selected = true
 		polygon_2d.visible = true
@@ -409,7 +409,7 @@ func show_range(p_show: bool, smooth: bool = true) -> void:
 			_range_tween.tween_property(polygon_2d, "scale", Vector2(0, 0), 0.2).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 			_range_tween.tween_property(outline, "scale", Vector2(0, 0), 0.2).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 			_range_tween.set_parallel(false)
-			_range_tween.tween_callback(func(): 
+			_range_tween.tween_callback(func():
 				polygon_2d.visible = false
 				outline.visible = false
 			)
@@ -633,11 +633,11 @@ func _on_tower_pressed() -> void:
 	tower_upgrade_menu_instance.position = position
 	tower_upgrade_menu_instance.name = "TowerUpgrade"
 	self.add_child(tower_upgrade_menu_instance)
-	
+
 	# Keep range visible while menu is open
 	_menu_open = true
 	show_range(true)
-	
+
 	# Hide the menu when closed
 	await tower_upgrade_menu_instance.tree_exited
 	_menu_open = false

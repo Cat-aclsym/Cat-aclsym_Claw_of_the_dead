@@ -9,6 +9,7 @@ var BONUS_TILE_SCENE: PackedScene = load("res://scenes/gameplay/world/map/bonus_
 var PATH_INDICATOR_SCRIPT: Script = load("res://scenes/gameplay/world/map/path_indicator.gd") as Script
 const SPECIAL_TILE_DEBUG_COLOR: Color = Color(0.2, 0.4, 1.0, 0.55)
 const SPECIAL_TILE_DEBUG_EXCLUSION_COLOR: Color = Color(1.0, 0.2, 0.2, 0.35)
+const SPECIAL_TILE_LAYER_INDEX: int = 3
 const SPECIAL_TILE_MAX_DISTANCE_TILES: float = 2.0
 const SPECIAL_TILE_MIN_DISTANCE_BETWEEN_TILES: float = 2.0
 const PATH_INDICATOR_END_TYPE: int = 1
@@ -26,6 +27,9 @@ var paths: Array[Path2D] = []
 var _debug_exclusion_overlays: Array[Node2D] = []
 var _debug_spawnable_overlays: Array[Node2D] = []
 
+var _bonus_tile_scene_source_id: int = -1
+var _bonus_tile_scene_tile_id: int = -1
+
 ## Dictionary of special tiles (position -> modifier data)
 var special_tiles: Dictionary = {}
 
@@ -35,6 +39,8 @@ var special_tiles: Dictionary = {}
 func _ready() -> void:
 	_load_paths()
 	_create_path_indicators()
+	_ensure_special_tile_layer()
+	_ensure_bonus_tile_scene_source()
 
 	var placement_system = Global.get("cursor")
 	if placement_system:
@@ -129,6 +135,7 @@ func _generate_special_tiles() -> void:
 		_clear_debug_spawnable_special_tiles()
 
 	special_tiles.clear()
+	_clear_special_tile_layer()
 
 	var bonus_tile_count: int = 0
 	if buildable_tiles.size() > 0:
@@ -202,6 +209,9 @@ func _generate_special_tiles() -> void:
 			_show_debug_exclusion_tiles_around(tile_pos)
 		Log.trace(Log.Level.INFO, "Generated malus tile at {0}: {1}".format([tile_pos, modifier["label"]]))
 
+	if tilemap:
+		tilemap.update_internals()
+
 func _is_special_tile_spawnable(candidate: Vector2i, already_selected: Array[Vector2i]) -> bool:
 	for other in already_selected:
 		if candidate.distance_to(other) < SPECIAL_TILE_MIN_DISTANCE_BETWEEN_TILES:
@@ -259,6 +269,13 @@ func _clear_debug_spawnable_special_tiles() -> void:
 			node.queue_free()
 	_debug_spawnable_overlays.clear()
 
+func _clear_special_tile_layer() -> void:
+	if not tilemap:
+		return
+
+	if tilemap.get_layers_count() > SPECIAL_TILE_LAYER_INDEX:
+		tilemap.clear_layer(SPECIAL_TILE_LAYER_INDEX)
+
 func _create_debug_tile_overlay(tile_pos: Vector2i, color: Color, overlays: Array[Node2D]) -> void:
 	var world_pos := tilemap.map_to_local(tile_pos)
 
@@ -284,15 +301,21 @@ func _show_debug_spawnable_special_tiles(spawnable_tiles: Array[Vector2i]) -> vo
 	for tile_pos in spawnable_tiles:
 		_create_debug_tile_overlay(tile_pos, SPECIAL_TILE_DEBUG_COLOR, _debug_spawnable_overlays)
 
-func _create_bonus_visual_indicator(tile_pos: Vector2i, modifier: Dictionary) -> void:
-	var bonus_tile = BONUS_TILE_SCENE.instantiate()
-	var world_pos: Vector2 = tilemap.map_to_local(tile_pos)
-	var label_text: String = modifier["label"]
-	var tint: Color = modifier["color"]
+func _create_bonus_visual_indicator(tile_pos: Vector2i, _modifier: Dictionary) -> void:
+	if not tilemap:
+		return
 
-	bonus_tile.position = world_pos
-	bonus_tile.configure(label_text, tint)
-	add_child(bonus_tile)
+	if _bonus_tile_scene_source_id < 0 or _bonus_tile_scene_tile_id < 0:
+		Log.trace(Log.Level.ERROR, "Bonus tile scene source is not ready")
+		return
+
+	tilemap.set_cell(
+		SPECIAL_TILE_LAYER_INDEX,
+		tile_pos,
+		_bonus_tile_scene_source_id,
+		Vector2i.ZERO,
+		_bonus_tile_scene_tile_id
+	)
 
 func _create_malus_visual_indicator(tile_pos: Vector2i, modifier: Dictionary) -> void:
 	var world_pos: Vector2 = tilemap.map_to_local(tile_pos)
@@ -334,6 +357,26 @@ func _create_malus_visual_indicator(tile_pos: Vector2i, modifier: Dictionary) ->
 	label.position = world_pos - Vector2(20, 20) # Positioned slightly higher
 	label.z_index = 1 # Above the filter
 	add_child(label)
+
+func _ensure_special_tile_layer() -> void:
+	if not tilemap:
+		return
+
+	while tilemap.get_layers_count() <= SPECIAL_TILE_LAYER_INDEX:
+		tilemap.add_layer(-1)
+
+func _ensure_bonus_tile_scene_source() -> void:
+	if not tilemap or not tilemap.tile_set:
+		return
+
+	var scene_source := TileSetScenesCollectionSource.new()
+	_bonus_tile_scene_tile_id = scene_source.create_scene_tile(BONUS_TILE_SCENE)
+	_bonus_tile_scene_source_id = tilemap.tile_set.add_source(scene_source, tilemap.tile_set.get_next_source_id())
+
+	if _bonus_tile_scene_source_id < 0 or not (tilemap.tile_set.get_source(_bonus_tile_scene_source_id) is TileSetScenesCollectionSource):
+		Log.trace(Log.Level.ERROR, "Failed to create bonus tile scene source")
+		_bonus_tile_scene_source_id = -1
+		_bonus_tile_scene_tile_id = -1
 
 func _is_tile_buildable(coords: Vector2i) -> bool:
 	# 1. Check if the base tile is valid
