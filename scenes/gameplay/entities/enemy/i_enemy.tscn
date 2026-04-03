@@ -103,6 +103,7 @@ position = Vector2(0, 4)
 shape = SubResource("RectangleShape2D_oeiyk")
 
 [node name="GPUParticles2D" type="GPUParticles2D" parent="."]
+visible = false
 material = SubResource("CanvasItemMaterial_tc12e")
 amount = 4
 texture = ExtResource("2_tjt82")

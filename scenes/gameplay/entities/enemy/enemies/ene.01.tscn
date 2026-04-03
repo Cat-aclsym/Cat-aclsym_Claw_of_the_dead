@@ -132,7 +132,7 @@ animations = [{
 size = Vector2(23, 61.4118)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_feet_ene01"]
-size = Vector2(20, 10)
+size = Vector2(22, 10)
 
 [node name="DefaultZombie" instance=ExtResource("1_rsmel")]
 position = Vector2(0, -16)
@@ -146,10 +146,8 @@ animation = &"walk_up"
 position = Vector2(0, 0)
 shape = SubResource("RectangleShape2D_iaady")
 
-[node name="GPUParticles2D" parent="." index="3"]
-visible = false
-
 [node name="FeetArea" type="Area2D" parent="." index="4"]
+position = Vector2(0, 15)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="FeetArea" index="0"]
 position = Vector2(0, 16)

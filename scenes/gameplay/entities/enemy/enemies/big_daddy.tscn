@@ -1,7 +1,7 @@
-[gd_scene load_steps=26 format=3 uid="uid://dkcpg16ie8deh"]
+[gd_scene load_steps=25 format=3 uid="uid://dkcpg16ie8deh"]
 
 [ext_resource type="PackedScene" uid="uid://tmlcshxut7kv" path="res://scenes/gameplay/entities/enemy/i_enemy.tscn" id="1_o4ric"]
-[ext_resource type="Script" path="res://scenes/gameplay/entities/enemy/enemies/big_daddy.gd" id="2_3ulna"]
+[ext_resource type="Script" uid="uid://c86lpodcyvqbd" path="res://scenes/gameplay/entities/enemy/enemies/big_daddy.gd" id="2_3ulna"]
 [ext_resource type="PackedScene" uid="uid://bji7sb08qku4y" path="res://scenes/gameplay/entities/bullet/enemy_projectile.tscn" id="3_nitix"]
 [ext_resource type="Texture2D" uid="uid://bxq7e3iuv0otk" path="res://assets/gameplay/enemies/Pompier_Zombie.png" id="5_g4vvv"]
 
@@ -133,11 +133,8 @@ animations = [{
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_tvjnp"]
 size = Vector2(41, 81.5001)
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_feet_bigdaddy"]
-size = Vector2(20, 10)
-
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_feet"]
-size = Vector2(20, 10)
+size = Vector2(41, 13)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_2ay3q"]
 radius = 214.189
@@ -158,28 +155,25 @@ position = Vector2(0, 0)
 scale = Vector2(0.999999, 0.999999)
 shape = SubResource("RectangleShape2D_tvjnp")
 
-[node name="FeetArea2" type="Area2D" parent="." index="3"]
+[node name="FeetArea" type="Area2D" parent="." index="3"]
+position = Vector2(0, 14)
 
-[node name="FeetArea" type="Area2D" parent="." index="4"]
-
-[node name="CollisionShape2D2" type="CollisionShape2D" parent="FeetArea" index="0"]
-position = Vector2(0, 16)
-shape = SubResource("RectangleShape2D_feet_bigdaddy")
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="FeetArea" index="1"]
-position = Vector2(0, 16)
+[node name="CollisionShape2D" type="CollisionShape2D" parent="FeetArea" index="0"]
+position = Vector2(-0.5, 20.5)
 shape = SubResource("RectangleShape2D_feet")
 
-[node name="RangeArea" type="Area2D" parent="." index="5"]
+[node name="RangeArea" type="Area2D" parent="." index="4"]
+visible = false
 collision_layer = 0
 collision_mask = 256
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="RangeArea" index="0"]
+visible = false
 shape = SubResource("CircleShape2D_2ay3q")
 
-[node name="FireRateTimer" type="Timer" parent="." index="6"]
+[node name="FireRateTimer" type="Timer" parent="." index="5"]
 
-[node name="PopupScoreSpawner" parent="." index="8"]
+[node name="PopupScoreSpawner" parent="." index="7"]
 position = Vector2(0, -34)
 
 [connection signal="body_entered" from="RangeArea" to="." method="_on_range_area_body_entered"]
