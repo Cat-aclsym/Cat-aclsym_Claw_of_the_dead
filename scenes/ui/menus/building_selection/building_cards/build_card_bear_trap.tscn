@@ -1,13 +1,13 @@
-[gd_scene load_steps=7 format=3 uid="uid://b2qklmpag4poo"]
+[gd_scene load_steps=7 format=3 uid="uid://b2qklmpagmiaj"]
 
-[ext_resource type="Script" uid="uid://e0qqc3xugp8k" path="res://scenes/ui/menus/tower_selection/tower_cards/build_card.gd" id="1_script"]
-[ext_resource type="Texture2D" uid="uid://85310xv6g30a" path="res://assets/ui/tower_cards/Construction Tower Title.svg" id="2_title"]
+[ext_resource type="Script" uid="uid://e0qqc3xugp8k" path="res://scenes/ui/menus/building_selection/building_cards/build_card.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://85310xv6g30a" path="res://assets/ui/building_cards/Construction Tower Title.svg" id="2_title"]
 [ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="3_theme"]
-[ext_resource type="Texture2D" uid="uid://cdesir3miwmug" path="res://assets/ui/tower_cards/Green Frame.svg" id="4_frame"]
-[ext_resource type="Texture2D" uid="uid://yayv0hygrr3u" path="res://assets/ui/tower_cards/Blue Backgrond.svg" id="5_bg"]
+[ext_resource type="Texture2D" uid="uid://cdesir3miwmug" path="res://assets/ui/building_cards/Green Frame.svg" id="4_frame"]
+[ext_resource type="Texture2D" uid="uid://yayv0hygrr3u" path="res://assets/ui/building_cards/Blue Backgrond.svg" id="5_bg"]
 [ext_resource type="Texture2D" uid="uid://do0ybx58p4dnq" path="res://assets/gameplay/traps/spikes.png" id="6_icon"]
 
-[node name="BuildCardSlowTrap" type="Control"]
+[node name="BuildCardBearTrap" type="Control"]
 z_index = 1
 layout_mode = 3
 anchors_preset = 15
@@ -49,7 +49,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("3_theme")
 theme_override_font_sizes/font_size = 15
-text = "Slow Trap"
+text = "Bear Trap"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -110,6 +110,6 @@ grow_horizontal = 2
 grow_vertical = 0
 theme = ExtResource("3_theme")
 theme_override_font_sizes/font_size = 15
-text = "75$"
+text = "10$"
 horizontal_alignment = 1
 vertical_alignment = 2

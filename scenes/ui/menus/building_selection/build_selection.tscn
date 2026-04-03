@@ -1,14 +1,14 @@
 [gd_scene load_steps=13 format=3 uid="uid://n3whw75fypkc"]
 
-[ext_resource type="Script" uid="uid://b4kvii87dw7yj" path="res://scenes/ui/menus/tower_selection/build_selection.gd" id="1_1guy3"]
+[ext_resource type="Script" uid="uid://b4kvii87dw7yj" path="res://scenes/ui/menus/building_selection/build_selection.gd" id="1_1guy3"]
 [ext_resource type="Texture2D" uid="uid://c8eh0l6o5swnq" path="res://assets/ui/background/Construction Background.svg" id="2_tcv0b"]
-[ext_resource type="PackedScene" uid="uid://3noiaamd0p84" path="res://scenes/ui/menus/tower_selection/tower_cards/tower_card_bat_01.tscn" id="3_60iow"]
-[ext_resource type="PackedScene" uid="uid://6kkbpbexa8ec" path="res://scenes/ui/menus/tower_selection/tower_cards/tower_card_bat_02.tscn" id="5_aw86t"]
+[ext_resource type="PackedScene" uid="uid://3noiaamd0p84" path="res://scenes/ui/menus/building_selection/building_cards/build_card_bat_01.tscn" id="3_60iow"]
+[ext_resource type="PackedScene" uid="uid://6kkbpbexa8ec" path="res://scenes/ui/menus/building_selection/building_cards/build_card_bat_02.tscn" id="5_aw86t"]
 [ext_resource type="PackedScene" uid="uid://cq705nqdp8fnw" path="res://scenes/gameplay/entities/tower/towers/bat_01.tscn" id="7_bat01"]
-[ext_resource type="PackedScene" uid="uid://b2qklmpagmiaj" path="res://scenes/ui/menus/tower_selection/tower_cards/build_card_bear_trap.tscn" id="8_bear_trap_card"]
+[ext_resource type="PackedScene" uid="uid://b2qklmpagmiaj" path="res://scenes/ui/menus/building_selection/building_cards/build_card_bear_trap.tscn" id="8_bear_trap_card"]
 [ext_resource type="PackedScene" uid="uid://b4qxkgw2yvnxr" path="res://scenes/gameplay/entities/trap/traps/bear_trap.tscn" id="9_bear_trap"]
 [ext_resource type="PackedScene" uid="uid://cekitu5ltqrp7" path="res://scenes/gameplay/entities/trap/traps/slow_trap.tscn" id="10_slow_trap"]
-[ext_resource type="PackedScene" uid="uid://b2qklmpag4poo" path="res://scenes/ui/menus/tower_selection/tower_cards/build_card_slow_trap.tscn" id="11_slow_trap_card"]
+[ext_resource type="PackedScene" uid="uid://b2qklmpag4poo" path="res://scenes/ui/menus/building_selection/building_cards/build_card_slow_trap.tscn" id="11_slow_trap_card"]
 
 [sub_resource type="Animation" id="Animation_fpn5b"]
 length = 0.35

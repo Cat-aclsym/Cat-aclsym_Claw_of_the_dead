@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://yayv0hygrr3u"
-path="res://.godot/imported/Blue Backgrond.svg-673bfb842a93006d6777daef8f7f3c25.ctex"
+path="res://.godot/imported/Blue Backgrond.svg-81d4b93bce0eeca73c1eb9a71a084308.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ui/tower_cards/Blue Backgrond.svg"
-dest_files=["res://.godot/imported/Blue Backgrond.svg-673bfb842a93006d6777daef8f7f3c25.ctex"]
+source_file="res://assets/ui/building_cards/Blue Backgrond.svg"
+dest_files=["res://.godot/imported/Blue Backgrond.svg-81d4b93bce0eeca73c1eb9a71a084308.ctex"]
 
 [params]
 

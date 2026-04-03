@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cdesir3miwmug"
-path="res://.godot/imported/Green Frame.svg-1708ce8713f9e7f87a09c2523856c675.ctex"
+uid="uid://85310xv6g30a"
+path="res://.godot/imported/Construction Tower Title.svg-4dad5204d68ba26e0d907a8a4d60c5cd.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ui/tower_cards/Green Frame.svg"
-dest_files=["res://.godot/imported/Green Frame.svg-1708ce8713f9e7f87a09c2523856c675.ctex"]
+source_file="res://assets/ui/building_cards/Construction Tower Title.svg"
+dest_files=["res://.godot/imported/Construction Tower Title.svg-4dad5204d68ba26e0d907a8a4d60c5cd.ctex"]
 
 [params]
 

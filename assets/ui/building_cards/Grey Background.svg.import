@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c4fvygmethra5"
-path="res://.godot/imported/Blue Frame.svg-8e73d38281e25dc04e4eea67e6218e72.ctex"
+uid="uid://dampyj6ceousf"
+path="res://.godot/imported/Grey Background.svg-ae33c4c30a06e2eacfe7c5fa48a716b2.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ui/tower_cards/Blue Frame.svg"
-dest_files=["res://.godot/imported/Blue Frame.svg-8e73d38281e25dc04e4eea67e6218e72.ctex"]
+source_file="res://assets/ui/building_cards/Grey Background.svg"
+dest_files=["res://.godot/imported/Grey Background.svg-ae33c4c30a06e2eacfe7c5fa48a716b2.ctex"]
 
 [params]
 

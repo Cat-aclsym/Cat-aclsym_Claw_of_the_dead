@@ -15,7 +15,7 @@ const PAUSE_MENU: PackedScene = preload("res://scenes/ui/menus/pause/pause.tscn"
 const POPUP_SCORE_SCENE: PackedScene = preload("res://scenes/ui/popup/popup_score.tscn")
 const SKIP_COLOR_INACTIVE: Color = Color(1.0, 1.0, 1.0, 1.0)
 const SKIP_TIME_SCALE: float = 3.0
-const BUILD_SELECTION_MENU: PackedScene = preload("res://scenes/ui/menus/tower_selection/build_selection.tscn")
+const BUILD_SELECTION_MENU: PackedScene = preload("res://scenes/ui/menus/building_selection/build_selection.tscn")
 
 # Variables
 @onready var challenges_button: TextureButton = $ChallengesMarginContainer/ChallengesButton
