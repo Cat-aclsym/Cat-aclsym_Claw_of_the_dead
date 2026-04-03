@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://c320vbgx83xlc"]
+[gd_scene load_steps=11 format=3 uid="uid://c320vbgx83xlc"]
 
 [ext_resource type="PackedScene" uid="uid://tmlcshxut7kv" path="res://scenes/gameplay/entities/enemy/i_enemy.tscn" id="1_dhx8w"]
 [ext_resource type="Texture2D" uid="uid://cfxkadf64p7m6" path="res://assets/gameplay/enemies/Zombie_Deliverer.png" id="2_1oooy"]
@@ -47,6 +47,12 @@ animations = [{
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_6dscd"]
 size = Vector2(44, 66)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_feet_ene03"]
+size = Vector2(20, 10)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_feet"]
+size = Vector2(20, 10)
+
 [node name="Rat" instance=ExtResource("1_dhx8w")]
 position = Vector2(0, -10)
 enemy_id = "rat"
@@ -62,5 +68,17 @@ offset = Vector2(0, -16)
 position = Vector2(0, -4)
 shape = SubResource("RectangleShape2D_6dscd")
 
-[node name="PopupScoreSpawner" parent="." index="4"]
+[node name="FeetArea" type="Area2D" parent="." index="3"]
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="FeetArea" index="0"]
+position = Vector2(0, 16)
+shape = SubResource("RectangleShape2D_feet_ene03")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="FeetArea" index="1"]
+position = Vector2(0, 16)
+shape = SubResource("RectangleShape2D_feet")
+
+[node name="FeetArea2" type="Area2D" parent="." index="4"]
+
+[node name="PopupScoreSpawner" parent="." index="6"]
 position = Vector2(0, -22)

@@ -9,6 +9,7 @@ script = ExtResource("2_script")
 damage = 10
 cost = 10
 trap_type = 2
+effect_duration = 0.5
 max_durability = 1
 
 [node name="Sprite2D" parent="." index="0"]
@@ -17,4 +18,4 @@ scale = Vector2(1, 1)
 texture = ExtResource("3_texture")
 
 [node name="CollisionPolygon2D" parent="Area2D" index="0"]
-polygon = PackedVector2Array(-27, -1, 0, -17, 28, 0, 0, 15)
+polygon = PackedVector2Array(-27, 0, 0, -17, 28, 0, 0, 15)

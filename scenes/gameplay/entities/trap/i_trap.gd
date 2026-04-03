@@ -67,7 +67,9 @@ var enemies_in_area: Array[IEnemy] = []
 ## Signal connections to be established in _ready
 @onready var signals: Array[Dictionary] = [
     {SignalUtil.WHO: area_2d, SignalUtil.WHAT: "body_entered", SignalUtil.TO: _on_area_2d_body_entered},
-    {SignalUtil.WHO: area_2d, SignalUtil.WHAT: "body_exited", SignalUtil.TO: _on_area_2d_body_exited}
+	{SignalUtil.WHO: area_2d, SignalUtil.WHAT: "body_exited", SignalUtil.TO: _on_area_2d_body_exited},
+	{SignalUtil.WHO: area_2d, SignalUtil.WHAT: "area_entered", SignalUtil.TO: _on_area_2d_body_entered},
+	{SignalUtil.WHO: area_2d, SignalUtil.WHAT: "area_exited", SignalUtil.TO: _on_area_2d_body_exited}
 ]
 
 ## Dictionary to track enemies affected by LIMITED type with their remaining effect duration
@@ -177,23 +179,47 @@ func _on_enemy_die(enemy: IEnemy) -> void:
 
 # signal
 func _on_area_2d_body_entered(body) -> void:
-    if not (body is IEnemy) or state != TrapState.ACTIVE:
+    if state != TrapState.ACTIVE:
         return
-        
-    enemies_in_area.append(body)
-    _handle_trap_activation(body)
+
+    var enemy := _get_enemy_from_overlap(body)
+    if enemy == null:
+        return
+
+    if enemy in enemies_in_area:
+        return
+
+    enemies_in_area.append(enemy)
+    _handle_trap_activation(enemy)
 
 func _on_area_2d_body_exited(body) -> void:
-    if not (body is IEnemy) or state != TrapState.ACTIVE:
+    if state != TrapState.ACTIVE:
         return
         
-    enemies_in_area.erase(body)
+    var enemy := _get_enemy_from_overlap(body)
+    if enemy == null:
+        return
+
+    enemies_in_area.erase(enemy)
     if trap_type == TrapType.PASSIVE:
-        remove_effect(body)
+        remove_effect(enemy)
     elif trap_type == TrapType.LIMITED:
-        if body in active_affected_enemies:
-            remove_effect(body)
-            active_affected_enemies.erase(body)
+        if enemy in active_affected_enemies:
+            remove_effect(enemy)
+            active_affected_enemies.erase(enemy)
+
+func _get_enemy_from_overlap(overlap) -> IEnemy:
+    # We want traps to trigger based on the zombie "feet" zone only.
+    # This avoids head/body overlaps triggering the effect on slopes.
+    if overlap is IEnemy:
+        return null
+
+    if overlap is Area2D and overlap.name == "FeetArea":
+        var parent := overlap.get_parent()
+        if parent is IEnemy:
+            return parent as IEnemy
+
+    return null
 
 ## Override these methods in specific trap implementations
 func apply_effect(_enemy: IEnemy) -> void:

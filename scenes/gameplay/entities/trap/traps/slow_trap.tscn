@@ -10,6 +10,7 @@ slow_amount = 0.3
 cost = 75
 
 [node name="Sprite2D" parent="." index="0"]
+modulate = Color(3.85046e-07, 0.670751, 0.662421, 1)
 position = Vector2(0, 0)
 scale = Vector2(1, 1)
 texture = ExtResource("3_acsu1")
