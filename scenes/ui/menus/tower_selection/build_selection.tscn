@@ -15,17 +15,17 @@ length = 0.35
 step = 0.05
 
 [sub_resource type="Animation" id="Animation_wc0kk"]
-resource_name = "show_tower_list"
+resource_name = "show_build_list"
 length = 0.35
 step = 0.05
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_omyie"]
 _data = {
 &"RESET": SubResource("Animation_fpn5b"),
-&"show_tower_list": SubResource("Animation_wc0kk")
+&"show_build_list": SubResource("Animation_wc0kk")
 }
 
-[node name="TowerSelection" type="Control"]
+[node name="BuildSelection" type="Control"]
 layout_mode = 3
 anchor_top = 0.747
 anchor_right = 0.877
@@ -53,7 +53,7 @@ texture = ExtResource("2_tcv0b")
 expand_mode = 1
 flip_h = true
 
-[node name="TowerListMarginContainer" type="MarginContainer" parent="MarginContainer/BackgroundTextureRect"]
+[node name="BuildListMarginContainer" type="MarginContainer" parent="MarginContainer/BackgroundTextureRect"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -65,38 +65,38 @@ theme_override_constants/margin_left = 90
 theme_override_constants/margin_top = 7
 theme_override_constants/margin_bottom = 7
 
-[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/BackgroundTextureRect/TowerListMarginContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/BackgroundTextureRect/BuildListMarginContainer"]
 layout_mode = 2
 theme_override_constants/separation = 150
 
-[node name="Bat01AspectRatioContainer" type="AspectRatioContainer" parent="MarginContainer/BackgroundTextureRect/TowerListMarginContainer/HBoxContainer"]
+[node name="Bat01AspectRatioContainer" type="AspectRatioContainer" parent="MarginContainer/BackgroundTextureRect/BuildListMarginContainer/HBoxContainer"]
 layout_mode = 2
 stretch_mode = 1
 
-[node name="TowerCardBat01" parent="MarginContainer/BackgroundTextureRect/TowerListMarginContainer/HBoxContainer/Bat01AspectRatioContainer" instance=ExtResource("3_60iow")]
+[node name="BuildCardBat01" parent="MarginContainer/BackgroundTextureRect/BuildListMarginContainer/HBoxContainer/Bat01AspectRatioContainer" instance=ExtResource("3_60iow")]
 layout_mode = 2
 entity = ExtResource("7_bat01")
 
-[node name="Bat02AspectRatioContainer" type="AspectRatioContainer" parent="MarginContainer/BackgroundTextureRect/TowerListMarginContainer/HBoxContainer"]
+[node name="Bat02AspectRatioContainer" type="AspectRatioContainer" parent="MarginContainer/BackgroundTextureRect/BuildListMarginContainer/HBoxContainer"]
 layout_mode = 2
 stretch_mode = 1
 
-[node name="TowerCardBat02" parent="MarginContainer/BackgroundTextureRect/TowerListMarginContainer/HBoxContainer/Bat02AspectRatioContainer" instance=ExtResource("5_aw86t")]
+[node name="BuildCardBat02" parent="MarginContainer/BackgroundTextureRect/BuildListMarginContainer/HBoxContainer/Bat02AspectRatioContainer" instance=ExtResource("5_aw86t")]
 layout_mode = 2
 
-[node name="BearTrapAspectRatioContainer" type="AspectRatioContainer" parent="MarginContainer/BackgroundTextureRect/TowerListMarginContainer/HBoxContainer"]
+[node name="BearTrapAspectRatioContainer" type="AspectRatioContainer" parent="MarginContainer/BackgroundTextureRect/BuildListMarginContainer/HBoxContainer"]
 layout_mode = 2
 stretch_mode = 1
 
-[node name="TowerCardBearTrap" parent="MarginContainer/BackgroundTextureRect/TowerListMarginContainer/HBoxContainer/BearTrapAspectRatioContainer" instance=ExtResource("8_bear_trap_card")]
+[node name="BuildCardBearTrap" parent="MarginContainer/BackgroundTextureRect/BuildListMarginContainer/HBoxContainer/BearTrapAspectRatioContainer" instance=ExtResource("8_bear_trap_card")]
 layout_mode = 2
 entity = ExtResource("9_bear_trap")
 
-[node name="SlowTrapAspectRatioContainer" type="AspectRatioContainer" parent="MarginContainer/BackgroundTextureRect/TowerListMarginContainer/HBoxContainer"]
+[node name="SlowTrapAspectRatioContainer" type="AspectRatioContainer" parent="MarginContainer/BackgroundTextureRect/BuildListMarginContainer/HBoxContainer"]
 layout_mode = 2
 stretch_mode = 1
 
-[node name="TowerCardSlowTrap" parent="MarginContainer/BackgroundTextureRect/TowerListMarginContainer/HBoxContainer/SlowTrapAspectRatioContainer" instance=ExtResource("11_slow_trap_card")]
+[node name="BuildCardSlowTrap" parent="MarginContainer/BackgroundTextureRect/BuildListMarginContainer/HBoxContainer/SlowTrapAspectRatioContainer" instance=ExtResource("11_slow_trap_card")]
 layout_mode = 2
 entity = ExtResource("10_slow_trap")
 
@@ -105,4 +105,4 @@ root_node = NodePath("../MarginContainer")
 libraries = {
 &"": SubResource("AnimationLibrary_omyie")
 }
-autoplay = "show_tower_list"
+autoplay = "show_build_list"

@@ -11,7 +11,7 @@
 atlas = ExtResource("6_lwhdy")
 region = Rect2(0, -2, 64, 64)
 
-[node name="TowerCardBat01" type="Control"]
+[node name="BuildCardBat01" type="Control"]
 z_index = 1
 layout_mode = 3
 anchors_preset = 15
@@ -87,7 +87,7 @@ texture = ExtResource("5_4himi")
 expand_mode = 1
 stretch_mode = 4
 
-[node name="TowerTextureRect" type="TextureRect" parent="CardVBoxContainer/CardAspectRatioContainer/CardTextureButton"]
+[node name="BuildPreviewTextureRect" type="TextureRect" parent="CardVBoxContainer/CardAspectRatioContainer/CardTextureButton"]
 z_index = -1
 layout_mode = 1
 anchors_preset = 15

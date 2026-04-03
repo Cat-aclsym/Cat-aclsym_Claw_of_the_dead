@@ -21,14 +21,14 @@ const BUTTON_COLOR_DISABLED := Color(0.5, 0.5, 0.5, 0.6)
 const UP_OFFSET := Vector2i(-1, -1)
 const RIGHT_OFFSET := Vector2i(0, -1)
 const LEFT_OFFSET := Vector2i(-1, 0)
-## Base TileMap constraints for tower placement
+## Base TileMap constraints for ground-placed buildings (towers); traps use path rules instead.
 const VALID_SOURCE_ID: int = 0 # Ground Grass
 const VALID_TILES: Array[Vector2i] = [
 	Vector2i(0, 0)
 ]
 
-## Get the initial position for a new tower based on camera view
-func _get_initial_tower_position() -> Vector2:
+## World position to start the build preview (camera center or map center).
+func _get_initial_build_position() -> Vector2:
 	# Get the camera's center position in world coordinates
 	var camera := get_viewport().get_camera_2d()
 	if camera:
@@ -44,11 +44,11 @@ func _get_initial_tower_position() -> Vector2:
 	# Ultimate fallback
 	return Vector2.ZERO
 
-## States for the tower placement cursor
+## States for the build / upgrade cursor.
 enum CursorState {
 	IDLE,  ## Default state
-	BUILD,  ## Tower placement state
-	UPGRADE  ## Tower upgrade state
+	BUILD,  ## Placing a new [IBuilding] preview
+	UPGRADE  ## Tower upgrade mode
 }
 
 ## Reference to the tilemap node
@@ -57,10 +57,10 @@ var tm_ref: TileMap = null
 var _invalid_cells: Array[Vector2i] = []
 var _is_dragging: bool = false
 var _is_holding_click: bool = false
-var _is_move_tower_available: bool = true
+var _can_reposition_build_cursor: bool = true
 var _last_tm_pos: Vector2i = Vector2i(-1, -1)
 var _state: CursorState = CursorState.IDLE
-var _tower: IBuilding = null
+var _preview_building: IBuilding = null
 
 ## The number of towers created
 static var tower_count: int = 0
@@ -99,7 +99,7 @@ func _unhandled_input(event: InputEvent) -> void:
 	if _state == CursorState.BUILD:
 		_state_build_input(event)
 
-## Change the current state of the tower placement system
+## Change the current state of the build placement cursor.
 ## [br]
 ## [param new_state] The state to change to
 ## [param args] Additional arguments for the state change
@@ -110,8 +110,8 @@ func change_state(new_state: CursorState, args: Array = []) -> void:
 			_state = new_state
 			visible = false
 
-			# Re-enable tower buttons
-			_set_all_tower_buttons_enabled(true)
+			# Re-enable on-map tower UI (buttons / hover)
+			_set_placed_tower_ui_enabled(true)
 		CursorState.BUILD:
 			if _state != CursorState.IDLE:
 				Log.trace(Log.Level.WARN, "Cannot change cursor state from BUILD to IDLE")
@@ -127,8 +127,8 @@ func change_state(new_state: CursorState, args: Array = []) -> void:
 			if ILevel.current_level and not ILevel.current_level.stats_updated.is_connected(_on_level_stats_updated):
 				ILevel.current_level.stats_updated.connect(_on_level_stats_updated)
 
-			# Disable tower buttons to prevent interference
-			_set_all_tower_buttons_enabled(false)
+			# Disable on-map tower UI so it does not steal input during placement
+			_set_placed_tower_ui_enabled(false)
 
 			_state_build(args[0])
 
@@ -167,23 +167,22 @@ func _set_cursor_position(pos: Vector2 = get_global_mouse_position()) -> void:
 	# Move the placement area hitbox to follow the cursor
 	placement_area.position = local_pos
 
-## Handles the build state logic, such as tower placement and validation
-func _state_build(tower: Node2D = null) -> void:
-	if tower:
-		# Get the initial position before creating the tower
-		var initial_pos := _get_initial_tower_position()
+## Build-mode frame: follow cursor, tint preview, validate tile.
+func _state_build(template: Node2D = null) -> void:
+	if template:
+		var initial_pos := _get_initial_build_position()
 		_set_cursor_position(initial_pos)
 
-		_tower = tower.duplicate() as IBuilding
-		_tower.enter_build_preview()
-		_tower.position = cursor.position - Vector2(0, _tower.get_placement_vertical_offset())
-		add_child(_tower)
-		tower.free()
+		_preview_building = template.duplicate() as IBuilding
+		_preview_building.enter_build_preview()
+		_preview_building.position = cursor.position - Vector2(0, _preview_building.get_placement_vertical_offset())
+		add_child(_preview_building)
+		template.free()
 
-	if _tower == null:
+	if _preview_building == null:
 		return
 
-	_tower.position = cursor.position - Vector2(0, _tower.get_placement_vertical_offset())
+	_preview_building.position = cursor.position - Vector2(0, _preview_building.get_placement_vertical_offset())
 	var tm_pos: Vector2i = tm_ref.local_to_map(cursor.global_position)
 
 	# Update special modifiers in real-time based on current tile
@@ -194,25 +193,23 @@ func _state_build(tower: Node2D = null) -> void:
 			var map = current_level.map
 			if map.special_tiles.has(tm_pos):
 				var modifier = map.special_tiles[tm_pos]
-				if "apply_special_modifier" in _tower:
-					_tower.apply_special_modifier(modifier)
-			elif "apply_special_modifier" in _tower:
+				if "apply_special_modifier" in _preview_building:
+					_preview_building.apply_special_modifier(modifier)
+			elif "apply_special_modifier" in _preview_building:
 				# Clear modifiers if the tile is not special
-				_tower.apply_special_modifier({})
+				_preview_building.apply_special_modifier({})
 
 	var is_buildable := _is_buildable(cursor.position)
-	_tower.modulate = COLOR_OK if is_buildable else COLOR_KO
+	_preview_building.modulate = COLOR_OK if is_buildable else COLOR_KO
 	_update_place_button_state(is_buildable)
 
-	# Allow the tower button to work during placement for range preview
-	# Disable only the hover box to prevent interference (towers only)
-	if _tower is ITower and (_tower as ITower).hover_box and (_tower as ITower).hover_box.get_parent():
-		var hover_area: Area2D = (_tower as ITower).hover_box.get_parent()
+	# [ITower] only: keep range button usable; disable hover hitbox so it does not steal clicks
+	if _preview_building is ITower and (_preview_building as ITower).hover_box and (_preview_building as ITower).hover_box.get_parent():
+		var hover_area: Area2D = (_preview_building as ITower).hover_box.get_parent()
 		hover_area.monitoring = false
 		hover_area.monitorable = false
 		hover_area.input_pickable = false
-	# Use the placement area position (cursor position) for validation, not the tower position
-	_tower.modulate = COLOR_OK if is_buildable else COLOR_KO
+	_preview_building.modulate = COLOR_OK if is_buildable else COLOR_KO
 
 ## Check if the placement area overlaps with any enemy path
 func _is_position_on_path(pos: Vector2) -> bool:
@@ -253,7 +250,7 @@ func _state_build_input(event: InputEvent) -> void:
 			_is_dragging = true
 
 	if event is InputEventScreenTouch and OS.has_feature("mobile"):
-		if event.is_released() and _is_move_tower_available:
+		if event.is_released() and _can_reposition_build_cursor:
 			_is_holding_click = false
 
 			if _is_dragging:
@@ -265,7 +262,7 @@ func _state_build_input(event: InputEvent) -> void:
 			_update()
 	elif event is InputEventMouseButton and not OS.has_feature("mobile"):
 		# Don't process clicks on buttons
-		if not _is_move_tower_available:
+		if not _can_reposition_build_cursor:
 			return
 
 		if event.is_pressed() and event.button_index == MouseButton.MOUSE_BUTTON_LEFT:
@@ -291,12 +288,12 @@ func _state_upgrade() -> void:
 func _cancel_build() -> void:
 	cursor.visible = false
 	place_hud.visible = false
-	if _tower:
-		var t: IBuilding = _tower
-		_tower = null # Clear reference immediately
+	if _preview_building:
+		var t: IBuilding = _preview_building
+		_preview_building = null # Clear reference immediately
 		t.cancel_build_preview()
 
-		# Fade out the tower preview smoothly
+		# Fade out the build preview
 		var tween = create_tween()
 		tween.tween_property(t, "modulate:a", 0.0, 0.2)
 		tween.tween_callback(t.queue_free)
@@ -306,12 +303,11 @@ func _cancel_build() -> void:
 
 func _build() -> void:
 	if not _is_buildable(cursor.position):
-		# Log.trace(Log.Level.DEBUG, "Cannot build tower at position: {0}".format([_tower.position]))
 		return
 
-	_is_move_tower_available = false
+	_can_reposition_build_cursor = false
 
-	var new_entity: Node2D = _tower.duplicate()
+	var new_entity: Node2D = _preview_building.duplicate()
 	new_entity.modulate = Color(1, 1, 1, 1)
 
 	var current_level = ILevel.current_level
@@ -349,18 +345,18 @@ func _build() -> void:
 		ChallengeManager.notify_building_placed(new_entity as IBuilding)
 
 	_invalid_cells.append(tm_pos)
-	ILevel.current_level.coins -= _tower.cost
+	ILevel.current_level.coins -= _preview_building.cost
 
 	_cancel_build()
-	_is_move_tower_available = true
+	_can_reposition_build_cursor = true
 
 func _is_buildable(pos: Vector2) -> bool:
-	if _tower.get_building_kind() == IBuilding.BuildingKind.TRAP:
+	if _preview_building.get_building_kind() == IBuilding.BuildingKind.TRAP:
 		return _is_trap_buildable(pos)
-	return _is_tower_buildable(pos)
+	return _is_ground_building_placeable(pos)
 
-func _is_tower_buildable(pos: Vector2) -> bool:
-	if ILevel.current_level.coins < _tower.cost:
+func _is_ground_building_placeable(pos: Vector2) -> bool:
+	if ILevel.current_level.coins < _preview_building.cost:
 		return false
 
 	var tm_pos: Vector2i = tm_ref.local_to_map(pos)
@@ -387,7 +383,7 @@ func _is_tower_buildable(pos: Vector2) -> bool:
 	return true
 
 func _is_trap_buildable(pos: Vector2) -> bool:
-	if ILevel.current_level.coins < _tower.cost:
+	if ILevel.current_level.coins < _preview_building.cost:
 		return false
 
 	var tm_pos := tm_ref.local_to_map(pos)
@@ -411,8 +407,8 @@ func _update_place_button_state(can_build: bool) -> void:
 		place_button.modulate = BUTTON_COLOR_DISABLED
 		place_button.disabled = true
 
-## Enables or disables all tower buttons and hover boxes to prevent interference during placement
-func _set_all_tower_buttons_enabled(enabled: bool) -> void:
+## Enables or disables [ITower] on-map buttons and hover areas during build preview.
+func _set_placed_tower_ui_enabled(enabled: bool) -> void:
 	if not ILevel.current_level:
 		return
 
@@ -440,19 +436,18 @@ func _on_cancel_place_button_pressed() -> void:
 	_cancel_build()
 
 func _on_button_mouse_entered() -> void:
-	_is_move_tower_available = false
+	_can_reposition_build_cursor = false
 
 func _on_button_mouse_exited() -> void:
-	_is_move_tower_available = true
+	_can_reposition_build_cursor = true
 
 func _on_level_stats_updated() -> void:
-	# Update button state when coins change during tower placement
-	if _state == CursorState.BUILD and _tower:
+	if _state == CursorState.BUILD and _preview_building:
 		var is_buildable := _is_buildable(cursor.position)
-		_tower.modulate = COLOR_OK if is_buildable else COLOR_KO
+		_preview_building.modulate = COLOR_OK if is_buildable else COLOR_KO
 		_update_place_button_state(is_buildable)
 
-## Removes a cell from the invalid cells list, allowing new towers to be built there
+## Removes a cell from the invalid cells list so a building can be placed there again.
 func remove_invalid_cell(tm_pos: Vector2i) -> void:
 	if tm_pos in _invalid_cells:
 		_invalid_cells.erase(tm_pos)

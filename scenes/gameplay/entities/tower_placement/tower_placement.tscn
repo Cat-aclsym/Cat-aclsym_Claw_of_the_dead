@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://cgundkxnxoixt"]
+[gd_scene load_steps=12 format=3 uid="uid://c37m62gfab408"]
 
 [ext_resource type="Script" path="res://scenes/gameplay/entities/tower_placement/tower_placement.gd" id="1_3aclw"]
 [ext_resource type="Texture2D" uid="uid://dn7sa2jf2kvor" path="res://assets/environment/grid_placement/moving_arrow.png" id="2_8yjt0"]

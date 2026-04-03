@@ -1,11 +1,11 @@
 ## © [2026] A7 Studio. All rights reserved. Trademark.
 ##
-## Manages the tower construction selection menu interface and functionality.
+## Manages the build menu (towers and traps) and its animations.
 class_name BuildSelection
 extends Control
 
-## Construction menu nodes
-@onready var construction_menu: HBoxContainer = $MarginContainer/BackgroundTextureRect/TowerListMarginContainer/HBoxContainer
+## Row of [BuildCard] instances.
+@onready var construction_menu: HBoxContainer = $MarginContainer/BackgroundTextureRect/BuildListMarginContainer/HBoxContainer
 @onready var construction_anim_player: AnimationPlayer = $AnimationPlayer
 
 # Called when the node enters the scene tree for the first time.
@@ -28,14 +28,14 @@ func _process(_delta: float):
 # public
 
 ## Toggles the build menu visibility with animation.
-## [br]Updates tower cards when showing the menu.
+## [br]Refreshes build cards when opening the menu.
 func toggle_build_menu() -> void:
 	if construction_menu.visible:
 		Log.trace(Log.Level.INFO, "Hiding construction menu")
 		construction_anim_player.play("RESET")
 	else:
 		Log.trace(Log.Level.INFO, "Showing construction menu")
-		construction_anim_player.play("show_tower_list")
+		construction_anim_player.play("show_build_list")
 		construction_menu.visible = true
 		_refresh_construction_cards()
 		return

@@ -45,7 +45,7 @@ animations = [{
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_bapwk"]
 size = Vector2(14, 14)
 
-[node name="TowerPlacement" type="Node2D"]
+[node name="BuildPlacement" type="Node2D"]
 script = ExtResource("1_3aclw")
 
 [node name="cursor" type="AnimatedSprite2D" parent="."]

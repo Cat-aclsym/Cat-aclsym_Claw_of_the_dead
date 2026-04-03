@@ -83,7 +83,7 @@ texture = ExtResource("5_bg")
 expand_mode = 1
 stretch_mode = 4
 
-[node name="TowerTextureRect" type="TextureRect" parent="CardVBoxContainer/CardAspectRatioContainer/CardTextureButton"]
+[node name="BuildPreviewTextureRect" type="TextureRect" parent="CardVBoxContainer/CardAspectRatioContainer/CardTextureButton"]
 z_index = 0
 layout_mode = 1
 anchors_preset = 15

@@ -343,7 +343,7 @@ func _dead_state() -> void:
 
 	var money_reward: int = 10
 	
-	# Apply reward multiplier if the killer was a tower
+	# Apply reward multiplier when the killing [IBullet] was fired by a tower ([member IBullet.tower_owner]).
 	if last_source is IBullet and last_source.tower_owner != null:
 		money_reward = int(money_reward * last_source.tower_owner.reward_multiplier)
 		

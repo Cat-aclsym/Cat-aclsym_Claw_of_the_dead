@@ -44,13 +44,13 @@ func _ready() -> void:
 # Public functions
 ## Initializes the end game screen with victory or defeat state.
 func init(victory: bool) -> void:
-	var tower_selection := Global.ui.get_node_or_null("TowerSelection")
-	if tower_selection:
-		tower_selection.queue_free()
+	var build_menu := Global.ui.get_node_or_null("BuildSelection")
+	if build_menu:
+		build_menu.queue_free()
 
-	var tower_selection_button := Global.hud.get_node_or_null("TowerSelectionMarginContainer/TowerSelectionButton")
-	if tower_selection_button:
-		tower_selection_button.set_pressed_no_signal(false)
+	var build_menu_button := Global.hud.get_node_or_null("BuildSelectionMarginContainer/BuildSelectionButton")
+	if build_menu_button:
+		build_menu_button.set_pressed_no_signal(false)
 
 	assert(time_label != null, "time_label node not found")
 	assert(life_label != null, "life_label node not found")
