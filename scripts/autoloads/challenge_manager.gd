@@ -73,11 +73,11 @@ func notify_building_placed(building: IBuilding) -> void:
 		IBuilding.BuildingKind.TOWER:
 			notify_tower_placed(building as ITower)
 		IBuilding.BuildingKind.TRAP:
-			notify_trap_placed(building)
+			notify_trap_placed(building as ITrap)
 
 
 ## Notifies challenges about a trap placement.
-func notify_trap_placed(trap: Variant) -> void:
+func notify_trap_placed(trap: ITrap) -> void:
 	for c in active_challenges:
 		if c.has_method("on_trap_placed"):
 			c.on_trap_placed(trap)

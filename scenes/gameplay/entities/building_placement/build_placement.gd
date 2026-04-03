@@ -27,57 +27,6 @@ const VALID_TILES: Array[Vector2i] = [
 	Vector2i(0, 0)
 ]
 
-## Nearest map cell to [param origin_cell] where [param template] can be placed (4-neighbour BFS within padded used rect).
-func _find_nearest_valid_build_cell(origin_cell: Vector2i, template: IBuilding) -> Vector2i:
-	if not tm_ref:
-		return origin_cell
-	var bounds: Rect2i = Rect2i(tm_ref.get_used_rect()).grow(8)
-	var visited: Dictionary = {}
-	var queue: Array[Vector2i] = [origin_cell]
-	visited[origin_cell] = true
-	var head: int = 0
-	const NEIGHBOURS: Array[Vector2i] = [
-		Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)
-	]
-	while head < queue.size():
-		var c: Vector2i = queue[head]
-		head += 1
-		if _is_template_buildable_at_map_cell(c, template):
-			return c
-		for d: Vector2i in NEIGHBOURS:
-			var n: Vector2i = c + d
-			if not bounds.has_point(n):
-				continue
-			if visited.has(n):
-				continue
-			visited[n] = true
-			queue.append(n)
-	return origin_cell
-
-## World position to start the build preview (camera center or map center).
-func _get_initial_build_position() -> Vector2:
-	# Get the camera's center position in world coordinates
-	var camera := get_viewport().get_camera_2d()
-	if camera:
-		var world_position := camera.get_screen_center_position()
-		return world_position
-
-	# Fallback: if no camera, get the center of the map
-	if tm_ref:
-		var map_rect := tm_ref.get_used_rect()
-		var map_center := map_rect.position + (map_rect.size / 2)
-		return tm_ref.map_to_local(map_center)
-
-	# Ultimate fallback
-	return Vector2.ZERO
-
-## Whether [param template] can be built at tile [param cell] (tilemap-local center).
-func _is_template_buildable_at_map_cell(cell: Vector2i, template: IBuilding) -> bool:
-	var pos: Vector2 = tm_ref.map_to_local(cell)
-	if template.get_building_kind() == IBuilding.BuildingKind.TRAP:
-		return _is_trap_buildable(pos, template)
-	return _is_ground_building_placeable(pos, template)
-
 ## States for the build / upgrade cursor.
 enum CursorState {
 	IDLE,  ## Default state
@@ -115,14 +64,19 @@ static var tower_count: int = 0
 	{SignalUtil.WHO: cancel_place_button, SignalUtil.WHAT: "mouse_exited", SignalUtil.TO: _on_button_mouse_exited},
 ]
 
-# core
 func _ready() -> void:
+	assert(cancel_place_button != null, "cancel_place_button node not found")
+	assert(cursor != null, "cursor node not found")
+	assert(place_button != null, "place_button node not found")
+	assert(place_hud != null, "place_hud node not found")
+	assert(place_hud_content != null, "place_hud_content node not found")
+	assert(placement_area != null, "placement_area node not found")
+
 	Global.cursor = self
 	visible = false
 	place_hud.visible = false
 	SignalUtil.connects(signals)
 
-	# Connect to level stats updates to refresh button state when coins change
 	if ILevel.current_level:
 		var level_signals: Array[Dictionary] = [
 			{SignalUtil.WHO: ILevel.current_level, SignalUtil.WHAT: "stats_updated", SignalUtil.TO: _on_level_stats_updated}
@@ -132,6 +86,12 @@ func _ready() -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if _state == CursorState.BUILD:
 		_state_build_input(event)
+
+## Adds a cell to the invalid cells list
+func add_invalid_cell(tm_pos: Vector2i) -> void:
+	if not tm_pos in _invalid_cells:
+		_invalid_cells.append(tm_pos)
+		Log.trace(Log.Level.INFO, "Cell {0} is now occupied".format([tm_pos]))
 
 ## Change the current state of the build placement cursor.
 ## [br]
@@ -148,7 +108,7 @@ func change_state(new_state: CursorState, args: Array = []) -> void:
 			_set_placed_tower_ui_enabled(true)
 		CursorState.BUILD:
 			if _state != CursorState.IDLE:
-				Log.trace(Log.Level.WARN, "Cannot change cursor state from BUILD to IDLE")
+				Log.trace(Log.Level.WARN, "Cannot enter BUILD state: current state is not IDLE")
 				return
 			assert(args.size() == 1)
 			assert(args[0] is IBuilding)
@@ -157,18 +117,16 @@ func change_state(new_state: CursorState, args: Array = []) -> void:
 			_state = new_state
 			visible = true
 
-			# Connect to level stats if not already connected
 			if ILevel.current_level and not ILevel.current_level.stats_updated.is_connected(_on_level_stats_updated):
 				ILevel.current_level.stats_updated.connect(_on_level_stats_updated)
 
-			# Disable on-map tower UI so it does not steal input during placement
 			_set_placed_tower_ui_enabled(false)
 
 			_state_build(args[0])
 
 		CursorState.UPGRADE:
 			if _state != CursorState.IDLE:
-				Log.trace(Log.Level.WARN, "Cannot change cursor state from UPGRADE to IDLE")
+				Log.trace(Log.Level.WARN, "Cannot enter UPGRADE state: current state is not IDLE")
 				return
 			trigger_state_upgrade.emit()
 			_state = new_state
@@ -176,9 +134,114 @@ func change_state(new_state: CursorState, args: Array = []) -> void:
 
 	_update()
 
-# private
-func _update() -> void:
-	_handle_state()
+## Removes a cell from the invalid cells list so a building can be placed there again.
+func remove_invalid_cell(tm_pos: Vector2i) -> void:
+	if tm_pos in _invalid_cells:
+		_invalid_cells.erase(tm_pos)
+		Log.trace(Log.Level.INFO, "Cell {0} is now free for building".format([tm_pos]))
+
+func _build() -> void:
+	if not _is_buildable(cursor.position):
+		return
+
+	_can_reposition_build_cursor = false
+
+	var new_entity: Node2D = _preview_building.duplicate()
+	new_entity.modulate = Color(1, 1, 1, 1)
+
+	var current_level: ILevel = ILevel.current_level
+	var tm_pos: Vector2i = tm_ref.local_to_map(tm_ref.to_local(cursor.global_position))
+
+	if new_entity is ITower:
+		var new_tower := new_entity as ITower
+		new_tower.state = ITower.TowerState.ACTIVE
+		new_tower.show_range(false, false) # Hide range instantly on the placed tower
+		tower_count += 1
+		new_tower.name = "t%d" % tower_count
+		if "tile_pos" in new_tower:
+			new_tower.tile_pos = tm_pos
+
+		if current_level and current_level.map:
+			var map: IMap = current_level.map
+			map.add_child(new_tower)
+			if map.special_tiles.has(tm_pos):
+				var modifier: Dictionary = map.special_tiles[tm_pos]
+				new_tower.apply_special_modifier(modifier)
+		else:
+			get_parent().add_child(new_tower)
+
+	elif new_entity is ITrap:
+		var new_trap := new_entity as ITrap
+		new_trap.state = ITrap.TrapState.ACTIVE
+		if current_level and current_level.map:
+			current_level.map.add_child(new_trap)
+		else:
+			get_parent().add_child(new_trap)
+
+	if new_entity is IBuilding:
+		ChallengeManager.notify_building_placed(new_entity as IBuilding)
+
+	_invalid_cells.append(tm_pos)
+	ILevel.current_level.coins -= _preview_building.cost
+
+	_cancel_build()
+	_can_reposition_build_cursor = true
+
+func _cancel_build() -> void:
+	cursor.visible = false
+	place_hud.visible = false
+	if _preview_building:
+		var t: IBuilding = _preview_building
+		_preview_building = null # Clear reference immediately
+		t.cancel_build_preview()
+
+		var tween: Tween = create_tween()
+		tween.tween_property(t, "modulate:a", 0.0, 0.2)
+		tween.tween_callback(t.queue_free)
+
+	_last_tm_pos = Vector2i(-1, -1)
+	change_state(CursorState.IDLE)
+
+## Nearest map cell to [param origin_cell] where [param template] can be placed (4-neighbour BFS within padded used rect).
+func _find_nearest_valid_build_cell(origin_cell: Vector2i, template: IBuilding) -> Vector2i:
+	if not tm_ref:
+		return origin_cell
+	var bounds: Rect2i = Rect2i(tm_ref.get_used_rect()).grow(8)
+	var visited: Dictionary = {}
+	var queue: Array[Vector2i] = [origin_cell]
+	visited[origin_cell] = true
+	var head: int = 0
+	const NEIGHBOURS: Array[Vector2i] = [
+		Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)
+	]
+	while head < queue.size():
+		var c: Vector2i = queue[head]
+		head += 1
+		if _is_template_buildable_at_map_cell(c, template):
+			return c
+		for d: Vector2i in NEIGHBOURS:
+			var n: Vector2i = c + d
+			if not bounds.has_point(n):
+				continue
+			if visited.has(n):
+				continue
+			visited[n] = true
+			queue.append(n)
+	return origin_cell
+
+## World position to start the build preview (camera center or map center).
+func _get_initial_build_position() -> Vector2:
+	var camera: Camera2D = get_viewport().get_camera_2d()
+	if camera:
+		var world_position: Vector2 = camera.get_screen_center_position()
+		return world_position
+
+	if tm_ref:
+		var map_rect: Rect2i = tm_ref.get_used_rect()
+		var map_center: Vector2i = map_rect.position + (map_rect.size / 2)
+		return tm_ref.map_to_local(map_center)
+
+	return Vector2.ZERO
 
 func _handle_state() -> void:
 	match _state:
@@ -189,6 +252,103 @@ func _handle_state() -> void:
 		CursorState.UPGRADE:
 			_state_upgrade()
 
+func _is_buildable(pos: Vector2) -> bool:
+	if _preview_building.get_building_kind() == IBuilding.BuildingKind.TRAP:
+		return _is_trap_buildable(pos)
+	return _is_ground_building_placeable(pos)
+
+func _is_ground_building_placeable(pos: Vector2, building: IBuilding = null) -> bool:
+	var b: IBuilding = building if building != null else _preview_building
+	if b == null:
+		return false
+	if ILevel.current_level.coins < b.cost:
+		return false
+
+	var tm_pos: Vector2i = tm_ref.local_to_map(pos)
+
+	if tm_pos in _invalid_cells:
+		return false
+
+	var source_id: int = tm_ref.get_cell_source_id(0, tm_pos)
+	if source_id != VALID_SOURCE_ID:
+		return false
+
+	var atlas_coords: Vector2i = tm_ref.get_cell_atlas_coords(0, tm_pos)
+	if not atlas_coords in VALID_TILES:
+		return false
+
+	if tm_ref.get_cell_atlas_coords(1, tm_pos) != Vector2i(-1, -1):
+		return false
+
+	if _is_position_on_path(pos):
+		return false
+
+	return true
+
+## Whether the placement area at [param pos] overlaps an enemy path.
+## [br]Uses half-size 12.5 px (25×25 placement box) versus distance to each [Path2D].
+func _is_position_on_path(pos: Vector2) -> bool:
+	if not ILevel.current_level:
+		return false
+
+	var level: ILevel = ILevel.current_level
+	if not "map" in level or not level.map:
+		return false
+
+	var paths: Array[Path2D] = level.map.paths
+	var placement_half_size: float = 12.5
+
+	for path: Path2D in paths:
+		var closest_point: Vector2 = path.curve.get_closest_point(path.to_local(pos))
+		var distance: float = pos.distance_to(path.to_global(closest_point))
+
+		if distance < placement_half_size:
+			return true
+
+	return false
+
+## Whether [param template] can be built at tile [param cell] (tilemap-local center).
+func _is_template_buildable_at_map_cell(cell: Vector2i, template: IBuilding) -> bool:
+	var pos: Vector2 = tm_ref.map_to_local(cell)
+	if template.get_building_kind() == IBuilding.BuildingKind.TRAP:
+		return _is_trap_buildable(pos, template)
+	return _is_ground_building_placeable(pos, template)
+
+func _is_trap_buildable(pos: Vector2, building: IBuilding = null) -> bool:
+	var b: IBuilding = building if building != null else _preview_building
+	if b == null:
+		return false
+	if ILevel.current_level.coins < b.cost:
+		return false
+
+	var tm_pos: Vector2i = tm_ref.local_to_map(pos)
+
+	if not _is_position_on_path(pos):
+		return false
+
+	if tm_pos in _invalid_cells:
+		return false
+
+	return true
+
+func _on_button_mouse_entered() -> void:
+	_can_reposition_build_cursor = false
+
+func _on_button_mouse_exited() -> void:
+	_can_reposition_build_cursor = true
+
+func _on_cancel_place_button_pressed() -> void:
+	_cancel_build()
+
+func _on_level_stats_updated() -> void:
+	if _state == CursorState.BUILD and _preview_building:
+		var is_buildable := _is_buildable(cursor.position)
+		_preview_building.modulate = COLOR_OK if is_buildable else COLOR_KO
+		_update_place_button_state(is_buildable)
+
+func _on_place_button_pressed() -> void:
+	_build()
+
 func _set_cursor_position(pos: Vector2 = get_global_mouse_position()) -> void:
 	var map_pos: Vector2i = tm_ref.local_to_map(pos)
 	var local_pos: Vector2 = tm_ref.map_to_local(map_pos)
@@ -198,17 +358,36 @@ func _set_cursor_position(pos: Vector2 = get_global_mouse_position()) -> void:
 	place_hud.visible = true
 	place_hud.position = local_pos
 
-	# Move the placement area hitbox to follow the cursor
 	placement_area.position = local_pos
+
+func _set_placed_tower_ui_enabled(enabled: bool) -> void:
+	if not ILevel.current_level:
+		return
+
+	var level: ILevel = ILevel.current_level
+	if not "map" in level or not level.map:
+		return
+
+	var towers: Array[Node] = get_tree().get_nodes_in_group("towers")
+	for tower_body: Node in towers:
+		if tower_body.get_parent() is ITower:
+			var tower: ITower = tower_body.get_parent()
+			if tower.button:
+				tower.button.disabled = not enabled
+			if tower.hover_box and tower.hover_box.get_parent():
+				var hover_area: Area2D = tower.hover_box.get_parent()
+				hover_area.monitoring = enabled
+				hover_area.monitorable = enabled
+				hover_area.input_pickable = enabled
 
 ## Build-mode frame: follow cursor, tint preview, validate tile.
 func _state_build(template: Node2D = null) -> void:
 	if template:
 		var tpl: IBuilding = template as IBuilding
-		var initial_global := _get_initial_build_position()
+		var initial_global: Vector2 = _get_initial_build_position()
 		if tm_ref:
-			var origin_cell := tm_ref.local_to_map(tm_ref.to_local(initial_global))
-			var best_cell := _find_nearest_valid_build_cell(origin_cell, tpl)
+			var origin_cell: Vector2i = tm_ref.local_to_map(tm_ref.to_local(initial_global))
+			var best_cell: Vector2i = _find_nearest_valid_build_cell(origin_cell, tpl)
 			_set_cursor_position(tm_ref.map_to_local(best_cell))
 		else:
 			_set_cursor_position(initial_global)
@@ -225,65 +404,28 @@ func _state_build(template: Node2D = null) -> void:
 	_preview_building.position = cursor.position - Vector2(0, _preview_building.get_placement_vertical_offset())
 	var tm_pos: Vector2i = tm_ref.local_to_map(cursor.global_position)
 
-	# Update special modifiers in real-time based on current tile
 	if tm_pos != _last_tm_pos:
 		_last_tm_pos = tm_pos
-		var current_level = ILevel.current_level
+		var current_level: ILevel = ILevel.current_level
 		if current_level and current_level.map:
-			var map = current_level.map
+			var map: IMap = current_level.map
 			if map.special_tiles.has(tm_pos):
-				var modifier = map.special_tiles[tm_pos]
+				var modifier: Dictionary = map.special_tiles[tm_pos]
 				if "apply_special_modifier" in _preview_building:
 					_preview_building.apply_special_modifier(modifier)
 			elif "apply_special_modifier" in _preview_building:
-				# Clear modifiers if the tile is not special
 				_preview_building.apply_special_modifier({})
 
 	var is_buildable := _is_buildable(cursor.position)
 	_preview_building.modulate = COLOR_OK if is_buildable else COLOR_KO
 	_update_place_button_state(is_buildable)
 
-	# [ITower] only: keep range button usable; disable hover hitbox so it does not steal clicks
 	if _preview_building is ITower and (_preview_building as ITower).hover_box and (_preview_building as ITower).hover_box.get_parent():
 		var hover_area: Area2D = (_preview_building as ITower).hover_box.get_parent()
 		hover_area.monitoring = false
 		hover_area.monitorable = false
 		hover_area.input_pickable = false
-	_preview_building.modulate = COLOR_OK if is_buildable else COLOR_KO
 
-## Check if the placement area overlaps with any enemy path
-func _is_position_on_path(pos: Vector2) -> bool:
-	"""Check if the placement area at a given position would overlap with any enemy path.
-	Uses a 25x25 box (the placement area size) to check collision with paths.
-
-	Args:
-		pos: The world position where to check placement
-
-	Returns:
-		true if the placement area would collide with a path, false otherwise
-	"""
-	if not ILevel.current_level:
-		return false
-
-	var level = ILevel.current_level
-	if not "map" in level or not level.map:
-		return false
-
-	var paths: Array[Path2D] = level.map.paths
-	var placement_half_size: float = 12.5  # Half of 25x25 placement box
-
-	# Check distance to each path
-	for path in paths:
-		var closest_point = path.curve.get_closest_point(path.to_local(pos))
-		var distance = pos.distance_to(path.to_global(closest_point))
-
-		# If distance is less than placement box size, it's overlapping
-		if distance < placement_half_size:
-			return true
-
-	return false
-
-## Handles the build state input events, such as mouse clicks and drags
 func _state_build_input(event: InputEvent) -> void:
 	if event is InputEventScreenDrag or event is InputEventMouseMotion:
 		if _is_holding_click and not _is_dragging:
@@ -301,7 +443,6 @@ func _state_build_input(event: InputEvent) -> void:
 			_set_cursor_position(pos)
 			_update()
 	elif event is InputEventMouseButton and not OS.has_feature("mobile"):
-		# Don't process clicks on buttons
 		if not _can_reposition_build_cursor:
 			return
 
@@ -325,126 +466,9 @@ func _state_idle() -> void:
 func _state_upgrade() -> void:
 	pass
 
-func _cancel_build() -> void:
-	cursor.visible = false
-	place_hud.visible = false
-	if _preview_building:
-		var t: IBuilding = _preview_building
-		_preview_building = null # Clear reference immediately
-		t.cancel_build_preview()
+func _update() -> void:
+	_handle_state()
 
-		# Fade out the build preview
-		var tween = create_tween()
-		tween.tween_property(t, "modulate:a", 0.0, 0.2)
-		tween.tween_callback(t.queue_free)
-
-	_last_tm_pos = Vector2i(-1, -1)
-	change_state(CursorState.IDLE)
-
-func _build() -> void:
-	if not _is_buildable(cursor.position):
-		return
-
-	_can_reposition_build_cursor = false
-
-	var new_entity: Node2D = _preview_building.duplicate()
-	new_entity.modulate = Color(1, 1, 1, 1)
-
-	var current_level = ILevel.current_level
-	# Use global position to ensure we get the correct tile regardless of local offsets
-	var tm_pos: Vector2i = tm_ref.local_to_map(tm_ref.to_local(cursor.global_position))
-
-	if new_entity is ITower:
-		var new_tower := new_entity as ITower
-		new_tower.state = ITower.TowerState.ACTIVE
-		new_tower.show_range(false, false) # Hide range instantly on the placed tower
-		tower_count += 1
-		new_tower.name = "t%d" % tower_count
-		if "tile_pos" in new_tower:
-			new_tower.tile_pos = tm_pos
-
-		if current_level and current_level.map:
-			var map = current_level.map
-			map.add_child(new_tower)
-			if map.special_tiles.has(tm_pos):
-				var modifier = map.special_tiles[tm_pos]
-				new_tower.apply_special_modifier(modifier)
-		else:
-			# Fallback if map is not directly accessible via current_level
-			get_parent().add_child(new_tower)
-
-	elif new_entity is ITrap:
-		var new_trap := new_entity as ITrap
-		new_trap.state = ITrap.TrapState.ACTIVE
-		if current_level and current_level.map:
-			current_level.map.add_child(new_trap)
-		else:
-			get_parent().add_child(new_trap)
-
-	if new_entity is IBuilding:
-		ChallengeManager.notify_building_placed(new_entity as IBuilding)
-
-	_invalid_cells.append(tm_pos)
-	ILevel.current_level.coins -= _preview_building.cost
-
-	_cancel_build()
-	_can_reposition_build_cursor = true
-
-func _is_buildable(pos: Vector2) -> bool:
-	if _preview_building.get_building_kind() == IBuilding.BuildingKind.TRAP:
-		return _is_trap_buildable(pos)
-	return _is_ground_building_placeable(pos)
-
-func _is_ground_building_placeable(pos: Vector2, building: IBuilding = null) -> bool:
-	var b: IBuilding = building if building != null else _preview_building
-	if b == null:
-		return false
-	if ILevel.current_level.coins < b.cost:
-		return false
-
-	var tm_pos: Vector2i = tm_ref.local_to_map(pos)
-
-	if tm_pos in _invalid_cells:
-		return false
-
-	# Only allow tiles coming from valid TileSet sources and specific atlas coordinates
-	var source_id: int = tm_ref.get_cell_source_id(0, tm_pos)
-	if source_id != VALID_SOURCE_ID:
-		return false
-
-	var atlas_coords: Vector2i = tm_ref.get_cell_atlas_coords(0, tm_pos)
-	if not atlas_coords in VALID_TILES:
-		return false
-
-	if tm_ref.get_cell_atlas_coords(1, tm_pos) != Vector2i(-1, -1):
-		return false
-
-	# Prevent placement on or near enemy paths
-	if _is_position_on_path(pos):
-		return false
-
-	return true
-
-func _is_trap_buildable(pos: Vector2, building: IBuilding = null) -> bool:
-	var b: IBuilding = building if building != null else _preview_building
-	if b == null:
-		return false
-	if ILevel.current_level.coins < b.cost:
-		return false
-
-	var tm_pos := tm_ref.local_to_map(pos)
-
-	# Only allow traps directly on the enemy path
-	# (uses current path system instead of old TileSet atlas coords)
-	if not _is_position_on_path(pos):
-		return false
-
-	if tm_pos in _invalid_cells:
-		return false
-
-	return true
-
-## Updates the visual state of the place button based on buildability
 func _update_place_button_state(can_build: bool) -> void:
 	if can_build:
 		place_button.modulate = BUTTON_COLOR_ENABLED
@@ -452,55 +476,3 @@ func _update_place_button_state(can_build: bool) -> void:
 	else:
 		place_button.modulate = BUTTON_COLOR_DISABLED
 		place_button.disabled = true
-
-## Enables or disables [ITower] on-map buttons and hover areas during build preview.
-func _set_placed_tower_ui_enabled(enabled: bool) -> void:
-	if not ILevel.current_level:
-		return
-
-	var level = ILevel.current_level
-	if not "map" in level or not level.map:
-		return
-
-	var towers := get_tree().get_nodes_in_group("towers")
-	for tower_body in towers:
-		if tower_body.get_parent() is ITower:
-			var tower: ITower = tower_body.get_parent()
-			if tower.button:
-				tower.button.disabled = not enabled
-			# Also disable/enable the hover box
-			if tower.hover_box and tower.hover_box.get_parent():
-				var hover_area: Area2D = tower.hover_box.get_parent()
-				hover_area.monitoring = enabled
-				hover_area.monitorable = enabled
-				hover_area.input_pickable = enabled
-
-func _on_place_button_pressed() -> void:
-	_build()
-
-func _on_cancel_place_button_pressed() -> void:
-	_cancel_build()
-
-func _on_button_mouse_entered() -> void:
-	_can_reposition_build_cursor = false
-
-func _on_button_mouse_exited() -> void:
-	_can_reposition_build_cursor = true
-
-func _on_level_stats_updated() -> void:
-	if _state == CursorState.BUILD and _preview_building:
-		var is_buildable := _is_buildable(cursor.position)
-		_preview_building.modulate = COLOR_OK if is_buildable else COLOR_KO
-		_update_place_button_state(is_buildable)
-
-## Removes a cell from the invalid cells list so a building can be placed there again.
-func remove_invalid_cell(tm_pos: Vector2i) -> void:
-	if tm_pos in _invalid_cells:
-		_invalid_cells.erase(tm_pos)
-		Log.trace(Log.Level.INFO, "Cell {0} is now free for building".format([tm_pos]))
-
-## Adds a cell to the invalid cells list
-func add_invalid_cell(tm_pos: Vector2i) -> void:
-	if not tm_pos in _invalid_cells:
-		_invalid_cells.append(tm_pos)
-		Log.trace(Log.Level.INFO, "Cell {0} is now occupied".format([tm_pos]))

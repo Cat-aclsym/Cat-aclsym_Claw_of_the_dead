@@ -1,4 +1,4 @@
-## © [2024] A7 Studio. All rights reserved. Trademark.
+## © [2026] A7 Studio. All rights reserved. Trademark.
 ##
 ## Interface for a tower.
 class_name ITower
@@ -115,7 +115,6 @@ var tile_pos: Vector2i
 var _pulse_tween: Tween = null
 var _scale_tween: Tween = null
 var _range_tween: Tween = null
-@onready var stats_db = get_node("/root/StatsDB")
 @export var tower_id: String = ""
 
 # Core methods
@@ -395,7 +394,7 @@ func build_tower() -> void:
 ## Sells the tower
 func sell_tower() -> void:
 	ILevel.current_level.coins += sell_price
-	var placement_system = Global.get("cursor")
+	var placement_system: BuildPlacement = Global.get("cursor") as BuildPlacement
 	if placement_system:
 		placement_system.remove_invalid_cell(tile_pos)
 	queue_free()
@@ -405,7 +404,7 @@ func _register_with_cursor() -> void:
 		return
 		
 	# Safe access to Global.cursor to avoid assertion if it's not yet set
-	var placement_system = Global.get("cursor")
+	var placement_system: BuildPlacement = Global.get("cursor") as BuildPlacement
 	if placement_system:
 		if tile_pos == Vector2i.ZERO:
 			if placement_system.tm_ref:

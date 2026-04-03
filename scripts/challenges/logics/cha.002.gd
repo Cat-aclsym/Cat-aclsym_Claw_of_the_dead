@@ -8,5 +8,5 @@ extends Challenge
 
 # Public functions
 ## Notifies the challenge about a trap placement.
-func on_trap_placed(_trap: Variant) -> void:
+func on_trap_placed(_trap: ITrap) -> void:
 	fail()

@@ -57,8 +57,8 @@ var remaining_effects: Array[float] = []
 	{SignalUtil.WHO: area_2d, SignalUtil.WHAT: "area_exited", SignalUtil.TO: _on_area_2d_body_exited}
 ]
 
-# core
-func _ready():
+func _ready() -> void:
+	assert(area_2d != null, "area_2d node not found")
 	apply_stats_from_db()
 	_update_z_index()
 	SignalUtil.connects(signals)
@@ -77,8 +77,8 @@ func _process(delta: float) -> void:
 		var opacity := (0.8 * (float(current_durability) / float(max_durability))) + 0.2
 		modulate.a = opacity
 
-		var to_remove := []
-		for enemy in active_affected_enemies:
+		var to_remove: Array[IEnemy] = []
+		for enemy: IEnemy in active_affected_enemies:
 			active_affected_enemies[enemy] -= delta
 			if active_affected_enemies[enemy] <= 0:
 				if enemy in enemies_in_area and is_usable:
@@ -87,7 +87,7 @@ func _process(delta: float) -> void:
 					remove_effect(enemy)
 					to_remove.append(enemy)
 
-		var remaining_to_remove := []
+		var remaining_to_remove: Array[int] = []
 		for i in range(remaining_effects.size()):
 			remaining_effects[i] -= delta
 			if remaining_effects[i] <= 0:
@@ -179,7 +179,7 @@ func _update_z_index() -> void:
 	var y_position := int(global_position.y)
 	z_index = (y_position / 2) - 10
 
-func _get_enemy_from_overlap(overlap) -> IEnemy:
+func _get_enemy_from_overlap(overlap: Node2D) -> IEnemy:
 	# We want traps to trigger based on the zombie "feet" zone only.
 	# This avoids head/body overlaps triggering the effect on slopes.
 	if overlap is IEnemy:
@@ -193,7 +193,7 @@ func _get_enemy_from_overlap(overlap) -> IEnemy:
 	return null
 
 # signal
-func _on_area_2d_body_entered(body) -> void:
+func _on_area_2d_body_entered(body: Node2D) -> void:
 	if state != TrapState.ACTIVE:
 		return
 
@@ -207,7 +207,7 @@ func _on_area_2d_body_entered(body) -> void:
 	enemies_in_area.append(enemy)
 	_handle_trap_activation(enemy)
 
-func _on_area_2d_body_exited(body) -> void:
+func _on_area_2d_body_exited(body: Node2D) -> void:
 	if state != TrapState.ACTIVE:
 		return
 

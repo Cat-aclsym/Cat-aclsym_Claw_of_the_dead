@@ -1,4 +1,4 @@
-## © [2024] A7 Studio. All rights reserved. Trademark.
+## © [2026] A7 Studio. All rights reserved. Trademark.
 ##
 ## Base class for game maps. Manages tile-based map layout.
 ## @tutorial: See map_1.tscn for implementation example
@@ -21,7 +21,7 @@ func _ready() -> void:
 	_load_paths()
 	_create_path_indicators()
 
-	var placement_system = Global.get("cursor")
+	var placement_system: BuildPlacement = Global.get("cursor") as BuildPlacement
 	if placement_system:
 		placement_system.tm_ref = tilemap
 	else:
@@ -32,7 +32,7 @@ func _ready() -> void:
 	_generate_special_tiles()
 
 func _assign_tilemap_to_cursor() -> void:
-	var placement_system = Global.get("cursor")
+	var placement_system: BuildPlacement = Global.get("cursor") as BuildPlacement
 	if placement_system:
 		placement_system.tm_ref = tilemap
 

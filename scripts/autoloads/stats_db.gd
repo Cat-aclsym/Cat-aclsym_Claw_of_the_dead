@@ -1,4 +1,4 @@
-## © [2024] A7 Studio. All rights reserved. Trademark.
+## © [2026] A7 Studio. All rights reserved. Trademark.
 ##
 ## Charge et expose les stats centralisées (tours, pièges, upgrades, ennemis) depuis un JSON.
 extends Node

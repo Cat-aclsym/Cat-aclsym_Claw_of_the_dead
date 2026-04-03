@@ -13,10 +13,6 @@ var original_speeds: Dictionary = {}
 func _ready() -> void:
 	super()
 
-func _apply_trap_stats_extension(base: Dictionary) -> void:
-	if base.has("slow_amount"):
-		slow_amount = float(base["slow_amount"])
-
 func apply_effect(enemy: IEnemy) -> void:
 	if not enemy in original_speeds:
 		original_speeds[enemy] = enemy.speed
@@ -28,3 +24,7 @@ func remove_effect(enemy: IEnemy) -> void:
 		enemy.speed = original_speeds[enemy]
 		original_speeds.erase(enemy)
 		enemy.pop_slow_visual()
+
+func _apply_trap_stats_extension(_base: Dictionary) -> void:
+	if _base.has("slow_amount"):
+		slow_amount = float(_base["slow_amount"])
