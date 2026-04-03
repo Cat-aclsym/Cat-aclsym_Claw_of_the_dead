@@ -27,6 +27,33 @@ const VALID_TILES: Array[Vector2i] = [
 	Vector2i(0, 0)
 ]
 
+## Nearest map cell to [param origin_cell] where [param template] can be placed (4-neighbour BFS within padded used rect).
+func _find_nearest_valid_build_cell(origin_cell: Vector2i, template: IBuilding) -> Vector2i:
+	if not tm_ref:
+		return origin_cell
+	var bounds: Rect2i = Rect2i(tm_ref.get_used_rect()).grow(8)
+	var visited: Dictionary = {}
+	var queue: Array[Vector2i] = [origin_cell]
+	visited[origin_cell] = true
+	var head: int = 0
+	const NEIGHBOURS: Array[Vector2i] = [
+		Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)
+	]
+	while head < queue.size():
+		var c: Vector2i = queue[head]
+		head += 1
+		if _is_template_buildable_at_map_cell(c, template):
+			return c
+		for d: Vector2i in NEIGHBOURS:
+			var n: Vector2i = c + d
+			if not bounds.has_point(n):
+				continue
+			if visited.has(n):
+				continue
+			visited[n] = true
+			queue.append(n)
+	return origin_cell
+
 ## World position to start the build preview (camera center or map center).
 func _get_initial_build_position() -> Vector2:
 	# Get the camera's center position in world coordinates
@@ -43,6 +70,13 @@ func _get_initial_build_position() -> Vector2:
 
 	# Ultimate fallback
 	return Vector2.ZERO
+
+## Whether [param template] can be built at tile [param cell] (tilemap-local center).
+func _is_template_buildable_at_map_cell(cell: Vector2i, template: IBuilding) -> bool:
+	var pos: Vector2 = tm_ref.map_to_local(cell)
+	if template.get_building_kind() == IBuilding.BuildingKind.TRAP:
+		return _is_trap_buildable(pos, template)
+	return _is_ground_building_placeable(pos, template)
 
 ## States for the build / upgrade cursor.
 enum CursorState {
@@ -170,8 +204,14 @@ func _set_cursor_position(pos: Vector2 = get_global_mouse_position()) -> void:
 ## Build-mode frame: follow cursor, tint preview, validate tile.
 func _state_build(template: Node2D = null) -> void:
 	if template:
-		var initial_pos := _get_initial_build_position()
-		_set_cursor_position(initial_pos)
+		var tpl: IBuilding = template as IBuilding
+		var initial_global := _get_initial_build_position()
+		if tm_ref:
+			var origin_cell := tm_ref.local_to_map(tm_ref.to_local(initial_global))
+			var best_cell := _find_nearest_valid_build_cell(origin_cell, tpl)
+			_set_cursor_position(tm_ref.map_to_local(best_cell))
+		else:
+			_set_cursor_position(initial_global)
 
 		_preview_building = template.duplicate() as IBuilding
 		_preview_building.enter_build_preview()
@@ -355,8 +395,11 @@ func _is_buildable(pos: Vector2) -> bool:
 		return _is_trap_buildable(pos)
 	return _is_ground_building_placeable(pos)
 
-func _is_ground_building_placeable(pos: Vector2) -> bool:
-	if ILevel.current_level.coins < _preview_building.cost:
+func _is_ground_building_placeable(pos: Vector2, building: IBuilding = null) -> bool:
+	var b: IBuilding = building if building != null else _preview_building
+	if b == null:
+		return false
+	if ILevel.current_level.coins < b.cost:
 		return false
 
 	var tm_pos: Vector2i = tm_ref.local_to_map(pos)
@@ -382,8 +425,11 @@ func _is_ground_building_placeable(pos: Vector2) -> bool:
 
 	return true
 
-func _is_trap_buildable(pos: Vector2) -> bool:
-	if ILevel.current_level.coins < _preview_building.cost:
+func _is_trap_buildable(pos: Vector2, building: IBuilding = null) -> bool:
+	var b: IBuilding = building if building != null else _preview_building
+	if b == null:
+		return false
+	if ILevel.current_level.coins < b.cost:
 		return false
 
 	var tm_pos := tm_ref.local_to_map(pos)
