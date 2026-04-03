@@ -94,6 +94,8 @@ var state: EnemyState = EnemyState.FOLLOW_PATH
 ## Store the last source of damage
 var last_source: Variant = null
 
+var _damage_tween: Tween
+
 ## Stacked slow visuals (traps, debuffs); each source must pair pop with push.
 var _slow_visual_refcount: int = 0
 
@@ -149,7 +151,7 @@ func take_damage(damage: float, damage_type: DamageType, source: Variant = null)
 	last_damage_type = damage_type
 	last_source = source
 	_damage_effect(DAMAGES[damage_type]["color"])
-	
+
 	if popup_score_spawner:
 		popup_score_spawner.display_damage(damage, DAMAGES[damage_type]["color"])
 
@@ -233,6 +235,29 @@ func _damage_effect(color: Color) -> void:
 	sprite.modulate = color
 	await get_tree().create_timer(0.1).timeout
 	sprite.modulate = _idle_modulate()
+	if not is_instance_valid(sprite) or not is_inside_tree():
+		return
+
+	if _damage_tween:
+		_damage_tween.kill()
+
+	_damage_tween = create_tween()
+	
+	# Flash color: white/glowing white or colored based on damage type
+	var flash_color = Color(2.5, 2.5, 2.5, 1.0)
+	if color != Color.WHITE and color != Color(1, 1, 1, 1):
+		flash_color = color.lightened(0.5)
+		flash_color.a = 1.0
+
+	# Apply initial state immediately
+	sprite.modulate = flash_color
+	sprite.offset.x = 4.0
+	
+	# Wait a tiny bit then tween back
+	_damage_tween.tween_interval(0.04)
+	_damage_tween.set_parallel(true)
+	_damage_tween.tween_property(sprite, "modulate", old_modulate, 0.15)
+	_damage_tween.tween_property(sprite, "offset:x", 0.0, 0.15).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
 
 ## Update the direction of the enemy based on movement
 func _update_direction() -> void:
@@ -342,11 +367,13 @@ func _dead_state() -> void:
 		return
 
 	var money_reward: int = 10
+
+	# Apply reward multiplier if the killer was a tower
 	
 	# Apply reward multiplier when the killing [IBullet] was fired by a tower ([member IBullet.tower_owner]).
 	if last_source is IBullet and last_source.tower_owner != null:
 		money_reward = int(money_reward * last_source.tower_owner.reward_multiplier)
-		
+
 	ILevel.current_level.coins += money_reward
 	_disappear()
 

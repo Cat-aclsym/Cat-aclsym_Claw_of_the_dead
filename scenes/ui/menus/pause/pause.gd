@@ -78,5 +78,6 @@ func _update_encyclopedia_notification() -> void:
 # signals
 ## Resumes the game by unpausing and closing the menu.
 func _on_play_button_pressed() -> void:
-	Global.paused = false
+	if ILevel.current_level != null:
+		ILevel.current_level.resume_from_pause()
 	queue_free()

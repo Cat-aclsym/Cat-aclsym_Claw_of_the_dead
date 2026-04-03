@@ -18,6 +18,7 @@ const LVL_NAME: String = "name"
 @export var level_id: String = "lev.XX"
 
 var arc_texture: Texture2D
+var _level: ILevel = null
 var level: ILevel = null : get = _get_level
 
 @onready var challenges_container: VBoxContainer = $LevelPanelContainer/LevelMarginContainer/LevelVBoxContainer/FooterHBoxContainer/ChallengesContainer
@@ -35,6 +36,10 @@ func _ready() -> void:
 	configure()
 
 
+func _exit_tree() -> void:
+	unload_level()
+
+
 # Public functions
 func configure() -> void:
 	level_name_label.text = level.level_name
@@ -50,13 +55,26 @@ func configure() -> void:
 # Private functions
 # private
 func _get_level() -> ILevel:
-	if level != null:
-		return level
+	if _level != null:
+		return _level
 	var level_scene := load("res://scenes/gameplay/world/level/levels/%s.tscn" % level_id)
-	level = level_scene.instantiate() as ILevel
-	return level
+	_level = level_scene.instantiate() as ILevel
+	return _level
 
-	
+
+func unload_level() -> void:
+	if not is_instance_valid(_level):
+		_level = null
+		return
+
+	if _level.is_inside_tree():
+		return
+
+	var level_to_free: ILevel = _level
+	_level = null
+	level_to_free.queue_free()
+
+
 func _load_challenges() -> void:
 	# Load level config to find challenges
 	var level_path := "res://resources/levels/%s.json" % level_id
