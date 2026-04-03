@@ -6,15 +6,15 @@ extends Node2D
 
 ## Enum for the type of trap behavior
 enum TrapType {
-    PASSIVE, ## Effect is continuously applied while enemy is on trap
-    ACTIVE, ## Effect is triggered by first enemy then has cooldown
-    LIMITED ## Effect is triggered by first enemy then has limited durability
+	PASSIVE, ## Effect is continuously applied while enemy is on trap
+	ACTIVE, ## Effect is triggered by first enemy then has cooldown
+	LIMITED ## Effect is triggered by first enemy then has limited durability
 }
 
 ## Enum for the state of the trap
 enum TrapState {
-    BUILDING, ## The trap is being built
-    ACTIVE, ## The trap is placed and active
+	BUILDING, ## The trap is being built
+	ACTIVE, ## The trap is placed and active
 }
 
 ## The cost of the trap
@@ -66,7 +66,7 @@ var enemies_in_area: Array[IEnemy] = []
 
 ## Signal connections to be established in _ready
 @onready var signals: Array[Dictionary] = [
-    {SignalUtil.WHO: area_2d, SignalUtil.WHAT: "body_entered", SignalUtil.TO: _on_area_2d_body_entered},
+	{SignalUtil.WHO: area_2d, SignalUtil.WHAT: "body_entered", SignalUtil.TO: _on_area_2d_body_entered},
 	{SignalUtil.WHO: area_2d, SignalUtil.WHAT: "body_exited", SignalUtil.TO: _on_area_2d_body_exited},
 	{SignalUtil.WHO: area_2d, SignalUtil.WHAT: "area_entered", SignalUtil.TO: _on_area_2d_body_entered},
 	{SignalUtil.WHO: area_2d, SignalUtil.WHAT: "area_exited", SignalUtil.TO: _on_area_2d_body_exited}
@@ -80,150 +80,150 @@ var remaining_effects: Array[float] = []
 
 # core
 func _ready():
-    _update_z_index()
-    SignalUtil.connects(signals)
-    current_durability = max_durability
-    active_affected_enemies = {}
+	_update_z_index()
+	SignalUtil.connects(signals)
+	current_durability = max_durability
+	active_affected_enemies = {}
 
 func _process(delta: float) -> void:
-    if Global.paused:
-        return
-        
-    if state == TrapState.BUILDING:
-        _update_z_index()
-        return
+	if Global.paused:
+		return
+		
+	if state == TrapState.BUILDING:
+		_update_z_index()
+		return
 
-    # Handle cooldown for ACTIVE type
-    if trap_type == TrapType.ACTIVE:
-        if not is_usable:
-            current_cooldown -= delta
-            if current_cooldown <= 0:
-                is_usable = true
-        
-        # Handle effect duration for ACTIVE type
-        if active_affected_enemy != null:
-            current_effect_duration -= delta
-            if current_effect_duration <= 0:
-                remove_effect(active_affected_enemy)
-                active_affected_enemy = null
-    
-    # Update opacity for LIMITED type and handle effect duration
-    elif trap_type == TrapType.LIMITED:
-        # Calculate opacity based on remaining durability (100% to 20%)
-        var opacity := (0.8 * (float(current_durability) / float(max_durability))) + 0.2
-        modulate.a = opacity
-        
-        # Gérer la durée d'effet pour chaque ennemi
-        var to_remove := []
-        for enemy in active_affected_enemies:
-            active_affected_enemies[enemy] -= delta
-            if active_affected_enemies[enemy] <= 0:
-                if enemy in enemies_in_area and is_usable:  # Reset only if trap is still usable
-                    active_affected_enemies[enemy] = effect_duration  # Reset duration
-                else:
-                    remove_effect(enemy)
-                    to_remove.append(enemy)
-        
-        # Gérer les effets restants (ennemis morts)
-        var remaining_to_remove := []
-        for i in range(remaining_effects.size()):
-            remaining_effects[i] -= delta
-            if remaining_effects[i] <= 0:
-                remaining_to_remove.append(i)
-        
-        # Nettoyer les effets terminés
-        for i in range(remaining_to_remove.size() - 1, -1, -1):
-            remaining_effects.remove_at(remaining_to_remove[i])
-        
-        # Nettoyer les ennemis dont l'effet est terminé
-        for enemy in to_remove:
-            active_affected_enemies.erase(enemy)
-            
-        # Destroy trap only when no more active effects
-        if not is_usable and active_affected_enemies.is_empty() and remaining_effects.is_empty():
-            queue_free()
+	# Handle cooldown for ACTIVE type
+	if trap_type == TrapType.ACTIVE:
+		if not is_usable:
+			current_cooldown -= delta
+			if current_cooldown <= 0:
+				is_usable = true
+		
+		# Handle effect duration for ACTIVE type
+		if active_affected_enemy != null:
+			current_effect_duration -= delta
+			if current_effect_duration <= 0:
+				remove_effect(active_affected_enemy)
+				active_affected_enemy = null
+	
+	# Update opacity for LIMITED type and handle effect duration
+	elif trap_type == TrapType.LIMITED:
+		# Calculate opacity based on remaining durability (100% to 20%)
+		var opacity := (0.8 * (float(current_durability) / float(max_durability))) + 0.2
+		modulate.a = opacity
+		
+		# Gérer la durée d'effet pour chaque ennemi
+		var to_remove := []
+		for enemy in active_affected_enemies:
+			active_affected_enemies[enemy] -= delta
+			if active_affected_enemies[enemy] <= 0:
+				if enemy in enemies_in_area and is_usable:  # Reset only if trap is still usable
+					active_affected_enemies[enemy] = effect_duration  # Reset duration
+				else:
+					remove_effect(enemy)
+					to_remove.append(enemy)
+		
+		# Gérer les effets restants (ennemis morts)
+		var remaining_to_remove := []
+		for i in range(remaining_effects.size()):
+			remaining_effects[i] -= delta
+			if remaining_effects[i] <= 0:
+				remaining_to_remove.append(i)
+		
+		# Nettoyer les effets terminés
+		for i in range(remaining_to_remove.size() - 1, -1, -1):
+			remaining_effects.remove_at(remaining_to_remove[i])
+		
+		# Nettoyer les ennemis dont l'effet est terminé
+		for enemy in to_remove:
+			active_affected_enemies.erase(enemy)
+			
+		# Destroy trap only when no more active effects
+		if not is_usable and active_affected_enemies.is_empty() and remaining_effects.is_empty():
+			queue_free()
 
 # private
 func _update_z_index() -> void:
-    var y_position := int(global_position.y)
-    z_index = (y_position / 2) - 10
+	var y_position := int(global_position.y)
+	z_index = (y_position / 2) - 10
 
 func _handle_trap_activation(enemy: IEnemy) -> void:
-    match trap_type:
-        TrapType.PASSIVE:
-            apply_effect(enemy)
-        TrapType.ACTIVE:
-            if is_usable:
-                apply_effect(enemy)
-                active_affected_enemy = enemy
-                current_effect_duration = effect_duration
-                is_usable = false
-                current_cooldown = cooldown_time
-        TrapType.LIMITED:
-            if not enemy in active_affected_enemies:  # Seulement si l'ennemi n'est pas déjà affecté
-                if is_usable:
-                    # Connect to enemy death signal
-                    enemy.die.connect(_on_enemy_die.bind(enemy))
-                    
-                    apply_effect(enemy)
-                    active_affected_enemies[enemy] = effect_duration
-                    current_durability -= 1
-                    if current_durability <= 0:
-                        is_usable = false
+	match trap_type:
+		TrapType.PASSIVE:
+			apply_effect(enemy)
+		TrapType.ACTIVE:
+			if is_usable:
+				apply_effect(enemy)
+				active_affected_enemy = enemy
+				current_effect_duration = effect_duration
+				is_usable = false
+				current_cooldown = cooldown_time
+		TrapType.LIMITED:
+			if not enemy in active_affected_enemies:  # Seulement si l'ennemi n'est pas déjà affecté
+				if is_usable:
+					# Connect to enemy death signal
+					enemy.die.connect(_on_enemy_die.bind(enemy))
+					
+					apply_effect(enemy)
+					active_affected_enemies[enemy] = effect_duration
+					current_durability -= 1
+					if current_durability <= 0:
+						is_usable = false
 
 func _on_enemy_die(enemy: IEnemy) -> void:
-    if trap_type == TrapType.LIMITED and enemy in active_affected_enemies:
-        # Transfer remaining duration to remaining_effects
-        remaining_effects.append(active_affected_enemies[enemy])
-        active_affected_enemies.erase(enemy)
+	if trap_type == TrapType.LIMITED and enemy in active_affected_enemies:
+		# Transfer remaining duration to remaining_effects
+		remaining_effects.append(active_affected_enemies[enemy])
+		active_affected_enemies.erase(enemy)
 
 # signal
 func _on_area_2d_body_entered(body) -> void:
-    if state != TrapState.ACTIVE:
-        return
+	if state != TrapState.ACTIVE:
+		return
 
-    var enemy := _get_enemy_from_overlap(body)
-    if enemy == null:
-        return
+	var enemy := _get_enemy_from_overlap(body)
+	if enemy == null:
+		return
 
-    if enemy in enemies_in_area:
-        return
+	if enemy in enemies_in_area:
+		return
 
-    enemies_in_area.append(enemy)
-    _handle_trap_activation(enemy)
+	enemies_in_area.append(enemy)
+	_handle_trap_activation(enemy)
 
 func _on_area_2d_body_exited(body) -> void:
-    if state != TrapState.ACTIVE:
-        return
-        
-    var enemy := _get_enemy_from_overlap(body)
-    if enemy == null:
-        return
+	if state != TrapState.ACTIVE:
+		return
+		
+	var enemy := _get_enemy_from_overlap(body)
+	if enemy == null:
+		return
 
-    enemies_in_area.erase(enemy)
-    if trap_type == TrapType.PASSIVE:
-        remove_effect(enemy)
-    elif trap_type == TrapType.LIMITED:
-        if enemy in active_affected_enemies:
-            remove_effect(enemy)
-            active_affected_enemies.erase(enemy)
+	enemies_in_area.erase(enemy)
+	if trap_type == TrapType.PASSIVE:
+		remove_effect(enemy)
+	elif trap_type == TrapType.LIMITED:
+		if enemy in active_affected_enemies:
+			remove_effect(enemy)
+			active_affected_enemies.erase(enemy)
 
 func _get_enemy_from_overlap(overlap) -> IEnemy:
-    # We want traps to trigger based on the zombie "feet" zone only.
-    # This avoids head/body overlaps triggering the effect on slopes.
-    if overlap is IEnemy:
-        return null
+	# We want traps to trigger based on the zombie "feet" zone only.
+	# This avoids head/body overlaps triggering the effect on slopes.
+	if overlap is IEnemy:
+		return null
 
-    if overlap is Area2D and overlap.name == "FeetArea":
-        var parent := overlap.get_parent()
-        if parent is IEnemy:
-            return parent as IEnemy
+	if overlap is Area2D and overlap.name == "FeetArea":
+		var parent: Node = overlap.get_parent()
+		if parent is IEnemy:
+			return parent as IEnemy
 
-    return null
+	return null
 
 ## Override these methods in specific trap implementations
 func apply_effect(_enemy: IEnemy) -> void:
-    pass
+	pass
 
 func remove_effect(_enemy: IEnemy) -> void:
-    pass 
+	pass 
