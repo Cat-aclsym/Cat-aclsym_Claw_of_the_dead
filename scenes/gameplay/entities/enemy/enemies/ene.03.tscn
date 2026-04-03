@@ -65,18 +65,18 @@ offset = Vector2(0, -16)
 position = Vector2(0, -18)
 shape = SubResource("RectangleShape2D_6dscd")
 
-[node name="GPUParticles2D" parent="." index="3"]
-position = Vector2(0, -19)
-
 [node name="FeetArea" type="Area2D" parent="." index="3"]
-position = Vector2(0, 1)
+position = Vector2(0, -6)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="FeetArea" index="0"]
 position = Vector2(0, 18.5)
 shape = SubResource("RectangleShape2D_feet")
 
+[node name="GPUParticles2D" parent="." index="4"]
+position = Vector2(0, -19)
+
 [node name="PopupScoreSpawner" parent="." index="5"]
 position = Vector2(0, -41)
 
-[node name="HealthBar" parent="." index="5"]
+[node name="HealthBar" parent="." index="6"]
 position = Vector2(0, -51)

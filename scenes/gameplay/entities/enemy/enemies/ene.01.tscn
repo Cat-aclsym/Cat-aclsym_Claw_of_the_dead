@@ -148,23 +148,18 @@ position = Vector2(0, -11)
 shape = SubResource("RectangleShape2D_iaady")
 
 [node name="FeetArea" type="Area2D" parent="." index="4"]
-position = Vector2(0, 15)
+position = Vector2(0, -1)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="FeetArea" index="0"]
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="FeetArea" index="0"]
 position = Vector2(0, 16)
 shape = SubResource("RectangleShape2D_feet_ene01")
 
-[node name="GPUParticles2D" parent="." index="3"]
-visible = false
+[node name="CollisionShape2D" type="CollisionShape2D" parent="FeetArea" index="1"]
+position = Vector2(0, 16)
+shape = SubResource("RectangleShape2D_feet_ene01")
 
-[node name="PopupScoreSpawner" parent="." index="4"]
+[node name="PopupScoreSpawner" parent="." index="5"]
 position = Vector2(0, -27)
 
-[node name="HealthBar" parent="." index="5"]
+[node name="HealthBar" parent="." index="6"]
 position = Vector2(0, -43)
-[node name="FeetArea" type="Area2D" parent="." index="4"]
-position = Vector2(0, 15)
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="FeetArea" index="0"]
-position = Vector2(0, 16)
-shape = SubResource("RectangleShape2D_feet_ene01")
