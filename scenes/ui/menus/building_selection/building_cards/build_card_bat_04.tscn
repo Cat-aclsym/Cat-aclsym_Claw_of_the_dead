@@ -1,13 +1,14 @@
-[gd_scene load_steps=7 format=3 uid="uid://b2qklmpag4poo"]
+[gd_scene load_steps=8 format=3 uid="uid://b2qklmpag4poo"]
 
 [ext_resource type="Script" uid="uid://e0qqc3xugp8k" path="res://scenes/ui/menus/building_selection/building_cards/build_card.gd" id="1_script"]
-[ext_resource type="Texture2D" uid="uid://85310xv6g30a" path="res://assets/ui/building_cards/Construction Tower Title.svg" id="2_title"]
-[ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="3_theme"]
-[ext_resource type="Texture2D" uid="uid://cdesir3miwmug" path="res://assets/ui/building_cards/Green Frame.svg" id="4_frame"]
-[ext_resource type="Texture2D" uid="uid://yayv0hygrr3u" path="res://assets/ui/building_cards/Blue Backgrond.svg" id="5_bg"]
-[ext_resource type="Texture2D" uid="uid://do0ybx58p4dnq" path="res://assets/gameplay/traps/spikes.png" id="6_icon"]
+[ext_resource type="PackedScene" uid="uid://cekitu5ltqrp7" path="res://scenes/gameplay/entities/trap/traps/bat_04.tscn" id="2_entity"]
+[ext_resource type="Texture2D" uid="uid://85310xv6g30a" path="res://assets/ui/building_cards/Construction Tower Title.svg" id="3_title"]
+[ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="4_theme"]
+[ext_resource type="Texture2D" uid="uid://cdesir3miwmug" path="res://assets/ui/building_cards/Green Frame.svg" id="5_frame"]
+[ext_resource type="Texture2D" uid="uid://yayv0hygrr3u" path="res://assets/ui/building_cards/Blue Backgrond.svg" id="6_bg"]
+[ext_resource type="Texture2D" uid="uid://do0ybx58p4dnq" path="res://assets/gameplay/traps/spikes.png" id="7_icon"]
 
-[node name="BuildCardSlowTrap" type="Control"]
+[node name="BuildCardBat04" type="Control"]
 z_index = 1
 layout_mode = 3
 anchors_preset = 15
@@ -18,6 +19,7 @@ grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource("1_script")
+entity = ExtResource("2_entity")
 
 [node name="CardVBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 1
@@ -36,7 +38,7 @@ ratio = 3.0
 
 [node name="TitleTextureRect" type="TextureButton" parent="CardVBoxContainer/TitleAspectRatioContainer"]
 layout_mode = 2
-texture_normal = ExtResource("2_title")
+texture_normal = ExtResource("3_title")
 ignore_texture_size = true
 stretch_mode = 5
 
@@ -47,9 +49,9 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme = ExtResource("3_theme")
+theme = ExtResource("4_theme")
 theme_override_font_sizes/font_size = 15
-text = "Slow Trap"
+text = "Bat 04"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -61,7 +63,7 @@ size_flags_stretch_ratio = 0.7
 
 [node name="CardTextureButton" type="TextureButton" parent="CardVBoxContainer/CardAspectRatioContainer"]
 layout_mode = 2
-texture_normal = ExtResource("4_frame")
+texture_normal = ExtResource("5_frame")
 ignore_texture_size = true
 stretch_mode = 4
 
@@ -79,7 +81,7 @@ offset_right = 0.51001
 offset_bottom = -0.48999
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("5_bg")
+texture = ExtResource("6_bg")
 expand_mode = 1
 stretch_mode = 4
 
@@ -92,7 +94,7 @@ anchor_bottom = 1.0
 offset_bottom = -5.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("6_icon")
+texture = ExtResource("7_icon")
 expand_mode = 1
 stretch_mode = 4
 
@@ -108,7 +110,7 @@ offset_right = -4.05896
 offset_bottom = -5.0
 grow_horizontal = 2
 grow_vertical = 0
-theme = ExtResource("3_theme")
+theme = ExtResource("4_theme")
 theme_override_font_sizes/font_size = 15
 text = "75$"
 horizontal_alignment = 1

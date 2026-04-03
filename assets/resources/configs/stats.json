@@ -50,8 +50,8 @@
 	}
   },
   "traps": {
-	"trap_bear": {
-	  "scene": "res://scenes/gameplay/entities/trap/traps/bear_trap.tscn",
+	"bat_03": {
+	  "scene": "res://scenes/gameplay/entities/trap/traps/bat_03.tscn",
 	  "name": "Piège à lames",
 	  "base": {
 		"cost": 10,
@@ -61,8 +61,8 @@
 		"damage": 10
 	  }
 	},
-	"trap_slow": {
-	  "scene": "res://scenes/gameplay/entities/trap/traps/slow_trap.tscn",
+	"bat_04": {
+	  "scene": "res://scenes/gameplay/entities/trap/traps/bat_04.tscn",
 	  "name": "Piège ralentissant",
 	  "base": {
 		"cost": 50,
