@@ -1,6 +1,6 @@
 ## © [2026] A7 Studio. All rights reserved. Trademark.
 ##
-## Base class for entities placed via [TowerPlacement] (towers, traps).
+## Base class for entities placed via [BuildPlacement] (towers, traps).
 class_name IBuilding
 extends Node2D
 

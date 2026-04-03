@@ -174,7 +174,7 @@ func _create_visual_indicator(tile_pos: Vector2i, modifier: Dictionary) -> void:
 
 func _is_tile_buildable(coords: Vector2i) -> bool:
 	# 1. Check if the base tile is valid
-	if tilemap.get_cell_source_id(0, coords) != TowerPlacement.VALID_SOURCE_ID or not tilemap.get_cell_atlas_coords(0, coords) in TowerPlacement.VALID_TILES:
+	if tilemap.get_cell_source_id(0, coords) != BuildPlacement.VALID_SOURCE_ID or not tilemap.get_cell_atlas_coords(0, coords) in BuildPlacement.VALID_TILES:
 		return false
 	
 	# 2. Check if there are obstacles on layer 1 (Water Rays, etc.)
@@ -182,11 +182,11 @@ func _is_tile_buildable(coords: Vector2i) -> bool:
 		return false
 	
 	# 3. Check if there are props on layer 2 that might block (if layer 2 is used for blocking)
-	# (Optionnel, selon votre projet. TowerPlacement ne semble pas vérifier le layer 2)
+	# (Optionnel, selon votre projet. BuildPlacement ne semble pas vérifier le layer 2)
 	
 	# 4. Check if it's on an enemy path
 	var world_pos = tilemap.map_to_local(coords)
-	var placement_half_size: float = 12.5 # matching TowerPlacement.placement_half_size
+	var placement_half_size: float = 12.5 # matching BuildPlacement.placement_half_size
 	
 	for path in paths:
 		var closest_point = path.curve.get_closest_point(path.to_local(world_pos))
