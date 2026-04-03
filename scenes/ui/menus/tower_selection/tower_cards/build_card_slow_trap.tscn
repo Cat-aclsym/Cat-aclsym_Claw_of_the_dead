@@ -8,6 +8,7 @@
 [ext_resource type="Texture2D" uid="uid://do0ybx58p4dnq" path="res://assets/gameplay/traps/spikes.png" id="6_icon"]
 
 [node name="BuildCardSlowTrap" type="Control"]
+z_index = 1
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -53,6 +54,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="CardAspectRatioContainer" type="AspectRatioContainer" parent="CardVBoxContainer"]
+z_index = 1
 layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 0.7
@@ -82,7 +84,7 @@ expand_mode = 1
 stretch_mode = 4
 
 [node name="TowerTextureRect" type="TextureRect" parent="CardVBoxContainer/CardAspectRatioContainer/CardTextureButton"]
-z_index = -1
+z_index = 0
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0

@@ -37,6 +37,7 @@ func _ready() -> void:
 	assert(_entity != null, "entity could not be instantiated as Node2D")
 	assert("cost" in _entity, "entity must expose a 'cost' property")
 	_cost = int(_entity.cost)
+	_apply_entity_preview_texture()
 
 	SignalUtil.connects(signals)
 
@@ -48,6 +49,14 @@ func update() -> void:
 	button_texture.disabled = ILevel.current_level.coins < _cost
 
 # private
+## Fills the card icon from the entity when it uses a [Sprite2D] (e.g. traps). Towers use [AnimatedSprite2D] and keep their scene texture.
+func _apply_entity_preview_texture() -> void:
+	var sprite_2d := _entity.get_node_or_null("Sprite2D") as Sprite2D
+	if sprite_2d == null or sprite_2d.texture == null:
+		return
+	tower_texture.texture = sprite_2d.texture
+	tower_texture.modulate = sprite_2d.modulate
+
 ## Handles the build button press event.
 ## [br]Changes cursor state to build mode and closes the build menu.
 func _on_button_texture_pressed() -> void:
