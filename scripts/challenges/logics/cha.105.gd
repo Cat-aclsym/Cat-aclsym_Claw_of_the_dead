@@ -1,13 +1,13 @@
-## © [2024] A7 Studio. All rights reserved. Trademark.
+## © [2026] A7 Studio. All rights reserved. Trademark.
 
 class_name Challenge105
 extends Challenge
 ## Challenge: Trap Master
-## Boss must be hit by every trap type (Active, Passive, Limited).
+## Boss must be hit by every trap type (passive and limited).
 
 
 # Constants
-const REQUIRED_TYPES: Array[String] = ["active", "passive", "limited"]
+const REQUIRED_TYPES: Array[String] = ["passive", "limited"]
 
 
 # Private variables
@@ -30,17 +30,13 @@ func check_completion() -> bool:
 func on_enemy_hit(enemy: IEnemy, source: Variant) -> void:
 	if enemy.type != IEnemy.EnemyType.BIG_DADDY:
 		return
-
-	# Assuming traps have a 'trap_type' property or we can infer it
-	var type: String = ""
-	if source.has_method("get_trap_type"):
-		type = source.get_trap_type().to_lower()
-	elif "trap_type" in source:
-		type = source.trap_type.to_lower()
-
-	if type != "" and type in REQUIRED_TYPES:
-		if not type in _hit_types:
-			_hit_types.append(type)
-
-			if _hit_types.size() >= REQUIRED_TYPES.size():
-				complete()
+	if not source is ITrap:
+		return
+	var type: String = (source as ITrap).get_trap_type()
+	if type == "" or type not in REQUIRED_TYPES:
+		return
+	if type in _hit_types:
+		return
+	_hit_types.append(type)
+	if _hit_types.size() >= REQUIRED_TYPES.size():
+		complete()

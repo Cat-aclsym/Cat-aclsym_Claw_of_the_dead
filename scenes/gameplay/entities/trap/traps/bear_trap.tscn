@@ -8,7 +8,7 @@
 script = ExtResource("2_script")
 damage = 10
 cost = 10
-trap_type = 2
+trap_type = 1
 effect_duration = 0.5
 max_durability = 1
 

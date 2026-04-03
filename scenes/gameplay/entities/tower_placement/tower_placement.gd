@@ -360,6 +360,8 @@ func _build() -> void:
 		else:
 			get_parent().add_child(new_trap)
 
+		ChallengeManager.notify_trap_placed(new_trap)
+
 	_invalid_cells.append(tm_pos)
 	ILevel.current_level.coins -= _tower.cost
 

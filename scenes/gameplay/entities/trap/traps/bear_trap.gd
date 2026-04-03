@@ -15,7 +15,7 @@ func _ready() -> void:
 
 func apply_effect(enemy: IEnemy) -> void:
 	# Deal instant damage
-	enemy.take_damage(damage, IEnemy.DamageType.DEFAULT)
+	enemy.take_damage(damage, IEnemy.DamageType.DEFAULT, self)
 	
 	# Store original speed and immobilize if not dead
 	if enemy.state != IEnemy.EnemyState.DEAD:
