@@ -5,6 +5,12 @@
 class_name BuildCard
 extends Control
 
+const CARD_DIM_UNAFFORDABLE: float = 0.82
+const CARD_MODULATE_AFFORDABLE: Color = Color.WHITE
+const CARD_MODULATE_UNAFFORDABLE: Color = Color(CARD_DIM_UNAFFORDABLE, CARD_DIM_UNAFFORDABLE, CARD_DIM_UNAFFORDABLE, 1.0)
+const PRICE_LABEL_COLOR_UNAFFORDABLE: Color = Color(0.92, 0.26, 0.22, 1.0)
+const PRICE_LABEL_MODULATE_VS_DIM: Color = Color(1.0 / CARD_DIM_UNAFFORDABLE, 1.0 / CARD_DIM_UNAFFORDABLE, 1.0 / CARD_DIM_UNAFFORDABLE, 1.0)
+
 ## The entity scene to instantiate when building (tower or trap).
 @export var entity: PackedScene = null
 
@@ -50,9 +56,18 @@ func _ready() -> void:
 # public
 ## Updates the card price label and availability.
 ## [br]Disables the build button if player doesn't have enough coins.
+## [br]Slightly dims the card when unaffordable; price text turns red.
 func update() -> void:
 	price_label.text = "{0}$".format([_cost])
-	button_texture.disabled = ILevel.current_level.coins < _cost
+	var can_afford: bool = ILevel.current_level != null and ILevel.current_level.coins >= _cost
+	button_texture.disabled = not can_afford
+	modulate = CARD_MODULATE_AFFORDABLE if can_afford else CARD_MODULATE_UNAFFORDABLE
+	if can_afford:
+		price_label.modulate = Color.WHITE
+		price_label.remove_theme_color_override("font_color")
+	else:
+		price_label.modulate = PRICE_LABEL_MODULATE_VS_DIM
+		price_label.add_theme_color_override("font_color", PRICE_LABEL_COLOR_UNAFFORDABLE)
 
 # private
 ## Fills the card icon from the entity when it uses a [Sprite2D] (e.g. traps). Towers use [AnimatedSprite2D] and keep their scene texture.

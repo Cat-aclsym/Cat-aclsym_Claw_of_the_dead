@@ -8,8 +8,17 @@ extends Control
 @onready var construction_menu: HBoxContainer = $MarginContainer/BackgroundTextureRect/BuildListMarginContainer/HBoxContainer
 @onready var construction_anim_player: AnimationPlayer = $AnimationPlayer
 
-# Called when the node enters the scene tree for the first time.
-func _ready():
+func _exit_tree() -> void:
+	if ILevel.current_level and ILevel.current_level.stats_updated.is_connected(_on_level_stats_updated):
+		ILevel.current_level.stats_updated.disconnect(_on_level_stats_updated)
+
+
+func _process(_delta: float) -> void:
+	if is_queued_for_deletion():
+		toggle_build_menu()
+
+
+func _ready() -> void:
 	assert(construction_menu != null, "construction_menu node not found")
 	assert(construction_anim_player != null, "construction_anim_player node not found")
 
@@ -20,12 +29,11 @@ func _ready():
 	)
 	construction_menu.visible = true
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(_delta: float):
-	if is_queued_for_deletion():
-		toggle_build_menu()
+	if ILevel.current_level:
+		ILevel.current_level.stats_updated.connect(_on_level_stats_updated)
 
-# public
+
+# Public functions
 
 ## Toggles the build menu visibility with animation.
 ## [br]Refreshes build cards when opening the menu.
@@ -39,6 +47,13 @@ func toggle_build_menu() -> void:
 		construction_menu.visible = true
 		_refresh_construction_cards()
 		return
+
+
+# Private functions
+
+## Re-runs [method BuildCard.update] on every card when [signal ILevel.stats_updated] fires (e.g. coins).
+func _on_level_stats_updated() -> void:
+	_refresh_construction_cards()
 
 
 ## Refreshes price / disabled state on all build cards (coins may have changed).

@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://n3whw75fypkc"]
+[gd_scene load_steps=11 format=3 uid="uid://n3whw75fypkc"]
 
 [ext_resource type="Script" uid="uid://b4kvii87dw7yj" path="res://scenes/ui/menus/building_selection/build_selection.gd" id="1_1guy3"]
 [ext_resource type="Texture2D" uid="uid://c8eh0l6o5swnq" path="res://assets/ui/background/Construction Background.svg" id="2_tcv0b"]
