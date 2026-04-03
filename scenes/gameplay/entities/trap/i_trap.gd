@@ -2,7 +2,7 @@
 ##
 ## Interface for a trap.
 class_name ITrap
-extends Node2D
+extends IBuilding
 
 ## Enum for the type of trap behavior
 enum TrapType {
@@ -16,9 +16,6 @@ enum TrapState {
 	ACTIVE, ## The trap is placed and active
 }
 
-## The cost of the trap
-@export var cost: int
-
 ## The type of trap behavior
 @export var trap_type: TrapType = TrapType.PASSIVE
 
@@ -27,6 +24,9 @@ enum TrapState {
 
 ## Maximum durability for LIMITED type
 @export var max_durability: int = 3
+
+## [StatsDB] key under [code]traps[/code] in [code]stats.json[/code]. Empty keeps scene defaults only.
+@export var trap_id: String = ""
 
 ## The state of the trap
 var state: TrapState = TrapState.ACTIVE
@@ -59,6 +59,7 @@ var remaining_effects: Array[float] = []
 
 # core
 func _ready():
+	apply_stats_from_db()
 	_update_z_index()
 	SignalUtil.connects(signals)
 	current_durability = max_durability
@@ -101,6 +102,38 @@ func _process(delta: float) -> void:
 		if not is_usable and active_affected_enemies.is_empty() and remaining_effects.is_empty():
 			queue_free()
 
+func cancel_build_preview() -> void:
+	pass
+
+func enter_build_preview() -> void:
+	state = TrapState.BUILDING
+
+func get_building_kind() -> IBuilding.BuildingKind:
+	return IBuilding.BuildingKind.TRAP
+
+func get_placement_vertical_offset() -> float:
+	return 0.0
+
+## Applies [code]stats.json[/code] [code]traps[/code] entry when [member trap_id] is set. Uses the [StatsDB] autoload so it works on orphan instances (e.g. build menu preview).
+func apply_stats_from_db() -> void:
+	if trap_id.is_empty():
+		return
+	if not StatsDB.has_trap(trap_id):
+		Log.trace(Log.Level.WARN, "StatsDB missing trap id: %s" % trap_id)
+		return
+	var data: Dictionary = StatsDB.get_trap(trap_id)
+	var base: Dictionary = data.get("base", {})
+	Log.trace(Log.Level.INFO, "Applying trap stats from StatsDB for %s: %s" % [trap_id, base])
+	if base.has("cost"):
+		cost = int(base["cost"])
+	if base.has("trap_type"):
+		trap_type = int(base["trap_type"]) as TrapType
+	if base.has("effect_duration"):
+		effect_duration = float(base["effect_duration"])
+	if base.has("max_durability"):
+		max_durability = int(base["max_durability"])
+	_apply_trap_stats_extension(base)
+
 ## Returns challenge id string for [Challenge] scripts ([code]passive[/code] / [code]limited[/code]).
 func get_trap_type() -> String:
 	match trap_type:
@@ -112,6 +145,10 @@ func get_trap_type() -> String:
 			return ""
 
 # private
+## Subclasses read extra [code]base[/code] keys (e.g. [code]damage[/code], [code]slow_amount[/code]).
+func _apply_trap_stats_extension(_base: Dictionary) -> void:
+	pass
+
 func _handle_trap_activation(enemy: IEnemy) -> void:
 	match trap_type:
 		TrapType.PASSIVE:

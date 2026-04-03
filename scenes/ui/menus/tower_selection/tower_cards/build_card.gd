@@ -36,16 +36,22 @@ func _ready() -> void:
 	_entity = entity.instantiate() as Node2D
 	assert(_entity != null, "entity could not be instantiated as Node2D")
 	assert("cost" in _entity, "entity must expose a 'cost' property")
+	if _entity is ITower:
+		(_entity as ITower).apply_stats_from_db()
+	elif _entity is ITrap:
+		(_entity as ITrap).apply_stats_from_db()
 	_cost = int(_entity.cost)
+	_sync_title_from_stats_db()
 	_apply_entity_preview_texture()
+	update()
 
 	SignalUtil.connects(signals)
 
 # public
-## Updates the card display with current cost and availability.
+## Updates the card price label and availability.
 ## [br]Disables the build button if player doesn't have enough coins.
 func update() -> void:
-	price_label.text = "BUY {0}$".format([_cost])
+	price_label.text = "{0}$".format([_cost])
 	button_texture.disabled = ILevel.current_level.coins < _cost
 
 # private
@@ -68,3 +74,17 @@ func _on_button_texture_pressed() -> void:
 	var tower_selection_button: BaseButton = Global.hud.get_node_or_null("TowerSelectionMarginContainer/TowerSelectionButton")
 	if tower_selection_button:
 		tower_selection_button.set_pressed_no_signal(false)
+
+## Sets [member title_label] from [StatsDB] when the entity has a [code]tower_id[/code] / [code]trap_id[/code].
+func _sync_title_from_stats_db() -> void:
+	var display_name: String = ""
+	if _entity is ITower:
+		var tw: ITower = _entity as ITower
+		if not tw.tower_id.is_empty() and StatsDB.has_tower(tw.tower_id):
+			display_name = StatsDB.get_tower_name(tw.tower_id)
+	elif _entity is ITrap:
+		var trap: ITrap = _entity as ITrap
+		if not trap.trap_id.is_empty() and StatsDB.has_trap(trap.trap_id):
+			display_name = StatsDB.get_trap_name(trap.trap_id)
+	if not display_name.is_empty():
+		title_label.text = display_name

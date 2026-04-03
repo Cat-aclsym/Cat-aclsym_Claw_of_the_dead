@@ -1,7 +1,7 @@
-## © [2025] A7 Studio. All rights reserved. Trademark.
+## © [2026] A7 Studio. All rights reserved. Trademark.
 ##
 ## Manages the tower construction selection menu interface and functionality.
-class_name TowerSelection
+class_name BuildSelection
 extends Control
 
 ## Construction menu nodes

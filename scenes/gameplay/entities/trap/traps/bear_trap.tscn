@@ -6,11 +6,8 @@
 
 [node name="BearTrap" instance=ExtResource("1_base")]
 script = ExtResource("2_script")
-damage = 10
-cost = 10
-trap_type = 1
-effect_duration = 0.5
-max_durability = 1
+damage = 100
+trap_id = "trap_bear"
 
 [node name="Sprite2D" parent="." index="0"]
 position = Vector2(0, 0)

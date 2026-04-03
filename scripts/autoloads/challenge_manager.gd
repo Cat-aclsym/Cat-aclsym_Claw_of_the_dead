@@ -67,6 +67,15 @@ func notify_tower_placed(tower: ITower) -> void:
 			c.on_tower_placed(tower)
 
 
+## Dispatches placement to [method notify_tower_placed] or [method notify_trap_placed] by [method IBuilding.get_building_kind].
+func notify_building_placed(building: IBuilding) -> void:
+	match building.get_building_kind():
+		IBuilding.BuildingKind.TOWER:
+			notify_tower_placed(building as ITower)
+		IBuilding.BuildingKind.TRAP:
+			notify_trap_placed(building)
+
+
 ## Notifies challenges about a trap placement.
 func notify_trap_placed(trap: Variant) -> void:
 	for c in active_challenges:

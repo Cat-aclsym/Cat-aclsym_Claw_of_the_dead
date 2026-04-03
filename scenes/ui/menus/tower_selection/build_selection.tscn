@@ -1,6 +1,6 @@
-[gd_scene load_steps=13 format=3 uid="uid://bbkb1i4q8ljpf"]
+[gd_scene load_steps=13 format=3 uid="uid://n3whw75fypkc"]
 
-[ext_resource type="Script" uid="uid://brxpqmyvypyn5" path="res://scenes/ui/menus/tower_selection/tower_selection.gd" id="1_1guy3"]
+[ext_resource type="Script" uid="uid://b4kvii87dw7yj" path="res://scenes/ui/menus/tower_selection/build_selection.gd" id="1_1guy3"]
 [ext_resource type="Texture2D" uid="uid://c8eh0l6o5swnq" path="res://assets/ui/background/Construction Background.svg" id="2_tcv0b"]
 [ext_resource type="PackedScene" uid="uid://3noiaamd0p84" path="res://scenes/ui/menus/tower_selection/tower_cards/tower_card_bat_01.tscn" id="3_60iow"]
 [ext_resource type="PackedScene" uid="uid://6kkbpbexa8ec" path="res://scenes/ui/menus/tower_selection/tower_cards/tower_card_bat_02.tscn" id="5_aw86t"]

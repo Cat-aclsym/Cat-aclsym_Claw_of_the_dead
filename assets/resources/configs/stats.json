@@ -49,6 +49,28 @@
 	  "upgrades": ["bat_02_02"]
 	}
   },
+  "traps": {
+	"trap_bear": {
+	  "scene": "res://scenes/gameplay/entities/trap/traps/bear_trap.tscn",
+	  "name": "Piège à lames",
+	  "base": {
+		"cost": 10,
+		"trap_type": 1,
+		"effect_duration": 0.25,
+		"max_durability": 1,
+		"damage": 10
+	  }
+	},
+	"trap_slow": {
+	  "scene": "res://scenes/gameplay/entities/trap/traps/slow_trap.tscn",
+	  "name": "Piège ralentissant",
+	  "base": {
+		"cost": 50,
+		"trap_type": 0,
+		"slow_amount": 0.3
+	  }
+	}
+  },
   "upgrades": {
 	"bat_01_02": {
 	  "scene": "res://scenes/gameplay/entities/upgrade/bat_01/bat_01_02.tscn",

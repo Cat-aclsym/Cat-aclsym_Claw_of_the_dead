@@ -1,10 +1,8 @@
 ## © [2026] A7 Studio. All rights reserved. Trademark.
 ##
-## Handles tower placement mechanics in the game.
-## [br]
-## This class manages tower placement, validation, and state management for building and upgrading towers.
+## Placement cursor and validation for the build flow (towers, traps, upgrades).
 ## @tutorial: https://docs.godotengine.org/en/stable/tutorials/2d/2d_transforms.html
-class_name TowerPlacement
+class_name BuildPlacement
 extends Node2D
 
 ## Emitted when entering idle state

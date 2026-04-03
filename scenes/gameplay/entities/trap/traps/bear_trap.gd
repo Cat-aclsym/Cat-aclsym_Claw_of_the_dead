@@ -13,6 +13,10 @@ var original_speeds: Dictionary = {}
 func _ready() -> void:
 	super()
 
+func _apply_trap_stats_extension(base: Dictionary) -> void:
+	if base.has("damage"):
+		damage = int(base["damage"])
+
 func apply_effect(enemy: IEnemy) -> void:
 	# Deal instant damage
 	enemy.take_damage(damage, IEnemy.DamageType.DEFAULT, self)

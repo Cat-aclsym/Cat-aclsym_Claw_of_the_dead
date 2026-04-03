@@ -6,8 +6,8 @@
 
 [node name="SlowTrap" instance=ExtResource("1_base")]
 script = ExtResource("2_script")
-slow_amount = 0.3
-cost = 50
+slow_amount = 0.75
+trap_id = "trap_slow"
 
 [node name="Sprite2D" parent="." index="0"]
 modulate = Color(3.85046e-07, 0.670751, 0.662421, 1)
