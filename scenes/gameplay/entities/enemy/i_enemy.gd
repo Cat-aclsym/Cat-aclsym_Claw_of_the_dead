@@ -256,7 +256,7 @@ func _damage_effect(color: Color) -> void:
 	# Wait a tiny bit then tween back
 	_damage_tween.tween_interval(0.04)
 	_damage_tween.set_parallel(true)
-	_damage_tween.tween_property(sprite, "modulate", old_modulate, 0.15)
+	_damage_tween.tween_property(sprite, "modulate", _idle_modulate(), 0.15)
 	_damage_tween.tween_property(sprite, "offset:x", 0.0, 0.15).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
 
 ## Update the direction of the enemy based on movement
