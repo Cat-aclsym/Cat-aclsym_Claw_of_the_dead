@@ -1,4 +1,4 @@
-## © [2024] A7 Studio. All rights reserved. Trademark.
+## © [2026] A7 Studio. All rights reserved. Trademark.
 ##
 ## Store global variables.
 ## <!> Please ask your referent before update this script.
@@ -8,7 +8,7 @@ extends Node
 
 var camera: Camera = null: get = _get_camera
 var console: Console = null: get = _get_console
-var cursor: TowerPlacement = null: get = _get_cursor
+var cursor: BuildPlacement = null: get = _get_cursor
 var hud: HUD = null: get = _get_hud
 var ui: UI = null: get = _get_ui
 var paused: bool = false
@@ -42,7 +42,7 @@ func _get_camera() -> Camera:
 	if _initialized: assert(camera != null, "Camera is null")
 	return camera
 
-func _get_cursor() -> TowerPlacement:
+func _get_cursor() -> BuildPlacement:
 	if _initialized: assert(cursor != null, "Cursor is null")
 	return cursor
 
