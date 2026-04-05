@@ -8,6 +8,9 @@ signal menu_close
 
 const _BUFF_TAB_CATEGORY: String = "core_buff"
 
+## Prevents [method _fit_scroll_content_width] re-entry when [signal ScrollContainer.resized] feedback-loops with content min width.
+var _fitting_scroll: bool = false
+
 @onready var close_button: TextureButton = %CloseTextureButton
 @onready var legacy_label: Label = %LegacyLabel
 @onready var nodes_buffs: VBoxContainer = %NodesBuffsVBox
@@ -134,8 +137,12 @@ func _fit_one_scroll_panel(vbox: VBoxContainer, scroll: ScrollContainer) -> void
 
 ## ScrollContainer children default to a narrow min width; match viewport width so rows use the full panel.
 func _fit_scroll_content_width() -> void:
+	if _fitting_scroll:
+		return
+	_fitting_scroll = true
 	_fit_one_scroll_panel(nodes_buildings, scroll_buildings)
 	_fit_one_scroll_panel(nodes_buffs, scroll_buffs)
+	_fitting_scroll = false
 
 
 func _is_buff_node(node_def: Dictionary) -> bool:
@@ -147,8 +154,7 @@ func _on_armory_updated() -> void:
 
 
 func _on_buy_pressed(node_id: String) -> void:
-	if ArmoryManager.purchase_node(node_id):
-		_refresh()
+	ArmoryManager.purchase_node(node_id)
 
 
 func _on_close_pressed() -> void:
@@ -170,10 +176,14 @@ func _on_tab_changed(_tab: int) -> void:
 
 
 func _refresh() -> void:
-	for c in nodes_buildings.get_children():
-		c.queue_free()
-	for c in nodes_buffs.get_children():
-		c.queue_free()
+	while nodes_buildings.get_child_count() > 0:
+		var cb: Node = nodes_buildings.get_child(0)
+		nodes_buildings.remove_child(cb)
+		cb.queue_free()
+	while nodes_buffs.get_child_count() > 0:
+		var cf: Node = nodes_buffs.get_child(0)
+		nodes_buffs.remove_child(cf)
+		cf.queue_free()
 
 	legacy_label.visible = ProgressionManager.data.armory_legacy_mode
 	if legacy_label.visible:

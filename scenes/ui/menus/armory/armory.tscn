@@ -1,10 +1,11 @@
-[gd_scene load_steps=4 format=3 uid="uid://bqmarmorymenu01"]
+[gd_scene load_steps=4 format=3 uid="uid://dygxxtpara021"]
 
-[ext_resource type="Script" path="res://scenes/ui/menus/armory/armory.gd" id="1_arm"]
+[ext_resource type="Script" uid="uid://6soot5tpvyhx" path="res://scenes/ui/menus/armory/armory.gd" id="1_arm"]
 [ext_resource type="Texture2D" uid="uid://0lgpu16nkbho" path="res://assets/ui/icons/Button Close.svg" id="2_close"]
 [ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="3_theme"]
 
 [node name="Armory" type="Control"]
+clip_contents = true
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -51,6 +52,7 @@ size_flags_horizontal = 3
 theme = ExtResource("3_theme")
 theme_override_font_sizes/font_size = 42
 text = "ARMORY.TITLE"
+autowrap_mode = 3
 
 [node name="CloseTextureButton" type="TextureButton" parent="MainMargin/VBox/HeaderHBox"]
 unique_name_in_owner = true
@@ -67,13 +69,13 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme = ExtResource("3_theme")
 theme_override_font_sizes/font_size = 18
-autowrap_mode = 3
 text = "ARMORY.LEGACY_NOTICE"
+autowrap_mode = 3
 
-[node name="StarsRow" type="HBoxContainer" parent="MainMargin/VBox"]
+[node name="StarsRow" type="VBoxContainer" parent="MainMargin/VBox"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/separation = 16
+theme_override_constants/separation = 10
 
 [node name="StarsLabel" type="Label" parent="MainMargin/VBox/StarsRow"]
 unique_name_in_owner = true
@@ -83,8 +85,14 @@ theme = ExtResource("3_theme")
 theme_override_font_sizes/font_size = 22
 text = "ARMORY.STARS_LINE"
 vertical_alignment = 1
+autowrap_mode = 3
 
-[node name="ResetSpentStarsButton" type="Button" parent="MainMargin/VBox/StarsRow"]
+[node name="ResetStarsHBox" type="HBoxContainer" parent="MainMargin/VBox/StarsRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+alignment = 2
+
+[node name="ResetSpentStarsButton" type="Button" parent="MainMargin/VBox/StarsRow/ResetStarsHBox"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(200, 40)
 layout_mode = 2
@@ -96,6 +104,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme = ExtResource("3_theme")
+current_tab = 0
 
 [node name="ScrollBuildings" type="ScrollContainer" parent="MainMargin/VBox/ArmoryTabs"]
 unique_name_in_owner = true
@@ -103,6 +112,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
+metadata/_tab_index = 0
 
 [node name="NodesBuildingsVBox" type="VBoxContainer" parent="MainMargin/VBox/ArmoryTabs/ScrollBuildings"]
 unique_name_in_owner = true
@@ -113,10 +123,12 @@ theme_override_constants/separation = 10
 
 [node name="ScrollBuffs" type="ScrollContainer" parent="MainMargin/VBox/ArmoryTabs"]
 unique_name_in_owner = true
+visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
+metadata/_tab_index = 1
 
 [node name="NodesBuffsVBox" type="VBoxContainer" parent="MainMargin/VBox/ArmoryTabs/ScrollBuffs"]
 unique_name_in_owner = true
