@@ -121,6 +121,8 @@ var _range_tween: Tween = null
 func _ready() -> void:
 	target_type = TargetType.FIRST
 	_apply_base_stats_override()
+	ArmoryManager.append_unlocked_upgrades(self)
+	available_upgrade = ArmoryManager.filter_upgrade_scenes(available_upgrade)
 	sell_price = ceil(cost / 2.0)
 	hover_box.z_index = 3
 	update_dependent_properties()
@@ -278,7 +280,7 @@ func apply_upgrade() -> void:
 	if upgrade.changes["bullet_model"] and upgrade.bullet != null:
 		bullet_scene = upgrade.bullet
 
-	available_upgrade = upgrade.next_upgrades
+	available_upgrade = ArmoryManager.filter_upgrade_scenes(upgrade.next_upgrades)
 	sell_price += ceil(upgrade.price / 2.0)
 	update_dependent_properties()
 	level += 1
@@ -478,6 +480,7 @@ func _apply_bullet_modifications(bullet_instance: IBullet) -> void:
 
 func _apply_base_stats_override() -> void:
 	apply_stats_from_db()
+	ArmoryManager.apply_buffs_to_tower(self)
 
 func _choose_target() -> void:
 	match target_type:

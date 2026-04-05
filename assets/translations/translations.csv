@@ -7,6 +7,7 @@ LEVEL.MENU.TITLE,Choose level:,Choisissez un niveau :
 FIRST.LEVEL.NAME,First level,Premier niveau
 SECOND.LEVEL.NAME,Second level,Deuxième niveau
 THIRD.LEVEL.NAME,Third level,Troisième niveau
+BUILD.CARD.LOCKED,Locked,Verrouillé
 HOME.PLAY.BUTTON,Play,Jouer
 HOME.SETTINGS.BUTTON,Settings,Paramètres
 INGAMEHUD.COINS.LABEL,%s,%s
@@ -89,3 +90,28 @@ CHALLENGE.DIFFICULTY.EASY,Easy,Facile
 CHALLENGE.DIFFICULTY.HARD,Hard,Difficile
 CHALLENGE.DIFFICULTY.IMPOSSIBLE,Impossible,Impossible
 CHALLENGE.DIFFICULTY.MEDIUM,Medium,Moyen
+HOME.ARMORY.BUTTON,Armory,Armurerie
+ARMORY.TITLE,Armory,Armurerie
+ARMORY.TAB.BUILDINGS,Buildings,Bâtiments
+ARMORY.TAB.BUFFS,Buffs,Bonus
+ARMORY.STARS_LINE,Available: %d | Earned: %d,Disponibles : %d | Gagnées : %d
+ARMORY.RESET_SPENT_STARS,Reset spent stars,Réinitialiser les étoiles dépensées
+ARMORY.RESET_STARS_CONFIRM,"This clears all armory purchases. You recover your stars. Buildings beyond the starter kit lock again (legacy saves keep all buildings unlocked).","Cela annule tous les achats de l'armurerie. Vous récupérez vos étoiles. Les bâtiments hors kit de départ seront reverrouillés (les sauvegardes « legacy » gardent tout débloqué)."
+ARMORY.RESET_CONFIRM_OK,OK,Confirmer
+ARMORY.STAR_COST,%d stars,%d étoiles
+ARMORY.BUY,Buy,Acheter
+ARMORY.OWNED,Owned,Obtenu
+ARMORY.CANT_AFFORD,Not enough stars,Pas assez d'étoiles
+ARMORY.LOCKED_PREREQ,Requirements missing,Prérequis manquants
+ARMORY.LEGACY_NOTICE,Legacy save: all buildings stay unlocked. Armory purchases are optional.,Sauvegarde antérieure : tous les bâtiments restent débloqués. L'armurerie est optionnelle.
+ARMORY.LEGACY_SKIP,—,—
+ARMORY.NODE.UNLOCK_BAT_02.NAME,Unlock Cataboom tower,Débloquer la tour Cataboom
+ARMORY.NODE.UNLOCK_BAT_02.DESC,Adds the AOE tower to the build menu.,Ajoute la tour de zone au menu de construction.
+ARMORY.NODE.UNLOCK_BAT_03.NAME,Unlock blade trap,Débloquer le piège à lames
+ARMORY.NODE.UNLOCK_BAT_03.DESC,Adds the blade trap to the build menu.,Ajoute le piège à lames au menu de construction.
+ARMORY.NODE.UNLOCK_BAT_04.NAME,Unlock slow trap,Débloquer le piège ralentissant
+ARMORY.NODE.UNLOCK_BAT_04.DESC,Adds the slowing trap to the build menu.,Ajoute le piège ralentissant au menu de construction.
+ARMORY.NODE.CORE_SHARP_EYES.NAME,Sharp eyes,Yeux perçants
+ARMORY.NODE.CORE_SHARP_EYES.DESC,+5% tower range.,+5 % de portée des tours.
+ARMORY.NODE.CORE_QUICK_PAWS.NAME,Quick paws,Pattes rapides
+ARMORY.NODE.CORE_QUICK_PAWS.DESC,+5% fire rate (requires Sharp eyes).,+5 % de cadence (requiert Yeux perçants).

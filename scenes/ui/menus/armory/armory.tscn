@@ -1,0 +1,130 @@
+[gd_scene load_steps=4 format=3 uid="uid://bqmarmorymenu01"]
+
+[ext_resource type="Script" path="res://scenes/ui/menus/armory/armory.gd" id="1_arm"]
+[ext_resource type="Texture2D" uid="uid://0lgpu16nkbho" path="res://assets/ui/icons/Button Close.svg" id="2_close"]
+[ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="3_theme"]
+
+[node name="Armory" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_arm")
+
+[node name="DimRect" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.08, 0.12, 0.14, 0.94)
+
+[node name="MainMargin" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 24
+
+[node name="VBox" type="VBoxContainer" parent="MainMargin"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 12
+
+[node name="HeaderHBox" type="HBoxContainer" parent="MainMargin/VBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="TitleLabel" type="Label" parent="MainMargin/VBox/HeaderHBox"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme = ExtResource("3_theme")
+theme_override_font_sizes/font_size = 42
+text = "ARMORY.TITLE"
+
+[node name="CloseTextureButton" type="TextureButton" parent="MainMargin/VBox/HeaderHBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+texture_normal = ExtResource("2_close")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="LegacyLabel" type="Label" parent="MainMargin/VBox"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+theme = ExtResource("3_theme")
+theme_override_font_sizes/font_size = 18
+autowrap_mode = 3
+text = "ARMORY.LEGACY_NOTICE"
+
+[node name="StarsRow" type="HBoxContainer" parent="MainMargin/VBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 16
+
+[node name="StarsLabel" type="Label" parent="MainMargin/VBox/StarsRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme = ExtResource("3_theme")
+theme_override_font_sizes/font_size = 22
+text = "ARMORY.STARS_LINE"
+vertical_alignment = 1
+
+[node name="ResetSpentStarsButton" type="Button" parent="MainMargin/VBox/StarsRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 40)
+layout_mode = 2
+theme = ExtResource("3_theme")
+
+[node name="ArmoryTabs" type="TabContainer" parent="MainMargin/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme = ExtResource("3_theme")
+
+[node name="ScrollBuildings" type="ScrollContainer" parent="MainMargin/VBox/ArmoryTabs"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="NodesBuildingsVBox" type="VBoxContainer" parent="MainMargin/VBox/ArmoryTabs/ScrollBuildings"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 10
+
+[node name="ScrollBuffs" type="ScrollContainer" parent="MainMargin/VBox/ArmoryTabs"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="NodesBuffsVBox" type="VBoxContainer" parent="MainMargin/VBox/ArmoryTabs/ScrollBuffs"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 10
+
+[node name="ResetConfirmDialog" type="ConfirmationDialog" parent="."]
+unique_name_in_owner = true
+unresizable = true
