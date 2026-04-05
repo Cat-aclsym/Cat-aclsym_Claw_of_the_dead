@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://dygxxtpara021"]
+[gd_scene load_steps=5 format=3 uid="uid://dygxxtpara021"]
 
 [ext_resource type="Script" uid="uid://6soot5tpvyhx" path="res://scenes/ui/menus/armory/armory.gd" id="1_arm"]
 [ext_resource type="Texture2D" uid="uid://0lgpu16nkbho" path="res://assets/ui/icons/Button Close.svg" id="2_close"]
 [ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="3_theme"]
+[ext_resource type="Texture2D" uid="uid://bm6k4rajx0ffb" path="res://assets/ui/level_selection/window/condition_done.svg" id="4_chal_star"]
 
 [node name="Armory" type="Control"]
 clip_contents = true
@@ -44,6 +45,8 @@ theme_override_constants/separation = 12
 [node name="HeaderHBox" type="HBoxContainer" parent="MainMargin/VBox"]
 layout_mode = 2
 size_flags_horizontal = 3
+theme_override_constants/separation = 16
+alignment = 1
 
 [node name="TitleLabel" type="Label" parent="MainMargin/VBox/HeaderHBox"]
 unique_name_in_owner = true
@@ -53,6 +56,32 @@ theme = ExtResource("3_theme")
 theme_override_font_sizes/font_size = 42
 text = "ARMORY.TITLE"
 autowrap_mode = 3
+
+[node name="StarsStrip" type="HBoxContainer" parent="MainMargin/VBox/HeaderHBox"]
+layout_mode = 2
+theme_override_constants/separation = 6
+alignment = 1
+
+[node name="StarsIconTextureRect" type="TextureRect" parent="MainMargin/VBox/HeaderHBox/StarsStrip"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+texture = ExtResource("4_chal_star")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="StarsCountLabel" type="Label" parent="MainMargin/VBox/HeaderHBox/StarsStrip"]
+unique_name_in_owner = true
+layout_mode = 2
+theme = ExtResource("3_theme")
+theme_override_font_sizes/font_size = 22
+text = "0"
+vertical_alignment = 1
+
+[node name="ResetSpentStarsButton" type="Button" parent="MainMargin/VBox/HeaderHBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(180, 40)
+layout_mode = 2
+theme = ExtResource("3_theme")
 
 [node name="CloseTextureButton" type="TextureButton" parent="MainMargin/VBox/HeaderHBox"]
 unique_name_in_owner = true
@@ -71,32 +100,6 @@ theme = ExtResource("3_theme")
 theme_override_font_sizes/font_size = 18
 text = "ARMORY.LEGACY_NOTICE"
 autowrap_mode = 3
-
-[node name="StarsRow" type="VBoxContainer" parent="MainMargin/VBox"]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_constants/separation = 10
-
-[node name="StarsLabel" type="Label" parent="MainMargin/VBox/StarsRow"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-theme = ExtResource("3_theme")
-theme_override_font_sizes/font_size = 22
-text = "ARMORY.STARS_LINE"
-vertical_alignment = 1
-autowrap_mode = 3
-
-[node name="ResetStarsHBox" type="HBoxContainer" parent="MainMargin/VBox/StarsRow"]
-layout_mode = 2
-size_flags_horizontal = 3
-alignment = 2
-
-[node name="ResetSpentStarsButton" type="Button" parent="MainMargin/VBox/StarsRow/ResetStarsHBox"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(200, 40)
-layout_mode = 2
-theme = ExtResource("3_theme")
 
 [node name="ArmoryTabs" type="TabContainer" parent="MainMargin/VBox"]
 unique_name_in_owner = true

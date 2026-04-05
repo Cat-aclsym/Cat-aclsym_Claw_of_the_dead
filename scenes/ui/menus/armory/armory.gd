@@ -19,7 +19,7 @@ var _fitting_scroll: bool = false
 @onready var reset_spent_stars_button: Button = %ResetSpentStarsButton
 @onready var scroll_buffs: ScrollContainer = %ScrollBuffs
 @onready var scroll_buildings: ScrollContainer = %ScrollBuildings
-@onready var stars_label: Label = %StarsLabel
+@onready var stars_count_label: Label = %StarsCountLabel
 @onready var tab_container: TabContainer = %ArmoryTabs
 @onready var title_label: Label = %TitleLabel
 
@@ -40,7 +40,7 @@ func _ready() -> void:
 	assert(reset_spent_stars_button != null, "reset_spent_stars_button node not found")
 	assert(scroll_buffs != null, "scroll_buffs node not found")
 	assert(scroll_buildings != null, "scroll_buildings node not found")
-	assert(stars_label != null, "stars_label node not found")
+	assert(stars_count_label != null, "stars_count_label node not found")
 	assert(tab_container != null, "tab_container node not found")
 	assert(title_label != null, "title_label node not found")
 	tab_container.set_tab_title(0, tr("ARMORY.TAB.BUILDINGS"))
@@ -190,8 +190,7 @@ func _refresh() -> void:
 		legacy_label.text = tr("ARMORY.LEGACY_NOTICE")
 
 	var avail: int = ArmoryManager.get_available_stars()
-	var earned: int = ArmoryManager.get_total_earned_stars()
-	stars_label.text = tr("ARMORY.STARS_LINE") % [avail, earned]
+	stars_count_label.text = "x %d" % avail
 	reset_spent_stars_button.disabled = ProgressionManager.data.armory_purchased.is_empty()
 
 	for nid in ArmoryManager.get_node_ids_ordered():
