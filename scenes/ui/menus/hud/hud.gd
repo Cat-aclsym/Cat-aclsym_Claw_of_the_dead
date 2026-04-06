@@ -135,16 +135,16 @@ func _trigger_coin_effects(amount: int) -> void:
 	tween.tween_property(coins_rich_text_label, "scale", Vector2(1.2, 1.2), 0.1).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	tween.tween_property(coins_rich_text_label, "scale", Vector2(1.0, 1.0), 0.1).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 
-	# Floating notification (+X$)
+	# Floating notification (+X with coin icon)
 	var popup = POPUP_SCORE_SCENE.instantiate()
-	var label: Label = popup.get_node("FloatingNumbers/Label")
+	var label: Label = popup.get_node("FloatingNumbers/PriceRow/Label") as Label
 
 	# Configure label with requested style
 	label.add_theme_font_override("font", DOTGOTHIC_FONT)
 	label.add_theme_font_size_override("font_size", 24)
 	label.add_theme_color_override("font_outline_color", Color.BLACK)
 	label.add_theme_constant_override("outline_size", 6)
-	label.text = "+%d$" % amount
+	label.text = "+%d" % amount
 	label.self_modulate = Color(1, 1, 1, 1)
 
 	# Add to HUD to keep it in screen space

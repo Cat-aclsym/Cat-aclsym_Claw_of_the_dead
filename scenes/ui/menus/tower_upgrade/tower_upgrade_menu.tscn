@@ -1,10 +1,11 @@
-[gd_scene load_steps=7 format=3 uid="uid://xukck3ogg7bs"]
+[gd_scene load_steps=8 format=3 uid="uid://xukck3ogg7bs"]
 
 [ext_resource type="Script" uid="uid://de5b23g7wdtx6" path="res://scenes/ui/menus/tower_upgrade/tower_upgrade_menu.gd" id="1_53bwk"]
 [ext_resource type="Texture2D" uid="uid://c5jwmpccl40pb" path="res://assets/environment/backgrounds/Fond Menu 01.svg" id="2_wrblu"]
 [ext_resource type="FontFile" uid="uid://ddo3rokwsadq0" path="res://assets/ui/fonts/dotgothic/DotGothic16-Regular.ttf" id="3_uyu61"]
 [ext_resource type="Texture2D" uid="uid://nsf3nkto3p0t" path="res://assets/ui/buttons/Bouton Vert.svg" id="7_wrblu"]
 [ext_resource type="Texture2D" uid="uid://cvut87og2mth" path="res://assets/ui/buttons/Bouton orange.svg" id="8_u7ot3"]
+[ext_resource type="Texture2D" path="res://assets/ui/huds/Coin.png" id="9_28meq"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_u7ot3"]
 texture = ExtResource("2_wrblu")
@@ -69,13 +70,25 @@ theme_override_constants/separation = 10
 alignment = 1
 
 [node name="UpgradeOption1Button" type="Button" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/TabsHBoxContainer"]
+custom_minimum_size = Vector2(180, 65)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("3_uyu61")
+theme_override_styles/normal = SubResource("StyleBoxTexture_u7ot3")
+theme_override_styles/hover = SubResource("StyleBoxTexture_u7ot3")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_u7ot3")
+theme_override_styles/focus = SubResource("StyleBoxTexture_u7ot3")
+alignment = 1
 text = "Option 1"
 
 [node name="UpgradeOption2Button" type="Button" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/TabsHBoxContainer"]
+custom_minimum_size = Vector2(180, 65)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("3_uyu61")
+theme_override_styles/normal = SubResource("StyleBoxTexture_u7ot3")
+theme_override_styles/hover = SubResource("StyleBoxTexture_u7ot3")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_u7ot3")
+theme_override_styles/focus = SubResource("StyleBoxTexture_u7ot3")
+alignment = 1
 text = "Option 2"
 
 [node name="StatsScrollContainer" type="ScrollContainer" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer"]
@@ -104,18 +117,37 @@ texture_normal = ExtResource("7_wrblu")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="Label" type="Label" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/ButtonsHBoxContainer/ConfirmButton"]
+[node name="PriceRow" type="HBoxContainer" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/ButtonsHBoxContainer/ConfirmButton"]
 layout_mode = 1
-anchors_preset = 5
+anchors_preset = 8
 anchor_left = 0.5
+anchor_top = 0.5
 anchor_right = 0.5
-offset_left = -60.0
-offset_top = 4.0
-offset_right = 60.0
-offset_bottom = 48.0
+anchor_bottom = 0.5
+offset_left = -110.0
+offset_top = -24.0
+offset_right = 110.0
+offset_bottom = 24.0
 grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/ButtonsHBoxContainer/ConfirmButton/PriceRow"]
+layout_mode = 2
+size_flags_vertical = 4
 theme_override_fonts/font = ExtResource("3_uyu61")
-text = "Confirmer"
+text = "Acheter 0"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CoinIcon" type="TextureRect" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/ButtonsHBoxContainer/ConfirmButton/PriceRow"]
+layout_mode = 2
+custom_minimum_size = Vector2(20, 20)
+size_flags_vertical = 4
+texture = ExtResource("9_28meq")
+expand_mode = 1
+stretch_mode = 5
 
 [node name="CancelButton" type="TextureButton" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/ButtonsHBoxContainer"]
 custom_minimum_size = Vector2(200, 65)

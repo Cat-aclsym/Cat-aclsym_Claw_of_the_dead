@@ -22,7 +22,8 @@ var _locked: bool = false
 @onready var background_texture: TextureRect = $CardVBoxContainer/CardAspectRatioContainer/CardTextureButton/BackgroundTextureRect
 @onready var button_texture: TextureButton = $CardVBoxContainer/CardAspectRatioContainer/CardTextureButton
 @onready var container: VBoxContainer = $CardVBoxContainer
-@onready var price_label: Label = $CardVBoxContainer/CardAspectRatioContainer/CardTextureButton/PriceLabel
+@onready var price_coin_icon: TextureRect = $CardVBoxContainer/CardAspectRatioContainer/CardTextureButton/PriceRow/CoinIcon
+@onready var price_label: Label = $CardVBoxContainer/CardAspectRatioContainer/CardTextureButton/PriceRow/PriceLabel
 @onready var title_label: Label = $CardVBoxContainer/TitleAspectRatioContainer/TitleTextureRect/TitleLabel
 @onready var preview_texture_rect: TextureRect = $CardVBoxContainer/CardAspectRatioContainer/CardTextureButton/BuildPreviewTextureRect
 
@@ -37,6 +38,7 @@ func _ready() -> void:
 	assert(button_texture != null, "button_texture node not found")
 	assert(container != null, "container node not found")
 	assert(price_label != null, "price_label node not found")
+	assert(price_coin_icon != null, "price_coin_icon node not found")
 	assert(title_label != null, "title_label node not found")
 	assert(preview_texture_rect != null, "preview_texture_rect node not found")
 
@@ -68,16 +70,19 @@ func update() -> void:
 	button_texture.disabled = not can_build
 	if _locked:
 		price_label.text = tr("BUILD.CARD.LOCKED")
+		price_coin_icon.visible = false
 		modulate = CARD_MODULATE_UNAFFORDABLE
 		price_label.modulate = Color(0.75, 0.78, 0.8, 1.0)
 		price_label.remove_theme_color_override("font_color")
 	elif can_afford:
-		price_label.text = "{0}$".format([_cost])
+		price_label.text = str(_cost)
+		price_coin_icon.visible = true
 		modulate = CARD_MODULATE_AFFORDABLE
 		price_label.modulate = Color.WHITE
 		price_label.remove_theme_color_override("font_color")
 	else:
-		price_label.text = "{0}$".format([_cost])
+		price_label.text = str(_cost)
+		price_coin_icon.visible = true
 		modulate = CARD_MODULATE_UNAFFORDABLE
 		price_label.modulate = PRICE_LABEL_MODULATE_VS_DIM
 		price_label.add_theme_color_override("font_color", PRICE_LABEL_COLOR_UNAFFORDABLE)
