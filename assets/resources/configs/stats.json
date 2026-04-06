@@ -73,8 +73,13 @@
   },
   "upgrades": {
 	"bat_01_02": {
-	  "scene": "res://scenes/gameplay/entities/upgrade/bat_01/bat_01_02.tscn",
 	  "price": 75,
+	  "changes": {
+		"tower_stat": true,
+		"tower_model": false,
+		"bullet_stat": true,
+		"bullet_model": false
+	  },
 	  "tower_stats": {
 		"level": 1,
 		"shoot_range": 0.0,
@@ -83,17 +88,27 @@
 		"spread_angle": 0.0
 	  },
 	  "bullet_stats": {
+		"aoe_duration": 0.0,
 		"damage": 2.0,
+		"damage_multiplier": 0.0,
+		"dot_damage": 0.0,
 		"speed": 0.0,
 		"pierce_count": 0.0,
 		"pierce_reduction": 0.0,
-		"aoe_range": 0.0
+		"aoe_range": 0.0,
+		"burn_duration": 0.0,
+		"burn_damage_base": 0.0
 	  },
 	  "next": ["bat_01_03"]
 	},
 	"bat_01_03": {
-	  "scene": "res://scenes/gameplay/entities/upgrade/bat_01/bat_01_03.tscn",
 	  "price": 0,
+	  "changes": {
+		"tower_stat": true,
+		"tower_model": false,
+		"bullet_stat": true,
+		"bullet_model": false
+	  },
 	  "tower_stats": {
 		"level": 1,
 		"shoot_range": 0.0,
@@ -102,17 +117,86 @@
 		"spread_angle": 0.0
 	  },
 	  "bullet_stats": {
+		"aoe_duration": 0.0,
 		"damage": 2.0,
+		"damage_multiplier": 0.0,
+		"dot_damage": 0.0,
 		"speed": 0.0,
 		"pierce_count": 0.0,
 		"pierce_reduction": 0.0,
-		"aoe_range": 0.0
+		"aoe_range": 0.0,
+		"burn_duration": 0.0,
+		"burn_damage_base": 0.0
 	  },
 	  "next": ["bat_01_a_04", "bat_01_b_04"]
 	},
-	"bat_01_b_04": {
-	  "scene": "res://scenes/gameplay/entities/upgrade/bat_01/bat_01_b_04.tscn",
+	"bat_01_a_04": {
 	  "price": 0,
+	  "changes": {
+		"tower_stat": true,
+		"tower_model": false,
+		"bullet_stat": false,
+		"bullet_model": true
+	  },
+	  "tower_stats": {
+		"level": 1,
+		"shoot_range": 30.0,
+		"fire_rate": 0.0,
+		"projectile_count": 0,
+		"spread_angle": 0.0
+	  },
+	  "bullet_stats": {
+		"aoe_duration": 0.0,
+		"damage": 0.0,
+		"damage_multiplier": 0.0,
+		"dot_damage": 0.0,
+		"speed": 0.0,
+		"pierce_count": 0.0,
+		"pierce_reduction": 0.0,
+		"aoe_range": 0.0,
+		"burn_duration": 0.0,
+		"burn_damage_base": 0.0
+	  },
+	  "bullet_scene_path": "res://scenes/gameplay/entities/bullet/piercing_arrow.tscn",
+	  "next": ["bat_01_a_05"]
+	},
+	"bat_01_a_05": {
+	  "price": 0,
+	  "changes": {
+		"tower_stat": true,
+		"tower_model": false,
+		"bullet_stat": true,
+		"bullet_model": false
+	  },
+	  "tower_stats": {
+		"level": 1,
+		"shoot_range": 0.0,
+		"fire_rate": 0.0,
+		"projectile_count": 0,
+		"spread_angle": 0.0
+	  },
+	  "bullet_stats": {
+		"aoe_duration": 0.0,
+		"damage": 5.0,
+		"damage_multiplier": 0.0,
+		"dot_damage": 0.0,
+		"speed": 0.0,
+		"pierce_count": 1.0,
+		"pierce_reduction": 0.0,
+		"aoe_range": 0.0,
+		"burn_duration": 0.0,
+		"burn_damage_base": 0.0
+	  },
+	  "next": []
+	},
+	"bat_01_b_04": {
+	  "price": 0,
+	  "changes": {
+		"tower_stat": true,
+		"tower_model": false,
+		"bullet_stat": false,
+		"bullet_model": false
+	  },
 	  "tower_stats": {
 		"level": 1,
 		"shoot_range": 0.0,
@@ -121,13 +205,27 @@
 		"spread_angle": 10.0
 	  },
 	  "bullet_stats": {
-		"damage": -2.0
+		"aoe_duration": 0.0,
+		"damage": -2.0,
+		"damage_multiplier": 0.0,
+		"dot_damage": 0.0,
+		"speed": 0.0,
+		"pierce_count": 0.0,
+		"pierce_reduction": 0.0,
+		"aoe_range": 0.0,
+		"burn_duration": 0.0,
+		"burn_damage_base": 0.0
 	  },
 	  "next": ["bat_01_b_05"]
 	},
 	"bat_01_b_05": {
-	  "scene": "res://scenes/gameplay/entities/upgrade/bat_01/bat_01_b_05.tscn",
 	  "price": 0,
+	  "changes": {
+		"tower_stat": true,
+		"tower_model": false,
+		"bullet_stat": false,
+		"bullet_model": false
+	  },
 	  "tower_stats": {
 		"fire_rate": 0.0,
 		"level": 1,
@@ -135,12 +233,28 @@
 		"shoot_range": 0.0,
 		"spread_angle": 20.0
 	  },
-	  "bullet_stats": {},
+	  "bullet_stats": {
+		"aoe_duration": 0.0,
+		"damage": 0.0,
+		"damage_multiplier": 0.0,
+		"dot_damage": 0.0,
+		"speed": 0.0,
+		"pierce_count": 0.0,
+		"pierce_reduction": 0.0,
+		"aoe_range": 0.0,
+		"burn_duration": 0.0,
+		"burn_damage_base": 0.0
+	  },
 	  "next": []
 	},
 	"bat_02_02": {
-	  "scene": "res://scenes/gameplay/entities/upgrade/bat_02/bat_02_02.tscn",
 	  "price": 0,
+	  "changes": {
+		"tower_stat": true,
+		"tower_model": false,
+		"bullet_stat": false,
+		"bullet_model": false
+	  },
 	  "tower_stats": {
 		"fire_rate": 0.0,
 		"level": 1,
@@ -148,12 +262,28 @@
 		"shoot_range": 0.0,
 		"spread_angle": 0.0
 	  },
-	  "bullet_stats": {},
+	  "bullet_stats": {
+		"aoe_duration": 0.0,
+		"damage": 0.0,
+		"damage_multiplier": 0.0,
+		"dot_damage": 0.0,
+		"speed": 0.0,
+		"pierce_count": 0.0,
+		"pierce_reduction": 0.0,
+		"aoe_range": 0.0,
+		"burn_duration": 0.0,
+		"burn_damage_base": 0.0
+	  },
 	  "next": ["bat_02_03"]
 	},
 	"bat_02_03": {
-	  "scene": "res://scenes/gameplay/entities/upgrade/bat_02/bat_02_03.tscn",
 	  "price": 0,
+	  "changes": {
+		"tower_stat": true,
+		"tower_model": false,
+		"bullet_stat": false,
+		"bullet_model": false
+	  },
 	  "tower_stats": {
 		"fire_rate": 0.0,
 		"level": 1,
@@ -161,12 +291,28 @@
 		"shoot_range": 0.0,
 		"spread_angle": 0.0
 	  },
-	  "bullet_stats": {},
+	  "bullet_stats": {
+		"aoe_duration": 0.0,
+		"damage": 0.0,
+		"damage_multiplier": 0.0,
+		"dot_damage": 0.0,
+		"speed": 0.0,
+		"pierce_count": 0.0,
+		"pierce_reduction": 0.0,
+		"aoe_range": 0.0,
+		"burn_duration": 0.0,
+		"burn_damage_base": 0.0
+	  },
 	  "next": ["bat_02_a_04", "bat_02_b_04"]
 	},
 	"bat_02_a_04": {
-	  "scene": "res://scenes/gameplay/entities/upgrade/bat_02/bat_02_a_04.tscn",
 	  "price": 0,
+	  "changes": {
+		"tower_stat": true,
+		"tower_model": false,
+		"bullet_stat": false,
+		"bullet_model": true
+	  },
 	  "tower_stats": {
 		"fire_rate": 0.0,
 		"level": 1,
@@ -174,13 +320,58 @@
 		"shoot_range": 0.0,
 		"spread_angle": 0.0
 	  },
-	  "bullet_stats": {},
-	  "bullet": "res://scenes/gameplay/entities/bullet/fire_arrow.tscn",
+	  "bullet_stats": {
+		"aoe_duration": 0.0,
+		"damage": 0.0,
+		"damage_multiplier": 0.0,
+		"dot_damage": 0.0,
+		"speed": 0.0,
+		"pierce_count": 0.0,
+		"pierce_reduction": 0.0,
+		"aoe_range": 0.0,
+		"burn_duration": 0.0,
+		"burn_damage_base": 0.0
+	  },
+	  "bullet_scene_path": "res://scenes/gameplay/entities/bullet/fire_arrow.tscn",
+	  "next": ["bat_02_a_05"]
+	},
+	"bat_02_a_05": {
+	  "price": 0,
+	  "changes": {
+		"tower_stat": true,
+		"tower_model": false,
+		"bullet_stat": false,
+		"bullet_model": false
+	  },
+	  "tower_stats": {
+		"fire_rate": 0.0,
+		"level": 1,
+		"projectile_count": 0,
+		"shoot_range": 0.0,
+		"spread_angle": 0.0
+	  },
+	  "bullet_stats": {
+		"aoe_duration": 0.0,
+		"damage": 0.0,
+		"damage_multiplier": 0.0,
+		"dot_damage": 0.0,
+		"speed": 0.0,
+		"pierce_count": 0.0,
+		"pierce_reduction": 0.0,
+		"aoe_range": 0.0,
+		"burn_duration": 0.0,
+		"burn_damage_base": 0.0
+	  },
 	  "next": []
 	},
 	"bat_02_b_04": {
-	  "scene": "res://scenes/gameplay/entities/upgrade/bat_02/bat_02_b_04.tscn",
 	  "price": 0,
+	  "changes": {
+		"tower_stat": true,
+		"tower_model": false,
+		"bullet_stat": true,
+		"bullet_model": false
+	  },
 	  "tower_stats": {
 		"level": 1,
 		"shoot_range": 0.0,
@@ -189,7 +380,10 @@
 		"spread_angle": 0.0
 	  },
 	  "bullet_stats": {
+		"aoe_duration": 0.0,
 		"aoe_range": 20.0,
+		"damage_multiplier": 0.0,
+		"dot_damage": 0.0,
 		"burn_damage_base": 0.0,
 		"burn_duration": 0.0,
 		"damage": 0.0,
@@ -200,8 +394,13 @@
 	  "next": ["bat_02_b_05"]
 	},
 	"bat_02_b_05": {
-	  "scene": "res://scenes/gameplay/entities/upgrade/bat_02/bat_02_b_05.tscn",
 	  "price": 0,
+	  "changes": {
+		"tower_stat": true,
+		"tower_model": false,
+		"bullet_stat": true,
+		"bullet_model": false
+	  },
 	  "tower_stats": {
 		"fire_rate": 0.0,
 		"level": 1,
@@ -210,7 +409,10 @@
 		"spread_angle": 0.0
 	  },
 	  "bullet_stats": {
+		"aoe_duration": 0.0,
 		"aoe_range": 20.0,
+		"damage_multiplier": 0.0,
+		"dot_damage": 0.0,
 		"burn_damage_base": 0.0,
 		"burn_duration": 0.0,
 		"damage": 0.0,

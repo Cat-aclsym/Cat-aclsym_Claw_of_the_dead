@@ -12,7 +12,7 @@ const ARMORY_JSON_PATH: String = "res://resources/armory/armory.json"
 # Private variables
 var _nodes_by_id: Dictionary = {}
 var _ordered_node_ids: Array[String] = []
-var _upgrade_gates: Dictionary = {} ## scene path -> required armory node id
+var _upgrade_gates_by_id: Dictionary = {} ## upgrade id -> required armory node id
 
 
 # Built-in functions
@@ -21,8 +21,8 @@ func _ready() -> void:
 
 
 # Public functions
-## Appends [PackedScene] upgrades from purchased [code]append_tower_upgrade[/code] effects for this [param tower].
-func append_unlocked_upgrades(tower: ITower) -> void:
+## Appends upgrade IDs from purchased [code]append_tower_upgrade[/code] effects.
+func append_unlocked_upgrade_ids(tower: ITower) -> void:
 	if tower == null or tower.tower_id.is_empty():
 		return
 	if _legacy_mode():
@@ -36,13 +36,13 @@ func append_unlocked_upgrades(tower: ITower) -> void:
 				continue
 			if eff.get("tower_id", "") != tower.tower_id:
 				continue
-			var p: PackedScene = StatsDB.load_packed_scene(eff.get("upgrade_scene", ""))
-			if p == null:
-				Log.trace(Log.Level.WARN, "Armory: missing upgrade_scene for node %s" % node_id)
+			var appended_upgrade_id: String = str(eff.get("upgrade_id", ""))
+			if appended_upgrade_id.is_empty() or not StatsDB.has_upgrade(appended_upgrade_id):
+				Log.trace(Log.Level.WARN, "Armory: invalid append_tower_upgrade effect in node %s" % node_id)
 				continue
-			if p in tower.available_upgrade:
+			if appended_upgrade_id in tower.available_upgrade_ids:
 				continue
-			tower.available_upgrade.append(p)
+			tower.available_upgrade_ids.append(appended_upgrade_id)
 
 
 ## Applies aggregated [code]core_buff[/code] multipliers after [method ITower.apply_stats_from_db].
@@ -102,15 +102,14 @@ func get_spent_stars() -> int:
 	return spent
 
 
-## Filters upgrade options using [code]upgrade_gates[/code] and legacy mode.
-func filter_upgrade_scenes(scenes: Array[PackedScene]) -> Array[PackedScene]:
-	var out: Array[PackedScene] = []
-	for s in scenes:
-		if s == null:
+## Filters upgrade IDs using [code]upgrade_gates[/code] and legacy mode.
+func filter_upgrade_ids(ids: Array[String]) -> Array[String]:
+	var out: Array[String] = []
+	for upgrade_id in ids:
+		if upgrade_id.is_empty():
 			continue
-		var path: String = s.resource_path
-		if _legacy_mode() or _is_upgrade_path_allowed(path):
-			out.append(s)
+		if _legacy_mode() or _is_upgrade_id_allowed(upgrade_id):
+			out.append(upgrade_id)
 	return out
 
 
@@ -236,12 +235,12 @@ func _has_any_prereq_cycle() -> bool:
 	return false
 
 
-func _is_upgrade_path_allowed(scene_path: String) -> bool:
-	if scene_path.is_empty():
+func _is_upgrade_id_allowed(upgrade_id: String) -> bool:
+	if upgrade_id.is_empty():
 		return false
-	if not _upgrade_gates.has(scene_path):
+	if not _upgrade_gates_by_id.has(upgrade_id):
 		return true
-	var req: String = str(_upgrade_gates[scene_path])
+	var req: String = str(_upgrade_gates_by_id[upgrade_id])
 	return is_node_purchased(req)
 
 
@@ -252,7 +251,7 @@ func _legacy_mode() -> bool:
 func _load_and_validate() -> void:
 	_nodes_by_id.clear()
 	_ordered_node_ids.clear()
-	_upgrade_gates.clear()
+	_upgrade_gates_by_id.clear()
 
 	if not FileAccess.file_exists(ARMORY_JSON_PATH):
 		Log.trace(Log.Level.ERROR, "Armory: missing %s" % ARMORY_JSON_PATH)
@@ -267,10 +266,10 @@ func _load_and_validate() -> void:
 	for g in parsed.get("upgrade_gates", []):
 		if typeof(g) != TYPE_DICTIONARY:
 			continue
-		var sc: String = g.get("scene", "")
+		var upg_id: String = g.get("upgrade_id", "")
 		var req: String = g.get("requires_node", "")
-		if not sc.is_empty() and not req.is_empty():
-			_upgrade_gates[sc] = req
+		if not upg_id.is_empty() and not req.is_empty():
+			_upgrade_gates_by_id[upg_id] = req
 
 	var nodes: Array = parsed.get("nodes", [])
 	for item in nodes:
@@ -304,9 +303,9 @@ func _validate_node_effects(node: Dictionary) -> void:
 				if not trap_key.is_empty() and not StatsDB.has_trap(trap_key):
 					Log.trace(Log.Level.WARN, "Armory: unknown trap_id in node %s" % node.get("id", ""))
 			"append_tower_upgrade":
-				var path: String = eff.get("upgrade_scene", "")
-				if not path.is_empty() and StatsDB.load_packed_scene(path) == null:
-					Log.trace(Log.Level.WARN, "Armory: invalid upgrade_scene in node %s" % node.get("id", ""))
+				var upgrade_id: String = eff.get("upgrade_id", "")
+				if upgrade_id.is_empty() or not StatsDB.has_upgrade(upgrade_id):
+					Log.trace(Log.Level.WARN, "Armory: invalid upgrade_id in node %s" % node.get("id", ""))
 			"tower_buff":
 				pass
 			_:

@@ -65,8 +65,8 @@ var reward_multiplier: float = 1.0
 var _special_modifiers: Dictionary = {}
 
 @export_subgroup("Upgrades")
-## The upgrade array to store upgrades that are applied in the tower
-@export var available_upgrade: Array[PackedScene]
+## Data-driven upgrade IDs available for this tower
+@export var available_upgrade_ids: Array[String] = []
 
 # Onready variables
 ## The area 2D node for the tower to detect enemies in range
@@ -109,7 +109,7 @@ var target: IEnemy
 ## The type of target the tower will shoot at
 var target_type: TargetType
 ## The pending upgrade to be applied
-var pending_upgrade: PackedScene
+var pending_upgrade_id: String = ""
 ## The tile position of the tower on the map
 var tile_pos: Vector2i
 var _pulse_tween: Tween = null
@@ -121,8 +121,9 @@ var _range_tween: Tween = null
 func _ready() -> void:
 	target_type = TargetType.FIRST
 	_apply_base_stats_override()
-	ArmoryManager.append_unlocked_upgrades(self)
-	available_upgrade = ArmoryManager.filter_upgrade_scenes(available_upgrade)
+	_resolve_initial_upgrade_ids()
+	ArmoryManager.append_unlocked_upgrade_ids(self)
+	available_upgrade_ids = _filter_upgrade_ids(available_upgrade_ids)
 	sell_price = ceil(cost / 2.0)
 	hover_box.z_index = 3
 	update_dependent_properties()
@@ -231,13 +232,16 @@ func fire() -> void:
 
 	fire_rate_timer.start()
 
-## Starts the upgrade process with the given upgrade scene
-func start_upgrade(upgradeScene: PackedScene) -> void:
-	var upgrade: IUpgrade = upgradeScene.instantiate()
-	if ILevel.current_level.coins < upgrade.price:
+## Starts the upgrade process with the given upgrade id
+func start_upgrade(upgrade_id: String) -> void:
+	if upgrade_id.is_empty() or not StatsDB.has_upgrade(upgrade_id):
+		Log.trace(Log.Level.ERROR, "Invalid upgrade id: %s" % upgrade_id)
+		return
+	var upgrade_price: int = StatsDB.get_upgrade_price(upgrade_id)
+	if ILevel.current_level.coins < upgrade_price:
 		Log.trace(Log.Level.ERROR, "Not enough coins to upgrade")
 		return
-	pending_upgrade = upgradeScene
+	pending_upgrade_id = upgrade_id
 	state = TowerState.UPGRADING
 	$ProgressBar.value = 0
 	$ProgressBar.visible = true
@@ -246,16 +250,24 @@ func start_upgrade(upgradeScene: PackedScene) -> void:
 
 ## Applies the pending upgrade to the tower
 func apply_upgrade() -> void:
-	var upgrade: IUpgrade = pending_upgrade.instantiate()
+	if pending_upgrade_id.is_empty() or not StatsDB.has_upgrade(pending_upgrade_id):
+		Log.trace(Log.Level.ERROR, "No pending upgrade id to apply")
+		return
+	var changes: Dictionary = StatsDB.get_upgrade_changes(pending_upgrade_id)
+	var tower_stats: Dictionary = StatsDB.get_upgrade_tower_stats(pending_upgrade_id)
+	var bullet_stats_delta: Dictionary = StatsDB.get_upgrade_bullet_stats(pending_upgrade_id)
+	var upgrade_data: Dictionary = StatsDB.get_upgrade(pending_upgrade_id)
 
-	if upgrade.changes["tower_stat"]:
-		_apply_tower_stat_changes(upgrade)
+	if changes.get("tower_stat", false):
+		_apply_tower_stat_changes(tower_stats)
 
-	if upgrade.changes["bullet_stat"]:
-		_apply_bullet_stat_changes(upgrade)
+	if changes.get("bullet_stat", false):
+		_apply_bullet_stat_changes(bullet_stats_delta)
 
-	if upgrade.changes["tower_model"] and upgrade.tower != null:
-		if upgrade.tower is Texture2D:
+	if changes.get("tower_model", false):
+		var tower_model_path: String = str(upgrade_data.get("tower_model_path", ""))
+		var tower_model_res: Resource = load(tower_model_path) if not tower_model_path.is_empty() else null
+		if tower_model_res is Texture2D:
 			if animated_sprite_2d.sprite_frames != null and animated_sprite_2d.sprite_frames.has_animation("idle"):
 				var idle_anim = animated_sprite_2d.sprite_frames.get_animation("idle")
 				# Determine frame index: 0 to add if empty, or last frame index to update
@@ -263,27 +275,30 @@ func apply_upgrade() -> void:
 				if idle_anim.get_frame_count() > 0:
 					frame_idx = idle_anim.get_frame_count() - 1
 
-				idle_anim.set_frame_texture(frame_idx, upgrade.tower)
+				idle_anim.set_frame_texture(frame_idx, tower_model_res)
 
 				if not animated_sprite_2d.is_playing() or animated_sprite_2d.animation != "idle":
 					animated_sprite_2d.play("idle")
-			else: # upgrade.tower is Texture2D, but no 'idle' animation or no sprite_frames
+			else:
 				var reason = "'idle' animation missing"
 				if animated_sprite_2d.sprite_frames == null:
 					reason = "no sprite_frames assigned"
 				elif not animated_sprite_2d.sprite_frames.has_animation("idle"):
-					reason = "'idle' animation missing" # Redundant but clear
+					reason = "'idle' animation missing"
 				Log.trace(Log.Level.WARN, "Cannot apply tower_model texture: %s in AnimatedSprite2D." % reason)
-		else: # upgrade.tower is not Texture2D (and not null)
-			Log.trace(Log.Level.ERROR, "upgrade.tower for tower_model is not a Texture2D as expected. Type: %s" % typeof(upgrade.tower))
+		elif not tower_model_path.is_empty():
+			Log.trace(Log.Level.ERROR, "tower_model_path is not a Texture2D as expected. Type: %s" % typeof(tower_model_res))
 
-	if upgrade.changes["bullet_model"] and upgrade.bullet != null:
-		bullet_scene = upgrade.bullet
+	if changes.get("bullet_model", false):
+		var bullet_override: PackedScene = StatsDB.get_upgrade_bullet_scene(pending_upgrade_id)
+		if bullet_override != null:
+			bullet_scene = bullet_override
 
-	available_upgrade = ArmoryManager.filter_upgrade_scenes(upgrade.next_upgrades)
-	sell_price += ceil(upgrade.price / 2.0)
+	available_upgrade_ids = _filter_upgrade_ids(StatsDB.get_upgrade_next_ids(pending_upgrade_id))
+	sell_price += ceil(float(StatsDB.get_upgrade_price(pending_upgrade_id)) / 2.0)
 	update_dependent_properties()
-	level += 1
+	level += int(tower_stats.get("level", 1))
+	pending_upgrade_id = ""
 	state = TowerState.ACTIVE
 	emit_signal("upgrade_completed")
 
@@ -457,18 +472,18 @@ func show_range(p_show: bool, smooth: bool = true) -> void:
 			polygon_2d.visible = false
 			outline.visible = false
 
-func _apply_tower_stat_changes(upgrade: IUpgrade) -> void:
-	for stat in upgrade.tower_stats.keys():
+func _apply_tower_stat_changes(tower_stats: Dictionary) -> void:
+	for stat in tower_stats.keys():
 		if stat == "level":
 			continue
-		if self.get(stat):
-			Log.trace(Log.Level.DEBUG, "Modifying stat: {0} by {1}".format([stat, upgrade.tower_stats[stat]]))
-			self.set(stat, self.get(stat) + upgrade.tower_stats[stat])
+		if stat in self:
+			Log.trace(Log.Level.DEBUG, "Modifying stat: {0} by {1}".format([stat, tower_stats[stat]]))
+			self.set(stat, self.get(stat) + tower_stats[stat])
 
-func _apply_bullet_stat_changes(upgrade: IUpgrade) -> void:
-	for stat in upgrade.bullet_stats.keys():
+func _apply_bullet_stat_changes(bullet_stats_delta: Dictionary) -> void:
+	for stat in bullet_stats_delta.keys():
 		if bullet_stats.has(stat):
-			bullet_stats[stat] += upgrade.bullet_stats[stat]
+			bullet_stats[stat] += bullet_stats_delta[stat]
 
 func _apply_bullet_modifications(bullet_instance: IBullet) -> void:
 	if bullet_instance == null:
@@ -481,6 +496,15 @@ func _apply_bullet_modifications(bullet_instance: IBullet) -> void:
 func _apply_base_stats_override() -> void:
 	apply_stats_from_db()
 	ArmoryManager.apply_buffs_to_tower(self)
+
+
+func _filter_upgrade_ids(ids: Array[String]) -> Array[String]:
+	return ArmoryManager.filter_upgrade_ids(ids)
+
+
+func _resolve_initial_upgrade_ids() -> void:
+	if available_upgrade_ids.is_empty() and not tower_id.is_empty():
+		available_upgrade_ids = StatsDB.get_upgrade_ids_for_tower(tower_id)
 
 func _choose_target() -> void:
 	match target_type:

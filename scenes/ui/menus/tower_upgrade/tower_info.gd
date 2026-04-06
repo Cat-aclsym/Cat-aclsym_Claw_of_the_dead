@@ -1,4 +1,4 @@
-## © [2024] A7 Studio. All rights reserved. Trademark.
+## © [2026] A7 Studio. All rights reserved. Trademark.
 ##
 ## Manages the display of tower info statistics with dynamic gauge bars.
 class_name TowerInfo
@@ -46,7 +46,7 @@ func _exit_tree() -> void:
 		ILevel.current_level.resume_from_pause()
 
 ## Initializes the info display with tower data
-func setup(p_tower: ITower, _upgrade_scene: PackedScene = null) -> void:
+func setup(p_tower: ITower) -> void:
 	tower = p_tower
 
 	# Get tower name based on scene name

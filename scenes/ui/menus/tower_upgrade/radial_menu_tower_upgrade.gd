@@ -1,3 +1,5 @@
+## © [2026] A7 Studio. All rights reserved. Trademark.
+##
 class_name RadialTowerUpgradeMenu
 extends Control
 
@@ -48,9 +50,8 @@ func _ready() -> void:
 
 	sell_price = tower.sell_price
 	sell_label.text = str(sell_price)+"$"
-	if !tower.available_upgrade.is_empty():
-		var upg: IUpgrade = tower.available_upgrade[0].instantiate()
-		upgrade_price = upg.price
+	if !tower.available_upgrade_ids.is_empty():
+		upgrade_price = StatsDB.get_upgrade_price(tower.available_upgrade_ids[0])
 		upgrade_label.text = str(upgrade_price)+"$"
 	else:
 		upgrade_button.disabled = true
@@ -156,7 +157,7 @@ func _on_close_button_pressed():
 
 
 func _on_upgrade_button_pressed():
-	if tower == null or tower.available_upgrade.is_empty():
+	if tower == null or tower.available_upgrade_ids.is_empty():
 		return
 	var upgrade_menu_scene: PackedScene = load("res://scenes/ui/menus/tower_upgrade/tower_upgrade_menu.tscn")
 	if upgrade_menu_scene == null:
@@ -169,7 +170,7 @@ func _on_upgrade_button_pressed():
 		Global.hud.add_child(upgrade_menu_instance)
 	else:
 		add_child(upgrade_menu_instance)
-	upgrade_menu_instance.setup(tower, tower.available_upgrade)
+	upgrade_menu_instance.setup(tower, tower.available_upgrade_ids)
 	hide_menu()
 
 
@@ -192,8 +193,7 @@ func _on_info_button_pressed():
 		Global.hud.add_child(desc_instance)
 	else:
 		add_child(desc_instance)
-	var upgrade_scene: PackedScene = tower.available_upgrade[0] if not tower.available_upgrade.is_empty() else null
-	desc_instance.setup(tower, upgrade_scene)
+	desc_instance.setup(tower)
 
 
 func _on_tween_finished():

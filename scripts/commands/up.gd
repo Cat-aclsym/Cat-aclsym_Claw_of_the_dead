@@ -1,4 +1,4 @@
-## © [2024] A7 Studio. All rights reserved. Trademark.
+## © [2026] A7 Studio. All rights reserved. Trademark.
 ##
 ## Command to upgrade a tower in the current level.
 extends ICommand
@@ -31,15 +31,15 @@ func _execute(console: Console, args: Array) -> int:
 		console.push_error_("Tower '%s' not found." % tower_name)
 		return ERR_UNKNOWN_BEHAVIOR
 
-	if tower.available_upgrade.is_empty():
+	if tower.available_upgrade_ids.is_empty():
 		console.push_error_("No upgrades available for this tower.")
 		return ERR_UNKNOWN_BEHAVIOR
 
-	if upgrade_path < 1 or upgrade_path > tower.available_upgrade.size():
+	if upgrade_path < 1 or upgrade_path > tower.available_upgrade_ids.size():
 		console.push_error_("Invalid upgrade path: %d." % upgrade_path)
 		return ERR_UNKNOWN_BEHAVIOR
 
-	tower.start_upgrade(tower.available_upgrade[upgrade_path - 1])
+	tower.start_upgrade(tower.available_upgrade_ids[upgrade_path - 1])
 	console.push_text("Upgrading tower: %s (Path %d)" % [tower_name, upgrade_path])
 
 	return OK

@@ -1,4 +1,4 @@
-## © [2024] A7 Studio. All rights reserved. Trademark.
+## © [2026] A7 Studio. All rights reserved. Trademark.
 ##
 ## Manages the display of tower upgrade statistics with dynamic gauge bars.
 class_name TowerUpgradeMenu
@@ -6,8 +6,8 @@ extends Control
 
 ## Reference to the tower being upgraded
 var tower: ITower
-var upgrade_scene: PackedScene
-var _upgrades: Array[PackedScene] = []
+var selected_upgrade_id: String = ""
+var _upgrade_ids: Array[String] = []
 var _current_upgrade_index: int = 0
 
 @onready var _cancel_button: TextureButton = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/ButtonsHBoxContainer/CancelButton
@@ -62,31 +62,35 @@ func _exit_tree() -> void:
 		ILevel.current_level.resume_from_pause()
 
 ## Initializes the upgrade description with tower and one or more upgrade options
-func setup(p_tower: ITower, p_upgrades: Array[PackedScene]) -> void:
+func setup(p_tower: ITower, p_upgrade_ids: Array[String]) -> void:
 	tower = p_tower
-	_upgrades = p_upgrades.duplicate()
+	_upgrade_ids = p_upgrade_ids.duplicate()
 	_current_upgrade_index = 0
 	_update_tabs_visibility()
 	_refresh_upgrade_view()
 
 
 func _refresh_upgrade_view() -> void:
-	if _upgrades.is_empty():
+	if _upgrade_ids.is_empty():
 		queue_free()
 		return
 
-	_current_upgrade_index = clamp(_current_upgrade_index, 0, _upgrades.size() - 1)
-	upgrade_scene = _upgrades[_current_upgrade_index]
-
-	var upgrade: IUpgrade = upgrade_scene.instantiate()
+	_current_upgrade_index = clamp(_current_upgrade_index, 0, _upgrade_ids.size() - 1)
+	selected_upgrade_id = _upgrade_ids[_current_upgrade_index]
+	var upgrade: Dictionary = StatsDB.get_upgrade(selected_upgrade_id)
+	if upgrade.is_empty():
+		Log.trace(Log.Level.ERROR, "Unknown upgrade id in menu: %s" % selected_upgrade_id)
+		queue_free()
+		return
 
 	# Set title and confirm price
-	_confirm_label.text = tr("TOWER.UPGRADE.PRICE") % upgrade.price
+	var upgrade_price: int = int(upgrade.get("price", 0))
+	_confirm_label.text = tr("TOWER.UPGRADE.PRICE") % upgrade_price
 	_upgrade_title_label.text = _get_upgrade_title(upgrade)
 	_set_active_tab_button(_current_upgrade_index)
 
 	# Check if player has enough money
-	if ILevel.current_level != null and ILevel.current_level.coins < upgrade.price:
+	if ILevel.current_level != null and ILevel.current_level.coins < upgrade_price:
 		_confirm_button.disabled = true
 		_confirm_button.modulate = Color(0.5, 0.5, 0.5)  # Gray out the button
 	else:
@@ -100,8 +104,9 @@ func _refresh_upgrade_view() -> void:
 	var displayed_stats: int = 0
 
 	# Create dynamic stat displays for tower stats
-	for stat_name in upgrade.tower_stats.keys():
-		var stat_change: float = upgrade.tower_stats[stat_name]
+	var tower_stats: Dictionary = upgrade.get("tower_stats", {})
+	for stat_name in tower_stats.keys():
+		var stat_change: float = float(tower_stats[stat_name])
 
 		# Skip level stat
 		if stat_name == "level":
@@ -119,21 +124,21 @@ func _refresh_upgrade_view() -> void:
 			displayed_stats += 1
 
 	# Create dynamic stat displays for bullet stats
-	for stat_name in upgrade.bullet_stats.keys():
-		var stat_change: float = upgrade.bullet_stats[stat_name]
+	var bullet_stats: Dictionary = upgrade.get("bullet_stats", {})
+	for stat_name in bullet_stats.keys():
+		var stat_change: float = float(bullet_stats[stat_name])
 		if stat_change != 0.0:
 			_create_stat_display(stat_name, stat_change, false)
 			displayed_stats += 1
 
 	_update_scroll_mode(displayed_stats)
 
-	upgrade.queue_free()
-
 ## Gets the upgrade title based on the current tower level and upgrade data
-func _get_upgrade_title(upgrade: IUpgrade) -> String:
+func _get_upgrade_title(upgrade: Dictionary) -> String:
 	var delta_level: int = 1
-	if upgrade != null and upgrade.tower_stats.has("level"):
-		delta_level = int(upgrade.tower_stats["level"])
+	var tower_stats: Dictionary = upgrade.get("tower_stats", {})
+	if tower_stats.has("level"):
+		delta_level = int(tower_stats["level"])
 
 	var next_level: int = delta_level
 	if tower != null:
@@ -180,13 +185,13 @@ func _on_cancel_button_pressed() -> void:
 	queue_free()
 
 func _on_confirm_button_pressed() -> void:
-	if tower != null and upgrade_scene != null:
-		tower.start_upgrade(upgrade_scene)
+	if tower != null and not selected_upgrade_id.is_empty():
+		tower.start_upgrade(selected_upgrade_id)
 	queue_free()
 
 
 func _update_tabs_visibility() -> void:
-	var count: int = _upgrades.size()
+	var count: int = _upgrade_ids.size()
 	if _tabs_container == null:
 		return
 	_tabs_container.visible = count > 1
@@ -207,7 +212,7 @@ func _on_option1_button_pressed() -> void:
 
 
 func _on_option2_button_pressed() -> void:
-	if _upgrades.size() < 2:
+	if _upgrade_ids.size() < 2:
 		return
 	_current_upgrade_index = 1
 	_refresh_upgrade_view()
