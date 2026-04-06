@@ -8,17 +8,22 @@ signal menu_close
 
 const _ARMORY_ITEM_SCENE: PackedScene = preload("res://scenes/ui/menus/armory/armory_item.tscn")
 const _FALLBACK_ICON: Texture2D = preload("res://assets/ui/level_selection/window/condition_done.svg")
+const _RESET_BUTTON_ENABLED_MODULATE: Color = Color(1.0, 1.0, 1.0, 1.0)
+const _RESET_BUTTON_DISABLED_MODULATE: Color = Color(0.55, 0.55, 0.55, 1.0)
 
 var _armory_items: Dictionary = {}
 var _selected_node_id: String = ""
 
 @onready var close_button: TextureButton = %CloseTextureButton
 @onready var description_label: Label = %DescriptionLabel
+@onready var description_panel: PanelContainer = %DescriptionPanel
 @onready var description_title_label: Label = %DescriptionTitleLabel
 @onready var items_hbox: HBoxContainer = %ItemsHBox
 @onready var legacy_label: Label = %LegacyLabel
 @onready var reset_confirm: ConfirmationDialog = %ResetConfirmDialog
 @onready var reset_spent_stars_button: BaseButton = %ResetSpentStarsButton
+@onready var reset_spent_stars_label: Label = get_node("MainMargin/VBox/HeaderHBox/ResetSpentStarsButton/ResetSpentStarsLabel") as Label
+@onready var scroll_buildings: ScrollContainer = %ScrollBuildings
 @onready var stars_count_label: Label = %StarsCountLabel
 @onready var title_label: Label = %TitleLabel
 
@@ -26,17 +31,21 @@ var _selected_node_id: String = ""
 	{SignalUtil.WHO: close_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_close_pressed},
 	{SignalUtil.WHO: reset_confirm, SignalUtil.WHAT: "confirmed", SignalUtil.TO: _on_reset_confirm_confirmed},
 	{SignalUtil.WHO: reset_spent_stars_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_reset_spent_stars_pressed},
+	{SignalUtil.WHO: scroll_buildings, SignalUtil.WHAT: "gui_input", SignalUtil.TO: _on_scroll_buildings_gui_input},
 ]
 
 
 func _ready() -> void:
 	assert(close_button != null, "close_button node not found")
 	assert(description_label != null, "description_label node not found")
+	assert(description_panel != null, "description_panel node not found")
 	assert(description_title_label != null, "description_title_label node not found")
 	assert(items_hbox != null, "items_hbox node not found")
 	assert(legacy_label != null, "legacy_label node not found")
 	assert(reset_confirm != null, "reset_confirm node not found")
 	assert(reset_spent_stars_button != null, "reset_spent_stars_button node not found")
+	assert(reset_spent_stars_label != null, "reset_spent_stars_label node not found")
+	assert(scroll_buildings != null, "scroll_buildings node not found")
 	assert(stars_count_label != null, "stars_count_label node not found")
 	assert(title_label != null, "title_label node not found")
 	reset_confirm.dialog_text = tr("ARMORY.RESET_STARS_CONFIRM")
@@ -45,6 +54,7 @@ func _ready() -> void:
 	if not ArmoryManager.armory_updated.is_connected(_on_armory_updated):
 		ArmoryManager.armory_updated.connect(_on_armory_updated)
 	title_label.text = tr("ARMORY.TITLE")
+	reset_spent_stars_label.text = tr("ARMORY.RESET_SPENT_STARS")
 	_refresh()
 
 
@@ -82,8 +92,9 @@ func _refresh() -> void:
 		legacy_label.text = tr("ARMORY.LEGACY_NOTICE")
 
 	var avail: int = ArmoryManager.get_available_stars()
-	stars_count_label.text = tr("ARMORY.STAR_COST") % avail
+	stars_count_label.text = str(avail)
 	reset_spent_stars_button.disabled = ProgressionManager.data.armory_purchased.is_empty()
+	_update_reset_button_visual()
 
 	for nid in ArmoryManager.get_node_ids_ordered():
 		var armory_item: ArmoryItem = _create_armory_item(nid)
@@ -96,9 +107,7 @@ func _refresh() -> void:
 	if not _selected_node_id.is_empty() and _armory_items.has(_selected_node_id):
 		_select_node(_selected_node_id)
 	else:
-		_selected_node_id = ""
-		description_title_label.text = ""
-		description_label.text = ""
+		_clear_selection()
 
 
 func _create_armory_item(node_id: String) -> ArmoryItem:
@@ -132,8 +141,40 @@ func _on_buy_requested(node_id: String) -> void:
 	ArmoryManager.purchase_node(node_id)
 
 
+func _update_reset_button_visual() -> void:
+	var is_disabled: bool = reset_spent_stars_button.disabled
+	reset_spent_stars_button.modulate = _RESET_BUTTON_DISABLED_MODULATE if is_disabled else _RESET_BUTTON_ENABLED_MODULATE
+	reset_spent_stars_label.modulate = _RESET_BUTTON_DISABLED_MODULATE if is_disabled else _RESET_BUTTON_ENABLED_MODULATE
+
+
 func _on_item_selected(node_id: String) -> void:
 	_select_node(node_id)
+
+
+func _on_scroll_buildings_gui_input(event: InputEvent) -> void:
+	if _selected_node_id.is_empty():
+		return
+	var mb: InputEventMouseButton = event as InputEventMouseButton
+	if mb == null:
+		return
+	if mb.button_index != MOUSE_BUTTON_LEFT or not mb.pressed:
+		return
+	for item_ref in _armory_items.values():
+		var item: ArmoryItem = item_ref as ArmoryItem
+		if item != null and item.get_global_rect().has_point(mb.global_position):
+			return
+	_clear_selection()
+
+
+func _clear_selection() -> void:
+	_selected_node_id = ""
+	for item_ref in _armory_items.values():
+		var item: ArmoryItem = item_ref as ArmoryItem
+		if item != null:
+			item.set_selected(false)
+	description_title_label.text = ""
+	description_label.text = ""
+	description_panel.visible = false
 
 
 func _select_node(node_id: String) -> void:
@@ -144,6 +185,7 @@ func _select_node(node_id: String) -> void:
 			item.set_selected(key == node_id)
 	description_title_label.text = _get_node_name(node_id)
 	description_label.text = _get_node_description(node_id)
+	description_panel.visible = true
 
 
 func _get_node_description(node_id: String) -> String:

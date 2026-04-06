@@ -1,10 +1,18 @@
-[gd_scene load_steps=6 format=3 uid="uid://dygxxtpara021"]
+[gd_scene load_steps=8 format=3 uid="uid://dygxxtpara021"]
 
 [ext_resource type="Script" uid="uid://6soot5tpvyhx" path="res://scenes/ui/menus/armory/armory.gd" id="1_arm"]
 [ext_resource type="Texture2D" uid="uid://0lgpu16nkbho" path="res://assets/ui/icons/Button Close.svg" id="2_close"]
 [ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="3_theme"]
 [ext_resource type="Texture2D" uid="uid://bm6k4rajx0ffb" path="res://assets/ui/level_selection/window/condition_done.svg" id="4_chal_star"]
 [ext_resource type="Texture2D" uid="uid://cvut87og2mth" path="res://assets/ui/buttons/Bouton orange.svg" id="5_orange_button"]
+[ext_resource type="Texture2D" uid="uid://c8b8irfugbxdj" path="res://assets/environment/backgrounds/Fond Menu 02.svg" id="6_x4aod"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_desc_bg"]
+texture = ExtResource("6_x4aod")
+expand_margin_left = 20.0
+expand_margin_top = 30.0
+expand_margin_right = 20.0
+expand_margin_bottom = 30.0
 
 [node name="Armory" type="Control"]
 clip_contents = true
@@ -15,15 +23,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_arm")
-
-[node name="DimRect" type="ColorRect" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0.08, 0.12, 0.14, 0.94)
 
 [node name="MainMargin" type="MarginContainer" parent="."]
 layout_mode = 1
@@ -138,24 +137,31 @@ layout_mode = 2
 theme_override_constants/separation = 24
 alignment = 1
 
-[node name="DescriptionPanel" type="PanelContainer" parent="MainMargin/VBox"]
-custom_minimum_size = Vector2(0, 140)
+[node name="DescriptionPanel" type="PanelContainer" parent="."]
+unique_name_in_owner = true
 layout_mode = 2
-size_flags_horizontal = 3
+offset_left = 24.0
+offset_top = 511.0
+offset_right = 1128.0
+offset_bottom = 608.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
 theme = ExtResource("3_theme")
+theme_override_styles/panel = SubResource("StyleBoxTexture_desc_bg")
 
-[node name="DescriptionMargin" type="MarginContainer" parent="MainMargin/VBox/DescriptionPanel"]
+[node name="DescriptionMargin" type="MarginContainer" parent="DescriptionPanel"]
 layout_mode = 2
 theme_override_constants/margin_left = 12
 theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 12
 theme_override_constants/margin_bottom = 10
 
-[node name="DescriptionVBox" type="VBoxContainer" parent="MainMargin/VBox/DescriptionPanel/DescriptionMargin"]
+[node name="DescriptionVBox" type="VBoxContainer" parent="DescriptionPanel/DescriptionMargin"]
 layout_mode = 2
 theme_override_constants/separation = 6
 
-[node name="DescriptionTitleLabel" type="Label" parent="MainMargin/VBox/DescriptionPanel/DescriptionMargin/DescriptionVBox"]
+[node name="DescriptionTitleLabel" type="Label" parent="DescriptionPanel/DescriptionMargin/DescriptionVBox"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -163,11 +169,11 @@ theme = ExtResource("3_theme")
 theme_override_font_sizes/font_size = 24
 autowrap_mode = 3
 
-[node name="DescriptionLabel" type="Label" parent="MainMargin/VBox/DescriptionPanel/DescriptionMargin/DescriptionVBox"]
+[node name="DescriptionLabel" type="Label" parent="DescriptionPanel/DescriptionMargin/DescriptionVBox"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_vertical = 3
+size_flags_vertical = 0
 theme = ExtResource("3_theme")
 theme_override_font_sizes/font_size = 20
 vertical_alignment = 1

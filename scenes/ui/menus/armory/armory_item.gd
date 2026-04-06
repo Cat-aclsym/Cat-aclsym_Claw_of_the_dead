@@ -74,7 +74,7 @@ func _on_card_texture_button_pressed() -> void:
 
 func _update_visuals() -> void:
 	preview_texture_rect.texture = icon_texture
-	price_label.text = "x %d" % cost_stars
+	price_label.text = "%d" % cost_stars
 	price_label.add_theme_color_override("font_color", COLOR_PRICE_AFFORDABLE if is_affordable else COLOR_PRICE_UNAFFORDABLE)
 	if is_purchased:
 		buy_button.texture_normal = BUY_BUTTON_GREEN
