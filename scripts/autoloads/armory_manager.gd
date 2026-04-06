@@ -63,9 +63,17 @@ func apply_buffs_to_tower(tower: ITower) -> void:
 		tower.bullet_stats["damage"] = float(tower.bullet_stats["damage"]) * dmg_mult
 
 
-## Stars still available after purchases (recalculated from current JSON costs).
-func get_available_stars() -> int:
-	return get_total_earned_stars() - get_spent_stars()
+## True when every prerequisite node id in [code]armory.json[/code] is already purchased.
+func are_prerequisites_met(node_id: String) -> bool:
+	if node_id.is_empty():
+		return false
+	var node: Dictionary = _nodes_by_id.get(node_id, {})
+	if node.is_empty():
+		return false
+	for p in node.get("prerequisites", []):
+		if not is_node_purchased(str(p)):
+			return false
+	return true
 
 
 ## Returns true if the player can spend stars on this node.
@@ -81,58 +89,6 @@ func can_purchase(node_id: String) -> bool:
 		if not is_node_purchased(str(p)):
 			return false
 	return int(node.get("cost_stars", 0)) <= get_available_stars()
-
-
-## Total stars earned from completed challenges across all levels.
-func get_total_earned_stars() -> int:
-	var total: int = 0
-	for level_id in ProgressionManager.data.levels.keys():
-		var ld: LevelData = ProgressionManager.data.levels[level_id]
-		total += ld.challenges_completed.size()
-	return total
-
-
-## Sum of star costs for purchased nodes (unknown IDs skipped).
-func get_spent_stars() -> int:
-	var spent: int = 0
-	for node_id in ProgressionManager.data.armory_purchased:
-		var node: Dictionary = _nodes_by_id.get(node_id, {})
-		if not node.is_empty():
-			spent += int(node.get("cost_stars", 0))
-	return spent
-
-
-## Filters upgrade IDs using [code]upgrade_gates[/code] and legacy mode.
-func filter_upgrade_ids(ids: Array[String]) -> Array[String]:
-	var out: Array[String] = []
-	for upgrade_id in ids:
-		if upgrade_id.is_empty():
-			continue
-		if _legacy_mode() or _is_upgrade_id_allowed(upgrade_id):
-			out.append(upgrade_id)
-	return out
-
-
-## Sorted list of armory node IDs for UI.
-func get_node_ids_ordered() -> Array[String]:
-	return _ordered_node_ids.duplicate()
-
-
-## Node dictionary from cache (copy).
-func get_armory_node(node_id: String) -> Dictionary:
-	var n: Variant = _nodes_by_id.get(node_id, {})
-	return n.duplicate() if n is Dictionary else {}
-
-
-## True if this node was already bought.
-func is_node_purchased(node_id: String) -> bool:
-	return node_id in ProgressionManager.data.armory_purchased
-
-
-## Clears all armory purchases, restores spendable stars, and re-locks non-starter buildings (unless legacy save).
-func reset_armory_spending() -> void:
-	ProgressionManager.reset_armory_spending()
-	armory_updated.emit()
 
 
 ## Debug / console: same as [method reset_armory_spending].
@@ -153,6 +109,70 @@ func debug_grant_node(node_id: String) -> bool:
 	return true
 
 
+## Filters upgrade IDs using [code]upgrade_gates[/code] and legacy mode.
+func filter_upgrade_ids(ids: Array[String]) -> Array[String]:
+	var out: Array[String] = []
+	for upgrade_id in ids:
+		if upgrade_id.is_empty():
+			continue
+		if _legacy_mode() or _is_upgrade_id_allowed(upgrade_id):
+			out.append(upgrade_id)
+	return out
+
+
+## Node dictionary from cache (copy).
+func get_armory_node(node_id: String) -> Dictionary:
+	var n: Variant = _nodes_by_id.get(node_id, {})
+	return n.duplicate() if n is Dictionary else {}
+
+
+## Stars still available after purchases (recalculated from current JSON costs).
+func get_available_stars() -> int:
+	return get_total_earned_stars() - get_spent_stars()
+
+
+## Sorted list of armory node IDs for UI.
+func get_node_ids_ordered() -> Array[String]:
+	return _ordered_node_ids.duplicate()
+
+
+## Sum of star costs for purchased nodes (unknown IDs skipped).
+func get_spent_stars() -> int:
+	var spent: int = 0
+	for node_id in ProgressionManager.data.armory_purchased:
+		var node: Dictionary = _nodes_by_id.get(node_id, {})
+		if not node.is_empty():
+			spent += int(node.get("cost_stars", 0))
+	return spent
+
+
+## Total stars earned from completed challenges across all levels.
+func get_total_earned_stars() -> int:
+	var total: int = 0
+	for level_id in ProgressionManager.data.levels.keys():
+		var ld: LevelData = ProgressionManager.data.levels[level_id]
+		total += ld.challenges_completed.size()
+	return total
+
+
+## Prerequisite node IDs from [code]armory.json[/code] that are not purchased yet.
+func get_unmet_prerequisite_node_ids(node_id: String) -> Array[String]:
+	var out: Array[String] = []
+	var node: Dictionary = _nodes_by_id.get(node_id, {})
+	if node.is_empty():
+		return out
+	for p in node.get("prerequisites", []):
+		var pid: String = str(p)
+		if not is_node_purchased(pid):
+			out.append(pid)
+	return out
+
+
+## True if this node was already bought.
+func is_node_purchased(node_id: String) -> bool:
+	return node_id in ProgressionManager.data.armory_purchased
+
+
 ## Purchases a node if allowed; applies unlock effects and saves.
 func purchase_node(node_id: String) -> bool:
 	if not can_purchase(node_id):
@@ -162,6 +182,12 @@ func purchase_node(node_id: String) -> bool:
 	ProgressionManager.save_game()
 	armory_updated.emit()
 	return true
+
+
+## Clears all armory purchases, restores spendable stars, and re-locks non-starter buildings (unless legacy save).
+func reset_armory_spending() -> void:
+	ProgressionManager.reset_armory_spending()
+	armory_updated.emit()
 
 
 # Private functions
@@ -204,25 +230,6 @@ func _apply_unlock_effects(node: Dictionary) -> void:
 					ProgressionManager.unlock_trap_no_save(trap_key)
 			_:
 				pass
-
-
-func _prereq_visit(node_id: String, state: Dictionary) -> bool:
-	var st: int = int(state.get(node_id, 0))
-	if st == 1:
-		return true
-	if st == 2:
-		return false
-	state[node_id] = 1
-	var node: Dictionary = _nodes_by_id.get(node_id, {})
-	for p in node.get("prerequisites", []):
-		var pid: String = str(p)
-		if not _nodes_by_id.has(pid):
-			Log.trace(Log.Level.WARN, "Armory: missing prerequisite node '%s' for '%s'" % [pid, node_id])
-			continue
-		if _prereq_visit(pid, state):
-			return true
-	state[node_id] = 2
-	return false
 
 
 func _has_any_prereq_cycle() -> bool:
@@ -287,6 +294,25 @@ func _load_and_validate() -> void:
 		Log.trace(Log.Level.ERROR, "Armory: prerequisite cycle detected — graph invalid")
 
 	Log.trace(Log.Level.INFO, "Armory: loaded %d nodes" % _nodes_by_id.size())
+
+
+func _prereq_visit(node_id: String, state: Dictionary) -> bool:
+	var st: int = int(state.get(node_id, 0))
+	if st == 1:
+		return true
+	if st == 2:
+		return false
+	state[node_id] = 1
+	var node: Dictionary = _nodes_by_id.get(node_id, {})
+	for p in node.get("prerequisites", []):
+		var pid: String = str(p)
+		if not _nodes_by_id.has(pid):
+			Log.trace(Log.Level.WARN, "Armory: missing prerequisite node '%s' for '%s'" % [pid, node_id])
+			continue
+		if _prereq_visit(pid, state):
+			return true
+	state[node_id] = 2
+	return false
 
 
 func _validate_node_effects(node: Dictionary) -> void:

@@ -1,12 +1,57 @@
 {
-	"upgrade_gates": [],
+	"upgrade_gates": [
+		{
+			"upgrade_id": "bat_01_a_04",
+			"requires_node": "unlock_bat_01_branch_a"
+		},
+		{
+			"upgrade_id": "bat_01_b_04",
+			"requires_node": "unlock_bat_01_branch_b"
+		},
+		{
+			"upgrade_id": "bat_02_a_04",
+			"requires_node": "unlock_bat_02_branch_a"
+		},
+		{
+			"upgrade_id": "bat_02_b_04",
+			"requires_node": "unlock_bat_02_branch_b"
+		}
+	],
 	"nodes": [
+		{
+			"id": "unlock_bat_01_branch_a",
+			"cost_stars": 1,
+			"prerequisites": [],
+			"category": "periphery_upgrade",
+			"effects": []
+		},
+		{
+			"id": "unlock_bat_01_branch_b",
+			"cost_stars": 1,
+			"prerequisites": [],
+			"category": "periphery_upgrade",
+			"effects": []
+		},
 		{
 			"id": "unlock_bat_02",
 			"cost_stars": 1,
 			"prerequisites": [],
 			"category": "periphery_building",
 			"effects": [{ "type": "unlock_tower", "tower_id": "bat_02" }]
+		},
+		{
+			"id": "unlock_bat_02_branch_a",
+			"cost_stars": 1,
+			"prerequisites": ["unlock_bat_02"],
+			"category": "periphery_upgrade",
+			"effects": []
+		},
+		{
+			"id": "unlock_bat_02_branch_b",
+			"cost_stars": 1,
+			"prerequisites": ["unlock_bat_02"],
+			"category": "periphery_upgrade",
+			"effects": []
 		},
 		{
 			"id": "unlock_bat_03",

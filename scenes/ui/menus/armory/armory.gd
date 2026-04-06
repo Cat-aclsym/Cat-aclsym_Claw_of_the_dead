@@ -8,10 +8,15 @@ signal menu_close
 
 const _ARMORY_ITEM_SCENE: PackedScene = preload("res://scenes/ui/menus/armory/armory_item.tscn")
 const _FALLBACK_ICON: Texture2D = preload("res://assets/ui/level_selection/window/condition_done.svg")
+const _ARMORY_SCROLL_DRAG_THRESHOLD_PX: float = 12.0
 const _RESET_BUTTON_ENABLED_MODULATE: Color = Color(1.0, 1.0, 1.0, 1.0)
 const _RESET_BUTTON_DISABLED_MODULATE: Color = Color(0.55, 0.55, 0.55, 1.0)
 
 var _armory_items: Dictionary = {}
+var _armory_scroll_dragging: bool = false
+var _armory_scroll_last_global_x: float = 0.0
+var _armory_scroll_press_global: Vector2 = Vector2.ZERO
+var _armory_scroll_press_valid: bool = false
 var _selected_node_id: String = ""
 
 @onready var close_button: TextureButton = %CloseTextureButton
@@ -58,12 +63,51 @@ func _ready() -> void:
 	_refresh()
 
 
+func _input(event: InputEvent) -> void:
+	if not is_visible_in_tree():
+		return
+	if event is InputEventMouseButton:
+		var mb: InputEventMouseButton = event
+		if mb.button_index != MOUSE_BUTTON_LEFT:
+			return
+		if mb.pressed:
+			_armory_scroll_press_valid = scroll_buildings.get_global_rect().has_point(mb.global_position)
+			if _armory_scroll_press_valid:
+				_armory_scroll_press_global = mb.global_position
+				_armory_scroll_dragging = false
+		else:
+			if _armory_scroll_dragging:
+				get_viewport().set_input_as_handled()
+			_armory_scroll_dragging = false
+			_armory_scroll_press_valid = false
+	elif event is InputEventMouseMotion:
+		var mm: InputEventMouseMotion = event
+		if (mm.button_mask & MOUSE_BUTTON_MASK_LEFT) == 0:
+			return
+		if not _armory_scroll_dragging:
+			if not _armory_scroll_press_valid:
+				return
+			if _armory_scroll_press_global.distance_to(mm.global_position) <= _ARMORY_SCROLL_DRAG_THRESHOLD_PX:
+				return
+			_armory_scroll_dragging = true
+			_armory_scroll_last_global_x = mm.global_position.x - mm.relative.x
+		var dx: float = mm.global_position.x - _armory_scroll_last_global_x
+		_armory_scroll_last_global_x = mm.global_position.x
+		scroll_buildings.scroll_horizontal -= int(round(dx))
+		get_viewport().set_input_as_handled()
+	elif event is InputEventScreenDrag:
+		# Same drag is already handled by MouseMotion when emulate_touch_from_mouse is on.
+		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+			return
+		var sd: InputEventScreenDrag = event
+		if not scroll_buildings.get_global_rect().has_point(sd.position):
+			return
+		scroll_buildings.scroll_horizontal -= int(round(sd.relative.x))
+		get_viewport().set_input_as_handled()
+
+
 func _on_armory_updated() -> void:
 	_refresh()
-
-
-func _on_buy_pressed(node_id: String) -> void:
-	ArmoryManager.purchase_node(node_id)
 
 
 func _on_close_pressed() -> void:
@@ -131,7 +175,7 @@ func _create_armory_item(node_id: String) -> ArmoryItem:
 func _sync_armory_item_state(item: ArmoryItem, node_id: String) -> void:
 	item.refresh_state(
 		ArmoryManager.get_available_stars() >= item.cost_stars,
-		not ArmoryManager.can_purchase(node_id),
+		ArmoryManager.are_prerequisites_met(node_id),
 		ArmoryManager.is_node_purchased(node_id),
 		ProgressionManager.data.armory_legacy_mode
 	)
@@ -184,8 +228,25 @@ func _select_node(node_id: String) -> void:
 		if item != null:
 			item.set_selected(key == node_id)
 	description_title_label.text = _get_node_name(node_id)
-	description_label.text = _get_node_description(node_id)
+	var legacy_mode: bool = ProgressionManager.data.armory_legacy_mode
+	var purchased: bool = ArmoryManager.is_node_purchased(node_id)
+	if not legacy_mode and not purchased and not ArmoryManager.are_prerequisites_met(node_id):
+		description_label.text = _get_prerequisite_block_text(node_id)
+	else:
+		description_label.text = _get_node_description(node_id)
 	description_panel.visible = true
+
+
+func _get_prerequisite_block_text(node_id: String) -> String:
+	var ids: Array[String] = ArmoryManager.get_unmet_prerequisite_node_ids(node_id)
+	if ids.is_empty():
+		return _get_node_description(node_id)
+	var joined: String = ""
+	for i in range(ids.size()):
+		if i > 0:
+			joined += ", "
+		joined += _get_node_name(ids[i])
+	return tr("ARMORY.PREREQ_BLOCK_DETAIL") % joined
 
 
 func _get_node_description(node_id: String) -> String:

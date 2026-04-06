@@ -96,8 +96,10 @@ ARMORY.RESET_STARS_CONFIRM,"This clears all armory purchases. You recover your s
 ARMORY.RESET_CONFIRM_OK,OK,Confirmer
 ARMORY.STAR_COST,%d stars,%d étoiles
 ARMORY.BUY,Buy,Acheter
+ARMORY.BUY_BLOCKED,BLOCKED,BLOQUÉ
 ARMORY.OWNED,Owned,Obtenu
 ARMORY.CANT_AFFORD,Not enough stars,Pas assez d'étoiles
+ARMORY.PREREQ_BLOCK_DETAIL,"Unlock first: %s","Débloquer d'abord : %s"
 ARMORY.LOCKED_PREREQ,Requirements missing,Prérequis manquants
 ARMORY.LEGACY_NOTICE,Legacy save: all buildings stay unlocked. Armory purchases are optional.,Sauvegarde antérieure : tous les bâtiments restent débloqués. L'armurerie est optionnelle.
 ARMORY.LEGACY_SKIP,—,—
@@ -107,3 +109,11 @@ ARMORY.NODE.UNLOCK_BAT_03.NAME,Unlock blade trap,Débloquer le piège à lames
 ARMORY.NODE.UNLOCK_BAT_03.DESC,Adds the blade trap to the build menu.,Ajoute le piège à lames au menu de construction.
 ARMORY.NODE.UNLOCK_BAT_04.NAME,Unlock slow trap,Débloquer le piège ralentissant
 ARMORY.NODE.UNLOCK_BAT_04.DESC,Adds the slowing trap to the build menu.,Ajoute le piège ralentissant au menu de construction.
+ARMORY.NODE.UNLOCK_BAT_01_BRANCH_A.NAME,Unlock branch A (Cat Tree),Débloquer la branche A (Arbre à Chat'rchés)
+ARMORY.NODE.UNLOCK_BAT_01_BRANCH_A.DESC,Allows the A upgrade path for the Cat Tree.,Autorise la branche d'amélioration A pour l'Arbre à Chat'rchés.
+ARMORY.NODE.UNLOCK_BAT_01_BRANCH_B.NAME,Unlock branch B (Cat Tree),Débloquer la branche B (Arbre à Chat'rchés)
+ARMORY.NODE.UNLOCK_BAT_01_BRANCH_B.DESC,Allows the B upgrade path for the Cat Tree.,Autorise la branche d'amélioration B pour l'Arbre à Chat'rchés.
+ARMORY.NODE.UNLOCK_BAT_02_BRANCH_A.NAME,Unlock branch A (Cataboom),Débloquer la branche A (Cataboom)
+ARMORY.NODE.UNLOCK_BAT_02_BRANCH_A.DESC,Allows the A upgrade path for the Cataboom tower.,Autorise la branche d'amélioration A pour la tour Cataboom.
+ARMORY.NODE.UNLOCK_BAT_02_BRANCH_B.NAME,Unlock branch B (Cataboom),Débloquer la branche B (Cataboom)
+ARMORY.NODE.UNLOCK_BAT_02_BRANCH_B.DESC,Allows the B upgrade path for the Cataboom tower.,Autorise la branche d'amélioration B pour la tour Cataboom.
