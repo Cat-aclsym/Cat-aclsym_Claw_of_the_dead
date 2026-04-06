@@ -33,6 +33,20 @@ enum TowerType {
 	DEBUG_PIERCING, ## The debug piercing tower
 }
 
+## Gameplay keys applied from [member bullet_stats] onto each projectile at fire time (scenes keep VFX only).
+const PROJECTILE_GAMEPLAY_KEYS: Array[String] = [
+	"damage",
+	"speed",
+	"pierce_count",
+	"pierce_reduction",
+	"aoe_range",
+	"burn_duration",
+	"burn_damage_base",
+	"aoe_duration",
+	"aoe_tick",
+	"dot_damage",
+	"damage_multiplier",
+]
 
 # Exported variables
 ## The bullet scene to be instantiated by the tower
@@ -63,21 +77,6 @@ var _special_modifiers: Dictionary = {}
 
 ## Data-driven upgrade IDs available for this tower
 var available_upgrade_ids: Array[String] = []
-
-## Gameplay keys applied from [member bullet_stats] onto each projectile at fire time (scenes keep VFX only).
-const PROJECTILE_GAMEPLAY_KEYS: Array[String] = [
-	"damage",
-	"speed",
-	"pierce_count",
-	"pierce_reduction",
-	"aoe_range",
-	"burn_duration",
-	"burn_damage_base",
-	"aoe_duration",
-	"aoe_tick",
-	"dot_damage",
-	"damage_multiplier",
-]
 
 # Onready variables
 ## The area 2D node for the tower to detect enemies in range
@@ -171,14 +170,12 @@ func enter_build_preview() -> void:
 func get_building_kind() -> IBuilding.BuildingKind:
 	return IBuilding.BuildingKind.TOWER
 
-func get_placement_vertical_offset() -> float:
-	return 16.0
-
-
 ## Returns a copy of [member bullet_stats] for UI and tooling (single source for projectile numbers).
 func get_display_bullet_stats() -> Dictionary:
 	return bullet_stats.duplicate()
 
+func get_placement_vertical_offset() -> float:
+	return 16.0
 
 ## Applies [code]stats.json[/code] [code]towers[/code] entry when [member tower_id] is set. Uses the [StatsDB] autoload so it works on orphan instances (e.g. build menu preview).
 func apply_stats_from_db() -> void:
