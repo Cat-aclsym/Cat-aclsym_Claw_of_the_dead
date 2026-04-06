@@ -55,7 +55,7 @@ stretch_mode = 4
 
 [node name="PreviewTextureRect" type="TextureRect" parent="CardAspectRatioContainer/CardTextureButton"]
 unique_name_in_owner = true
-z_index = -1
+z_index = 1
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -107,6 +107,7 @@ vertical_alignment = 1
 uppercase = true
 
 [node name="StarsIconTextureRect" type="TextureRect" parent="BuyButton/BuyHBoxContainer"]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(20, 20)
 layout_mode = 2
 texture = ExtResource("6_star_icon")

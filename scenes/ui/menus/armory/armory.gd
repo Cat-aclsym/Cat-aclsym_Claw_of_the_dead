@@ -9,17 +9,18 @@ signal menu_close
 const _ARMORY_ITEM_SCENE: PackedScene = preload("res://scenes/ui/menus/armory/armory_item.tscn")
 const _FALLBACK_ICON: Texture2D = preload("res://assets/ui/level_selection/window/condition_done.svg")
 
+var _armory_items: Dictionary = {}
+var _selected_node_id: String = ""
+
 @onready var close_button: TextureButton = %CloseTextureButton
 @onready var description_label: Label = %DescriptionLabel
+@onready var description_title_label: Label = %DescriptionTitleLabel
 @onready var items_hbox: HBoxContainer = %ItemsHBox
 @onready var legacy_label: Label = %LegacyLabel
 @onready var reset_confirm: ConfirmationDialog = %ResetConfirmDialog
-@onready var reset_spent_stars_button: Button = %ResetSpentStarsButton
+@onready var reset_spent_stars_button: BaseButton = %ResetSpentStarsButton
 @onready var stars_count_label: Label = %StarsCountLabel
 @onready var title_label: Label = %TitleLabel
-
-var _armory_items: Dictionary = {}
-var _selected_node_id: String = ""
 
 @onready var signals: Array[Dictionary] = [
 	{SignalUtil.WHO: close_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_close_pressed},
@@ -31,6 +32,7 @@ var _selected_node_id: String = ""
 func _ready() -> void:
 	assert(close_button != null, "close_button node not found")
 	assert(description_label != null, "description_label node not found")
+	assert(description_title_label != null, "description_title_label node not found")
 	assert(items_hbox != null, "items_hbox node not found")
 	assert(legacy_label != null, "legacy_label node not found")
 	assert(reset_confirm != null, "reset_confirm node not found")
@@ -39,7 +41,6 @@ func _ready() -> void:
 	assert(title_label != null, "title_label node not found")
 	reset_confirm.dialog_text = tr("ARMORY.RESET_STARS_CONFIRM")
 	reset_confirm.ok_button_text = tr("ARMORY.RESET_CONFIRM_OK")
-	reset_spent_stars_button.text = tr("ARMORY.RESET_SPENT_STARS")
 	SignalUtil.connects(signals)
 	if not ArmoryManager.armory_updated.is_connected(_on_armory_updated):
 		ArmoryManager.armory_updated.connect(_on_armory_updated)
@@ -81,7 +82,7 @@ func _refresh() -> void:
 		legacy_label.text = tr("ARMORY.LEGACY_NOTICE")
 
 	var avail: int = ArmoryManager.get_available_stars()
-	stars_count_label.text = "x %d" % avail
+	stars_count_label.text = tr("ARMORY.STAR_COST") % avail
 	reset_spent_stars_button.disabled = ProgressionManager.data.armory_purchased.is_empty()
 
 	for nid in ArmoryManager.get_node_ids_ordered():
@@ -91,14 +92,13 @@ func _refresh() -> void:
 		_armory_items[nid] = armory_item
 		items_hbox.add_child(armory_item)
 		_sync_armory_item_state(armory_item, nid)
-		if _selected_node_id.is_empty():
-			_selected_node_id = nid
+		armory_item.set_selected(false)
 	if not _selected_node_id.is_empty() and _armory_items.has(_selected_node_id):
 		_select_node(_selected_node_id)
-	elif items_hbox.get_child_count() > 0:
-		var first_item: ArmoryItem = items_hbox.get_child(0) as ArmoryItem
-		if first_item != null:
-			_select_node(first_item.node_id)
+	else:
+		_selected_node_id = ""
+		description_title_label.text = ""
+		description_label.text = ""
 
 
 func _create_armory_item(node_id: String) -> ArmoryItem:
@@ -142,6 +142,7 @@ func _select_node(node_id: String) -> void:
 		var item: ArmoryItem = _armory_items.get(key) as ArmoryItem
 		if item != null:
 			item.set_selected(key == node_id)
+	description_title_label.text = _get_node_name(node_id)
 	description_label.text = _get_node_description(node_id)
 
 
@@ -149,6 +150,12 @@ func _get_node_description(node_id: String) -> String:
 	var desc_key: String = "ARMORY.NODE.%s.DESC" % node_id.to_upper()
 	var desc_text: String = tr(desc_key)
 	return "" if desc_text == desc_key else desc_text
+
+
+func _get_node_name(node_id: String) -> String:
+	var name_key: String = "ARMORY.NODE.%s.NAME" % node_id.to_upper()
+	var name_text: String = tr(name_key)
+	return node_id if name_text == name_key else name_text
 
 
 func _resolve_icon_texture(node: Dictionary) -> Texture2D:
@@ -182,9 +189,13 @@ func _extract_preview_texture(scene_path: String) -> Texture2D:
 		return sprite.texture
 	var animated: AnimatedSprite2D = entity.find_child("AnimatedSprite2D", true, false) as AnimatedSprite2D
 	if animated != null and animated.sprite_frames != null:
-		var names: PackedStringArray = animated.sprite_frames.get_animation_names()
-		if not names.is_empty():
-			var texture: Texture2D = animated.sprite_frames.get_frame_texture(names[0], 0)
+		var animation_name: StringName = &"idle"
+		if not animated.sprite_frames.has_animation(animation_name):
+			var names: PackedStringArray = animated.sprite_frames.get_animation_names()
+			if not names.is_empty():
+				animation_name = StringName(names[0])
+		if animated.sprite_frames.has_animation(animation_name) and animated.sprite_frames.get_frame_count(animation_name) > 0:
+			var texture: Texture2D = animated.sprite_frames.get_frame_texture(animation_name, 0)
 			entity.queue_free()
 			return texture if texture != null else _FALLBACK_ICON
 	entity.queue_free()
