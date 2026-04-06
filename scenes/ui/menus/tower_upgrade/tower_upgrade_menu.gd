@@ -167,16 +167,7 @@ func _get_current_stat_value(stat_name: String, is_tower_stat: bool) -> float:
 			var value = tower.get(stat_name)
 			return float(value) if value != null else 0.0
 	else:
-		# Bullet stats
-		if stat_name == "damage":
-			var base_damage: float = 0.0
-			if tower.bullet_scene != null:
-				var bullet_instance: IBullet = tower.bullet_scene.instantiate()
-				base_damage = float(bullet_instance.damage)
-				bullet_instance.queue_free()
-			return base_damage + tower.bullet_stats.get("damage", 0.0)
-		else:
-			return tower.bullet_stats.get(stat_name, 0.0)
+		return tower.get_display_bullet_stats().get(stat_name, 0.0)
 
 	return 0.0
 

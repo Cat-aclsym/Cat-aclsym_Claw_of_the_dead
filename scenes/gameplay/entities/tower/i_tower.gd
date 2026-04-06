@@ -64,6 +64,21 @@ var _special_modifiers: Dictionary = {}
 ## Data-driven upgrade IDs available for this tower
 var available_upgrade_ids: Array[String] = []
 
+## Gameplay keys applied from [member bullet_stats] onto each projectile at fire time (scenes keep VFX only).
+const PROJECTILE_GAMEPLAY_KEYS: Array[String] = [
+	"damage",
+	"speed",
+	"pierce_count",
+	"pierce_reduction",
+	"aoe_range",
+	"burn_duration",
+	"burn_damage_base",
+	"aoe_duration",
+	"aoe_tick",
+	"dot_damage",
+	"damage_multiplier",
+]
+
 # Onready variables
 ## The area 2D node for the tower to detect enemies in range
 @onready var area_2d: Area2D = $Area2D
@@ -159,6 +174,12 @@ func get_building_kind() -> IBuilding.BuildingKind:
 func get_placement_vertical_offset() -> float:
 	return 16.0
 
+
+## Returns a copy of [member bullet_stats] for UI and tooling (single source for projectile numbers).
+func get_display_bullet_stats() -> Dictionary:
+	return bullet_stats.duplicate()
+
+
 ## Applies [code]stats.json[/code] [code]towers[/code] entry when [member tower_id] is set. Uses the [StatsDB] autoload so it works on orphan instances (e.g. build menu preview).
 func apply_stats_from_db() -> void:
 	if tower_id.is_empty():
@@ -223,7 +244,7 @@ func fire() -> void:
 		if "tower_owner" in bullet_instance:
 			bullet_instance.tower_owner = self
 
-		_apply_bullet_modifications(bullet_instance)
+		_apply_projectile_config(bullet_instance)
 		add_child(bullet_instance)
 
 	fire_rate_timer.start()
@@ -478,15 +499,32 @@ func _apply_tower_stat_changes(tower_stats: Dictionary) -> void:
 
 func _apply_bullet_stat_changes(bullet_stats_delta: Dictionary) -> void:
 	for stat in bullet_stats_delta.keys():
+		var delta: Variant = bullet_stats_delta[stat]
 		if bullet_stats.has(stat):
-			bullet_stats[stat] += bullet_stats_delta[stat]
+			bullet_stats[stat] += delta
+		else:
+			bullet_stats[stat] = delta
 
-func _apply_bullet_modifications(bullet_instance: IBullet) -> void:
+
+## Overwrites gameplay fields on the projectile from [member bullet_stats] (tower-owned balance; scenes are VFX-only).
+func _apply_projectile_config(bullet_instance: Node) -> void:
 	if bullet_instance == null:
 		return
-
-	bullet_instance.damage += bullet_stats["damage"]
-	bullet_instance.speed += bullet_stats["speed"]
+	for key in PROJECTILE_GAMEPLAY_KEYS:
+		if not bullet_stats.has(key):
+			continue
+		if not (key in bullet_instance):
+			continue
+		var v: Variant = bullet_stats[key]
+		match key:
+			"damage", "speed", "pierce_count", "burn_damage_base", "aoe_range", "pierce_reduction":
+				bullet_instance.set(key, int(round(float(v))))
+			"burn_duration", "aoe_duration", "aoe_tick":
+				bullet_instance.set(key, float(v))
+			"dot_damage", "damage_multiplier":
+				bullet_instance.set(key, float(v))
+			_:
+				bullet_instance.set(key, v)
 
 
 func _apply_base_stats_override() -> void:

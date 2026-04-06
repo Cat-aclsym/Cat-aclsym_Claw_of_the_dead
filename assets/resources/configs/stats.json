@@ -14,12 +14,14 @@
 		  "aoe_duration": 0.0,
 		  "aoe_range": 0.0,
 		  "aoe_tick": 0.0,
-		  "damage": 0.0,
+		  "damage": 10.0,
 		  "damage_multiplier": 0.0,
 		  "dot_damage": 0.0,
 		  "pierce_count": 0.0,
 		  "pierce_reduction": 0.0,
-		  "speed": 0.0
+		  "speed": 500.0,
+		  "burn_duration": 0.0,
+		  "burn_damage_base": 0.0
 		}
 	  },
 	  "upgrades": ["bat_01_02"]
@@ -36,14 +38,16 @@
 		"spread_angle": 15.0,
 		"bullet_stats": {
 		  "aoe_duration": 0.0,
-		  "aoe_range": 0.0,
+		  "aoe_range": 100.0,
 		  "aoe_tick": 0.0,
-		  "damage": 0.0,
+		  "damage": 20.0,
 		  "damage_multiplier": 0.0,
 		  "dot_damage": 0.0,
 		  "pierce_count": 0.0,
 		  "pierce_reduction": 0.0,
-		  "speed": 0.0
+		  "speed": 350.0,
+		  "burn_duration": 0.0,
+		  "burn_damage_base": 0.0
 		}
 	  },
 	  "upgrades": ["bat_02_02"]
@@ -135,7 +139,7 @@
 	  "changes": {
 		"tower_stat": true,
 		"tower_model": false,
-		"bullet_stat": false,
+		"bullet_stat": true,
 		"bullet_model": true
 	  },
 	  "tower_stats": {
@@ -147,12 +151,12 @@
 	  },
 	  "bullet_stats": {
 		"aoe_duration": 0.0,
-		"damage": 0.0,
+		"damage": 100.0,
 		"damage_multiplier": 0.0,
 		"dot_damage": 0.0,
-		"speed": 0.0,
-		"pierce_count": 0.0,
-		"pierce_reduction": 0.0,
+		"speed": -200.0,
+		"pierce_count": 10.0,
+		"pierce_reduction": 10.0,
 		"aoe_range": 0.0,
 		"burn_duration": 0.0,
 		"burn_damage_base": 0.0
@@ -310,7 +314,7 @@
 	  "changes": {
 		"tower_stat": true,
 		"tower_model": false,
-		"bullet_stat": false,
+		"bullet_stat": true,
 		"bullet_model": true
 	  },
 	  "tower_stats": {
@@ -325,12 +329,12 @@
 		"damage": 0.0,
 		"damage_multiplier": 0.0,
 		"dot_damage": 0.0,
-		"speed": 0.0,
+		"speed": 50.0,
 		"pierce_count": 0.0,
 		"pierce_reduction": 0.0,
-		"aoe_range": 0.0,
-		"burn_duration": 0.0,
-		"burn_damage_base": 0.0
+		"aoe_range": -20.0,
+		"burn_duration": 3.0,
+		"burn_damage_base": 10.0
 	  },
 	  "bullet_scene_path": "res://scenes/gameplay/entities/bullet/fire_arrow.tscn",
 	  "next": ["bat_02_a_05"]
