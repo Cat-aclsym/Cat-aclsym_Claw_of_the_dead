@@ -35,20 +35,17 @@ enum TowerType {
 
 
 # Exported variables
-@export_subgroup("Bullet Configuration")
 ## The bullet scene to be instantiated by the tower
 @export var bullet_scene: PackedScene = null
 
 ## The bullet stats to be applied to the bullet (overridden at runtime from StatsDB)
 var bullet_stats: Dictionary = {}
 
-@export_subgroup("Multi-Shot Properties")
 ## The number of projectiles to fire simultaneously (overridden at runtime)
 var projectile_count: int = 0
 ## The angle spread between multiple projectiles (in degrees) (overridden at runtime)
 var spread_angle: float = 0.0
 
-@export_subgroup("Tower Properties")
 ## The fire rate of the tower (overridden at runtime)
 var fire_rate: float = 0.0
 ## The level of the tower (overridden at runtime)
@@ -64,9 +61,8 @@ var reward_multiplier: float = 1.0
 ## Dictionary of modifiers applied to this tower (stat_name -> multiplier)
 var _special_modifiers: Dictionary = {}
 
-@export_subgroup("Upgrades")
 ## Data-driven upgrade IDs available for this tower
-@export var available_upgrade_ids: Array[String] = []
+var available_upgrade_ids: Array[String] = []
 
 # Onready variables
 ## The area 2D node for the tower to detect enemies in range
