@@ -32,16 +32,62 @@ var _selected_node_id: String = ""
 @onready var reset_spent_stars_button: BaseButton = %ResetSpentStarsButton
 @onready var reset_spent_stars_label: Label = get_node("MainMargin/VBox/HeaderHBox/ResetSpentStarsButton/ResetSpentStarsLabel") as Label
 @onready var scroll_buildings: ScrollContainer = %ScrollBuildings
-@onready var stars_count_label: Label = %StarsCountLabel
-@onready var title_label: Label = %TitleLabel
-
 @onready var signals: Array[Dictionary] = [
 	{SignalUtil.WHO: close_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_close_pressed},
 	{SignalUtil.WHO: reset_cancel_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_reset_dialog_cancel_pressed},
 	{SignalUtil.WHO: reset_confirm_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_reset_dialog_confirm_pressed},
 	{SignalUtil.WHO: reset_spent_stars_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_reset_spent_stars_pressed},
-	{SignalUtil.WHO: scroll_buildings, SignalUtil.WHAT: "gui_input", SignalUtil.TO: _on_scroll_buildings_gui_input},
 ]
+@onready var stars_count_label: Label = %StarsCountLabel
+@onready var title_label: Label = %TitleLabel
+
+
+func _input(event: InputEvent) -> void:
+	if not is_visible_in_tree():
+		return
+	if event is InputEventMouseButton:
+		var mb: InputEventMouseButton = event
+		if mb.button_index != MOUSE_BUTTON_LEFT:
+			return
+		if mb.pressed:
+			_armory_scroll_press_valid = scroll_buildings.get_global_rect().has_point(mb.global_position)
+			if _armory_scroll_press_valid:
+				_armory_scroll_press_global = mb.global_position
+				_armory_scroll_dragging = false
+			_queue_clear_selection_if_background_click(mb.global_position)
+		else:
+			if _armory_scroll_dragging:
+				get_viewport().set_input_as_handled()
+			_armory_scroll_dragging = false
+			_armory_scroll_press_valid = false
+	elif event is InputEventScreenTouch:
+		var st: InputEventScreenTouch = event
+		if st.pressed:
+			_queue_clear_selection_if_background_click(st.position)
+	elif event is InputEventMouseMotion:
+		var mm: InputEventMouseMotion = event
+		if (mm.button_mask & MOUSE_BUTTON_MASK_LEFT) == 0:
+			return
+		if not _armory_scroll_dragging:
+			if not _armory_scroll_press_valid:
+				return
+			if _armory_scroll_press_global.distance_to(mm.global_position) <= _ARMORY_SCROLL_DRAG_THRESHOLD_PX:
+				return
+			_armory_scroll_dragging = true
+			_armory_scroll_last_global_x = mm.global_position.x - mm.relative.x
+		var dx: float = mm.global_position.x - _armory_scroll_last_global_x
+		_armory_scroll_last_global_x = mm.global_position.x
+		scroll_buildings.scroll_horizontal -= int(round(dx))
+		get_viewport().set_input_as_handled()
+	elif event is InputEventScreenDrag:
+		# Same drag is already handled by MouseMotion when emulate_touch_from_mouse is on.
+		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+			return
+		var sd: InputEventScreenDrag = event
+		if not scroll_buildings.get_global_rect().has_point(sd.position):
+			return
+		scroll_buildings.scroll_horizontal -= int(round(sd.relative.x))
+		get_viewport().set_input_as_handled()
 
 
 func _ready() -> void:
@@ -71,49 +117,6 @@ func _ready() -> void:
 	_refresh()
 
 
-func _input(event: InputEvent) -> void:
-	if not is_visible_in_tree():
-		return
-	if event is InputEventMouseButton:
-		var mb: InputEventMouseButton = event
-		if mb.button_index != MOUSE_BUTTON_LEFT:
-			return
-		if mb.pressed:
-			_armory_scroll_press_valid = scroll_buildings.get_global_rect().has_point(mb.global_position)
-			if _armory_scroll_press_valid:
-				_armory_scroll_press_global = mb.global_position
-				_armory_scroll_dragging = false
-		else:
-			if _armory_scroll_dragging:
-				get_viewport().set_input_as_handled()
-			_armory_scroll_dragging = false
-			_armory_scroll_press_valid = false
-	elif event is InputEventMouseMotion:
-		var mm: InputEventMouseMotion = event
-		if (mm.button_mask & MOUSE_BUTTON_MASK_LEFT) == 0:
-			return
-		if not _armory_scroll_dragging:
-			if not _armory_scroll_press_valid:
-				return
-			if _armory_scroll_press_global.distance_to(mm.global_position) <= _ARMORY_SCROLL_DRAG_THRESHOLD_PX:
-				return
-			_armory_scroll_dragging = true
-			_armory_scroll_last_global_x = mm.global_position.x - mm.relative.x
-		var dx: float = mm.global_position.x - _armory_scroll_last_global_x
-		_armory_scroll_last_global_x = mm.global_position.x
-		scroll_buildings.scroll_horizontal -= int(round(dx))
-		get_viewport().set_input_as_handled()
-	elif event is InputEventScreenDrag:
-		# Same drag is already handled by MouseMotion when emulate_touch_from_mouse is on.
-		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
-			return
-		var sd: InputEventScreenDrag = event
-		if not scroll_buildings.get_global_rect().has_point(sd.position):
-			return
-		scroll_buildings.scroll_horizontal -= int(round(sd.relative.x))
-		get_viewport().set_input_as_handled()
-
-
 func _clear_selection() -> void:
 	_selected_node_id = ""
 	for item_ref in _armory_items.values():
@@ -123,6 +126,19 @@ func _clear_selection() -> void:
 	description_title_label.text = ""
 	description_label.text = ""
 	description_panel.visible = false
+
+
+## After GUI controls handle the click (e.g. card selection), clear the description if the hit was outside any item.
+func _clear_selection_if_click_missed_items(global_pos: Vector2) -> void:
+	if _selected_node_id.is_empty():
+		return
+	if not is_visible_in_tree():
+		return
+	for item_ref in _armory_items.values():
+		var item: ArmoryItem = item_ref as ArmoryItem
+		if item != null and item.get_global_rect().has_point(global_pos):
+			return
+	_clear_selection()
 
 
 func _create_armory_item(node_id: String) -> ArmoryItem:
@@ -224,19 +240,10 @@ func _on_reset_spent_stars_pressed() -> void:
 	reset_confirm_root.visible = true
 
 
-func _on_scroll_buildings_gui_input(event: InputEvent) -> void:
+func _queue_clear_selection_if_background_click(global_pos: Vector2) -> void:
 	if _selected_node_id.is_empty():
 		return
-	var mb: InputEventMouseButton = event as InputEventMouseButton
-	if mb == null:
-		return
-	if mb.button_index != MOUSE_BUTTON_LEFT or not mb.pressed:
-		return
-	for item_ref in _armory_items.values():
-		var item: ArmoryItem = item_ref as ArmoryItem
-		if item != null and item.get_global_rect().has_point(mb.global_position):
-			return
-	_clear_selection()
+	call_deferred("_clear_selection_if_click_missed_items", global_pos)
 
 
 func _refresh() -> void:

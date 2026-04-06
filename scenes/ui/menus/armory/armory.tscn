@@ -42,7 +42,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/margin_left = 24
-theme_override_constants/margin_top = 24
+theme_override_constants/margin_top = 16
 theme_override_constants/margin_right = 24
 theme_override_constants/margin_bottom = 24
 
@@ -50,7 +50,7 @@ theme_override_constants/margin_bottom = 24
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_constants/separation = 12
+theme_override_constants/separation = 8
 
 [node name="HeaderHBox" type="HBoxContainer" parent="MainMargin/VBox"]
 layout_mode = 2
@@ -138,12 +138,31 @@ follow_focus = true
 horizontal_scroll_mode = 3
 vertical_scroll_mode = 0
 
-[node name="ItemsHBox" type="HBoxContainer" parent="MainMargin/VBox/ScrollBuildings"]
+[node name="ScrollContentVBox" type="VBoxContainer" parent="MainMargin/VBox/ScrollBuildings"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 0
+
+[node name="ScrollTopSpacer" type="Control" parent="MainMargin/VBox/ScrollBuildings/ScrollContentVBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 2
+
+[node name="ItemsHBox" type="HBoxContainer" parent="MainMargin/VBox/ScrollBuildings/ScrollContentVBox"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 0
-size_flags_vertical = 3
+size_flags_vertical = 0
 theme_override_constants/separation = 24
+
+[node name="ScrollBottomSpacer" type="Control" parent="MainMargin/VBox/ScrollBuildings/ScrollContentVBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 3.0
+mouse_filter = 2
 
 [node name="DescriptionPanel" type="PanelContainer" parent="."]
 unique_name_in_owner = true
