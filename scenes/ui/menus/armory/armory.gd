@@ -7,10 +7,10 @@ extends Control
 signal menu_close
 
 const _ARMORY_ITEM_SCENE: PackedScene = preload("res://scenes/ui/menus/armory/armory_item.tscn")
-const _FALLBACK_ICON: Texture2D = preload("res://assets/ui/level_selection/window/condition_done.svg")
 const _ARMORY_SCROLL_DRAG_THRESHOLD_PX: float = 12.0
-const _RESET_BUTTON_ENABLED_MODULATE: Color = Color(1.0, 1.0, 1.0, 1.0)
+const _FALLBACK_ICON: Texture2D = preload("res://assets/ui/level_selection/window/condition_done.svg")
 const _RESET_BUTTON_DISABLED_MODULATE: Color = Color(0.55, 0.55, 0.55, 1.0)
+const _RESET_BUTTON_ENABLED_MODULATE: Color = Color(1.0, 1.0, 1.0, 1.0)
 
 var _armory_items: Dictionary = {}
 var _armory_scroll_dragging: bool = false
@@ -25,7 +25,10 @@ var _selected_node_id: String = ""
 @onready var description_title_label: Label = %DescriptionTitleLabel
 @onready var items_hbox: HBoxContainer = %ItemsHBox
 @onready var legacy_label: Label = %LegacyLabel
-@onready var reset_confirm: ConfirmationDialog = %ResetConfirmDialog
+@onready var reset_cancel_button: TextureButton = %ResetCancelButton
+@onready var reset_confirm_button: TextureButton = %ResetConfirmButton
+@onready var reset_confirm_root: Control = %ResetConfirmRoot
+@onready var reset_message_label: Label = %ResetMessageLabel
 @onready var reset_spent_stars_button: BaseButton = %ResetSpentStarsButton
 @onready var reset_spent_stars_label: Label = get_node("MainMargin/VBox/HeaderHBox/ResetSpentStarsButton/ResetSpentStarsLabel") as Label
 @onready var scroll_buildings: ScrollContainer = %ScrollBuildings
@@ -34,7 +37,8 @@ var _selected_node_id: String = ""
 
 @onready var signals: Array[Dictionary] = [
 	{SignalUtil.WHO: close_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_close_pressed},
-	{SignalUtil.WHO: reset_confirm, SignalUtil.WHAT: "confirmed", SignalUtil.TO: _on_reset_confirm_confirmed},
+	{SignalUtil.WHO: reset_cancel_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_reset_dialog_cancel_pressed},
+	{SignalUtil.WHO: reset_confirm_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_reset_dialog_confirm_pressed},
 	{SignalUtil.WHO: reset_spent_stars_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_reset_spent_stars_pressed},
 	{SignalUtil.WHO: scroll_buildings, SignalUtil.WHAT: "gui_input", SignalUtil.TO: _on_scroll_buildings_gui_input},
 ]
@@ -47,14 +51,18 @@ func _ready() -> void:
 	assert(description_title_label != null, "description_title_label node not found")
 	assert(items_hbox != null, "items_hbox node not found")
 	assert(legacy_label != null, "legacy_label node not found")
-	assert(reset_confirm != null, "reset_confirm node not found")
+	assert(reset_cancel_button != null, "reset_cancel_button node not found")
+	assert(reset_confirm_button != null, "reset_confirm_button node not found")
+	assert(reset_confirm_root != null, "reset_confirm_root node not found")
+	assert(reset_message_label != null, "reset_message_label node not found")
 	assert(reset_spent_stars_button != null, "reset_spent_stars_button node not found")
 	assert(reset_spent_stars_label != null, "reset_spent_stars_label node not found")
 	assert(scroll_buildings != null, "scroll_buildings node not found")
 	assert(stars_count_label != null, "stars_count_label node not found")
 	assert(title_label != null, "title_label node not found")
-	reset_confirm.dialog_text = tr("ARMORY.RESET_STARS_CONFIRM")
-	reset_confirm.ok_button_text = tr("ARMORY.RESET_CONFIRM_OK")
+	reset_message_label.text = tr("ARMORY.RESET_STARS_CONFIRM")
+	(reset_confirm_button.get_node(^"Label") as Label).text = tr("ARMORY.RESET_CONFIRM_OK")
+	(reset_cancel_button.get_node(^"Label") as Label).text = tr("ARMORY.RESET_CANCEL")
 	SignalUtil.connects(signals)
 	if not ArmoryManager.armory_updated.is_connected(_on_armory_updated):
 		ArmoryManager.armory_updated.connect(_on_armory_updated)
@@ -106,22 +114,129 @@ func _input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 
 
+func _clear_selection() -> void:
+	_selected_node_id = ""
+	for item_ref in _armory_items.values():
+		var item: ArmoryItem = item_ref as ArmoryItem
+		if item != null:
+			item.set_selected(false)
+	description_title_label.text = ""
+	description_label.text = ""
+	description_panel.visible = false
+
+
+func _create_armory_item(node_id: String) -> ArmoryItem:
+	var node: Dictionary = ArmoryManager.get_armory_node(node_id)
+	if node.is_empty():
+		return null
+	var item: ArmoryItem = _ARMORY_ITEM_SCENE.instantiate() as ArmoryItem
+	if item == null:
+		return null
+	var cost: int = int(node.get("cost_stars", 0))
+	item.node_id = node_id
+	item.cost_stars = cost
+	item.icon_texture = _resolve_icon_texture(node)
+	if not item.buy_requested.is_connected(_on_buy_requested):
+		item.buy_requested.connect(_on_buy_requested)
+	if not item.selected.is_connected(_on_item_selected):
+		item.selected.connect(_on_item_selected)
+	return item
+
+
+func _extract_preview_texture(scene_path: String) -> Texture2D:
+	var packed_scene: PackedScene = StatsDB.load_packed_scene(scene_path)
+	if packed_scene == null:
+		return _FALLBACK_ICON
+	var entity: Node = packed_scene.instantiate()
+	if entity == null:
+		return _FALLBACK_ICON
+	var sprite: Sprite2D = entity.find_child("Sprite2D", true, false) as Sprite2D
+	if sprite != null and sprite.texture != null:
+		entity.queue_free()
+		return sprite.texture
+	var animated: AnimatedSprite2D = entity.find_child("AnimatedSprite2D", true, false) as AnimatedSprite2D
+	if animated != null and animated.sprite_frames != null:
+		var animation_name: StringName = &"idle"
+		if not animated.sprite_frames.has_animation(animation_name):
+			var names: PackedStringArray = animated.sprite_frames.get_animation_names()
+			if not names.is_empty():
+				animation_name = StringName(names[0])
+		if animated.sprite_frames.has_animation(animation_name) and animated.sprite_frames.get_frame_count(animation_name) > 0:
+			var texture: Texture2D = animated.sprite_frames.get_frame_texture(animation_name, 0)
+			entity.queue_free()
+			return texture if texture != null else _FALLBACK_ICON
+	entity.queue_free()
+	return _FALLBACK_ICON
+
+
+func _get_node_description(node_id: String) -> String:
+	var desc_key: String = "ARMORY.NODE.%s.DESC" % node_id.to_upper()
+	var desc_text: String = tr(desc_key)
+	return "" if desc_text == desc_key else desc_text
+
+
+func _get_node_name(node_id: String) -> String:
+	var name_key: String = "ARMORY.NODE.%s.NAME" % node_id.to_upper()
+	var name_text: String = tr(name_key)
+	return node_id if name_text == name_key else name_text
+
+
+func _get_prerequisite_block_text(node_id: String) -> String:
+	var ids: Array[String] = ArmoryManager.get_unmet_prerequisite_node_ids(node_id)
+	if ids.is_empty():
+		return _get_node_description(node_id)
+	var joined: String = ""
+	for i in range(ids.size()):
+		if i > 0:
+			joined += ", "
+		joined += _get_node_name(ids[i])
+	return tr("ARMORY.PREREQ_BLOCK_DETAIL") % joined
+
+
 func _on_armory_updated() -> void:
 	_refresh()
+
+
+func _on_buy_requested(node_id: String) -> void:
+	ArmoryManager.purchase_node(node_id)
 
 
 func _on_close_pressed() -> void:
 	menu_close.emit()
 
 
-func _on_reset_confirm_confirmed() -> void:
+func _on_item_selected(node_id: String) -> void:
+	_select_node(node_id)
+
+
+func _on_reset_dialog_cancel_pressed() -> void:
+	reset_confirm_root.visible = false
+
+
+func _on_reset_dialog_confirm_pressed() -> void:
 	ArmoryManager.reset_armory_spending()
+	reset_confirm_root.visible = false
 
 
 func _on_reset_spent_stars_pressed() -> void:
 	if reset_spent_stars_button.disabled:
 		return
-	reset_confirm.popup_centered()
+	reset_confirm_root.visible = true
+
+
+func _on_scroll_buildings_gui_input(event: InputEvent) -> void:
+	if _selected_node_id.is_empty():
+		return
+	var mb: InputEventMouseButton = event as InputEventMouseButton
+	if mb == null:
+		return
+	if mb.button_index != MOUSE_BUTTON_LEFT or not mb.pressed:
+		return
+	for item_ref in _armory_items.values():
+		var item: ArmoryItem = item_ref as ArmoryItem
+		if item != null and item.get_global_rect().has_point(mb.global_position):
+			return
+	_clear_selection()
 
 
 func _refresh() -> void:
@@ -154,113 +269,6 @@ func _refresh() -> void:
 		_clear_selection()
 
 
-func _create_armory_item(node_id: String) -> ArmoryItem:
-	var node: Dictionary = ArmoryManager.get_armory_node(node_id)
-	if node.is_empty():
-		return null
-	var item: ArmoryItem = _ARMORY_ITEM_SCENE.instantiate() as ArmoryItem
-	if item == null:
-		return null
-	var cost: int = int(node.get("cost_stars", 0))
-	item.node_id = node_id
-	item.cost_stars = cost
-	item.icon_texture = _resolve_icon_texture(node)
-	if not item.buy_requested.is_connected(_on_buy_requested):
-		item.buy_requested.connect(_on_buy_requested)
-	if not item.selected.is_connected(_on_item_selected):
-		item.selected.connect(_on_item_selected)
-	return item
-
-
-func _sync_armory_item_state(item: ArmoryItem, node_id: String) -> void:
-	item.refresh_state(
-		ArmoryManager.get_available_stars() >= item.cost_stars,
-		ArmoryManager.are_prerequisites_met(node_id),
-		ArmoryManager.is_node_purchased(node_id),
-		ProgressionManager.data.armory_legacy_mode
-	)
-
-
-func _on_buy_requested(node_id: String) -> void:
-	ArmoryManager.purchase_node(node_id)
-
-
-func _update_reset_button_visual() -> void:
-	var is_disabled: bool = reset_spent_stars_button.disabled
-	reset_spent_stars_button.modulate = _RESET_BUTTON_DISABLED_MODULATE if is_disabled else _RESET_BUTTON_ENABLED_MODULATE
-	reset_spent_stars_label.modulate = _RESET_BUTTON_DISABLED_MODULATE if is_disabled else _RESET_BUTTON_ENABLED_MODULATE
-
-
-func _on_item_selected(node_id: String) -> void:
-	_select_node(node_id)
-
-
-func _on_scroll_buildings_gui_input(event: InputEvent) -> void:
-	if _selected_node_id.is_empty():
-		return
-	var mb: InputEventMouseButton = event as InputEventMouseButton
-	if mb == null:
-		return
-	if mb.button_index != MOUSE_BUTTON_LEFT or not mb.pressed:
-		return
-	for item_ref in _armory_items.values():
-		var item: ArmoryItem = item_ref as ArmoryItem
-		if item != null and item.get_global_rect().has_point(mb.global_position):
-			return
-	_clear_selection()
-
-
-func _clear_selection() -> void:
-	_selected_node_id = ""
-	for item_ref in _armory_items.values():
-		var item: ArmoryItem = item_ref as ArmoryItem
-		if item != null:
-			item.set_selected(false)
-	description_title_label.text = ""
-	description_label.text = ""
-	description_panel.visible = false
-
-
-func _select_node(node_id: String) -> void:
-	_selected_node_id = node_id
-	for key in _armory_items.keys():
-		var item: ArmoryItem = _armory_items.get(key) as ArmoryItem
-		if item != null:
-			item.set_selected(key == node_id)
-	description_title_label.text = _get_node_name(node_id)
-	var legacy_mode: bool = ProgressionManager.data.armory_legacy_mode
-	var purchased: bool = ArmoryManager.is_node_purchased(node_id)
-	if not legacy_mode and not purchased and not ArmoryManager.are_prerequisites_met(node_id):
-		description_label.text = _get_prerequisite_block_text(node_id)
-	else:
-		description_label.text = _get_node_description(node_id)
-	description_panel.visible = true
-
-
-func _get_prerequisite_block_text(node_id: String) -> String:
-	var ids: Array[String] = ArmoryManager.get_unmet_prerequisite_node_ids(node_id)
-	if ids.is_empty():
-		return _get_node_description(node_id)
-	var joined: String = ""
-	for i in range(ids.size()):
-		if i > 0:
-			joined += ", "
-		joined += _get_node_name(ids[i])
-	return tr("ARMORY.PREREQ_BLOCK_DETAIL") % joined
-
-
-func _get_node_description(node_id: String) -> String:
-	var desc_key: String = "ARMORY.NODE.%s.DESC" % node_id.to_upper()
-	var desc_text: String = tr(desc_key)
-	return "" if desc_text == desc_key else desc_text
-
-
-func _get_node_name(node_id: String) -> String:
-	var name_key: String = "ARMORY.NODE.%s.NAME" % node_id.to_upper()
-	var name_text: String = tr(name_key)
-	return node_id if name_text == name_key else name_text
-
-
 func _resolve_icon_texture(node: Dictionary) -> Texture2D:
 	for effect in node.get("effects", []):
 		if typeof(effect) != TYPE_DICTIONARY:
@@ -279,27 +287,32 @@ func _resolve_icon_texture(node: Dictionary) -> Texture2D:
 	return _FALLBACK_ICON
 
 
-func _extract_preview_texture(scene_path: String) -> Texture2D:
-	var packed_scene: PackedScene = StatsDB.load_packed_scene(scene_path)
-	if packed_scene == null:
-		return _FALLBACK_ICON
-	var entity: Node = packed_scene.instantiate()
-	if entity == null:
-		return _FALLBACK_ICON
-	var sprite: Sprite2D = entity.find_child("Sprite2D", true, false) as Sprite2D
-	if sprite != null and sprite.texture != null:
-		entity.queue_free()
-		return sprite.texture
-	var animated: AnimatedSprite2D = entity.find_child("AnimatedSprite2D", true, false) as AnimatedSprite2D
-	if animated != null and animated.sprite_frames != null:
-		var animation_name: StringName = &"idle"
-		if not animated.sprite_frames.has_animation(animation_name):
-			var names: PackedStringArray = animated.sprite_frames.get_animation_names()
-			if not names.is_empty():
-				animation_name = StringName(names[0])
-		if animated.sprite_frames.has_animation(animation_name) and animated.sprite_frames.get_frame_count(animation_name) > 0:
-			var texture: Texture2D = animated.sprite_frames.get_frame_texture(animation_name, 0)
-			entity.queue_free()
-			return texture if texture != null else _FALLBACK_ICON
-	entity.queue_free()
-	return _FALLBACK_ICON
+func _select_node(node_id: String) -> void:
+	_selected_node_id = node_id
+	for key in _armory_items.keys():
+		var item: ArmoryItem = _armory_items.get(key) as ArmoryItem
+		if item != null:
+			item.set_selected(key == node_id)
+	description_title_label.text = _get_node_name(node_id)
+	var legacy_mode: bool = ProgressionManager.data.armory_legacy_mode
+	var purchased: bool = ArmoryManager.is_node_purchased(node_id)
+	if not legacy_mode and not purchased and not ArmoryManager.are_prerequisites_met(node_id):
+		description_label.text = _get_prerequisite_block_text(node_id)
+	else:
+		description_label.text = _get_node_description(node_id)
+	description_panel.visible = true
+
+
+func _sync_armory_item_state(item: ArmoryItem, node_id: String) -> void:
+	item.refresh_state(
+		ArmoryManager.get_available_stars() >= item.cost_stars,
+		ArmoryManager.are_prerequisites_met(node_id),
+		ArmoryManager.is_node_purchased(node_id),
+		ProgressionManager.data.armory_legacy_mode
+	)
+
+
+func _update_reset_button_visual() -> void:
+	var is_disabled: bool = reset_spent_stars_button.disabled
+	reset_spent_stars_button.modulate = _RESET_BUTTON_DISABLED_MODULATE if is_disabled else _RESET_BUTTON_ENABLED_MODULATE
+	reset_spent_stars_label.modulate = _RESET_BUTTON_DISABLED_MODULATE if is_disabled else _RESET_BUTTON_ENABLED_MODULATE

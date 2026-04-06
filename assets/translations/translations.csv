@@ -92,8 +92,9 @@ ARMORY.TAB.BUILDINGS,Buildings,Bâtiments
 ARMORY.TAB.BUFFS,Buffs,Bonus
 ARMORY.STARS_LINE,Available: %d | Earned: %d,Disponibles : %d | Gagnées : %d
 ARMORY.RESET_SPENT_STARS,Reset,Réinitialiser
-ARMORY.RESET_STARS_CONFIRM,"This clears all armory purchases. You recover your stars. Buildings beyond the starter kit lock again (legacy saves keep all buildings unlocked).","Cela annule tous les achats de l'armurerie. Vous récupérez vos étoiles. Les bâtiments hors kit de départ seront reverrouillés (les sauvegardes « legacy » gardent tout débloqué)."
+ARMORY.RESET_STARS_CONFIRM,Are you sure you want to reset the armory?,Êtes-vous sûr de vouloir réinitialiser l'armurerie ?
 ARMORY.RESET_CONFIRM_OK,OK,Confirmer
+ARMORY.RESET_CANCEL,Cancel,Annuler
 ARMORY.STAR_COST,%d stars,%d étoiles
 ARMORY.BUY,Buy,Acheter
 ARMORY.BUY_BLOCKED,BLOCKED,BLOQUÉ
