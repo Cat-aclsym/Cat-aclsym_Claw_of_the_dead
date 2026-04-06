@@ -103,18 +103,18 @@ ARMORY.CANT_AFFORD,Not enough stars,Pas assez d'étoiles
 ARMORY.PREREQ_BLOCK_DETAIL,"Unlock first: %s","Débloquer d'abord : %s"
 ARMORY.LOCKED_PREREQ,Requirements missing,Prérequis manquants
 ARMORY.LEGACY_NOTICE,Legacy save: all buildings stay unlocked. Armory purchases are optional.,Sauvegarde antérieure : tous les bâtiments restent débloqués. L'armurerie est optionnelle.
-ARMORY.LEGACY_SKIP,—,—
-ARMORY.NODE.UNLOCK_BAT_02.NAME,Unlock Cataboom tower,Débloquer la tour Cataboom
-ARMORY.NODE.UNLOCK_BAT_02.DESC,Adds the AOE tower to the build menu.,Ajoute la tour de zone au menu de construction.
-ARMORY.NODE.UNLOCK_BAT_03.NAME,Unlock blade trap,Débloquer le piège à lames
-ARMORY.NODE.UNLOCK_BAT_03.DESC,Adds the blade trap to the build menu.,Ajoute le piège à lames au menu de construction.
-ARMORY.NODE.UNLOCK_BAT_04.NAME,Unlock slow trap,Débloquer le piège ralentissant
-ARMORY.NODE.UNLOCK_BAT_04.DESC,Adds the slowing trap to the build menu.,Ajoute le piège ralentissant au menu de construction.
-ARMORY.NODE.UNLOCK_BAT_01_BRANCH_A.NAME,Unlock branch A (Cat Tree),Débloquer la branche A (Arbre à Chat'rchés)
-ARMORY.NODE.UNLOCK_BAT_01_BRANCH_A.DESC,Allows the A upgrade path for the Cat Tree.,Autorise la branche d'amélioration A pour l'Arbre à Chat'rchés.
-ARMORY.NODE.UNLOCK_BAT_01_BRANCH_B.NAME,Unlock branch B (Cat Tree),Débloquer la branche B (Arbre à Chat'rchés)
-ARMORY.NODE.UNLOCK_BAT_01_BRANCH_B.DESC,Allows the B upgrade path for the Cat Tree.,Autorise la branche d'amélioration B pour l'Arbre à Chat'rchés.
-ARMORY.NODE.UNLOCK_BAT_02_BRANCH_A.NAME,Unlock branch A (Cataboom),Débloquer la branche A (Cataboom)
-ARMORY.NODE.UNLOCK_BAT_02_BRANCH_A.DESC,Allows the A upgrade path for the Cataboom tower.,Autorise la branche d'amélioration A pour la tour Cataboom.
-ARMORY.NODE.UNLOCK_BAT_02_BRANCH_B.NAME,Unlock branch B (Cataboom),Débloquer la branche B (Cataboom)
-ARMORY.NODE.UNLOCK_BAT_02_BRANCH_B.DESC,Allows the B upgrade path for the Cataboom tower.,Autorise la branche d'amélioration B pour la tour Cataboom.
+ARMORY.LEGACY_SKIP,-,-
+ARMORY.NODE.UNLOCK_BAT_02.NAME,Cataboom Tower,Tour Cataboom
+ARMORY.NODE.UNLOCK_BAT_02.DESC,"Adds the Cataboom to the build menu. It lobs explosive shots that deal area damage to every enemy caught in the blast.","La Cataboom arrive au menu : elle balance des trucs qui pètent en zone : tout ce qui traîne dans le rayon, ça prend cher. Simple et efficace."
+ARMORY.NODE.UNLOCK_BAT_03.NAME,Blade trap,Piège à lames
+ARMORY.NODE.UNLOCK_BAT_03.DESC,"Adds the blade trap to the build menu. Enemies that trigger it take a burst of damage; each trap only works a limited number of times.","Le piège à lames : un coup sec dans les pattes, ça fait mal tout de suite. Petit bémol : ça s'use vite."
+ARMORY.NODE.UNLOCK_BAT_04.NAME,Slow trap,Piège ralentissant
+ARMORY.NODE.UNLOCK_BAT_04.DESC,"Adds the slow trap to the build menu. Enemies crossing it are slowed so your towers have more time to finish them off.","Le piège ralentissant : les zombies passent au ralenti, histoire que tes tours aient le temps de leur dire bonjour."
+ARMORY.NODE.UNLOCK_BAT_01_BRANCH_A.NAME,Branch A (Cat Tree),Branche A (Arbre à Chat'rchés)
+ARMORY.NODE.UNLOCK_BAT_01_BRANCH_A.DESC,"Unlocks the A upgrade line for the Cat Tree: piercing arrows with very high single-shot damage and multi-enemy pierce, extra range, and slower projectiles, ideal for dense lines of foes.","Branche A : des flèches qui traversent toute la meute comme si la vie privée n'existait pas, gros dégâts, plus de portée : les tirs sont un peu paresseux mais ça compense."
+ARMORY.NODE.UNLOCK_BAT_01_BRANCH_B.NAME,Branch B (Cat Tree),Branche B (Arbre à Chat'rchés)
+ARMORY.NODE.UNLOCK_BAT_01_BRANCH_B.DESC,"Unlocks the B upgrade line for the Cat Tree: higher fire rate, an extra projectile, and a wider firing spread, better for shredding groups up close.","Branche B : tu tires plus vite, tu doubles les flèches, tu éclates la dispersion : le mode mitraillette de l'arbre, pour ceux qui aiment le bruit de près."
+ARMORY.NODE.UNLOCK_BAT_02_BRANCH_A.NAME,Branch A (Cataboom),Branche A (Cataboom)
+ARMORY.NODE.UNLOCK_BAT_02_BRANCH_A.DESC,"Unlocks the A upgrade line for the Cataboom: fire-tipped shells that apply burn damage over time and trade some blast radius for a tighter, more focused explosion.","Branche feu : ça crame dans la durée, l'explosion est plus modeste mais le barbecue est assuré. Les morts-vivants détestent quand c'est bien cuit."
+ARMORY.NODE.UNLOCK_BAT_02_BRANCH_B.NAME,Branch B (Cataboom),Branche B (Cataboom)
+ARMORY.NODE.UNLOCK_BAT_02_BRANCH_B.DESC,"Unlocks the B upgrade line: larger explosion radius on each tier so one shot can clip more enemies in the AoE.","Branche gros boom : à chaque palier le rayon grossit : un seul tir, et tu invites plus de monde à la fête."
