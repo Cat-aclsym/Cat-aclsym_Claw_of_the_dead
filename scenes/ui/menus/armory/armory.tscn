@@ -101,44 +101,46 @@ theme_override_font_sizes/font_size = 18
 text = "ARMORY.LEGACY_NOTICE"
 autowrap_mode = 3
 
-[node name="ArmoryTabs" type="TabContainer" parent="MainMargin/VBox"]
+[node name="ScrollBuildings" type="ScrollContainer" parent="MainMargin/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="ItemsCenter" type="CenterContainer" parent="MainMargin/VBox/ScrollBuildings"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="ItemsHBox" type="HBoxContainer" parent="MainMargin/VBox/ScrollBuildings/ItemsCenter"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 24
+alignment = 1
+
+[node name="DescriptionPanel" type="PanelContainer" parent="MainMargin/VBox"]
+custom_minimum_size = Vector2(0, 140)
+layout_mode = 2
+size_flags_horizontal = 3
+theme = ExtResource("3_theme")
+
+[node name="DescriptionMargin" type="MarginContainer" parent="MainMargin/VBox/DescriptionPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 10
+
+[node name="DescriptionLabel" type="Label" parent="MainMargin/VBox/DescriptionPanel/DescriptionMargin"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme = ExtResource("3_theme")
-current_tab = 0
-
-[node name="ScrollBuildings" type="ScrollContainer" parent="MainMargin/VBox/ArmoryTabs"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-horizontal_scroll_mode = 0
-metadata/_tab_index = 0
-
-[node name="NodesBuildingsVBox" type="VBoxContainer" parent="MainMargin/VBox/ArmoryTabs/ScrollBuildings"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-theme_override_constants/separation = 10
-
-[node name="ScrollBuffs" type="ScrollContainer" parent="MainMargin/VBox/ArmoryTabs"]
-unique_name_in_owner = true
-visible = false
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-horizontal_scroll_mode = 0
-metadata/_tab_index = 1
-
-[node name="NodesBuffsVBox" type="VBoxContainer" parent="MainMargin/VBox/ArmoryTabs/ScrollBuffs"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-theme_override_constants/separation = 10
+theme_override_font_sizes/font_size = 20
+vertical_alignment = 1
+autowrap_mode = 3
 
 [node name="ResetConfirmDialog" type="ConfirmationDialog" parent="."]
 unique_name_in_owner = true

@@ -21,20 +21,6 @@
 			"prerequisites": [],
 			"category": "periphery_building",
 			"effects": [{ "type": "unlock_trap", "trap_id": "bat_04" }]
-		},
-		{
-			"id": "core_sharp_eyes",
-			"cost_stars": 2,
-			"prerequisites": [],
-			"category": "core_buff",
-			"effects": [{ "type": "tower_buff", "shoot_range_mult": 1.05 }]
-		},
-		{
-			"id": "core_quick_paws",
-			"cost_stars": 3,
-			"prerequisites": ["core_sharp_eyes"],
-			"category": "core_buff",
-			"effects": [{ "type": "tower_buff", "fire_rate_mult": 1.05 }]
 		}
 	]
 }
