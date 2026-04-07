@@ -212,7 +212,6 @@ func load_game() -> void:
 	if had_any_record and not saw_armory:
 		data.armory_legacy_mode = true
 		_unlock_all_buildings_for_legacy_migration()
-		save_game()
 
 	apply_settings()
 	Log.trace(Log.Level.DEBUG, "Game loaded from %s (absolute: %s)" % [SAVE_PATH, file.get_path_absolute()])
