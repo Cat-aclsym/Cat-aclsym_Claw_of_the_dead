@@ -37,18 +37,21 @@ jobs:
         run: |
           echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > ~/Cataclysm.keystore
 
+      - name: Configure keystore in export presets
+        run: |
+          sed -i '/package\/signed=true/a keystore\/release="\/root\/Cataclysm.keystore"\nkeystore\/release_password="${{ secrets.KEYSTORE_PASSWORD }}"\nkeystore\/release_user="Cataclysm"' export_presets.cfg
+
+      - name: Import project
+        run: |
+          godot --headless --import || true
+
       - name: Build APK
         run: |
-          godot --headless --export-release "Android" build/Cataclysm.apk \
-            --export-pack \
-            -- \
-            --keystore ~/Cataclysm.keystore \
-            --keystore-pass "${{ secrets.KEYSTORE_PASSWORD }}" \
-            --key-alias "Cataclysm" \
-            --key-pass "${{ secrets.KEY_PASSWORD }}"
+          mkdir -p exports
+          godot --headless --export-release "Android" exports/Cataclysm.apk
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
           name: Cataclysm-apk
-          path: build/Cataclysm.apk
+          path: exports/Cataclysm.apk

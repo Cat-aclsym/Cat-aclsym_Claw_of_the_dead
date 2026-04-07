@@ -1,8 +1,8 @@
-## © [2024] A7 Studio. All rights reserved. Trademark.
+## © [2026] A7 Studio. All rights reserved. Trademark.
 ##
 ## Interface for a tower.
 class_name ITower
-extends Node2D
+extends IBuilding
 
 ## Signal emitted when the tower starts upgrading
 signal upgrade_started
@@ -49,8 +49,6 @@ var projectile_count: int = 0
 var spread_angle: float = 0.0
 
 @export_subgroup("Tower Properties")
-## The cost of the tower (overridden at runtime)
-var cost: int = 0
 ## The fire rate of the tower (overridden at runtime)
 var fire_rate: float = 0.0
 ## The level of the tower (overridden at runtime)
@@ -117,7 +115,6 @@ var tile_pos: Vector2i
 var _pulse_tween: Tween = null
 var _scale_tween: Tween = null
 var _range_tween: Tween = null
-@onready var stats_db = get_node("/root/StatsDB")
 @export var tower_id: String = ""
 
 # Core methods
@@ -150,6 +147,45 @@ func _process(_delta: float) -> void:
 		fire()
 
 # Public methods
+func cancel_build_preview() -> void:
+	show_range(false, true)
+
+func enter_build_preview() -> void:
+	state = TowerState.BUILDING
+	show_range(true, false)
+
+func get_building_kind() -> IBuilding.BuildingKind:
+	return IBuilding.BuildingKind.TOWER
+
+func get_placement_vertical_offset() -> float:
+	return 16.0
+
+## Applies [code]stats.json[/code] [code]towers[/code] entry when [member tower_id] is set. Uses the [StatsDB] autoload so it works on orphan instances (e.g. build menu preview).
+func apply_stats_from_db() -> void:
+	if tower_id.is_empty():
+		return
+	if not StatsDB.has_tower(tower_id):
+		Log.trace(Log.Level.ERROR, "StatsDB missing tower id: %s" % tower_id)
+		return
+	var data: Dictionary = StatsDB.get_tower(tower_id)
+	var base: Dictionary = data.get("base", {})
+	level = StatsDB.get_tower_level(tower_id)
+	Log.trace(Log.Level.INFO, "Applying tower stats from StatsDB for %s: %s" % [tower_id, base])
+	if base.has("cost"):
+		cost = int(base["cost"])
+	if base.has("fire_rate"):
+		fire_rate = float(base["fire_rate"])
+	if base.has("shoot_range"):
+		shoot_range = float(base["shoot_range"])
+	if base.has("projectile_count"):
+		projectile_count = int(base["projectile_count"])
+	if base.has("spread_angle"):
+		spread_angle = float(base["spread_angle"])
+	if base.has("bullet_stats"):
+		var bs: Dictionary = base["bullet_stats"]
+		for k in bs.keys():
+			bullet_stats[k] = bs[k]
+
 ## Fires a bullet at the current target if conditions are met
 func fire() -> void:
 	if state != TowerState.ACTIVE or not len(enemy_array):
@@ -347,7 +383,7 @@ func build_tower() -> void:
 ## Sells the tower
 func sell_tower() -> void:
 	ILevel.current_level.coins += sell_price
-	var placement_system = Global.get("cursor")
+	var placement_system: BuildPlacement = Global.get("cursor") as BuildPlacement
 	if placement_system:
 		placement_system.remove_invalid_cell(tile_pos)
 	queue_free()
@@ -357,7 +393,7 @@ func _register_with_cursor() -> void:
 		return
 
 	# Safe access to Global.cursor to avoid assertion if it's not yet set
-	var placement_system = Global.get("cursor")
+	var placement_system: BuildPlacement = Global.get("cursor") as BuildPlacement
 	if placement_system:
 		if tile_pos == Vector2i.ZERO:
 			if placement_system.tm_ref:
@@ -430,29 +466,7 @@ func _apply_bullet_modifications(bullet_instance: IBullet) -> void:
 
 
 func _apply_base_stats_override() -> void:
-	if tower_id.is_empty() or stats_db == null:
-		return
-	if not stats_db.has_tower(tower_id):
-		Log.trace(Log.Level.ERROR, "StatsDB missing tower id: %s" % tower_id)
-		return
-	var data: Dictionary = stats_db.get_tower(tower_id)
-	var base: Dictionary = data.get("base", {})
-	level = stats_db.get_tower_level(tower_id)
-	Log.trace(Log.Level.INFO, "Applying tower stats from StatsDB for %s: %s" % [tower_id, base])
-	if base.has("cost"):
-		cost = int(base["cost"])
-	if base.has("fire_rate"):
-		fire_rate = float(base["fire_rate"])
-	if base.has("shoot_range"):
-		shoot_range = float(base["shoot_range"])
-	if base.has("projectile_count"):
-		projectile_count = int(base["projectile_count"])
-	if base.has("spread_angle"):
-		spread_angle = float(base["spread_angle"])
-	if base.has("bullet_stats"):
-		var bs: Dictionary = base["bullet_stats"]
-		for k in bs.keys():
-			bullet_stats[k] = bs[k]
+	apply_stats_from_db()
 
 func _choose_target() -> void:
 	match target_type:

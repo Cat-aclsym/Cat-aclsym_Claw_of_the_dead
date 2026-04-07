@@ -4,7 +4,7 @@ extends Node
 ## Manages active level challenges and coordinates event notifications.
 ##
 ## This autoload loads specific challenge logic for the current level and
-## relays gameplay events (damage, tower placement) to monitoring challenges.
+## relays gameplay events (damage, building placement) to monitoring challenges.
 
 # Signals
 signal challenges_loaded()
@@ -60,15 +60,24 @@ func notify_damage(amount: int, _source: Variant = null) -> void:
 			c.on_damage_taken(amount)
 
 
-## Notifies challenges about a tower placement.
+## Notifies challenges that an [ITower] was placed (not traps).
 func notify_tower_placed(tower: ITower) -> void:
 	for c in active_challenges:
 		if c.has_method("on_tower_placed"):
 			c.on_tower_placed(tower)
 
 
+## Dispatches placement to [method notify_tower_placed] or [method notify_trap_placed] by [method IBuilding.get_building_kind].
+func notify_building_placed(building: IBuilding) -> void:
+	match building.get_building_kind():
+		IBuilding.BuildingKind.TOWER:
+			notify_tower_placed(building as ITower)
+		IBuilding.BuildingKind.TRAP:
+			notify_trap_placed(building as ITrap)
+
+
 ## Notifies challenges about a trap placement.
-func notify_trap_placed(trap: Variant) -> void:
+func notify_trap_placed(trap: ITrap) -> void:
 	for c in active_challenges:
 		if c.has_method("on_trap_placed"):
 			c.on_trap_placed(trap)

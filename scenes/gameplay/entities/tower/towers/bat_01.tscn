@@ -108,9 +108,6 @@ sprite_frames = SubResource("SpriteFrames_1t44q")
 animation = &"idle"
 frame_progress = 0.394808
 
-[node name="Area2D" parent="." index="1"]
-visible = false
-
 [node name="CollisionShape2D" parent="Area2D" index="0"]
 position = Vector2(4.76837e-07, 16)
 rotation = 0.567232
