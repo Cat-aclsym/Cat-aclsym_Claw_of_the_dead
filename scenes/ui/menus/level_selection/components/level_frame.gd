@@ -7,8 +7,8 @@ extends Control
 signal start_level(level: ILevel)
 
 # Constants
-const CONDITION_DONE: Texture2D = preload("res://assets/ui/level_selection/window/condition_done.svg")
-const CONDITION_TODO: Texture2D = preload("res://assets/ui/level_selection/window/condition_todo.svg")
+const CONDITION_DONE: Texture2D = preload("res://assets/ui/icons/Star.png")
+const CONDITION_TODO: Texture2D = preload("res://assets/ui/icons/Star_Empty.png")
 const LVL_DESC: String = "desc"
 const LVL_IDEN: String = "id"
 const LVL_NAME: String = "name"
