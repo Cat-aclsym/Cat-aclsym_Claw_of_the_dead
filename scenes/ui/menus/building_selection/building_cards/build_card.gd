@@ -53,6 +53,12 @@ func _ready() -> void:
 
 	SignalUtil.connects(signals)
 
+
+func _exit_tree() -> void:
+	if is_instance_valid(_entity):
+		_entity.free()
+		_entity = null
+
 # public
 ## Updates the card price label and availability.
 ## [br]Disables the build button if player doesn't have enough coins.
