@@ -14,7 +14,7 @@
 script = ExtResource("1_2nmgi")
 overrides = {
 "follow_viewport": "true",
-"global_font": "\"res://assets/ui/fonts/ibm_plex_mono/IBMPlexMono-Regular.ttf\""
+"global_font": "\"res://assets/ui/fonts/dotgothic/DotGothic16-Regular.ttf\""
 }
 
 [sub_resource type="Resource" id="Resource_3au23"]
@@ -31,8 +31,8 @@ overrides = {}
 script = ExtResource("1_2nmgi")
 scene = ExtResource("4_8a4jf")
 overrides = {
-"custom_bold_font": "\"res://assets/ui/fonts/ibm_plex_mono/IBMPlexMono-Bold.ttf\"",
-"custom_normal_font": "\"res://assets/ui/fonts/ibm_plex_mono/IBMPlexMono-Regular.ttf\"",
+"custom_bold_font": "\"res://assets/ui/fonts/dotgothic/DotGothic16-Regular.ttf\"",
+"custom_normal_font": "\"res://assets/ui/fonts/dotgothic/DotGothic16-Regular.ttf\"",
 "name_label_custom_color": "Color(0.726563, 0.726563, 0.726563, 1)"
 }
 

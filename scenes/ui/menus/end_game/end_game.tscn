@@ -6,11 +6,12 @@
 [ext_resource type="Texture2D" uid="uid://2h2ubjxfobs5" path="res://assets/ui/icons/Victory Gold.svg" id="4_u374u"]
 [ext_resource type="Texture2D" uid="uid://d01pp2dnlu1uh" path="res://assets/ui/icons/Clock.svg" id="5_jbudf"]
 [ext_resource type="Texture2D" uid="uid://qhsyglmr4xyo" path="res://assets/ui/icons/Heart.svg" id="6_86q27"]
-[ext_resource type="Texture2D" uid="uid://ddk5xo6vibq1t" path="res://assets/ui/icons/Button Replay.svg" id="7_shpam"]
-[ext_resource type="Texture2D" uid="uid://dn8ksi7radij3" path="res://assets/ui/icons/Button Skip.svg" id="8_ueh5j"]
-[ext_resource type="Texture2D" uid="uid://dksoj327amr1a" path="res://assets/ui/icons/Button Home Menu.svg" id="9_g4nh0"]
+[ext_resource type="Texture2D" uid="uid://c8haaogs5jrow" path="res://assets/ui/icons/Retry_Button.png" id="7_shpam"]
+[ext_resource type="Texture2D" uid="uid://85fepmd06xnd" path="res://assets/ui/icons/Fast_Forward_Button.png" id="8_ueh5j"]
+[ext_resource type="Texture2D" uid="uid://b7734rs8y770c" path="res://assets/ui/icons/Home_Button.png" id="9_g4nh0"]
 
 [node name="EndGame" type="Control"]
+texture_filter = 1
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0

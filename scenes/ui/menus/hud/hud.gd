@@ -178,11 +178,20 @@ func _spawn_coin_explosion(start_pos: Vector2) -> void:
 	for i in range(num_coins):
 		var coin = Sprite2D.new()
 		coin.texture = COIN_ICON_TEXTURE
-		coin.scale = Vector2(0.15, 0.15)
+		coin.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+		coin.scale = Vector2(1, 1)
 		add_child(coin)
 		coin.global_position = start_pos
 
-		var angle = randf_range(-PI * 0.8, -PI * 0.2) # Mostly upwards explosion
+		# Use angles 10° to 45° (left) and 170° to 135° (right), in radians, but flip direction upward
+		var use_left = randf() < 0.5
+		var angle: float
+		if use_left:
+			# Left arc: 10° to 45° UP (flip y-axis)
+			angle = -deg_to_rad(randf_range(10, 45))
+		else:
+			# Right arc: 170° to 135° UP (flip y-axis)
+			angle = -deg_to_rad(randf_range(135, 170))
 		var distance = randf_range(40, 80) # Increased travel distance
 		var target_pos = start_pos + Vector2(cos(angle), sin(angle)) * distance
 
