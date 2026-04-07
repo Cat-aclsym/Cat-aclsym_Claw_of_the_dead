@@ -12,10 +12,8 @@ var _initialized: bool = false
 
 # core
 func _ready() -> void:
-	Global.ui = self
-	if hud == null:
-		Log.trace(Log.Level.FATAL, "UI : HUD node is null! Children: %s" % str(get_children()))
 	assert(hud != null, "hud node not found")
+	Global.ui = self
 	_initialized = true
 
 # public
