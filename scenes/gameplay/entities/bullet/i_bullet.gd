@@ -1,10 +1,11 @@
-## © [2024] A7 Studio. All rights reserved. Trademark.
+## © [2026] A7 Studio. All rights reserved. Trademark.
 ##
 ## Interface for bullet entities.
 class_name IBullet
 extends Area2D
 
 # exports
+## Runtime values; balance comes from [method ITower._apply_projectile_config] (tower [code]bullet_stats[/code]). Scenes use 0 for gameplay.
 @export var damage: int ## Base damage value dealt to enemies
 @export var speed: int ## Speed of the bullet
 

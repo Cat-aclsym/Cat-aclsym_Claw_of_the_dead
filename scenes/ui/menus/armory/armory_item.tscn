@@ -1,0 +1,125 @@
+[gd_scene load_steps=7 format=3 uid="uid://6mhjyovq8wdc"]
+
+[ext_resource type="Script" uid="uid://yn0xr1v34u6y" path="res://scenes/ui/menus/armory/armory_item.gd" id="1_armory_item_script"]
+[ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="2_theme"]
+[ext_resource type="Texture2D" uid="uid://cdesir3miwmug" path="res://assets/ui/building_cards/Green Frame.svg" id="3_green_frame"]
+[ext_resource type="Texture2D" uid="uid://yayv0hygrr3u" path="res://assets/ui/building_cards/Blue Backgrond.svg" id="4_blue_background"]
+[ext_resource type="Texture2D" uid="uid://deifsvtkdkqo1" path="res://assets/ui/buttons/Bouton Bleu.svg" id="5_blue_button"]
+[ext_resource type="Texture2D" uid="uid://bm6k4rajx0ffb" path="res://assets/ui/level_selection/window/condition_done.svg" id="6_star_icon"]
+
+[node name="ArmoryItem" type="VBoxContainer"]
+custom_minimum_size = Vector2(180, 260)
+theme_override_constants/separation = 8
+alignment = 1
+script = ExtResource("1_armory_item_script")
+
+[node name="CardAspectRatioContainer" type="AspectRatioContainer" parent="."]
+custom_minimum_size = Vector2(160, 160)
+layout_mode = 2
+
+[node name="CardTextureButton" type="TextureButton" parent="CardAspectRatioContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+ignore_texture_size = true
+stretch_mode = 4
+
+[node name="FrameTextureRect" type="TextureRect" parent="CardAspectRatioContainer/CardTextureButton"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_green_frame")
+expand_mode = 1
+stretch_mode = 4
+
+[node name="BackgroundTextureRect" type="TextureRect" parent="CardAspectRatioContainer/CardTextureButton"]
+z_index = -1
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.01
+anchor_top = 0.01
+anchor_right = 0.99
+anchor_bottom = 0.99
+offset_left = 0.49
+offset_top = 0.49
+offset_right = 0.51001
+offset_bottom = -0.48999
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("4_blue_background")
+expand_mode = 1
+stretch_mode = 4
+
+[node name="PreviewTextureRect" type="TextureRect" parent="CardAspectRatioContainer/CardTextureButton"]
+unique_name_in_owner = true
+z_index = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 12.0
+offset_top = 12.0
+offset_right = -12.0
+offset_bottom = -12.0
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 1
+stretch_mode = 4
+
+[node name="BuyButton" type="TextureButton" parent="."]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(170, 52)
+layout_mode = 2
+texture_normal = ExtResource("5_blue_button")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="BuyHBoxContainer" type="HBoxContainer" parent="BuyButton"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -78.0
+offset_top = -13.0
+offset_right = 78.0
+offset_bottom = 13.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 6
+alignment = 1
+
+[node name="BuyLabel" type="Label" parent="BuyButton/BuyHBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme = ExtResource("2_theme")
+theme_override_colors/font_color = Color(0.137255, 0.215686, 0.223529, 1)
+theme_override_colors/font_outline_color = Color(0.137255, 0.215686, 0.223529, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 18
+text = "ARMORY.BUY"
+vertical_alignment = 1
+uppercase = true
+
+[node name="StarsIconTextureRect" type="TextureRect" parent="BuyButton/BuyHBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(20, 20)
+layout_mode = 2
+texture = ExtResource("6_star_icon")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="PriceLabel" type="Label" parent="BuyButton/BuyHBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme = ExtResource("2_theme")
+theme_override_colors/font_outline_color = Color(0.137255, 0.215686, 0.223529, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 18
+text = "x 0"
+vertical_alignment = 1

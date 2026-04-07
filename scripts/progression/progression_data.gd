@@ -17,6 +17,15 @@ var parameters: SettingsData = SettingsData.new()
 ## Dictionary mapping tower IDs (String) to TowerData objects.
 var towers: Dictionary = {}
 
+## Dictionary mapping trap IDs (String) to TrapData objects.
+var traps: Dictionary = {}
+
+## Armurerie: IDs of purchased meta nodes (see [code]resources/armory/armory.json[/code]).
+var armory_purchased: Array[String] = []
+
+## When true (migrated old saves), all buildings stay buildable regardless of armory unlocks.
+var armory_legacy_mode: bool = false
+
 
 # Public functions
 ## Converts the entire progression to a dictionary for serialization or debugging.
@@ -36,5 +45,12 @@ func save() -> Dictionary:
 	res["towers"] = {}
 	for id in towers:
 		res["towers"][id] = towers[id].save()
+
+	res["traps"] = {}
+	for trap_id in traps:
+		res["traps"][trap_id] = traps[trap_id].save()
+
+	res["armory_purchased"] = armory_purchased.duplicate()
+	res["armory_legacy_mode"] = armory_legacy_mode
 
 	return res

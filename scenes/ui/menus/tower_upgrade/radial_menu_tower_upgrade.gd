@@ -1,3 +1,5 @@
+## © [2026] A7 Studio. All rights reserved. Trademark.
+##
 class_name RadialTowerUpgradeMenu
 extends Control
 
@@ -22,8 +24,11 @@ var shape_scale: float = 0.0:
 @onready var info_button: TextureButton = $Buttons/InfoTextureButton
 @onready var close_button: TextureButton = $Buttons/CloseTextureButton
 
-@onready var sell_label: Label = sell_button.find_child("ValueLabel") as Label
-@onready var upgrade_label: Label = upgrade_button.find_child("ValueLabel") as Label
+@onready var sell_price_row: HBoxContainer = $Buttons/SellTextureButton/PriceRow
+@onready var upgrade_price_row: HBoxContainer = $Buttons/UpgradeTextureButton/PriceRow
+@onready var sell_label: Label = $Buttons/SellTextureButton/PriceRow/ValueLabel
+@onready var upgrade_label: Label = $Buttons/UpgradeTextureButton/PriceRow/ValueLabel
+@onready var upgrade_coin_icon: TextureRect = $Buttons/UpgradeTextureButton/PriceRow/CoinIcon
 
 
 @onready var signals: Array[Dictionary] = [
@@ -36,8 +41,11 @@ var shape_scale: float = 0.0:
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	assert(sell_price_row != null, "Sell price row not found")
+	assert(upgrade_price_row != null, "Upgrade price row not found")
 	assert(sell_label != null, "Sell label not found")
 	assert(upgrade_label != null, "Upgrade label not found")
+	assert(upgrade_coin_icon != null, "Upgrade coin icon not found")
 	tower = get_parent() as ITower
 	global_position = tower.global_position
 	sell_button.position = Vector2.ZERO
@@ -47,16 +55,17 @@ func _ready() -> void:
 	buttons.position = Vector2.ZERO
 
 	sell_price = tower.sell_price
-	sell_label.text = str(sell_price)+"$"
-	if !tower.available_upgrade.is_empty():
-		var upg: IUpgrade = tower.available_upgrade[0].instantiate()
-		upgrade_price = upg.price
-		upgrade_label.text = str(upgrade_price)+"$"
+	sell_label.text = str(sell_price)
+	if !tower.available_upgrade_ids.is_empty():
+		upgrade_price = StatsDB.get_upgrade_price(tower.available_upgrade_ids[0])
+		upgrade_label.text = str(upgrade_price)
+		upgrade_coin_icon.visible = true
 	else:
 		upgrade_button.disabled = true
 		# Change upgrade button to gray rbg #525252
 		upgrade_button.modulate = Color(0.325, 0.325, 0.325)  # Gray color
-		upgrade_label.text = "MAX"
+		upgrade_label.text = tr("TOWER.UPGRADE.MAX")
+		upgrade_coin_icon.visible = false
 	SignalUtil.connects(signals)
 
 	for b in buttons.get_children():
@@ -123,14 +132,14 @@ func hide_menu():
 		tw.tween_property(b, "scale", Vector2.ZERO, speed)\
 			.set_trans(Tween.TRANS_LINEAR)
 
-		tw.tween_property(sell_label, "position", Vector2.ZERO, speed)\
+		tw.tween_property(sell_price_row, "position", Vector2.ZERO, speed)\
 			.set_trans(Tween.TRANS_BACK)
-		tw.tween_property(sell_label, "scale", Vector2.ZERO, speed)\
+		tw.tween_property(sell_price_row, "scale", Vector2.ZERO, speed)\
 			.set_trans(Tween.TRANS_LINEAR)
 
-		tw.tween_property(upgrade_label, "position", Vector2.ZERO, speed)\
+		tw.tween_property(upgrade_price_row, "position", Vector2.ZERO, speed)\
 			.set_trans(Tween.TRANS_BACK)
-		tw.tween_property(upgrade_label, "scale", Vector2.ZERO, speed)\
+		tw.tween_property(upgrade_price_row, "scale", Vector2.ZERO, speed)\
 			.set_trans(Tween.TRANS_LINEAR)
 
 	tw.tween_property(self, "shape_scale", 0.0, speed)\
@@ -156,7 +165,7 @@ func _on_close_button_pressed():
 
 
 func _on_upgrade_button_pressed():
-	if tower == null or tower.available_upgrade.is_empty():
+	if tower == null or tower.available_upgrade_ids.is_empty():
 		return
 	var upgrade_menu_scene: PackedScene = load("res://scenes/ui/menus/tower_upgrade/tower_upgrade_menu.tscn")
 	if upgrade_menu_scene == null:
@@ -169,7 +178,7 @@ func _on_upgrade_button_pressed():
 		Global.hud.add_child(upgrade_menu_instance)
 	else:
 		add_child(upgrade_menu_instance)
-	upgrade_menu_instance.setup(tower, tower.available_upgrade)
+	upgrade_menu_instance.setup(tower, tower.available_upgrade_ids)
 	hide_menu()
 
 
@@ -192,8 +201,7 @@ func _on_info_button_pressed():
 		Global.hud.add_child(desc_instance)
 	else:
 		add_child(desc_instance)
-	var upgrade_scene: PackedScene = tower.available_upgrade[0] if not tower.available_upgrade.is_empty() else null
-	desc_instance.setup(tower, upgrade_scene)
+	desc_instance.setup(tower)
 
 
 func _on_tween_finished():

@@ -7,6 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://cdesir3miwmug" path="res://assets/ui/building_cards/Green Frame.svg" id="4_m83gu"]
 [ext_resource type="Texture2D" uid="uid://yayv0hygrr3u" path="res://assets/ui/building_cards/Blue Backgrond.svg" id="5_q5f42"]
 [ext_resource type="Texture2D" uid="uid://comglet8s7g5i" path="res://assets/gameplay/towers/tower_2_LVL_1.png" id="6_304go"]
+[ext_resource type="Texture2D" path="res://assets/ui/huds/Coin.png" id="8_coin"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_hh3vp"]
 atlas = ExtResource("6_304go")
@@ -102,8 +103,7 @@ texture = SubResource("AtlasTexture_hh3vp")
 expand_mode = 1
 stretch_mode = 4
 
-[node name="PriceLabel" type="Label" parent="CardVBoxContainer/CardAspectRatioContainer/CardTextureButton"]
-texture_filter = 5
+[node name="PriceRow" type="HBoxContainer" parent="CardVBoxContainer/CardAspectRatioContainer/CardTextureButton"]
 layout_mode = 1
 anchors_preset = -1
 anchor_top = 0.716
@@ -114,8 +114,23 @@ offset_right = -4.05896
 offset_bottom = -5.0
 grow_horizontal = 2
 grow_vertical = 0
+alignment = 1
+theme_override_constants/separation = 4
+
+[node name="PriceLabel" type="Label" parent="CardVBoxContainer/CardAspectRatioContainer/CardTextureButton/PriceRow"]
+texture_filter = 5
+layout_mode = 2
+size_flags_vertical = 4
 theme = ExtResource("3_xl830")
 theme_override_font_sizes/font_size = 15
-text = "50$"
+text = "50"
 horizontal_alignment = 1
-vertical_alignment = 2
+vertical_alignment = 1
+
+[node name="CoinIcon" type="TextureRect" parent="CardVBoxContainer/CardAspectRatioContainer/CardTextureButton/PriceRow"]
+layout_mode = 2
+custom_minimum_size = Vector2(18, 18)
+size_flags_vertical = 4
+texture = ExtResource("8_coin")
+expand_mode = 1
+stretch_mode = 5

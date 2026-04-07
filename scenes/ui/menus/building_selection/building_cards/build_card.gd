@@ -16,12 +16,14 @@ const PRICE_LABEL_MODULATE_VS_DIM: Color = Color(1.0 / CARD_DIM_UNAFFORDABLE, 1.
 
 var _cost: int = 0
 var _entity: Node2D = null
+var _locked: bool = false
 
 ## The container node for the card elements.
 @onready var background_texture: TextureRect = $CardVBoxContainer/CardAspectRatioContainer/CardTextureButton/BackgroundTextureRect
 @onready var button_texture: TextureButton = $CardVBoxContainer/CardAspectRatioContainer/CardTextureButton
 @onready var container: VBoxContainer = $CardVBoxContainer
-@onready var price_label: Label = $CardVBoxContainer/CardAspectRatioContainer/CardTextureButton/PriceLabel
+@onready var price_coin_icon: TextureRect = $CardVBoxContainer/CardAspectRatioContainer/CardTextureButton/PriceRow/CoinIcon
+@onready var price_label: Label = $CardVBoxContainer/CardAspectRatioContainer/CardTextureButton/PriceRow/PriceLabel
 @onready var title_label: Label = $CardVBoxContainer/TitleAspectRatioContainer/TitleTextureRect/TitleLabel
 @onready var preview_texture_rect: TextureRect = $CardVBoxContainer/CardAspectRatioContainer/CardTextureButton/BuildPreviewTextureRect
 
@@ -36,6 +38,7 @@ func _ready() -> void:
 	assert(button_texture != null, "button_texture node not found")
 	assert(container != null, "container node not found")
 	assert(price_label != null, "price_label node not found")
+	assert(price_coin_icon != null, "price_coin_icon node not found")
 	assert(title_label != null, "title_label node not found")
 	assert(preview_texture_rect != null, "preview_texture_rect node not found")
 
@@ -43,10 +46,13 @@ func _ready() -> void:
 	assert(_entity != null, "entity could not be instantiated as Node2D")
 	assert("cost" in _entity, "entity must expose a 'cost' property")
 	if _entity is ITower:
-		(_entity as ITower).apply_stats_from_db()
+		var tw: ITower = _entity as ITower
+		tw.apply_stats_from_db()
+		ArmoryManager.apply_buffs_to_tower(tw)
 	elif _entity is ITrap:
 		(_entity as ITrap).apply_stats_from_db()
 	_cost = int(_entity.cost)
+	_locked = not _is_entity_unlocked()
 	_sync_title_from_stats_db()
 	_apply_entity_preview_texture()
 	update()
@@ -55,17 +61,29 @@ func _ready() -> void:
 
 # public
 ## Updates the card price label and availability.
-## [br]Disables the build button if player doesn't have enough coins.
-## [br]Slightly dims the card when unaffordable; price text turns red.
+## [br]If the building is locked (armory), shows [code]BUILD.CARD.LOCKED[/code] instead of the price.
+## [br]Disables the build button if locked or if player doesn't have enough coins.
+## [br]Slightly dims the card when unaffordable; price text turns red when unaffordable (not when locked).
 func update() -> void:
-	price_label.text = "{0}$".format([_cost])
 	var can_afford: bool = ILevel.current_level != null and ILevel.current_level.coins >= _cost
-	button_texture.disabled = not can_afford
-	modulate = CARD_MODULATE_AFFORDABLE if can_afford else CARD_MODULATE_UNAFFORDABLE
-	if can_afford:
+	var can_build: bool = not _locked and can_afford
+	button_texture.disabled = not can_build
+	if _locked:
+		price_label.text = tr("BUILD.CARD.LOCKED")
+		price_coin_icon.visible = false
+		modulate = CARD_MODULATE_UNAFFORDABLE
+		price_label.modulate = Color(0.75, 0.78, 0.8, 1.0)
+		price_label.remove_theme_color_override("font_color")
+	elif can_afford:
+		price_label.text = str(_cost)
+		price_coin_icon.visible = true
+		modulate = CARD_MODULATE_AFFORDABLE
 		price_label.modulate = Color.WHITE
 		price_label.remove_theme_color_override("font_color")
 	else:
+		price_label.text = str(_cost)
+		price_coin_icon.visible = true
+		modulate = CARD_MODULATE_UNAFFORDABLE
 		price_label.modulate = PRICE_LABEL_MODULATE_VS_DIM
 		price_label.add_theme_color_override("font_color", PRICE_LABEL_COLOR_UNAFFORDABLE)
 
@@ -81,6 +99,8 @@ func _apply_entity_preview_texture() -> void:
 ## Handles the build button press event.
 ## [br]Changes cursor state to build mode and closes the build menu.
 func _on_button_texture_pressed() -> void:
+	if _locked:
+		return
 	Global.cursor.change_state(Global.cursor.CursorState.BUILD, [_entity])
 	var build_menu := Global.ui.get_node_or_null("BuildSelection")
 	if build_menu:
@@ -103,3 +123,17 @@ func _sync_title_from_stats_db() -> void:
 			display_name = StatsDB.get_trap_name(trap.trap_id)
 	if not display_name.is_empty():
 		title_label.text = display_name
+
+
+func _is_entity_unlocked() -> bool:
+	if _entity is ITower:
+		var tw: ITower = _entity as ITower
+		if tw.tower_id.is_empty():
+			return true
+		return ProgressionManager.is_tower_unlocked(tw.tower_id)
+	if _entity is ITrap:
+		var trap_entity: ITrap = _entity as ITrap
+		if trap_entity.trap_id.is_empty():
+			return true
+		return ProgressionManager.is_trap_unlocked(trap_entity.trap_id)
+	return true
