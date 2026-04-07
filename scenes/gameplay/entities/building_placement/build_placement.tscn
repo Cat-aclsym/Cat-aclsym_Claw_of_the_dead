@@ -45,12 +45,8 @@ animations = [{
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_bapwk"]
 size = Vector2(14, 14)
 
-<<<<<<< HEAD:scenes/gameplay/entities/tower_placement/tower_placement.tscn
-[node name="TowerPlacement" type="Node2D"]
-texture_filter = 1
-=======
 [node name="BuildPlacement" type="Node2D"]
->>>>>>> origin/develop:scenes/gameplay/entities/building_placement/build_placement.tscn
+texture_filter = 1
 script = ExtResource("1_3aclw")
 
 [node name="cursor" type="AnimatedSprite2D" parent="."]
