@@ -312,24 +312,13 @@ func _apply_special_visual_effect(modifier: Dictionary) -> void:
 			self.scale = Vector2(1, 1)
 		return
 
-	var effect_color = modifier["color"]
-	effect_color.a = 1.0 # Force full opacity for the color tint
-
-	# Create a dedicated tween for the visual effect
-	_pulse_tween = create_tween().set_loops()
-
-	# Pulse only the color between normal (White) and the modifier color (Solid Tint)
-	# No scale/zoom effect as requested
+	# Keep the tower visuals neutral; the bonus tile scene owns the color tint.
 	if animated_sprite_2d:
-		_pulse_tween.tween_property(animated_sprite_2d, "modulate", effect_color, 1.0).set_trans(Tween.TRANS_SINE)
-		_pulse_tween.tween_property(animated_sprite_2d, "modulate", Color.WHITE, 1.0).set_trans(Tween.TRANS_SINE)
+		animated_sprite_2d.modulate = Color.WHITE
 	elif sprite_2d:
-		_pulse_tween.tween_property(sprite_2d, "modulate", effect_color, 1.0).set_trans(Tween.TRANS_SINE)
-		_pulse_tween.tween_property(sprite_2d, "modulate", Color.WHITE, 1.0).set_trans(Tween.TRANS_SINE)
+		sprite_2d.modulate = Color.WHITE
 	else:
-		# Fallback to the whole node
-		_pulse_tween.tween_property(self, "modulate", effect_color, 1.0).set_trans(Tween.TRANS_SINE)
-		_pulse_tween.tween_property(self, "modulate", Color.WHITE, 1.0).set_trans(Tween.TRANS_SINE)
+		self.modulate = Color.WHITE
 
 	# Add a small scale effect only to the tower sprite
 	_scale_tween = create_tween()

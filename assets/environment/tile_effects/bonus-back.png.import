@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dfp1oi72vjlt"
-path="res://.godot/imported/bonus.png-b478d5acdd73501ec3f4972b717ccd7e.ctex"
+uid="uid://dsgl7b0w4t7x2"
+path="res://.godot/imported/bonus-back.png-38b44ff8b888388770998ba01f1f8536.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/environment/tile_effects/bonus.png"
-dest_files=["res://.godot/imported/bonus.png-b478d5acdd73501ec3f4972b717ccd7e.ctex"]
+source_file="res://assets/environment/tile_effects/bonus-back.png"
+dest_files=["res://.godot/imported/bonus-back.png-38b44ff8b888388770998ba01f1f8536.ctex"]
 
 [params]
 

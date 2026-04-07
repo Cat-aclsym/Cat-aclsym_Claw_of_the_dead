@@ -7,6 +7,8 @@ extends Node2D
 
 var BONUS_TILE_SCENE: PackedScene = load("res://scenes/gameplay/world/map/bonus_tile.tscn") as PackedScene
 var PATH_INDICATOR_SCRIPT: Script = load("res://scenes/gameplay/world/map/path_indicator.gd") as Script
+const BONUS_TILE_LAYER_NAME: String = "Special Bonus"
+const BONUS_TILE_LAYER_Z_INDEX: int = -16
 const SPECIAL_TILE_DEBUG_COLOR: Color = Color(0.2, 0.4, 1.0, 0.55)
 const SPECIAL_TILE_DEBUG_EXCLUSION_COLOR: Color = Color(1.0, 0.2, 0.2, 0.35)
 const SPECIAL_TILE_LAYER_INDEX: int = 3
@@ -365,8 +367,16 @@ func _ensure_special_tile_layer() -> void:
 	while tilemap.get_layers_count() <= SPECIAL_TILE_LAYER_INDEX:
 		tilemap.add_layer(-1)
 
+	tilemap.set_layer_name(SPECIAL_TILE_LAYER_INDEX, BONUS_TILE_LAYER_NAME)
+	tilemap.set_layer_y_sort_enabled(SPECIAL_TILE_LAYER_INDEX, false)
+	tilemap.set_layer_z_index(SPECIAL_TILE_LAYER_INDEX, BONUS_TILE_LAYER_Z_INDEX)
+	tilemap.set_layer_modulate(SPECIAL_TILE_LAYER_INDEX, Color.WHITE)
+
 func _ensure_bonus_tile_scene_source() -> void:
 	if not tilemap or not tilemap.tile_set:
+		return
+	if BONUS_TILE_SCENE == null:
+		Log.trace(Log.Level.ERROR, "Bonus tile scene is not loaded")
 		return
 
 	var scene_source := TileSetScenesCollectionSource.new()
