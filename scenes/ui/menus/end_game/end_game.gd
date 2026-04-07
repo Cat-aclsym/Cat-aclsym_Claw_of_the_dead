@@ -38,25 +38,27 @@ var elapsed_time_text: String
 
 # Built-in functions
 func _ready() -> void:
+	assert(challenges_vbox != null, "challenges_vbox node not found")
+	assert(end_game_image != null, "end_game_image node not found")
+	assert(home_button != null, "home_button node not found")
+	assert(life_label != null, "life_label node not found")
+	assert(next_button != null, "next_button node not found")
+	assert(restart_button != null, "restart_button node not found")
+	assert(time_label != null, "time_label node not found")
+	assert(title_label != null, "title_label node not found")
 	SignalUtil.connects(signals)
 
 
 # Public functions
 ## Initializes the end game screen with victory or defeat state.
 func init(victory: bool) -> void:
-	var tower_selection := Global.ui.get_node_or_null("TowerSelection")
-	if tower_selection:
-		tower_selection.queue_free()
+	var build_menu := Global.ui.get_node_or_null("BuildSelection")
+	if build_menu:
+		build_menu.queue_free()
 
-	var tower_selection_button := Global.hud.get_node_or_null("TowerSelectionMarginContainer/TowerSelectionButton")
-	if tower_selection_button:
-		tower_selection_button.set_pressed_no_signal(false)
-
-	assert(time_label != null, "time_label node not found")
-	assert(life_label != null, "life_label node not found")
-	assert(home_button != null, "home_button node not found")
-	assert(restart_button != null, "restart_button node not found")
-	assert(next_button != null, "next_button node not found")
+	var build_menu_button := Global.hud.get_node_or_null("BuildSelectionMarginContainer/BuildSelectionButton")
+	if build_menu_button:
+		build_menu_button.set_pressed_no_signal(false)
 
 	elapsed_time_seconds = floor(ILevel.current_level.end_time - ILevel.current_level.start_time)
 	elapsed_time_minutes = floor(elapsed_time_seconds / 60.)

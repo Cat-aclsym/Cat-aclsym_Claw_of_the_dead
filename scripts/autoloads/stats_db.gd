@@ -1,6 +1,6 @@
-## © [2024] A7 Studio. All rights reserved. Trademark.
+## © [2026] A7 Studio. All rights reserved. Trademark.
 ##
-## Charge et expose les stats centralisées (tours, upgrades, ennemis) depuis un JSON.
+## Charge et expose les stats centralisées (tours, pièges, upgrades, ennemis) depuis un JSON.
 extends Node
 
 # Constants
@@ -16,9 +16,10 @@ func _ready() -> void:
 	_data = _load_json(STATS_PATH)
 	_index_upgrades_by_scene()
 	var towers_count: int = _data.get("towers", {}).size()
+	var traps_count: int = _data.get("traps", {}).size()
 	var enemies_count: int = _data.get("enemies", {}).size()
 	var upgrades_count: int = _data.get("upgrades", {}).size()
-	Log.trace(Log.Level.INFO, "StatsDB loaded: towers=%s, enemies=%s, upgrades=%s" % [towers_count, enemies_count, upgrades_count])
+	Log.trace(Log.Level.INFO, "StatsDB loaded: towers=%s, traps=%s, enemies=%s, upgrades=%s" % [towers_count, traps_count, enemies_count, upgrades_count])
 
 
 # Public functions
@@ -44,12 +45,25 @@ func get_enemy(id: String) -> Dictionary:
 	return _data.get("enemies", {}).get(id, {})
 
 
+func get_trap(id: String) -> Dictionary:
+	return _data.get("traps", {}).get(id, {})
+
+
+func get_trap_name(id: String) -> String:
+	var trap: Dictionary = get_trap(id)
+	return trap.get("name", "") if not trap.is_empty() else ""
+
+
 func get_tower_ids() -> Array:
 	return _data.get("towers", {}).keys()
 
 
 func get_enemy_ids() -> Array:
 	return _data.get("enemies", {}).keys()
+
+
+func get_trap_ids() -> Array:
+	return _data.get("traps", {}).keys()
 
 
 func get_upgrade_ids_for_tower(id: String) -> Array:
@@ -72,6 +86,10 @@ func upgrade_id_from_scene(path: String) -> String:
 
 func has_enemy(id: String) -> bool:
 	return _data.get("enemies", {}).has(id)
+
+
+func has_trap(id: String) -> bool:
+	return _data.get("traps", {}).has(id)
 
 
 func load_packed_scene(path: String) -> PackedScene:

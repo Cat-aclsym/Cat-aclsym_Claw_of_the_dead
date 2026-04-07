@@ -85,9 +85,11 @@ alignment = 1
 layout_mode = 2
 
 [node name="Challenge1Indicator" type="TextureRect" parent="LevelPanelContainer/LevelMarginContainer/LevelVBoxContainer/FooterHBoxContainer/ChallengesContainer/Challenge1"]
+custom_minimum_size = Vector2(30, 30)
 layout_mode = 2
 size_flags_vertical = 4
 texture = ExtResource("4_klwmy")
+expand_mode = 2
 stretch_mode = 5
 
 [node name="Challenge1Label" type="Label" parent="LevelPanelContainer/LevelMarginContainer/LevelVBoxContainer/FooterHBoxContainer/ChallengesContainer/Challenge1"]
@@ -105,9 +107,11 @@ autowrap_mode = 3
 layout_mode = 2
 
 [node name="Challenge2Indicator" type="TextureRect" parent="LevelPanelContainer/LevelMarginContainer/LevelVBoxContainer/FooterHBoxContainer/ChallengesContainer/Challenge2"]
+custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 size_flags_vertical = 4
 texture = ExtResource("4_klwmy")
+expand_mode = 2
 stretch_mode = 5
 
 [node name="Challenge2Label" type="Label" parent="LevelPanelContainer/LevelMarginContainer/LevelVBoxContainer/FooterHBoxContainer/ChallengesContainer/Challenge2"]
@@ -125,9 +129,11 @@ autowrap_mode = 3
 layout_mode = 2
 
 [node name="Challenge3Indicator" type="TextureRect" parent="LevelPanelContainer/LevelMarginContainer/LevelVBoxContainer/FooterHBoxContainer/ChallengesContainer/Challenge3"]
+custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 size_flags_vertical = 4
 texture = ExtResource("4_klwmy")
+expand_mode = 2
 stretch_mode = 5
 
 [node name="Challenge3Label" type="Label" parent="LevelPanelContainer/LevelMarginContainer/LevelVBoxContainer/FooterHBoxContainer/ChallengesContainer/Challenge3"]

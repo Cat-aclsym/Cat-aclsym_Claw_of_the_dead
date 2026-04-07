@@ -15,7 +15,7 @@ const PAUSE_MENU: PackedScene = preload("res://scenes/ui/menus/pause/pause.tscn"
 const POPUP_SCORE_SCENE: PackedScene = preload("res://scenes/ui/popup/popup_score.tscn")
 const SKIP_COLOR_INACTIVE: Color = Color(1.0, 1.0, 1.0, 1.0)
 const SKIP_TIME_SCALE: float = 3.0
-const TOWER_SELECTION_MENU: PackedScene = preload("res://scenes/ui/menus/tower_selection/tower_selection.tscn")
+const BUILD_SELECTION_MENU: PackedScene = preload("res://scenes/ui/menus/building_selection/build_selection.tscn")
 
 # Variables
 @onready var challenges_button: TextureButton = $ChallengesMarginContainer/ChallengesButton
@@ -26,7 +26,7 @@ const TOWER_SELECTION_MENU: PackedScene = preload("res://scenes/ui/menus/tower_s
 @onready var pause_button: TextureButton = $PauseMarginContainer/PauseButton
 @onready var skip_animation_player: AnimationPlayer = $SkipMarginContainer/SkipAnimationPlayer
 @onready var skip_time_scale_button: TextureButton = $SkipMarginContainer/SkipButton
-@onready var tower_selection_button: TextureButton = $TowerSelectionMarginContainer/TowerSelectionButton
+@onready var build_selection_button: TextureButton = $BuildSelectionMarginContainer/BuildSelectionButton
 @onready var waves_rich_text_label: Label = %HUDVBoxContainer/CoinsWavesMarginContainer/CoinsWavesHBoxContainer/WavesTextureRect/MarginContainer/WavesLabel
 
 @onready var default_coins_text: String = coins_rich_text_label.text
@@ -37,7 +37,7 @@ const TOWER_SELECTION_MENU: PackedScene = preload("res://scenes/ui/menus/tower_s
 	{SignalUtil.WHO: challenges_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_challenges_button_pressed},
 	{SignalUtil.WHO: pause_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_pause_button_pressed},
 	{SignalUtil.WHO: skip_time_scale_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_skip_time_scale_button_pressed},
-	{SignalUtil.WHO: tower_selection_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_tower_selection_button_pressed}
+	{SignalUtil.WHO: build_selection_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_build_selection_button_pressed}
 ]
 
 var _is_ready: bool = false
@@ -50,7 +50,7 @@ func _ready() -> void:
 	assert(health_rich_text_label != null, "health_rich_text_label node not found")
 	assert(waves_rich_text_label != null, "waves_rich_text_label node not found")
 	assert(health_texture_progress_bar != null, "health_texture_progress_bar node not found")
-	assert(tower_selection_button != null, "tower_selection_button node not found")
+	assert(build_selection_button != null, "build_selection_button node not found")
 	assert(skip_time_scale_button != null, "skip_time_scale_button node not found")
 
 	Global.hud = self
@@ -65,7 +65,6 @@ func _process(_delta: float) -> void:
 		return
 	if not visible:
 		show()
-
 
 # Public functions
 ## Initializes and displays the HUD interface.
@@ -88,7 +87,6 @@ func unload_ui() -> void:
 	if ILevel.current_level:
 		ILevel.current_level.disconnect("stats_updated", _update)
 
-
 # Private functions
 func _apply_time_scale(time_scale: float, is_fast: bool) -> void:
 	Engine.time_scale = time_scale
@@ -110,8 +108,8 @@ func _on_challenges_button_pressed() -> void:
 
 
 func _on_pause_button_pressed() -> void:
-	if not Global.paused:
-		Global.paused = true
+	if not Global.paused and ILevel.current_level != null:
+		ILevel.current_level.pause()
 		var pause_menu_instance: Pause = PAUSE_MENU.instantiate()
 		Global.ui.add_child(pause_menu_instance)
 
@@ -122,12 +120,12 @@ func _on_skip_time_scale_button_pressed() -> void:
 	_apply_time_scale(target_scale, is_fast)
 
 
-func _on_tower_selection_button_pressed() -> void:
-	if Global.ui.get_node("TowerSelection") == null:
-		var tower_selection_menu_instance: TowerSelection = TOWER_SELECTION_MENU.instantiate()
-		Global.ui.add_child(tower_selection_menu_instance)
+func _on_build_selection_button_pressed() -> void:
+	if Global.ui.get_node_or_null("BuildSelection") == null:
+		var build_selection_menu_instance: BuildSelection = BUILD_SELECTION_MENU.instantiate()
+		Global.ui.add_child(build_selection_menu_instance)
 	else:
-		Global.ui.get_node("TowerSelection").queue_free()
+		Global.ui.get_node("BuildSelection").queue_free()
 
 
 func _trigger_coin_effects(amount: int) -> void:

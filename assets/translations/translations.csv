@@ -71,7 +71,7 @@ CHALLENGE.CHA.103.DESC,No enemy must reach halfway.,Ne laisser aucun ennemi atte
 CHALLENGE.CHA.104.NAME,Some Rats,Quelques rats
 CHALLENGE.CHA.104.DESC,Let exactly N rats pass.,Laisser passer exactement N rats jusqu'à la base.
 CHALLENGE.CHA.105.NAME,Three in One,Trois dans un
-CHALLENGE.CHA.105.DESC,Boss must be hit by every trap type.,"Le boss doit subir au moins un fois chaque type de piège (actif, passif, limité)."
+CHALLENGE.CHA.105.DESC,Boss must be hit by every trap type (passive and limited).,"Le boss doit subir au moins une fois chaque type de piège (passif et limité)."
 CHALLENGE.CHA.106.NAME,Survive,Survivre
 CHALLENGE.CHA.106.DESC,Survive until the end.,Survivre jusqu'à la fin.
 CHALLENGE.CHA.201.NAME,Sample,Echantillon

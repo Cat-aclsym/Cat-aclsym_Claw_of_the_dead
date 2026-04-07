@@ -1,4 +1,4 @@
-## © [2024] A7 Studio. All rights reserved. Trademark.
+## © [2026] A7 Studio. All rights reserved. Trademark.
 ## Level script that manages map, waves, state transitions, and enemy spawning.
 class_name ILevel extends Node2D
 
@@ -39,10 +39,11 @@ var health: int = 20: set = _set_health
 
 # Private Variables
 var _enemies_alive: int = 0
+var _time_scale_before_pause: float = 1.0
 
 
-@onready var popup_spawner: PopupSpawner = $PopupSpawner
 @onready var clock: Clock = $Clock
+@onready var popup_spawner: PopupSpawner = $PopupSpawner
 
 # core
 ## Custom ticker callback
@@ -165,32 +166,36 @@ func _on_state_wave(_args = []) -> bool:
 
 	return true
 
+func _on_level_end(_args = []) -> void:
+	clock.stop()
 
-func _on_state_victory(_args = []) -> bool:
-	Log.trace(Log.Level.INFO, "Entering VICTORY state.")
-	ChallengeManager.check_victory_conditions()
 	end_time = Time.get_unix_time_from_system()
 	var end_game_menu_instance: EndGame = ScenesLoader.END_GAME_MENU.instantiate()
 	Global.ui.add_child(end_game_menu_instance)
 	end_game_menu_instance.init(true)
 	state_machine.toggle_state(STATE_END)
+
+
+func _on_state_victory(_args = []) -> bool:
+	Log.trace(Log.Level.INFO, "Entering VICTORY state.")
+	ChallengeManager.check_victory_conditions()
+
+	_on_level_end()
 	return true
 
 
 func _on_state_defeat(_args = []) -> bool:
 	Log.trace(Log.Level.INFO, "Entering DEFEAT state.")
-	end_time = Time.get_unix_time_from_system()
-	var end_game_menu_instance: EndGame = ScenesLoader.END_GAME_MENU.instantiate()
-	Global.ui.add_child(end_game_menu_instance)
-	end_game_menu_instance.init(false)
-	state_machine.toggle_state(STATE_END)
+
+	_on_level_end()
 	return true
 
 
 func _on_state_pause(_args = []) -> bool:
 	Log.trace(Log.Level.INFO, "Entering PAUSE state.")
-	get_tree().paused = true
+	_time_scale_before_pause = Engine.time_scale if Engine.time_scale > 0 else 1.0
 	Engine.time_scale = 0
+	Global.paused = true
 	Log.trace(Log.Level.INFO, "Game paused")
 	return true
 
@@ -222,6 +227,21 @@ func _on_enemy_die() -> void:
 
 func _on_enemy_spawn() -> void:
 	_enemies_alive += 1
+
+
+## Sets the game to paused state, affecting both time scale and state machine.
+func pause() -> void:
+	if state_machine.get_current_state().name != STATE_PAUSE:
+		state_machine.toggle_state(STATE_PAUSE)
+
+
+## Resumes the game from pause state.
+## [br]Restores time scale, then transitions back to current wave if in PAUSE state.
+func resume_from_pause() -> void:
+	if state_machine.get_current_state().name == STATE_PAUSE:
+		Engine.time_scale = _time_scale_before_pause
+		Global.paused = false
+		state_machine.toggle_state(STATE_WAVE % current_wave)
 
 
 ## Update player's coin count

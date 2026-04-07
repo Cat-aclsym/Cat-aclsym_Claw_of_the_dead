@@ -1,4 +1,4 @@
-## © [2024] A7 Studio. All rights reserved. Trademark.
+## © [2026] A7 Studio. All rights reserved. Trademark.
 ##
 ## Base class for all enemy entities in the game.
 ## Handles enemy movement, health, damage, and state management.
@@ -56,6 +56,9 @@ const DAMAGES: Dictionary = {
 	DamageType.FIRE: {"color": Color(1.0, 0.6, 0.2, 1)},   # Brighter orange/fire
 }
 
+## Multiplied with [member old_modulate] while slowed; matches slow-trap cyan/teal feel (slightly darker, bluish).
+const SLOW_VISUAL_TINT: Color = Color(0.58, 0.78, 0.86, 1.0)
+
 
 # Exported variables
 @export var enemy_id: String = ""
@@ -90,6 +93,11 @@ var state: EnemyState = EnemyState.FOLLOW_PATH
 
 ## Store the last source of damage
 var last_source: Variant = null
+
+var _damage_tween: Tween
+
+## Stacked slow visuals (traps, debuffs); each source must pair pop with push.
+var _slow_visual_refcount: int = 0
 
 
 # Built-in functions
@@ -143,7 +151,7 @@ func take_damage(damage: float, damage_type: DamageType, source: Variant = null)
 	last_damage_type = damage_type
 	last_source = source
 	_damage_effect(DAMAGES[damage_type]["color"])
-	
+
 	if popup_score_spawner:
 		popup_score_spawner.display_damage(damage, DAMAGES[damage_type]["color"])
 
@@ -198,12 +206,58 @@ func add_poison_effect(damage: float, total_execution: int, interval: float) -> 
 	poison_timer.timeout.connect(func(): _on_poison_timer_timeout(poison_timer))
 
 
+## Removes one stacked slow visual tint (e.g. leaving a slow zone).
+func pop_slow_visual() -> void:
+	_slow_visual_refcount = maxi(0, _slow_visual_refcount - 1)
+	_apply_idle_modulate()
+
+
+## Adds one stacked slow visual tint (e.g. entering a slow zone).
+func push_slow_visual() -> void:
+	_slow_visual_refcount += 1
+	_apply_idle_modulate()
+
+
 # Private functions
+func _apply_idle_modulate() -> void:
+	sprite.modulate = _idle_modulate()
+
+
+## Sprite color when not flashing damage; includes slow tint when slow stacks are active.
+func _idle_modulate() -> Color:
+	if _slow_visual_refcount > 0:
+		return old_modulate * SLOW_VISUAL_TINT
+	return old_modulate
+
+
 ## Apply a damage effect to the enemy sprite
 func _damage_effect(color: Color) -> void:
 	sprite.modulate = color
 	await get_tree().create_timer(0.1).timeout
-	sprite.modulate = old_modulate
+	sprite.modulate = _idle_modulate()
+	if not is_instance_valid(sprite) or not is_inside_tree():
+		return
+
+	if _damage_tween:
+		_damage_tween.kill()
+
+	_damage_tween = create_tween()
+	
+	# Flash color: white/glowing white or colored based on damage type
+	var flash_color = Color(2.5, 2.5, 2.5, 1.0)
+	if color != Color.WHITE and color != Color(1, 1, 1, 1):
+		flash_color = color.lightened(0.5)
+		flash_color.a = 1.0
+
+	# Apply initial state immediately
+	sprite.modulate = flash_color
+	sprite.offset.x = 4.0
+	
+	# Wait a tiny bit then tween back
+	_damage_tween.tween_interval(0.04)
+	_damage_tween.set_parallel(true)
+	_damage_tween.tween_property(sprite, "modulate", _idle_modulate(), 0.15)
+	_damage_tween.tween_property(sprite, "offset:x", 0.0, 0.15).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
 
 ## Update the direction of the enemy based on movement
 func _update_direction() -> void:
@@ -313,11 +367,13 @@ func _dead_state() -> void:
 		return
 
 	var money_reward: int = 10
-	
+
 	# Apply reward multiplier if the killer was a tower
+	
+	# Apply reward multiplier when the killing [IBullet] was fired by a tower ([member IBullet.tower_owner]).
 	if last_source is IBullet and last_source.tower_owner != null:
 		money_reward = int(money_reward * last_source.tower_owner.reward_multiplier)
-		
+
 	ILevel.current_level.coins += money_reward
 	_disappear()
 
