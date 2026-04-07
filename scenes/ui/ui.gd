@@ -8,7 +8,7 @@ extends CanvasLayer
 ## Flag indicating if the UI has been initialized
 var _initialized: bool = false
 
-@onready var hud: HUD = get_node("HUD")
+@onready var hud: HUD = $HUD
 
 # core
 func _ready() -> void:
