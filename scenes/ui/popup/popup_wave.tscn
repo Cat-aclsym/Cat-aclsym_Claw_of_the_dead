@@ -2,7 +2,7 @@
 
 [ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="1_ox1tf"]
 [ext_resource type="Texture2D" uid="uid://deifsvtkdkqo1" path="res://assets/ui/buttons/Bouton Bleu.svg" id="2_26l8s"]
-[ext_resource type="FontVariation" path="res://assets/ui/fonts/dotgothic/dotgothic_bold_variation.tres" id="3_variation"]
+[ext_resource type="FontVariation" uid="uid://b6y1j2k3l4m5p" path="res://assets/ui/fonts/dotgothic/dotgothic_bold_variation.tres" id="3_variation"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_wiubb"]
 font = ExtResource("3_variation")

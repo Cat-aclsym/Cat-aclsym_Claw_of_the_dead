@@ -101,7 +101,7 @@ func _apply_time_scale(time_scale: float, is_fast: bool) -> void:
 
 
 func _on_challenges_button_pressed() -> void:
-	var existing = Global.ui.get_node_or_null("ChallengesMenu")
+	var existing := Global.ui.get_node_or_null("ChallengesMenu")
 	if existing != null:
 		(existing as ChallengesMenu).close()
 	else:
@@ -124,7 +124,7 @@ func _on_skip_time_scale_button_pressed() -> void:
 
 func _on_tower_selection_button_pressed() -> void:
 	if Global.ui.get_node("TowerSelection") == null:
-		var tower_selection_menu_instance = TOWER_SELECTION_MENU.instantiate()
+		var tower_selection_menu_instance: TowerSelection = TOWER_SELECTION_MENU.instantiate()
 		Global.ui.add_child(tower_selection_menu_instance)
 	else:
 		Global.ui.get_node("TowerSelection").queue_free()
