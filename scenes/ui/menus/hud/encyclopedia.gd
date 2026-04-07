@@ -141,6 +141,12 @@ func _ready() -> void:
 	name_label.add_theme_font_size_override("font_size", 48)
 	towers_button.add_theme_font_override("font", _font)
 	enemies_button.add_theme_font_override("font", _font)
+	
+	ButtonEffects.apply(close_button)
+	ButtonEffects.apply(enemies_button)
+	ButtonEffects.apply(next_button)
+	ButtonEffects.apply(prev_button)
+	ButtonEffects.apply(towers_button)
 
 
 ## Adds an enemy entry to the internal dictionary.

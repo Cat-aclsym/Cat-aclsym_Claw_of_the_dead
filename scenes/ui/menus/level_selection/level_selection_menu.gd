@@ -42,6 +42,10 @@ func configure() -> void:
 	_load_levels()
 	_update()
 	SignalUtil.connects(signals)
+	
+	ButtonEffects.apply(previous_button)
+	ButtonEffects.apply(next_button)
+	ButtonEffects.apply(main_menu_button)
 
 
 # private

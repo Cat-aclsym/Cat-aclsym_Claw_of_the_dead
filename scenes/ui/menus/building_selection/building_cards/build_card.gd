@@ -52,6 +52,7 @@ func _ready() -> void:
 	update()
 
 	SignalUtil.connects(signals)
+	ButtonEffects.apply(button_texture)
 
 # public
 ## Updates the card price label and availability.

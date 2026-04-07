@@ -58,6 +58,11 @@ func _ready() -> void:
 
 	SignalUtil.connects(signals)
 	_apply_time_scale(DEFAULT_TIME_SCALE, false)
+	
+	ButtonEffects.apply(challenges_button)
+	ButtonEffects.apply(pause_button)
+	ButtonEffects.apply(skip_time_scale_button)
+	ButtonEffects.apply(build_selection_button)
 
 
 func _process(_delta: float) -> void:

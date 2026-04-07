@@ -50,6 +50,7 @@ func configure() -> void:
 	_load_challenges()
 
 	SignalUtil.connects(signals)
+	ButtonEffects.apply(play_button)
 
 
 # Private functions

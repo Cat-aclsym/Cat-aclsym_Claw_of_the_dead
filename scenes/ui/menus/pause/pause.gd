@@ -33,6 +33,19 @@ func _ready() -> void:
 	assert(play_button != null, "play_button node not found")
 	SignalUtil.connects(signals)
 	_update_encyclopedia_notification()
+	
+	# Wait for a frame to ensure sizes are calculated for pivot centering
+	await get_tree().process_frame
+	
+	# Force process mode to Always so tweens run even when tree is paused
+	process_mode = Node.PROCESS_MODE_ALWAYS
+	
+	ButtonEffects.apply(encyclopedia_button)
+	ButtonEffects.apply(home_button)
+	ButtonEffects.apply(music_button)
+	ButtonEffects.apply(play_button)
+	ButtonEffects.apply(restart_button)
+	ButtonEffects.apply(sound_button)
 
 # private
 ## Handles the encyclopedia button press event.
