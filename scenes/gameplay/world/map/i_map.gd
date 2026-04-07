@@ -6,6 +6,7 @@ class_name IMap
 extends Node2D
 
 var BONUS_TILE_SCENE: PackedScene = load("res://scenes/gameplay/world/map/bonus_tile.tscn") as PackedScene
+var MALUS_TILE_SCENE: PackedScene = load("res://scenes/gameplay/world/map/malus_tile.tscn") as PackedScene
 var BONUS_SPAWN_SCENE: PackedScene = load("res://scenes/gameplay/world/map/bonus_spawn.tscn") as PackedScene
 var PATH_INDICATOR_SCRIPT: Script = load("res://scenes/gameplay/world/map/path_indicator.gd") as Script
 const BONUS_TILE_LAYER_NAME: String = "Special Bonus"
@@ -26,6 +27,7 @@ const SPECIAL_TILE_SPAWN_DROP_HEIGHT_PIXELS: float = 128.0
 const SPECIAL_TILE_SPAWN_TINT_WHITE_BLEND: float = 0.5
 const SPECIAL_TILE_SPAWN_SHAKE_STRENGTH: float = 12.0
 const SPECIAL_TILE_SPAWN_STAGGER_SECONDS: float = 0.2
+const MALUS_TILE_SPAWN_INTERVAL_SECONDS: float = 0.12
 const PATH_INDICATOR_END_TYPE: int = 1
 const PATH_INDICATOR_START_TYPE: int = 0
 
@@ -43,10 +45,11 @@ var _debug_spawnable_overlays: Array[Node2D] = []
 
 var _bonus_tile_scene_source_id: int = -1
 var _bonus_tile_scene_tile_id: int = -1
+var _malus_tile_scene_source_id: int = -1
+var _malus_tile_scene_tile_id: int = -1
 
 ## Dictionary of special tiles (position -> modifier data)
 var special_tiles: Dictionary = {}
-var _malus_visual_nodes: Array[CanvasItem] = []
 var _pending_special_tile_spawns: Array[Dictionary] = []
 
 @onready var camera: Camera2D = $Camera2D
@@ -57,6 +60,7 @@ func _ready() -> void:
 	_create_path_indicators()
 	_ensure_special_tile_layer()
 	_ensure_bonus_tile_scene_source()
+	_ensure_malus_tile_scene_source()
 
 	var placement_system: BuildPlacement = Global.get("cursor") as BuildPlacement
 	if placement_system:
@@ -80,13 +84,26 @@ func play_special_tiles_intro_sequence() -> void:
 
 	await get_tree().create_timer(SPECIAL_TILE_INTRO_INITIAL_DELAY_SECONDS).timeout
 
-	var spawn_queue: Array[Dictionary] = _pending_special_tile_spawns.duplicate(true)
-	spawn_queue.shuffle()
+	var bonus_spawn_queue: Array[Dictionary] = []
+	var malus_spawn_queue: Array[Dictionary] = []
+	for spawn_data in _pending_special_tile_spawns:
+		if bool(spawn_data.get("is_bonus", false)):
+			bonus_spawn_queue.append(spawn_data)
+		else:
+			malus_spawn_queue.append(spawn_data)
 
-	for i in range(spawn_queue.size()):
-		_spawn_special_tile_with_intro_animation(spawn_queue[i])
-		if i < spawn_queue.size() - 1:
+	bonus_spawn_queue.shuffle()
+	malus_spawn_queue.shuffle()
+
+	for i in range(bonus_spawn_queue.size()):
+		_spawn_special_tile_with_intro_animation(bonus_spawn_queue[i])
+		if i < bonus_spawn_queue.size() - 1:
 			await get_tree().create_timer(SPECIAL_TILE_SPAWN_STAGGER_SECONDS).timeout
+
+	for i in range(malus_spawn_queue.size()):
+		_spawn_special_tile_with_intro_animation(malus_spawn_queue[i])
+		if i < malus_spawn_queue.size() - 1:
+			await get_tree().create_timer(MALUS_TILE_SPAWN_INTERVAL_SECONDS).timeout
 
 	_pending_special_tile_spawns.clear()
 
@@ -175,16 +192,13 @@ func _generate_special_tiles() -> void:
 		bonus_tile_count = int(ceil(float(buildable_tiles.size()) * special_tile_percentage / 100.0))
 		if special_tile_percentage > 0.0:
 			bonus_tile_count = maxi(1, bonus_tile_count)
-	var malus_tile_count: int = bonus_tile_count
-	var required_special_tile_count: int = bonus_tile_count + malus_tile_count
-
-	if required_special_tile_count == 0:
+	if bonus_tile_count == 0:
 		return
 
-	if spawnable_tiles.size() < required_special_tile_count:
+	if spawnable_tiles.size() < bonus_tile_count:
 		Log.trace(
 			Log.Level.WARN,
-			"Not enough tiles near paths for special tiles: need {0}, found {1}".format([required_special_tile_count, spawnable_tiles.size()])
+			"Not enough tiles near paths for special tiles: need {0}, found {1}".format([bonus_tile_count, spawnable_tiles.size()])
 		)
 		return
 
@@ -198,15 +212,15 @@ func _generate_special_tiles() -> void:
 			continue
 
 		selected_special_tiles.append(candidate)
-		if selected_special_tiles.size() >= required_special_tile_count:
+		if selected_special_tiles.size() >= bonus_tile_count:
 			break
 
-	if selected_special_tiles.size() < required_special_tile_count:
+	if selected_special_tiles.size() < bonus_tile_count:
 		Log.trace(
 			Log.Level.WARN,
 			"Not enough tiles to place special tiles with min separation (%s). Need %s, found %s".format([
 				SPECIAL_TILE_MIN_DISTANCE_BETWEEN_TILES,
-				required_special_tile_count,
+				bonus_tile_count,
 				selected_special_tiles.size()
 			])
 		)
@@ -219,13 +233,15 @@ func _generate_special_tiles() -> void:
 	]
 
 	var malus_types = [
-		{"fire_rate": 0.7, "color": Color(1.0, 0.2, 0.2, 0.5), "label": "SPEED-"},
-		{"damage": 0.7, "color": Color(1.0, 0.5, 0.2, 0.5), "label": "DMG-"},
-		{"shoot_range": 0.7, "color": Color(0.8, 0.2, 0.8, 0.5), "label": "RANGE-"}
+		{"fire_rate": 0.7, "color": Color(0.62, 0.18, 0.22, 0.5), "label": "SPEED-"},
+		{"damage": 0.7, "color": Color(0.58, 0.30, 0.16, 0.5), "label": "DMG-"},
+		{"shoot_range": 0.7, "color": Color(0.42, 0.20, 0.48, 0.5), "label": "RANGE-"}
 	]
 
+	var selected_bonus_tiles: Array[Vector2i] = []
 	for i in range(bonus_tile_count):
 		var tile_pos = selected_special_tiles.pop_back()
+		selected_bonus_tiles.append(tile_pos)
 		var modifier = bonus_types[i % bonus_types.size()]
 		_pending_special_tile_spawns.append({
 			"tile_pos": tile_pos,
@@ -236,8 +252,9 @@ func _generate_special_tiles() -> void:
 			_show_debug_exclusion_tiles_around(tile_pos)
 		Log.trace(Log.Level.INFO, "Queued bonus tile at {0}: {1}".format([tile_pos, modifier["label"]]))
 
-	for i in range(malus_tile_count):
-		var tile_pos = selected_special_tiles.pop_back()
+	var malus_tiles: Array[Vector2i] = _get_malus_tiles_around_bonus(selected_bonus_tiles, spawnable_tiles)
+	for i in range(malus_tiles.size()):
+		var tile_pos = malus_tiles[i]
 		var modifier = malus_types[i % malus_types.size()]
 		_pending_special_tile_spawns.append({
 			"tile_pos": tile_pos,
@@ -247,6 +264,36 @@ func _generate_special_tiles() -> void:
 		if debug_show_spawnable_special_tiles:
 			_show_debug_exclusion_tiles_around(tile_pos)
 		Log.trace(Log.Level.INFO, "Queued malus tile at {0}: {1}".format([tile_pos, modifier["label"]]))
+
+func _get_malus_tiles_around_bonus(bonus_tiles: Array[Vector2i], spawnable_tiles: Array[Vector2i]) -> Array[Vector2i]:
+	var spawnable_lookup: Dictionary = {}
+	for tile_pos in spawnable_tiles:
+		spawnable_lookup[tile_pos] = true
+
+	var bonus_lookup: Dictionary = {}
+	for tile_pos in bonus_tiles:
+		bonus_lookup[tile_pos] = true
+
+	var malus_lookup: Dictionary = {}
+	for bonus_tile in bonus_tiles:
+		for dx in range(-1, 2):
+			for dy in range(-1, 2):
+				if dx == 0 and dy == 0:
+					continue
+
+				var candidate := bonus_tile + Vector2i(dx, dy)
+				if bonus_lookup.has(candidate):
+					continue
+				if not spawnable_lookup.has(candidate):
+					continue
+
+				malus_lookup[candidate] = true
+
+	var malus_tiles: Array[Vector2i] = []
+	for tile_pos in malus_lookup.keys():
+		malus_tiles.append(tile_pos)
+
+	return malus_tiles
 
 func _is_special_tile_spawnable(candidate: Vector2i, already_selected: Array[Vector2i]) -> bool:
 	for other in already_selected:
@@ -306,8 +353,6 @@ func _clear_debug_spawnable_special_tiles() -> void:
 	_debug_spawnable_overlays.clear()
 
 func _clear_special_tile_layer() -> void:
-	_clear_malus_visual_indicators()
-
 	if not tilemap:
 		return
 
@@ -355,54 +400,21 @@ func _create_bonus_visual_indicator(tile_pos: Vector2i, _modifier: Dictionary) -
 		_bonus_tile_scene_tile_id
 	)
 
-func _create_malus_visual_indicator(tile_pos: Vector2i, modifier: Dictionary) -> void:
-	var world_pos: Vector2 = tilemap.map_to_local(tile_pos)
+func _create_malus_visual_indicator(tile_pos: Vector2i, _modifier: Dictionary) -> void:
+	if not tilemap:
+		return
 
-	# Create a diamond shape that matches the isometric tile (64x32)
-	var poly := Polygon2D.new()
-	var half_width := 32.0
-	var half_height := 16.0
+	if _malus_tile_scene_source_id < 0 or _malus_tile_scene_tile_id < 0:
+		Log.trace(Log.Level.ERROR, "Malus tile scene source is not ready")
+		return
 
-	# Points for the diamond shape
-	var points := PackedVector2Array([
-		Vector2(0, -half_height), # Top
-		Vector2(half_width, 0),   # Right
-		Vector2(0, half_height),  # Bottom
-		Vector2(-half_width, 0)   # Left
-	])
-
-	poly.polygon = points
-	poly.color = modifier["color"]
-	poly.color.a = 0.4 # Slightly more opaque for the "filter" effect
-	poly.position = world_pos
-	poly.z_index = 0 # Just above the ground
-	add_child(poly)
-	_malus_visual_nodes.append(poly)
-
-	# Add a pulse effect to the tile filter
-	var tween = create_tween().set_loops()
-	tween.tween_property(poly, "color:a", 0.7, 1.5).set_trans(Tween.TRANS_SINE)
-	tween.tween_property(poly, "color:a", 0.4, 1.5).set_trans(Tween.TRANS_SINE)
-
-	# Add a label with better styling, slightly above the tile
-	var label = Label.new()
-	label.text = modifier["label"]
-	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	label.add_theme_font_size_override("font_size", 12)
-	label.add_theme_color_override("font_color", Color.WHITE)
-	label.add_theme_color_override("font_outline_color", Color.BLACK)
-	label.add_theme_constant_override("outline_size", 4)
-	label.position = world_pos - Vector2(20, 20) # Positioned slightly higher
-	label.z_index = 1 # Above the filter
-	add_child(label)
-	_malus_visual_nodes.append(label)
-
-func _clear_malus_visual_indicators() -> void:
-	for node in _malus_visual_nodes:
-		if is_instance_valid(node):
-			node.queue_free()
-	_malus_visual_nodes.clear()
+	tilemap.set_cell(
+		SPECIAL_TILE_LAYER_INDEX,
+		tile_pos,
+		_malus_tile_scene_source_id,
+		Vector2i.ZERO,
+		_malus_tile_scene_tile_id
+	)
 
 func _spawn_special_tile_with_intro_animation(spawn_data: Dictionary) -> void:
 	if not tilemap:
@@ -414,18 +426,22 @@ func _spawn_special_tile_with_intro_animation(spawn_data: Dictionary) -> void:
 
 	var modifier: Dictionary = spawn_data.get("modifier", {})
 	var world_pos: Vector2 = tilemap.map_to_local(tile_pos)
-	var spawn_fx: Node2D = _create_bonus_spawn_animation(world_pos, modifier)
+	var is_bonus: bool = bool(spawn_data.get("is_bonus", false))
+	var spawn_fx: Node2D = null
+	if is_bonus:
+		spawn_fx = _create_bonus_spawn_animation(world_pos, modifier)
 
 	await get_tree().create_timer(SPECIAL_TILE_SPAWN_ANIMATION_DURATION_SECONDS * SPECIAL_TILE_SPAWN_APPLY_RATIO).timeout
 
 	special_tiles[tile_pos] = modifier
-	if bool(spawn_data["is_bonus"]):
+	if is_bonus:
 		_create_bonus_visual_indicator(tile_pos, modifier)
 	else:
 		_create_malus_visual_indicator(tile_pos, modifier)
 
 	tilemap.update_internals()
-	_trigger_special_tile_spawn_shake()
+	if is_bonus:
+		_trigger_special_tile_spawn_shake()
 
 	var remaining_duration := SPECIAL_TILE_SPAWN_ANIMATION_DURATION_SECONDS * (1.0 - SPECIAL_TILE_SPAWN_APPLY_RATIO)
 	if remaining_duration > 0.0:
@@ -491,6 +507,8 @@ func _ensure_bonus_tile_scene_source() -> void:
 	if BONUS_TILE_SCENE == null:
 		Log.trace(Log.Level.ERROR, "Bonus tile scene is not loaded")
 		return
+	if _bonus_tile_scene_source_id >= 0:
+		return
 
 	var scene_source := TileSetScenesCollectionSource.new()
 	_bonus_tile_scene_tile_id = scene_source.create_scene_tile(BONUS_TILE_SCENE)
@@ -500,6 +518,24 @@ func _ensure_bonus_tile_scene_source() -> void:
 		Log.trace(Log.Level.ERROR, "Failed to create bonus tile scene source")
 		_bonus_tile_scene_source_id = -1
 		_bonus_tile_scene_tile_id = -1
+
+func _ensure_malus_tile_scene_source() -> void:
+	if not tilemap or not tilemap.tile_set:
+		return
+	if MALUS_TILE_SCENE == null:
+		Log.trace(Log.Level.ERROR, "Malus tile scene is not loaded")
+		return
+	if _malus_tile_scene_source_id >= 0:
+		return
+
+	var scene_source := TileSetScenesCollectionSource.new()
+	_malus_tile_scene_tile_id = scene_source.create_scene_tile(MALUS_TILE_SCENE)
+	_malus_tile_scene_source_id = tilemap.tile_set.add_source(scene_source, tilemap.tile_set.get_next_source_id())
+
+	if _malus_tile_scene_source_id < 0 or not (tilemap.tile_set.get_source(_malus_tile_scene_source_id) is TileSetScenesCollectionSource):
+		Log.trace(Log.Level.ERROR, "Failed to create malus tile scene source")
+		_malus_tile_scene_source_id = -1
+		_malus_tile_scene_tile_id = -1
 
 func _is_tile_buildable(coords: Vector2i) -> bool:
 	# 1. Check if the base tile is valid
