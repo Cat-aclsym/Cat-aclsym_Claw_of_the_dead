@@ -35,17 +35,17 @@ enum TowerType {
 
 ## Gameplay keys applied from [member bullet_stats] onto each projectile at fire time (scenes keep VFX only).
 const PROJECTILE_GAMEPLAY_KEYS: Array[String] = [
+	"aoe_duration",
+	"aoe_range",
+	"aoe_tick",
+	"burn_damage_base",
+	"burn_duration",
 	"damage",
-	"speed",
+	"damage_multiplier",
+	"dot_damage",
 	"pierce_count",
 	"pierce_reduction",
-	"aoe_range",
-	"burn_duration",
-	"burn_damage_base",
-	"aoe_duration",
-	"aoe_tick",
-	"dot_damage",
-	"damage_multiplier",
+	"speed",
 ]
 
 # Exported variables

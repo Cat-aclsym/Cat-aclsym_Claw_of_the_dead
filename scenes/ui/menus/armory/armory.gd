@@ -1,9 +1,14 @@
 ## © [2026] A7 Studio. All rights reserved. Trademark.
 ##
-## Armory tree menu: spend challenge stars on building unlock nodes.
+## Armory tree menu: horizontal list of [ArmoryManager] nodes the player unlocks with challenge stars.
+## [br]
+## Builds one [ArmoryItem] per configured node, syncs afford/prerequisite/purchase state from [ArmoryManager]
+## and [ProgressionManager] (including legacy saves where buildings stay unlocked). Handles drag-to-scroll on
+## the buildings strip, description panel when a card is selected, and reset spent stars with confirmation.
 class_name Armory
 extends Control
 
+## Emitted when the player closes the armory (e.g. back button).
 signal menu_close
 
 const _ARMORY_ITEM_SCENE: PackedScene = preload("res://scenes/ui/menus/armory/armory_item.tscn")
@@ -42,6 +47,7 @@ var _selected_node_id: String = ""
 @onready var title_label: Label = %TitleLabel
 
 
+## Routes pointer drag on [member scroll_buildings] to horizontal scroll; defers clearing selection so item clicks win.
 func _input(event: InputEvent) -> void:
 	if not is_visible_in_tree():
 		return
@@ -90,6 +96,7 @@ func _input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 
 
+## Wires UI strings, [ArmoryManager.armory_updated], and initial population via [method _refresh].
 func _ready() -> void:
 	assert(close_button != null, "close_button node not found")
 	assert(description_label != null, "description_label node not found")
@@ -117,6 +124,7 @@ func _ready() -> void:
 	_refresh()
 
 
+## Clears the selected node, hides the description panel, and deselects all [ArmoryItem] instances.
 func _clear_selection() -> void:
 	_selected_node_id = ""
 	for item_ref in _armory_items.values():
@@ -141,6 +149,7 @@ func _clear_selection_if_click_missed_items(global_pos: Vector2) -> void:
 	_clear_selection()
 
 
+## Instantiates an [ArmoryItem] for [param node_id], sets cost/icon from [ArmoryManager] data, and connects signals.
 func _create_armory_item(node_id: String) -> ArmoryItem:
 	var node: Dictionary = ArmoryManager.get_armory_node(node_id)
 	if node.is_empty():
@@ -159,6 +168,7 @@ func _create_armory_item(node_id: String) -> ArmoryItem:
 	return item
 
 
+## Loads a tower/trap scene and returns the first useful preview ([Sprite2D] texture or first [AnimatedSprite2D] idle frame).
 func _extract_preview_texture(scene_path: String) -> Texture2D:
 	var packed_scene: PackedScene = StatsDB.load_packed_scene(scene_path)
 	if packed_scene == null:
@@ -185,18 +195,21 @@ func _extract_preview_texture(scene_path: String) -> Texture2D:
 	return _FALLBACK_ICON
 
 
+## Translation for [code]ARMORY.NODE.{ID}.DESC[/code], or empty if the key is missing.
 func _get_node_description(node_id: String) -> String:
 	var desc_key: String = "ARMORY.NODE.%s.DESC" % node_id.to_upper()
 	var desc_text: String = tr(desc_key)
 	return "" if desc_text == desc_key else desc_text
 
 
+## Translation for [code]ARMORY.NODE.{ID}.NAME[/code], or [param node_id] if the key is missing.
 func _get_node_name(node_id: String) -> String:
 	var name_key: String = "ARMORY.NODE.%s.NAME" % node_id.to_upper()
 	var name_text: String = tr(name_key)
 	return node_id if name_text == name_key else name_text
 
 
+## When prerequisites are unmet, returns [code]ARMORY.PREREQ_BLOCK_DETAIL[/code] with human-readable missing node names.
 func _get_prerequisite_block_text(node_id: String) -> String:
 	var ids: Array[String] = ArmoryManager.get_unmet_prerequisite_node_ids(node_id)
 	if ids.is_empty():
@@ -209,6 +222,7 @@ func _get_prerequisite_block_text(node_id: String) -> String:
 	return tr("ARMORY.PREREQ_BLOCK_DETAIL") % joined
 
 
+## Refreshes the list after a purchase or external [ArmoryManager] change.
 func _on_armory_updated() -> void:
 	_refresh()
 
@@ -240,12 +254,14 @@ func _on_reset_spent_stars_pressed() -> void:
 	reset_confirm_root.visible = true
 
 
+## Defers [method _clear_selection_if_click_missed_items] so controls under the pointer receive the press first.
 func _queue_clear_selection_if_background_click(global_pos: Vector2) -> void:
 	if _selected_node_id.is_empty():
 		return
 	call_deferred("_clear_selection_if_click_missed_items", global_pos)
 
 
+## Rebuilds the item row from [method ArmoryManager.get_node_ids_ordered], updates star count, legacy notice, and reset button state.
 func _refresh() -> void:
 	while items_hbox.get_child_count() > 0:
 		var cb: Node = items_hbox.get_child(0)
@@ -276,6 +292,7 @@ func _refresh() -> void:
 		_clear_selection()
 
 
+## Picks a card icon from the first [code]unlock_tower[/code] or [code]unlock_trap[/code] effect by previewing the linked scene.
 func _resolve_icon_texture(node: Dictionary) -> Texture2D:
 	for effect in node.get("effects", []):
 		if typeof(effect) != TYPE_DICTIONARY:
@@ -294,6 +311,7 @@ func _resolve_icon_texture(node: Dictionary) -> Texture2D:
 	return _FALLBACK_ICON
 
 
+## Highlights one card, shows title and either prerequisite hint or full description depending on purchase/prereq state.
 func _select_node(node_id: String) -> void:
 	_selected_node_id = node_id
 	for key in _armory_items.keys():
@@ -310,6 +328,7 @@ func _select_node(node_id: String) -> void:
 	description_panel.visible = true
 
 
+## Pushes current stars, prerequisites, purchase, and legacy flags into a single [ArmoryItem] for [method ArmoryItem.refresh_state].
 func _sync_armory_item_state(item: ArmoryItem, node_id: String) -> void:
 	item.refresh_state(
 		ArmoryManager.get_available_stars() >= item.cost_stars,
@@ -319,6 +338,7 @@ func _sync_armory_item_state(item: ArmoryItem, node_id: String) -> void:
 	)
 
 
+## Dims the reset control and its label when there is nothing to reset ([member BaseButton.disabled]).
 func _update_reset_button_visual() -> void:
 	var is_disabled: bool = reset_spent_stars_button.disabled
 	reset_spent_stars_button.modulate = _RESET_BUTTON_DISABLED_MODULATE if is_disabled else _RESET_BUTTON_ENABLED_MODULATE

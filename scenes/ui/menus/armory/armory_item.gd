@@ -1,10 +1,16 @@
 ## © [2026] A7 Studio. All rights reserved. Trademark.
 ##
-## Armory tree node card with icon and contextual buy button.
+## Single unlock card in the armory: preview, star cost, frame by state (locked / affordable / owned / legacy).
+## [br]
+## Selection is visual only until the player confirms purchase: [member buy_button] only accepts input when the card
+## is selected and [method refresh_state] reports prerequisites met, enough stars, not legacy, and not already owned.
 class_name ArmoryItem
 extends VBoxContainer
 
+## Fired when the buy control confirms a purchase for [param node_id] (parent calls [method ArmoryManager.purchase_node]).
 signal buy_requested(node_id: String)
+
+## Fired when the card body is pressed so the parent can show the description panel and selection highlight.
 signal selected(node_id: String)
 
 const COLOR_BUY_BLOCKED_MODULATE: Color = Color(0.55, 0.55, 0.55, 1.0)
@@ -41,6 +47,7 @@ var _is_card_selected: bool = false
 ]
 
 
+## Connects signals and applies the initial layout (buy row stays visible to avoid layout jumps when selecting).
 func _ready() -> void:
 	assert(buy_button != null, "buy_button node not found")
 	assert(buy_label != null, "buy_label node not found")
@@ -55,6 +62,7 @@ func _ready() -> void:
 	_update_visuals()
 
 
+## Updates exported mirrors used by [method _update_visuals]: affordability, prereqs, purchase, and legacy bypass.
 func refresh_state(affordable: bool, prerequisites_met: bool, purchased: bool, legacy_mode: bool) -> void:
 	is_affordable = affordable
 	is_prerequisites_met = prerequisites_met
@@ -63,21 +71,25 @@ func refresh_state(affordable: bool, prerequisites_met: bool, purchased: bool, l
 	_update_visuals()
 
 
+## Stores selection for the parent; [method _update_visuals] fades the buy row in (alpha) only when this is true and purchase is allowed.
 func set_selected(value: bool) -> void:
 	_is_card_selected = value
 	_update_visuals()
 
 
+## Emits [signal buy_requested] only when the node can still be bought (stars, prereqs, not legacy).
 func _on_buy_button_pressed() -> void:
 	if is_purchased or is_legacy_mode or not is_prerequisites_met or not is_affordable:
 		return
 	buy_requested.emit(node_id)
 
 
+## Notifies the armory screen to focus this card and open the description panel.
 func _on_card_texture_button_pressed() -> void:
 	selected.emit(node_id)
 
 
+## Applies textures, labels, price visibility, disabled/mouse_filter rules, and buy-row alpha from current flags.
 func _update_visuals() -> void:
 	preview_texture_rect.texture = icon_texture
 	price_label.text = "%d" % cost_stars

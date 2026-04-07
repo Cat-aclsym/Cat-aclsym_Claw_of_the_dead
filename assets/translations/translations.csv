@@ -19,7 +19,7 @@ ENDGAMEMENU.LEVEL.TITLE.WIN,Victory,Victoire
 ENDGAMEMENU.LEVEL.TITLE.LOOSE,Defeat,Défaite
 HOME.COPYRIGHT,© [2024] A7 Studio. All rights reserved. Trademark.,© [2024] A7 Studio. Tous droits réservés. Marque déposée.
 TOWER.BAT_01.NAME,Cat Tree,Arbre à Chat'rchés
-TOWER.BAT_02.NAME,AOE Tower,Tour Cataboom
+TOWER.BAT_02.NAME,Cataboom Tower,Tour Cataboom
 TOWER.LEVEL.DISPLAY,%s - lvl %d,%s - niv %d
 TOWER.UPGRADE.PRICE,%d golds,%d pièces d'or
 TOWER.UPGRADE.MAX,MAX,MAX
