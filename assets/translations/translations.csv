@@ -21,7 +21,7 @@ HOME.COPYRIGHT,© [2024] A7 Studio. All rights reserved. Trademark.,© [2024] A7
 TOWER.BAT_01.NAME,Cat Tree,Arbre à Chat'rchés
 TOWER.BAT_02.NAME,Cataboom Tower,Tour Cataboom
 TOWER.LEVEL.DISPLAY,%s - lvl %d,%s - niv %d
-TOWER.UPGRADE.PRICE,%d golds,%d pièces d'or
+TOWER.UPGRADE.PRICE,%d,%d
 TOWER.UPGRADE.MAX,MAX,MAX
 TOWER.UPGRADE.TITLE,Upgrade to level %d,Améliorer au niveau %d
 HOME.ENCYCLOPEDIA.BUTTON,Encyclopedia,Encyclopédie

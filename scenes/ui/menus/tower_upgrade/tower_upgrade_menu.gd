@@ -96,7 +96,7 @@ func _refresh_upgrade_view() -> void:
 
 	# Set title and confirm price
 	var upgrade_price: int = int(upgrade.get("price", 0))
-	_confirm_label.text = "Acheter %d" % upgrade_price
+	_confirm_label.text = tr("TOWER.UPGRADE.PRICE") % upgrade.price
 	_upgrade_title_label.text = _get_upgrade_title(upgrade)
 	_set_active_tab_button(_current_upgrade_index)
 
