@@ -13,7 +13,6 @@ var _initialized: bool = false
 # core
 func _ready() -> void:
 	assert(hud != null, "hud node not found")
-
 	Global.ui = self
 	_initialized = true
 

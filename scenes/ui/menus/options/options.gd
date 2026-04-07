@@ -12,8 +12,8 @@ signal menu_close
 var _actual_texture: Texture2D
 
 ## Preloaded flag textures for language toggle button
-@onready var _flag_en: Texture2D = preload("res://assets/ui/icons/Button Language English.svg")
-@onready var _flag_fr: Texture2D = preload("res://assets/ui/icons/Button Language French.svg")
+@onready var _flag_en: Texture2D = preload("res://assets/ui/icons/English_Button.png")
+@onready var _flag_fr: Texture2D = preload("res://assets/ui/icons/French_Button.png")
 
 ## Options buttons
 @onready var close_button: TextureButton = $GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/TopLineHBoxContainer/AspectRatioContainer/CloseTextureButton

@@ -4,21 +4,21 @@
 [ext_resource type="Texture2D" uid="uid://c8b8irfugbxdj" path="res://assets/environment/backgrounds/Fond Menu 02.svg" id="2_h87ds"]
 [ext_resource type="Texture2D" uid="uid://0lgpu16nkbho" path="res://assets/ui/icons/Button Close.svg" id="2_vd677"]
 [ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="3_mxk3u"]
-[ext_resource type="Texture2D" uid="uid://dqm3a3tfnyu2r" path="res://assets/ui/icons/Button Music On.svg" id="4_jywym"]
-[ext_resource type="Texture2D" uid="uid://bftxjalenxriu" path="res://assets/ui/icons/Button Music Off.svg" id="6_2o3v8"]
-[ext_resource type="Texture2D" uid="uid://b72djafe25kjf" path="res://assets/ui/icons/Button Sound On.svg" id="6_168q2"]
-[ext_resource type="Texture2D" uid="uid://sn02kb1pfkvd" path="res://assets/ui/icons/Button Sound Off.svg" id="8_0pr6m"]
-[ext_resource type="Texture2D" uid="uid://dig6lt2elaxac" path="res://assets/ui/icons/Button Language English.svg" id="8_iii62"]
-[ext_resource type="Texture2D" uid="uid://3n0huugh0rgh" path="res://assets/ui/icons/Button Language French.svg" id="9_h87ds"]
-[ext_resource type="Texture2D" uid="uid://p55ia8mvxuls" path="res://assets/ui/icons/Button Instagram.svg" id="11_h87ds"]
-[ext_resource type="Texture2D" uid="uid://d0la3b5reh1og" path="res://assets/ui/icons/Button Announce.svg" id="12_esjhy"]
-[ext_resource type="Texture2D" uid="uid://dtyutsffhjnm7" path="res://assets/ui/icons/Button X.svg" id="12_h87ds"]
-[ext_resource type="Texture2D" uid="uid://bu1f55q3ahnnw" path="res://assets/ui/icons/Button Confidentiality.svg" id="13_gyr4v"]
-[ext_resource type="Texture2D" uid="uid://calb1m2wmghd8" path="res://assets/ui/icons/Button Discord.svg" id="13_h87ds"]
-[ext_resource type="Texture2D" uid="uid://d4lwyslhi65m3" path="res://assets/ui/icons/Button Email.svg" id="14_ib5pc"]
+[ext_resource type="Texture2D" uid="uid://lyhp13rlx7r1" path="res://assets/ui/icons/Music_Button.png" id="4_jywym"]
+[ext_resource type="Texture2D" uid="uid://bomhxmoxwsuiu" path="res://assets/ui/icons/Music_Off_Button.png" id="6_2o3v8"]
+[ext_resource type="Texture2D" uid="uid://5vx07x57xqmc" path="res://assets/ui/icons/Sound_Button.png" id="6_168q2"]
+[ext_resource type="Texture2D" uid="uid://dnqjm4l5ol2c8" path="res://assets/ui/icons/Sound_Off_Button.png" id="8_0pr6m"]
+[ext_resource type="Texture2D" uid="uid://dpa7u6bojjqvn" path="res://assets/ui/icons/English_Button.png" id="8_iii62"]
+[ext_resource type="Texture2D" uid="uid://lseoebwf3mgg" path="res://assets/ui/icons/Insta_Button.png" id="9_vb5lp"]
+[ext_resource type="Texture2D" uid="uid://okkqp50is0im" path="res://assets/ui/icons/X_Button.png" id="10_droxh"]
+[ext_resource type="Texture2D" uid="uid://dfv62c4uf2jdw" path="res://assets/ui/icons/French_Button.png" id="11_3w6fj"]
+[ext_resource type="Texture2D" uid="uid://bdggwdxr5c810" path="res://assets/ui/icons/Discord_Button.png" id="11_ioidm"]
+[ext_resource type="Texture2D" uid="uid://chnjmnn6vuygx" path="res://assets/ui/icons/Report_Button.png" id="12_esjhy"]
+[ext_resource type="Texture2D" uid="uid://bbq17gtg7gqky" path="res://assets/ui/icons/Shield_Button.png" id="13_gyr4v"]
+[ext_resource type="Texture2D" uid="uid://yo1kyblhvyb3" path="res://assets/ui/icons/Mail_Button.png" id="14_ib5pc"]
 
 [node name="OptionMenu" type="Control"]
-texture_filter = 6
+texture_filter = 1
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -74,7 +74,7 @@ alignment_horizontal = 2
 alignment_vertical = 2
 
 [node name="CloseTextureButton" type="TextureButton" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/TopLineHBoxContainer/AspectRatioContainer"]
-texture_filter = 6
+texture_filter = 1
 layout_mode = 2
 texture_normal = ExtResource("2_vd677")
 ignore_texture_size = true
@@ -89,7 +89,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="MusicTextureButton" type="TextureButton" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/SettingsHBoxContainer/MusicAspectRatioContainer"]
-texture_filter = 6
+texture_filter = 1
 layout_mode = 2
 texture_normal = ExtResource("4_jywym")
 texture_pressed = ExtResource("6_2o3v8")
@@ -101,7 +101,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="SoundTextureButton" type="TextureButton" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/SettingsHBoxContainer/SoundAspectRatioContainer"]
-texture_filter = 6
+texture_filter = 1
 layout_mode = 2
 texture_normal = ExtResource("6_168q2")
 texture_pressed = ExtResource("8_0pr6m")
@@ -113,9 +113,9 @@ layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="LanguageTextureButton" type="TextureButton" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/SettingsHBoxContainer/LanguageAspectRatioContainer"]
-texture_filter = 6
+texture_filter = 1
 layout_mode = 2
-texture_normal = ExtResource("9_h87ds")
+texture_normal = ExtResource("11_3w6fj")
 texture_pressed = ExtResource("8_iii62")
 ignore_texture_size = true
 stretch_mode = 5
@@ -137,9 +137,9 @@ layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="InstagramTextureButton" type="TextureButton" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/SocialsHBoxContainer/InstagramAspectRatioContainer"]
-texture_filter = 6
+texture_filter = 1
 layout_mode = 2
-texture_normal = ExtResource("11_h87ds")
+texture_normal = ExtResource("9_vb5lp")
 ignore_texture_size = true
 stretch_mode = 5
 
@@ -148,10 +148,10 @@ layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="XTextureButton" type="TextureButton" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/SocialsHBoxContainer/XAspectRatioContainer"]
-texture_filter = 6
+texture_filter = 1
 layout_mode = 2
 size_flags_horizontal = 3
-texture_normal = ExtResource("12_h87ds")
+texture_normal = ExtResource("10_droxh")
 ignore_texture_size = true
 stretch_mode = 5
 
@@ -160,10 +160,10 @@ layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="DiscordTextureButton" type="TextureButton" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/SocialsHBoxContainer/DiscordAspectRatioContainer"]
-texture_filter = 6
+texture_filter = 1
 layout_mode = 2
 size_flags_horizontal = 3
-texture_normal = ExtResource("13_h87ds")
+texture_normal = ExtResource("11_ioidm")
 ignore_texture_size = true
 stretch_mode = 5
 
@@ -185,7 +185,7 @@ size_flags_horizontal = 3
 
 [node name="NewsTextureButton" type="TextureButton" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/MiscHBoxContainer/NewsAspectRatioContainer"]
 modulate = Color(1, 1, 1, 0.313726)
-texture_filter = 6
+texture_filter = 1
 layout_mode = 2
 size_flags_horizontal = 3
 disabled = true
@@ -199,7 +199,7 @@ size_flags_horizontal = 3
 
 [node name="InformationTextureButton" type="TextureButton" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/MiscHBoxContainer/InformationAspectRatioContainer"]
 modulate = Color(1, 1, 1, 0.313726)
-texture_filter = 6
+texture_filter = 1
 layout_mode = 2
 size_flags_horizontal = 3
 disabled = true
@@ -212,7 +212,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="ContactTextureButton" type="TextureButton" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/MiscHBoxContainer/ContactAspectRatioContainer"]
-texture_filter = 6
+texture_filter = 1
 layout_mode = 2
 size_flags_horizontal = 3
 texture_normal = ExtResource("14_ib5pc")
