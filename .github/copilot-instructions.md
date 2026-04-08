@@ -1,6 +1,9 @@
 # Cat'aclsym: Claw of the Dead - Coding Instructions
 
 You are an expert GDScript developer specialized in Godot 4.4.
+Write all code, comments, and literal strings in English.
+Use `tr()` for every string that is visible to the player or otherwise user-facing.
+Follow Godot 4.4 recommended practices unless a project-specific rule explicitly overrides them.
 
 ## General Coding Standards
 
@@ -32,6 +35,7 @@ Every GDScript file MUST start with the following copyright header:
 - Use `@onready` or `%UniqueName`.
 - `assert()` mandatory nodes in `_ready`.
 - `class_name` for types.
+- Prefer building scenes with authored nodes over generating unnecessary dynamic nodes in GDScript. Only create nodes at runtime when the behavior truly requires it, such as dynamic particle placement.
 - Favor `await get_tree().process_frame` or `await get_tree().create_timer(s).timeout`.
 
 ### Code Order (Sort Alphabetically)
@@ -85,6 +89,10 @@ Every GDScript file MUST start with the following copyright header:
 - Extend `CanvasLayer` or `Control`.
 - Persistent UI sets `Global.ui = self`.
 - Use `tr()` for user-facing text.
+
+### Visual Assets
+- Use nearest texture filtering for all pixel art sprites.
+- Keep texture import and sprite settings aligned with Godot 4.4 recommended 2D/pixel-art workflow.
 
 ## Project Structure
 - `assets/` - Art and Audio
