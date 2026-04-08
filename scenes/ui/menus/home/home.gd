@@ -42,6 +42,11 @@ func _ready() -> void:
 	assert(_option_menu != null, "option_menu scene not found")
 	SignalUtil.connects(signals)
 	_update_encyclopedia_notification()
+	
+	ButtonEffects.apply(armory_button)
+	ButtonEffects.apply(encyclopedia_button)
+	ButtonEffects.apply(play_button)
+	ButtonEffects.apply(settings_button)
 
 # private
 ## Handles the armory button press event.

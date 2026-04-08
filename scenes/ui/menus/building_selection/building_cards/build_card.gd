@@ -58,6 +58,7 @@ func _ready() -> void:
 	update()
 
 	SignalUtil.connects(signals)
+	ButtonEffects.apply(button_texture)
 
 
 func _exit_tree() -> void:

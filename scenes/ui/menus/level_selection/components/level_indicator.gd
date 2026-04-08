@@ -37,6 +37,7 @@ func configure(in_level: int, in_status: LevelIndicator.Status) -> void:
 	status = in_status
 	SignalUtil.connects(signals)
 	update()
+	ButtonEffects.apply(self)
 
 
 func update() -> void:

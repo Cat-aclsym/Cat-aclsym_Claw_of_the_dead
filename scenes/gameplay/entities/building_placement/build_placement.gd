@@ -76,6 +76,9 @@ func _ready() -> void:
 	visible = false
 	place_hud.visible = false
 	SignalUtil.connects(signals)
+	
+	ButtonEffects.apply(place_button)
+	ButtonEffects.apply(cancel_place_button)
 
 	if ILevel.current_level:
 		var level_signals: Array[Dictionary] = [
