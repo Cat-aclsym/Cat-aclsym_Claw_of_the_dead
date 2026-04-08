@@ -62,9 +62,11 @@ func _populate() -> void:
 		completed_in_save = ProgressionManager.data.levels[level_id].challenges_completed
 
 	for c in ChallengeManager.get_active_challenges():
-		var card := CHALLENGE_CARD.instantiate() as ChallengeCard
+		var card := CHALLENGE_CARD.instantiate()
 		challenges_container.add_child(card)
-		card.setup(c, (c.id in completed_in_save) or c.is_completed)
+		var runtime_completed: bool = (c.id in completed_in_save) or c.is_completed
+		if card.has_method("setup"):
+			card.setup(c, runtime_completed)
 
 
 func _slide_in() -> void:

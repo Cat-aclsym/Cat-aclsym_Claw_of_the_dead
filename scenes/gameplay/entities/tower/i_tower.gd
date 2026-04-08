@@ -659,11 +659,15 @@ func _on_area_2d_area_exited(area: Area2D) -> void:
 		area.queue_free()
 
 func _on_tower_hover_box_mouse_entered() -> void:
+	if Global.paused:
+		return
 	if _menu_open:
 		return
 	show_range(true)
 
 func _on_tower_hover_box_mouse_exited() -> void:
+	if Global.paused:
+		return
 	if _menu_open:
 		return
 	show_range(false)
@@ -677,6 +681,8 @@ func _on_timer_timeout() -> void:
 
 func _on_tower_pressed() -> void:
 	Log.trace(Log.Level.DEBUG, "Tower Pressed")
+	if Global.paused:
+		return
 
 	if state != TowerState.ACTIVE:
 		return

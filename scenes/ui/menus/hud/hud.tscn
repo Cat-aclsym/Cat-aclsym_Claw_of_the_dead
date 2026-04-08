@@ -15,6 +15,16 @@
 [ext_resource type="Texture2D" uid="uid://85fepmd06xnd" path="res://assets/ui/icons/Fast_Forward_Button.png" id="13_hn23h"]
 [ext_resource type="FontVariation" uid="uid://c5y1j2k3l4m5n" path="res://assets/ui/fonts/dotgothic/dotgothic_variation.tres" id="14_variation"]
 [ext_resource type="Shader" uid="uid://b6y7u8i9o0p1q" path="res://assets/resources/shaders/health_bar_scaling.gdshader" id="15_shader"]
+[ext_resource type="Script" uid="uid://lowhealthindicator" path="res://scenes/ui/menus/hud/low_health_indicator.gd" id="16_indicator"]
+[ext_resource type="Shader" uid="uid://lowhealthshader" path="res://assets/resources/shaders/low_health_vignette.gdshader" id="17_vignette"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_vignette"]
+shader = ExtResource("17_vignette")
+shader_parameter/intensity = 0.0
+shader_parameter/pulse_speed = 2.0
+shader_parameter/noise_speed = 5.0
+shader_parameter/edge_width = 0.15
+shader_parameter/base_color = Color(0.8, 0.1, 0.1, 1)
 
 [sub_resource type="Animation" id="1"]
 resource_name = "skip_active"
@@ -55,6 +65,17 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("1_cuep3")
+
+[node name="LowHealthIndicator" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_vignette")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("16_indicator")
 
 [node name="PauseMarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1
@@ -134,6 +155,23 @@ anchors_preset = 0
 offset_left = 30.0
 offset_right = 474.0
 offset_bottom = 61.0
+
+[node name="HealthGhostProgressBar" type="TextureProgressBar" parent="HUDMarginContainer/HUDHBoxContainer/HUDVBoxContainer/HeartTextureRect/HealthMarginContainer/MarginContainer"]
+unique_name_in_owner = true
+z_index = -1
+z_as_relative = false
+texture_filter = 1
+layout_mode = 2
+offset_left = 42.0
+offset_top = 14.0
+offset_right = 424.0
+offset_bottom = 55.0
+max_value = 20.0
+value = 20.0
+rounded = true
+nine_patch_stretch = true
+texture_progress = ExtResource("5_hukgj")
+tint_progress = Color(1, 1, 1, 0.5)
 
 [node name="HealthTextureProgressBar" type="TextureProgressBar" parent="HUDMarginContainer/HUDHBoxContainer/HUDVBoxContainer/HeartTextureRect/HealthMarginContainer/MarginContainer"]
 unique_name_in_owner = true
