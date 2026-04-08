@@ -14,40 +14,7 @@
 [ext_resource type="Texture2D" uid="uid://c2uqlay1r2d1d" path="res://assets/ui/icons/Button Cancel.svg" id="12_5jyti"]
 [ext_resource type="Texture2D" uid="uid://85fepmd06xnd" path="res://assets/ui/icons/Fast_Forward_Button.png" id="13_hn23h"]
 [ext_resource type="FontVariation" uid="uid://c5y1j2k3l4m5n" path="res://assets/ui/fonts/dotgothic/dotgothic_variation.tres" id="14_variation"]
-
-[sub_resource type="Shader" id="Shader_health"]
-code = "## © [2026] A7 Studio. All rights reserved. Trademark.
-
-shader_type canvas_item;
-
-uniform float health_percentage : hint_range(0.0, 1.0) = 1.0;
-uniform vec4 cut_color : source_color = vec4(0.0, 0.0, 0.0, 1.0);
-uniform float segment_width : hint_range(0.0, 0.1) = 0.005;
-
-void fragment() {
-    vec4 tex_color = texture(TEXTURE, UV);
-    
-    // Si l'UV.x est supérieur au pourcentage de vie, on applique l'effet de \"coupe\"
-    if (UV.x > health_percentage) {
-        // On rend la partie vide plus sombre et transparente
-        tex_color.a *= 0.3;
-        tex_color.rgb *= 0.2;
-    }
-    
-    // Ajouter une ligne de séparation à la limite
-    float limit_dist = abs(UV.x - health_percentage);
-    if (limit_dist < segment_width && health_percentage > 0.0 && health_percentage < 1.0) {
-        tex_color = mix(tex_color, cut_color, 1.0 - (limit_dist / segment_width));
-    }
-
-    COLOR = tex_color;
-}"
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_health"]
-shader = SubResource("Shader_health")
-shader_parameter/health_percentage = 1.0
-shader_parameter/cut_color = Color(0, 0, 0, 1)
-shader_parameter/segment_width = 0.005
+[ext_resource type="Shader" uid="uid://b6y7u8i9o0p1q" path="res://assets/resources/shaders/health_bar_scaling.gdshader" id="15_shader"]
 
 [sub_resource type="Animation" id="1"]
 resource_name = "skip_active"
@@ -65,6 +32,14 @@ tracks/0/keys = {
 "update": 0,
 "values": [Color(1, 0.4, 0.4, 1), Color(1, 1, 0.4, 1), Color(0.5, 1, 0.5, 1), Color(0.4, 1, 1, 1), Color(0.4, 0.6, 1, 1), Color(0.8, 0.4, 1, 1), Color(1, 0.4, 0.8, 1)]
 }
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_health"]
+shader = ExtResource("15_shader")
+shader_parameter/health_percentage = 1.0
+shader_parameter/cut_color = Color(0, 0, 0, 1)
+shader_parameter/segment_width = 0.005
+shader_parameter/flash_intensity = 0.0
+shader_parameter/flash_color = Color(1, 1, 1, 1)
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_0gj16"]
 _data = {

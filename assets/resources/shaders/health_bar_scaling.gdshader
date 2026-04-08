@@ -11,17 +11,17 @@ uniform vec4 flash_color : source_color = vec4(1.0, 1.0, 1.0, 1.0);
 void fragment() {
     vec4 tex_color = texture(TEXTURE, UV);
     
-    // Appliquer le flash blanc
+    // Apply white flash
     tex_color.rgb = mix(tex_color.rgb, flash_color.rgb, flash_intensity);
     
-    // Si l'UV.x est supérieur au pourcentage de vie, on applique l'effet de "coupe"
+    // If UV.x is greater than health percentage, apply "cut" effect
     if (UV.x > health_percentage) {
-        // On rend la partie vide plus sombre et transparente
+        // Make the empty part darker and more transparent
         tex_color.a *= 0.3;
         tex_color.rgb *= 0.2;
     }
     
-    // Ajouter une ligne de séparation à la limite
+    // Add a separation line at the limit
     float limit_dist = abs(UV.x - health_percentage);
     if (limit_dist < segment_width && health_percentage > 0.0 && health_percentage < 1.0) {
         tex_color = mix(tex_color, cut_color, 1.0 - (limit_dist / segment_width));
