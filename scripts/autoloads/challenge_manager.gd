@@ -8,6 +8,7 @@ extends Node
 
 # Signals
 signal challenges_loaded()
+signal challenge_status_updated(challenge_id: String, is_completed: bool, is_failed: bool)
 
 # Public variables
 var active_challenges: Array[Challenge] = []
@@ -44,6 +45,7 @@ func start_level_challenges(level_id: String) -> void:
 		c.start_monitoring()
 
 	challenges_loaded.emit()
+	emit_runtime_status()
 
 
 ## Checks and completes all valid challenges at the end of a level.
@@ -58,6 +60,7 @@ func notify_damage(amount: int, _source: Variant = null) -> void:
 	for c in active_challenges:
 		if c.has_method("on_damage_taken"):
 			c.on_damage_taken(amount)
+	emit_runtime_status()
 
 
 ## Notifies challenges that an [ITower] was placed (not traps).
@@ -65,6 +68,7 @@ func notify_tower_placed(tower: ITower) -> void:
 	for c in active_challenges:
 		if c.has_method("on_tower_placed"):
 			c.on_tower_placed(tower)
+	emit_runtime_status()
 
 
 ## Dispatches placement to [method notify_tower_placed] or [method notify_trap_placed] by [method IBuilding.get_building_kind].
@@ -81,6 +85,7 @@ func notify_trap_placed(trap: ITrap) -> void:
 	for c in active_challenges:
 		if c.has_method("on_trap_placed"):
 			c.on_trap_placed(trap)
+	emit_runtime_status()
 
 
 ## Notifies challenges about an enemy being hit.
@@ -88,6 +93,7 @@ func notify_enemy_hit(enemy: IEnemy, source: Variant) -> void:
 	for c in active_challenges:
 		if c.has_method("on_enemy_hit"):
 			c.on_enemy_hit(enemy, source)
+	emit_runtime_status()
 
 
 ## Notifies challenges about an enemy death.
@@ -95,6 +101,7 @@ func notify_enemy_died(enemy: IEnemy, damage_type: IEnemy.DamageType, source: Va
 	for c in active_challenges:
 		if c.has_method("on_enemy_died"):
 			c.on_enemy_died(enemy, damage_type, source)
+	emit_runtime_status()
 
 
 ## Returns currently active challenges.
@@ -129,6 +136,17 @@ func _load_challenge(c_id: String) -> void:
 		data.get("description"),
 		data.get("difficulty")
 	)
+	challenge_instance.completed.connect(_on_challenge_state_changed)
+	challenge_instance.failed.connect(_on_challenge_state_changed)
 
 	add_child(challenge_instance)
 	active_challenges.append(challenge_instance)
+
+
+func emit_runtime_status() -> void:
+	for c in active_challenges:
+		challenge_status_updated.emit(c.id, c.is_completed, c.is_failed)
+
+
+func _on_challenge_state_changed(_challenge_id: String) -> void:
+	emit_runtime_status()
