@@ -9,6 +9,9 @@ func _init(in_data: Dictionary) -> void:
 
 
 # public
+## Executes the spawn logic, instantiating an enemy and placing it on a path.
+
+
 func exec() -> void:
 	var enemy_id: String = _data[WaveStep.ENEMY_ID]
 	var spawner_index: int = _data[WaveStep.SPAWNER]
