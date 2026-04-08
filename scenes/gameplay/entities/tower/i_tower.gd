@@ -91,9 +91,8 @@ var available_upgrade_ids: Array[String] = []
 @onready var outline: Line2D = $Polygon2D/Line2D
 ## The polygon 2D node for the range of the tower to detect enemies
 @onready var polygon_2d: Polygon2D = $Polygon2D
-## The sprite 2D node for the tower to display the tower model
-@onready var animated_sprite_2d: AnimatedSprite2D = $AnimatedSprite2D
-@onready var sprite_2d: Sprite2D = $Sprite2D
+## The sprite node for the tower to display the tower model
+@onready var sprite: AnimatedSprite2D = %Sprite
 ## The button node for the tower to interact with
 @onready var button: Button = $Button
 
@@ -130,6 +129,7 @@ var _range_tween: Tween = null
 # Core methods
 func _ready() -> void:
 	target_type = TargetType.FIRST
+	assert(sprite != null)
 	_apply_base_stats_override()
 	_resolve_initial_upgrade_ids()
 	ArmoryManager.append_unlocked_upgrade_ids(self)
@@ -143,8 +143,8 @@ func _ready() -> void:
 	if state == TowerState.ACTIVE:
 		call_deferred("_register_with_cursor")
 
-	if animated_sprite_2d and animated_sprite_2d.sprite_frames and animated_sprite_2d.sprite_frames.has_animation("idle"):
-		animated_sprite_2d.play("idle")
+	if sprite and sprite.sprite_frames and sprite.sprite_frames.has_animation("idle"):
+		sprite.play("idle")
 	SignalUtil.connects(signals)
 
 func _process(_delta: float) -> void:
@@ -282,8 +282,8 @@ func apply_upgrade() -> void:
 		var tower_model_path: String = str(upgrade_data.get("tower_model_path", ""))
 		var tower_model_res: Resource = load(tower_model_path) if not tower_model_path.is_empty() else null
 		if tower_model_res is Texture2D:
-			if animated_sprite_2d.sprite_frames != null and animated_sprite_2d.sprite_frames.has_animation("idle"):
-				var idle_anim = animated_sprite_2d.sprite_frames.get_animation("idle")
+			if sprite.sprite_frames != null and sprite.sprite_frames.has_animation("idle"):
+				var idle_anim = sprite.sprite_frames.get_animation("idle")
 				# Determine frame index: 0 to add if empty, or last frame index to update
 				var frame_idx = 0
 				if idle_anim.get_frame_count() > 0:
@@ -291,13 +291,13 @@ func apply_upgrade() -> void:
 
 				idle_anim.set_frame_texture(frame_idx, tower_model_res)
 
-				if not animated_sprite_2d.is_playing() or animated_sprite_2d.animation != "idle":
-					animated_sprite_2d.play("idle")
+				if not sprite.is_playing() or sprite.animation != "idle":
+					sprite.play("idle")
 			else:
 				var reason = "'idle' animation missing"
-				if animated_sprite_2d.sprite_frames == null:
+				if sprite.sprite_frames == null:
 					reason = "no sprite_frames assigned"
-				elif not animated_sprite_2d.sprite_frames.has_animation("idle"):
+				elif not sprite.sprite_frames.has_animation("idle"):
 					reason = "'idle' animation missing"
 				Log.trace(Log.Level.WARN, "Cannot apply tower_model texture: %s in AnimatedSprite2D." % reason)
 		elif not tower_model_path.is_empty():
@@ -368,40 +368,28 @@ func _apply_special_visual_effect(modifier: Dictionary) -> void:
 
 	# Reset visual state if no modifier or no color
 	if not modifier.has("color"):
-		if animated_sprite_2d:
-			animated_sprite_2d.modulate = Color.WHITE
-			animated_sprite_2d.scale = Vector2(1, 1)
-		elif sprite_2d:
-			sprite_2d.modulate = Color.WHITE
-			sprite_2d.scale = Vector2(1, 1)
+		if sprite:
+			sprite.modulate = Color.WHITE
+			sprite.scale = Vector2(1, 1)
 		else:
 			self.modulate = Color.WHITE
 			self.scale = Vector2(1, 1)
 		return
 
 	# Keep the tower visuals neutral; the bonus tile scene owns the color tint.
-	if animated_sprite_2d:
-		animated_sprite_2d.modulate = Color.WHITE
-	elif sprite_2d:
-		sprite_2d.modulate = Color.WHITE
+	if sprite:
+		sprite.modulate = Color.WHITE
 	else:
 		self.modulate = Color.WHITE
 
 	# Add a small scale effect only to the tower sprite
 	_scale_tween = create_tween()
-	var target_sprite: Node2D = null
-	if animated_sprite_2d:
-		target_sprite = animated_sprite_2d
-	elif sprite_2d:
-		target_sprite = sprite_2d
-
-	if target_sprite:
+	if sprite:
 		if modifier["label"].ends_with("-"):
-			_scale_tween.tween_property(target_sprite, "scale", Vector2(0.85, 0.85), 0.3).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+			_scale_tween.tween_property(sprite, "scale", Vector2(0.85, 0.85), 0.3).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 		else:
-			_scale_tween.tween_property(target_sprite, "scale", Vector2(1.15, 1.15), 0.3).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+			_scale_tween.tween_property(sprite, "scale", Vector2(1.15, 1.15), 0.3).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	else:
-		# Fallback to the whole node if no sprite is found
 		if modifier["label"].ends_with("-"):
 			_scale_tween.tween_property(self, "scale", Vector2(0.85, 0.85), 0.3).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 		else:
@@ -560,7 +548,7 @@ func _create_range_polygon(radius: float, precision: int) -> void:
 	polygon_2d.color = Color(color, 0.3)
 
 	## Set the z-index of the range polygon to 1, making it appear below other nodes
-	animated_sprite_2d.z_index = 1
+	sprite.z_index = 1
 
 	## Add the first value of points to the end of the array to close the outline
 	points.append(Vector2(points[0]))
