@@ -139,8 +139,11 @@ func change_state(new_state: CursorState, args: Array = []) -> void:
 
 ## Removes a cell from the invalid cells list so a building can be placed there again.
 func remove_invalid_cell(tm_pos: Vector2i) -> void:
-	if tm_pos in _invalid_cells:
+	var removed_any: bool = false
+	while tm_pos in _invalid_cells:
 		_invalid_cells.erase(tm_pos)
+		removed_any = true
+	if removed_any:
 		Log.trace(Log.Level.INFO, "Cell {0} is now free for building".format([tm_pos]))
 
 func _build() -> void:
@@ -184,7 +187,7 @@ func _build() -> void:
 	if new_entity is IBuilding:
 		ChallengeManager.notify_building_placed(new_entity as IBuilding)
 
-	_invalid_cells.append(tm_pos)
+	add_invalid_cell(tm_pos)
 	ILevel.current_level.coins -= _preview_building.cost
 
 	_cancel_build()
