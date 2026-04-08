@@ -112,6 +112,17 @@
 			},
 			"name": "Piège ralentissant",
 			"scene": "res://scenes/gameplay/entities/trap/traps/bat_04.tscn"
+		},
+		"bat_05": {
+			"base": {
+				"cost": 25,
+				"damage": 50,
+				"explosion_range": 100,
+				"max_durability": 1,
+				"trap_type": 1
+			},
+			"name": "Bombe",
+			"scene": "res://scenes/gameplay/entities/trap/traps/bat_05.tscn"
 		}
 	},
 	"upgrades": {
