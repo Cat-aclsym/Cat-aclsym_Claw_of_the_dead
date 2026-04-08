@@ -86,7 +86,8 @@ func get_tower_by_name(tower_name: String) -> ITower:
 
 ## Load all the paths in the map
 func _load_paths() -> void:
-	var children: Array[Node] = $Paths.get_children()
+	var paths: Node = $Paths
+	var children: Array[Node] = paths.get_children()
 	for child in children:
 		if child is Path2D:
 			paths.append(child as Path2D)
