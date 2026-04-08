@@ -7,22 +7,45 @@
 	"status": "done",
 	"waves": [
 		[
-			{ "wait_s": 3 },
+			{ "wait_s": 3.0 },
 			{ "enemy_id": "ene.01", "count": 3, "spawner": 0 },
-			{ "wait_s": 2 },
-			{ "enemy_id": "ene.01", "count": 3, "spawner": 1 }
+			{ "wait_s": 4.0 },
+			{ "enemy_id": "ene.01", "count": 3, "spawner": 0 }
 		],
 		[
-			{ "wait_s": 3 },
-			{ "enemy_id": "ene.01", "count": 5, "spawner": 0 },
-			{ "wait_s": 1 },
-			{ "enemy_id": "ene.01", "count": 5, "spawner": 1 }
-		],
-		[
-			{ "wait_s": 3 },
+			{ "wait_s": 3.0 },
+			{ "path_index": 1, "path_active": true },
 			{ "enemy_id": "ene.01", "count": 4, "spawner": 0 },
-			{ "wait_s": 2 },
+			{ "wait_s": 1.5 },
 			{ "enemy_id": "ene.03", "count": 3, "spawner": 1 }
+		],
+		[
+			{ "wait_s": 3.0 },
+			{ "enemy_id": "ene.01", "count": 4, "spawner": 0 },
+			{ "wait_s": 1.0 },
+			{ "enemy_id": "ene.03", "count": 4, "spawner": 1 },
+			{ "wait_s": 2.0 },
+			{ "path_index": 2, "path_active": true },
+			{ "enemy_id": "ene.03", "count": 5, "spawner": 2 }
+		],
+		[
+			{ "wait_s": 3.0 },
+			{ "enemy_id": "ene.01", "count": 3, "spawner": 0 },
+			{ "wait_s": 0.5 },
+			{ "enemy_id": "ene.03", "count": 4, "spawner": 1 },
+			{ "wait_s": 0.5 },
+			{ "enemy_id": "ene.03", "count": 5, "spawner": 2 }
+		],
+		[
+			{ "wait_s": 4.0 },
+			{ "path_index": 3, "path_active": true },
+			{ "enemy_id": "ene.01", "count": 3, "spawner": 0 },
+			{ "wait_s": 0.5 },
+			{ "enemy_id": "ene.03", "count": 4, "spawner": 1 },
+			{ "wait_s": 0.5 },
+			{ "enemy_id": "ene.03", "count": 4, "spawner": 2 },
+			{ "wait_s": 1.0 },
+			{ "enemy_id": "ene.02", "count": 2, "spawner": 3 }
 		]
 	]
 }

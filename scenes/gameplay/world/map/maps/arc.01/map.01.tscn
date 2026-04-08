@@ -2,17 +2,29 @@
 
 [ext_resource type="PackedScene" uid="uid://crdosg1fmycsi" path="res://scenes/gameplay/world/map/i_map.tscn" id="1_ja0gd"]
 
-[sub_resource type="Curve2D" id="Curve2D_1ver7"]
+[sub_resource type="Curve2D" id="Curve2D_pathA"]
 _data = {
 "points": PackedVector2Array(0, 0, 0, 0, 104, 202, 0, 0, 0, 0, 448, 378, 0, 0, 0, 0, 592, 306, 0, 0, 0, 0, 496, 258, 0, 0, 0, 0, 576, 218, 0, 0, 0, 0, 976, 418)
 }
 point_count = 6
 
-[sub_resource type="Curve2D" id="Curve2D_pnrrg"]
+[sub_resource type="Curve2D" id="Curve2D_pathB"]
 _data = {
 "points": PackedVector2Array(0, 0, 0, 0, -136, 80, 0, 0, 0, 0, 200, 248, 0, 0, 0, 0, 312, 192, 0, 0, 0, 0, 216, 144, 0, 0, 0, 0, 328, 88, 0, 0, 0, 0, 744, 296)
 }
 point_count = 6
+
+[sub_resource type="Curve2D" id="Curve2D_pathC"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 200, 80, 0, 0, 0, 0, 520, 160, 0, 0, 0, 0, 880, 340)
+}
+point_count = 3
+
+[sub_resource type="Curve2D" id="Curve2D_pathD"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 160, 480, 0, 0, 0, 0, 360, 400, 0, 0, 0, 0, 560, 300, 0, 0, 0, 0, 880, 340)
+}
+point_count = 4
 
 [node name="IMap" instance=ExtResource("1_ja0gd")]
 
@@ -23,11 +35,19 @@ layer_1/tile_data = PackedInt32Array(786441, 5, 0, 786440, 5, 0, 786439, 5, 0, 8
 
 [node name="Path2DA1" type="Path2D" parent="Paths" index="0"]
 position = Vector2(-32, 62)
-curve = SubResource("Curve2D_1ver7")
+curve = SubResource("Curve2D_pathA")
 
 [node name="Path2DA2" type="Path2D" parent="Paths" index="1"]
 position = Vector2(216, 176)
-curve = SubResource("Curve2D_pnrrg")
+curve = SubResource("Curve2D_pathB")
+
+[node name="Path2DC" type="Path2D" parent="Paths" index="2"]
+position = Vector2(-32, 62)
+curve = SubResource("Curve2D_pathC")
+
+[node name="Path2DD" type="Path2D" parent="Paths" index="3"]
+position = Vector2(-32, 62)
+curve = SubResource("Curve2D_pathD")
 
 [node name="Controller" parent="." index="3"]
 z_index = 4000
