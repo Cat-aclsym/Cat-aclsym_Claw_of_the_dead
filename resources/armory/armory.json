@@ -66,6 +66,13 @@
 			"prerequisites": [],
 			"category": "periphery_building",
 			"effects": [{ "type": "unlock_trap", "trap_id": "bat_04" }]
+		},
+		{
+			"id": "unlock_bat_07",
+			"cost_stars": 1,
+			"prerequisites": ["unlock_bat_02"],
+			"category": "periphery_building",
+			"effects": [{ "type": "unlock_tower", "tower_id": "bat_07" }]
 		}
 	]
 }

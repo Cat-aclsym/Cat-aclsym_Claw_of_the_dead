@@ -236,6 +236,8 @@ func fire() -> void:
 		bullet_instance.direction = rotated_direction
 		bullet_instance.rotation = rotated_direction.angle()
 		bullet_instance.target = enemy_position
+		if "enemy_target" in bullet_instance:
+			bullet_instance.enemy_target = target
 
 		# Set tower owner to allow reward multiplier logic
 		if "tower_owner" in bullet_instance:

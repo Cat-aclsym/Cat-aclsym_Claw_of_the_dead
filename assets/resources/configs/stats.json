@@ -90,6 +90,32 @@
 			"upgrades": [
 				"bat_02_02"
 			]
+		},
+		"bat_07": {
+			"base": {
+				"bullet_stats": {
+					"aoe_duration": 0,
+					"aoe_range": 0,
+					"aoe_tick": 0,
+					"burn_damage_base": 0,
+					"burn_duration": 0,
+					"damage": 18,
+					"damage_multiplier": 0,
+					"dot_damage": 0,
+					"pierce_count": 0,
+					"pierce_reduction": 0,
+					"speed": 0
+				},
+				"cost": 25,
+				"fire_rate": 2.0,
+				"projectile_count": 1,
+				"shoot_range": 120,
+				"spread_angle": 0
+			},
+			"level": 1,
+			"name": "Tour Tesla",
+			"scene": "res://scenes/gameplay/entities/tower/towers/bat_07.tscn",
+			"upgrades": []
 		}
 	},
 	"traps": {
