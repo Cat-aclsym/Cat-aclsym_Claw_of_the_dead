@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://besrv3mghbx31"]
+[gd_scene load_steps=18 format=3 uid="uid://cwfbv84nlapse"]
 
 [ext_resource type="Script" uid="uid://d06pd8s8pbgp3" path="res://scenes/gameplay/world/map/bonus_tile.gd" id="1_bonus_tile_script"]
 [ext_resource type="Texture2D" uid="uid://bfvtlhbglxal1" path="res://assets/environment/tile_effects/bonus-ground.png" id="3_bonus_ground_texture"]
