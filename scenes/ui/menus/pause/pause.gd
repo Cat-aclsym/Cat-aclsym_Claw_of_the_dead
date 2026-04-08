@@ -41,11 +41,8 @@ func _ready() -> void:
 		if btn:
 			btn.process_mode = Node.PROCESS_MODE_ALWAYS
 			btn.mouse_filter = Control.MOUSE_FILTER_STOP
-			# Ensure ButtonEffects are applied AFTER setting process_mode
 			ButtonEffects.apply(btn)
 
-	_update_encyclopedia_notification()
-	
 	# Wait for a frame to ensure sizes are calculated for pivot centering
 	await get_tree().process_frame
 	
@@ -103,6 +100,7 @@ func _update_encyclopedia_notification() -> void:
 ## Resumes the game by unpausing and closing the menu.
 func _on_play_button_pressed() -> void:
 	get_tree().paused = false
+	Global.paused = false
 	if ILevel.current_level != null:
 		ILevel.current_level.resume_from_pause()
 	queue_free()
