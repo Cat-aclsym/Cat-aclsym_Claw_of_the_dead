@@ -135,6 +135,23 @@ offset_left = 30.0
 offset_right = 474.0
 offset_bottom = 61.0
 
+[node name="HealthGhostProgressBar" type="TextureProgressBar" parent="HUDMarginContainer/HUDHBoxContainer/HUDVBoxContainer/HeartTextureRect/HealthMarginContainer/MarginContainer"]
+unique_name_in_owner = true
+z_index = -1
+z_as_relative = false
+texture_filter = 1
+layout_mode = 2
+offset_left = 42.0
+offset_top = 14.0
+offset_right = 424.0
+offset_bottom = 55.0
+max_value = 20.0
+value = 20.0
+rounded = true
+nine_patch_stretch = true
+texture_progress = ExtResource("5_hukgj")
+tint_progress = Color(1, 1, 1, 0.5)
+
 [node name="HealthTextureProgressBar" type="TextureProgressBar" parent="HUDMarginContainer/HUDHBoxContainer/HUDVBoxContainer/HeartTextureRect/HealthMarginContainer/MarginContainer"]
 unique_name_in_owner = true
 z_index = -1

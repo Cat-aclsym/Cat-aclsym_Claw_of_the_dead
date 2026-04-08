@@ -20,6 +20,7 @@ const BUILD_SELECTION_MENU: PackedScene = preload("res://scenes/ui/menus/buildin
 # Variables
 @onready var challenges_button: TextureButton = $ChallengesMarginContainer/ChallengesButton
 @onready var coins_rich_text_label: Label = %HUDVBoxContainer/CoinsWavesMarginContainer/CoinsWavesHBoxContainer/CoinsTextureRect/MarginContainer/CoinsLabel
+@onready var health_ghost_progress_bar: TextureProgressBar = %HealthGhostProgressBar
 @onready var health_rich_text_label: Label = %HUDVBoxContainer/HeartTextureRect/HealthMarginContainer/MarginContainer/HealthTextureProgressBar/HealthLabel
 @onready var health_texture_progress_bar: TextureProgressBar = %HUDVBoxContainer/HeartTextureRect/HealthMarginContainer/MarginContainer/HealthTextureProgressBar
 @onready var new_wave_count_label: Label = $NewWaveCountLabel
@@ -43,6 +44,7 @@ const BUILD_SELECTION_MENU: PackedScene = preload("res://scenes/ui/menus/buildin
 var _is_ready: bool = false
 var _last_coins: int = 0
 var _last_health: int = 0
+var _ghost_tween: Tween
 
 # Built-in functions
 func _ready() -> void:
@@ -50,6 +52,7 @@ func _ready() -> void:
 	assert(coins_rich_text_label != null, "coins_rich_text_label node not found")
 	assert(health_rich_text_label != null, "health_rich_text_label node not found")
 	assert(waves_rich_text_label != null, "waves_rich_text_label node not found")
+	assert(health_ghost_progress_bar != null, "health_ghost_progress_bar node not found")
 	assert(health_texture_progress_bar != null, "health_texture_progress_bar node not found")
 	assert(build_selection_button != null, "build_selection_button node not found")
 	assert(skip_time_scale_button != null, "skip_time_scale_button node not found")
@@ -213,6 +216,16 @@ func _spawn_coin_explosion(start_pos: Vector2) -> void:
 
 
 func _trigger_health_damage_effects() -> void:
+	# Ghost bar effect
+	if _ghost_tween:
+		_ghost_tween.kill()
+	
+	# IMPORTANT: Ensure the ghost bar starts from its current value (the previous health)
+	# and then animates down to the new current health.
+	_ghost_tween = create_tween()
+	_ghost_tween.tween_interval(0.4) # Slightly longer delay for better readability
+	_ghost_tween.tween_property(health_ghost_progress_bar, "value", ILevel.current_level.health, 1.2).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+
 	# Flash effect via shader
 	if health_texture_progress_bar.material is ShaderMaterial:
 		var flash_tween = create_tween()
@@ -226,6 +239,14 @@ func _trigger_health_damage_effects() -> void:
 		var offset = Vector2(randf_range(-5, 5), randf_range(-3, 3))
 		shake_tween.tween_property(health_texture_progress_bar, "position", original_pos + offset, 0.04)
 	shake_tween.tween_property(health_texture_progress_bar, "position", original_pos, 0.04)
+	
+	# Also shake ghost bar to keep them aligned
+	var ghost_original_pos = health_ghost_progress_bar.position
+	var ghost_shake_tween = create_tween()
+	for i in range(4):
+		var offset = Vector2(randf_range(-5, 5), randf_range(-3, 3))
+		ghost_shake_tween.tween_property(health_ghost_progress_bar, "position", ghost_original_pos + offset, 0.04)
+	ghost_shake_tween.tween_property(health_ghost_progress_bar, "position", ghost_original_pos, 0.04)
 
 
 func _update() -> void:
@@ -239,7 +260,15 @@ func _update() -> void:
 
 	var current_health = ILevel.current_level.health
 	if current_health < _last_health:
+		# DAMAGE: Ensure the ghost bar is at the PREVIOUS health before updating the main bar
+		health_ghost_progress_bar.value = _last_health
 		_trigger_health_damage_effects()
+	elif current_health > _last_health:
+		# HEAL: Update ghost bar instantly
+		if _ghost_tween:
+			_ghost_tween.kill()
+		health_ghost_progress_bar.value = current_health
+	
 	_last_health = current_health
 
 	coins_rich_text_label.text = tr(default_coins_text) % current_coins
