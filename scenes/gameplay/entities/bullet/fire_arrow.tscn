@@ -29,9 +29,9 @@ color = Color(1, 0.5, 0, 1)
 
 [node name="FireArrow" instance=ExtResource("1_ecq02")]
 script = ExtResource("2_okbr1")
-burn_duration = 3.0
-burn_damage_base = 10
-aoe_range = 80
+burn_duration = 0.0
+burn_damage_base = 0
+aoe_range = 0
 explosion_effect_enabled = true
 shockwave_duration = 0.4
 shockwave_color = Color(0.8, 0.9, 1, 0.7)
@@ -40,7 +40,6 @@ debris_particles_lifetime = 0.35
 debris_particles_speed = 150.0
 debris_particles_size = 3.0
 debris_particles_color = Color(1, 0.156863, 0.0313726, 0.847059)
-speed = 400
 trail_color = Color(1, 0.2, 0, 0.784314)
 hit_effect_enabled = false
 

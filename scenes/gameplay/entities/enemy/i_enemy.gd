@@ -368,11 +368,13 @@ func _dead_state() -> void:
 
 	var money_reward: int = 10
 
-	# Apply reward multiplier if the killer was a tower
-	
 	# Apply reward multiplier when the killing [IBullet] was fired by a tower ([member IBullet.tower_owner]).
-	if last_source is IBullet and last_source.tower_owner != null:
-		money_reward = int(money_reward * last_source.tower_owner.reward_multiplier)
+	# [code]last_source[/code] may already be freed (bullet [method queue_free] after hit) — check validity before [code]is[/code].
+	if is_instance_valid(last_source) and last_source is IBullet:
+		var killing_bullet: IBullet = last_source
+		var owner_tower: ITower = killing_bullet.tower_owner
+		if is_instance_valid(owner_tower):
+			money_reward = int(money_reward * owner_tower.reward_multiplier)
 
 	ILevel.current_level.coins += money_reward
 	_disappear()

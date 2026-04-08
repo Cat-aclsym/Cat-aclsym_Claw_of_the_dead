@@ -1,4 +1,4 @@
-## © [2024] A7 Studio. All rights reserved. Trademark.
+## © [2026] A7 Studio. All rights reserved. Trademark.
 ##
 ## Manages the display of tower upgrade statistics with dynamic gauge bars.
 class_name TowerUpgradeMenu
@@ -6,13 +6,13 @@ extends Control
 
 ## Reference to the tower being upgraded
 var tower: ITower
-var upgrade_scene: PackedScene
-var _upgrades: Array[PackedScene] = []
+var selected_upgrade_id: String = ""
+var _upgrade_ids: Array[String] = []
 var _current_upgrade_index: int = 0
 
 @onready var _cancel_button: TextureButton = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/ButtonsHBoxContainer/CancelButton
 @onready var _confirm_button: TextureButton = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/ButtonsHBoxContainer/ConfirmButton
-@onready var _confirm_label: Label = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/ButtonsHBoxContainer/ConfirmButton/Label
+@onready var _confirm_label: Label = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/ButtonsHBoxContainer/ConfirmButton/PriceRow/Label
 @onready var _panel: Control = $UpgradeDescriptionTextureRect
 @onready var _stats_container: VBoxContainer = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/StatsScrollContainer/VBoxContainer
 @onready var _stats_scroll: ScrollContainer = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/StatsScrollContainer
@@ -30,14 +30,25 @@ var _current_upgrade_index: int = 0
 
 # Preloaded resources
 const ICON_TEXTURE: Texture2D = preload("res://assets/ui/icons/Icon Attack.svg")
+const OPTION_ACTIVE_TEXTURE: Texture2D = preload("res://assets/ui/buttons/Bouton Vert.svg")
+const OPTION_INACTIVE_TEXTURE: Texture2D = preload("res://assets/ui/buttons/Bouton Bleu.svg")
 const STAT_BAR_SCENE: PackedScene = preload("res://scenes/ui/menus/tower_upgrade/stat_bar.tscn")
 
 # Constants
 const MAX_STAT_VALUE: float = 200.0
+## Same color for all interaction states (no desktop-only hover/pressed tint; mobile-friendly).
+const OPTION_TAB_FONT_COLOR: Color = Color.WHITE
+var _option_active_style: StyleBoxTexture
+var _option_inactive_style: StyleBoxTexture
 
 # Core methods
 func _ready() -> void:
 	SignalUtil.connects(signals)
+	_setup_option_button_styles()
+	_flatten_option_tab_font_colors(_option1_button)
+	_flatten_option_tab_font_colors(_option2_button)
+	_option1_button.focus_mode = Control.FOCUS_NONE
+	_option2_button.focus_mode = Control.FOCUS_NONE
 	Global.paused = true
 	if ILevel.current_level != null:
 		ILevel.current_level.pause()
@@ -62,31 +73,35 @@ func _exit_tree() -> void:
 		ILevel.current_level.resume_from_pause()
 
 ## Initializes the upgrade description with tower and one or more upgrade options
-func setup(p_tower: ITower, p_upgrades: Array[PackedScene]) -> void:
+func setup(p_tower: ITower, p_upgrade_ids: Array[String]) -> void:
 	tower = p_tower
-	_upgrades = p_upgrades.duplicate()
+	_upgrade_ids = p_upgrade_ids.duplicate()
 	_current_upgrade_index = 0
 	_update_tabs_visibility()
 	_refresh_upgrade_view()
 
 
 func _refresh_upgrade_view() -> void:
-	if _upgrades.is_empty():
+	if _upgrade_ids.is_empty():
 		queue_free()
 		return
 
-	_current_upgrade_index = clamp(_current_upgrade_index, 0, _upgrades.size() - 1)
-	upgrade_scene = _upgrades[_current_upgrade_index]
-
-	var upgrade: IUpgrade = upgrade_scene.instantiate()
+	_current_upgrade_index = clamp(_current_upgrade_index, 0, _upgrade_ids.size() - 1)
+	selected_upgrade_id = _upgrade_ids[_current_upgrade_index]
+	var upgrade: Dictionary = StatsDB.get_upgrade(selected_upgrade_id)
+	if upgrade.is_empty():
+		Log.trace(Log.Level.ERROR, "Unknown upgrade id in menu: %s" % selected_upgrade_id)
+		queue_free()
+		return
 
 	# Set title and confirm price
+	var upgrade_price: int = int(upgrade.get("price", 0))
 	_confirm_label.text = tr("TOWER.UPGRADE.PRICE") % upgrade.price
 	_upgrade_title_label.text = _get_upgrade_title(upgrade)
 	_set_active_tab_button(_current_upgrade_index)
 
 	# Check if player has enough money
-	if ILevel.current_level != null and ILevel.current_level.coins < upgrade.price:
+	if ILevel.current_level != null and ILevel.current_level.coins < upgrade_price:
 		_confirm_button.disabled = true
 		_confirm_button.modulate = Color(0.5, 0.5, 0.5)  # Gray out the button
 	else:
@@ -100,8 +115,9 @@ func _refresh_upgrade_view() -> void:
 	var displayed_stats: int = 0
 
 	# Create dynamic stat displays for tower stats
-	for stat_name in upgrade.tower_stats.keys():
-		var stat_change: float = upgrade.tower_stats[stat_name]
+	var tower_stats: Dictionary = upgrade.get("tower_stats", {})
+	for stat_name in tower_stats.keys():
+		var stat_change: float = float(tower_stats[stat_name])
 
 		# Skip level stat
 		if stat_name == "level":
@@ -119,21 +135,21 @@ func _refresh_upgrade_view() -> void:
 			displayed_stats += 1
 
 	# Create dynamic stat displays for bullet stats
-	for stat_name in upgrade.bullet_stats.keys():
-		var stat_change: float = upgrade.bullet_stats[stat_name]
+	var bullet_stats: Dictionary = upgrade.get("bullet_stats", {})
+	for stat_name in bullet_stats.keys():
+		var stat_change: float = float(bullet_stats[stat_name])
 		if stat_change != 0.0:
 			_create_stat_display(stat_name, stat_change, false)
 			displayed_stats += 1
 
 	_update_scroll_mode(displayed_stats)
 
-	upgrade.queue_free()
-
 ## Gets the upgrade title based on the current tower level and upgrade data
-func _get_upgrade_title(upgrade: IUpgrade) -> String:
+func _get_upgrade_title(upgrade: Dictionary) -> String:
 	var delta_level: int = 1
-	if upgrade != null and upgrade.tower_stats.has("level"):
-		delta_level = int(upgrade.tower_stats["level"])
+	var tower_stats: Dictionary = upgrade.get("tower_stats", {})
+	if tower_stats.has("level"):
+		delta_level = int(tower_stats["level"])
 
 	var next_level: int = delta_level
 	if tower != null:
@@ -162,16 +178,7 @@ func _get_current_stat_value(stat_name: String, is_tower_stat: bool) -> float:
 			var value = tower.get(stat_name)
 			return float(value) if value != null else 0.0
 	else:
-		# Bullet stats
-		if stat_name == "damage":
-			var base_damage: float = 0.0
-			if tower.bullet_scene != null:
-				var bullet_instance: IBullet = tower.bullet_scene.instantiate()
-				base_damage = float(bullet_instance.damage)
-				bullet_instance.queue_free()
-			return base_damage + tower.bullet_stats.get("damage", 0.0)
-		else:
-			return tower.bullet_stats.get(stat_name, 0.0)
+		return tower.get_display_bullet_stats().get(stat_name, 0.0)
 
 	return 0.0
 
@@ -180,13 +187,13 @@ func _on_cancel_button_pressed() -> void:
 	queue_free()
 
 func _on_confirm_button_pressed() -> void:
-	if tower != null and upgrade_scene != null:
-		tower.start_upgrade(upgrade_scene)
+	if tower != null and not selected_upgrade_id.is_empty():
+		tower.start_upgrade(selected_upgrade_id)
 	queue_free()
 
 
 func _update_tabs_visibility() -> void:
-	var count: int = _upgrades.size()
+	var count: int = _upgrade_ids.size()
 	if _tabs_container == null:
 		return
 	_tabs_container.visible = count > 1
@@ -199,6 +206,8 @@ func _set_active_tab_button(index: int) -> void:
 		return
 	_option1_button.button_pressed = index == 0
 	_option2_button.button_pressed = index == 1
+	_apply_option_button_style(_option1_button, index == 0)
+	_apply_option_button_style(_option2_button, index == 1)
 
 
 func _on_option1_button_pressed() -> void:
@@ -207,7 +216,7 @@ func _on_option1_button_pressed() -> void:
 
 
 func _on_option2_button_pressed() -> void:
-	if _upgrades.size() < 2:
+	if _upgrade_ids.size() < 2:
 		return
 	_current_upgrade_index = 1
 	_refresh_upgrade_view()
@@ -220,3 +229,38 @@ func _update_scroll_mode(displayed_stats: int) -> void:
 		_stats_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
 	else:
 		_stats_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+
+
+func _setup_option_button_styles() -> void:
+	_option_active_style = StyleBoxTexture.new()
+	_option_active_style.texture = OPTION_ACTIVE_TEXTURE
+	_option_active_style.texture_margin_left = 8.0
+	_option_active_style.texture_margin_top = 8.0
+	_option_active_style.texture_margin_right = 8.0
+	_option_active_style.texture_margin_bottom = 8.0
+
+	_option_inactive_style = StyleBoxTexture.new()
+	_option_inactive_style.texture = OPTION_INACTIVE_TEXTURE
+	_option_inactive_style.texture_margin_left = 8.0
+	_option_inactive_style.texture_margin_top = 8.0
+	_option_inactive_style.texture_margin_right = 8.0
+	_option_inactive_style.texture_margin_bottom = 8.0
+
+
+func _apply_option_button_style(button: Button, is_active: bool) -> void:
+	var style: StyleBoxTexture = _option_active_style if is_active else _option_inactive_style
+	button.add_theme_stylebox_override("normal", style)
+	button.add_theme_stylebox_override("hover", style)
+	button.add_theme_stylebox_override("pressed", style)
+	button.add_theme_stylebox_override("focus", style)
+	button.add_theme_stylebox_override("disabled", style)
+
+
+func _flatten_option_tab_font_colors(button: Button) -> void:
+	var c: Color = OPTION_TAB_FONT_COLOR
+	button.add_theme_color_override("font_color", c)
+	button.add_theme_color_override("font_hover_color", c)
+	button.add_theme_color_override("font_pressed_color", c)
+	button.add_theme_color_override("font_hover_pressed_color", c)
+	button.add_theme_color_override("font_focus_color", c)
+	button.add_theme_color_override("font_disabled_color", c)

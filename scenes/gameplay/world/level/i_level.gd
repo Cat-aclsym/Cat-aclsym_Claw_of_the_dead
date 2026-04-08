@@ -14,6 +14,9 @@ const STATE_WAVE: String = "WAVE_%d"
 const STATE_WAVE_0: String = "WAVE_0"
 const STATE_END: String = "END"
 
+## Extra delay between the last bonus spawn and the first wave.
+const POST_SPECIAL_TILE_INTRO_DELAY_SECONDS: float = 2.0
+
 # Exported Variables
 @export var level_id: String = "lev.XX"
 @export var level_name: String
@@ -61,6 +64,8 @@ func start_level() -> void:
 	_load_waves()
 	ChallengeManager.start_level_challenges(level_id)
 	_build_state_machine()
+	await map.play_special_tiles_intro_sequence()
+	await get_tree().create_timer(POST_SPECIAL_TILE_INTRO_DELAY_SECONDS).timeout
 	state_machine.toggle_initial_state()
 	start_time = Time.get_unix_time_from_system()
 	popup_spawner.wave("Wave %s" % [current_wave+1])

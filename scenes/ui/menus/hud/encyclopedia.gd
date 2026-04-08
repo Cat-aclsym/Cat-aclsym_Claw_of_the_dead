@@ -339,8 +339,8 @@ func _get_sprite_from_instance(p_node: Node) -> Dictionary:
 ## Loads all tower and enemy entries from StatsDB.
 func _initialize_entries() -> void:
 	var tower_name_mapping: Dictionary = {
-		"bat_01": "TOWER.1.NAME",
-		"bat_02": "TOWER.2.NAME"
+		"bat_01": "TOWER.BAT_01.NAME",
+		"bat_02": "TOWER.BAT_02.NAME"
 	}
 	var enemy_name_mapping: Dictionary = {
 		"big_daddy": "ENEMY.BIGDADDY.NAME",

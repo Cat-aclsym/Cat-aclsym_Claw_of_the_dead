@@ -1,4 +1,4 @@
-## © [2024] A7 Studio. All rights reserved. Trademark.
+## © [2026] A7 Studio. All rights reserved. Trademark.
 ##
 ## Manages the display of tower info statistics with dynamic gauge bars.
 class_name TowerInfo
@@ -46,7 +46,7 @@ func _exit_tree() -> void:
 		ILevel.current_level.resume_from_pause()
 
 ## Initializes the info display with tower data
-func setup(p_tower: ITower, _upgrade_scene: PackedScene = null) -> void:
+func setup(p_tower: ITower) -> void:
 	tower = p_tower
 
 	# Get tower name based on scene name
@@ -115,15 +115,7 @@ func _display_tower_stat(stat_name: String) -> void:
 func _display_bullet_stat(stat_name: String) -> void:
 	var value: float = 0.0
 
-	if stat_name == "damage":
-		var base_damage: float = 0.0
-		if tower.bullet_scene != null:
-			var bullet_instance: IBullet = tower.bullet_scene.instantiate()
-			base_damage = float(bullet_instance.damage)
-			bullet_instance.queue_free()
-		value = base_damage + tower.bullet_stats.get("damage", 0.0)
-	else:
-		value = tower.bullet_stats.get(stat_name, 0.0)
+	value = tower.get_display_bullet_stats().get(stat_name, 0.0)
 
 	if value != 0.0:
 		_create_stat_display(stat_name, value)
