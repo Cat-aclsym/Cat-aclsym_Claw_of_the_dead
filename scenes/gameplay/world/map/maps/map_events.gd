@@ -52,12 +52,14 @@ func on_wave_start(wave_number: int) -> void:
 			for path_index in event["deactivate"]:
 				map.deactivate_path(path_index)
 				path_locked.emit(path_index)
+		else: error
 
 		# Activate paths
 		if event.has("activate"):
 			for path_index in event["activate"]:
 				map.activate_path(path_index)
 				path_unlocked.emit(path_index)
+		else: error
 
 		event_triggered.emit("wave_%d_paths" % wave_number)
 		Log.trace(Log.Level.INFO, "Événements de chemins appliqués pour la vague %d" % wave_number)
