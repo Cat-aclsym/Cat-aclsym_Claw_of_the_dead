@@ -134,6 +134,17 @@
 			},
 			"name": "Piège empoisonné",
 			"scene": "res://scenes/gameplay/entities/trap/traps/bat_06.tscn"
+		},
+		"bat_07": {
+			"base": {
+				"cost": 30,
+				"stun_duration": 4.0,
+				"stun_range": 100,
+				"max_durability": 1,
+				"trap_type": 1
+			},
+			"name": "Piège étourdissant",
+			"scene": "res://scenes/gameplay/entities/trap/traps/bat_07.tscn"
 		}
 	},
 	"upgrades": {

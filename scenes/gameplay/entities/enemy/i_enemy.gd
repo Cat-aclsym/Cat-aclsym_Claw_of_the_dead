@@ -41,6 +41,7 @@ enum DamageType {
 	DEFAULT,
 	POISON,
 	FIRE,
+	STUN,
 }
 
 
@@ -54,6 +55,7 @@ const DAMAGES: Dictionary = {
 	DamageType.DEFAULT: {"color": Color(1.0, 1.0, 1.0, 1)}, # White for better visibility
 	DamageType.POISON: {"color": Color("#744187")}, # Custom purple for poison
 	DamageType.FIRE: {"color": Color(1.0, 0.6, 0.2, 1)},   # Brighter orange/fire
+	DamageType.STUN: {"color": Color(1.0, 1.0, 0.0, 1)},   # Yellow for stun
 }
 
 ## Multiplied with [member old_modulate] while slowed; matches slow-trap cyan/teal feel (slightly darker, bluish).
@@ -81,6 +83,9 @@ var poison_timer_execution_count: int = 0
 var previous_position: Vector2 = Vector2.ZERO
 var speed: float = 0.0
 var state: EnemyState = EnemyState.FOLLOW_PATH
+
+## Whether the enemy is currently stunned
+var is_stunned: bool = false
 
 ## Must be placed first as it is used in other onready variables
 @onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
@@ -176,6 +181,10 @@ func take_damage(damage: float, damage_type: DamageType, source: Variant = null)
 ## [br]
 ## [param delta] Time since last frame
 func follow_path(delta: float) -> void:
+	if is_stunned:
+		_process_stun_shake()
+		return
+
 	if path_follow.get_progress_ratio() >= 1.0:
 		state = EnemyState.PATH_FINISHED
 		return
@@ -223,9 +232,35 @@ func push_slow_visual() -> void:
 	_apply_idle_modulate()
 
 
+## Applies a stun effect to the enemy.
+## [param duration] How long the stun lasts in seconds.
+func stun(duration: float) -> void:
+	if is_already_dead or is_stunned:
+		return
+	
+	is_stunned = true
+	_damage_effect(DAMAGES[DamageType.STUN]["color"])
+	
+	var timer := get_tree().create_timer(duration)
+	timer.timeout.connect(func() -> void:
+		is_stunned = false
+		sprite.offset = Vector2.ZERO
+	)
+
+
 # Private functions
 func _apply_idle_modulate() -> void:
 	sprite.modulate = _idle_modulate()
+
+
+func _process_stun_shake() -> void:
+	if not is_stunned:
+		return
+	var shake_offset := 1.0
+	sprite.offset = Vector2(
+		randf_range(-shake_offset, shake_offset),
+		randf_range(-shake_offset, shake_offset)
+	)
 
 
 ## Sprite color when not flashing damage; includes slow tint when slow stacks are active.
