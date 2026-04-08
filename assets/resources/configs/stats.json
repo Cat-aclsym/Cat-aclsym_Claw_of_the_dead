@@ -109,6 +109,8 @@
 					"electrify_slow_amount": 0,
 					"electrify_tick_damage": 0,
 					"electrify_tick_interval": 0,
+					"lightning_blue_tint_strength": 0,
+					"lightning_width_scale": 1,
 					"pierce_count": 0,
 					"pierce_reduction": 0,
 					"speed": 0
@@ -534,6 +536,8 @@
 				"electrify_slow_amount": 0,
 				"electrify_tick_damage": 0,
 				"electrify_tick_interval": 0,
+				"lightning_blue_tint_strength": 0,
+				"lightning_width_scale": 0,
 				"pierce_count": 0,
 				"pierce_reduction": 0,
 				"speed": 0
@@ -573,6 +577,8 @@
 				"electrify_slow_amount": 0,
 				"electrify_tick_damage": 0,
 				"electrify_tick_interval": 0,
+				"lightning_blue_tint_strength": 0,
+				"lightning_width_scale": 0,
 				"pierce_count": 0,
 				"pierce_reduction": 0,
 				"speed": 0
@@ -613,6 +619,8 @@
 				"electrify_slow_amount": 0,
 				"electrify_tick_damage": 0,
 				"electrify_tick_interval": 0,
+				"lightning_blue_tint_strength": 0,
+				"lightning_width_scale": 0.35,
 				"pierce_count": 0,
 				"pierce_reduction": 0,
 				"speed": 0
@@ -652,6 +660,8 @@
 				"electrify_slow_amount": 0,
 				"electrify_tick_damage": 0,
 				"electrify_tick_interval": 0,
+				"lightning_blue_tint_strength": 0,
+				"lightning_width_scale": 0.15,
 				"pierce_count": 0,
 				"pierce_reduction": 0,
 				"speed": 0
@@ -689,6 +699,8 @@
 				"electrify_slow_amount": 0.18,
 				"electrify_tick_damage": 4,
 				"electrify_tick_interval": 0.5,
+				"lightning_blue_tint_strength": 1,
+				"lightning_width_scale": 0,
 				"pierce_count": 0,
 				"pierce_reduction": 0,
 				"speed": 0
@@ -728,6 +740,8 @@
 				"electrify_slow_amount": 0.07,
 				"electrify_tick_damage": 2,
 				"electrify_tick_interval": 0.0,
+				"lightning_blue_tint_strength": 0,
+				"lightning_width_scale": 0,
 				"pierce_count": 0,
 				"pierce_reduction": 0,
 				"speed": 0

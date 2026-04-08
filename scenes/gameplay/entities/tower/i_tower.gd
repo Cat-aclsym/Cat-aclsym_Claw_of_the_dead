@@ -50,6 +50,8 @@ const PROJECTILE_GAMEPLAY_KEYS: Array[String] = [
 	"electrify_slow_amount",
 	"electrify_tick_damage",
 	"electrify_tick_interval",
+	"lightning_blue_tint_strength",
+	"lightning_width_scale",
 	"pierce_count",
 	"pierce_reduction",
 	"speed",

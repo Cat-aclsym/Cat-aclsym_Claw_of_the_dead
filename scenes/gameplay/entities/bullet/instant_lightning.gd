@@ -9,6 +9,8 @@ const ARC_LIFETIME: float = 0.08
 const ARC_JITTER: float = 10.0
 const CHAIN_BOUNCE_DELAY: float = 0.03
 const CHAIN_REVEAL_STEP_DELAY: float = 0.012
+const BLUE_TINT_CORE: Color = Color(0.6, 0.9, 1.0, 1.0)
+const BLUE_TINT_GLOW: Color = Color(0.45, 0.75, 1.0, 0.75)
 
 @export var chain_bounces: int = 0
 @export var chain_damage_falloff: float = 0.0
@@ -17,6 +19,8 @@ const CHAIN_REVEAL_STEP_DELAY: float = 0.012
 @export var electrify_slow_amount: float = 0.0
 @export var electrify_tick_damage: float = 0.0
 @export var electrify_tick_interval: float = 0.5
+@export var lightning_blue_tint_strength: float = 0.0
+@export var lightning_width_scale: float = 1.0
 
 ## Enemy resolved by the tower at fire time.
 var enemy_target: IEnemy = null
@@ -27,6 +31,7 @@ var enemy_target: IEnemy = null
 func _ready() -> void:
 	assert(line_core != null, "Missing required node: LineCore")
 	assert(line_glow != null, "Missing required node: LineGlow")
+	_apply_visual_modifiers()
 	_build_arc()
 
 	if is_instance_valid(enemy_target):
@@ -188,3 +193,14 @@ func _build_arc_points(from_pos: Vector2, to_pos: Vector2) -> PackedVector2Array
 		points.append(to_local(p))
 
 	return points
+
+func _apply_visual_modifiers() -> void:
+	line_core.width *= maxf(0.1, lightning_width_scale)
+	line_glow.width *= maxf(0.1, lightning_width_scale)
+
+	var tint_strength: float = clampf(lightning_blue_tint_strength, 0.0, 1.0)
+	if tint_strength <= 0.0:
+		return
+
+	line_core.default_color = line_core.default_color.lerp(BLUE_TINT_CORE, tint_strength)
+	line_glow.default_color = line_glow.default_color.lerp(BLUE_TINT_GLOW, tint_strength)
