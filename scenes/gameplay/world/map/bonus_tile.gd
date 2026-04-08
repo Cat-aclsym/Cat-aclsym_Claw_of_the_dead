@@ -19,14 +19,14 @@ var _tint: Color = Color.WHITE
 @onready var _bonus_ground: Sprite2D = $BonusGround
 @onready var _back_particles: GPUParticles2D = $BonusParticlesBehind
 @onready var _front_particles: GPUParticles2D = $BonusParticlesFront
-@onready var _emissing_particle: GPUParticles2D = $EmissingParticle
+@onready var _emitting_particle: GPUParticles2D = $EmittingParticle
 
 func _ready() -> void:
 	z_as_relative = false
 	z_index = int(global_position.y) - BONUS_ROOT_Z_BIAS
 	_bonus_ground.z_index = -BONUS_GROUND_LAYER_Z_OFFSET
 	_back_particles.z_index = -BONUS_PARTICLE_LAYER_Z_OFFSET
-	_emissing_particle.z_index = BONUS_DECORATION_LAYER_Z_OFFSET
+	_emitting_particle.z_index = BONUS_DECORATION_LAYER_Z_OFFSET
 	_front_particles.z_index = BONUS_PARTICLE_LAYER_Z_OFFSET
 	_ensure_unique_particle_materials()
 	_resolve_tint_from_map()
@@ -53,18 +53,18 @@ func _apply_configuration() -> void:
 	var particle_color = Color(particle_tint.r, particle_tint.g, particle_tint.b, BONUS_PARTICLE_ALPHA)
 
 	(_back_particles.process_material as ParticleProcessMaterial).color = particle_color
-	(_emissing_particle.process_material as ParticleProcessMaterial).color = Color(1, 1, 1, 0.65)
+	(_emitting_particle.process_material as ParticleProcessMaterial).color = Color(1, 1, 1, 0.65)
 	(_front_particles.process_material as ParticleProcessMaterial).color = particle_color
 
 	_back_particles.emitting = true
-	_emissing_particle.emitting = true
+	_emitting_particle.emitting = true
 	_front_particles.emitting = true
 
 func _ensure_unique_particle_materials() -> void:
 	if _back_particles.process_material:
 		_back_particles.process_material = (_back_particles.process_material as ParticleProcessMaterial).duplicate(true)
-	if _emissing_particle.process_material:
-		_emissing_particle.process_material = (_emissing_particle.process_material as ParticleProcessMaterial).duplicate(true)
+	if _emitting_particle.process_material:
+		_emitting_particle.process_material = (_emitting_particle.process_material as ParticleProcessMaterial).duplicate(true)
 	if _front_particles.process_material:
 		_front_particles.process_material = (_front_particles.process_material as ParticleProcessMaterial).duplicate(true)
 

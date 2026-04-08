@@ -101,7 +101,7 @@ fixed_fps = 60
 local_coords = true
 process_material = SubResource("ParticleProcessMaterial_qxxlu")
 
-[node name="EmissingParticle" type="GPUParticles2D" parent="."]
+[node name="EmittingParticle" type="GPUParticles2D" parent="."]
 z_index = 10
 amount = 200
 lifetime = 1.5
