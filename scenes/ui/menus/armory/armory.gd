@@ -13,7 +13,7 @@ signal menu_close
 
 const _ARMORY_ITEM_SCENE: PackedScene = preload("res://scenes/ui/menus/armory/armory_item.tscn")
 const _ARMORY_SCROLL_DRAG_THRESHOLD_PX: float = 12.0
-const _FALLBACK_ICON: Texture2D = preload("res://assets/ui/level_selection/window/condition_done.svg")
+const _FALLBACK_ICON: Texture2D = preload("res://assets/ui/icons/Star.png")
 const _RESET_BUTTON_DISABLED_MODULATE: Color = Color(0.55, 0.55, 0.55, 1.0)
 const _RESET_BUTTON_ENABLED_MODULATE: Color = Color(1.0, 1.0, 1.0, 1.0)
 
