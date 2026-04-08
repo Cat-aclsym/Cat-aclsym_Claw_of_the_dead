@@ -127,6 +127,39 @@
 			},
 			"name": "Piège ralentissant",
 			"scene": "res://scenes/gameplay/entities/trap/traps/bat_04.tscn"
+		},
+		"bat_05": {
+			"base": {
+				"cost": 25,
+				"damage": 50,
+				"explosion_range": 100,
+				"max_durability": 1,
+				"trap_type": 1
+			},
+			"name": "Bombe",
+			"scene": "res://scenes/gameplay/entities/trap/traps/bat_05.tscn"
+		},
+		"bat_06": {
+			"base": {
+				"cost": 40,
+				"poison_damage": 5,
+				"poison_ticks": 6,
+				"poison_interval": 1.0,
+				"trap_type": 0
+			},
+			"name": "Piège empoisonné",
+			"scene": "res://scenes/gameplay/entities/trap/traps/bat_06.tscn"
+		},
+		"bat_07": {
+			"base": {
+				"cost": 30,
+				"stun_duration": 4.0,
+				"stun_range": 100,
+				"max_durability": 1,
+				"trap_type": 1
+			},
+			"name": "Piège étourdissant",
+			"scene": "res://scenes/gameplay/entities/trap/traps/bat_07.tscn"
 		}
 	},
 	"upgrades": {

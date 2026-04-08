@@ -89,6 +89,11 @@ func _process(delta: float) -> void:
 		return
 
 	if trap_type == TrapType.LIMITED:
+		# For traps with a charge-up or special activation sequence (like Bat07),
+		# we don't want the generic opacity/cleanup logic to interfere.
+		if "is_activating" in self and self.is_activating:
+			return
+
 		var opacity := (0.8 * (float(current_durability) / float(max_durability))) + 0.2
 		modulate.a = opacity
 
