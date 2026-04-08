@@ -8,6 +8,9 @@
 [ext_resource type="PackedScene" uid="uid://b2qklmpagmiaj" path="res://scenes/ui/menus/building_selection/building_cards/build_card_bat_03.tscn" id="8_bat_03_card"]
 [ext_resource type="PackedScene" uid="uid://b2qklmpag4poo" path="res://scenes/ui/menus/building_selection/building_cards/build_card_bat_04.tscn" id="11_bat_04_card"]
 [ext_resource type="PackedScene" path="res://scenes/ui/menus/building_selection/building_cards/build_card_bat_08.tscn" id="12_bat_08_card"]
+[ext_resource type="PackedScene" uid="uid://b2qklmpagmiak" path="res://scenes/ui/menus/building_selection/building_cards/build_card_bat_05.tscn" id="12_bat_05_card"]
+[ext_resource type="PackedScene" uid="uid://b2qklmpagmiap" path="res://scenes/ui/menus/building_selection/building_cards/build_card_bat_06.tscn" id="13_bat_06_card"]
+[ext_resource type="PackedScene" uid="uid://b2qklmpagmiaq" path="res://scenes/ui/menus/building_selection/building_cards/build_card_bat_07.tscn" id="14_bat_07_card"]
 
 [sub_resource type="Animation" id="Animation_fpn5b"]
 length = 0.35
@@ -131,6 +134,25 @@ layout_mode = 2
 stretch_mode = 1
 
 [node name="BuildCardBat08" parent="MarginContainer/VBoxContainer/BackgroundTextureRect/BuildListMarginContainer/HBoxContainer/Bat08AspectRatioContainer" instance=ExtResource("12_bat_08_card")]
+[node name="Bat05AspectRatioContainer" type="AspectRatioContainer" parent="MarginContainer/BackgroundTextureRect/BuildListMarginContainer/HBoxContainer"]
+layout_mode = 2
+stretch_mode = 1
+
+[node name="BuildCardBat05" parent="MarginContainer/BackgroundTextureRect/BuildListMarginContainer/HBoxContainer/Bat05AspectRatioContainer" instance=ExtResource("12_bat_05_card")]
+layout_mode = 2
+
+[node name="Bat06AspectRatioContainer" type="AspectRatioContainer" parent="MarginContainer/BackgroundTextureRect/BuildListMarginContainer/HBoxContainer"]
+layout_mode = 2
+stretch_mode = 1
+
+[node name="BuildCardBat06" parent="MarginContainer/BackgroundTextureRect/BuildListMarginContainer/HBoxContainer/Bat06AspectRatioContainer" instance=ExtResource("13_bat_06_card")]
+layout_mode = 2
+
+[node name="Bat07AspectRatioContainer" type="AspectRatioContainer" parent="MarginContainer/BackgroundTextureRect/BuildListMarginContainer/HBoxContainer"]
+layout_mode = 2
+stretch_mode = 1
+
+[node name="BuildCardBat07" parent="MarginContainer/BackgroundTextureRect/BuildListMarginContainer/HBoxContainer/Bat07AspectRatioContainer" instance=ExtResource("14_bat_07_card")]
 layout_mode = 2
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]

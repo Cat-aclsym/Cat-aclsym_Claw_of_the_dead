@@ -41,6 +41,7 @@ enum DamageType {
 	DEFAULT,
 	POISON,
 	FIRE,
+	STUN,
 }
 
 
@@ -52,12 +53,22 @@ const ANIM_WALK_DOWN := "walk_down"
 ## Damage configuration for different damage types
 const DAMAGES: Dictionary = {
 	DamageType.DEFAULT: {"color": Color(1.0, 1.0, 1.0, 1)}, # White for better visibility
-	DamageType.POISON: {"color": Color(0.4, 1.0, 0.4, 1)}, # Brighter green
+	DamageType.POISON: {"color": Color("#744187")}, # Custom purple for poison
 	DamageType.FIRE: {"color": Color(1.0, 0.6, 0.2, 1)},   # Brighter orange/fire
+	DamageType.STUN: {"color": Color(1.0, 1.0, 0.0, 1)},   # Yellow for stun
 }
 
 ## Multiplied with [member old_modulate] while slowed; matches slow-trap cyan/teal feel (slightly darker, bluish).
 const SLOW_VISUAL_TINT: Color = Color(0.58, 0.78, 0.86, 1.0)
+
+## Multiplied with [member old_modulate] while poisoned; purple feel.
+const POISON_VISUAL_TINT: Color = Color(0.85, 0.75, 0.9, 1.0)
+
+## Multiplied with [member old_modulate] while stunned; yellow feel.
+const STUN_VISUAL_TINT: Color = Color(1.0, 1.0, 0.6, 1.0)
+
+## Stun star texture cached for performance.
+const STUN_STAR_TEX := preload("res://assets/gameplay/enemies/Stunned_Star.png")
 
 
 # Exported variables
@@ -78,6 +89,12 @@ var poison_timer_execution_count: int = 0
 var previous_position: Vector2 = Vector2.ZERO
 var speed: float = 0.0
 var state: EnemyState = EnemyState.FOLLOW_PATH
+
+## Whether the enemy is currently stunned
+var is_stunned: bool = false
+
+## Array to store stun stars visual nodes
+var _stun_stars: Array[Sprite2D] = []
 
 ## Must be placed first as it is used in other onready variables
 @onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
@@ -144,6 +161,10 @@ func _physics_process(delta: float) -> void:
 			Log.trace(Log.Level.WARN, "{0} unknown EnemyState : {1}".format([name, state]))
 
 	poison_particle.emitting = not active_poison_timers.is_empty()
+	poison_particle.visible = poison_particle.emitting
+	
+	if is_stunned:
+		_update_stun_stars(delta)
 
 
 # Public functions
@@ -179,6 +200,10 @@ func take_damage(damage: float, damage_type: DamageType, source: Variant = null)
 ## [br]
 ## [param delta] Time since last frame
 func follow_path(delta: float) -> void:
+	if is_stunned:
+		_process_stun_shake()
+		return
+
 	if path_follow.get_progress_ratio() >= 1.0:
 		state = EnemyState.PATH_FINISHED
 		return
@@ -211,6 +236,7 @@ func add_poison_effect(damage: float, total_execution: int, interval: float) -> 
 	})
 
 	poison_timer.timeout.connect(func(): _on_poison_timer_timeout(poison_timer))
+	_apply_idle_modulate() # Apply violet tint immediately
 
 
 ## Removes one stacked slow visual tint (e.g. leaving a slow zone).
@@ -254,6 +280,39 @@ func apply_electrify_effect(duration: float, slow_amount: float, tick_damage: fl
 	_electrify_tick_remaining = minf(_electrify_tick_remaining if _electrify_tick_remaining > 0.0 else normalized_interval, normalized_interval)
 
 
+## Applies a stun effect to the enemy.
+## [param duration] How long the stun lasts in seconds.
+func stun(duration: float) -> void:
+	if is_already_dead or is_stunned:
+		return
+	
+	is_stunned = true
+	sprite.pause() # Freeze the walking animation
+	_create_stun_stars()
+	_apply_idle_modulate() # Apply yellow tint immediately
+	_damage_effect(DAMAGES[DamageType.STUN]["color"])
+	
+	var timer := get_tree().create_timer(duration)
+	timer.timeout.connect(func() -> void:
+		# Fade out stars
+		var fade_tween := create_tween()
+		fade_tween.set_parallel(true)
+		for star in _stun_stars:
+			if is_instance_valid(star):
+				fade_tween.tween_property(star, "modulate:a", 0.0, 0.5)
+		
+		# Wait for the stars fade to finish
+		# to set is_stunned to false, which will refresh the modulate
+		fade_tween.finished.connect(func() -> void:
+			is_stunned = false
+			sprite.play() # Resume the walking animation
+			_remove_stun_stars()
+			sprite.offset = Vector2.ZERO
+			_apply_idle_modulate()
+		)
+	)
+
+
 # Private functions
 func _process_electrify(delta: float) -> void:
 	if not _electrified:
@@ -287,11 +346,67 @@ func _apply_idle_modulate() -> void:
 	sprite.modulate = _idle_modulate()
 
 
+func _create_stun_stars() -> void:
+	_remove_stun_stars() # Safety
+	for i in range(3):
+		var star := Sprite2D.new()
+		star.texture = STUN_STAR_TEX
+		star.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+		add_child(star)
+		_stun_stars.append(star)
+
+
+func _remove_stun_stars() -> void:
+	for star in _stun_stars:
+		if is_instance_valid(star):
+			star.queue_free()
+	_stun_stars.clear()
+
+
+func _update_stun_stars(delta: float) -> void:
+	if _stun_stars.is_empty():
+		return
+	
+	var time := Time.get_ticks_msec() / 1000.0
+	var radius_x := 15.0
+	var radius_y := 5.0 # Isometric perspective
+	var center_offset := Vector2(0, -30) # Above head
+	
+	for i in range(_stun_stars.size()):
+		var angle := time * 5.0 + (i * PI * 2.0 / 3.0)
+		_stun_stars[i].position = center_offset + Vector2(
+			cos(angle) * radius_x,
+			sin(angle) * radius_y
+		)
+		# Small scale effect to simulate depth
+		# We use a base scale of 0.30 as requested
+		var base_s := 0.30
+		var s := base_s * (0.7 + (sin(angle) + 1.0) * 0.15)
+		_stun_stars[i].scale = Vector2(s, s)
+		# Z-index adjustment based on position in orbit
+		_stun_stars[i].z_index = z_index + (1 if sin(angle) > 0 else -1)
+
+
+func _process_stun_shake() -> void:
+	if not is_stunned:
+		return
+	var shake_offset := 1.0
+	sprite.offset = Vector2(
+		randf_range(-shake_offset, shake_offset),
+		randf_range(-shake_offset, shake_offset)
+	)
+
+
 ## Sprite color when not flashing damage; includes slow tint when slow stacks are active.
 func _idle_modulate() -> Color:
+	var tint: Color = old_modulate
 	if _slow_visual_refcount > 0:
-		return old_modulate * SLOW_VISUAL_TINT
-	return old_modulate
+		tint *= SLOW_VISUAL_TINT
+	if not active_poison_timers.is_empty():
+		tint *= POISON_VISUAL_TINT
+	if is_stunned:
+		tint *= STUN_VISUAL_TINT
+	return tint
 
 
 ## Apply a damage effect to the enemy sprite
@@ -503,5 +618,6 @@ func _on_poison_timer_timeout(timer: Timer) -> void:
 			active_poison_timers.remove_at(timer_index)
 			timer.stop()
 			timer.queue_free()
+			_apply_idle_modulate() # Refresh visual tint when a poison timer ends
 		else:
 			timer.start()

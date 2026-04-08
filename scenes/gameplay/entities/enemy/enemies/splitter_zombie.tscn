@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3 uid="uid://xs30lasiuoiq"]
+[gd_scene load_steps=23 format=3 uid="uid://dkb8u4hyu1qqd"]
 
 [ext_resource type="PackedScene" uid="uid://tmlcshxut7kv" path="res://scenes/gameplay/entities/enemy/i_enemy.tscn" id="1_rsmel"]
 [ext_resource type="Texture2D" uid="uid://it5nrej70nlf" path="res://assets/gameplay/enemies/Zombie_lOM_Base-Sheet.png" id="2_04mla"]
