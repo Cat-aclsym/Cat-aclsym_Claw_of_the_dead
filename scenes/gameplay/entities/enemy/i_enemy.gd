@@ -64,6 +64,9 @@ const SLOW_VISUAL_TINT: Color = Color(0.58, 0.78, 0.86, 1.0)
 ## Multiplied with [member old_modulate] while poisoned; purple feel.
 const POISON_VISUAL_TINT: Color = Color(0.85, 0.75, 0.9, 1.0)
 
+## Multiplied with [member old_modulate] while stunned; yellow feel.
+const STUN_VISUAL_TINT: Color = Color(1.0, 1.0, 0.6, 1.0)
+
 
 # Exported variables
 @export var enemy_id: String = ""
@@ -86,6 +89,9 @@ var state: EnemyState = EnemyState.FOLLOW_PATH
 
 ## Whether the enemy is currently stunned
 var is_stunned: bool = false
+
+## Array to store stun stars visual nodes
+var _stun_stars: Array[Polygon2D] = []
 
 ## Must be placed first as it is used in other onready variables
 @onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
@@ -146,6 +152,9 @@ func _physics_process(delta: float) -> void:
 
 	poison_particle.emitting = not active_poison_timers.is_empty()
 	poison_particle.visible = poison_particle.emitting
+	
+	if is_stunned:
+		_update_stun_stars(delta)
 
 
 # Public functions
@@ -239,18 +248,79 @@ func stun(duration: float) -> void:
 		return
 	
 	is_stunned = true
+	_create_stun_stars()
+	_apply_idle_modulate() # Apply yellow tint immediately
 	_damage_effect(DAMAGES[DamageType.STUN]["color"])
 	
 	var timer := get_tree().create_timer(duration)
 	timer.timeout.connect(func() -> void:
-		is_stunned = false
-		sprite.offset = Vector2.ZERO
+		# Fade out stars
+		var fade_tween := create_tween()
+		fade_tween.set_parallel(true)
+		for star in _stun_stars:
+			if is_instance_valid(star):
+				fade_tween.tween_property(star, "modulate:a", 0.0, 0.5)
+		
+		# Fade out yellow tint by tweening a temporary value
+		var tint_fade := create_tween()
+		# We use a proxy property or just wait for the stars fade to finish
+		# to set is_stunned to false, which will refresh the modulate
+		fade_tween.finished.connect(func() -> void:
+			is_stunned = false
+			_remove_stun_stars()
+			sprite.offset = Vector2.ZERO
+			_apply_idle_modulate()
+		)
 	)
 
 
 # Private functions
 func _apply_idle_modulate() -> void:
 	sprite.modulate = _idle_modulate()
+
+
+func _create_stun_stars() -> void:
+	_remove_stun_stars() # Safety
+	for i in range(3):
+		var star := Polygon2D.new()
+		# Simple 4-point star shape
+		star.polygon = PackedVector2Array([
+			Vector2(0, -4), Vector2(1, -1), Vector2(4, 0), Vector2(1, 1),
+			Vector2(0, 4), Vector2(-1, 1), Vector2(-4, 0), Vector2(-1, -1)
+		])
+		star.color = Color.YELLOW
+		star.scale = Vector2(0.8, 0.8)
+		add_child(star)
+		_stun_stars.append(star)
+
+
+func _remove_stun_stars() -> void:
+	for star in _stun_stars:
+		if is_instance_valid(star):
+			star.queue_free()
+	_stun_stars.clear()
+
+
+func _update_stun_stars(delta: float) -> void:
+	if _stun_stars.is_empty():
+		return
+	
+	var time := Time.get_ticks_msec() / 1000.0
+	var radius_x := 15.0
+	var radius_y := 5.0 # Isometric perspective
+	var center_offset := Vector2(0, -30) # Above head
+	
+	for i in range(_stun_stars.size()):
+		var angle := time * 5.0 + (i * PI * 2.0 / 3.0)
+		_stun_stars[i].position = center_offset + Vector2(
+			cos(angle) * radius_x,
+			sin(angle) * radius_y
+		)
+		# Small scale effect to simulate depth
+		var s := 0.7 + (sin(angle) + 1.0) * 0.15
+		_stun_stars[i].scale = Vector2(s, s)
+		# Z-index adjustment based on position in orbit
+		_stun_stars[i].z_index = z_index + (1 if sin(angle) > 0 else -1)
 
 
 func _process_stun_shake() -> void:
@@ -270,6 +340,8 @@ func _idle_modulate() -> Color:
 		tint *= SLOW_VISUAL_TINT
 	if not active_poison_timers.is_empty():
 		tint *= POISON_VISUAL_TINT
+	if is_stunned:
+		tint *= STUN_VISUAL_TINT
 	return tint
 
 

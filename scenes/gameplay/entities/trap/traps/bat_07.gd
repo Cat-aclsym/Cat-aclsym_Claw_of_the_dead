@@ -109,13 +109,13 @@ func _start_activation_sequence() -> void:
 		_trigger_stun()
 		
 		# 4. On garde le cercle et le piège pendant la durée du stun
-		# Puis on fait disparaître le tout
+		# Puis on fait disparaître le tout avec un fade out
 		var cleanup_timer := get_tree().create_timer(stun_duration)
 		cleanup_timer.timeout.connect(func() -> void:
 			var fade_tween: Tween = create_tween()
 			fade_tween.set_parallel(true)
-			fade_tween.tween_property(circle, "modulate:a", 0.0, 0.5)
-			fade_tween.tween_property(self, "modulate:a", 0.0, 0.5)
+			fade_tween.tween_property(circle, "modulate:a", 0.0, 0.8) # Fade out plus long
+			fade_tween.tween_property(self, "modulate:a", 0.0, 0.8)
 			fade_tween.finished.connect(queue_free)
 		)
 	)
