@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bgv0uyh2tbaec"
-path="res://.godot/imported/condition_todo.svg-069c83e958fc2291a04ee2c825a526a6.ctex"
+uid="uid://ofigwvpb243k"
+path="res://.godot/imported/smoke.png-cdd3d6936ef6e230d5a88ccc05f0b15d.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ui/level_selection/window/condition_todo.svg"
-dest_files=["res://.godot/imported/condition_todo.svg-069c83e958fc2291a04ee2c825a526a6.ctex"]
+source_file="res://assets/gameplay/bullet/smoke.png"
+dest_files=["res://.godot/imported/smoke.png-cdd3d6936ef6e230d5a88ccc05f0b15d.ctex"]
 
 [params]
 
@@ -32,6 +32,3 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
-svg/scale=5.0
-editor/scale_with_editor_scale=false
-editor/convert_colors_with_editor_theme=false

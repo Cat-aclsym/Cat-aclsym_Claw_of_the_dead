@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://b5630xr4v607r"]
+[gd_scene load_steps=22 format=3 uid="uid://b5630xr4v607r"]
 
 [ext_resource type="Script" uid="uid://cc06prch72skr" path="res://scenes/ui/menus/hud/hud.gd" id="1_cuep3"]
 [ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="2_jel3x"]
@@ -13,10 +13,10 @@
 [ext_resource type="Texture2D" uid="uid://ccis5avg2eshj" path="res://assets/ui/icons/Trophey_Button.png" id="11_5r146"]
 [ext_resource type="Texture2D" uid="uid://c2uqlay1r2d1d" path="res://assets/ui/icons/Button Cancel.svg" id="12_5jyti"]
 [ext_resource type="Texture2D" uid="uid://85fepmd06xnd" path="res://assets/ui/icons/Fast_Forward_Button.png" id="13_hn23h"]
-[ext_resource type="FontVariation" uid="uid://c5y1j2k3l4m5n" path="res://assets/ui/fonts/dotgothic/dotgothic_variation.tres" id="14_variation"]
-[ext_resource type="Shader" uid="uid://b6y7u8i9o0p1q" path="res://assets/resources/shaders/health_bar_scaling.gdshader" id="15_shader"]
-[ext_resource type="Script" uid="uid://lowhealthindicator" path="res://scenes/ui/menus/hud/low_health_indicator.gd" id="16_indicator"]
-[ext_resource type="Shader" uid="uid://lowhealthshader" path="res://assets/resources/shaders/low_health_vignette.gdshader" id="17_vignette"]
+[ext_resource type="FontVariation" path="res://assets/ui/fonts/dotgothic/dotgothic_variation.tres" id="14_variation"]
+[ext_resource type="Shader" uid="uid://7k322cmfkfh1" path="res://assets/resources/shaders/health_bar_scaling.gdshader" id="15_shader"]
+[ext_resource type="Script" path="res://scenes/ui/menus/hud/low_health_indicator.gd" id="16_indicator"]
+[ext_resource type="Shader" path="res://assets/resources/shaders/low_health_vignette.gdshader" id="17_vignette"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_vignette"]
 shader = ExtResource("17_vignette")
@@ -25,6 +25,10 @@ shader_parameter/pulse_speed = 2.0
 shader_parameter/noise_speed = 5.0
 shader_parameter/edge_width = 0.15
 shader_parameter/base_color = Color(0.8, 0.1, 0.1, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_health"]
+render_priority = 0
+shader = ExtResource("15_shader")
 
 [sub_resource type="Animation" id="1"]
 resource_name = "skip_active"
@@ -42,14 +46,6 @@ tracks/0/keys = {
 "update": 0,
 "values": [Color(1, 0.4, 0.4, 1), Color(1, 1, 0.4, 1), Color(0.5, 1, 0.5, 1), Color(0.4, 1, 1, 1), Color(0.4, 0.6, 1, 1), Color(0.8, 0.4, 1, 1), Color(1, 0.4, 0.8, 1)]
 }
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_health"]
-shader = ExtResource("15_shader")
-shader_parameter/health_percentage = 1.0
-shader_parameter/cut_color = Color(0, 0, 0, 1)
-shader_parameter/segment_width = 0.005
-shader_parameter/flash_intensity = 0.0
-shader_parameter/flash_color = Color(1, 1, 1, 1)
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_0gj16"]
 _data = {

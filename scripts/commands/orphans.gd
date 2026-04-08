@@ -1,4 +1,4 @@
-## © [2024] A7 Studio. All rights reserved. Trademark.
+## © [2026] A7 Studio. All rights reserved. Trademark.
 ##
 ## Displays all available commands with their descriptions.
 ## Lists all commands in the [code]COMMANDS_DIRECTORY[/code] with their usage and descriptions.
@@ -16,5 +16,5 @@ func description() -> String:
 
 # private
 func _execute(_console: Console, _args: Array) -> int:
-	print_orphan_nodes()
+	Node.print_orphan_nodes()
 	return OK

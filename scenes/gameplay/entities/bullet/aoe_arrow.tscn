@@ -22,7 +22,6 @@ debris_particles_size = 2.5
 debris_particles_color = Color(0.588235, 0.588235, 0.588235, 1)
 damage = 0
 speed = 0
-hit_effect_enabled = false
 
 [node name="Sprite2D" parent="." index="0"]
 modulate = Color(0.490196, 0.490196, 0.490196, 1)

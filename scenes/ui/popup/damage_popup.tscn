@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://dg48m2b1x4p3k"]
 
-[ext_resource type="Script" uid="uid://dlp8w2y4k1p6r" path="res://scenes/ui/popup/damage_popup.gd" id="1_v3k2n"]
+[ext_resource type="Script" uid="uid://cpnsulvb2nd6t" path="res://scenes/ui/popup/damage_popup.gd" id="1_v3k2n"]
 [ext_resource type="FontFile" uid="uid://ddo3rokwsadq0" path="res://assets/ui/fonts/dotgothic/DotGothic16-Regular.ttf" id="2_font"]
 
 [node name="DamagePopup" type="Node2D"]

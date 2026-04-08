@@ -20,7 +20,9 @@ spark_particles_size = 1.5
 spark_particles_color = Color(1, 1, 0.376471, 0.901961)
 damage = 0
 speed = 0
-trail_color = Color(1, 0.886275, 0, 0.901961)
+
+[node name="TrailParticles" parent="." index="2"]
+modulate = Color(1, 0.886275, 0, 0.901961)
 
 [node name="Sprite2D" parent="." index="0"]
 modulate = Color(1, 0.913725, 0, 1)

@@ -101,7 +101,7 @@ position = Vector2(0, -16)
 bullet_scene = ExtResource("2_pv1tv")
 tower_id = "bat_02"
 
-[node name="AnimatedSprite2D" parent="." index="0"]
+[node name="Sprite" parent="." index="0"]
 sprite_frames = SubResource("SpriteFrames_ynjgg")
 animation = &"idle"
 

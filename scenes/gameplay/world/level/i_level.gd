@@ -49,6 +49,11 @@ var _time_scale_before_pause: float = 1.0
 @onready var popup_spawner: PopupSpawner = $PopupSpawner
 
 # core
+func _ready() -> void:
+	assert(clock != null, "clock node not found")
+	assert(popup_spawner != null, "popup_spawner node not found")
+
+
 ## Custom ticker callback
 func _process_tick() -> void:
 	assert(state_machine)
@@ -68,7 +73,7 @@ func start_level() -> void:
 	await get_tree().create_timer(POST_SPECIAL_TILE_INTRO_DELAY_SECONDS).timeout
 	state_machine.toggle_initial_state()
 	start_time = Time.get_unix_time_from_system()
-	popup_spawner.wave("Wave %s" % [current_wave+1])
+	popup_spawner.wave(tr("Wave %s") % [current_wave + 1])
 
 	clock.subscribe(_process_tick, 5)
 	clock.start()
@@ -137,7 +142,7 @@ func _next_wave() -> void:
 		state_machine.toggle_state(STATE_VICTORY)
 		return
 	current_wave += 1
-	popup_spawner.wave("Wave %s" % [current_wave+1])
+	popup_spawner.wave(tr("Wave %s") % [current_wave + 1])
 	state_machine.toggle_state(STATE_WAVE % current_wave)
 
 
@@ -171,13 +176,14 @@ func _on_state_wave(_args = []) -> bool:
 
 	return true
 
-func _on_level_end(_args = []) -> void:
+func _on_level_end(victory: bool, _args = []) -> void:
 	clock.stop()
+	Global.paused = true
 
 	end_time = Time.get_unix_time_from_system()
 	var end_game_menu_instance: EndGame = ScenesLoader.END_GAME_MENU.instantiate()
 	Global.ui.add_child(end_game_menu_instance)
-	end_game_menu_instance.init(true)
+	end_game_menu_instance.init(victory)
 	state_machine.toggle_state(STATE_END)
 
 
@@ -185,14 +191,14 @@ func _on_state_victory(_args = []) -> bool:
 	Log.trace(Log.Level.INFO, "Entering VICTORY state.")
 	ChallengeManager.check_victory_conditions()
 
-	_on_level_end()
+	_on_level_end(true)
 	return true
 
 
 func _on_state_defeat(_args = []) -> bool:
 	Log.trace(Log.Level.INFO, "Entering DEFEAT state.")
 
-	_on_level_end()
+	_on_level_end(false)
 	return true
 
 

@@ -5,7 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://cdesir3miwmug" path="res://assets/ui/building_cards/Green Frame.svg" id="3_green_frame"]
 [ext_resource type="Texture2D" uid="uid://yayv0hygrr3u" path="res://assets/ui/building_cards/Blue Backgrond.svg" id="4_blue_background"]
 [ext_resource type="Texture2D" uid="uid://deifsvtkdkqo1" path="res://assets/ui/buttons/Bouton Bleu.svg" id="5_blue_button"]
-[ext_resource type="Texture2D" uid="uid://bm6k4rajx0ffb" path="res://assets/ui/level_selection/window/condition_done.svg" id="6_star_icon"]
+[ext_resource type="Texture2D" uid="uid://8y5uhgfsgmp8" path="res://assets/ui/icons/Star.png" id="6_krslc"]
 
 [node name="ArmoryItem" type="VBoxContainer"]
 custom_minimum_size = Vector2(180, 260)
@@ -110,7 +110,7 @@ uppercase = true
 unique_name_in_owner = true
 custom_minimum_size = Vector2(20, 20)
 layout_mode = 2
-texture = ExtResource("6_star_icon")
+texture = ExtResource("6_krslc")
 expand_mode = 1
 stretch_mode = 5
 
