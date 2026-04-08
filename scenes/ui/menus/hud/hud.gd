@@ -219,7 +219,7 @@ func _spawn_coin_explosion(start_pos: Vector2) -> void:
 func _trigger_health_damage_effects() -> void:
 	# Camera shake
 	if Global.camera:
-		Global.camera.shake_camera_with_strength(15.0)
+		Global.camera.shake_camera_with_strength(7.0)
 	
 	# Ghost bar effect
 	if _ghost_tween:
