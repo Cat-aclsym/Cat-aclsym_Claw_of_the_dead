@@ -28,10 +28,10 @@ jobs:
 
       - name: Setup Android export template
         run: |
-          mkdir -p ~/.config/godot/export_templates/4.4.stable
+          mkdir -p ~/.local/share/godot/export_templates/4.4.stable
           wget -q https://github.com/godotengine/godot/releases/download/4.4-stable/Godot_v4.4-stable_export_templates.tpz
           unzip -q Godot_v4.4-stable_export_templates.tpz
-          mv templates/* ~/.config/godot/export_templates/4.4.stable/
+          mv templates/* ~/.local/share/godot/export_templates/4.4.stable/
 
       - name: Decode keystore
         run: |
@@ -39,7 +39,10 @@ jobs:
 
       - name: Configure keystore in export presets
         run: |
-          sed -i '/package\/signed=true/a keystore\/release="\/root\/Cataclysm.keystore"\nkeystore\/release_password="${{ secrets.KEYSTORE_PASSWORD }}"\nkeystore\/release_user="Cataclysm"' export_presets.cfg
+          sed -i "s|keystore/release=\"\"|keystore/release=\"/home/runner/Cataclysm.keystore\"|" export_presets.cfg
+          sed -i "s|keystore/release_password=\"\"|keystore/release_password=\"${{ secrets.KEYSTORE_PASSWORD }}\"|" export_presets.cfg
+          sed -i "s|keystore/release_user=\"\"|keystore/release_user=\"Cataclysm\"|" export_presets.cfg
+          grep -n "keystore" export_presets.cfg
 
       - name: Import project
         run: |

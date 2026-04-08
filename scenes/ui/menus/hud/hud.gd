@@ -29,6 +29,7 @@ const BUILD_SELECTION_MENU: PackedScene = preload("res://scenes/ui/menus/buildin
 @onready var skip_time_scale_button: TextureButton = $SkipMarginContainer/SkipButton
 @onready var build_selection_button: TextureButton = $BuildSelectionMarginContainer/BuildSelectionButton
 @onready var waves_rich_text_label: Label = %HUDVBoxContainer/CoinsWavesMarginContainer/CoinsWavesHBoxContainer/WavesTextureRect/MarginContainer/WavesLabel
+@onready var low_health_indicator: LowHealthIndicator = $LowHealthIndicator
 
 @onready var default_coins_text: String = coins_rich_text_label.text
 @onready var default_health_text: String = health_rich_text_label.text
@@ -216,6 +217,10 @@ func _spawn_coin_explosion(start_pos: Vector2) -> void:
 
 
 func _trigger_health_damage_effects() -> void:
+	# Camera shake
+	if Global.camera:
+		Global.camera.shake_camera_with_strength(15.0)
+	
 	# Ghost bar effect
 	if _ghost_tween:
 		_ghost_tween.kill()
@@ -227,6 +232,7 @@ func _trigger_health_damage_effects() -> void:
 	_ghost_tween.tween_interval(0.4) # Reset the delay on every hit
 	_ghost_tween.tween_property(health_ghost_progress_bar, "value", ILevel.current_level.health, 1.2).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 
+	# Flash effect via shader
 	# Flash effect via shader
 	if health_texture_progress_bar.material is ShaderMaterial:
 		var flash_tween = create_tween()
@@ -281,6 +287,9 @@ func _update() -> void:
 	var health_ratio: float = float(ILevel.current_level.health) / max_health
 	if health_texture_progress_bar.material is ShaderMaterial:
 		health_texture_progress_bar.material.set_shader_parameter("health_percentage", health_ratio)
+	
+	if low_health_indicator:
+		low_health_indicator.update_health(health_ratio)
 	
 	var current_wave: int = ILevel.current_level.current_wave + 1
 	waves_rich_text_label.text = tr(default_waves_text) % current_wave
