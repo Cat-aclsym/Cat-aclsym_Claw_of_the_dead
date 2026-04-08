@@ -113,11 +113,15 @@ func change_state(new_state: CursorState, args: Array = []) -> void:
 			# Re-enable on-map tower UI (buttons / hover)
 			_set_placed_tower_ui_enabled(true)
 		CursorState.BUILD:
+			assert(args.size() == 1)
+			assert(args[0] is IBuilding)
+			if _state == CursorState.BUILD:
+				_state_build(args[0], true)
+				_update()
+				return
 			if _state != CursorState.IDLE:
 				Log.trace(Log.Level.WARN, "Cannot enter BUILD state: current state is not IDLE")
 				return
-			assert(args.size() == 1)
-			assert(args[0] is IBuilding)
 
 			trigger_state_build.emit()
 			_state = new_state
@@ -142,8 +146,11 @@ func change_state(new_state: CursorState, args: Array = []) -> void:
 
 ## Removes a cell from the invalid cells list so a building can be placed there again.
 func remove_invalid_cell(tm_pos: Vector2i) -> void:
-	if tm_pos in _invalid_cells:
+	var removed_any: bool = false
+	while tm_pos in _invalid_cells:
 		_invalid_cells.erase(tm_pos)
+		removed_any = true
+	if removed_any:
 		Log.trace(Log.Level.INFO, "Cell {0} is now free for building".format([tm_pos]))
 
 func _build() -> void:
@@ -187,7 +194,7 @@ func _build() -> void:
 	if new_entity is IBuilding:
 		ChallengeManager.notify_building_placed(new_entity as IBuilding)
 
-	_invalid_cells.append(tm_pos)
+	add_invalid_cell(tm_pos)
 	ILevel.current_level.coins -= _preview_building.cost
 
 	_cancel_build()
@@ -387,17 +394,22 @@ func _set_placed_tower_ui_enabled(enabled: bool) -> void:
 				hover_area.input_pickable = enabled
 
 ## Build-mode frame: follow cursor, tint preview, validate tile.
-func _state_build(template: Node2D = null) -> void:
+## [param template] New building template to preview.
+## [param keep_current_cursor_position] Keep current selected tile when replacing preview.
+func _state_build(template: Node2D = null, keep_current_cursor_position: bool = false) -> void:
 	if template:
 		var tpl: IBuilding = template as IBuilding
-		var initial_global: Vector2 = _get_initial_build_position()
-		if tm_ref:
-			var origin_cell: Vector2i = tm_ref.local_to_map(tm_ref.to_local(initial_global))
-			var best_cell: Vector2i = _find_nearest_valid_build_cell(origin_cell, tpl)
-			_set_cursor_position(tm_ref.map_to_local(best_cell))
-		else:
-			_set_cursor_position(initial_global)
+		if not keep_current_cursor_position:
+			var initial_global: Vector2 = _get_initial_build_position()
+			if tm_ref:
+				var origin_cell: Vector2i = tm_ref.local_to_map(tm_ref.to_local(initial_global))
+				var best_cell: Vector2i = _find_nearest_valid_build_cell(origin_cell, tpl)
+				_set_cursor_position(tm_ref.map_to_local(best_cell))
+			else:
+				_set_cursor_position(initial_global)
 
+		if _preview_building:
+			_preview_building.queue_free()
 		_preview_building = template.duplicate() as IBuilding
 		_preview_building.enter_build_preview()
 		_preview_building.position = cursor.position - Vector2(0, _preview_building.get_placement_vertical_offset())

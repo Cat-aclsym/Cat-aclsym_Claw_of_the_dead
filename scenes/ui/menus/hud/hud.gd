@@ -120,6 +120,11 @@ func _on_challenges_button_pressed() -> void:
 
 func _on_pause_button_pressed() -> void:
 	if not Global.paused and ILevel.current_level != null:
+		var build_selection_menu: Node = Global.ui.get_node_or_null("BuildSelection")
+		if build_selection_menu != null:
+			build_selection_menu.queue_free()
+			build_selection_button.button_pressed = false
+
 		# Use Godot's built-in pause system
 		get_tree().paused = true
 		Global.paused = true
