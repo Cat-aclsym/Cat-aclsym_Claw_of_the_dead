@@ -4,22 +4,38 @@
 class_name InstantLightning
 extends IBullet
 
+## Number of points used to draw the lightning polyline.
 const ARC_SEGMENTS: int = 8
+## Fade-out duration for each lightning arc (seconds).
 const ARC_LIFETIME: float = 0.08
+## Max random offset per intermediate segment for jagged arc look.
 const ARC_JITTER: float = 10.0
+## Delay between two chained hits to keep bounce progression readable.
 const CHAIN_BOUNCE_DELAY: float = 0.03
+## Delay between each revealed point when drawing a chain arc.
 const CHAIN_REVEAL_STEP_DELAY: float = 0.012
+## Target core color used when blue tint is enabled.
 const BLUE_TINT_CORE: Color = Color(0.6, 0.9, 1.0, 1.0)
+## Target glow color used when blue tint is enabled.
 const BLUE_TINT_GLOW: Color = Color(0.45, 0.75, 1.0, 0.75)
 
+## Number of additional enemies hit after the first target.
 @export var chain_bounces: int = 0
+## Flat falloff applied to each chained hit based on base damage.
 @export var chain_damage_falloff: float = 0.0
+## Maximum distance (in pixels) to find the next chain target.
 @export var chain_range: float = 0.0
+## Branch B: electrified debuff duration.
 @export var electrify_duration: float = 0.0
+## Branch B: movement slow applied while electrified.
 @export var electrify_slow_amount: float = 0.0
+## Branch B: periodic damage dealt while electrified.
 @export var electrify_tick_damage: float = 0.0
+## Branch B: time between electrified damage ticks.
 @export var electrify_tick_interval: float = 0.5
+## Visual blend toward blue lightning palette.
 @export var lightning_blue_tint_strength: float = 0.0
+## Visual width multiplier for the initial lightning arc.
 @export var lightning_width_scale: float = 1.0
 
 ## Enemy resolved by the tower at fire time.
@@ -69,6 +85,7 @@ func _build_arc() -> void:
 	line_core.points = points
 	line_glow.points = points
 
+## Applies chained hits one-by-one, with a short delay so each bounce is readable.
 func _apply_chain_damage(first_enemy: IEnemy) -> void:
 	if chain_bounces <= 0 or chain_range <= 0.0:
 		return
@@ -84,6 +101,7 @@ func _apply_chain_damage(first_enemy: IEnemy) -> void:
 		_spawn_chain_arc(source_enemy.global_position, next_enemy.global_position)
 		await get_tree().create_timer(CHAIN_BOUNCE_DELAY).timeout
 
+		# Falloff is fixed per bounce from base damage (non-cumulative between bounces).
 		var bounce_multiplier: float = maxf(0.0, 1.0 - chain_damage_falloff)
 		var bounce_damage: float = float(damage) * bounce_multiplier
 		_hit_enemy(next_enemy, bounce_damage)
@@ -164,6 +182,7 @@ func _spawn_chain_arc(from_global: Vector2, target_global: Vector2) -> void:
 			chain_line_glow.queue_free()
 	)
 
+## Reveals the chain arc progressively (point by point) to improve readability.
 func _animate_chain_reveal(chain_line_core: Line2D, chain_line_glow: Line2D, full_points: PackedVector2Array) -> void:
 	if full_points.size() <= 1:
 		chain_line_core.points = full_points
