@@ -91,7 +91,7 @@ var state: EnemyState = EnemyState.FOLLOW_PATH
 var is_stunned: bool = false
 
 ## Array to store stun stars visual nodes
-var _stun_stars: Array[Polygon2D] = []
+var _stun_stars: Array[Sprite2D] = []
 
 ## Must be placed first as it is used in other onready variables
 @onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
@@ -281,15 +281,11 @@ func _apply_idle_modulate() -> void:
 
 func _create_stun_stars() -> void:
 	_remove_stun_stars() # Safety
+	var star_texture := load("res://assets/gameplay/enemies/Stuned_Star.png")
 	for i in range(3):
-		var star := Polygon2D.new()
-		# Simple 4-point star shape
-		star.polygon = PackedVector2Array([
-			Vector2(0, -4), Vector2(1, -1), Vector2(4, 0), Vector2(1, 1),
-			Vector2(0, 4), Vector2(-1, 1), Vector2(-4, 0), Vector2(-1, -1)
-		])
-		star.color = Color.YELLOW
-		star.scale = Vector2(0.8, 0.8)
+		var star := Sprite2D.new()
+		star.texture = star_texture
+		star.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 		add_child(star)
 		_stun_stars.append(star)
 
@@ -317,7 +313,9 @@ func _update_stun_stars(delta: float) -> void:
 			sin(angle) * radius_y
 		)
 		# Small scale effect to simulate depth
-		var s := 0.7 + (sin(angle) + 1.0) * 0.15
+		# We use a base scale of 0.30 as requested
+		var base_s := 0.30
+		var s := base_s * (0.7 + (sin(angle) + 1.0) * 0.15)
 		_stun_stars[i].scale = Vector2(s, s)
 		# Z-index adjustment based on position in orbit
 		_stun_stars[i].z_index = z_index + (1 if sin(angle) > 0 else -1)
