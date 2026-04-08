@@ -67,6 +67,9 @@ const POISON_VISUAL_TINT: Color = Color(0.85, 0.75, 0.9, 1.0)
 ## Multiplied with [member old_modulate] while stunned; yellow feel.
 const STUN_VISUAL_TINT: Color = Color(1.0, 1.0, 0.6, 1.0)
 
+## Stun star texture cached for performance.
+const STUN_STAR_TEX := preload("res://assets/gameplay/enemies/Stunned_Star.png")
+
 
 # Exported variables
 @export var enemy_id: String = ""
@@ -262,9 +265,7 @@ func stun(duration: float) -> void:
 			if is_instance_valid(star):
 				fade_tween.tween_property(star, "modulate:a", 0.0, 0.5)
 		
-		# Fade out yellow tint by tweening a temporary value
-		var tint_fade := create_tween()
-		# We use a proxy property or just wait for the stars fade to finish
+		# Wait for the stars fade to finish
 		# to set is_stunned to false, which will refresh the modulate
 		fade_tween.finished.connect(func() -> void:
 			is_stunned = false
@@ -283,10 +284,9 @@ func _apply_idle_modulate() -> void:
 
 func _create_stun_stars() -> void:
 	_remove_stun_stars() # Safety
-	var star_texture := load("res://assets/gameplay/enemies/Stuned_Star.png")
 	for i in range(3):
 		var star := Sprite2D.new()
-		star.texture = star_texture
+		star.texture = STUN_STAR_TEX
 		star.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 		add_child(star)
 		_stun_stars.append(star)

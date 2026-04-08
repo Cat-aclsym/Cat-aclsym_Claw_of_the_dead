@@ -171,7 +171,8 @@ func _start_explosion_sequence() -> void:
 	
 	# 2. Animation de clignotement
 	var blink_tween: Tween = create_tween()
-	blink_tween.set_loops(6) # Clignote 6 fois en 2 secondes
+	var loops: int = int(explosion_delay / 0.3) # 0.3s per loop (0.15 + 0.15)
+	blink_tween.set_loops(loops)
 	blink_tween.tween_property(circle, "modulate:a", 0.8, 0.15)
 	blink_tween.tween_property(circle, "modulate:a", 0.3, 0.15)
 	

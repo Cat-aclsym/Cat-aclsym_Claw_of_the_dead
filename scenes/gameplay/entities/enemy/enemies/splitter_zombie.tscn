@@ -2,7 +2,6 @@
 
 [ext_resource type="PackedScene" uid="uid://tmlcshxut7kv" path="res://scenes/gameplay/entities/enemy/i_enemy.tscn" id="1_rsmel"]
 [ext_resource type="Texture2D" uid="uid://it5nrej70nlf" path="res://assets/gameplay/enemies/Zombie_lOM_Base-Sheet.png" id="2_04mla"]
-[ext_resource type="Script" path="res://scenes/gameplay/entities/enemy/enemies/splitter_zombie.gd" id="3_splitter"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_f06cf"]
 atlas = ExtResource("2_04mla")
@@ -136,7 +135,6 @@ size = Vector2(23, 61.4118)
 size = Vector2(18, 15)
 
 [node name="SplitterZombie" instance=ExtResource("1_rsmel")]
-script = ExtResource("3_splitter")
 enemy_id = "splitter_zombie"
 
 [node name="AnimatedSprite2D" parent="." index="0"]

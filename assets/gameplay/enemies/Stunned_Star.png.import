@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dv6b8dfao6xp0"
-path="res://.godot/imported/Stuned_Star.png-4dddbf76ce418d9e4178beb402f90ee3.ctex"
+path="res://.godot/imported/Stunned_Star.png-32d1a5524cd5565a529f7fb33b4fc5bf.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/gameplay/enemies/Stuned_Star.png"
-dest_files=["res://.godot/imported/Stuned_Star.png-4dddbf76ce418d9e4178beb402f90ee3.ctex"]
+source_file="res://assets/gameplay/enemies/Stunned_Star.png"
+dest_files=["res://.godot/imported/Stunned_Star.png-32d1a5524cd5565a529f7fb33b4fc5bf.ctex"]
 
 [params]
 

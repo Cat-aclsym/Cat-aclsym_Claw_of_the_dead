@@ -21,7 +21,9 @@ func _ready() -> void:
 
 
 # public
-## Applies the poison effect when an enemy enters or stays on the trap.
+## Applies the poison effect when an enemy enters the trap.
+## [br]
+## Note: This trap applies the effect once upon entry.
 ## [param enemy] The enemy to poison.
 func apply_effect(enemy: IEnemy) -> void:
 	if is_instance_valid(enemy):

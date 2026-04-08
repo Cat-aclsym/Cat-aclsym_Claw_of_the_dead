@@ -116,7 +116,10 @@ func _start_activation_sequence() -> void:
 			fade_tween.set_parallel(true)
 			fade_tween.tween_property(circle, "modulate:a", 0.0, 0.8) # Fade out plus long
 			fade_tween.tween_property(self, "modulate:a", 0.0, 0.8)
-			fade_tween.finished.connect(queue_free)
+			fade_tween.finished.connect(func() -> void:
+				is_activating = false
+				queue_free()
+			)
 		)
 	)
 
@@ -139,18 +142,17 @@ func _trigger_stun() -> void:
 	
 	# 2. Stun les ennemis présents
 	var enemies: Array[Node] = get_tree().get_nodes_in_group("enemies")
-	var hit_count: int = 0
 	for node: Node in enemies:
 		if node is IEnemy:
 			var enemy: IEnemy = node as IEnemy
 			var distance: float = global_position.distance_to(enemy.global_position)
 			if distance <= stun_range:
 				enemy.stun(stun_duration)
-				hit_count += 1
 	
 	# 3. On ne cache plus le sprite ici, on attend la fin du stun (géré dans _start_activation_sequence)
 	current_durability = 0
-	is_activating = false # Sequence finished, but durability is 0 so it will wait for cleanup_timer
+	# Sequence finished, but we keep is_activating = true until the final cleanup
+	# to prevent ITrap from deleting the node too early.
 	
 	# Si personne n'a été touché, on pourrait accélérer la disparition, 
 	# mais pour la lisibilité visuelle, on garde le comportement uniforme.
