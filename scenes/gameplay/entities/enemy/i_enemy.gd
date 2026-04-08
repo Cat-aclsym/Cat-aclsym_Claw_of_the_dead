@@ -389,7 +389,7 @@ func _path_finished_state() -> void:
 	if type == EnemyType.BIG_DADDY or type == EnemyType.FAT:
 		ILevel.current_level.health = 0
 	else:
-		ILevel.current_level.health -= ceil(health / 2)
+		ILevel.current_level.health -= 5
 
 
 func _apply_stats_override() -> void:

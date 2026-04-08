@@ -214,5 +214,12 @@ func _update() -> void:
 	coins_rich_text_label.text = tr(default_coins_text) % current_coins
 	health_rich_text_label.text = tr(default_health_text) % (str(ILevel.current_level.health) + "/20")
 	health_texture_progress_bar.value = ILevel.current_level.health
+	
+	# Dynamic scaling via shader
+	var max_health: float = 20.0 # À ajuster si la vie max change dynamiquement
+	var health_ratio: float = float(ILevel.current_level.health) / max_health
+	if health_texture_progress_bar.material is ShaderMaterial:
+		health_texture_progress_bar.material.set_shader_parameter("health_percentage", health_ratio)
+	
 	var current_wave: int = ILevel.current_level.current_wave + 1
 	waves_rich_text_label.text = tr(default_waves_text) % current_wave
