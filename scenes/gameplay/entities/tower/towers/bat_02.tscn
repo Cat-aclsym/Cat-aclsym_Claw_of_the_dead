@@ -102,6 +102,7 @@ bullet_scene = ExtResource("2_pv1tv")
 tower_id = "bat_02"
 
 [node name="Sprite" parent="." index="0"]
+unique_name_in_owner = true
 sprite_frames = SubResource("SpriteFrames_ynjgg")
 animation = &"idle"
 

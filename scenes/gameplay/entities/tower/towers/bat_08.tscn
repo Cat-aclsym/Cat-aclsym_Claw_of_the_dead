@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://bt4o7girvjcue"]
+[gd_scene load_steps=18 format=3 uid="uid://vsaqk62gl8qk"]
 
 [ext_resource type="PackedScene" uid="uid://064cnqw4xlus" path="res://scenes/gameplay/entities/tower/i_tower.tscn" id="1_tower"]
 [ext_resource type="PackedScene" uid="uid://bacjy0ad1e7bl" path="res://scenes/gameplay/entities/bullet/instant_lightning.tscn" id="2_bullet"]
@@ -101,7 +101,8 @@ position = Vector2(0, -16)
 bullet_scene = ExtResource("2_bullet")
 tower_id = "bat_08"
 
-[node name="AnimatedSprite2D" parent="." index="0"]
+[node name="Sprite" parent="." index="0"]
+unique_name_in_owner = true
 self_modulate = Color(1, 0.93, 0.2, 1)
 sprite_frames = SubResource("SpriteFrames_1t44q")
 animation = &"idle"

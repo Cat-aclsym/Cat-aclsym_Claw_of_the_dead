@@ -5,7 +5,6 @@
 [node name="InstantLightning" type="Area2D"]
 script = ExtResource("1_tesla")
 trail_enabled = false
-hit_effect_enabled = false
 
 [node name="LineGlow" type="Line2D" parent="."]
 z_index = 90
