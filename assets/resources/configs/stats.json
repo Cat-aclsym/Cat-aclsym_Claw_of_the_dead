@@ -123,6 +123,17 @@
 			},
 			"name": "Bombe",
 			"scene": "res://scenes/gameplay/entities/trap/traps/bat_05.tscn"
+		},
+		"bat_06": {
+			"base": {
+				"cost": 40,
+				"poison_damage": 5,
+				"poison_ticks": 6,
+				"poison_interval": 1.0,
+				"trap_type": 0
+			},
+			"name": "Piège empoisonné",
+			"scene": "res://scenes/gameplay/entities/trap/traps/bat_06.tscn"
 		}
 	},
 	"upgrades": {

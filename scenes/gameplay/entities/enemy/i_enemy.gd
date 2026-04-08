@@ -52,12 +52,15 @@ const ANIM_WALK_DOWN := "walk_down"
 ## Damage configuration for different damage types
 const DAMAGES: Dictionary = {
 	DamageType.DEFAULT: {"color": Color(1.0, 1.0, 1.0, 1)}, # White for better visibility
-	DamageType.POISON: {"color": Color(0.4, 1.0, 0.4, 1)}, # Brighter green
+	DamageType.POISON: {"color": Color("#744187")}, # Custom purple for poison
 	DamageType.FIRE: {"color": Color(1.0, 0.6, 0.2, 1)},   # Brighter orange/fire
 }
 
 ## Multiplied with [member old_modulate] while slowed; matches slow-trap cyan/teal feel (slightly darker, bluish).
 const SLOW_VISUAL_TINT: Color = Color(0.58, 0.78, 0.86, 1.0)
+
+## Multiplied with [member old_modulate] while poisoned; purple feel.
+const POISON_VISUAL_TINT: Color = Color(0.85, 0.75, 0.9, 1.0)
 
 
 # Exported variables
@@ -137,6 +140,7 @@ func _physics_process(delta: float) -> void:
 			Log.trace(Log.Level.WARN, "{0} unknown EnemyState : {1}".format([name, state]))
 
 	poison_particle.emitting = not active_poison_timers.is_empty()
+	poison_particle.visible = poison_particle.emitting
 
 
 # Public functions
@@ -204,6 +208,7 @@ func add_poison_effect(damage: float, total_execution: int, interval: float) -> 
 	})
 
 	poison_timer.timeout.connect(func(): _on_poison_timer_timeout(poison_timer))
+	_apply_idle_modulate() # Apply violet tint immediately
 
 
 ## Removes one stacked slow visual tint (e.g. leaving a slow zone).
@@ -225,9 +230,12 @@ func _apply_idle_modulate() -> void:
 
 ## Sprite color when not flashing damage; includes slow tint when slow stacks are active.
 func _idle_modulate() -> Color:
+	var tint: Color = old_modulate
 	if _slow_visual_refcount > 0:
-		return old_modulate * SLOW_VISUAL_TINT
-	return old_modulate
+		tint *= SLOW_VISUAL_TINT
+	if not active_poison_timers.is_empty():
+		tint *= POISON_VISUAL_TINT
+	return tint
 
 
 ## Apply a damage effect to the enemy sprite
@@ -439,5 +447,6 @@ func _on_poison_timer_timeout(timer: Timer) -> void:
 			active_poison_timers.remove_at(timer_index)
 			timer.stop()
 			timer.queue_free()
+			_apply_idle_modulate() # Refresh visual tint when a poison timer ends
 		else:
 			timer.start()
