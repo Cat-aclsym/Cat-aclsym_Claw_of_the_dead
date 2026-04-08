@@ -46,6 +46,11 @@ var active_affected_enemies: Dictionary
 ## Dictionary to track remaining effect duration for dead enemies (LIMITED type)
 var remaining_effects: Array[float] = []
 
+## Tile position used by the placement system occupancy checks.
+var tile_pos: Vector2i = Vector2i.ZERO
+
+var _is_registered_in_placement_system: bool = false
+
 ## The area 2D node for the trap to detect enemies
 @onready var area_2d: Area2D = $Area2D
 
@@ -64,6 +69,16 @@ func _ready() -> void:
 	SignalUtil.connects(signals)
 	current_durability = max_durability
 	active_affected_enemies = {}
+	if state == TrapState.ACTIVE:
+		_register_with_cursor()
+
+func _exit_tree() -> void:
+	if not _is_registered_in_placement_system:
+		return
+	var placement_system: BuildPlacement = Global.get("cursor") as BuildPlacement
+	if placement_system:
+		placement_system.remove_invalid_cell(tile_pos)
+	_is_registered_in_placement_system = false
 
 func _process(delta: float) -> void:
 	if Global.paused:
@@ -149,7 +164,14 @@ func get_trap_type() -> String:
 		_:
 			return ""
 
-# private
+## Override these methods in specific trap implementations.
+func apply_effect(_enemy: IEnemy) -> void:
+	pass
+
+func remove_effect(_enemy: IEnemy) -> void:
+	pass
+
+## Private API
 ## Subclasses read extra [code]base[/code] keys (e.g. [code]damage[/code], [code]slow_amount[/code]).
 func _apply_trap_stats_extension(_base: Dictionary) -> void:
 	pass
@@ -182,7 +204,18 @@ func _on_enemy_die(enemy: IEnemy) -> void:
 
 func _update_z_index() -> void:
 	var y_position := int(global_position.y)
-	z_index = (y_position / 2) - 10
+	z_index = int(y_position / 2.0) - 10
+
+func _register_with_cursor() -> void:
+	if not is_inside_tree():
+		return
+	var placement_system: BuildPlacement = Global.get("cursor") as BuildPlacement
+	if not placement_system:
+		return
+	if tile_pos == Vector2i.ZERO and placement_system.tm_ref:
+		tile_pos = placement_system.tm_ref.local_to_map(placement_system.tm_ref.to_local(global_position))
+	placement_system.add_invalid_cell(tile_pos)
+	_is_registered_in_placement_system = true
 
 func _get_enemy_from_overlap(overlap: Node2D) -> IEnemy:
 	# We want traps to trigger based on the zombie "feet" zone only.
@@ -197,7 +230,7 @@ func _get_enemy_from_overlap(overlap: Node2D) -> IEnemy:
 
 	return null
 
-# signal
+## Signal handlers
 func _on_area_2d_body_entered(body: Node2D) -> void:
 	if state != TrapState.ACTIVE:
 		return
@@ -227,10 +260,3 @@ func _on_area_2d_body_exited(body: Node2D) -> void:
 		if enemy in active_affected_enemies:
 			remove_effect(enemy)
 			active_affected_enemies.erase(enemy)
-
-## Override these methods in specific trap implementations
-func apply_effect(_enemy: IEnemy) -> void:
-	pass
-
-func remove_effect(_enemy: IEnemy) -> void:
-	pass
