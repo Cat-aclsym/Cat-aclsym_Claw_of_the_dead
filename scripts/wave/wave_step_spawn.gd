@@ -25,9 +25,7 @@ func exec() -> void:
 	if not enemy.enemy_id.is_empty():
 		ProgressionManager.mark_enemy_seen(enemy.enemy_id)
 
-	enemy.connect("die", level._on_enemy_die)
 	EnemySpawner.spawn_enemy(level.map.paths[spawner_index], enemy)
-	level._on_enemy_spawn() # ! ILevel owns and contains WaveStep class, see it as a friend class
 	_data[WaveStep.COUNT] -= 1
 
 

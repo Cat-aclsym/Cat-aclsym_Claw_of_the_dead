@@ -1,5 +1,20 @@
 {
 	"enemies": {
+		"splitter_zombie": {
+			"extra": {
+				"spawn_count": 4
+			},
+			"max_health": 80,
+			"reward": 20,
+			"scene": "res://scenes/gameplay/entities/enemy/enemies/splitter_zombie.tscn",
+			"speed": 35
+		},
+		"small_zombie": {
+			"max_health": 10,
+			"reward": 5,
+			"scene": "res://scenes/gameplay/entities/enemy/enemies/small_zombie.tscn",
+			"speed": 70
+		},
 		"big_daddy": {
 			"extra": {
 				"attack_cooldown": 5,
