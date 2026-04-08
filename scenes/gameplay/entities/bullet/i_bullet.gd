@@ -37,10 +37,17 @@ var target: Vector2
 var tower_owner: ITower = null
 
 # private
+## Sprite used for the visible projectile.
+@onready var sprite_2d: Sprite2D = $Sprite2D
+## Collision shape used to stop the projectile immediately on impact.
+@onready var collision_shape_2d: CollisionShape2D = $CollisionShape2D
+
 ## Initial damage value to calculate percentage reduction
 var initial_damage: int
 ## Trail particle system
 var _trail_particles: GPUParticles2D
+## Guards against duplicate impact callbacks while overlap/animation is still active.
+var _has_impacted: bool = false
 ## Store the enemy that the bullet has touched to prevent multiple hits
 var _touched_enemy: IEnemy
 
@@ -64,6 +71,33 @@ func _physics_process(delta: float) -> void:
 		return
 
 	position += direction * speed * delta
+
+
+func _disable_projectile() -> void:
+	set_deferred("monitoring", false)
+	set_deferred("monitorable", false)
+	set_physics_process(false)
+	if is_instance_valid(collision_shape_2d):
+		collision_shape_2d.set_deferred("disabled", true)
+	if is_instance_valid(sprite_2d):
+		sprite_2d.visible = false
+	direction = Vector2.ZERO
+	speed = 0
+
+
+func _detach_trail_for_cleanup() -> void:
+	if not trail_enabled or not is_instance_valid(_trail_particles):
+		return
+
+	_trail_particles.emitting = false
+	var trail_particles := _trail_particles
+	trail_particles.reparent(get_tree().get_root())
+
+	var cleanup_timer := get_tree().create_timer(trail_lifetime + 0.1)
+	cleanup_timer.timeout.connect(func():
+		if is_instance_valid(trail_particles):
+			trail_particles.queue_free()
+	)
 
 
 # private
@@ -334,11 +368,16 @@ func _create_hit_effect(hit_position: Vector2) -> void:
 
 
 func _on_body_entered(body: Node2D) -> void:
-	if not body is IEnemy or _touched_enemy != null:
+	if _has_impacted or not body is IEnemy or _touched_enemy != null:
 		return
+
+	_has_impacted = true
 
 	_touched_enemy = body as IEnemy
 	var enemy := body as IEnemy
+
+	# Stop the projectile immediately so it no longer collides or moves after impact.
+	_disable_projectile()
 
 	# Debug log
 	if Global.console:
@@ -352,13 +391,7 @@ func _on_body_entered(body: Node2D) -> void:
 		# Use global coordinates for correct positioning
 		_create_hit_effect(global_position)
 
-	if trail_enabled and is_instance_valid(_trail_particles):
-		# Stop emitting but allow existing particles to finish
-		_trail_particles.emitting = false
-
-		# Setup timer to free the particles after they're done
-		await get_tree().create_timer(trail_lifetime + 0.1).timeout
-		_trail_particles.queue_free()
+	_detach_trail_for_cleanup()
 
 	# Free the bullet
 	queue_free()

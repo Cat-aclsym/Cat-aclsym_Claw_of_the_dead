@@ -1,6 +1,6 @@
-[gd_scene load_steps=7 format=3 uid="uid://bui1syjf6by53"]
+[gd_scene load_steps=7 format=3 uid="uid://d3lrnfp4scjga"]
 
-[ext_resource type="Script" uid="uid://d2dqec120ec7t" path="res://scenes/gameplay/world/map/malus_tile.gd" id="1_malus_tile_script"]
+[ext_resource type="Script" path="res://scenes/gameplay/world/map/malus_tile.gd" id="1_malus_tile_script"]
 [ext_resource type="Texture2D" uid="uid://cemk5chon7st" path="res://assets/environment/tile_effects/malus-ground.png" id="2_malus_ground_texture"]
 [ext_resource type="Texture2D" uid="uid://ea5e52qwryly" path="res://assets/environment/tile_effects/malus-particle.png" id="3_malus_particle_texture"]
 
@@ -36,6 +36,7 @@ color = Color(1, 1, 1, 0.75)
 alpha_curve = SubResource("CurveTexture_moq7u")
 
 [node name="MalusTile" type="Node2D"]
+modulate = Color(1, 1, 1, 0)
 z_index = -16
 z_as_relative = false
 script = ExtResource("1_malus_tile_script")
