@@ -44,7 +44,7 @@ func deactivate_path(path_index: int) -> void:
 	if path_index < 0 or path_index >= paths.size():
 		return
 
-	var path = paths[path_index]
+	var path := paths[path_index]
 	if path in active_paths:
 		active_paths.erase(path)
 		path.visible = false
