@@ -96,6 +96,8 @@ ARMORY.RESET_SPENT_STARS,Reset,Réinitialiser
 ARMORY.RESET_STARS_CONFIRM,Are you sure you want to reset the armory?,Êtes-vous sûr de vouloir réinitialiser l'armurerie ?
 ARMORY.RESET_CONFIRM_OK,OK,Confirmer
 ARMORY.RESET_CANCEL,Cancel,Annuler
+BUILD.TAB.TOWERS,Towers,Tours
+BUILD.TAB.TRAPS,Traps,Pièges
 ARMORY.STAR_COST,%d stars,%d étoiles
 ARMORY.BUY,Buy,Acheter
 ARMORY.BUY_BLOCKED,BLOCKED,BLOQUÉ

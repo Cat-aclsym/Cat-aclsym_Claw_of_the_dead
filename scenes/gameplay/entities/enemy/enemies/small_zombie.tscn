@@ -1,8 +1,8 @@
-[gd_scene load_steps=23 format=3 uid="uid://dkb8u4hyu1qqd"]
+[gd_scene load_steps=23 format=3 uid="uid://bie8k71s0xemc"]
 
 [ext_resource type="PackedScene" uid="uid://tmlcshxut7kv" path="res://scenes/gameplay/entities/enemy/i_enemy.tscn" id="1_rsmel"]
 [ext_resource type="Texture2D" uid="uid://it5nrej70nlf" path="res://assets/gameplay/enemies/Zombie_lOM_Base-Sheet.png" id="2_04mla"]
-[ext_resource type="Script" path="res://scenes/gameplay/entities/enemy/enemies/splitter_zombie.gd" id="3_splitter"]
+[ext_resource type="Script" path="res://scenes/gameplay/entities/enemy/enemies/small_zombie.gd" id="3_small"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_f06cf"]
 atlas = ExtResource("2_04mla")
@@ -132,24 +132,15 @@ animations = [{
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_iaady"]
 size = Vector2(23, 61.4118)
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_ndprq"]
-size = Vector2(18, 15)
-
-[node name="SplitterZombie" instance=ExtResource("1_rsmel")]
-script = ExtResource("3_splitter")
-enemy_id = "splitter_zombie"
+[node name="SmallZombie" instance=ExtResource("1_rsmel")]
+script = ExtResource("3_small")
+enemy_id = "small_zombie"
 
 [node name="AnimatedSprite2D" parent="." index="0"]
-modulate = Color(1, 0.3, 0.3, 1)
+modulate = Color(1, 0.5, 0.5, 1)
+scale = Vector2(0.6, 0.6)
 sprite_frames = SubResource("SpriteFrames_onmu7")
-animation = &"walk_down"
 
 [node name="CollisionShape2D" parent="." index="2"]
+scale = Vector2(0.6, 0.6)
 shape = SubResource("RectangleShape2D_iaady")
-
-[node name="FeetArea" type="Area2D" parent="." index="6"]
-position = Vector2(0, -6)
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="FeetArea" index="0"]
-position = Vector2(-1, 37)
-shape = SubResource("RectangleShape2D_ndprq")
