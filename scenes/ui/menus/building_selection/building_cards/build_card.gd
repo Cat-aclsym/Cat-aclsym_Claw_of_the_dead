@@ -59,6 +59,12 @@ func _ready() -> void:
 
 	SignalUtil.connects(signals)
 
+
+func _exit_tree() -> void:
+	if is_instance_valid(_entity):
+		_entity.free()
+		_entity = null
+
 # public
 ## Updates the card price label and availability.
 ## [br]If the building is locked (armory), shows [code]BUILD.CARD.LOCKED[/code] instead of the price.

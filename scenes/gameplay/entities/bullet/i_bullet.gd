@@ -130,7 +130,7 @@ func _create_fade_gradient() -> Gradient:
 
 func _create_star_particle_texture() -> Texture2D:
 	# Create a 4-pointed star texture for particles
-	var image_size := 8  # Reduced from 16 to 8 for smaller texture
+	var image_size := 8
 	var image := Image.create(image_size, image_size, false, Image.FORMAT_RGBA8)
 
 	# Fill with transparent
@@ -138,7 +138,7 @@ func _create_star_particle_texture() -> Texture2D:
 
 	# Center point
 	var center := Vector2(image_size / 2., image_size / 2.)
-	
+
 	# Draw 4-pointed star
 	var points := PackedVector2Array([
 		# Horizontal points
@@ -163,11 +163,11 @@ func _draw_thick_line(image: Image, from: Vector2, to: Vector2, color: Color, th
 
 	# Add thickness by drawing parallel lines
 	var half_thick := thickness / 2.
-	
+
 	# Calculate the perpendicular vector to the line
 	var dir: Vector2 = (to - from).normalized()
 	var perpendicular := Vector2(-dir.y, dir.x)
-	
+
 	# Draw parallel lines to create thickness
 	for i in range(1, half_thick + 1):
 		var offset := perpendicular * i
@@ -240,7 +240,7 @@ func _create_hit_particle_texture() -> Texture2D:
 	# Draw a filled circle to simulate blood drops
 	var center := Vector2(image_size / 2., image_size / 2.)
 	var radius := image_size / 2. - 1
-	
+
 	for x in range(image_size):
 		for y in range(image_size):
 			var dist := Vector2(x, y).distance_to(center)
@@ -325,17 +325,12 @@ func _create_hit_effect(hit_position: Vector2) -> void:
 		Global.console.push_debug("Hit particles created with count: " + str(hit_particles_count) + " z_index: " + str(hit_particles.z_index))
 
 	# Remove particles after their lifetime
-	var timer := Timer.new()
-	hit_particles.add_child(timer)
-	timer.wait_time = hit_particles_lifetime + 0.5 # Add margin to be sure
-	timer.one_shot = true
-	timer.timeout.connect(func():
-		# Debug log
-		if Global.console:
-			Global.console.push_debug("Removing hit particles")
-		hit_particles.queue_free()
-	)
-	timer.start()
+	await get_tree().create_timer(hit_particles_lifetime + 0.1).timeout
+
+	# Debug log
+	if Global.console:
+		Global.console.push_debug("Removing hit particles")
+	hit_particles.queue_free()
 
 
 func _on_body_entered(body: Node2D) -> void:
@@ -361,17 +356,9 @@ func _on_body_entered(body: Node2D) -> void:
 		# Stop emitting but allow existing particles to finish
 		_trail_particles.emitting = false
 
-		# Need to reparent to ensure particles finish their lifetime
-		remove_child(_trail_particles)
-		get_parent().add_child(_trail_particles)
-
 		# Setup timer to free the particles after they're done
-		var timer = Timer.new()
-		_trail_particles.add_child(timer)
-		timer.wait_time = trail_lifetime + 0.1
-		timer.one_shot = true
-		timer.timeout.connect(func(): _trail_particles.queue_free())
-		timer.start()
+		await get_tree().create_timer(trail_lifetime + 0.1).timeout
+		_trail_particles.queue_free()
 
 	# Free the bullet
 	queue_free()
