@@ -96,10 +96,10 @@ radius = 314.23
 radius = 16.0
 height = 36.0
 
-[node name="Bat07" instance=ExtResource("1_tower")]
+[node name="Bat08" instance=ExtResource("1_tower")]
 position = Vector2(0, -16)
 bullet_scene = ExtResource("2_bullet")
-tower_id = "bat_07"
+tower_id = "bat_08"
 
 [node name="AnimatedSprite2D" parent="." index="0"]
 self_modulate = Color(1, 0.93, 0.2, 1)

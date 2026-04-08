@@ -1,7 +1,7 @@
 [gd_scene load_steps=9 format=3]
 
 [ext_resource type="Script" path="res://scenes/ui/menus/building_selection/building_cards/build_card.gd" id="1_script"]
-[ext_resource type="PackedScene" path="res://scenes/gameplay/entities/tower/towers/bat_07.tscn" id="2_entity"]
+[ext_resource type="PackedScene" path="res://scenes/gameplay/entities/tower/towers/bat_08.tscn" id="2_entity"]
 [ext_resource type="Texture2D" path="res://assets/ui/building_cards/Construction Tower Title.svg" id="3_title"]
 [ext_resource type="Theme" path="res://assets/resources/themes/generic.tres" id="4_theme"]
 [ext_resource type="Texture2D" path="res://assets/ui/building_cards/Green Frame.svg" id="5_frame"]
@@ -13,7 +13,7 @@
 atlas = ExtResource("7_preview")
 region = Rect2(0, -2, 64, 64)
 
-[node name="BuildCardBat07" type="Control"]
+[node name="BuildCardBat08" type="Control"]
 z_index = 1
 layout_mode = 3
 anchors_preset = 15

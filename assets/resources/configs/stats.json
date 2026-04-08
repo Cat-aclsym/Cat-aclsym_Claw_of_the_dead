@@ -91,7 +91,7 @@
 				"bat_02_02"
 			]
 		},
-		"bat_07": {
+		"bat_08": {
 			"base": {
 				"bullet_stats": {
 					"aoe_duration": 0,
@@ -116,16 +116,16 @@
 					"speed": 0
 				},
 				"cost": 25,
-				"fire_rate": 2.0,
+				"fire_rate": 2,
 				"projectile_count": 1,
 				"shoot_range": 120,
 				"spread_angle": 0
 			},
 			"level": 1,
 			"name": "Tour Tesla",
-			"scene": "res://scenes/gameplay/entities/tower/towers/bat_07.tscn",
+			"scene": "res://scenes/gameplay/entities/tower/towers/bat_08.tscn",
 			"upgrades": [
-				"bat_07_02"
+				"bat_08_02"
 			]
 		}
 	},
@@ -520,7 +520,7 @@
 				"spread_angle": 0
 			}
 		},
-		"bat_07_02": {
+		"bat_08_02": {
 			"bullet_stats": {
 				"aoe_duration": 0,
 				"aoe_range": 0,
@@ -549,11 +549,11 @@
 				"tower_stat": true
 			},
 			"next": [
-				"bat_07_03"
+				"bat_08_03"
 			],
 			"price": 0,
 			"tower_stats": {
-				"fire_rate": 0.0,
+				"fire_rate": 0,
 				"level": 1,
 				"prefer_non_electrified_targets": false,
 				"projectile_count": 0,
@@ -561,7 +561,7 @@
 				"spread_angle": 0
 			}
 		},
-		"bat_07_03": {
+		"bat_08_03": {
 			"bullet_stats": {
 				"aoe_duration": 0,
 				"aoe_range": 0,
@@ -590,12 +590,12 @@
 				"tower_stat": true
 			},
 			"next": [
-				"bat_07_a_04",
-				"bat_07_b_04"
+				"bat_08_a_04",
+				"bat_08_b_04"
 			],
 			"price": 0,
 			"tower_stats": {
-				"fire_rate": 0.0,
+				"fire_rate": 0,
 				"level": 1,
 				"prefer_non_electrified_targets": false,
 				"projectile_count": 0,
@@ -603,7 +603,7 @@
 				"spread_angle": 0
 			}
 		},
-		"bat_07_a_04": {
+		"bat_08_a_04": {
 			"bullet_stats": {
 				"aoe_duration": 0,
 				"aoe_range": 0,
@@ -632,11 +632,11 @@
 				"tower_stat": true
 			},
 			"next": [
-				"bat_07_a_05"
+				"bat_08_a_05"
 			],
 			"price": 0,
 			"tower_stats": {
-				"fire_rate": 0.0,
+				"fire_rate": 0,
 				"level": 1,
 				"prefer_non_electrified_targets": false,
 				"projectile_count": 0,
@@ -644,7 +644,7 @@
 				"spread_angle": 0
 			}
 		},
-		"bat_07_a_05": {
+		"bat_08_a_05": {
 			"bullet_stats": {
 				"aoe_duration": 0,
 				"aoe_range": 0,
@@ -675,7 +675,7 @@
 			"next": [],
 			"price": 0,
 			"tower_stats": {
-				"fire_rate": 0.0,
+				"fire_rate": 0,
 				"level": 1,
 				"prefer_non_electrified_targets": false,
 				"projectile_count": 0,
@@ -683,7 +683,7 @@
 				"spread_angle": 0
 			}
 		},
-		"bat_07_b_04": {
+		"bat_08_b_04": {
 			"bullet_stats": {
 				"aoe_duration": 0,
 				"aoe_range": 0,
@@ -712,7 +712,7 @@
 				"tower_stat": true
 			},
 			"next": [
-				"bat_07_b_05"
+				"bat_08_b_05"
 			],
 			"price": 0,
 			"tower_stats": {
@@ -724,7 +724,7 @@
 				"spread_angle": 0
 			}
 		},
-		"bat_07_b_05": {
+		"bat_08_b_05": {
 			"bullet_stats": {
 				"aoe_duration": 0,
 				"aoe_range": 0,
@@ -736,10 +736,10 @@
 				"damage": 0,
 				"damage_multiplier": 0,
 				"dot_damage": 0,
-				"electrify_duration": 1.0,
+				"electrify_duration": 1,
 				"electrify_slow_amount": 0.07,
 				"electrify_tick_damage": 2,
-				"electrify_tick_interval": 0.0,
+				"electrify_tick_interval": 0,
 				"lightning_blue_tint_strength": 0,
 				"lightning_width_scale": 0,
 				"pierce_count": 0,
