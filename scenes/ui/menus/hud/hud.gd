@@ -220,10 +220,11 @@ func _trigger_health_damage_effects() -> void:
 	if _ghost_tween:
 		_ghost_tween.kill()
 	
-	# IMPORTANT: Ensure the ghost bar starts from its current value (the previous health)
-	# and then animates down to the new current health.
+	# IMPORTANT: We don't reset the ghost bar's value to _last_health here.
+	# If a second hit happens, the ghost bar stays where it is (at the higher value)
+	# and we just restart the timer and update the target destination.
 	_ghost_tween = create_tween()
-	_ghost_tween.tween_interval(0.4) # Slightly longer delay for better readability
+	_ghost_tween.tween_interval(0.4) # Reset the delay on every hit
 	_ghost_tween.tween_property(health_ghost_progress_bar, "value", ILevel.current_level.health, 1.2).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 
 	# Flash effect via shader
@@ -260,8 +261,8 @@ func _update() -> void:
 
 	var current_health = ILevel.current_level.health
 	if current_health < _last_health:
-		# DAMAGE: Ensure the ghost bar is at the PREVIOUS health before updating the main bar
-		health_ghost_progress_bar.value = _last_health
+		# DAMAGE: Do NOT reset ghost bar value here, let it stay at its current (higher) value
+		# so it represents the health BEFORE the sequence of hits started.
 		_trigger_health_damage_effects()
 	elif current_health > _last_health:
 		# HEAL: Update ghost bar instantly
