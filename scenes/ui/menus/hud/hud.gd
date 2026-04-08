@@ -214,6 +214,10 @@ func _spawn_coin_explosion(start_pos: Vector2) -> void:
 
 
 func _trigger_health_damage_effects() -> void:
+	# Camera shake
+	if Global.camera:
+		Global.camera.shake_camera_with_strength(15.0)
+	
 	# Flash effect via shader
 	if health_texture_progress_bar.material is ShaderMaterial:
 		var flash_tween = create_tween()
