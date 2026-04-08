@@ -1,10 +1,11 @@
 [gd_scene load_steps=3 format=3 uid="uid://db5fl3r1gwvq6"]
 
 [ext_resource type="PackedScene" uid="uid://bnsejcujkvcqg" path="res://scenes/gameplay/world/level/i_level.tscn" id="1_02q6s"]
-[ext_resource type="PackedScene" uid="uid://eo3o6kohdiy2" path="res://scenes/gameplay/world/map/maps/map_coink.tscn" id="2_n10g7"]
+[ext_resource type="PackedScene" uid="uid://cta5yotths5ck" path="res://scenes/gameplay/world/map/maps/arc.02/map.07.tscn" id="2_cay61"]
 
 [node name="Level07" instance=ExtResource("1_02q6s")]
 level_id = "lev.07"
 level_name = "7. Titre"
+level_description = "Pouet pouet"
 arc_id = "arc.02"
-map_scene = ExtResource("2_n10g7")
+map_scene = ExtResource("2_cay61")
