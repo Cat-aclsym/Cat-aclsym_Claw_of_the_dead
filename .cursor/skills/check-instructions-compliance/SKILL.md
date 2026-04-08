@@ -43,8 +43,14 @@ Use this on every changed `.gd` file unless the rule clearly does not apply (e.g
 | Language | Code, comments, and literal strings must be written in English |
 | Translation | Use `tr()` for every player-facing or otherwise user-visible string |
 | Typing | Explicit types where required by project style; use `Callable` / `Signal` appropriately |
+| Containers | Prefer supported Godot 4.4 typed containers like `Dictionary[String, Array]`; avoid nested generic annotations such as `Dictionary[String, Array[String]]` |
 | Structure | Prefer `class_name` for types; `@onready` or `%UniqueName`; `assert()` for mandatory nodes in `_ready` where applicable |
 | Scenes | Prefer authored scenes and nodes over generating unnecessary dynamic nodes in GDScript; only create nodes at runtime when required |
+| Loading | Prefer `const preload()` for static resources; use `load()` only when the path must be resolved at runtime |
+| Exports | Prefer detailed export annotations such as `@export_range`, `@export_flags`, and `@export_subgroup` when appropriate |
+| Collections | Prefer array helpers like `filter()` and `map()` over manual loops when they keep the code clearer |
+| Validity | Prefer `is_instance_valid()` before using node and object references that may have been freed |
+| Assets | Ignore `addons/` unless the task explicitly targets a plugin or vendored dependency |
 | Order | Member order: header → class_name/extends → signals/enums → constants → exports → public vars → onready → built-ins → public funcs → private funcs (alphabetical within sections as per project convention) |
 | Architecture | Signals up, methods down; prefer `await get_tree().process_frame` or `create_timer` patterns as in rules |
 | Visuals | Use nearest texture filtering for pixel art assets when relevant |
