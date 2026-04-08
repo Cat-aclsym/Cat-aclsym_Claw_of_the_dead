@@ -173,6 +173,7 @@ func _on_state_wave(_args = []) -> bool:
 
 func _on_level_end(_args = []) -> void:
 	clock.stop()
+	Global.paused = true
 
 	end_time = Time.get_unix_time_from_system()
 	var end_game_menu_instance: EndGame = ScenesLoader.END_GAME_MENU.instantiate()

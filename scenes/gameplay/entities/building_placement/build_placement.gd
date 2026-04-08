@@ -87,6 +87,9 @@ func _ready() -> void:
 		SignalUtil.connects(level_signals)
 
 func _unhandled_input(event: InputEvent) -> void:
+	if Global.paused:
+		return
+
 	if _state == CursorState.BUILD:
 		_state_build_input(event)
 
