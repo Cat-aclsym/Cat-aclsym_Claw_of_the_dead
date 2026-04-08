@@ -28,6 +28,7 @@ const BUILD_SELECTION_MENU: PackedScene = preload("res://scenes/ui/menus/buildin
 @onready var skip_time_scale_button: TextureButton = $SkipMarginContainer/SkipButton
 @onready var build_selection_button: TextureButton = $BuildSelectionMarginContainer/BuildSelectionButton
 @onready var waves_rich_text_label: Label = %HUDVBoxContainer/CoinsWavesMarginContainer/CoinsWavesHBoxContainer/WavesTextureRect/MarginContainer/WavesLabel
+@onready var low_health_indicator: LowHealthIndicator = $LowHealthIndicator
 
 @onready var default_coins_text: String = coins_rich_text_label.text
 @onready var default_health_text: String = health_rich_text_label.text
@@ -251,6 +252,9 @@ func _update() -> void:
 	var health_ratio: float = float(ILevel.current_level.health) / max_health
 	if health_texture_progress_bar.material is ShaderMaterial:
 		health_texture_progress_bar.material.set_shader_parameter("health_percentage", health_ratio)
+	
+	if low_health_indicator:
+		low_health_indicator.update_health(health_ratio)
 	
 	var current_wave: int = ILevel.current_level.current_wave + 1
 	waves_rich_text_label.text = tr(default_waves_text) % current_wave
