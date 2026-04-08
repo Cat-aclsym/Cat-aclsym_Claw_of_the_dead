@@ -1,6 +1,9 @@
 {
 	"enemies": {
 		"splitter_zombie": {
+			"extra": {
+				"spawn_count": 4
+			},
 			"max_health": 80,
 			"reward": 20,
 			"scene": "res://scenes/gameplay/entities/enemy/enemies/splitter_zombie.tscn",

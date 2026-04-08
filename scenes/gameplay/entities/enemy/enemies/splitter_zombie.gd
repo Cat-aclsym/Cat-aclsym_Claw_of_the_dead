@@ -6,11 +6,11 @@ extends IEnemy
 ## The scene of the small zombie to spawn upon death
 const SMALL_ZOMBIE_SCENE = preload("res://scenes/gameplay/entities/enemy/enemies/small_zombie.tscn")
 
-## Number of small zombies to spawn
-const SPAWN_COUNT: int = 4
-
 ## Visual tint for the splitter zombie
 const SPLITTER_TINT: Color = Color(1.0, 0.3, 0.3, 1.0)
+
+## Number of small zombies to spawn
+var spawn_count: int
 
 
 func _ready() -> void:
@@ -31,7 +31,7 @@ func _spawn_small_zombies() -> void:
 		
 	var current_progress = path_follow.get_progress()
 	
-	for i in range(SPAWN_COUNT):
+	for i in range(spawn_count):
 		var small_zombie: IEnemy = SMALL_ZOMBIE_SCENE.instantiate()
 		
 		# Add a bit of randomness to the progress to avoid overlapping
@@ -46,4 +46,15 @@ func _spawn_small_zombies() -> void:
 			# Add vertical offset randomness too
 			small_zombie.path_follow.v_offset += randf_range(-5.0, 5.0)
 	
-	Log.trace(Log.Level.DEBUG, "SplitterZombie spawned %d small zombies at progress %f" % [SPAWN_COUNT, current_progress])
+	# Log.trace(Log.Level.DEBUG, "SplitterZombie spawned %d small zombies at progress %f" % [spawn_count, current_progress])
+
+
+func _apply_stats_override() -> void:
+	super._apply_stats_override()
+	if enemy_id.is_empty() or stats_db == null:
+		return
+	var data: Dictionary = stats_db.get_enemy(enemy_id)
+	var extra: Dictionary = data.get("extra", {})
+	var count = extra.get("spawn_count", null)
+	if count != null:
+		spawn_count = int(count)
