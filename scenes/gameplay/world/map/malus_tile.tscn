@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://d3lrnfp4scjga"]
+[gd_scene load_steps=7 format=3 uid="uid://qutry73x6wpm"]
 
 [ext_resource type="Script" path="res://scenes/gameplay/world/map/malus_tile.gd" id="1_malus_tile_script"]
 [ext_resource type="Texture2D" uid="uid://cemk5chon7st" path="res://assets/environment/tile_effects/malus-ground.png" id="2_malus_ground_texture"]

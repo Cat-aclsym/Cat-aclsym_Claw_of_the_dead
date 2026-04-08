@@ -188,22 +188,6 @@ func _on_body_entered(body: Node2D) -> void:
 
 	# Create appropriate effect depending on whether it's the last enemy or not
 	if piercing <= 0:
-		# Last enemy: full blood effect (inherited from IBullet)
-		if hit_effect_enabled:
-			_create_hit_effect(global_position)
-
-		# Handle trail like in IBullet
-		if trail_enabled and is_instance_valid(_trail_particles):
-			_trail_particles.emitting = false
-			var trail_particles := _trail_particles
-			trail_particles.reparent(get_tree().get_root())
-
-			var cleanup_timer := get_tree().create_timer(trail_lifetime + 0.1)
-			cleanup_timer.timeout.connect(func():
-				if is_instance_valid(trail_particles):
-					trail_particles.queue_free()
-			)
-
 		# Destroy the arrow
 		queue_free()
 	else:
