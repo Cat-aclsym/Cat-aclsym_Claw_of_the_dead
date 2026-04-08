@@ -42,16 +42,41 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/margin_left = 4
-theme_override_constants/margin_top = 15
+theme_override_constants/margin_top = 0
 theme_override_constants/margin_bottom = 4
 
-[node name="BackgroundTextureRect" type="TextureRect" parent="MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
 layout_mode = 2
+theme_override_constants/separation = -5
+
+[node name="TabsHBox" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_constants/separation = 10
+alignment = 1
+
+[node name="TowerTabButton" type="Button" parent="MarginContainer/VBoxContainer/TabsHBox"]
+layout_mode = 2
+size_flags_vertical = 4
+focus_mode = 0
+theme_override_font_sizes/font_size = 14
+text = "BUILD.TAB.TOWERS"
+
+[node name="TrapTabButton" type="Button" parent="MarginContainer/VBoxContainer/TabsHBox"]
+layout_mode = 2
+size_flags_vertical = 4
+focus_mode = 0
+theme_override_font_sizes/font_size = 14
+text = "BUILD.TAB.TRAPS"
+
+[node name="BackgroundTextureRect" type="TextureRect" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
 texture = ExtResource("2_tcv0b")
 expand_mode = 1
 flip_h = true
 
-[node name="BuildListMarginContainer" type="MarginContainer" parent="MarginContainer/BackgroundTextureRect"]
+[node name="BuildListMarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/BackgroundTextureRect"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -64,40 +89,40 @@ theme_override_constants/margin_top = 7
 theme_override_constants/margin_right = 32
 theme_override_constants/margin_bottom = 7
 
-[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/BackgroundTextureRect/BuildListMarginContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/BackgroundTextureRect/BuildListMarginContainer"]
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 3
 theme_override_constants/separation = 150
 alignment = 1
 
-[node name="Bat01AspectRatioContainer" type="AspectRatioContainer" parent="MarginContainer/BackgroundTextureRect/BuildListMarginContainer/HBoxContainer"]
+[node name="Bat01AspectRatioContainer" type="AspectRatioContainer" parent="MarginContainer/VBoxContainer/BackgroundTextureRect/BuildListMarginContainer/HBoxContainer"]
 layout_mode = 2
 stretch_mode = 1
 
-[node name="BuildCardBat01" parent="MarginContainer/BackgroundTextureRect/BuildListMarginContainer/HBoxContainer/Bat01AspectRatioContainer" instance=ExtResource("3_60iow")]
+[node name="BuildCardBat01" parent="MarginContainer/VBoxContainer/BackgroundTextureRect/BuildListMarginContainer/HBoxContainer/Bat01AspectRatioContainer" instance=ExtResource("3_60iow")]
 layout_mode = 2
 entity = ExtResource("7_bat01")
 
-[node name="Bat02AspectRatioContainer" type="AspectRatioContainer" parent="MarginContainer/BackgroundTextureRect/BuildListMarginContainer/HBoxContainer"]
+[node name="Bat02AspectRatioContainer" type="AspectRatioContainer" parent="MarginContainer/VBoxContainer/BackgroundTextureRect/BuildListMarginContainer/HBoxContainer"]
 layout_mode = 2
 stretch_mode = 1
 
-[node name="BuildCardBat02" parent="MarginContainer/BackgroundTextureRect/BuildListMarginContainer/HBoxContainer/Bat02AspectRatioContainer" instance=ExtResource("5_aw86t")]
+[node name="BuildCardBat02" parent="MarginContainer/VBoxContainer/BackgroundTextureRect/BuildListMarginContainer/HBoxContainer/Bat02AspectRatioContainer" instance=ExtResource("5_aw86t")]
 layout_mode = 2
 
-[node name="Bat03AspectRatioContainer" type="AspectRatioContainer" parent="MarginContainer/BackgroundTextureRect/BuildListMarginContainer/HBoxContainer"]
-layout_mode = 2
-stretch_mode = 1
-
-[node name="BuildCardBat03" parent="MarginContainer/BackgroundTextureRect/BuildListMarginContainer/HBoxContainer/Bat03AspectRatioContainer" instance=ExtResource("8_bat_03_card")]
-layout_mode = 2
-
-[node name="Bat04AspectRatioContainer" type="AspectRatioContainer" parent="MarginContainer/BackgroundTextureRect/BuildListMarginContainer/HBoxContainer"]
+[node name="Bat03AspectRatioContainer" type="AspectRatioContainer" parent="MarginContainer/VBoxContainer/BackgroundTextureRect/BuildListMarginContainer/HBoxContainer"]
 layout_mode = 2
 stretch_mode = 1
 
-[node name="BuildCardBat04" parent="MarginContainer/BackgroundTextureRect/BuildListMarginContainer/HBoxContainer/Bat04AspectRatioContainer" instance=ExtResource("11_bat_04_card")]
+[node name="BuildCardBat03" parent="MarginContainer/VBoxContainer/BackgroundTextureRect/BuildListMarginContainer/HBoxContainer/Bat03AspectRatioContainer" instance=ExtResource("8_bat_03_card")]
+layout_mode = 2
+
+[node name="Bat04AspectRatioContainer" type="AspectRatioContainer" parent="MarginContainer/VBoxContainer/BackgroundTextureRect/BuildListMarginContainer/HBoxContainer"]
+layout_mode = 2
+stretch_mode = 1
+
+[node name="BuildCardBat04" parent="MarginContainer/VBoxContainer/BackgroundTextureRect/BuildListMarginContainer/HBoxContainer/Bat04AspectRatioContainer" instance=ExtResource("11_bat_04_card")]
 layout_mode = 2
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
