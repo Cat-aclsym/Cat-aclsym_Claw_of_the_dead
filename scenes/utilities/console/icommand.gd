@@ -1,8 +1,8 @@
-## © [2024] A7 Studio. All rights reserved. Trademark.
+## © [2026] A7 Studio. All rights reserved. Trademark.
 ##
 ## Base interface for console commands.
 ## Provides the foundation for creating custom console commands with argument validation and execution handling.
-class_name ICommand extends Node
+class_name ICommand extends RefCounted
 
 const OK: int = 0
 const ERR_INVALID_ARGS_TYPES: int = -1
