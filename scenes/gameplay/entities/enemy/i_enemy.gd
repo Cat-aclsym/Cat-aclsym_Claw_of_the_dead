@@ -248,6 +248,7 @@ func stun(duration: float) -> void:
 		return
 	
 	is_stunned = true
+	sprite.pause() # Freeze the walking animation
 	_create_stun_stars()
 	_apply_idle_modulate() # Apply yellow tint immediately
 	_damage_effect(DAMAGES[DamageType.STUN]["color"])
@@ -267,6 +268,7 @@ func stun(duration: float) -> void:
 		# to set is_stunned to false, which will refresh the modulate
 		fade_tween.finished.connect(func() -> void:
 			is_stunned = false
+			sprite.play() # Resume the walking animation
 			_remove_stun_stars()
 			sprite.offset = Vector2.ZERO
 			_apply_idle_modulate()
