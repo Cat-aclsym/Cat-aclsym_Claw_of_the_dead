@@ -24,7 +24,7 @@ extends Control
 	{SignalUtil.WHO: play_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_play_button_pressed}
 ]
 
-# core
+	# core
 func _ready() -> void:
 	assert(encyclopedia_button != null, "encyclopedia_button node not found")
 	assert(encyclopedia_exclamation != null, "encyclopedia_exclamation node not found")
@@ -32,6 +32,25 @@ func _ready() -> void:
 	assert(restart_button != null, "restart_button node not found")
 	assert(play_button != null, "play_button node not found")
 	SignalUtil.connects(signals)
+	
+	# Force process mode to Always so tweens run even when tree is paused
+	process_mode = Node.PROCESS_MODE_ALWAYS
+	
+	# Fix for button animations in pause menu
+	for btn in [music_button, sound_button, encyclopedia_button, home_button, play_button, restart_button]:
+		if btn:
+			btn.process_mode = Node.PROCESS_MODE_ALWAYS
+			btn.mouse_filter = Control.MOUSE_FILTER_STOP
+			ButtonEffects.apply(btn)
+
+	# Wait for a frame to ensure sizes are calculated for pivot centering
+	await get_tree().process_frame
+	
+	# Re-apply pivot after frame wait to be sure
+	for btn in [music_button, sound_button, encyclopedia_button, home_button, play_button, restart_button]:
+		if btn: btn.pivot_offset = btn.size / 2
+	
+	# Update notification after everything is set up
 	_update_encyclopedia_notification()
 
 # private
@@ -49,6 +68,7 @@ func _on_encyclopedia_button_pressed() -> void:
 
 ## Returns to the main menu and cleans up the current level.
 func _on_home_button_pressed() -> void:
+	get_tree().paused = false
 	get_tree().change_scene_to_file("res://scenes/main.tscn")
 	ILevel.current_level.queue_free()
 	Global.paused = false
@@ -56,6 +76,7 @@ func _on_home_button_pressed() -> void:
 ## Restarts the current level with fresh state.
 ## [br]Creates a new instance of the current level and initializes it.
 func _on_restart_button_pressed() -> void:
+	get_tree().paused = false
 	var current_level := ILevel.current_level
 	var level_scene: PackedScene = load(current_level.get_scene_file_path())
 
@@ -78,6 +99,8 @@ func _update_encyclopedia_notification() -> void:
 # signals
 ## Resumes the game by unpausing and closing the menu.
 func _on_play_button_pressed() -> void:
+	get_tree().paused = false
+	Global.paused = false
 	if ILevel.current_level != null:
 		ILevel.current_level.resume_from_pause()
 	queue_free()
