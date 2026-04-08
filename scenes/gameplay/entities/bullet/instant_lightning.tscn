@@ -9,7 +9,8 @@ hit_effect_enabled = false
 
 [node name="LineGlow" type="Line2D" parent="."]
 z_index = 90
-width = 7.0
+points = PackedVector2Array(599, 205)
+width = 5.0
 default_color = Color(0.913471, 1, 0.549342, 0.7)
 joint_mode = 1
 begin_cap_mode = 1
@@ -18,7 +19,7 @@ antialiased = true
 
 [node name="LineCore" type="Line2D" parent="."]
 z_index = 91
-width = 3.0
+width = 1.5
 default_color = Color(1, 1, 0.6, 1)
 joint_mode = 1
 begin_cap_mode = 1

@@ -98,6 +98,12 @@ var _damage_tween: Tween
 
 ## Stacked slow visuals (traps, debuffs); each source must pair pop with push.
 var _slow_visual_refcount: int = 0
+var _electrified: bool = false
+var _electrify_speed_factor: float = 1.0
+var _electrify_remaining: float = 0.0
+var _electrify_tick_damage: float = 0.0
+var _electrify_tick_interval: float = 0.0
+var _electrify_tick_remaining: float = 0.0
 
 
 # Built-in functions
@@ -124,6 +130,7 @@ func _physics_process(delta: float) -> void:
 	if is_already_dead or Global.paused:
 		return
 
+	_process_electrify(delta)
 	_update_z_index()
 
 	match state:
@@ -217,8 +224,65 @@ func push_slow_visual() -> void:
 	_slow_visual_refcount += 1
 	_apply_idle_modulate()
 
+## Returns true while enemy is under electrified effect.
+func is_electrified() -> bool:
+	return _electrified
+
+## Applies an electrified debuff: temporary slow + periodic electric damage.
+func apply_electrify_effect(duration: float, slow_amount: float, tick_damage: float, tick_interval: float, _source: Variant = null) -> void:
+	if duration <= 0.0:
+		return
+
+	var normalized_slow: float = clampf(slow_amount, 0.0, 0.95)
+	var normalized_interval: float = maxf(0.05, tick_interval)
+
+	if not _electrified:
+		_electrified = true
+		_electrify_speed_factor = (1.0 - normalized_slow)
+		speed *= _electrify_speed_factor
+		push_slow_visual()
+	else:
+		# Keep the strongest slow when effect is refreshed.
+		var refreshed_factor: float = (1.0 - normalized_slow)
+		if refreshed_factor < _electrify_speed_factor:
+			speed *= refreshed_factor / _electrify_speed_factor
+			_electrify_speed_factor = refreshed_factor
+
+	_electrify_remaining = maxf(_electrify_remaining, duration)
+	_electrify_tick_damage = maxf(_electrify_tick_damage, tick_damage)
+	_electrify_tick_interval = normalized_interval
+	_electrify_tick_remaining = minf(_electrify_tick_remaining if _electrify_tick_remaining > 0.0 else normalized_interval, normalized_interval)
+
 
 # Private functions
+func _process_electrify(delta: float) -> void:
+	if not _electrified:
+		return
+
+	_electrify_remaining -= delta
+	_electrify_tick_remaining -= delta
+
+	if _electrify_tick_remaining <= 0.0 and _electrify_tick_damage > 0.0:
+		take_damage(_electrify_tick_damage, DamageType.DEFAULT)
+		_electrify_tick_remaining = _electrify_tick_interval
+
+	if _electrify_remaining <= 0.0:
+		_clear_electrify_effect()
+
+func _clear_electrify_effect() -> void:
+	if not _electrified:
+		return
+
+	_electrified = false
+	if _electrify_speed_factor > 0.0:
+		speed /= _electrify_speed_factor
+	_electrify_speed_factor = 1.0
+	_electrify_remaining = 0.0
+	_electrify_tick_damage = 0.0
+	_electrify_tick_interval = 0.0
+	_electrify_tick_remaining = 0.0
+	pop_slow_visual()
+
 func _apply_idle_modulate() -> void:
 	sprite.modulate = _idle_modulate()
 
