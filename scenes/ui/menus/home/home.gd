@@ -43,6 +43,7 @@ func _ready() -> void:
 	SignalUtil.connects(signals)
 	_update_encyclopedia_notification()
 	
+	ButtonEffects.apply(armory_button)
 	ButtonEffects.apply(encyclopedia_button)
 	ButtonEffects.apply(play_button)
 	ButtonEffects.apply(settings_button)
