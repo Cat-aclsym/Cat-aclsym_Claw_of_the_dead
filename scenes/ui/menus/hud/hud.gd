@@ -42,6 +42,7 @@ const BUILD_SELECTION_MENU: PackedScene = preload("res://scenes/ui/menus/buildin
 
 var _is_ready: bool = false
 var _last_coins: int = 0
+var _last_health: int = 0
 
 # Built-in functions
 func _ready() -> void:
@@ -58,6 +59,11 @@ func _ready() -> void:
 
 	SignalUtil.connects(signals)
 	_apply_time_scale(DEFAULT_TIME_SCALE, false)
+	
+	ButtonEffects.apply(challenges_button)
+	ButtonEffects.apply(pause_button)
+	ButtonEffects.apply(skip_time_scale_button)
+	ButtonEffects.apply(build_selection_button)
 
 
 func _process(_delta: float) -> void:
@@ -76,6 +82,7 @@ func load_ui() -> void:
 	_is_ready = true
 	visible = true
 	_last_coins = ILevel.current_level.coins
+	_last_health = ILevel.current_level.health
 	SignalUtil.connects([{SignalUtil.WHO: ILevel.current_level, SignalUtil.WHAT: "stats_updated", SignalUtil.TO: _update}])
 	_update()
 
@@ -109,6 +116,9 @@ func _on_challenges_button_pressed() -> void:
 
 func _on_pause_button_pressed() -> void:
 	if not Global.paused and ILevel.current_level != null:
+		# Use Godot's built-in pause system
+		get_tree().paused = true
+		Global.paused = true
 		ILevel.current_level.pause()
 		var pause_menu_instance: Pause = PAUSE_MENU.instantiate()
 		Global.ui.add_child(pause_menu_instance)
@@ -202,6 +212,22 @@ func _spawn_coin_explosion(start_pos: Vector2) -> void:
 		coin_tween.finished.connect(coin.queue_free)
 
 
+func _trigger_health_damage_effects() -> void:
+	# Flash effect via shader
+	if health_texture_progress_bar.material is ShaderMaterial:
+		var flash_tween = create_tween()
+		flash_tween.tween_property(health_texture_progress_bar.material, "shader_parameter/flash_intensity", 1.0, 0.05)
+		flash_tween.tween_property(health_texture_progress_bar.material, "shader_parameter/flash_intensity", 0.0, 0.15)
+	
+	# Shake effect
+	var original_pos = health_texture_progress_bar.position
+	var shake_tween = create_tween()
+	for i in range(4):
+		var offset = Vector2(randf_range(-5, 5), randf_range(-3, 3))
+		shake_tween.tween_property(health_texture_progress_bar, "position", original_pos + offset, 0.04)
+	shake_tween.tween_property(health_texture_progress_bar, "position", original_pos, 0.04)
+
+
 func _update() -> void:
 	if !_is_ready:
 		return
@@ -211,8 +237,20 @@ func _update() -> void:
 		_trigger_coin_effects(current_coins - _last_coins)
 	_last_coins = current_coins
 
+	var current_health = ILevel.current_level.health
+	if current_health < _last_health:
+		_trigger_health_damage_effects()
+	_last_health = current_health
+
 	coins_rich_text_label.text = tr(default_coins_text) % current_coins
 	health_rich_text_label.text = tr(default_health_text) % (str(ILevel.current_level.health) + "/20")
 	health_texture_progress_bar.value = ILevel.current_level.health
+	
+	# Dynamic scaling via shader
+	var max_health: float = 20.0 # À ajuster si la vie max change dynamiquement
+	var health_ratio: float = float(ILevel.current_level.health) / max_health
+	if health_texture_progress_bar.material is ShaderMaterial:
+		health_texture_progress_bar.material.set_shader_parameter("health_percentage", health_ratio)
+	
 	var current_wave: int = ILevel.current_level.current_wave + 1
 	waves_rich_text_label.text = tr(default_waves_text) % current_wave
