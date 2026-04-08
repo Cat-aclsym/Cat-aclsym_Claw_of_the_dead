@@ -90,18 +90,11 @@ func _handle_impact(enemy: IEnemy) -> void:
 	# Apply direct hit damage
 	enemy.take_damage(damage, IEnemy.DamageType.DEFAULT)
 
-	# Create blood effect for directly hit enemy (inherited from IBullet)
-	if hit_effect_enabled:
-		_create_hit_effect(global_position)
-
 	# Apply AOE damage to nearby enemies
 	_apply_aoe_damage(enemy)
 
 	# Stop arrow movement and hide sprite
 	_stop_arrow_movement()
-
-	# Handle trail particles cleanup
-	_cleanup_trail_particles()
 
 	# Call virtual method for specific impact effects
 	_on_impact_effect(enemy, global_position)
@@ -123,20 +116,6 @@ func _stop_arrow_movement() -> void:
 	arrow_sprite.visible = false
 	direction = Vector2.ZERO
 	speed = 0
-
-
-## Cleanup trail particles (factorized)
-func _cleanup_trail_particles() -> void:
-	if trail_enabled and is_instance_valid(_trail_particles):
-		_trail_particles.emitting = false
-		var trail_particles := _trail_particles
-		trail_particles.reparent(get_tree().get_root())
-
-		var cleanup_timer := get_tree().create_timer(trail_lifetime + 0.1)
-		cleanup_timer.timeout.connect(func():
-			if is_instance_valid(trail_particles):
-				trail_particles.queue_free()
-		)
 
 
 # private

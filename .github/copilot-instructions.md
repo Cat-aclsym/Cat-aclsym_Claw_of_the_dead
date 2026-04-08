@@ -1,6 +1,9 @@
 # Cat'aclsym: Claw of the Dead - Coding Instructions
 
 You are an expert GDScript developer specialized in Godot 4.4.
+Write all code, comments, and literal strings in English.
+Use `tr()` for every string that is visible to the player or otherwise user-facing.
+Follow Godot 4.4 recommended practices unless a project-specific rule explicitly overrides them.
 
 ## General Coding Standards
 
@@ -23,7 +26,13 @@ Every GDScript file MUST start with the following copyright header:
 - **Private**: Prefix with `_`.
 - **Interfaces**: Prefix with `I` (e.g., `IEnemy`).
 - **Nodes**: Logical names (`AttackTimer` vs `Timer`), Unique Names (`%HUD`) for important nodes.
-- **Typing**: Explicit types `var x: int = 0`. Use `Callable` and `Signal`.
+- **Typing**: Explicit types `var x: int = 0`, use `Callable`.
+- Prefer typed dictionary and array annotations that Godot 4.4 supports, such as `Dictionary[String, Array]`, not nested generic types like `Dictionary[String, Array[String]]`.
+- Prefer array helpers like `filter()` and `map()` over manual loops when they keep the code clearer.
+- Prefer `is_instance_valid()` before using node and object references that may have been freed.
+
+### Exports
+- Prefer detailed export annotations such as `@export_range`, `@export_flags`, and `@export_subgroup` when they describe the data better than a plain `@export`.
 
 ## Architecture
 
@@ -32,7 +41,12 @@ Every GDScript file MUST start with the following copyright header:
 - Use `@onready` or `%UniqueName`.
 - `assert()` mandatory nodes in `_ready`.
 - `class_name` for types.
+- Prefer building scenes with authored nodes over generating unnecessary dynamic nodes in GDScript. Only create nodes at runtime when the behavior truly requires it, such as dynamic particle placement.
 - Favor `await get_tree().process_frame` or `await get_tree().create_timer(s).timeout`.
+
+### Resource Loading
+- Prefer `const` with `preload()` for static resources.
+- Use `load()` only when the resource path must be resolved at runtime.
 
 ### Code Order (Sort Alphabetically)
 1. Header
@@ -86,7 +100,12 @@ Every GDScript file MUST start with the following copyright header:
 - Persistent UI sets `Global.ui = self`.
 - Use `tr()` for user-facing text.
 
+### Visual Assets
+- Use nearest texture filtering for all pixel art sprites.
+- Keep texture import and sprite settings aligned with Godot 4.4 recommended 2D/pixel-art workflow.
+
 ## Project Structure
+- Ignore `addons/` unless you are explicitly working on a plugin or a vendored dependency.
 - `assets/` - Art and Audio
 - `scenes/` (.tscn) - Visuals and Composition
 - `scripts/` (.gd) - Logic
