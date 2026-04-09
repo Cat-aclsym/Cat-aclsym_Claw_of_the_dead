@@ -16,7 +16,7 @@
 [ext_resource type="FontVariation" path="res://assets/ui/fonts/dotgothic/dotgothic_variation.tres" id="14_variation"]
 [ext_resource type="Shader" uid="uid://7k322cmfkfh1" path="res://assets/resources/shaders/health_bar_scaling.gdshader" id="15_shader"]
 [ext_resource type="Script" path="res://scenes/ui/menus/hud/low_health_indicator.gd" id="16_indicator"]
-[ext_resource type="Shader" path="res://assets/resources/shaders/low_health_vignette.gdshader" id="17_vignette"]
+[ext_resource type="Shader" uid="uid://fk70ak7kbp1y" path="res://assets/resources/shaders/low_health_vignette.gdshader" id="17_vignette"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_vignette"]
 shader = ExtResource("17_vignette")
