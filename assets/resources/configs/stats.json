@@ -273,7 +273,7 @@
 		},
 		"bat_09_b_04": {
 			"bullet_stats": {
-				"damage": -0.2
+				"damage": 0.0
 			},
 			"changes": {
 				"bullet_stat": true,
