@@ -7,15 +7,20 @@ extends Control
 signal reveal_finished
 
 # Constants
+# Core transition timings for bars/background/fade out.
 const BAR_ANIM_DURATION: float = 0.42
 const BACKGROUND_TARGET_ALPHA: float = 0.4
 const FLASH_DURATION: float = 0.1
 const FLAT_ALPHA_TINT_SHADER: Shader = preload("res://assets/resources/shaders/flat_alpha_tint.gdshader")
+
+# Discovery boost timing/pace once the silhouette is revealed.
 const REVEAL_ACCEL_DURATION: float = 1.35
 const REVEAL_DECEL_DURATION: float = 1.8
 const REVEAL_BOOST_DURATION: float = REVEAL_ACCEL_DURATION + REVEAL_DECEL_DURATION
 const PRE_REVEAL_DELAY: float = 1.1
 const REVEAL_WOW_ROTATION_SPEED: float = 2.2
+
+# Screen/layout offsets and text movement values.
 const SLIDE_DISTANCE_MULTIPLIER: float = 1.2
 const OUTRO_DURATION: float = 0.3
 const AURA_POST_DISCOVER_SCALE: float = 1.0
@@ -26,20 +31,28 @@ const TITLE_ANIM_DURATION: float = 0.5
 const TEXT_OUTRO_DURATION: float = 0.42
 
 # Onready variables
+# Core fullscreen overlay layers and transition bars.
 @onready var background_rect: ColorRect = $Background
 @onready var aura_rect: ColorRect = %AuraRect
 @onready var bottom_bar: ColorRect = $BottomBar
 @onready var flash_rect: ColorRect = $FlashRect
 @onready var middle_band: ColorRect = $MiddleBand
+
+# Silhouette reveal panel elements.
 @onready var silhouette_container: Control = %SilhouetteContainer
 @onready var silhouette_rect: TextureRect = %SilhouetteRect
+
+# Reveal texts shown before/after sprite discovery.
 @onready var subtitle_label: Label = %SubtitleLabel
 @onready var top_bar: ColorRect = $TopBar
 @onready var title_label: Label = %TitleLabel
 
 # Private variables
+# Input gates used to pause animation flow until player confirmation.
 var _is_waiting_for_reveal_click: bool = false
 var _is_waiting_for_continue: bool = false
+
+# Cached base layout to always restore canonical positions after outro.
 var _layout_cached: bool = false
 var _base_bottom_bar_position: Vector2 = Vector2.ZERO
 var _base_silhouette_position: Vector2 = Vector2.ZERO
@@ -47,6 +60,8 @@ var _base_subtitle_position: Vector2 = Vector2.ZERO
 var _base_title_position: Vector2 = Vector2.ZERO
 var _base_top_bar_position: Vector2 = Vector2.ZERO
 var _cached_subtitle_final_pos: Vector2 = Vector2.ZERO
+
+# Shared material instance reused across reveals.
 var _silhouette_material: ShaderMaterial = null
 
 # Built-in functions
