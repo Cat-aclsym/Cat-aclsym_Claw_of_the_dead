@@ -6,7 +6,7 @@ extends Area2D
 
 # exports
 ## Runtime values; balance comes from [method ITower._apply_projectile_config] (tower [code]bullet_stats[/code]). Scenes use 0 for gameplay.
-@export var damage: int ## Base damage value dealt to enemies
+@export var damage: float ## Base damage value dealt to enemies
 @export var speed: int ## Speed of the bullet
 
 @export_group("Trail Effect")
@@ -31,7 +31,7 @@ var tower_owner: ITower = null
 @onready var trail_particles: GPUParticles2D = $TrailParticles
 
 ## Initial damage value to calculate percentage reduction
-var initial_damage: int
+var initial_damage: float
 ## Guards against duplicate impact callbacks while overlap/animation is still active.
 var _has_impacted: bool = false
 ## Store the enemy that the bullet has touched to prevent multiple hits

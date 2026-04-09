@@ -21,8 +21,13 @@ func _ready() -> void:
 	z_index = 4096
 	z_as_relative = false
 	
-	var rounded_amount = round(amount)
-	_label.text = str(rounded_amount)
+	var rounded_amount = amount
+	if rounded_amount >= 1.0:
+		_label.text = "%.1f" % rounded_amount if fmod(rounded_amount, 1.0) != 0 else str(int(rounded_amount))
+	elif rounded_amount > 0.0:
+		_label.text = "%.1f" % rounded_amount
+	else:
+		_label.text = "0"
 	_label.modulate = color
 	
 	# Rainbow effect trigger

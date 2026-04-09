@@ -60,8 +60,8 @@ func fire_tick() -> void:
 		var seconds_locked = floor(tower_owner.target_lock_time)
 		current_multiplier = pow(2.0, minf(max_damage_multiplier, seconds_locked))
 
-	var final_damage: float = float(damage) * current_multiplier
-	enemy_target.take_damage(final_damage, IEnemy.DamageType.DEFAULT, tower_owner)
+	var raw_damage: float = float(damage) * current_multiplier
+	enemy_target.take_damage(raw_damage, IEnemy.DamageType.DEFAULT, tower_owner)
 
 func _update_beam_visuals(multiplier: float) -> void:
 	var from_pos: Vector2 = Vector2.ZERO # Local à l'objet

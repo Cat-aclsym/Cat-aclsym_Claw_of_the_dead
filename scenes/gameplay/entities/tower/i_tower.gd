@@ -239,7 +239,6 @@ func fire() -> void:
 	_choose_target()
 
 	if not target:
-		Log.trace(Log.Level.WARN, "Failed to retrieve target")
 		return
 
 	var is_inferno = bullet_scene and "inferno_beam" in bullet_scene.resource_path
@@ -605,9 +604,9 @@ func _apply_projectile_config(bullet_instance: Node) -> void:
 			continue
 		var v: Variant = bullet_stats[key]
 		match key:
-			"damage", "speed", "pierce_count", "burn_damage_base", "aoe_range", "pierce_reduction":
+			"speed", "pierce_count", "burn_damage_base", "aoe_range", "pierce_reduction":
 				bullet_instance.set(key, int(round(float(v))))
-			"burn_duration", "aoe_duration", "aoe_tick":
+			"damage", "burn_duration", "aoe_duration", "aoe_tick":
 				bullet_instance.set(key, float(v))
 			"dot_damage", "damage_multiplier":
 				bullet_instance.set(key, float(v))
