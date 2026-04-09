@@ -10,13 +10,13 @@ enum TrapType {
 	LIMITED ## Effect is triggered per enemy until durability runs out
 }
 
-const MINESWEEPER_DISABLE_DURATION_SECONDS: float = 5.0
-
 ## Enum for the state of the trap
 enum TrapState {
 	BUILDING, ## The trap is being built
 	ACTIVE, ## The trap is placed and active
 }
+
+const MINESWEEPER_DISABLE_DURATION_SECONDS: float = 5.0
 
 ## The type of trap behavior
 @export var trap_type: TrapType = TrapType.PASSIVE
