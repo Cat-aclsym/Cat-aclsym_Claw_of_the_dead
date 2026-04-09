@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://kfp30hymy8sq"]
+
+[ext_resource type="PackedScene" uid="uid://pta23043ehss" path="res://scenes/gameplay/entities/enemy/enemies/ene.02.tscn" id="1_9w4t8"]
+[ext_resource type="Script" uid="uid://b6sut0hoho1eo" path="res://scenes/gameplay/entities/enemy/enemies/minesweeper.gd" id="2_2ehk1"]
+
+[node name="Minesweeper" instance=ExtResource("1_9w4t8")]
+script = ExtResource("2_2ehk1")
+enemy_id = "minesweeper"
+
+[node name="AnimatedSprite2D" parent="." index="0"]
+self_modulate = Color(1.34766e-06, 0.814401, 0.236278, 1)

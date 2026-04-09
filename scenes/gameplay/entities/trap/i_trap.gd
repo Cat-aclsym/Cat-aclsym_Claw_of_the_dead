@@ -10,6 +10,8 @@ enum TrapType {
 	LIMITED ## Effect is triggered per enemy until durability runs out
 }
 
+const MINESWEEPER_DISABLE_DURATION_SECONDS: float = 5.0
+
 ## Enum for the state of the trap
 enum TrapState {
 	BUILDING, ## The trap is being built
@@ -36,6 +38,8 @@ var current_durability: int
 
 ## Whether the trap can still trigger (LIMITED type)
 var is_usable: bool = true
+## Whether the trap is temporarily disabled by an external effect.
+var is_temporarily_disabled: bool = false
 
 ## List of enemies currently in the trap area
 var enemies_in_area: Array[IEnemy] = []
@@ -86,6 +90,9 @@ func _process(delta: float) -> void:
 
 	if state == TrapState.BUILDING:
 		_update_z_index()
+		return
+
+	if is_temporarily_disabled:
 		return
 
 	if trap_type == TrapType.LIMITED:
@@ -171,12 +178,37 @@ func apply_effect(_enemy: IEnemy) -> void:
 func remove_effect(_enemy: IEnemy) -> void:
 	pass
 
+## Temporarily disables the trap interactions for [param duration] seconds.
+func disable_temporarily(duration: float) -> void:
+	if duration <= 0.0:
+		return
+	if state != TrapState.ACTIVE:
+		return
+
+	is_temporarily_disabled = true
+	modulate.a = 0.35
+	_clear_active_effects()
+
+	var timer: SceneTreeTimer = get_tree().create_timer(duration)
+	timer.timeout.connect(func() -> void:
+		if not is_instance_valid(self):
+			return
+		if state != TrapState.ACTIVE:
+			return
+		is_temporarily_disabled = false
+		modulate.a = 1.0
+		_reapply_effects_to_present_enemies()
+	)
+
 ## Private API
 ## Subclasses read extra [code]base[/code] keys (e.g. [code]damage[/code], [code]slow_amount[/code]).
 func _apply_trap_stats_extension(_base: Dictionary) -> void:
 	pass
 
 func _handle_trap_activation(enemy: IEnemy) -> void:
+	if is_temporarily_disabled:
+		return
+
 	match trap_type:
 		TrapType.PASSIVE:
 			apply_effect(enemy)
@@ -196,6 +228,18 @@ func _notify_challenge_if_boss(enemy: IEnemy) -> void:
 	if enemy.type != IEnemy.EnemyType.BIG_DADDY:
 		return
 	ChallengeManager.notify_enemy_hit(enemy, self)
+
+func _clear_active_effects() -> void:
+	for enemy_item in enemies_in_area:
+		if is_instance_valid(enemy_item):
+			remove_effect(enemy_item)
+	active_affected_enemies.clear()
+
+func _reapply_effects_to_present_enemies() -> void:
+	for enemy_item in enemies_in_area:
+		if not is_instance_valid(enemy_item):
+			continue
+		_handle_trap_activation(enemy_item)
 
 func _on_enemy_die(enemy: IEnemy) -> void:
 	if trap_type == TrapType.LIMITED and enemy in active_affected_enemies:
@@ -237,6 +281,10 @@ func _on_area_2d_body_entered(body: Node2D) -> void:
 
 	var enemy := _get_enemy_from_overlap(body)
 	if enemy == null:
+		return
+
+	if enemy is Minesweeper:
+		disable_temporarily(MINESWEEPER_DISABLE_DURATION_SECONDS)
 		return
 
 	if enemy in enemies_in_area:
