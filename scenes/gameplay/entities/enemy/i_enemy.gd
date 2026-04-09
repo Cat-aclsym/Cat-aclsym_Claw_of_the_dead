@@ -411,6 +411,13 @@ func _idle_modulate() -> Color:
 
 ## Apply a damage effect to the enemy sprite
 func _damage_effect(color: Color) -> void:
+	if last_source is ITower and last_source.tower_id == "bat_09":
+		# Effet réduit pour l'Inferno Tower
+		sprite.modulate = color.lerp(old_modulate, 0.7)
+		await get_tree().create_timer(0.05).timeout
+		sprite.modulate = _idle_modulate()
+		return
+
 	sprite.modulate = color
 	await get_tree().create_timer(0.1).timeout
 	sprite.modulate = _idle_modulate()

@@ -13,6 +13,8 @@ func _ready() -> void:
 	assert(popup_node != null, "popup_node scene not assigned")
 
 # public
+var _active_popups: Dictionary = {} # target_node -> DamagePopup
+
 ## Spawns a damage popup at the current position.
 ## [br]
 ## [param amount] The amount of damage to display
@@ -21,11 +23,31 @@ func _ready() -> void:
 func display_damage(amount: float, color: Color = Color.WHITE, is_critical: bool = false) -> void:
 	if damage_popup_node == null:
 		return
-		
+	
+	# Check if this source is an Inferno Tower
+	var is_inferno = false
+	var source = null
+	if get_parent() is IEnemy:
+		source = get_parent().last_source
+		if source is ITower and source.tower_id == "bat_09":
+			is_inferno = true
+	
+	# Optimization for Inferno: check if an active popup already exists
+	if is_inferno and _active_popups.has(self) and is_instance_valid(_active_popups[self]):
+		var popup = _active_popups[self]
+		if popup.has_method("update_value"):
+			popup.update_value(amount)
+			return
+
 	var damage_popup: DamagePopup = damage_popup_node.instantiate()
 	damage_popup.amount = amount
 	damage_popup.color = color
 	damage_popup.is_critical = is_critical
+	
+	if is_inferno:
+		damage_popup.target_node = self
+		damage_popup.is_accumulative = true
+		_active_popups[self] = damage_popup
 	
 	# Use global_position of the spawner
 	damage_popup.global_position = global_position

@@ -31,6 +31,7 @@ const SEGMENTS_COUNT: int = 16
 var enemy_target: IEnemy = null
 
 var _time: float = 0.0
+var _damage_accumulator: float = 0.0
 
 @onready var line_core: Line2D = $LineCore
 @onready var line_glow: Line2D = $LineGlow
@@ -90,21 +91,19 @@ func _process(delta: float) -> void:
 		var seconds_locked = tower_owner.target_lock_time
 		current_multiplier = pow(2.0, floor(minf(max_damage_multiplier, seconds_locked)))
 	
+	# Accumulation des dégâts pour optimiser les popups
+	_damage_accumulator += float(damage) * current_multiplier * delta * (1.0 / tower_owner.fire_rate_timer.wait_time)
+	if _damage_accumulator >= 0.1: # Seuil réduit pour plus de réactivité avec le nouveau système de popup
+		enemy_target.take_damage(_damage_accumulator, IEnemy.DamageType.DEFAULT, tower_owner)
+		_damage_accumulator = 0.0
+	
 	_update_beam_visuals(current_multiplier)
 
 ## Appelé par la tour à chaque cycle de fire_rate
 func fire_tick() -> void:
-	if not is_instance_valid(enemy_target) or not is_instance_valid(tower_owner):
-		return
-
-	var current_multiplier: float = 1.0
-	var charging = tower_owner.bullet_stats.get("is_charging", false)
-	if charging:
-		var seconds_locked = tower_owner.target_lock_time
-		current_multiplier = pow(2.0, floor(minf(max_damage_multiplier, seconds_locked)))
-
-	var raw_damage: float = float(damage) * current_multiplier
-	enemy_target.take_damage(raw_damage, IEnemy.DamageType.DEFAULT, tower_owner)
+	# On ne fait plus rien ici pour l'InfernoBeam car on gère les dégâts dans _process
+	# pour une accumulation fluide et moins de popups.
+	pass
 
 func _update_beam_visuals(multiplier: float) -> void:
 	var from_pos: Vector2 = Vector2.ZERO
