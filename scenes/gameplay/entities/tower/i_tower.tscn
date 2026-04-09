@@ -7,7 +7,7 @@
 [node name="ITower" type="Node2D"]
 script = ExtResource("1_4edlv")
 
-[node name="Sprite" type="AnimatedSprite2D" parent="."]
+[node name="Sprite" type="AnimatedSprite2D" parent="." unique_name_in_owner="true"]
 position = Vector2(0, -2)
 scale = Vector2(0.85, 0.85)
 

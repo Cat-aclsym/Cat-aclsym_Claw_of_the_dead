@@ -57,8 +57,8 @@ func _ready() -> void:
 	var flicker: Tween = create_tween().set_parallel(true)
 	flicker.tween_property(line_core, "modulate:a", 0.0, ARC_LIFETIME)
 	flicker.tween_property(line_glow, "modulate:a", 0.0, ARC_LIFETIME)
-	flicker.tween_property(line_core, "width", 1.0, ARC_LIFETIME)
-	flicker.tween_property(line_glow, "width", 3.0, ARC_LIFETIME)
+	flicker.tween_property(line_core, "width", 0.0, ARC_LIFETIME)
+	flicker.tween_property(line_glow, "width", 0.0, ARC_LIFETIME)
 	await flicker.finished
 	queue_free()
 
@@ -173,8 +173,8 @@ func _spawn_chain_arc(from_global: Vector2, target_global: Vector2) -> void:
 	var chain_flicker: Tween = create_tween().set_parallel(true)
 	chain_flicker.tween_property(chain_line_core, "modulate:a", 0.0, ARC_LIFETIME)
 	chain_flicker.tween_property(chain_line_glow, "modulate:a", 0.0, ARC_LIFETIME)
-	chain_flicker.tween_property(chain_line_core, "width", 1.0, ARC_LIFETIME)
-	chain_flicker.tween_property(chain_line_glow, "width", 3.0, ARC_LIFETIME)
+	chain_flicker.tween_property(chain_line_core, "width", 0.0, ARC_LIFETIME)
+	chain_flicker.tween_property(chain_line_glow, "width", 0.0, ARC_LIFETIME)
 	chain_flicker.finished.connect(func() -> void:
 		if is_instance_valid(chain_line_core):
 			chain_line_core.queue_free()
