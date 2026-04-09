@@ -6,6 +6,12 @@
 script = ExtResource("1_tesla")
 trail_enabled = false
 
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+disabled = true
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+visible = false
+
 [node name="LineGlow" type="Line2D" parent="."]
 z_index = 90
 points = PackedVector2Array(599, 205)
@@ -24,3 +30,11 @@ joint_mode = 1
 begin_cap_mode = 1
 end_cap_mode = 1
 antialiased = true
+
+[node name="SmokeBurstParticles" type="GPUParticles2D" parent="."]
+visible = false
+emitting = false
+
+[node name="TrailParticles" type="GPUParticles2D" parent="."]
+visible = false
+emitting = false

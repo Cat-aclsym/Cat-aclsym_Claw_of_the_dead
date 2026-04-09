@@ -116,6 +116,7 @@ var _damage_tween: Tween
 ## Stacked slow visuals (traps, debuffs); each source must pair pop with push.
 var _slow_visual_refcount: int = 0
 var _electrified: bool = false
+var _electrify_base_speed: float = 0.0
 var _electrify_speed_factor: float = 1.0
 var _electrify_remaining: float = 0.0
 var _electrify_tick_damage: float = 0.0
@@ -264,15 +265,16 @@ func apply_electrify_effect(duration: float, slow_amount: float, tick_damage: fl
 
 	if not _electrified:
 		_electrified = true
+		_electrify_base_speed = speed
 		_electrify_speed_factor = (1.0 - normalized_slow)
-		speed *= _electrify_speed_factor
+		speed = _electrify_base_speed * _electrify_speed_factor
 		push_slow_visual()
 	else:
 		# Keep the strongest slow when effect is refreshed.
 		var refreshed_factor: float = (1.0 - normalized_slow)
 		if refreshed_factor < _electrify_speed_factor:
-			speed *= refreshed_factor / _electrify_speed_factor
 			_electrify_speed_factor = refreshed_factor
+			speed = _electrify_base_speed * _electrify_speed_factor
 
 	_electrify_remaining = maxf(_electrify_remaining, duration)
 	_electrify_tick_damage = maxf(_electrify_tick_damage, tick_damage)
@@ -333,8 +335,8 @@ func _clear_electrify_effect() -> void:
 		return
 
 	_electrified = false
-	if _electrify_speed_factor > 0.0:
-		speed /= _electrify_speed_factor
+	speed = _electrify_base_speed
+	_electrify_base_speed = 0.0
 	_electrify_speed_factor = 1.0
 	_electrify_remaining = 0.0
 	_electrify_tick_damage = 0.0
