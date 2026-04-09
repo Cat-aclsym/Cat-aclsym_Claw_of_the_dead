@@ -126,6 +126,10 @@ var _cancel_animations: bool = false
 var _menu_open: bool = false
 ## The target of the tower
 var target: IEnemy
+## The time the tower has been locked on the current target
+var target_lock_time: float = 0.0
+## Active beams for continuous fire towers (bullet_instance -> target)
+var _active_beams: Dictionary = {}
 ## The type of target the tower will shoot at
 var target_type: TargetType
 ## The pending upgrade to be applied
@@ -158,7 +162,7 @@ func _ready() -> void:
 		sprite.play("idle")
 	SignalUtil.connects(signals)
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
 	if Global.paused:
 		return
 
@@ -166,6 +170,15 @@ func _process(_delta: float) -> void:
 		_update_z_index()
 		# Allow range display even during building
 		return
+	
+	if is_instance_valid(target):
+		# Vérifier si la cible est toujours valide (vivante et à portée avec une marge de 10px pour éviter le clignotement)
+		if target.is_already_dead or global_position.distance_to(target.global_position) > shoot_range + 10.0:
+			target = null
+			target_lock_time = 0.0
+			_cleanup_beams()
+		else:
+			target_lock_time += delta
 
 	if fire_rate_timer.is_stopped():
 		fire()
@@ -238,6 +251,20 @@ func fire() -> void:
 
 	# Spawn each projectile
 	for i in range(projectile_count):
+		# For continuous beams, check if we already have an active beam for this target
+		if bullet_scene and "inferno_beam" in bullet_scene.resource_path:
+			var existing_beam = null
+			for beam in _active_beams.keys():
+				if is_instance_valid(beam) and _active_beams[beam] == target:
+					existing_beam = beam
+					break
+			
+			if existing_beam:
+				# Re-trigger damage and visual update on existing beam
+				if existing_beam.has_method("fire_tick"):
+					existing_beam.fire_tick()
+				continue
+
 		var bullet_instance: IBullet = bullet_scene.instantiate()
 
 		# Calculate angle for this projectile
@@ -256,6 +283,9 @@ func fire() -> void:
 
 		_apply_projectile_config(bullet_instance)
 		add_child(bullet_instance)
+
+		if bullet_scene and "inferno_beam" in bullet_scene.resource_path:
+			_active_beams[bullet_instance] = target
 
 	fire_rate_timer.start()
 
@@ -486,8 +516,12 @@ func _apply_tower_stat_changes(tower_stats: Dictionary) -> void:
 			var delta_value: Variant = tower_stats[stat]
 			if typeof(current_value) == TYPE_BOOL:
 				self.set(stat, bool(delta_value))
-			else:
+			elif typeof(current_value) == TYPE_INT and typeof(delta_value) == TYPE_INT:
 				self.set(stat, current_value + delta_value)
+			elif typeof(current_value) == TYPE_FLOAT or typeof(delta_value) == TYPE_FLOAT:
+				self.set(stat, float(current_value) + float(delta_value))
+			else:
+				self.set(stat, delta_value)
 
 func _apply_bullet_stat_changes(bullet_stats_delta: Dictionary) -> void:
 	for stat in bullet_stats_delta.keys():
@@ -533,16 +567,35 @@ func _resolve_initial_upgrade_ids() -> void:
 		available_upgrade_ids = StatsDB.get_upgrade_ids_for_tower(tower_id)
 
 func _choose_target() -> void:
+	var old_target = target
+	
+	# Filtrer les ennemis pour ne garder que ceux qui sont réellement à portée (avec une petite marge)
+	var valid_candidates = enemy_array.filter(func(e): 
+		return is_instance_valid(e) and not e.is_already_dead and global_position.distance_to(e.global_position) <= shoot_range + 5.0
+	)
+
 	if prefer_non_electrified_targets:
-		var non_electrified_enemies: Array[IEnemy] = enemy_array.filter(
+		var non_electrified_enemies: Array[IEnemy] = valid_candidates.filter(
 			func(enemy: IEnemy) -> bool:
-				return is_instance_valid(enemy) and enemy.has_method("is_electrified") and not enemy.is_electrified()
+				return enemy.has_method("is_electrified") and not enemy.is_electrified()
 		)
 		if not non_electrified_enemies.is_empty():
 			_choose_target_from_list(non_electrified_enemies)
+			if target != old_target:
+				target_lock_time = 0.0
+				_cleanup_beams()
 			return
 
-	_choose_target_from_list(enemy_array)
+	_choose_target_from_list(valid_candidates)
+	if target != old_target:
+		target_lock_time = 0.0
+		_cleanup_beams()
+
+func _cleanup_beams() -> void:
+	for beam in _active_beams.keys():
+		if is_instance_valid(beam):
+			beam.queue_free()
+	_active_beams.clear()
 
 func _choose_target_from_list(candidates: Array[IEnemy]) -> void:
 	if candidates.is_empty():
