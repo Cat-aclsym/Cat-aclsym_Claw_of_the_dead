@@ -74,8 +74,26 @@ func _ready() -> void:
 	var fade_in = create_tween()
 	fade_in.tween_property(self, "modulate:a", 1.0, FADE_DURATION)
 	
+	# Appliquer l'effet visuel sur l'ennemi
+	_apply_visual_effect(true)
+	
 	# Premier tir immédiat
 	fire_tick()
+
+
+func _exit_tree() -> void:
+	# Sécurité : retirer l'effet si le rayon est supprimé brusquement
+	_apply_visual_effect(false)
+
+
+func _apply_visual_effect(apply: bool) -> void:
+	if is_instance_valid(enemy_target) and enemy_target.has_method("push_inferno_visual"):
+		if apply:
+			enemy_target.push_inferno_visual()
+			set_meta("_visual_applied", true)
+		elif get_meta("_visual_applied", false):
+			enemy_target.pop_inferno_visual()
+			set_meta("_visual_applied", false)
 
 func _process(delta: float) -> void:
 	if not is_instance_valid(enemy_target) or not is_instance_valid(tower_owner):
@@ -182,6 +200,10 @@ func _trigger_scale_flash() -> void:
 
 func _start_fade_out() -> void:
 	set_process(false)
+	
+	# Retirer l'effet visuel sur l'ennemi
+	_apply_visual_effect(false)
+	
 	if is_instance_valid(fire_particles):
 		fire_particles.emitting = false
 	if is_instance_valid(spark_particles):

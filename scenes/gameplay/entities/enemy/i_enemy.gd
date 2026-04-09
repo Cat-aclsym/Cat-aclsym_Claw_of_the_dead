@@ -67,6 +67,9 @@ const POISON_VISUAL_TINT: Color = Color(0.85, 0.75, 0.9, 1.0)
 ## Multiplied with [member old_modulate] while stunned; yellow feel.
 const STUN_VISUAL_TINT: Color = Color(1.0, 1.0, 0.6, 1.0)
 
+## Multiplied with [member old_modulate] while being hit by Inferno Tower; red/orange feel.
+const INFERNO_VISUAL_TINT: Color = Color(1.0, 0.7, 0.7, 1.0)
+
 ## Stun star texture cached for performance.
 const STUN_STAR_TEX := preload("res://assets/gameplay/enemies/Stunned_Star.png")
 
@@ -115,6 +118,8 @@ var _damage_tween: Tween
 
 ## Stacked slow visuals (traps, debuffs); each source must pair pop with push.
 var _slow_visual_refcount: int = 0
+## Stacked inferno visuals; each beam must pair pop with push.
+var _inferno_visual_refcount: int = 0
 var _electrified: bool = false
 var _electrify_base_speed: float = 0.0
 var _electrify_speed_factor: float = 1.0
@@ -249,6 +254,18 @@ func pop_slow_visual() -> void:
 ## Adds one stacked slow visual tint (e.g. entering a slow zone).
 func push_slow_visual() -> void:
 	_slow_visual_refcount += 1
+	_apply_idle_modulate()
+
+
+## Removes one stacked inferno visual tint.
+func pop_inferno_visual() -> void:
+	_inferno_visual_refcount = maxi(0, _inferno_visual_refcount - 1)
+	_apply_idle_modulate()
+
+
+## Adds one stacked inferno visual tint.
+func push_inferno_visual() -> void:
+	_inferno_visual_refcount += 1
 	_apply_idle_modulate()
 
 ## Returns true while enemy is under electrified effect.
@@ -408,6 +425,8 @@ func _idle_modulate() -> Color:
 		tint *= POISON_VISUAL_TINT
 	if is_stunned:
 		tint *= STUN_VISUAL_TINT
+	if _inferno_visual_refcount > 0:
+		tint *= INFERNO_VISUAL_TINT
 	return tint
 
 
