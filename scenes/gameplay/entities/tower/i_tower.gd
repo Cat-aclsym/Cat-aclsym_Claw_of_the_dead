@@ -381,6 +381,15 @@ func apply_upgrade() -> void:
 
 	if changes.get("bullet_stat", false):
 		_apply_bullet_stat_changes(bullet_stats_delta)
+	
+	# S'assurer que le flag is_charging est bien synchronisé si présent dans l'upgrade
+	if upgrade_data.has("bullet_stats") and upgrade_data["bullet_stats"].has("is_charging"):
+		bullet_stats["is_charging"] = bool(upgrade_data["bullet_stats"]["is_charging"])
+	
+	# Mettre à jour les rayons existants immédiatement
+	for beam in _active_beams.keys():
+		if is_instance_valid(beam):
+			_apply_projectile_config(beam)
 
 	if changes.get("tower_model", false):
 		var tower_model_path: String = str(upgrade_data.get("tower_model_path", ""))
@@ -442,7 +451,7 @@ func apply_special_modifier(modifiers: Dictionary) -> void:
 		for stat in modifiers.keys():
 			_special_modifiers[stat] = modifiers[stat]
 
-	# Re-apply base stats first to avoid stacking multipliers incorrectly
+	# Apply base stats first to avoid stacking multipliers incorrectly
 	_apply_base_stats_override()
 
 	# Apply modifiers to basic tower stats
@@ -455,7 +464,7 @@ func apply_special_modifier(modifiers: Dictionary) -> void:
 
 	# Apply modifiers to bullet stats
 	if _special_modifiers.has("damage") and bullet_stats.has("damage"):
-		bullet_stats["damage"] = int(bullet_stats["damage"] * _special_modifiers["damage"])
+		bullet_stats["damage"] = float(bullet_stats["damage"]) * float(_special_modifiers["damage"])
 
 	Log.trace(Log.Level.INFO, "Tower {0} stats updated with modifiers: {1}".format([name, _special_modifiers]))
 	_apply_special_visual_effect(modifiers)
@@ -583,12 +592,19 @@ func _apply_tower_stat_changes(tower_stats: Dictionary) -> void:
 				self.set(stat, float(current_value) + float(delta_value))
 			else:
 				self.set(stat, delta_value)
+		elif stat in bullet_stats:
+			# Si la stat n'est pas dans la tour mais dans bullet_stats, on l'applique là
+			_apply_bullet_stat_changes({stat: tower_stats[stat]})
 
 func _apply_bullet_stat_changes(bullet_stats_delta: Dictionary) -> void:
 	for stat in bullet_stats_delta.keys():
 		var delta: Variant = bullet_stats_delta[stat]
 		if bullet_stats.has(stat):
-			bullet_stats[stat] += delta
+			var current_value = bullet_stats[stat]
+			if typeof(current_value) == TYPE_BOOL:
+				bullet_stats[stat] = bool(delta)
+			else:
+				bullet_stats[stat] += delta
 		else:
 			bullet_stats[stat] = delta
 
@@ -610,6 +626,8 @@ func _apply_projectile_config(bullet_instance: Node) -> void:
 				bullet_instance.set(key, float(v))
 			"dot_damage", "damage_multiplier":
 				bullet_instance.set(key, float(v))
+			"is_charging":
+				bullet_instance.set(key, bool(v))
 			_:
 				bullet_instance.set(key, v)
 

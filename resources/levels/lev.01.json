@@ -11,11 +11,6 @@
 			"wait_s": 1
 		},
 		{
-		  "enemy_id": "ene.01",
-		  "count": 5,
-		  "spawner": 0
-		},
-		{
 		  "enemy_id": "ene.02",
 		  "count": 2,
 		  "spawner": 0

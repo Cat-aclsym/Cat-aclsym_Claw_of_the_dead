@@ -45,8 +45,8 @@ func _process(_delta: float) -> void:
 	# Mise à jour visuelle continue de la position
 	var current_multiplier: float = 1.0
 	if is_charging:
-		var seconds_locked = floor(tower_owner.target_lock_time)
-		current_multiplier = pow(2.0, minf(max_damage_multiplier, seconds_locked))
+		var seconds_locked = tower_owner.target_lock_time
+		current_multiplier = pow(2.0, floor(minf(max_damage_multiplier, seconds_locked)))
 	
 	_update_beam_visuals(current_multiplier)
 
@@ -56,9 +56,11 @@ func fire_tick() -> void:
 		return
 
 	var current_multiplier: float = 1.0
-	if is_charging:
-		var seconds_locked = floor(tower_owner.target_lock_time)
-		current_multiplier = pow(2.0, minf(max_damage_multiplier, seconds_locked))
+	# Utiliser directement la valeur de la tour pour être sûr
+	var charging = tower_owner.bullet_stats.get("is_charging", false)
+	if charging:
+		var seconds_locked = tower_owner.target_lock_time
+		current_multiplier = pow(2.0, floor(minf(max_damage_multiplier, seconds_locked)))
 
 	var raw_damage: float = float(damage) * current_multiplier
 	enemy_target.take_damage(raw_damage, IEnemy.DamageType.DEFAULT, tower_owner)
