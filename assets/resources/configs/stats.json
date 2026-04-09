@@ -50,6 +50,25 @@
 		}
 	},
 	"towers": {
+		"bat_09": {
+			"base": {
+				"bullet_stats": {
+					"damage": 5,
+					"is_charging": false
+				},
+				"cost": 100,
+				"fire_rate": 1.0,
+				"projectile_count": 1,
+				"shoot_range": 150,
+				"spread_angle": 0
+			},
+			"level": 1,
+			"name": "Inferno Tower",
+			"scene": "res://scenes/gameplay/entities/tower/towers/bat_09.tscn",
+			"upgrades": [
+				"bat_09_02"
+			]
+		},
 		"bat_01": {
 			"base": {
 				"bullet_stats": {
@@ -163,6 +182,70 @@
 		}
 	},
 	"upgrades": {
+		"bat_09_02": {
+			"bullet_stats": {
+				"damage": 2
+			},
+			"changes": {
+				"bullet_stat": true,
+				"tower_stat": true
+			},
+			"next": [
+				"bat_09_03"
+			],
+			"price": 50,
+			"tower_stats": {
+				"level": 1
+			}
+		},
+		"bat_09_03": {
+			"bullet_stats": {
+				"damage": 3
+			},
+			"changes": {
+				"bullet_stat": true,
+				"tower_stat": true
+			},
+			"next": [
+				"bat_09_a_04",
+				"bat_09_b_04"
+			],
+			"price": 75,
+			"tower_stats": {
+				"level": 1
+			}
+		},
+		"bat_09_a_04": {
+			"bullet_stats": {
+				"is_charging": true
+			},
+			"changes": {
+				"bullet_stat": true,
+				"tower_stat": true
+			},
+			"inferno_mode": 0,
+			"next": [],
+			"price": 150,
+			"tower_stats": {
+				"level": 1
+			}
+		},
+		"bat_09_b_04": {
+			"bullet_stats": {
+				"damage": -2
+			},
+			"changes": {
+				"bullet_stat": true,
+				"tower_stat": true
+			},
+			"inferno_mode": 1,
+			"next": [],
+			"price": 150,
+			"tower_stats": {
+				"level": 1,
+				"projectile_count": 2
+			}
+		},
 		"bat_01_02": {
 			"bullet_stats": {
 				"aoe_duration": 0,

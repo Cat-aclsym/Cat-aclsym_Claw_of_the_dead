@@ -11,6 +11,9 @@
 [ext_resource type="PackedScene" uid="uid://b2qklmpagmiap" path="res://scenes/ui/menus/building_selection/building_cards/build_card_bat_06.tscn" id="13_bat_06_card"]
 [ext_resource type="PackedScene" uid="uid://b2qklmpagmiaq" path="res://scenes/ui/menus/building_selection/building_cards/build_card_bat_07.tscn" id="14_bat_07_card"]
 
+[ext_resource type="PackedScene" uid="uid://c8v8y8y8y8y8z" path="res://scenes/ui/menus/building_selection/building_cards/build_card_bat_09.tscn" id="15_bat_09_card"]
+[ext_resource type="PackedScene" uid="uid://c8v8y8y8y8y8y" path="res://scenes/gameplay/entities/tower/towers/bat_09.tscn" id="16_bat09"]
+
 [sub_resource type="Animation" id="Animation_fpn5b"]
 length = 0.35
 step = 0.05
@@ -113,6 +116,14 @@ stretch_mode = 1
 
 [node name="BuildCardBat02" parent="MarginContainer/VBoxContainer/BackgroundTextureRect/BuildListMarginContainer/HBoxContainer/Bat02AspectRatioContainer" instance=ExtResource("5_aw86t")]
 layout_mode = 2
+
+[node name="Bat09AspectRatioContainer" type="AspectRatioContainer" parent="MarginContainer/VBoxContainer/BackgroundTextureRect/BuildListMarginContainer/HBoxContainer"]
+layout_mode = 2
+stretch_mode = 1
+
+[node name="BuildCardBat09" parent="MarginContainer/VBoxContainer/BackgroundTextureRect/BuildListMarginContainer/HBoxContainer/Bat09AspectRatioContainer" instance=ExtResource("15_bat_09_card")]
+layout_mode = 2
+entity = ExtResource("16_bat09")
 
 [node name="Bat03AspectRatioContainer" type="AspectRatioContainer" parent="MarginContainer/VBoxContainer/BackgroundTextureRect/BuildListMarginContainer/HBoxContainer"]
 layout_mode = 2
