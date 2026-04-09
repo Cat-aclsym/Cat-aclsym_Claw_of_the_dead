@@ -12,11 +12,12 @@ const BACKGROUND_TARGET_ALPHA: float = 0.4
 const FLASH_DURATION: float = 0.1
 const FLAT_ALPHA_TINT_SHADER: Shader = preload("res://assets/resources/shaders/flat_alpha_tint.gdshader")
 const HOLD_DURATION: float = 1.8
+const SLIDE_DISTANCE_MULTIPLIER: float = 1.2
 const OUTRO_DURATION: float = 0.3
 const PANEL_START_OFFSET_Y: float = 110.0
 const SILHOUETTE_SCALE_MULTIPLIER: float = 1.16
-const SLASH_DURATION: float = 0.18
-const TITLE_ANIM_DURATION: float = 0.35
+const TEXT_SLIDE_DISTANCE: float = 300.0
+const TITLE_ANIM_DURATION: float = 0.28
 
 # Onready variables
 @onready var background_rect: ColorRect = $Background
@@ -64,35 +65,60 @@ func _apply_texts(enemy_id: String) -> void:
 
 
 func _play_animation() -> void:
-	bottom_bar.color.a = 0.0
-	middle_band.color.a = 0.0
-	top_bar.color.a = 0.0
+	var viewport_size: Vector2 = get_viewport_rect().size
+	var slide_distance: float = viewport_size.x * SLIDE_DISTANCE_MULTIPLIER
 
+	var top_bar_final_pos: Vector2 = top_bar.position
+	var bottom_bar_final_pos: Vector2 = bottom_bar.position
+	var title_final_pos: Vector2 = title_label.position
+	var subtitle_final_pos: Vector2 = subtitle_label.position
+	var silhouette_final_pos: Vector2 = silhouette_container.position
+	var aura_target_alpha: float = aura_rect.modulate.a if aura_rect.modulate.a > 0.0 else 1.0
+
+	# Step 1: full black screen.
+	modulate = Color.WHITE
+	background_rect.color = Color(0.0, 0.0, 0.0, 1.0)
 	flash_rect.color.a = 0.0
-
-	var initial_panel_position: Vector2 = silhouette_container.position + Vector2(0.0, PANEL_START_OFFSET_Y)
-	silhouette_container.position = initial_panel_position
-	silhouette_rect.scale = Vector2.ZERO
-
-	modulate = Color(1.0, 1.0, 1.0, 0.0)
-	background_rect.color = Color(0.0, 0.0, 0.0, 0.0)
 	visible = true
 
-	var bars_in_tween: Tween = create_tween().set_parallel(true)
-	bars_in_tween.tween_property(top_bar, "color:a", 0.95, BAR_ANIM_DURATION)
-	bars_in_tween.tween_property(bottom_bar, "color:a", 0.95, BAR_ANIM_DURATION)
-	bars_in_tween.tween_property(middle_band, "color:a", 0.95, BAR_ANIM_DURATION)
+	# Prepare start states.
+	top_bar.position = top_bar_final_pos + Vector2(slide_distance, 0.0)
+	bottom_bar.position = bottom_bar_final_pos - Vector2(slide_distance, 0.0)
+	top_bar.color.a = 0.95
+	bottom_bar.color.a = 0.95
+	middle_band.color.a = 0.0
 
-	var flash_tween: Tween = create_tween().set_parallel(true)
-	flash_tween.tween_property(flash_rect, "color:a", 0.95, FLASH_DURATION * 0.5)
-	flash_tween.tween_property(flash_rect, "color:a", 0.0, FLASH_DURATION).set_delay(FLASH_DURATION * 0.5)
+	title_label.position = title_final_pos + Vector2(TEXT_SLIDE_DISTANCE, 0.0)
+	title_label.modulate.a = 0.0
+	subtitle_label.position = subtitle_final_pos - Vector2(TEXT_SLIDE_DISTANCE, 0.0)
+	subtitle_label.modulate.a = 0.0
 
-	var intro_tween: Tween = create_tween().set_parallel(true)
-	intro_tween.tween_property(self, "modulate:a", 1.0, TITLE_ANIM_DURATION)
-	intro_tween.tween_property(background_rect, "color:a", BACKGROUND_TARGET_ALPHA, TITLE_ANIM_DURATION)
-	intro_tween.tween_property(silhouette_container, "position", initial_panel_position - Vector2(0.0, PANEL_START_OFFSET_Y), 0.55).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-	intro_tween.tween_property(silhouette_rect, "scale", Vector2.ONE * SILHOUETTE_SCALE_MULTIPLIER, 0.5).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-	await intro_tween.finished
+	silhouette_container.position = silhouette_final_pos + Vector2(0.0, PANEL_START_OFFSET_Y)
+	silhouette_rect.scale = Vector2.ZERO
+	aura_rect.modulate.a = 0.0
+
+	# Step 2: red bars slide in (top from right, bottom from left).
+	var bars_slide_tween: Tween = create_tween().set_parallel(true)
+	bars_slide_tween.tween_property(top_bar, "position", top_bar_final_pos, BAR_ANIM_DURATION + 0.18).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	bars_slide_tween.tween_property(bottom_bar, "position", bottom_bar_final_pos, BAR_ANIM_DURATION + 0.18).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	bars_slide_tween.tween_property(middle_band, "color:a", 0.95, BAR_ANIM_DURATION + 0.1)
+	bars_slide_tween.tween_property(background_rect, "color:a", BACKGROUND_TARGET_ALPHA, BAR_ANIM_DURATION + 0.18)
+	await bars_slide_tween.finished
+
+	# Step 3: top text from right.
+	var top_text_tween: Tween = create_tween().set_parallel(true)
+	top_text_tween.tween_property(title_label, "position", title_final_pos, TITLE_ANIM_DURATION).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	top_text_tween.tween_property(title_label, "modulate:a", 1.0, TITLE_ANIM_DURATION)
+	await top_text_tween.finished
+
+	# Step 4: bottom text from left + silhouette/aura appear.
+	var bottom_and_reveal_tween: Tween = create_tween().set_parallel(true)
+	bottom_and_reveal_tween.tween_property(subtitle_label, "position", subtitle_final_pos, 0.35).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	bottom_and_reveal_tween.tween_property(subtitle_label, "modulate:a", 1.0, 0.35)
+	bottom_and_reveal_tween.tween_property(silhouette_container, "position", silhouette_final_pos, 0.5).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	bottom_and_reveal_tween.tween_property(silhouette_rect, "scale", Vector2.ONE * SILHOUETTE_SCALE_MULTIPLIER, 0.45).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	bottom_and_reveal_tween.tween_property(aura_rect, "modulate:a", aura_target_alpha, 0.35)
+	await bottom_and_reveal_tween.finished
 
 	await get_tree().create_timer(HOLD_DURATION).timeout
 	_is_waiting_for_continue = true

@@ -25,6 +25,7 @@ region = Rect2(0, 0, 64, 128)
 
 [node name="NewEnemyChallenger" type="Control"]
 process_mode = 3
+visible = false
 z_index = 3000
 layout_mode = 3
 anchors_preset = 15
