@@ -1,0 +1,199 @@
+[gd_scene load_steps=5 format=3 uid="uid://c2kvbc6kb1a3t"]
+
+[ext_resource type="Script" uid="uid://bw630xrotcjl2" path="res://scenes/ui/menus/hud/new_enemy_challenger.gd" id="1_1vwxm"]
+[ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="2_nrwp8"]
+[ext_resource type="Shader" uid="uid://coojofonbtmn5" path="res://assets/resources/shaders/radial_aura.gdshader" id="3_m5r4k"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_halo_aura"]
+shader = ExtResource("3_m5r4k")
+shader_parameter/aura_color = Color(1, 1, 1, 0.92)
+shader_parameter/center_offset = Vector2(0, 0)
+shader_parameter/outer_radius = 0.52
+shader_parameter/falloff_power = 1.28
+shader_parameter/intensity = 1.16
+
+[node name="NewEnemyChallenger" type="Control"]
+process_mode = 3
+visible = false
+z_index = 3000
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_1vwxm")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 0)
+
+[node name="FlashRect" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(1, 1, 1, 0)
+
+[node name="TopBar" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 120.0
+grow_horizontal = 2
+mouse_filter = 2
+color = Color(0.85, 0.12, 0.12, 0)
+
+[node name="BottomBar" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -120.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+color = Color(0.85, 0.12, 0.12, 0)
+
+[node name="CenterSlash" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -500.0
+offset_top = -4.0
+offset_right = 500.0
+offset_bottom = 4.0
+grow_horizontal = 2
+grow_vertical = 2
+rotation = -0.08
+mouse_filter = 2
+color = Color(1, 1, 1, 0)
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="RevealVBox" type="VBoxContainer" parent="CenterContainer"]
+modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(860, 420)
+layout_mode = 2
+theme_override_constants/separation = 18
+alignment = 1
+
+[node name="TitleLabel" type="Label" parent="CenterContainer/RevealVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme = ExtResource("2_nrwp8")
+theme_type_variation = &"HeaderSmall"
+text = "INGAMEHUD.NEW_ENEMY.TITLE"
+horizontal_alignment = 1
+
+[node name="SilhouetteTopSpacer" type="Control" parent="CenterContainer/RevealVBox"]
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+
+[node name="SilhouettePlaceholder" type="Control" parent="CenterContainer/RevealVBox"]
+custom_minimum_size = Vector2(260, 220)
+layout_mode = 2
+
+[node name="SubtitleLabel" type="Label" parent="CenterContainer/RevealVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme = ExtResource("2_nrwp8")
+theme_type_variation = &"UILabel"
+text = "INGAMEHUD.NEW_ENEMY.SUBTITLE"
+horizontal_alignment = 1
+
+[node name="ContinueLabel" type="Label" parent="CenterContainer/RevealVBox"]
+unique_name_in_owner = true
+modulate = Color(1, 1, 1, 0)
+layout_mode = 2
+theme = ExtResource("2_nrwp8")
+theme_type_variation = &"UILabel"
+text = "INGAMEHUD.NEW_ENEMY.CONTINUE"
+horizontal_alignment = 1
+
+[node name="SilhouetteCenter" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -130.0
+offset_top = -110.0
+offset_right = 130.0
+offset_bottom = 110.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="SilhouetteContainer" type="Control" parent="SilhouetteCenter"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(260, 220)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -130.0
+offset_top = -110.0
+offset_right = 130.0
+offset_bottom = 110.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="AuraRect" type="ColorRect" parent="SilhouetteCenter/SilhouetteContainer"]
+unique_name_in_owner = true
+material = SubResource("ShaderMaterial_halo_aura")
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -240.0
+offset_top = -240.0
+offset_right = 240.0
+offset_bottom = 240.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(1, 1, 1, 0)
+
+[node name="SilhouetteRect" type="TextureRect" parent="SilhouetteCenter/SilhouetteContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 200)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -100.0
+offset_top = -100.0
+offset_right = 100.0
+offset_bottom = 100.0
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 3
+stretch_mode = 5
