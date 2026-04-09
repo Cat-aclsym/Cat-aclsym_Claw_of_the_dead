@@ -40,9 +40,18 @@ const PROJECTILE_GAMEPLAY_KEYS: Array[String] = [
 	"aoe_tick",
 	"burn_damage_base",
 	"burn_duration",
+	"chain_bounces",
+	"chain_damage_falloff",
+	"chain_range",
 	"damage",
 	"damage_multiplier",
 	"dot_damage",
+	"electrify_duration",
+	"electrify_slow_amount",
+	"electrify_tick_damage",
+	"electrify_tick_interval",
+	"lightning_blue_tint_strength",
+	"lightning_width_scale",
 	"pierce_count",
 	"pierce_reduction",
 	"speed",
@@ -71,6 +80,8 @@ var shoot_range: float = 0.0
 
 ## Multiplier for gold rewards when this tower kills an enemy
 var reward_multiplier: float = 1.0
+## Prioritize enemies that are not electrified
+var prefer_non_electrified_targets: bool = false
 
 ## Dictionary of modifiers applied to this tower (stat_name -> multiplier)
 var _special_modifiers: Dictionary = {}
@@ -236,6 +247,8 @@ func fire() -> void:
 		bullet_instance.direction = rotated_direction
 		bullet_instance.rotation = rotated_direction.angle()
 		bullet_instance.target = enemy_position
+		if "enemy_target" in bullet_instance:
+			bullet_instance.enemy_target = target
 
 		# Set tower owner to allow reward multiplier logic
 		if "tower_owner" in bullet_instance:
@@ -469,7 +482,12 @@ func _apply_tower_stat_changes(tower_stats: Dictionary) -> void:
 			continue
 		if stat in self:
 			Log.trace(Log.Level.DEBUG, "Modifying stat: {0} by {1}".format([stat, tower_stats[stat]]))
-			self.set(stat, self.get(stat) + tower_stats[stat])
+			var current_value: Variant = self.get(stat)
+			var delta_value: Variant = tower_stats[stat]
+			if typeof(current_value) == TYPE_BOOL:
+				self.set(stat, bool(delta_value))
+			else:
+				self.set(stat, current_value + delta_value)
 
 func _apply_bullet_stat_changes(bullet_stats_delta: Dictionary) -> void:
 	for stat in bullet_stats_delta.keys():
@@ -515,17 +533,35 @@ func _resolve_initial_upgrade_ids() -> void:
 		available_upgrade_ids = StatsDB.get_upgrade_ids_for_tower(tower_id)
 
 func _choose_target() -> void:
+	if prefer_non_electrified_targets:
+		var non_electrified_enemies: Array[IEnemy] = enemy_array.filter(
+			func(enemy: IEnemy) -> bool:
+				return is_instance_valid(enemy) and enemy.has_method("is_electrified") and not enemy.is_electrified()
+		)
+		if not non_electrified_enemies.is_empty():
+			_choose_target_from_list(non_electrified_enemies)
+			return
+
+	_choose_target_from_list(enemy_array)
+
+func _choose_target_from_list(candidates: Array[IEnemy]) -> void:
+	if candidates.is_empty():
+		target = null
+		return
+
 	match target_type:
 		TargetType.FIRST:
-			_get_first_target()
+			target = candidates[0]
 		TargetType.LAST:
-			_get_last_target()
+			target = candidates[-1]
 		TargetType.STRONGEST:
-			_get_strongest_target()
+			_get_strongest_target_from_list(candidates)
 		TargetType.WEAKEST:
-			_get_weakest_target()
+			_get_weakest_target_from_list(candidates)
 		TargetType.RANDOM:
-			_get_random_target()
+			_get_random_target_from_list(candidates)
+		_:
+			target = candidates[0]
 
 ## Function to create the range polygon for the tower when the tower is selected.
 ## [param radius] - The radius of the range polygon.
@@ -560,12 +596,15 @@ func _create_range_polygon(radius: float, precision: int) -> void:
 
 ## Function to get the strongest enemy in the enemy array.
 func _get_strongest_target():
+	_get_strongest_target_from_list(enemy_array)
+
+func _get_strongest_target_from_list(candidates: Array[IEnemy]) -> void:
 	## Set the initial strongest enemy to the first enemy in the enemy array
-	var strongest: IEnemy = enemy_array[0]
+	var strongest: IEnemy = candidates[0]
 	## Set the initial health of the strongest enemy to the health of the first enemy in the enemy array
-	var strongest_health: float = enemy_array[0].health
+	var strongest_health: float = candidates[0].health
 	## Loop through the enemy array to find the enemy with the most health
-	for enemies in enemy_array:
+	for enemies in candidates:
 		if enemies.health > strongest_health:
 			strongest = enemies
 			strongest_health = enemies.health
@@ -574,12 +613,15 @@ func _get_strongest_target():
 
 ## Function to get the weakest enemy in the enemy array.
 func _get_weakest_target():
+	_get_weakest_target_from_list(enemy_array)
+
+func _get_weakest_target_from_list(candidates: Array[IEnemy]) -> void:
 	## Set the initial weakest enemy to the first enemy in the enemy array
-	var weakest: IEnemy = enemy_array[0]
+	var weakest: IEnemy = candidates[0]
 	## Set the initial health of the weakest enemy to the health of the first enemy in the enemy array
-	var weakest_health: float = enemy_array[0].health
+	var weakest_health: float = candidates[0].health
 	## Loop through the enemy array to find the enemy with the least health
-	for enemies in enemy_array:
+	for enemies in candidates:
 		if enemies.health < weakest_health:
 			weakest = enemies
 			weakest_health = enemies.health
@@ -588,22 +630,31 @@ func _get_weakest_target():
 
 ## Function to get the first enemy in the enemy array.
 func _get_first_target():
+	_get_first_target_from_list(enemy_array)
+
+func _get_first_target_from_list(candidates: Array[IEnemy]) -> void:
 	## Set the target to the first enemy in the enemy array
-	target = enemy_array[0]
+	target = candidates[0]
 
 ## Function to get the last enemy in the enemy array.
 func _get_last_target():
+	_get_last_target_from_list(enemy_array)
+
+func _get_last_target_from_list(candidates: Array[IEnemy]) -> void:
 	## Set the target to the last enemy in the enemy array
-	target = enemy_array[-1]
+	target = candidates[-1]
 
 ## Function to get a random enemy in the enemy array.
 func _get_random_target():
+	_get_random_target_from_list(enemy_array)
+
+func _get_random_target_from_list(candidates: Array[IEnemy]) -> void:
 	## Create a RandomNumberGenerator and set the seed to the current time
 	var rng := RandomNumberGenerator.new()
 	rng.randomize()
 	## Generate a random number between 0 and the length of the enemy array
-	var num: int = rng.randi_range(0, len(enemy_array)-1)
-	target = enemy_array[num]
+	var num: int = rng.randi_range(0, len(candidates)-1)
+	target = candidates[num]
 
 ## Function to interpolate between two values.
 func _color_variation() -> void:

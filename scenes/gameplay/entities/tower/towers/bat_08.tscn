@@ -1,51 +1,51 @@
-[gd_scene load_steps=18 format=3 uid="uid://cq705nqdp8fnw"]
+[gd_scene load_steps=18 format=3 uid="uid://vsaqk62gl8qk"]
 
-[ext_resource type="PackedScene" uid="uid://064cnqw4xlus" path="res://scenes/gameplay/entities/tower/i_tower.tscn" id="1_tpm17"]
-[ext_resource type="PackedScene" uid="uid://b4n8yk4j255wb" path="res://scenes/gameplay/entities/bullet/base_arrow.tscn" id="2_g3vd4"]
-[ext_resource type="Texture2D" uid="uid://dlsa1m6s2rklo" path="res://assets/gameplay/towers/tower_1_LVL_1.png" id="3_sp7we"]
+[ext_resource type="PackedScene" uid="uid://064cnqw4xlus" path="res://scenes/gameplay/entities/tower/i_tower.tscn" id="1_tower"]
+[ext_resource type="PackedScene" uid="uid://bacjy0ad1e7bl" path="res://scenes/gameplay/entities/bullet/instant_lightning.tscn" id="2_bullet"]
+[ext_resource type="Texture2D" uid="uid://dlsa1m6s2rklo" path="res://assets/gameplay/towers/tower_1_LVL_1.png" id="3_sprite"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_auv34"]
-atlas = ExtResource("3_sp7we")
+atlas = ExtResource("3_sprite")
 region = Rect2(0, 0, 64, 64)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_jqe55"]
-atlas = ExtResource("3_sp7we")
+atlas = ExtResource("3_sprite")
 region = Rect2(64, 0, 64, 64)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_6v1vh"]
-atlas = ExtResource("3_sp7we")
+atlas = ExtResource("3_sprite")
 region = Rect2(128, 0, 64, 64)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_8ers3"]
-atlas = ExtResource("3_sp7we")
+atlas = ExtResource("3_sprite")
 region = Rect2(192, 0, 64, 64)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_fsc74"]
-atlas = ExtResource("3_sp7we")
+atlas = ExtResource("3_sprite")
 region = Rect2(256, 0, 64, 64)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_wev4n"]
-atlas = ExtResource("3_sp7we")
+atlas = ExtResource("3_sprite")
 region = Rect2(320, 0, 64, 64)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_h5hk7"]
-atlas = ExtResource("3_sp7we")
+atlas = ExtResource("3_sprite")
 region = Rect2(384, 0, 64, 64)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ssqwa"]
-atlas = ExtResource("3_sp7we")
+atlas = ExtResource("3_sprite")
 region = Rect2(448, 0, 64, 64)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_wnsnn"]
-atlas = ExtResource("3_sp7we")
+atlas = ExtResource("3_sprite")
 region = Rect2(512, 0, 64, 64)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_dbe1b"]
-atlas = ExtResource("3_sp7we")
+atlas = ExtResource("3_sprite")
 region = Rect2(576, 0, 64, 64)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ufdld"]
-atlas = ExtResource("3_sp7we")
+atlas = ExtResource("3_sprite")
 region = Rect2(640, 0, 64, 64)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_1t44q"]
@@ -96,16 +96,16 @@ radius = 314.23
 radius = 16.0
 height = 36.0
 
-[node name="Bat01" instance=ExtResource("1_tpm17")]
+[node name="Bat08" instance=ExtResource("1_tower")]
 position = Vector2(0, -16)
-bullet_scene = ExtResource("2_g3vd4")
-tower_id = "bat_01"
+bullet_scene = ExtResource("2_bullet")
+tower_id = "bat_08"
 
 [node name="Sprite" parent="." index="0"]
 unique_name_in_owner = true
+self_modulate = Color(1, 0.93, 0.2, 1)
 sprite_frames = SubResource("SpriteFrames_1t44q")
 animation = &"idle"
-frame_progress = 0.394808
 
 [node name="CollisionShape2D" parent="Area2D" index="0"]
 position = Vector2(4.76837e-07, 16)
