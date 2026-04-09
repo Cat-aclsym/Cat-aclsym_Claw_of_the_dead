@@ -40,7 +40,7 @@
 			"max_health": 70,
 			"reward": 12,
 			"scene": "res://scenes/gameplay/entities/enemy/enemies/minesweeper.tscn",
-			"speed": 80
+			"speed": 45
 		},
 		"default_zombie": {
 			"max_health": 20,
