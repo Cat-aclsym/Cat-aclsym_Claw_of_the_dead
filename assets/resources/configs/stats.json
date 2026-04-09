@@ -59,7 +59,7 @@
 				"cost": 10,
 				"fire_rate": 10.0,
 				"projectile_count": 1,
-				"shoot_range": 150,
+				"shoot_range": 100,
 				"spread_angle": 0
 			},
 			"level": 1,
@@ -221,7 +221,7 @@
 	"upgrades": {
 		"bat_09_02": {
 			"bullet_stats": {
-				"damage": 0.2
+				"damage": 0.1
 			},
 			"changes": {
 				"bullet_stat": true,
@@ -237,7 +237,7 @@
 		},
 		"bat_09_03": {
 			"bullet_stats": {
-				"damage": 0.3
+				"damage": 0.1
 			},
 			"changes": {
 				"bullet_stat": true,
@@ -254,7 +254,9 @@
 		},
 		"bat_09_a_04": {
 			"bullet_stats": {
-				"is_charging": true
+				"charge_speed": 1.0,
+				"is_charging": true,
+				"max_damage_multiplier": 8.0
 			},
 			"changes": {
 				"bullet_stat": true,
@@ -280,7 +282,7 @@
 			"price": 150,
 			"tower_stats": {
 				"level": 1,
-				"projectile_count": 2
+				"projectile_count": 4
 			}
 		},
 		"bat_01_02": {

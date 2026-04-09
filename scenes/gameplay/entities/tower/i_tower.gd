@@ -242,6 +242,14 @@ func fire() -> void:
 		Log.trace(Log.Level.WARN, "Failed to retrieve target")
 		return
 
+	var is_inferno = bullet_scene and "inferno_beam" in bullet_scene.resource_path
+	
+	# For continuous beams, we need to handle multiple targets if projectile_count > 1
+	if is_inferno and projectile_count > 1:
+		_fire_inferno_multi_target()
+		fire_rate_timer.start()
+		return
+
 	var enemy_position: Vector2 = target.global_position
 	var base_direction: Vector2 = global_position.direction_to(enemy_position)
 
@@ -252,7 +260,7 @@ func fire() -> void:
 	# Spawn each projectile
 	for i in range(projectile_count):
 		# For continuous beams, check if we already have an active beam for this target
-		if bullet_scene and "inferno_beam" in bullet_scene.resource_path:
+		if is_inferno:
 			var existing_beam = null
 			for beam in _active_beams.keys():
 				if is_instance_valid(beam) and _active_beams[beam] == target:
@@ -284,10 +292,64 @@ func fire() -> void:
 		_apply_projectile_config(bullet_instance)
 		add_child(bullet_instance)
 
-		if bullet_scene and "inferno_beam" in bullet_scene.resource_path:
+		if is_inferno:
 			_active_beams[bullet_instance] = target
 
 	fire_rate_timer.start()
+
+## Specific logic for multi-target Inferno Tower
+func _fire_inferno_multi_target() -> void:
+	# Get all valid enemies in range
+	var valid_enemies = enemy_array.filter(func(e): 
+		return is_instance_valid(e) and not e.is_already_dead and global_position.distance_to(e.global_position) <= shoot_range + 5.0
+	)
+	
+	if valid_enemies.is_empty():
+		_cleanup_beams()
+		return
+
+	# Sort or prioritize targets based on target_type if needed, 
+	# but for multishot we usually just take the first N unique targets.
+	var targets_to_hit: Array[IEnemy] = []
+	for e in valid_enemies:
+		if targets_to_hit.size() >= projectile_count:
+			break
+		targets_to_hit.append(e)
+
+	# Cleanup beams for targets that are no longer being hit
+	var beams_to_remove = []
+	for beam in _active_beams.keys():
+		if not is_instance_valid(beam):
+			beams_to_remove.append(beam)
+			continue
+		var beam_target = _active_beams[beam]
+		if not beam_target in targets_to_hit:
+			beam.queue_free()
+			beams_to_remove.append(beam)
+	
+	for b in beams_to_remove:
+		_active_beams.erase(b)
+
+	# Fire or update beams for selected targets
+	for t in targets_to_hit:
+		var existing_beam = null
+		for beam in _active_beams.keys():
+			if is_instance_valid(beam) and _active_beams[beam] == t:
+				existing_beam = beam
+				break
+		
+		if existing_beam:
+			if existing_beam.has_method("fire_tick"):
+				existing_beam.fire_tick()
+		else:
+			var bullet_instance: IBullet = bullet_scene.instantiate()
+			bullet_instance.tower_owner = self
+			if "enemy_target" in bullet_instance:
+				bullet_instance.enemy_target = t
+			
+			_apply_projectile_config(bullet_instance)
+			add_child(bullet_instance)
+			_active_beams[bullet_instance] = t
 
 ## Starts the upgrade process with the given upgrade id
 func start_upgrade(upgrade_id: String) -> void:
