@@ -40,6 +40,12 @@ const TEXT_OUTRO_DURATION: float = 0.42
 # Private variables
 var _is_waiting_for_reveal_click: bool = false
 var _is_waiting_for_continue: bool = false
+var _layout_cached: bool = false
+var _base_bottom_bar_position: Vector2 = Vector2.ZERO
+var _base_silhouette_position: Vector2 = Vector2.ZERO
+var _base_subtitle_position: Vector2 = Vector2.ZERO
+var _base_title_position: Vector2 = Vector2.ZERO
+var _base_top_bar_position: Vector2 = Vector2.ZERO
 var _cached_subtitle_final_pos: Vector2 = Vector2.ZERO
 var _silhouette_material: ShaderMaterial = null
 
@@ -53,6 +59,11 @@ func play_reveal(enemy_id: String, texture: Texture2D, enemy_scale: Vector2 = Ve
 	apply_silhouette(texture, enemy_scale)
 	await _play_animation()
 	reveal_finished.emit()
+
+
+# Built-in functions
+func _ready() -> void:
+	_cache_layout_if_needed()
 
 
 ## Applies a silhouette texture to the reveal panel.
@@ -73,21 +84,23 @@ func _apply_texts(enemy_id: String) -> void:
 
 
 func _play_animation() -> void:
+	_cache_layout_if_needed()
 	var viewport_size: Vector2 = get_viewport_rect().size
 	var slide_distance: float = viewport_size.x * SLIDE_DISTANCE_MULTIPLIER
 
-	var top_bar_final_pos: Vector2 = top_bar.position
-	var bottom_bar_final_pos: Vector2 = bottom_bar.position
-	var title_final_pos: Vector2 = title_label.position
-	var subtitle_final_pos: Vector2 = subtitle_label.position
+	var top_bar_final_pos: Vector2 = _base_top_bar_position
+	var bottom_bar_final_pos: Vector2 = _base_bottom_bar_position
+	var title_final_pos: Vector2 = _base_title_position
+	var subtitle_final_pos: Vector2 = _base_subtitle_position
 	_cached_subtitle_final_pos = subtitle_final_pos
-	var silhouette_final_pos: Vector2 = silhouette_container.position
+	var silhouette_final_pos: Vector2 = _base_silhouette_position
 	var aura_target_alpha: float = aura_rect.modulate.a if aura_rect.modulate.a > 0.0 else 1.0
 
 	# Step 1: full black screen.
 	modulate = Color.WHITE
 	background_rect.color = Color(0.0, 0.0, 0.0, 1.0)
 	flash_rect.color.a = 0.0
+	silhouette_rect.modulate.a = 1.0
 	visible = true
 
 	# Prepare start states.
@@ -141,7 +154,8 @@ func _play_animation() -> void:
 	var step4_out_tween: Tween = create_tween().set_parallel(true)
 	step4_out_tween.tween_property(subtitle_label, "position", subtitle_final_pos - Vector2(TEXT_SLIDE_DISTANCE, 0.0), TEXT_OUTRO_DURATION).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
 	step4_out_tween.tween_property(subtitle_label, "modulate:a", 0.0, TEXT_OUTRO_DURATION)
-	step4_out_tween.tween_property(silhouette_container, "position", silhouette_final_pos + Vector2(0.0, PANEL_START_OFFSET_Y), 0.32).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
+	step4_out_tween.tween_property(silhouette_container, "position", silhouette_final_pos + Vector2(0.0, PANEL_START_OFFSET_Y), 0.22).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
+	step4_out_tween.tween_property(silhouette_rect, "modulate:a", 0.0, 0.16).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
 	step4_out_tween.tween_property(aura_rect, "modulate:a", 0.0, 0.22)
 	await step4_out_tween.finished
 
@@ -165,6 +179,9 @@ func _play_animation() -> void:
 	final_fade.tween_property(self, "modulate:a", 0.0, 0.08)
 	await final_fade.finished
 	visible = false
+
+	# Restore canonical layout/state so the next reveal starts clean.
+	_restore_base_layout()
 
 
 func _input(event: InputEvent) -> void:
@@ -217,6 +234,29 @@ func _get_silhouette_material() -> ShaderMaterial:
 	_silhouette_material.shader = FLAT_ALPHA_TINT_SHADER
 	_silhouette_material.set_shader_parameter("tint_color", Color(0.0, 0.0, 0.0, 1.0))
 	return _silhouette_material
+
+
+func _cache_layout_if_needed() -> void:
+	if _layout_cached:
+		return
+	_base_top_bar_position = top_bar.position
+	_base_bottom_bar_position = bottom_bar.position
+	_base_title_position = title_label.position
+	_base_subtitle_position = subtitle_label.position
+	_base_silhouette_position = silhouette_container.position
+	_layout_cached = true
+
+
+func _restore_base_layout() -> void:
+	top_bar.position = _base_top_bar_position
+	bottom_bar.position = _base_bottom_bar_position
+	title_label.position = _base_title_position
+	title_label.modulate.a = 1.0
+	subtitle_label.position = _base_subtitle_position
+	subtitle_label.modulate.a = 1.0
+	silhouette_container.position = _base_silhouette_position
+	silhouette_rect.modulate.a = 1.0
+	aura_rect.modulate.a = 1.0
 
 
 func _play_discovery_boost() -> void:
