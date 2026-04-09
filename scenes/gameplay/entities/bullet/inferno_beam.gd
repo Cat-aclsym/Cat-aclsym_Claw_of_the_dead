@@ -11,14 +11,14 @@ const COLOR_ORANGE: Color = Color(1.0, 0.5, 0.1, 1.0)
 const COLOR_RED: Color = Color(0.9, 0.1, 0.1, 1.0)
 
 ## Largeurs de base
-const BEAM_WIDTH_BASE: float = 2.0
-const BEAM_WIDTH_MAX: float = 5.0
+const BEAM_WIDTH_BASE: float = 1.5
+const BEAM_WIDTH_MAX: float = 4.0
 const FADE_DURATION: float = 0.2
 
 ## Paramètres de l'effet de vague
-const NOISE_SPEED: float = 12.0
-const NOISE_AMPLITUDE: float = 2.5
-const SEGMENTS_COUNT: int = 12
+const NOISE_SPEED: float = 10.0
+const NOISE_AMPLITUDE: float = 1.8
+const SEGMENTS_COUNT: int = 16
 
 ## Si vrai, les dégâts augmentent avec le temps
 @export var is_charging: bool = false
@@ -34,6 +34,7 @@ var _time: float = 0.0
 
 @onready var line_core: Line2D = $LineCore
 @onready var line_glow: Line2D = $LineGlow
+@onready var line_inner: Line2D = $LineInner
 @onready var fire_particles: CPUParticles2D = $FireParticles
 @onready var spark_particles: CPUParticles2D = $SparkParticles
 @onready var impact_sparks: CPUParticles2D = $ImpactSparks
@@ -43,13 +44,25 @@ func _ready() -> void:
 		queue_free()
 		return
 	
-	# Configurer le gradient initial
-	var gradient = Gradient.new()
-	gradient.set_color(0, COLOR_YELLOW)
-	gradient.set_color(1, COLOR_RED)
-	gradient.add_point(0.5, COLOR_ORANGE)
-	line_core.gradient = gradient
-	line_glow.gradient = gradient
+	# Configurer les gradients
+	var gradient_glow = Gradient.new()
+	gradient_glow.set_color(0, Color(1.0, 0.3, 0.0, 0.0)) # Départ transparent
+	gradient_glow.add_point(0.2, Color(1.0, 0.4, 0.1, 0.4))
+	gradient_glow.add_point(0.8, Color(1.0, 0.5, 0.2, 0.4))
+	gradient_glow.set_color(1, Color(1.0, 0.6, 0.3, 0.0)) # Fin transparente
+	line_glow.gradient = gradient_glow
+	
+	var gradient_core = Gradient.new()
+	gradient_core.set_color(0, COLOR_RED)
+	gradient_core.add_point(0.5, COLOR_ORANGE)
+	gradient_core.set_color(1, COLOR_YELLOW)
+	line_core.gradient = gradient_core
+	
+	var gradient_inner = Gradient.new()
+	gradient_inner.set_color(0, Color(1.0, 1.0, 0.8, 1.0)) # Blanc cassé
+	gradient_inner.add_point(0.5, Color.WHITE)
+	gradient_inner.set_color(1, Color(1.0, 1.0, 0.8, 1.0))
+	line_inner.gradient = gradient_inner
 	
 	# Configurer les étincelles
 	if is_instance_valid(spark_particles):
@@ -110,6 +123,7 @@ func _update_beam_visuals(multiplier: float) -> void:
 	
 	line_core.points = points
 	line_glow.points = points
+	line_inner.points = points
 	
 	# Intensité visuelle basée sur la charge
 	var intensity = (multiplier - 1.0) / (max_damage_multiplier - 1.0) if max_damage_multiplier > 1.0 else 0.0
@@ -119,7 +133,8 @@ func _update_beam_visuals(multiplier: float) -> void:
 	var step = log(multiplier) / log(2.0)
 	var size_boost = 1.0 + step * 0.2
 	line_core.width = BEAM_WIDTH_BASE * size_boost
-	line_glow.width = line_core.width * 3.0
+	line_glow.width = line_core.width * 6.0
+	line_inner.width = line_core.width * 0.3
 	
 	# Flash visuel lors du scale up (quand le multiplicateur change)
 	var charging = tower_owner.bullet_stats.get("is_charging", false)
@@ -173,4 +188,5 @@ func _start_fade_out() -> void:
 	var fade: Tween = create_tween().set_parallel(true)
 	fade.tween_property(line_core, "modulate:a", 0.0, FADE_DURATION)
 	fade.tween_property(line_glow, "modulate:a", 0.0, FADE_DURATION)
+	fade.tween_property(line_inner, "modulate:a", 0.0, FADE_DURATION)
 	fade.finished.connect(queue_free)

@@ -10,14 +10,18 @@ script = ExtResource("1_script")
 
 [node name="LineGlow" type="Line2D" parent="."]
 width = 10.0
-default_color = Color(1, 0.4, 0.1, 0.3)
 begin_cap_mode = 2
 end_cap_mode = 2
 antialiased = true
 
 [node name="LineCore" type="Line2D" parent="."]
 width = 2.0
-default_color = Color(1, 0.9, 0.5, 1)
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+[node name="LineInner" type="Line2D" parent="."]
+width = 1.0
 begin_cap_mode = 2
 end_cap_mode = 2
 antialiased = true
@@ -62,6 +66,7 @@ anim_offset_min = 0.0
 anim_offset_max = 0.0
 
 [node name="SparkParticles" type="CPUParticles2D" parent="."]
+emitting = false
 amount = 30
 lifetime = 0.3
 preprocess = 0.0
