@@ -32,7 +32,9 @@ directories/dch_directory={
 "character1": "res://assets/narrative/character1.dch"
 }
 directories/dtl_directory={
-"example": "res://assets/narrative/example.dtl"
+"example": "res://assets/narrative/example.dtl",
+"tutorial_level_01.en": "res://assets/narrative/tutorial_level_01.en.dtl",
+"tutorial_level_01.fr": "res://assets/narrative/tutorial_level_01.fr.dtl"
 }
 text/default_speed=0.05
 text/skippable=true

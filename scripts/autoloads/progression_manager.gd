@@ -140,6 +140,19 @@ func is_trap_unlocked(trap_id: String) -> bool:
 	return false
 
 
+## Returns whether the first-play tutorial has been completed.
+func is_tutorial_completed() -> bool:
+	return data.parameters.tutorial_completed
+
+
+## Marks the first-play tutorial as completed and persists it.
+func mark_tutorial_completed() -> void:
+	if data.parameters.tutorial_completed:
+		return
+	data.parameters.tutorial_completed = true
+	save_game()
+
+
 ## Total stars earned (one per challenge completed, any level).
 func get_total_earned_stars() -> int:
 	var total: int = 0

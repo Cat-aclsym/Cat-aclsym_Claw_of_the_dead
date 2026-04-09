@@ -6,6 +6,10 @@ extends Control
 ##
 ## Handles resource displays, wave counters, and construction menu.
 
+signal pause_requested
+signal build_menu_opened
+signal build_menu_closed
+
 # Constants
 const CHALLENGES_MENU: PackedScene = preload("res://scenes/ui/menus/hud/challenges_menu.tscn")
 const COIN_ICON_TEXTURE: Texture2D = preload("res://assets/ui/huds/Coin.png")
@@ -63,7 +67,7 @@ func _ready() -> void:
 
 	SignalUtil.connects(signals)
 	_apply_time_scale(DEFAULT_TIME_SCALE, false)
-	
+
 	ButtonEffects.apply(challenges_button)
 	ButtonEffects.apply(pause_button)
 	ButtonEffects.apply(skip_time_scale_button)
@@ -120,6 +124,8 @@ func _on_challenges_button_pressed() -> void:
 
 func _on_pause_button_pressed() -> void:
 	if not Global.paused and ILevel.current_level != null:
+		pause_requested.emit()
+
 		var build_selection_menu: Node = Global.ui.get_node_or_null("BuildSelection")
 		if build_selection_menu != null:
 			build_selection_menu.queue_free()
@@ -140,11 +146,20 @@ func _on_skip_time_scale_button_pressed() -> void:
 
 
 func _on_build_selection_button_pressed() -> void:
-	if Global.ui.get_node_or_null("BuildSelection") == null:
-		var build_selection_menu_instance: BuildSelection = BUILD_SELECTION_MENU.instantiate()
+	var existing_menu: BuildSelection = Global.ui.get_node_or_null("BuildSelection") as BuildSelection
+	if existing_menu != null and existing_menu.is_queued_for_deletion():
+		existing_menu = null
+
+	if existing_menu == null:
+		var build_selection_menu_instance: BuildSelection = BUILD_SELECTION_MENU.instantiate() as BuildSelection
+		build_selection_menu_instance.z_index = 10000
+		build_selection_menu_instance.process_mode = Node.PROCESS_MODE_ALWAYS
 		Global.ui.add_child(build_selection_menu_instance)
-	else:
-		Global.ui.get_node("BuildSelection").queue_free()
+		build_menu_opened.emit()
+		return
+
+	existing_menu.queue_free()
+	build_menu_closed.emit()
 
 
 func _trigger_coin_effects(amount: int) -> void:
@@ -225,11 +240,11 @@ func _trigger_health_damage_effects() -> void:
 	# Camera shake
 	if Global.camera:
 		Global.camera.shake_camera_with_strength(15.0)
-	
+
 	# Ghost bar effect
 	if _ghost_tween:
 		_ghost_tween.kill()
-	
+
 	# IMPORTANT: We don't reset the ghost bar's value to _last_health here.
 	# If a second hit happens, the ghost bar stays where it is (at the higher value)
 	# and we just restart the timer and update the target destination.
@@ -243,7 +258,7 @@ func _trigger_health_damage_effects() -> void:
 		var flash_tween = create_tween()
 		flash_tween.tween_property(health_texture_progress_bar.material, "shader_parameter/flash_intensity", 1.0, 0.05)
 		flash_tween.tween_property(health_texture_progress_bar.material, "shader_parameter/flash_intensity", 0.0, 0.15)
-	
+
 	# Shake effect
 	var original_pos = health_texture_progress_bar.position
 	var shake_tween = create_tween()
@@ -251,7 +266,7 @@ func _trigger_health_damage_effects() -> void:
 		var offset = Vector2(randf_range(-5, 5), randf_range(-3, 3))
 		shake_tween.tween_property(health_texture_progress_bar, "position", original_pos + offset, 0.04)
 	shake_tween.tween_property(health_texture_progress_bar, "position", original_pos, 0.04)
-	
+
 	# Also shake ghost bar to keep them aligned
 	var ghost_original_pos = health_ghost_progress_bar.position
 	var ghost_shake_tween = create_tween()
@@ -280,21 +295,21 @@ func _update() -> void:
 		if _ghost_tween:
 			_ghost_tween.kill()
 		health_ghost_progress_bar.value = current_health
-	
+
 	_last_health = current_health
 
 	coins_rich_text_label.text = tr(default_coins_text) % current_coins
 	health_rich_text_label.text = tr(default_health_text) % (str(ILevel.current_level.health) + "/20")
 	health_texture_progress_bar.value = ILevel.current_level.health
-	
+
 	# Dynamic scaling via shader
 	var max_health: float = 20.0 # À ajuster si la vie max change dynamiquement
 	var health_ratio: float = float(ILevel.current_level.health) / max_health
 	if health_texture_progress_bar.material is ShaderMaterial:
 		health_texture_progress_bar.material.set_shader_parameter("health_percentage", health_ratio)
-	
+
 	if low_health_indicator:
 		low_health_indicator.update_health(health_ratio)
-	
+
 	var current_wave: int = ILevel.current_level.current_wave + 1
 	waves_rich_text_label.text = tr(default_waves_text) % current_wave

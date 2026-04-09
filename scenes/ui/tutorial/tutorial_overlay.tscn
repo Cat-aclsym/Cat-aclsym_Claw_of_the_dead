@@ -1,0 +1,40 @@
+[gd_scene load_steps=3 format=3 uid="uid://hkwgivxpry76"]
+
+[ext_resource type="Script" uid="uid://c6jv8lojnwmbs" path="res://scenes/ui/tutorial/tutorial_overlay.gd" id="1_6t5vl"]
+[ext_resource type="Texture2D" uid="uid://dgsyufigxe0jk" path="res://assets/gameplay/bullet/arrow.png" id="2_o2e2t"]
+
+[node name="TutorialOverlay" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_6t5vl")
+
+[node name="BackdropTop" type="ColorRect" parent="."]
+layout_mode = 0
+mouse_filter = 1
+
+[node name="BackdropLeft" type="ColorRect" parent="."]
+layout_mode = 0
+mouse_filter = 1
+
+[node name="BackdropRight" type="ColorRect" parent="."]
+layout_mode = 0
+mouse_filter = 1
+
+[node name="BackdropBottom" type="ColorRect" parent="."]
+layout_mode = 0
+mouse_filter = 1
+
+[node name="Arrow" type="TextureRect" parent="."]
+layout_mode = 0
+rotation = 1.5708
+scale = Vector2(0.75, 0.75)
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture = ExtResource("2_o2e2t")
+expand_mode = 1
+stretch_mode = 5

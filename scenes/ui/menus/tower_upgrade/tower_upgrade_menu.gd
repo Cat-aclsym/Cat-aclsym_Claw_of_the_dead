@@ -4,6 +4,8 @@
 class_name TowerUpgradeMenu
 extends Control
 
+signal upgrade_confirmed
+
 ## Reference to the tower being upgraded
 var tower: ITower
 var selected_upgrade_id: String = ""
@@ -188,6 +190,7 @@ func _on_cancel_button_pressed() -> void:
 
 func _on_confirm_button_pressed() -> void:
 	if tower != null and not selected_upgrade_id.is_empty():
+		upgrade_confirmed.emit()
 		tower.start_upgrade(selected_upgrade_id)
 	queue_free()
 

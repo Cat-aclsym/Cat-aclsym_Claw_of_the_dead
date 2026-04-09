@@ -11,6 +11,8 @@ signal trigger_state_idle
 signal trigger_state_build
 ## Emitted when entering upgrade state
 signal trigger_state_upgrade
+## Emitted when a building has been successfully placed
+signal building_placed(building: IBuilding)
 
 const COLOR_OK := Color(1, 1, 1, 0.5)
 const COLOR_KO := Color(1, 0.5, 0.5, 0.5)
@@ -76,7 +78,7 @@ func _ready() -> void:
 	visible = false
 	place_hud.visible = false
 	SignalUtil.connects(signals)
-	
+
 	ButtonEffects.apply(place_button)
 	ButtonEffects.apply(cancel_place_button)
 
@@ -192,7 +194,9 @@ func _build() -> void:
 			get_parent().add_child(new_trap)
 
 	if new_entity is IBuilding:
-		ChallengeManager.notify_building_placed(new_entity as IBuilding)
+		var placed_building: IBuilding = new_entity as IBuilding
+		ChallengeManager.notify_building_placed(placed_building)
+		building_placed.emit(placed_building)
 
 	add_invalid_cell(tm_pos)
 	ILevel.current_level.coins -= _preview_building.cost
