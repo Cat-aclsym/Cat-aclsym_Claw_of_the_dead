@@ -49,7 +49,33 @@ var _base_top_bar_position: Vector2 = Vector2.ZERO
 var _cached_subtitle_final_pos: Vector2 = Vector2.ZERO
 var _silhouette_material: ShaderMaterial = null
 
-# Public functions
+# Built-in functions
+func _ready() -> void:
+	_cache_layout_if_needed()
+
+
+func _input(event: InputEvent) -> void:
+	if not visible:
+		return
+	var is_press_event: bool = false
+	if event is InputEventMouseButton and event.pressed:
+		is_press_event = true
+	elif event.is_action_pressed("ui_accept"):
+		is_press_event = true
+
+	if not is_press_event:
+		return
+
+	if _is_waiting_for_reveal_click:
+		_is_waiting_for_reveal_click = false
+		get_viewport().set_input_as_handled()
+		return
+
+	if _is_waiting_for_continue:
+		_is_waiting_for_continue = false
+		get_viewport().set_input_as_handled()
+
+
 ## Plays the reveal animation for an enemy silhouette.
 func play_reveal(enemy_id: String, texture: Texture2D, enemy_scale: Vector2 = Vector2.ONE) -> void:
 	if texture == null:
@@ -59,11 +85,6 @@ func play_reveal(enemy_id: String, texture: Texture2D, enemy_scale: Vector2 = Ve
 	apply_silhouette(texture, enemy_scale)
 	await _play_animation()
 	reveal_finished.emit()
-
-
-# Built-in functions
-func _ready() -> void:
-	_cache_layout_if_needed()
 
 
 ## Applies a silhouette texture to the reveal panel.
@@ -182,28 +203,6 @@ func _play_animation() -> void:
 
 	# Restore canonical layout/state so the next reveal starts clean.
 	_restore_base_layout()
-
-
-func _input(event: InputEvent) -> void:
-	if not visible:
-		return
-	var is_press_event: bool = false
-	if event is InputEventMouseButton and event.pressed:
-		is_press_event = true
-	elif event.is_action_pressed("ui_accept"):
-		is_press_event = true
-
-	if not is_press_event:
-		return
-
-	if _is_waiting_for_reveal_click:
-		_is_waiting_for_reveal_click = false
-		get_viewport().set_input_as_handled()
-		return
-
-	if _is_waiting_for_continue:
-		_is_waiting_for_continue = false
-		get_viewport().set_input_as_handled()
 
 
 func _wait_for_continue_input() -> void:
