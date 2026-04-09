@@ -13,7 +13,7 @@ const COLOR_RED: Color = Color(0.9, 0.1, 0.1, 1.0)
 ## Largeurs de base
 const BEAM_WIDTH_BASE: float = 1.5
 const BEAM_WIDTH_MAX: float = 4.0
-const FADE_DURATION: float = 0.2
+const FADE_DURATION: float = 0.5
 
 ## Paramètres de l'effet de vague
 const NOISE_SPEED: float = 10.0
@@ -67,6 +67,11 @@ func _ready() -> void:
 	# Configurer les étincelles
 	if is_instance_valid(spark_particles):
 		spark_particles.emitting = true
+	
+	# Initialiser l'opacité à 0 pour le fade in
+	modulate.a = 0.0
+	var fade_in = create_tween()
+	fade_in.tween_property(self, "modulate:a", 1.0, FADE_DURATION)
 	
 	# Premier tir immédiat
 	fire_tick()
@@ -185,8 +190,6 @@ func _start_fade_out() -> void:
 	if is_instance_valid(impact_sparks):
 		impact_sparks.emitting = false
 		
-	var fade: Tween = create_tween().set_parallel(true)
-	fade.tween_property(line_core, "modulate:a", 0.0, FADE_DURATION)
-	fade.tween_property(line_glow, "modulate:a", 0.0, FADE_DURATION)
-	fade.tween_property(line_inner, "modulate:a", 0.0, FADE_DURATION)
+	var fade: Tween = create_tween()
+	fade.tween_property(self, "modulate:a", 0.0, FADE_DURATION)
 	fade.finished.connect(queue_free)
