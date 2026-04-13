@@ -1,4 +1,4 @@
-## © [2024] A7 Studio. All rights reserved. Trademark.
+## © [2026] A7 Studio. All rights reserved. Trademark.
 ## Level script that manages map, waves, state transitions, and enemy spawning.
 class_name ILevel extends Node2D
 
@@ -54,6 +54,8 @@ func _process_tick() -> void:
 # public
 ## Starts the level by initializing map, waves, and state machine.
 func start_level() -> void:
+	assert(clock != null, "Clock node is required.")
+	assert(popup_spawner != null, "PopupSpawner node is required.")
 	position = Vector2i.ZERO
 	ILevel.current_level = self
 	_init_map()
@@ -61,10 +63,10 @@ func start_level() -> void:
 	_build_state_machine()
 	state_machine.toggle_initial_state()
 	start_time = Time.get_unix_time_from_system()
-	popup_spawner.wave("Wave %s" % [current_wave+1])
+	popup_spawner.wave(tr("Wave %s") % [current_wave + 1])
 
 	# Notify the map of the wave start for dynamic events
-	if map:
+	if is_instance_valid(map):
 		map.notify_wave_start(current_wave)
 
 	clock.subscribe(_process_tick, 5)
@@ -128,16 +130,16 @@ func _build_state_machine() -> void:
 
 
 func _next_wave() -> void:
-	waves.pop_front() # NOTE : may shit later with save system
+	waves.pop_front() # TODO: Ensure this remains compatible with the save system.
 
 	if waves.is_empty() and current_step == null:
 		state_machine.toggle_state(STATE_VICTORY)
 		return
 	current_wave += 1
-	popup_spawner.wave("Wave %s" % [current_wave+1])
+	popup_spawner.wave(tr("Wave %s") % [current_wave + 1])
 
-	# Notifier la map du changement de vague pour les événements dynamiques
-	if map:
+	# Notify the map of the wave change for dynamic events.
+	if is_instance_valid(map):
 		map.notify_wave_start(current_wave)
 
 	state_machine.toggle_state(STATE_WAVE % current_wave)
@@ -157,11 +159,11 @@ func _on_state_wave(_args = []) -> bool:
 	var wave: Wave = waves.front()
 
 	# if no more steps and no enemy alive -> trigger next wave
-	if wave == null or wave.peak() == null and _enemies_alive == 0:
+	if (wave == null or wave.peak() == null) and _enemies_alive == 0 and current_step == null:
 		_next_wave()
 		return true
 
-	# if no current step -> tigger next step
+	# if no current step -> trigger next step
 	if current_step == null:
 		_next_step()
 		return true

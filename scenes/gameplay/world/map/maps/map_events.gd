@@ -1,40 +1,36 @@
-## © [2024] A7 Studio. All rights reserved. Trademark.
+## © [2026] A7 Studio. All rights reserved. Trademark.
 ##
-## Manage map events
-## Manage map events, such as path unlocks, wave events, etc.
+## Handles map events such as path unlocks and wave-based path changes.
 class_name MapEvents
 extends Node
 
-signal path_unlocked(path_index: int)
-signal path_locked(path_index: int)
 signal event_triggered(event_name: String)
+signal path_locked(path_index: int)
+signal path_unlocked(path_index: int)
 
-@export var map: IMap
+@export var map: IMap = null
 
-## Configuration of wave-based path unlocks
+## Wave-based path event configuration.
 ## Format: { wave_number: { "activate": [path_indices], "deactivate": [path_indices] } }
 @export var wave_path_events: Dictionary = {}
 
-## Programmed events to trigger later (e.g., after a delay or condition)
-var scheduled_events: Array[Dictionary] = []
-
-## Reference to the current level for accessing stats and state
+## Reference to the current level for state and currency checks.
 var _level: ILevel = null
 
 
 func _ready() -> void:
-	# Wait a frame to ensure all nodes are initialized before connecting to the level
+	# Wait one frame to ensure scene references are initialized.
 	await get_tree().process_frame
 	_connect_to_level()
 
 
 func _connect_to_level() -> void:
-	if ILevel.current_level:
+	if is_instance_valid(ILevel.current_level):
 		_level = ILevel.current_level
-		Log.trace(Log.Level.DEBUG, "MapEvents connecté au niveau")
+		Log.trace(Log.Level.DEBUG, "MapEvents connected to current level.")
 
 
-## Configure events for a specific wave
+## Configure events for a specific wave.
 func set_wave_event(wave_number: int, activate: Array[int] = [], deactivate: Array[int] = []) -> void:
 	wave_path_events[wave_number] = {
 		"activate": activate,
@@ -42,40 +38,42 @@ func set_wave_event(wave_number: int, activate: Array[int] = [], deactivate: Arr
 	}
 
 
-## Called by the level when a wave starts to apply configured path events
+## Apply configured path events when a wave starts.
 func on_wave_start(wave_number: int) -> void:
-	if wave_path_events.has(wave_number):
-		var event = wave_path_events[wave_number]
+	if not wave_path_events.has(wave_number):
+		return
 
-		# Deactivate paths
-		if event.has("deactivate"):
-			for path_index in event["deactivate"]:
-				map.deactivate_path(path_index)
-				path_locked.emit(path_index)
-		else: error
+	if not is_instance_valid(map):
+		Log.trace(Log.Level.ERROR, "MapEvents has no valid map reference.")
+		return
 
-		# Activate paths
-		if event.has("activate"):
-			for path_index in event["activate"]:
-				map.activate_path(path_index)
-				path_unlocked.emit(path_index)
-		else: error
+	var event: Dictionary = wave_path_events[wave_number]
+	var to_deactivate: Array = event.get("deactivate", [])
+	var to_activate: Array = event.get("activate", [])
 
-		event_triggered.emit("wave_%d_paths" % wave_number)
-		Log.trace(Log.Level.INFO, "Événements de chemins appliqués pour la vague %d" % wave_number)
+	for path_index in to_deactivate:
+		map.deactivate_path(path_index)
+		path_locked.emit(path_index)
+
+	for path_index in to_activate:
+		map.activate_path(path_index)
+		path_unlocked.emit(path_index)
+
+	event_triggered.emit("wave_%d_paths" % wave_number)
+	Log.trace(Log.Level.INFO, "Applied path events for wave %d." % wave_number)
 
 
-## Unlock a path after a specific wave
+## Unlock a path after a specific wave.
 func unlock_path_after_wave(path_index: int, wave_number: int) -> void:
 	set_wave_event(wave_number, [path_index], [])
 
 
-## Unlock a path by spending coins, with checks for sufficient funds
+## Unlock a path by spending coins.
 func unlock_path_with_money(path_index: int, cost: int) -> bool:
-	if _level == null:
-		_level = ILevel.current_level
+	if not _ensure_level_reference() or not is_instance_valid(map):
+		return false
 
-	if _level and _level.coins >= cost:
+	if _level.coins >= cost:
 		_level.coins -= cost
 		map.activate_path(path_index)
 		path_unlocked.emit(path_index)
@@ -84,8 +82,11 @@ func unlock_path_with_money(path_index: int, cost: int) -> bool:
 	return false
 
 
-## Close then open a path
+## Close one path, then open another.
 func switch_paths(close_index: int, open_index: int) -> void:
+	if not is_instance_valid(map):
+		return
+
 	map.deactivate_path(close_index)
 	map.activate_path(open_index)
 	path_locked.emit(close_index)
@@ -93,22 +94,31 @@ func switch_paths(close_index: int, open_index: int) -> void:
 	event_triggered.emit("path_switch_%d_to_%d" % [close_index, open_index])
 
 
-## Active multiple paths for a "rush mode" event, where enemies spawn on all unlocked paths
+## Activate multiple paths for a rush-mode event.
 func activate_rush_mode(path_indices: Array[int]) -> void:
+	if not is_instance_valid(map):
+		return
+
 	for index in path_indices:
 		map.activate_path(index)
 		path_unlocked.emit(index)
 	event_triggered.emit("rush_mode_activated")
 
 
-## Deactivate all paths except the initial one
+## Deactivate all paths except the initial one.
 func reset_to_main_path() -> void:
+	if not is_instance_valid(map):
+		return
+
 	map.set_active_paths_only([map.initial_path_index])
 	event_triggered.emit("paths_reset")
 
 
-## Activate a random path from a list of indices
+## Activate a random path from a list of indices.
 func activate_random_path(path_indices: Array[int]) -> int:
+	if not is_instance_valid(map):
+		return -1
+
 	if path_indices.is_empty():
 		return -1
 
@@ -119,7 +129,7 @@ func activate_random_path(path_indices: Array[int]) -> int:
 	return random_index
 
 
-## Program a callback to be called after a delay
+## Schedule a callback to run after a delay.
 func schedule_event(event_name: String, delay: float, callback: Callable) -> void:
 	var timer = get_tree().create_timer(delay)
 	await timer.timeout
@@ -127,13 +137,25 @@ func schedule_event(event_name: String, delay: float, callback: Callable) -> voi
 	event_triggered.emit(event_name)
 
 
-## Verify enemy count and activate paths if below a threshold
+## Activate paths when the enemy count is below a threshold.
 func check_enemy_count_event(threshold: int, paths_to_activate: Array[int]) -> void:
-	if _level == null:
-		_level = ILevel.current_level
+	if not _ensure_level_reference() or not is_instance_valid(map):
+		return
 
-	if _level and _level._enemies_alive <= threshold:
+	if _level._enemies_alive <= threshold:
 		for path_index in paths_to_activate:
 			map.activate_path(path_index)
 			path_unlocked.emit(path_index)
 		event_triggered.emit("low_enemy_paths_activated")
+
+
+func _ensure_level_reference() -> bool:
+	if is_instance_valid(_level):
+		return true
+
+	if is_instance_valid(ILevel.current_level):
+		_level = ILevel.current_level
+		return true
+
+	Log.trace(Log.Level.WARN, "No active level reference found.")
+	return false
