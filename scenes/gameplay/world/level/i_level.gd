@@ -14,6 +14,9 @@ const STATE_WAVE: String = "WAVE_%d"
 const STATE_WAVE_0: String = "WAVE_0"
 const STATE_END: String = "END"
 
+## Extra delay between the last bonus spawn and the first wave.
+const POST_SPECIAL_TILE_INTRO_DELAY_SECONDS: float = 2.0
+
 # Exported Variables
 @export var level_id: String = "lev.XX"
 @export var level_name: String
@@ -35,16 +38,22 @@ var end_time: float
 
 # stats
 var coins: int = 50: set = _set_coins
-var health: int = 200000: set = _set_health
+var health: int = 20: set = _set_health
 
 # Private Variables
 var _enemies_alive: int = 0
+var _time_scale_before_pause: float = 1.0
 
 
-@onready var popup_spawner: PopupSpawner = $PopupSpawner
 @onready var clock: Clock = $Clock
+@onready var popup_spawner: PopupSpawner = $PopupSpawner
 
 # core
+func _ready() -> void:
+	assert(clock != null, "clock node not found")
+	assert(popup_spawner != null, "popup_spawner node not found")
+
+
 ## Custom ticker callback
 func _process_tick() -> void:
 	assert(state_machine)
@@ -54,20 +63,17 @@ func _process_tick() -> void:
 # public
 ## Starts the level by initializing map, waves, and state machine.
 func start_level() -> void:
-	assert(clock != null, "Clock node is required.")
-	assert(popup_spawner != null, "PopupSpawner node is required.")
 	position = Vector2i.ZERO
 	ILevel.current_level = self
 	_init_map()
 	_load_waves()
+	ChallengeManager.start_level_challenges(level_id)
 	_build_state_machine()
+	await map.play_special_tiles_intro_sequence()
+	await get_tree().create_timer(POST_SPECIAL_TILE_INTRO_DELAY_SECONDS).timeout
 	state_machine.toggle_initial_state()
 	start_time = Time.get_unix_time_from_system()
 	popup_spawner.wave(tr("Wave %s") % [current_wave + 1])
-
-	# Notify the map of the wave start for dynamic events
-	if is_instance_valid(map):
-		map.notify_wave_start(current_wave)
 
 	clock.subscribe(_process_tick, 5)
 	clock.start()
@@ -130,18 +136,13 @@ func _build_state_machine() -> void:
 
 
 func _next_wave() -> void:
-	waves.pop_front() # TODO: Ensure this remains compatible with the save system.
+	waves.pop_front() # NOTE : may shit later with save system
 
 	if waves.is_empty() and current_step == null:
 		state_machine.toggle_state(STATE_VICTORY)
 		return
 	current_wave += 1
 	popup_spawner.wave(tr("Wave %s") % [current_wave + 1])
-
-	# Notify the map of the wave change for dynamic events.
-	if is_instance_valid(map):
-		map.notify_wave_start(current_wave)
-
 	state_machine.toggle_state(STATE_WAVE % current_wave)
 
 
@@ -163,7 +164,7 @@ func _on_state_wave(_args = []) -> bool:
 		_next_wave()
 		return true
 
-	# if no current step -> trigger next step
+	# if no current step -> tigger next step
 	if current_step == null:
 		_next_step()
 		return true
@@ -175,31 +176,37 @@ func _on_state_wave(_args = []) -> bool:
 
 	return true
 
+func _on_level_end(victory: bool, _args = []) -> void:
+	clock.stop()
+	Global.paused = true
 
-func _on_state_victory(_args = []) -> bool:
-	Log.trace(Log.Level.INFO, "Entering VICTORY state.")
 	end_time = Time.get_unix_time_from_system()
 	var end_game_menu_instance: EndGame = ScenesLoader.END_GAME_MENU.instantiate()
 	Global.ui.add_child(end_game_menu_instance)
-	end_game_menu_instance.init(true)
+	end_game_menu_instance.init(victory)
 	state_machine.toggle_state(STATE_END)
+
+
+func _on_state_victory(_args = []) -> bool:
+	Log.trace(Log.Level.INFO, "Entering VICTORY state.")
+	ChallengeManager.check_victory_conditions()
+
+	_on_level_end(true)
 	return true
 
 
 func _on_state_defeat(_args = []) -> bool:
 	Log.trace(Log.Level.INFO, "Entering DEFEAT state.")
-	end_time = Time.get_unix_time_from_system()
-	var end_game_menu_instance: EndGame = ScenesLoader.END_GAME_MENU.instantiate()
-	Global.ui.add_child(end_game_menu_instance)
-	end_game_menu_instance.init(false)
-	state_machine.toggle_state(STATE_END)
+
+	_on_level_end(false)
 	return true
 
 
 func _on_state_pause(_args = []) -> bool:
 	Log.trace(Log.Level.INFO, "Entering PAUSE state.")
-	get_tree().paused = true
+	_time_scale_before_pause = Engine.time_scale if Engine.time_scale > 0 else 1.0
 	Engine.time_scale = 0
+	Global.paused = true
 	Log.trace(Log.Level.INFO, "Game paused")
 	return true
 
@@ -214,6 +221,10 @@ func _on_state_error(_args = []) -> bool:
 func _set_health(new_value: int) -> void:
 	if health <= 0:
 		return
+
+	if new_value < health:
+		ChallengeManager.notify_damage(health - new_value)
+
 	health = new_value
 	stats_updated.emit()
 
@@ -227,6 +238,21 @@ func _on_enemy_die() -> void:
 
 func _on_enemy_spawn() -> void:
 	_enemies_alive += 1
+
+
+## Sets the game to paused state, affecting both time scale and state machine.
+func pause() -> void:
+	if state_machine.get_current_state().name != STATE_PAUSE:
+		state_machine.toggle_state(STATE_PAUSE)
+
+
+## Resumes the game from pause state.
+## [br]Restores time scale, then transitions back to current wave if in PAUSE state.
+func resume_from_pause() -> void:
+	if state_machine.get_current_state().name == STATE_PAUSE:
+		Engine.time_scale = _time_scale_before_pause
+		Global.paused = false
+		state_machine.toggle_state(STATE_WAVE % current_wave)
 
 
 ## Update player's coin count

@@ -15,19 +15,21 @@ const PAUSE_MENU: PackedScene = preload("res://scenes/ui/menus/pause/pause.tscn"
 const POPUP_SCORE_SCENE: PackedScene = preload("res://scenes/ui/popup/popup_score.tscn")
 const SKIP_COLOR_INACTIVE: Color = Color(1.0, 1.0, 1.0, 1.0)
 const SKIP_TIME_SCALE: float = 3.0
-const TOWER_SELECTION_MENU: PackedScene = preload("res://scenes/ui/menus/tower_selection/tower_selection.tscn")
+const BUILD_SELECTION_MENU: PackedScene = preload("res://scenes/ui/menus/building_selection/build_selection.tscn")
 
 # Variables
 @onready var challenges_button: TextureButton = $ChallengesMarginContainer/ChallengesButton
 @onready var coins_rich_text_label: Label = %HUDVBoxContainer/CoinsWavesMarginContainer/CoinsWavesHBoxContainer/CoinsTextureRect/MarginContainer/CoinsLabel
+@onready var health_ghost_progress_bar: TextureProgressBar = %HealthGhostProgressBar
 @onready var health_rich_text_label: Label = %HUDVBoxContainer/HeartTextureRect/HealthMarginContainer/MarginContainer/HealthTextureProgressBar/HealthLabel
 @onready var health_texture_progress_bar: TextureProgressBar = %HUDVBoxContainer/HeartTextureRect/HealthMarginContainer/MarginContainer/HealthTextureProgressBar
 @onready var new_wave_count_label: Label = $NewWaveCountLabel
 @onready var pause_button: TextureButton = $PauseMarginContainer/PauseButton
 @onready var skip_animation_player: AnimationPlayer = $SkipMarginContainer/SkipAnimationPlayer
 @onready var skip_time_scale_button: TextureButton = $SkipMarginContainer/SkipButton
-@onready var tower_selection_button: TextureButton = $TowerSelectionMarginContainer/TowerSelectionButton
+@onready var build_selection_button: TextureButton = $BuildSelectionMarginContainer/BuildSelectionButton
 @onready var waves_rich_text_label: Label = %HUDVBoxContainer/CoinsWavesMarginContainer/CoinsWavesHBoxContainer/WavesTextureRect/MarginContainer/WavesLabel
+@onready var low_health_indicator: LowHealthIndicator = $LowHealthIndicator
 
 @onready var default_coins_text: String = coins_rich_text_label.text
 @onready var default_health_text: String = health_rich_text_label.text
@@ -37,11 +39,13 @@ const TOWER_SELECTION_MENU: PackedScene = preload("res://scenes/ui/menus/tower_s
 	{SignalUtil.WHO: challenges_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_challenges_button_pressed},
 	{SignalUtil.WHO: pause_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_pause_button_pressed},
 	{SignalUtil.WHO: skip_time_scale_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_skip_time_scale_button_pressed},
-	{SignalUtil.WHO: tower_selection_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_tower_selection_button_pressed}
+	{SignalUtil.WHO: build_selection_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_build_selection_button_pressed}
 ]
 
 var _is_ready: bool = false
 var _last_coins: int = 0
+var _last_health: int = 0
+var _ghost_tween: Tween
 
 # Built-in functions
 func _ready() -> void:
@@ -49,8 +53,9 @@ func _ready() -> void:
 	assert(coins_rich_text_label != null, "coins_rich_text_label node not found")
 	assert(health_rich_text_label != null, "health_rich_text_label node not found")
 	assert(waves_rich_text_label != null, "waves_rich_text_label node not found")
+	assert(health_ghost_progress_bar != null, "health_ghost_progress_bar node not found")
 	assert(health_texture_progress_bar != null, "health_texture_progress_bar node not found")
-	assert(tower_selection_button != null, "tower_selection_button node not found")
+	assert(build_selection_button != null, "build_selection_button node not found")
 	assert(skip_time_scale_button != null, "skip_time_scale_button node not found")
 
 	Global.hud = self
@@ -58,6 +63,11 @@ func _ready() -> void:
 
 	SignalUtil.connects(signals)
 	_apply_time_scale(DEFAULT_TIME_SCALE, false)
+	
+	ButtonEffects.apply(challenges_button)
+	ButtonEffects.apply(pause_button)
+	ButtonEffects.apply(skip_time_scale_button)
+	ButtonEffects.apply(build_selection_button)
 
 
 func _process(_delta: float) -> void:
@@ -65,7 +75,6 @@ func _process(_delta: float) -> void:
 		return
 	if not visible:
 		show()
-
 
 # Public functions
 ## Initializes and displays the HUD interface.
@@ -77,6 +86,7 @@ func load_ui() -> void:
 	_is_ready = true
 	visible = true
 	_last_coins = ILevel.current_level.coins
+	_last_health = ILevel.current_level.health
 	SignalUtil.connects([{SignalUtil.WHO: ILevel.current_level, SignalUtil.WHAT: "stats_updated", SignalUtil.TO: _update}])
 	_update()
 
@@ -87,7 +97,6 @@ func unload_ui() -> void:
 	visible = false
 	if ILevel.current_level:
 		ILevel.current_level.disconnect("stats_updated", _update)
-
 
 # Private functions
 func _apply_time_scale(time_scale: float, is_fast: bool) -> void:
@@ -110,8 +119,16 @@ func _on_challenges_button_pressed() -> void:
 
 
 func _on_pause_button_pressed() -> void:
-	if not Global.paused:
+	if not Global.paused and ILevel.current_level != null:
+		var build_selection_menu: Node = Global.ui.get_node_or_null("BuildSelection")
+		if build_selection_menu != null:
+			build_selection_menu.queue_free()
+			build_selection_button.button_pressed = false
+
+		# Use Godot's built-in pause system
+		get_tree().paused = true
 		Global.paused = true
+		ILevel.current_level.pause()
 		var pause_menu_instance: Pause = PAUSE_MENU.instantiate()
 		Global.ui.add_child(pause_menu_instance)
 
@@ -122,12 +139,12 @@ func _on_skip_time_scale_button_pressed() -> void:
 	_apply_time_scale(target_scale, is_fast)
 
 
-func _on_tower_selection_button_pressed() -> void:
-	if Global.ui.get_node("TowerSelection") == null:
-		var tower_selection_menu_instance: TowerSelection = TOWER_SELECTION_MENU.instantiate()
-		Global.ui.add_child(tower_selection_menu_instance)
+func _on_build_selection_button_pressed() -> void:
+	if Global.ui.get_node_or_null("BuildSelection") == null:
+		var build_selection_menu_instance: BuildSelection = BUILD_SELECTION_MENU.instantiate()
+		Global.ui.add_child(build_selection_menu_instance)
 	else:
-		Global.ui.get_node("TowerSelection").queue_free()
+		Global.ui.get_node("BuildSelection").queue_free()
 
 
 func _trigger_coin_effects(amount: int) -> void:
@@ -137,16 +154,16 @@ func _trigger_coin_effects(amount: int) -> void:
 	tween.tween_property(coins_rich_text_label, "scale", Vector2(1.2, 1.2), 0.1).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	tween.tween_property(coins_rich_text_label, "scale", Vector2(1.0, 1.0), 0.1).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 
-	# Floating notification (+X$)
+	# Floating notification (+X with coin icon)
 	var popup = POPUP_SCORE_SCENE.instantiate()
-	var label: Label = popup.get_node("FloatingNumbers/Label")
+	var label: Label = popup.get_node("FloatingNumbers/PriceRow/Label") as Label
 
 	# Configure label with requested style
 	label.add_theme_font_override("font", DOTGOTHIC_FONT)
 	label.add_theme_font_size_override("font_size", 24)
 	label.add_theme_color_override("font_outline_color", Color.BLACK)
 	label.add_theme_constant_override("outline_size", 6)
-	label.text = "+%d$" % amount
+	label.text = "+%d" % amount
 	label.self_modulate = Color(1, 1, 1, 1)
 
 	# Add to HUD to keep it in screen space
@@ -180,11 +197,20 @@ func _spawn_coin_explosion(start_pos: Vector2) -> void:
 	for i in range(num_coins):
 		var coin = Sprite2D.new()
 		coin.texture = COIN_ICON_TEXTURE
-		coin.scale = Vector2(0.15, 0.15)
+		coin.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+		coin.scale = Vector2(1, 1)
 		add_child(coin)
 		coin.global_position = start_pos
 
-		var angle = randf_range(-PI * 0.8, -PI * 0.2) # Mostly upwards explosion
+		# Use angles 10° to 45° (left) and 170° to 135° (right), in radians, but flip direction upward
+		var use_left = randf() < 0.5
+		var angle: float
+		if use_left:
+			# Left arc: 10° to 45° UP (flip y-axis)
+			angle = -deg_to_rad(randf_range(10, 45))
+		else:
+			# Right arc: 170° to 135° UP (flip y-axis)
+			angle = -deg_to_rad(randf_range(135, 170))
 		var distance = randf_range(40, 80) # Increased travel distance
 		var target_pos = start_pos + Vector2(cos(angle), sin(angle)) * distance
 
@@ -193,6 +219,46 @@ func _spawn_coin_explosion(start_pos: Vector2) -> void:
 		coin_tween.tween_property(coin, "modulate:a", 0.0, 0.5).set_delay(0.2)
 		coin_tween.tween_property(coin, "scale", Vector2.ZERO, 0.5).set_ease(Tween.EASE_IN)
 		coin_tween.finished.connect(coin.queue_free)
+
+
+func _trigger_health_damage_effects() -> void:
+	# Camera shake
+	if Global.camera:
+		Global.camera.shake_camera_with_strength(7.0)
+	
+	# Ghost bar effect
+	if _ghost_tween:
+		_ghost_tween.kill()
+	
+	# IMPORTANT: We don't reset the ghost bar's value to _last_health here.
+	# If a second hit happens, the ghost bar stays where it is (at the higher value)
+	# and we just restart the timer and update the target destination.
+	_ghost_tween = create_tween()
+	_ghost_tween.tween_interval(0.4) # Reset the delay on every hit
+	_ghost_tween.tween_property(health_ghost_progress_bar, "value", ILevel.current_level.health, 1.2).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+
+	# Flash effect via shader
+	# Flash effect via shader
+	if health_texture_progress_bar.material is ShaderMaterial:
+		var flash_tween = create_tween()
+		flash_tween.tween_property(health_texture_progress_bar.material, "shader_parameter/flash_intensity", 1.0, 0.05)
+		flash_tween.tween_property(health_texture_progress_bar.material, "shader_parameter/flash_intensity", 0.0, 0.15)
+	
+	# Shake effect
+	var original_pos = health_texture_progress_bar.position
+	var shake_tween = create_tween()
+	for i in range(4):
+		var offset = Vector2(randf_range(-5, 5), randf_range(-3, 3))
+		shake_tween.tween_property(health_texture_progress_bar, "position", original_pos + offset, 0.04)
+	shake_tween.tween_property(health_texture_progress_bar, "position", original_pos, 0.04)
+	
+	# Also shake ghost bar to keep them aligned
+	var ghost_original_pos = health_ghost_progress_bar.position
+	var ghost_shake_tween = create_tween()
+	for i in range(4):
+		var offset = Vector2(randf_range(-5, 5), randf_range(-3, 3))
+		ghost_shake_tween.tween_property(health_ghost_progress_bar, "position", ghost_original_pos + offset, 0.04)
+	ghost_shake_tween.tween_property(health_ghost_progress_bar, "position", ghost_original_pos, 0.04)
 
 
 func _update() -> void:
@@ -204,8 +270,31 @@ func _update() -> void:
 		_trigger_coin_effects(current_coins - _last_coins)
 	_last_coins = current_coins
 
+	var current_health = ILevel.current_level.health
+	if current_health < _last_health:
+		# DAMAGE: Do NOT reset ghost bar value here, let it stay at its current (higher) value
+		# so it represents the health BEFORE the sequence of hits started.
+		_trigger_health_damage_effects()
+	elif current_health > _last_health:
+		# HEAL: Update ghost bar instantly
+		if _ghost_tween:
+			_ghost_tween.kill()
+		health_ghost_progress_bar.value = current_health
+	
+	_last_health = current_health
+
 	coins_rich_text_label.text = tr(default_coins_text) % current_coins
 	health_rich_text_label.text = tr(default_health_text) % (str(ILevel.current_level.health) + "/20")
 	health_texture_progress_bar.value = ILevel.current_level.health
+	
+	# Dynamic scaling via shader
+	var max_health: float = 20.0 # À ajuster si la vie max change dynamiquement
+	var health_ratio: float = float(ILevel.current_level.health) / max_health
+	if health_texture_progress_bar.material is ShaderMaterial:
+		health_texture_progress_bar.material.set_shader_parameter("health_percentage", health_ratio)
+	
+	if low_health_indicator:
+		low_health_indicator.update_health(health_ratio)
+	
 	var current_wave: int = ILevel.current_level.current_wave + 1
 	waves_rich_text_label.text = tr(default_waves_text) % current_wave

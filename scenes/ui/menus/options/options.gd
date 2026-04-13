@@ -12,8 +12,8 @@ signal menu_close
 var _actual_texture: Texture2D
 
 ## Preloaded flag textures for language toggle button
-@onready var _flag_en: Texture2D = preload("res://assets/ui/icons/Button Language English.svg")
-@onready var _flag_fr: Texture2D = preload("res://assets/ui/icons/Button Language French.png")
+@onready var _flag_en: Texture2D = preload("res://assets/ui/icons/English_Button.png")
+@onready var _flag_fr: Texture2D = preload("res://assets/ui/icons/French_Button.png")
 
 ## Options buttons
 @onready var close_button: TextureButton = $GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/TopLineHBoxContainer/AspectRatioContainer/CloseTextureButton
@@ -49,6 +49,17 @@ func _ready() -> void:
 
 	# Set initial button states based on current settings
 	_update_button_states()
+	
+	ButtonEffects.apply(close_button)
+	ButtonEffects.apply(contact_button)
+	ButtonEffects.apply(discord_button)
+	ButtonEffects.apply(instagram_button)
+	ButtonEffects.apply(language_toggle_button)
+	ButtonEffects.apply(music_toggle_button)
+	ButtonEffects.apply(news_button)
+	ButtonEffects.apply(rgpd_button)
+	ButtonEffects.apply(sound_toggle_button)
+	ButtonEffects.apply(x_button)
 
 # private
 ## Toggles the music state and updates the button texture.

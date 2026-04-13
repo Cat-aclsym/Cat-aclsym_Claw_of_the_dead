@@ -42,6 +42,10 @@ func configure() -> void:
 	_load_levels()
 	_update()
 	SignalUtil.connects(signals)
+	
+	ButtonEffects.apply(previous_button)
+	ButtonEffects.apply(next_button)
+	ButtonEffects.apply(main_menu_button)
 
 
 # private
@@ -105,6 +109,13 @@ func _on_frame_start_level(level: ILevel) -> void:
 	Global.ui.start_level()
 	level_selected.emit()
 
+	# free all other frames to save memory
+	for frame in level_frames:
+		if frame != locked_frame and frame != level_frames[level_index]:
+			if frame is LevelFrame:
+				frame.unload_level()
+			frame.queue_free()
+
 
 func _on_previous_button_pressed() -> void:
 	if level_index > 0:
@@ -142,8 +153,3 @@ func _on_level_indicator_selected(indicator: LevelIndicator) -> void:
 
 func _on_dim_bg() -> void: # pas vraiment un signal mais un peu quand meme
 	background_texture_rect.texture = level_frames[level_index].arc_texture
-
-# event
-
-
-# setget

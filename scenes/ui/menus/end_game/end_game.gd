@@ -8,14 +8,20 @@ extends Control
 ## Handles navigation back to menus or next level.
 
 # Constants
-const CONDITION_DONE: Texture2D = preload("res://assets/ui/level_selection/window/condition_done.svg")
-const CONDITION_TODO: Texture2D = preload("res://assets/ui/level_selection/window/condition_todo.svg")
+const CONDITION_DONE: Texture2D = preload("res://assets/ui/icons/Star.png")
+const CONDITION_TODO: Texture2D = preload("res://assets/ui/icons/Star_Empty.png")
+const DEFEAT_TITLE_COLOR: Color = Color(0.85, 0.2, 0.2, 1.0)
+const NORMAL_CHALLENGE_COLOR: Color = Color.WHITE
+const TINT_DEFAULT: Color = Color.WHITE
+const TINT_FAILED: Color = Color(1.0, 0.35, 0.35, 1.0)
+const VICTORY_TITLE_COLOR: Color = Color(0.364706, 0.847059, 0.364706, 1)
 
 
 # Variables
 var elapsed_time_minutes: int
 var elapsed_time_seconds: int
 var elapsed_time_text: String
+var _is_victory: bool = true
 
 @onready var challenges_vbox: VBoxContainer = $GUIMarginContainer/BackgroundTextureRect/ContentMarginContainer/VBoxContainerMain/ChallengesVBoxContainer
 @onready var end_game_image: TextureRect = $GUIMarginContainer/BackgroundTextureRect/ContentMarginContainer/VBoxContainerMain/ResultIconTextureRect
@@ -38,25 +44,28 @@ var elapsed_time_text: String
 
 # Built-in functions
 func _ready() -> void:
+	assert(challenges_vbox != null, "challenges_vbox node not found")
+	assert(end_game_image != null, "end_game_image node not found")
+	assert(home_button != null, "home_button node not found")
+	assert(life_label != null, "life_label node not found")
+	assert(next_button != null, "next_button node not found")
+	assert(restart_button != null, "restart_button node not found")
+	assert(time_label != null, "time_label node not found")
+	assert(title_label != null, "title_label node not found")
 	SignalUtil.connects(signals)
 
 
 # Public functions
 ## Initializes the end game screen with victory or defeat state.
 func init(victory: bool) -> void:
-	var tower_selection := Global.ui.get_node_or_null("TowerSelection")
-	if tower_selection:
-		tower_selection.queue_free()
+	_is_victory = victory
+	var build_menu := Global.ui.get_node_or_null("BuildSelection")
+	if build_menu:
+		build_menu.queue_free()
 
-	var tower_selection_button := Global.hud.get_node_or_null("TowerSelectionMarginContainer/TowerSelectionButton")
-	if tower_selection_button:
-		tower_selection_button.set_pressed_no_signal(false)
-
-	assert(time_label != null, "time_label node not found")
-	assert(life_label != null, "life_label node not found")
-	assert(home_button != null, "home_button node not found")
-	assert(restart_button != null, "restart_button node not found")
-	assert(next_button != null, "next_button node not found")
+	var build_menu_button := Global.hud.get_node_or_null("BuildSelectionMarginContainer/BuildSelectionButton")
+	if build_menu_button:
+		build_menu_button.set_pressed_no_signal(false)
 
 	elapsed_time_seconds = floor(ILevel.current_level.end_time - ILevel.current_level.start_time)
 	elapsed_time_minutes = floor(elapsed_time_seconds / 60.)
@@ -71,10 +80,12 @@ func init(victory: bool) -> void:
 
 	if victory:
 		title_label.text = tr("ENDGAMEMENU.LEVEL.TITLE.WIN")
+		title_label.add_theme_color_override("font_color", VICTORY_TITLE_COLOR)
 		end_game_image.texture = ResourceLoader.load("res://assets/ui/icons/Victory Gold.svg")
 		ProgressionManager.complete_level(ILevel.current_level.level_id)
 	else:
 		title_label.text = tr("ENDGAMEMENU.LEVEL.TITLE.LOOSE")
+		title_label.add_theme_color_override("font_color", DEFEAT_TITLE_COLOR)
 		end_game_image.texture = ResourceLoader.load("res://assets/ui/icons/Defeat.svg")
 		next_button.get_parent().visible = false
 
@@ -96,12 +107,20 @@ func _display_challenges() -> void:
 		icon_rect.custom_minimum_size = Vector2(30, 30)
 		icon_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		icon_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-		icon_rect.texture = CONDITION_DONE if challenge.is_completed else CONDITION_TODO
+		var is_done: bool = challenge.is_completed
+		var is_failed_visual: bool = challenge.is_failed or (not _is_victory and not is_done)
+		if is_failed_visual:
+			icon_rect.texture = CONDITION_DONE
+			icon_rect.modulate = TINT_FAILED
+		else:
+			icon_rect.texture = CONDITION_DONE if is_done else CONDITION_TODO
+			icon_rect.modulate = TINT_DEFAULT
 
 		var label := Label.new()
 		label.text = tr(challenge.title) + ": " + tr(challenge.description)
 		label.add_theme_font_override("font", load("res://assets/ui/fonts/dotgothic/DotGothic16-Regular.ttf"))
 		label.add_theme_font_size_override("font_size", 20)
+		label.add_theme_color_override("font_color", NORMAL_CHALLENGE_COLOR)
 
 		hbox.add_child(icon_rect)
 		hbox.add_child(label)

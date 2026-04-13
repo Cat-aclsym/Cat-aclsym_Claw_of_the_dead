@@ -1,19 +1,34 @@
-[gd_scene load_steps=17 format=3 uid="uid://b5630xr4v607r"]
+[gd_scene load_steps=22 format=3 uid="uid://b5630xr4v607r"]
 
 [ext_resource type="Script" uid="uid://cc06prch72skr" path="res://scenes/ui/menus/hud/hud.gd" id="1_cuep3"]
 [ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="2_jel3x"]
-[ext_resource type="Texture2D" uid="uid://fioj6q2hn4ii" path="res://assets/ui/icons/Button Pause.svg" id="2_meysh"]
+[ext_resource type="Texture2D" uid="uid://bnlogkwjp75g2" path="res://assets/ui/icons/Pause_Button_1.png" id="2_meysh"]
 [ext_resource type="Texture2D" uid="uid://cml3pcp3ixa0k" path="res://assets/ui/huds/Coeur.png" id="2_neukb"]
 [ext_resource type="Texture2D" uid="uid://bcvoasbjyvuy5" path="res://assets/ui/huds/Barre de vie.png" id="3_g6v8d"]
-[ext_resource type="Texture2D" uid="uid://d33ngfvvwv501" path="res://assets/ui/huds/Barre de vie ombre.png" id="4_4h2ri"]
 [ext_resource type="Texture2D" uid="uid://cf3qgahrw8xo1" path="res://assets/ui/huds/Vie@2x.png" id="5_hukgj"]
-[ext_resource type="Texture2D" uid="uid://dg0hpeoeleiff" path="res://assets/ui/huds/Coins@2x.png" id="7_1sk4j"]
-[ext_resource type="Texture2D" uid="uid://bcga3gamtf11v" path="res://assets/ui/huds/Waves@2x.png" id="8_ewojn"]
+[ext_resource type="Texture2D" uid="uid://mx73uy3s3lsk" path="res://assets/ui/icons/Coin_Button.png" id="7_1sk4j"]
+[ext_resource type="Texture2D" uid="uid://c8tt36yijwktt" path="res://assets/ui/icons/Cat_Button.png" id="8_ewojn"]
 [ext_resource type="Script" uid="uid://b5mbfrr7vwpj7" path="res://scenes/ui/menus/hud/new_wave_count.gd" id="9_o6rym"]
-[ext_resource type="Texture2D" uid="uid://do48sldu5a83i" path="res://assets/ui/icons/Button Build.svg" id="10_sc2vu"]
-[ext_resource type="Texture2D" uid="uid://bcj0nqyx7o5kh" path="res://assets/ui/icons/Bouton Challenges.svg" id="11_5r146"]
+[ext_resource type="Texture2D" uid="uid://c3eyakb4oxqkc" path="res://assets/ui/icons/Build_Button.png" id="10_sc2vu"]
+[ext_resource type="Texture2D" uid="uid://ccis5avg2eshj" path="res://assets/ui/icons/Trophey_Button.png" id="11_5r146"]
 [ext_resource type="Texture2D" uid="uid://c2uqlay1r2d1d" path="res://assets/ui/icons/Button Cancel.svg" id="12_5jyti"]
-[ext_resource type="Texture2D" uid="uid://dn8ksi7radij3" path="res://assets/ui/icons/Button Skip.svg" id="13_hn23h"]
+[ext_resource type="Texture2D" uid="uid://85fepmd06xnd" path="res://assets/ui/icons/Fast_Forward_Button.png" id="13_hn23h"]
+[ext_resource type="FontVariation" path="res://assets/ui/fonts/dotgothic/dotgothic_variation.tres" id="14_variation"]
+[ext_resource type="Shader" uid="uid://7k322cmfkfh1" path="res://assets/resources/shaders/health_bar_scaling.gdshader" id="15_shader"]
+[ext_resource type="Script" path="res://scenes/ui/menus/hud/low_health_indicator.gd" id="16_indicator"]
+[ext_resource type="Shader" path="res://assets/resources/shaders/low_health_vignette.gdshader" id="17_vignette"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_vignette"]
+shader = ExtResource("17_vignette")
+shader_parameter/intensity = 0.0
+shader_parameter/pulse_speed = 2.0
+shader_parameter/noise_speed = 5.0
+shader_parameter/edge_width = 0.15
+shader_parameter/base_color = Color(0.8, 0.1, 0.1, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_health"]
+render_priority = 0
+shader = ExtResource("15_shader")
 
 [sub_resource type="Animation" id="1"]
 resource_name = "skip_active"
@@ -38,7 +53,6 @@ _data = {
 }
 
 [node name="HUD" type="Control"]
-texture_filter = 6
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -47,6 +61,17 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("1_cuep3")
+
+[node name="LowHealthIndicator" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_vignette")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("16_indicator")
 
 [node name="PauseMarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1
@@ -97,50 +122,66 @@ texture = ExtResource("2_neukb")
 expand_mode = 3
 stretch_mode = 4
 
-[node name="HealthMarginContainer" type="MarginContainer" parent="HUDMarginContainer/HUDHBoxContainer/HUDVBoxContainer/HeartTextureRect"]
+[node name="HealthMarginContainer" type="Control" parent="HUDMarginContainer/HUDHBoxContainer/HUDVBoxContainer/HeartTextureRect"]
 layout_mode = 1
-anchors_preset = -1
-anchor_top = 0.2
+anchor_top = 0.05
 anchor_right = 1.0
-anchor_bottom = 0.8
+anchor_bottom = 0.95
+offset_top = 6.2
+offset_right = 5.0
+offset_bottom = -0.199997
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/margin_left = 30
 
 [node name="BottomHealthTextureRect" type="TextureRect" parent="HUDMarginContainer/HUDHBoxContainer/HUDVBoxContainer/HeartTextureRect/HealthMarginContainer"]
 z_index = -1
 z_as_relative = false
+texture_filter = 1
 layout_mode = 2
+offset_left = 48.0
+offset_top = -31.0
+offset_right = 467.0
+offset_bottom = 89.0
 texture = ExtResource("3_g6v8d")
 expand_mode = 2
 
-[node name="ShadowHealthMarginContainer" type="MarginContainer" parent="HUDMarginContainer/HUDHBoxContainer/HUDVBoxContainer/HeartTextureRect/HealthMarginContainer"]
+[node name="MarginContainer" type="Control" parent="HUDMarginContainer/HUDHBoxContainer/HUDVBoxContainer/HeartTextureRect/HealthMarginContainer"]
 layout_mode = 2
-theme_override_constants/margin_left = 5
-theme_override_constants/margin_top = 10
-theme_override_constants/margin_right = -5
-theme_override_constants/margin_bottom = -10
+anchors_preset = 0
+offset_left = 30.0
+offset_right = 474.0
+offset_bottom = 61.0
 
-[node name="ShadowHealthTextureRect" type="TextureRect" parent="HUDMarginContainer/HUDHBoxContainer/HUDVBoxContainer/HeartTextureRect/HealthMarginContainer/ShadowHealthMarginContainer"]
-z_index = -2
-z_as_relative = false
-layout_mode = 2
-texture = ExtResource("4_4h2ri")
-expand_mode = 2
-
-[node name="MarginContainer" type="MarginContainer" parent="HUDMarginContainer/HUDHBoxContainer/HUDVBoxContainer/HeartTextureRect/HealthMarginContainer"]
-layout_mode = 2
-theme_override_constants/margin_left = 8
-theme_override_constants/margin_top = 8
-theme_override_constants/margin_right = 16
-theme_override_constants/margin_bottom = 8
-
-[node name="HealthTextureProgressBar" type="TextureProgressBar" parent="HUDMarginContainer/HUDHBoxContainer/HUDVBoxContainer/HeartTextureRect/HealthMarginContainer/MarginContainer"]
+[node name="HealthGhostProgressBar" type="TextureProgressBar" parent="HUDMarginContainer/HUDHBoxContainer/HUDVBoxContainer/HeartTextureRect/HealthMarginContainer/MarginContainer"]
+unique_name_in_owner = true
 z_index = -1
 z_as_relative = false
+texture_filter = 1
 layout_mode = 2
-max_value = 10.0
-value = 9.0
+offset_left = 42.0
+offset_top = 14.0
+offset_right = 424.0
+offset_bottom = 55.0
+max_value = 20.0
+value = 20.0
+rounded = true
+nine_patch_stretch = true
+texture_progress = ExtResource("5_hukgj")
+tint_progress = Color(1, 1, 1, 0.5)
+
+[node name="HealthTextureProgressBar" type="TextureProgressBar" parent="HUDMarginContainer/HUDHBoxContainer/HUDVBoxContainer/HeartTextureRect/HealthMarginContainer/MarginContainer"]
+unique_name_in_owner = true
+z_index = -1
+z_as_relative = false
+texture_filter = 1
+material = SubResource("ShaderMaterial_health")
+layout_mode = 2
+offset_left = 42.0
+offset_top = 14.0
+offset_right = 424.0
+offset_bottom = 55.0
+max_value = 20.0
+value = 20.0
 rounded = true
 nine_patch_stretch = true
 texture_progress = ExtResource("5_hukgj")
@@ -150,6 +191,10 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = 26.0
+offset_top = 3.0
+offset_right = -21.0
+offset_bottom = -4.0
 grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("2_jel3x")
@@ -171,7 +216,7 @@ mouse_filter = 2
 theme_override_constants/separation = 10
 
 [node name="CoinsTextureRect" type="TextureRect" parent="HUDMarginContainer/HUDHBoxContainer/HUDVBoxContainer/CoinsWavesMarginContainer/CoinsWavesHBoxContainer"]
-texture_filter = 6
+texture_filter = 1
 layout_mode = 2
 texture = ExtResource("7_1sk4j")
 expand_mode = 3
@@ -202,7 +247,7 @@ horizontal_alignment = 1
 vertical_alignment = 2
 
 [node name="WavesTextureRect" type="TextureRect" parent="HUDMarginContainer/HUDHBoxContainer/HUDVBoxContainer/CoinsWavesMarginContainer/CoinsWavesHBoxContainer"]
-texture_filter = 6
+texture_filter = 1
 layout_mode = 2
 texture = ExtResource("8_ewojn")
 expand_mode = 3
@@ -244,6 +289,7 @@ offset_bottom = 72.0
 grow_horizontal = 0
 theme = ExtResource("2_jel3x")
 theme_type_variation = &"HeaderSmall"
+theme_override_fonts/font = ExtResource("14_variation")
 theme_override_font_sizes/font_size = 25
 text = "New wave in XX.XX s"
 script = ExtResource("9_o6rym")
@@ -263,13 +309,14 @@ grow_vertical = 0
 theme_override_constants/margin_right = 20
 
 [node name="ChallengesButton" type="TextureButton" parent="ChallengesMarginContainer"]
+texture_filter = 1
 custom_minimum_size = Vector2(110, 90)
 layout_mode = 2
 texture_normal = ExtResource("11_5r146")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="TowerSelectionMarginContainer" type="MarginContainer" parent="."]
+[node name="BuildSelectionMarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1
 anchors_preset = 3
 anchor_left = 1.0
@@ -283,7 +330,7 @@ grow_horizontal = 0
 grow_vertical = 0
 theme_override_constants/margin_right = 20
 
-[node name="TowerSelectionButton" type="TextureButton" parent="TowerSelectionMarginContainer"]
+[node name="BuildSelectionButton" type="TextureButton" parent="BuildSelectionMarginContainer"]
 custom_minimum_size = Vector2(110, 90)
 layout_mode = 2
 toggle_mode = true

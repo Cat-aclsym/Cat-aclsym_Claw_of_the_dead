@@ -10,17 +10,19 @@ size = Vector2(21, 6)
 [node name="PiercingArrow" instance=ExtResource("1_vp3tv")]
 z_index = 1000
 script = ExtResource("2_bdcpf")
-pierce_count = 10
-pierce_reduction = 10
+pierce_count = 0
+pierce_reduction = 0
 spark_effect_enabled = true
 spark_particles_count = 8
 spark_particles_lifetime = 0.3
 spark_particles_speed = 80.0
 spark_particles_size = 1.5
 spark_particles_color = Color(1, 1, 0.376471, 0.901961)
-damage = 100
-speed = 300
-trail_color = Color(1, 0.886275, 0, 0.901961)
+damage = 0
+speed = 0
+
+[node name="TrailParticles" parent="." index="2"]
+modulate = Color(1, 0.886275, 0, 0.901961)
 
 [node name="Sprite2D" parent="." index="0"]
 modulate = Color(1, 0.913725, 0, 1)

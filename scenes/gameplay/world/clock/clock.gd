@@ -10,7 +10,7 @@
 ## EXAMPLE:
 ## func _ready():
 ##     var id = $Clock.subscribe(my_function, 5)  # Call `my_function` every 5 ticks
-## 
+##
 ## func my_function():
 ##     print("Ticked!")
 class_name Clock extends Node
@@ -40,11 +40,11 @@ class _sub:
 	func next() -> void:
 		_i -= 1
 		if _i == 0:
-			_exec()	
+			_exec()
 
 	func uid() -> int:
 		return _uid
-	
+
 	func _exec() -> void:
 		_i = _count
 		_callback.call()
@@ -57,16 +57,16 @@ func _ready() -> void:
 
 # public
 func start() -> void:
-	if ILevel.current_level == null: return
 	Log.trace(Log.Level.INFO, "Starting clock");
-	timer.connect("timeout", _on_timer_timeout)
+	if not timer.timeout.is_connected(_on_timer_timeout):
+		timer.timeout.connect(_on_timer_timeout)
 	timer.start()
 
 
 func stop() -> void:
-	if ILevel.current_level == null: return
 	Log.trace(Log.Level.INFO, "Stoping clock");
-	timer.disconnect("timeout", _on_timer_timeout)
+	if timer.timeout.is_connected(_on_timer_timeout):
+		timer.timeout.disconnect(_on_timer_timeout)
 	timer.stop()
 
 

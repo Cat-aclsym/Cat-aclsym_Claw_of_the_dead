@@ -4,8 +4,8 @@
 [ext_resource type="Texture2D" uid="uid://bi5awqgar5hx3" path="res://assets/ui/level_selection/window/icon_100.svg" id="2_4j8i8"]
 [ext_resource type="FontFile" uid="uid://ddo3rokwsadq0" path="res://assets/ui/fonts/dotgothic/DotGothic16-Regular.ttf" id="2_indkb"]
 [ext_resource type="Texture2D" uid="uid://c8b8irfugbxdj" path="res://assets/environment/backgrounds/Fond Menu 02.svg" id="2_kbiyt"]
-[ext_resource type="Texture2D" uid="uid://bgv0uyh2tbaec" path="res://assets/ui/level_selection/window/condition_todo.svg" id="4_klwmy"]
-[ext_resource type="Texture2D" uid="uid://dnfx1s3hrkmcy" path="res://assets/ui/level_selection/window/bt_play.svg" id="5_w1l1s"]
+[ext_resource type="Texture2D" uid="uid://c4hs23u8vhbyh" path="res://assets/ui/icons/Star_Empty.png" id="4_klwmy"]
+[ext_resource type="Texture2D" uid="uid://dspulp5k6gi3b" path="res://assets/ui/icons/Play_Button.png" id="5_w1l1s"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_3ndqc"]
 content_margin_left = 16.0
@@ -85,9 +85,11 @@ alignment = 1
 layout_mode = 2
 
 [node name="Challenge1Indicator" type="TextureRect" parent="LevelPanelContainer/LevelMarginContainer/LevelVBoxContainer/FooterHBoxContainer/ChallengesContainer/Challenge1"]
+custom_minimum_size = Vector2(30, 30)
 layout_mode = 2
 size_flags_vertical = 4
 texture = ExtResource("4_klwmy")
+expand_mode = 2
 stretch_mode = 5
 
 [node name="Challenge1Label" type="Label" parent="LevelPanelContainer/LevelMarginContainer/LevelVBoxContainer/FooterHBoxContainer/ChallengesContainer/Challenge1"]
@@ -105,9 +107,11 @@ autowrap_mode = 3
 layout_mode = 2
 
 [node name="Challenge2Indicator" type="TextureRect" parent="LevelPanelContainer/LevelMarginContainer/LevelVBoxContainer/FooterHBoxContainer/ChallengesContainer/Challenge2"]
+custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 size_flags_vertical = 4
 texture = ExtResource("4_klwmy")
+expand_mode = 2
 stretch_mode = 5
 
 [node name="Challenge2Label" type="Label" parent="LevelPanelContainer/LevelMarginContainer/LevelVBoxContainer/FooterHBoxContainer/ChallengesContainer/Challenge2"]
@@ -125,9 +129,11 @@ autowrap_mode = 3
 layout_mode = 2
 
 [node name="Challenge3Indicator" type="TextureRect" parent="LevelPanelContainer/LevelMarginContainer/LevelVBoxContainer/FooterHBoxContainer/ChallengesContainer/Challenge3"]
+custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 size_flags_vertical = 4
 texture = ExtResource("4_klwmy")
+expand_mode = 2
 stretch_mode = 5
 
 [node name="Challenge3Label" type="Label" parent="LevelPanelContainer/LevelMarginContainer/LevelVBoxContainer/FooterHBoxContainer/ChallengesContainer/Challenge3"]
@@ -142,6 +148,7 @@ vertical_alignment = 1
 autowrap_mode = 3
 
 [node name="PlayButton" type="TextureButton" parent="LevelPanelContainer/LevelMarginContainer/LevelVBoxContainer/FooterHBoxContainer"]
+texture_filter = 1
 custom_minimum_size = Vector2(100, 87.5)
 layout_mode = 2
 texture_normal = ExtResource("5_w1l1s")

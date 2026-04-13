@@ -1,0 +1,40 @@
+[gd_scene load_steps=2 format=3 uid="uid://bacjy0ad1e7bl"]
+
+[ext_resource type="Script" uid="uid://b2c68ntkhbob7" path="res://scenes/gameplay/entities/bullet/instant_lightning.gd" id="1_tesla"]
+
+[node name="InstantLightning" type="Area2D"]
+script = ExtResource("1_tesla")
+trail_enabled = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+disabled = true
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+visible = false
+
+[node name="LineGlow" type="Line2D" parent="."]
+z_index = 90
+points = PackedVector2Array(599, 205)
+width = 5.0
+default_color = Color(0.913471, 1, 0.549342, 0.7)
+joint_mode = 1
+begin_cap_mode = 1
+end_cap_mode = 1
+antialiased = true
+
+[node name="LineCore" type="Line2D" parent="."]
+z_index = 91
+width = 1.5
+default_color = Color(1, 1, 0.6, 1)
+joint_mode = 1
+begin_cap_mode = 1
+end_cap_mode = 1
+antialiased = true
+
+[node name="SmokeBurstParticles" type="GPUParticles2D" parent="."]
+visible = false
+emitting = false
+
+[node name="TrailParticles" type="GPUParticles2D" parent="."]
+visible = false
+emitting = false

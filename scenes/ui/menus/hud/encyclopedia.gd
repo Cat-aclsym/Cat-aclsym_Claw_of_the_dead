@@ -141,6 +141,12 @@ func _ready() -> void:
 	name_label.add_theme_font_size_override("font_size", 48)
 	towers_button.add_theme_font_override("font", _font)
 	enemies_button.add_theme_font_override("font", _font)
+	
+	ButtonEffects.apply(close_button)
+	ButtonEffects.apply(enemies_button)
+	ButtonEffects.apply(next_button)
+	ButtonEffects.apply(prev_button)
+	ButtonEffects.apply(towers_button)
 
 
 ## Adds an enemy entry to the internal dictionary.
@@ -333,8 +339,8 @@ func _get_sprite_from_instance(p_node: Node) -> Dictionary:
 ## Loads all tower and enemy entries from StatsDB.
 func _initialize_entries() -> void:
 	var tower_name_mapping: Dictionary = {
-		"bat_01": "TOWER.1.NAME",
-		"bat_02": "TOWER.2.NAME"
+		"bat_01": "TOWER.BAT_01.NAME",
+		"bat_02": "TOWER.BAT_02.NAME"
 	}
 	var enemy_name_mapping: Dictionary = {
 		"big_daddy": "ENEMY.BIGDADDY.NAME",

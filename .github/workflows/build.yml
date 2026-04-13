@@ -1,0 +1,60 @@
+name: Build Cat'aclysm Android APK
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Setup Godot
+        uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.4.0
+          use-dotnet: false
+
+      - name: Setup Android export template
+        run: |
+          mkdir -p ~/.local/share/godot/export_templates/4.4.stable
+          wget -q https://github.com/godotengine/godot/releases/download/4.4-stable/Godot_v4.4-stable_export_templates.tpz
+          unzip -q Godot_v4.4-stable_export_templates.tpz
+          mv templates/* ~/.local/share/godot/export_templates/4.4.stable/
+
+      - name: Decode keystore
+        run: |
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > ~/Cataclysm.keystore
+
+      - name: Configure keystore in export presets
+        run: |
+          sed -i "s|keystore/release=\"\"|keystore/release=\"/home/runner/Cataclysm.keystore\"|" export_presets.cfg
+          sed -i "s|keystore/release_password=\"\"|keystore/release_password=\"${{ secrets.KEYSTORE_PASSWORD }}\"|" export_presets.cfg
+          sed -i "s|keystore/release_user=\"\"|keystore/release_user=\"Cataclysm\"|" export_presets.cfg
+          grep -n "keystore" export_presets.cfg
+
+      - name: Import project
+        run: |
+          godot --headless --import || true
+
+      - name: Build APK
+        run: |
+          mkdir -p exports
+          godot --headless --export-release "Android" exports/Cataclysm.apk
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Cataclysm-apk
+          path: exports/Cataclysm.apk

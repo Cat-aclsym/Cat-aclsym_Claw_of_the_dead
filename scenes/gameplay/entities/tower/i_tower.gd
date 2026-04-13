@@ -1,8 +1,8 @@
-## © [2024] A7 Studio. All rights reserved. Trademark.
+## © [2026] A7 Studio. All rights reserved. Trademark.
 ##
 ## Interface for a tower.
 class_name ITower
-extends Node2D
+extends IBuilding
 
 ## Signal emitted when the tower starts upgrading
 signal upgrade_started
@@ -33,24 +33,42 @@ enum TowerType {
 	DEBUG_PIERCING, ## The debug piercing tower
 }
 
+## Gameplay keys applied from [member bullet_stats] onto each projectile at fire time (scenes keep VFX only).
+const PROJECTILE_GAMEPLAY_KEYS: Array[String] = [
+	"aoe_duration",
+	"aoe_range",
+	"aoe_tick",
+	"burn_damage_base",
+	"burn_duration",
+	"chain_bounces",
+	"chain_damage_falloff",
+	"chain_range",
+	"damage",
+	"damage_multiplier",
+	"dot_damage",
+	"electrify_duration",
+	"electrify_slow_amount",
+	"electrify_tick_damage",
+	"electrify_tick_interval",
+	"lightning_blue_tint_strength",
+	"lightning_width_scale",
+	"pierce_count",
+	"pierce_reduction",
+	"speed",
+]
 
 # Exported variables
-@export_subgroup("Bullet Configuration")
 ## The bullet scene to be instantiated by the tower
 @export var bullet_scene: PackedScene = null
 
 ## The bullet stats to be applied to the bullet (overridden at runtime from StatsDB)
 var bullet_stats: Dictionary = {}
 
-@export_subgroup("Multi-Shot Properties")
 ## The number of projectiles to fire simultaneously (overridden at runtime)
 var projectile_count: int = 0
 ## The angle spread between multiple projectiles (in degrees) (overridden at runtime)
 var spread_angle: float = 0.0
 
-@export_subgroup("Tower Properties")
-## The cost of the tower (overridden at runtime)
-var cost: int = 0
 ## The fire rate of the tower (overridden at runtime)
 var fire_rate: float = 0.0
 ## The level of the tower (overridden at runtime)
@@ -62,13 +80,14 @@ var shoot_range: float = 0.0
 
 ## Multiplier for gold rewards when this tower kills an enemy
 var reward_multiplier: float = 1.0
+## Prioritize enemies that are not electrified
+var prefer_non_electrified_targets: bool = false
 
 ## Dictionary of modifiers applied to this tower (stat_name -> multiplier)
 var _special_modifiers: Dictionary = {}
 
-@export_subgroup("Upgrades")
-## The upgrade array to store upgrades that are applied in the tower
-@export var available_upgrade: Array[PackedScene]
+## Data-driven upgrade IDs available for this tower
+var available_upgrade_ids: Array[String] = []
 
 # Onready variables
 ## The area 2D node for the tower to detect enemies in range
@@ -83,9 +102,8 @@ var _special_modifiers: Dictionary = {}
 @onready var outline: Line2D = $Polygon2D/Line2D
 ## The polygon 2D node for the range of the tower to detect enemies
 @onready var polygon_2d: Polygon2D = $Polygon2D
-## The sprite 2D node for the tower to display the tower model
-@onready var animated_sprite_2d: AnimatedSprite2D = $AnimatedSprite2D
-@onready var sprite_2d: Sprite2D = $Sprite2D
+## The sprite node for the tower to display the tower model
+@onready var sprite: AnimatedSprite2D = %Sprite
 ## The button node for the tower to interact with
 @onready var button: Button = $Button
 
@@ -111,30 +129,33 @@ var target: IEnemy
 ## The type of target the tower will shoot at
 var target_type: TargetType
 ## The pending upgrade to be applied
-var pending_upgrade: PackedScene
+var pending_upgrade_id: String = ""
 ## The tile position of the tower on the map
 var tile_pos: Vector2i
 var _pulse_tween: Tween = null
 var _scale_tween: Tween = null
 var _range_tween: Tween = null
-@onready var stats_db = get_node("/root/StatsDB")
 @export var tower_id: String = ""
 
 # Core methods
 func _ready() -> void:
 	target_type = TargetType.FIRST
+	assert(sprite != null)
 	_apply_base_stats_override()
+	_resolve_initial_upgrade_ids()
+	ArmoryManager.append_unlocked_upgrade_ids(self)
+	available_upgrade_ids = _filter_upgrade_ids(available_upgrade_ids)
 	sell_price = ceil(cost / 2.0)
 	hover_box.z_index = 3
 	update_dependent_properties()
 	# Sync range visibility with selected state (especially for duplicated towers)
 	show_range(selected, false)
-	
+
 	if state == TowerState.ACTIVE:
 		call_deferred("_register_with_cursor")
-		
-	if animated_sprite_2d and animated_sprite_2d.sprite_frames and animated_sprite_2d.sprite_frames.has_animation("idle"):
-		animated_sprite_2d.play("idle")
+
+	if sprite and sprite.sprite_frames and sprite.sprite_frames.has_animation("idle"):
+		sprite.play("idle")
 	SignalUtil.connects(signals)
 
 func _process(_delta: float) -> void:
@@ -150,6 +171,49 @@ func _process(_delta: float) -> void:
 		fire()
 
 # Public methods
+func cancel_build_preview() -> void:
+	show_range(false, true)
+
+func enter_build_preview() -> void:
+	state = TowerState.BUILDING
+	show_range(true, false)
+
+func get_building_kind() -> IBuilding.BuildingKind:
+	return IBuilding.BuildingKind.TOWER
+
+## Returns a copy of [member bullet_stats] for UI and tooling (single source for projectile numbers).
+func get_display_bullet_stats() -> Dictionary:
+	return bullet_stats.duplicate()
+
+func get_placement_vertical_offset() -> float:
+	return 16.0
+
+## Applies [code]stats.json[/code] [code]towers[/code] entry when [member tower_id] is set. Uses the [StatsDB] autoload so it works on orphan instances (e.g. build menu preview).
+func apply_stats_from_db() -> void:
+	if tower_id.is_empty():
+		return
+	if not StatsDB.has_tower(tower_id):
+		Log.trace(Log.Level.ERROR, "StatsDB missing tower id: %s" % tower_id)
+		return
+	var data: Dictionary = StatsDB.get_tower(tower_id)
+	var base: Dictionary = data.get("base", {})
+	level = StatsDB.get_tower_level(tower_id)
+	Log.trace(Log.Level.INFO, "Applying tower stats from StatsDB for %s: %s" % [tower_id, base])
+	if base.has("cost"):
+		cost = int(base["cost"])
+	if base.has("fire_rate"):
+		fire_rate = float(base["fire_rate"])
+	if base.has("shoot_range"):
+		shoot_range = float(base["shoot_range"])
+	if base.has("projectile_count"):
+		projectile_count = int(base["projectile_count"])
+	if base.has("spread_angle"):
+		spread_angle = float(base["spread_angle"])
+	if base.has("bullet_stats"):
+		var bs: Dictionary = base["bullet_stats"]
+		for k in bs.keys():
+			bullet_stats[k] = bs[k]
+
 ## Fires a bullet at the current target if conditions are met
 func fire() -> void:
 	if state != TowerState.ACTIVE or not len(enemy_array):
@@ -183,23 +247,28 @@ func fire() -> void:
 		bullet_instance.direction = rotated_direction
 		bullet_instance.rotation = rotated_direction.angle()
 		bullet_instance.target = enemy_position
-		
+		if "enemy_target" in bullet_instance:
+			bullet_instance.enemy_target = target
+
 		# Set tower owner to allow reward multiplier logic
 		if "tower_owner" in bullet_instance:
 			bullet_instance.tower_owner = self
 
-		_apply_bullet_modifications(bullet_instance)
+		_apply_projectile_config(bullet_instance)
 		add_child(bullet_instance)
 
 	fire_rate_timer.start()
 
-## Starts the upgrade process with the given upgrade scene
-func start_upgrade(upgradeScene: PackedScene) -> void:
-	var upgrade: IUpgrade = upgradeScene.instantiate()
-	if ILevel.current_level.coins < upgrade.price:
+## Starts the upgrade process with the given upgrade id
+func start_upgrade(upgrade_id: String) -> void:
+	if upgrade_id.is_empty() or not StatsDB.has_upgrade(upgrade_id):
+		Log.trace(Log.Level.ERROR, "Invalid upgrade id: %s" % upgrade_id)
+		return
+	var upgrade_price: int = StatsDB.get_upgrade_price(upgrade_id)
+	if ILevel.current_level.coins < upgrade_price:
 		Log.trace(Log.Level.ERROR, "Not enough coins to upgrade")
 		return
-	pending_upgrade = upgradeScene
+	pending_upgrade_id = upgrade_id
 	state = TowerState.UPGRADING
 	$ProgressBar.value = 0
 	$ProgressBar.visible = true
@@ -208,44 +277,55 @@ func start_upgrade(upgradeScene: PackedScene) -> void:
 
 ## Applies the pending upgrade to the tower
 func apply_upgrade() -> void:
-	var upgrade: IUpgrade = pending_upgrade.instantiate()
+	if pending_upgrade_id.is_empty() or not StatsDB.has_upgrade(pending_upgrade_id):
+		Log.trace(Log.Level.ERROR, "No pending upgrade id to apply")
+		return
+	var changes: Dictionary = StatsDB.get_upgrade_changes(pending_upgrade_id)
+	var tower_stats: Dictionary = StatsDB.get_upgrade_tower_stats(pending_upgrade_id)
+	var bullet_stats_delta: Dictionary = StatsDB.get_upgrade_bullet_stats(pending_upgrade_id)
+	var upgrade_data: Dictionary = StatsDB.get_upgrade(pending_upgrade_id)
 
-	if upgrade.changes["tower_stat"]:
-		_apply_tower_stat_changes(upgrade)
+	if changes.get("tower_stat", false):
+		_apply_tower_stat_changes(tower_stats)
 
-	if upgrade.changes["bullet_stat"]:
-		_apply_bullet_stat_changes(upgrade)
+	if changes.get("bullet_stat", false):
+		_apply_bullet_stat_changes(bullet_stats_delta)
 
-	if upgrade.changes["tower_model"] and upgrade.tower != null:
-		if upgrade.tower is Texture2D:
-			if animated_sprite_2d.sprite_frames != null and animated_sprite_2d.sprite_frames.has_animation("idle"):
-				var idle_anim = animated_sprite_2d.sprite_frames.get_animation("idle")
+	if changes.get("tower_model", false):
+		var tower_model_path: String = str(upgrade_data.get("tower_model_path", ""))
+		var tower_model_res: Resource = load(tower_model_path) if not tower_model_path.is_empty() else null
+		if tower_model_res is Texture2D:
+			if sprite.sprite_frames != null and sprite.sprite_frames.has_animation("idle"):
+				var idle_anim = sprite.sprite_frames.get_animation("idle")
 				# Determine frame index: 0 to add if empty, or last frame index to update
 				var frame_idx = 0
 				if idle_anim.get_frame_count() > 0:
 					frame_idx = idle_anim.get_frame_count() - 1
 
-				idle_anim.set_frame_texture(frame_idx, upgrade.tower)
+				idle_anim.set_frame_texture(frame_idx, tower_model_res)
 
-				if not animated_sprite_2d.is_playing() or animated_sprite_2d.animation != "idle":
-					animated_sprite_2d.play("idle")
-			else: # upgrade.tower is Texture2D, but no 'idle' animation or no sprite_frames
+				if not sprite.is_playing() or sprite.animation != "idle":
+					sprite.play("idle")
+			else:
 				var reason = "'idle' animation missing"
-				if animated_sprite_2d.sprite_frames == null:
+				if sprite.sprite_frames == null:
 					reason = "no sprite_frames assigned"
-				elif not animated_sprite_2d.sprite_frames.has_animation("idle"):
-					reason = "'idle' animation missing" # Redundant but clear
+				elif not sprite.sprite_frames.has_animation("idle"):
+					reason = "'idle' animation missing"
 				Log.trace(Log.Level.WARN, "Cannot apply tower_model texture: %s in AnimatedSprite2D." % reason)
-		else: # upgrade.tower is not Texture2D (and not null)
-			Log.trace(Log.Level.ERROR, "upgrade.tower for tower_model is not a Texture2D as expected. Type: %s" % typeof(upgrade.tower))
+		elif not tower_model_path.is_empty():
+			Log.trace(Log.Level.ERROR, "tower_model_path is not a Texture2D as expected. Type: %s" % typeof(tower_model_res))
 
-	if upgrade.changes["bullet_model"] and upgrade.bullet != null:
-		bullet_scene = upgrade.bullet
+	if changes.get("bullet_model", false):
+		var bullet_override: PackedScene = StatsDB.get_upgrade_bullet_scene(pending_upgrade_id)
+		if bullet_override != null:
+			bullet_scene = bullet_override
 
-	available_upgrade = upgrade.next_upgrades
-	sell_price += ceil(upgrade.price / 2.0)
+	available_upgrade_ids = _filter_upgrade_ids(StatsDB.get_upgrade_next_ids(pending_upgrade_id))
+	sell_price += ceil(float(StatsDB.get_upgrade_price(pending_upgrade_id)) / 2.0)
 	update_dependent_properties()
-	level += 1
+	level += int(tower_stats.get("level", 1))
+	pending_upgrade_id = ""
 	state = TowerState.ACTIVE
 	emit_signal("upgrade_completed")
 
@@ -270,10 +350,10 @@ func apply_special_modifier(modifiers: Dictionary) -> void:
 	else:
 		for stat in modifiers.keys():
 			_special_modifiers[stat] = modifiers[stat]
-	
+
 	# Re-apply base stats first to avoid stacking multipliers incorrectly
 	_apply_base_stats_override()
-	
+
 	# Apply modifiers to basic tower stats
 	if _special_modifiers.has("fire_rate"):
 		fire_rate *= _special_modifiers["fire_rate"]
@@ -281,11 +361,11 @@ func apply_special_modifier(modifiers: Dictionary) -> void:
 		shoot_range *= _special_modifiers["shoot_range"]
 	if _special_modifiers.has("reward_multiplier"):
 		reward_multiplier *= _special_modifiers["reward_multiplier"]
-	
+
 	# Apply modifiers to bullet stats
 	if _special_modifiers.has("damage") and bullet_stats.has("damage"):
 		bullet_stats["damage"] = int(bullet_stats["damage"] * _special_modifiers["damage"])
-		
+
 	Log.trace(Log.Level.INFO, "Tower {0} stats updated with modifiers: {1}".format([name, _special_modifiers]))
 	_apply_special_visual_effect(modifiers)
 	update_dependent_properties()
@@ -298,54 +378,31 @@ func _apply_special_visual_effect(modifier: Dictionary) -> void:
 	if _scale_tween:
 		_scale_tween.kill()
 		_scale_tween = null
-	
+
 	# Reset visual state if no modifier or no color
 	if not modifier.has("color"):
-		if animated_sprite_2d:
-			animated_sprite_2d.modulate = Color.WHITE
-			animated_sprite_2d.scale = Vector2(1, 1)
-		elif sprite_2d:
-			sprite_2d.modulate = Color.WHITE
-			sprite_2d.scale = Vector2(1, 1)
+		if sprite:
+			sprite.modulate = Color.WHITE
+			sprite.scale = Vector2(1, 1)
 		else:
 			self.modulate = Color.WHITE
 			self.scale = Vector2(1, 1)
 		return
-		
-	var effect_color = modifier["color"]
-	effect_color.a = 1.0 # Force full opacity for the color tint
-	
-	# Create a dedicated tween for the visual effect
-	_pulse_tween = create_tween().set_loops()
-	
-	# Pulse only the color between normal (White) and the modifier color (Solid Tint)
-	# No scale/zoom effect as requested
-	if animated_sprite_2d:
-		_pulse_tween.tween_property(animated_sprite_2d, "modulate", effect_color, 1.0).set_trans(Tween.TRANS_SINE)
-		_pulse_tween.tween_property(animated_sprite_2d, "modulate", Color.WHITE, 1.0).set_trans(Tween.TRANS_SINE)
-	elif sprite_2d:
-		_pulse_tween.tween_property(sprite_2d, "modulate", effect_color, 1.0).set_trans(Tween.TRANS_SINE)
-		_pulse_tween.tween_property(sprite_2d, "modulate", Color.WHITE, 1.0).set_trans(Tween.TRANS_SINE)
+
+	# Keep the tower visuals neutral; the bonus tile scene owns the color tint.
+	if sprite:
+		sprite.modulate = Color.WHITE
 	else:
-		# Fallback to the whole node
-		_pulse_tween.tween_property(self, "modulate", effect_color, 1.0).set_trans(Tween.TRANS_SINE)
-		_pulse_tween.tween_property(self, "modulate", Color.WHITE, 1.0).set_trans(Tween.TRANS_SINE)
-	
+		self.modulate = Color.WHITE
+
 	# Add a small scale effect only to the tower sprite
 	_scale_tween = create_tween()
-	var target_sprite: Node2D = null
-	if animated_sprite_2d:
-		target_sprite = animated_sprite_2d
-	elif sprite_2d:
-		target_sprite = sprite_2d
-	
-	if target_sprite:
+	if sprite:
 		if modifier["label"].ends_with("-"):
-			_scale_tween.tween_property(target_sprite, "scale", Vector2(0.85, 0.85), 0.3).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+			_scale_tween.tween_property(sprite, "scale", Vector2(0.85, 0.85), 0.3).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 		else:
-			_scale_tween.tween_property(target_sprite, "scale", Vector2(1.15, 1.15), 0.3).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+			_scale_tween.tween_property(sprite, "scale", Vector2(1.15, 1.15), 0.3).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	else:
-		# Fallback to the whole node if no sprite is found
 		if modifier["label"].ends_with("-"):
 			_scale_tween.tween_property(self, "scale", Vector2(0.85, 0.85), 0.3).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 		else:
@@ -358,7 +415,7 @@ func build_tower() -> void:
 ## Sells the tower
 func sell_tower() -> void:
 	ILevel.current_level.coins += sell_price
-	var placement_system = Global.get("cursor")
+	var placement_system: BuildPlacement = Global.get("cursor") as BuildPlacement
 	if placement_system:
 		placement_system.remove_invalid_cell(tile_pos)
 	queue_free()
@@ -366,9 +423,9 @@ func sell_tower() -> void:
 func _register_with_cursor() -> void:
 	if not is_inside_tree():
 		return
-		
+
 	# Safe access to Global.cursor to avoid assertion if it's not yet set
-	var placement_system = Global.get("cursor")
+	var placement_system: BuildPlacement = Global.get("cursor") as BuildPlacement
 	if placement_system:
 		if tile_pos == Vector2i.ZERO:
 			if placement_system.tm_ref:
@@ -380,7 +437,7 @@ func _register_with_cursor() -> void:
 ## Animates the range display
 func show_range(p_show: bool, smooth: bool = true) -> void:
 	selected = p_show
-	
+
 	# If not in tree yet, the @onready variables aren't initialized.
 	# We just set the state and return; visuals will be handled by the scene's default state
 	# or subsequent calls once ready.
@@ -389,7 +446,7 @@ func show_range(p_show: bool, smooth: bool = true) -> void:
 
 	if _range_tween:
 		_range_tween.kill()
-	
+
 	if p_show:
 		selected = true
 		polygon_2d.visible = true
@@ -409,7 +466,7 @@ func show_range(p_show: bool, smooth: bool = true) -> void:
 			_range_tween.tween_property(polygon_2d, "scale", Vector2(0, 0), 0.2).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 			_range_tween.tween_property(outline, "scale", Vector2(0, 0), 0.2).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 			_range_tween.set_parallel(false)
-			_range_tween.tween_callback(func(): 
+			_range_tween.tween_callback(func():
 				polygon_2d.visible = false
 				outline.visible = false
 			)
@@ -419,64 +476,92 @@ func show_range(p_show: bool, smooth: bool = true) -> void:
 			polygon_2d.visible = false
 			outline.visible = false
 
-func _apply_tower_stat_changes(upgrade: IUpgrade) -> void:
-	for stat in upgrade.tower_stats.keys():
+func _apply_tower_stat_changes(tower_stats: Dictionary) -> void:
+	for stat in tower_stats.keys():
 		if stat == "level":
 			continue
-		if self.get(stat):
-			Log.trace(Log.Level.DEBUG, "Modifying stat: {0} by {1}".format([stat, upgrade.tower_stats[stat]]))
-			self.set(stat, self.get(stat) + upgrade.tower_stats[stat])
+		if stat in self:
+			Log.trace(Log.Level.DEBUG, "Modifying stat: {0} by {1}".format([stat, tower_stats[stat]]))
+			var current_value: Variant = self.get(stat)
+			var delta_value: Variant = tower_stats[stat]
+			if typeof(current_value) == TYPE_BOOL:
+				self.set(stat, bool(delta_value))
+			else:
+				self.set(stat, current_value + delta_value)
 
-func _apply_bullet_stat_changes(upgrade: IUpgrade) -> void:
-	for stat in upgrade.bullet_stats.keys():
+func _apply_bullet_stat_changes(bullet_stats_delta: Dictionary) -> void:
+	for stat in bullet_stats_delta.keys():
+		var delta: Variant = bullet_stats_delta[stat]
 		if bullet_stats.has(stat):
-			bullet_stats[stat] += upgrade.bullet_stats[stat]
+			bullet_stats[stat] += delta
+		else:
+			bullet_stats[stat] = delta
 
-func _apply_bullet_modifications(bullet_instance: IBullet) -> void:
+
+## Overwrites gameplay fields on the projectile from [member bullet_stats] (tower-owned balance; scenes are VFX-only).
+func _apply_projectile_config(bullet_instance: Node) -> void:
 	if bullet_instance == null:
 		return
-
-	bullet_instance.damage += bullet_stats["damage"]
-	bullet_instance.speed += bullet_stats["speed"]
+	for key in PROJECTILE_GAMEPLAY_KEYS:
+		if not bullet_stats.has(key):
+			continue
+		if not (key in bullet_instance):
+			continue
+		var v: Variant = bullet_stats[key]
+		match key:
+			"damage", "speed", "pierce_count", "burn_damage_base", "aoe_range", "pierce_reduction":
+				bullet_instance.set(key, int(round(float(v))))
+			"burn_duration", "aoe_duration", "aoe_tick":
+				bullet_instance.set(key, float(v))
+			"dot_damage", "damage_multiplier":
+				bullet_instance.set(key, float(v))
+			_:
+				bullet_instance.set(key, v)
 
 
 func _apply_base_stats_override() -> void:
-	if tower_id.is_empty() or stats_db == null:
-		return
-	if not stats_db.has_tower(tower_id):
-		Log.trace(Log.Level.ERROR, "StatsDB missing tower id: %s" % tower_id)
-		return
-	var data: Dictionary = stats_db.get_tower(tower_id)
-	var base: Dictionary = data.get("base", {})
-	level = stats_db.get_tower_level(tower_id)
-	Log.trace(Log.Level.INFO, "Applying tower stats from StatsDB for %s: %s" % [tower_id, base])
-	if base.has("cost"):
-		cost = int(base["cost"])
-	if base.has("fire_rate"):
-		fire_rate = float(base["fire_rate"])
-	if base.has("shoot_range"):
-		shoot_range = float(base["shoot_range"])
-	if base.has("projectile_count"):
-		projectile_count = int(base["projectile_count"])
-	if base.has("spread_angle"):
-		spread_angle = float(base["spread_angle"])
-	if base.has("bullet_stats"):
-		var bs: Dictionary = base["bullet_stats"]
-		for k in bs.keys():
-			bullet_stats[k] = bs[k]
+	apply_stats_from_db()
+	ArmoryManager.apply_buffs_to_tower(self)
+
+
+func _filter_upgrade_ids(ids: Array[String]) -> Array[String]:
+	return ArmoryManager.filter_upgrade_ids(ids)
+
+
+func _resolve_initial_upgrade_ids() -> void:
+	if available_upgrade_ids.is_empty() and not tower_id.is_empty():
+		available_upgrade_ids = StatsDB.get_upgrade_ids_for_tower(tower_id)
 
 func _choose_target() -> void:
+	if prefer_non_electrified_targets:
+		var non_electrified_enemies: Array[IEnemy] = enemy_array.filter(
+			func(enemy: IEnemy) -> bool:
+				return is_instance_valid(enemy) and enemy.has_method("is_electrified") and not enemy.is_electrified()
+		)
+		if not non_electrified_enemies.is_empty():
+			_choose_target_from_list(non_electrified_enemies)
+			return
+
+	_choose_target_from_list(enemy_array)
+
+func _choose_target_from_list(candidates: Array[IEnemy]) -> void:
+	if candidates.is_empty():
+		target = null
+		return
+
 	match target_type:
 		TargetType.FIRST:
-			_get_first_target()
+			target = candidates[0]
 		TargetType.LAST:
-			_get_last_target()
+			target = candidates[-1]
 		TargetType.STRONGEST:
-			_get_strongest_target()
+			_get_strongest_target_from_list(candidates)
 		TargetType.WEAKEST:
-			_get_weakest_target()
+			_get_weakest_target_from_list(candidates)
 		TargetType.RANDOM:
-			_get_random_target()
+			_get_random_target_from_list(candidates)
+		_:
+			target = candidates[0]
 
 ## Function to create the range polygon for the tower when the tower is selected.
 ## [param radius] - The radius of the range polygon.
@@ -499,7 +584,7 @@ func _create_range_polygon(radius: float, precision: int) -> void:
 	polygon_2d.color = Color(color, 0.3)
 
 	## Set the z-index of the range polygon to 1, making it appear below other nodes
-	animated_sprite_2d.z_index = 1
+	sprite.z_index = 1
 
 	## Add the first value of points to the end of the array to close the outline
 	points.append(Vector2(points[0]))
@@ -511,12 +596,15 @@ func _create_range_polygon(radius: float, precision: int) -> void:
 
 ## Function to get the strongest enemy in the enemy array.
 func _get_strongest_target():
+	_get_strongest_target_from_list(enemy_array)
+
+func _get_strongest_target_from_list(candidates: Array[IEnemy]) -> void:
 	## Set the initial strongest enemy to the first enemy in the enemy array
-	var strongest: IEnemy = enemy_array[0]
+	var strongest: IEnemy = candidates[0]
 	## Set the initial health of the strongest enemy to the health of the first enemy in the enemy array
-	var strongest_health: float = enemy_array[0].health
+	var strongest_health: float = candidates[0].health
 	## Loop through the enemy array to find the enemy with the most health
-	for enemies in enemy_array:
+	for enemies in candidates:
 		if enemies.health > strongest_health:
 			strongest = enemies
 			strongest_health = enemies.health
@@ -525,12 +613,15 @@ func _get_strongest_target():
 
 ## Function to get the weakest enemy in the enemy array.
 func _get_weakest_target():
+	_get_weakest_target_from_list(enemy_array)
+
+func _get_weakest_target_from_list(candidates: Array[IEnemy]) -> void:
 	## Set the initial weakest enemy to the first enemy in the enemy array
-	var weakest: IEnemy = enemy_array[0]
+	var weakest: IEnemy = candidates[0]
 	## Set the initial health of the weakest enemy to the health of the first enemy in the enemy array
-	var weakest_health: float = enemy_array[0].health
+	var weakest_health: float = candidates[0].health
 	## Loop through the enemy array to find the enemy with the least health
-	for enemies in enemy_array:
+	for enemies in candidates:
 		if enemies.health < weakest_health:
 			weakest = enemies
 			weakest_health = enemies.health
@@ -539,22 +630,31 @@ func _get_weakest_target():
 
 ## Function to get the first enemy in the enemy array.
 func _get_first_target():
+	_get_first_target_from_list(enemy_array)
+
+func _get_first_target_from_list(candidates: Array[IEnemy]) -> void:
 	## Set the target to the first enemy in the enemy array
-	target = enemy_array[0]
+	target = candidates[0]
 
 ## Function to get the last enemy in the enemy array.
 func _get_last_target():
+	_get_last_target_from_list(enemy_array)
+
+func _get_last_target_from_list(candidates: Array[IEnemy]) -> void:
 	## Set the target to the last enemy in the enemy array
-	target = enemy_array[-1]
+	target = candidates[-1]
 
 ## Function to get a random enemy in the enemy array.
 func _get_random_target():
+	_get_random_target_from_list(enemy_array)
+
+func _get_random_target_from_list(candidates: Array[IEnemy]) -> void:
 	## Create a RandomNumberGenerator and set the seed to the current time
 	var rng := RandomNumberGenerator.new()
 	rng.randomize()
 	## Generate a random number between 0 and the length of the enemy array
-	var num: int = rng.randi_range(0, len(enemy_array)-1)
-	target = enemy_array[num]
+	var num: int = rng.randi_range(0, len(candidates)-1)
+	target = candidates[num]
 
 ## Function to interpolate between two values.
 func _color_variation() -> void:
@@ -598,11 +698,15 @@ func _on_area_2d_area_exited(area: Area2D) -> void:
 		area.queue_free()
 
 func _on_tower_hover_box_mouse_entered() -> void:
+	if Global.paused:
+		return
 	if _menu_open:
 		return
 	show_range(true)
 
 func _on_tower_hover_box_mouse_exited() -> void:
+	if Global.paused:
+		return
 	if _menu_open:
 		return
 	show_range(false)
@@ -616,6 +720,8 @@ func _on_timer_timeout() -> void:
 
 func _on_tower_pressed() -> void:
 	Log.trace(Log.Level.DEBUG, "Tower Pressed")
+	if Global.paused:
+		return
 
 	if state != TowerState.ACTIVE:
 		return
@@ -633,11 +739,11 @@ func _on_tower_pressed() -> void:
 	tower_upgrade_menu_instance.position = position
 	tower_upgrade_menu_instance.name = "TowerUpgrade"
 	self.add_child(tower_upgrade_menu_instance)
-	
+
 	# Keep range visible while menu is open
 	_menu_open = true
 	show_range(true)
-	
+
 	# Hide the menu when closed
 	await tower_upgrade_menu_instance.tree_exited
 	_menu_open = false

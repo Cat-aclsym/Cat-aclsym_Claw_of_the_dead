@@ -4,10 +4,15 @@ extends Node
 ## Manages persistent game progression, settings, and player discoveries.
 
 # Constants
+## Tower IDs always buildable without armorer (first tower + kit de départ).
+const ARMORY_STARTER_TOWER_IDS: Array[String] = ["bat_01"]
+## Trap IDs always buildable without armorer (empty: traps only via armurerie or legacy).
+const ARMORY_STARTER_TRAP_IDS: Array[String] = []
 const SAVE_PATH: String = "user://progression.dat"
+const _TRAP_DATA_SCRIPT: GDScript = preload("res://scripts/progression/trap_data.gd")
 
 # Public variables
-var data := ProgressionData.new()
+var data: ProgressionData = ProgressionData.new()
 
 # Built-in functions
 func _ready() -> void:
@@ -115,9 +120,33 @@ func is_tower_encyclopedia_seen(tower_id: String) -> bool:
 
 ## Checks if a tower is unlocked.
 func is_tower_unlocked(tower_id: String) -> bool:
+	if data.armory_legacy_mode:
+		return true
+	if tower_id in ARMORY_STARTER_TOWER_IDS:
+		return true
 	if data.towers.has(tower_id):
 		return data.towers[tower_id].unlocked
 	return false
+
+
+## Checks if a trap is unlocked for the construction menu.
+func is_trap_unlocked(trap_id: String) -> bool:
+	if data.armory_legacy_mode:
+		return true
+	if trap_id in ARMORY_STARTER_TRAP_IDS:
+		return true
+	if data.traps.has(trap_id):
+		return data.traps[trap_id].unlocked
+	return false
+
+
+## Total stars earned (one per challenge completed, any level).
+func get_total_earned_stars() -> int:
+	var total: int = 0
+	for level_id in data.levels.keys():
+		var ld: LevelData = data.levels[level_id]
+		total += ld.challenges_completed.size()
+	return total
 
 
 ## Loads the progression from disk.
@@ -136,6 +165,9 @@ func load_game() -> void:
 		Log.trace(Log.Level.ERROR, "Failed to open save file " + SAVE_PATH)
 		return
 
+	var saw_armory: bool = false
+	var had_any_record: bool = false
+
 	while file.get_position() < file.get_length():
 		var node_data: Variant = file.get_var()
 
@@ -144,6 +176,8 @@ func load_game() -> void:
 
 		if not node_data.has("type"):
 			continue
+
+		had_any_record = true
 
 		match node_data["type"]:
 			"enemy":
@@ -163,8 +197,22 @@ func load_game() -> void:
 				if not data.towers.has(id):
 					data.towers[id] = TowerData.new()
 				data.towers[id].from_dictionary(node_data)
+			"trap":
+				var trap_id: String = node_data["id"]
+				if not data.traps.has(trap_id):
+					data.traps[trap_id] = _TRAP_DATA_SCRIPT.new()
+				data.traps[trap_id].from_dictionary(node_data)
+			"armory":
+				saw_armory = true
+				data.armory_purchased.assign(node_data.get("purchased", []))
+				data.armory_legacy_mode = node_data.get("legacy_mode", false)
 
 	file.close()
+
+	if had_any_record and not saw_armory:
+		data.armory_legacy_mode = true
+		_unlock_all_buildings_for_legacy_migration()
+
 	apply_settings()
 	Log.trace(Log.Level.DEBUG, "Game loaded from %s (absolute: %s)" % [SAVE_PATH, file.get_path_absolute()])
 	Log.trace(Log.Level.DEBUG, "Data: %s" % data.save())
@@ -211,6 +259,15 @@ func reset_progression() -> void:
 	Log.trace(Log.Level.DEBUG, "Progression reset to default.")
 
 
+## Clears armory node purchases so stars become available again. Non-starter buildings are locked unless [member ProgressionData.armory_legacy_mode].
+func reset_armory_spending() -> void:
+	data.armory_purchased.clear()
+	if not data.armory_legacy_mode:
+		_apply_starter_only_building_unlocks()
+	save_game()
+	Log.trace(Log.Level.INFO, "Armory purchases reset; building locks synced to starters (unless legacy save).")
+
+
 ## Saves the current progression to disk.
 func save_game() -> void:
 	var file := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
@@ -247,6 +304,21 @@ func save_game() -> void:
 		tower_data["id"] = id
 		file.store_var(tower_data)
 
+	# Save Traps
+	for id in data.traps:
+		var trap_obj: Object = data.traps[id]
+		var trap_data: Dictionary = trap_obj.save()
+		trap_data["type"] = "trap"
+		trap_data["id"] = id
+		file.store_var(trap_data)
+
+	var armory_blob: Dictionary = {
+		"type": "armory",
+		"purchased": data.armory_purchased.duplicate(),
+		"legacy_mode": data.armory_legacy_mode
+	}
+	file.store_var(armory_blob)
+
 	file.close()
 	Log.trace(Log.Level.DEBUG, "Game saved to %s (absolute: %s)" % [SAVE_PATH, file.get_path_absolute()])
 
@@ -262,11 +334,31 @@ func unlock_level(level_id: String) -> void:
 
 ## Unlocks a tower by ID.
 func unlock_tower(tower_id: String) -> void:
+	unlock_tower_no_save(tower_id)
+	save_game()
+
+
+## Unlocks a tower without writing the save file (batch with [method save_game]).
+func unlock_tower_no_save(tower_id: String) -> void:
 	if not data.towers.has(tower_id):
 		data.towers[tower_id] = TowerData.new()
 
 	data.towers[tower_id].unlocked = true
+
+
+## Unlocks a trap by ID for the construction menu.
+func unlock_trap(trap_id: String) -> void:
+	unlock_trap_no_save(trap_id)
 	save_game()
+
+
+## Unlocks a trap without writing the save file.
+func unlock_trap_no_save(trap_id: String) -> void:
+	if not data.traps.has(trap_id):
+		data.traps[trap_id] = _TRAP_DATA_SCRIPT.new()
+
+	data.traps[trap_id].unlocked = true
+
 
 # Private functions
 func _init_default_data() -> void:
@@ -278,8 +370,28 @@ func _init_default_data() -> void:
 		data.levels["lev.01"] = LevelData.new()
 	data.levels["lev.01"].unlocked = true
 
-	# Unlock all towers by default from StatsDB config
+	data.armory_purchased.clear()
+	data.armory_legacy_mode = false
+
+	_apply_starter_only_building_unlocks()
+
+
+func _apply_starter_only_building_unlocks() -> void:
 	for tid in StatsDB.get_tower_ids():
 		if not data.towers.has(tid):
 			data.towers[tid] = TowerData.new()
-		data.towers[tid].unlocked = true
+		data.towers[tid].unlocked = tid in ARMORY_STARTER_TOWER_IDS
+
+	for trap_key in StatsDB.get_trap_ids():
+		if not data.traps.has(trap_key):
+			data.traps[trap_key] = _TRAP_DATA_SCRIPT.new()
+		data.traps[trap_key].unlocked = trap_key in ARMORY_STARTER_TRAP_IDS
+
+
+func _unlock_all_buildings_for_legacy_migration() -> void:
+	for tid in StatsDB.get_tower_ids():
+		unlock_tower_no_save(tid)
+	for trap_key in StatsDB.get_trap_ids():
+		unlock_trap_no_save(trap_key)
+	save_game()
+	Log.trace(Log.Level.INFO, "Armory: legacy save migrated — all buildings unlocked, armory_legacy_mode on")

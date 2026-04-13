@@ -2,6 +2,7 @@
 
 class_name WaveStepSpawn
 extends WaveStep
+## A wave step that spawns a number of enemies of a specific type.
 
 
 # core
@@ -34,31 +35,32 @@ func exec() -> void:
 		return
 
 	var enemy: IEnemy = enemy_scene.instantiate()
-	enemy.die.connect(level._on_enemy_die)
+	if not enemy.enemy_id.is_empty():
+		ProgressionManager.mark_enemy_seen(enemy.enemy_id)
 
-	# Use active paths for dynamic spawning.
-	var map: IMap = level.map
-	var spawn_path: Path2D = null
-
-	if spawner_index == -1:
-		# -1 means use a random active path.
-		spawn_path = map.get_random_active_path()
-	elif spawner_index >= 0 and spawner_index < map.active_paths.size():
-		# Use a specific active path index.
-		spawn_path = map.active_paths[spawner_index]
-	else:
-		# Fallback to a random active path if the index is out of bounds.
-		spawn_path = map.get_random_active_path()
-
+	var spawn_path: Path2D = _resolve_spawn_path(level.map, spawner_index)
 	if spawn_path == null:
-		Log.trace(Log.Level.ERROR, "No valid path available for spawning!")
+		Log.trace(Log.Level.ERROR, "No valid path available for spawning.")
 		return
 
 	EnemySpawner.spawn_enemy(spawn_path, enemy)
-	level._on_enemy_spawn() # ILevel owns the WaveStep lifecycle.
 	_data[WaveStep.COUNT] -= 1
 
 
 ## Returns true when every enemy from this step has spawned.
 func is_over() -> bool:
 	return _data[WaveStep.COUNT] == 0
+
+
+func _resolve_spawn_path(map: IMap, spawner_index: int) -> Path2D:
+	if map.paths.is_empty():
+		return null
+
+	if spawner_index == -1:
+		return map.paths[randi() % map.paths.size()]
+
+	if spawner_index >= 0 and spawner_index < map.paths.size():
+		return map.paths[spawner_index]
+
+	Log.trace(Log.Level.WARN, "Invalid spawner index %d, using random path." % spawner_index)
+	return map.paths[randi() % map.paths.size()]

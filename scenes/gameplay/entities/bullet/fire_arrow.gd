@@ -256,5 +256,6 @@ func _adjust_burn_area_size() -> void:
 	var particle_amount = round(30 * _area_size_ratio * _area_size_ratio)
 	burn_particles.amount = int(clamp(particle_amount, 10, 100))
 	
-	# Adjust damage strength proportionally to size
-	burn_damage_base = int(BASE_BURN_DAMAGE * _area_size_ratio)
+	# Scale burn tick damage from tower-provided [member burn_damage_base] (set before [method _ready]).
+	var burn_base: int = burn_damage_base if burn_damage_base > 0 else BASE_BURN_DAMAGE
+	burn_damage_base = int(round(float(burn_base) * _area_size_ratio))

@@ -24,7 +24,7 @@ var initial_piercing: int  # Initial number of enemies that can be pierced
 # core
 func _ready() -> void:
 	super._ready()
-	
+
 	# Initialize piercing variables
 	piercing = pierce_count
 	initial_piercing = pierce_count
@@ -33,7 +33,7 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	if Global.paused:
 		return
-		
+
 	position += direction * speed * delta
 
 
@@ -42,13 +42,13 @@ func _create_spark_particle_texture() -> Texture2D:
 	# Create a spark texture (small 4-pointed star)
 	var image_size := 6
 	var image := Image.create(image_size, image_size, false, Image.FORMAT_RGBA8)
-	
+
 	# Fill with transparency
 	image.fill(Color(0, 0, 0, 0))
-	
+
 	# Center of the image
 	var center := Vector2(image_size / 2., image_size / 2.)
-	
+
 	# Draw a small 4-pointed star
 	var points := PackedVector2Array([
 		Vector2(0, center.y),           # Left
@@ -56,14 +56,14 @@ func _create_spark_particle_texture() -> Texture2D:
 		Vector2(center.x, 0),           # Top
 		Vector2(center.x, image_size - 1)   # Bottom
 	])
-	
+
 	# Draw the star lines
 	for point in points:
 		_draw_spark_line(image, center, point, Color(1, 1, 1, 1))
-	
+
 	# Add a brighter central point
 	image.set_pixel(center.x as int, center.y as int, Color(1, 1, 1, 1))
-	
+
 	var texture := ImageTexture.create_from_image(image)
 	return texture
 
@@ -75,24 +75,24 @@ func _draw_spark_line(image: Image, from: Vector2, to: Vector2, color: Color) ->
 	var sx: int = 1 if from.x < to.x else -1
 	var sy: int = 1 if from.y < to.y else -1
 	var err: int = dx + dy
-	
+
 	var x: int = from.x as int
 	var y: int = from.y as int
-	
+
 	while true:
 		if x >= 0 and y >= 0 and x < image.get_width() and y < image.get_height():
 			image.set_pixel(x, y, color)
-		
+
 		if x == to.x and y == to.y:
 			break
-		
+
 		var e2: int = 2 * err
 		if e2 >= dy:
 			if x == to.x:
 				break
 			err += dy
 			x += sx
-		
+
 		if e2 <= dx:
 			if y == to.y:
 				break
@@ -104,18 +104,18 @@ func _create_spark_effect(hit_position: Vector2) -> void:
 	# Create a spark effect for pierced enemies
 	if Global.console:
 		Global.console.push_debug("Creating spark effect at position: " + str(hit_position))
-	
+
 	var scene_root := get_tree().get_root()
-	
+
 	# Create the spark particle system
 	var spark_particles := GPUParticles2D.new()
 	scene_root.add_child(spark_particles)
 	spark_particles.global_position = hit_position
 	spark_particles.z_index = 500 # Lower than blood effect but above enemies
-	
+
 	# Create the particle material
 	var particle_material := ParticleProcessMaterial.new()
-	
+
 	# Configure for a spark effect
 	particle_material.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_POINT
 	particle_material.direction = Vector3(0, 0, 1)
@@ -128,23 +128,23 @@ func _create_spark_effect(hit_position: Vector2) -> void:
 	particle_material.color = spark_particles_color
 	particle_material.damping_min = 30.0
 	particle_material.damping_max = 60.0
-	
+
 	# Create a gradient for spark fading
 	var gradient := Gradient.new()
 	gradient.add_point(0.0, spark_particles_color)
-	
+
 	var mid_color := spark_particles_color
 	mid_color.a *= 0.6
 	gradient.add_point(0.4, mid_color)
-	
+
 	var fade_color := spark_particles_color
 	fade_color.a = 0.0
 	gradient.add_point(1.0, fade_color)
-	
+
 	var color_ramp := GradientTexture1D.new()
 	color_ramp.gradient = gradient
 	particle_material.color_ramp = color_ramp
-	
+
 	# Configure particles
 	spark_particles.process_material = particle_material
 	spark_particles.amount = spark_particles_count
@@ -153,59 +153,41 @@ func _create_spark_effect(hit_position: Vector2) -> void:
 	spark_particles.randomness = 0.4
 	spark_particles.one_shot = true
 	spark_particles.texture = _create_spark_particle_texture()
-	
+
 	# Start emission
 	spark_particles.emitting = true
-	
+
 	# Remove after lifetime
-	var timer := Timer.new()
-	spark_particles.add_child(timer)
-	timer.wait_time = spark_particles_lifetime + 0.2
-	timer.one_shot = true
-	timer.timeout.connect(func(): spark_particles.queue_free())
-	timer.start()
+	var cleanup_timer := get_tree().create_timer(spark_particles_lifetime + 0.2)
+	cleanup_timer.timeout.connect(func():
+		if is_instance_valid(spark_particles):
+			spark_particles.queue_free()
+	)
 
 
 func _on_body_entered(body: Node2D) -> void:
 	if not body is IEnemy:
 		return
-		
+
 	if pierced_enemies.has(body):
 		return  # Avoid hitting the same enemy twice
-		
+
 	var enemy := body as IEnemy
 	pierced_enemies.append(enemy)
-	
+
 	# Apply damage
 	enemy.take_damage(damage, IEnemy.DamageType.DEFAULT)
-	
+
 	# Handle piercing
 	piercing -= 1
-	
+
 	# Calculate damage reduction
 	var enemies_pierced := initial_piercing - piercing
 	var remaining_damage_percent: float = 100 - (pierce_reduction * enemies_pierced)
 	damage = roundi(initial_damage * (remaining_damage_percent / 100))
-	
+
 	# Create appropriate effect depending on whether it's the last enemy or not
 	if piercing <= 0:
-		# Last enemy: full blood effect (inherited from IBullet)
-		if hit_effect_enabled:
-			_create_hit_effect(global_position)
-		
-		# Handle trail like in IBullet
-		if trail_enabled and is_instance_valid(_trail_particles):
-			_trail_particles.emitting = false
-			remove_child(_trail_particles)
-			get_parent().add_child(_trail_particles)
-			
-			var timer = Timer.new()
-			_trail_particles.add_child(timer)
-			timer.wait_time = trail_lifetime + 0.1
-			timer.one_shot = true
-			timer.timeout.connect(func(): _trail_particles.queue_free())
-			timer.start()
-		
 		# Destroy the arrow
 		queue_free()
 	else:
