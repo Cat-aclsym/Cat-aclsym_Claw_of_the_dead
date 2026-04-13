@@ -37,6 +37,3 @@ curve = SubResource("Curve2D_gb5l4")
 
 [node name="Path2D3" type="Path2D" parent="Paths" index="2"]
 curve = SubResource("Curve2D_gbp6p")
-
-[node name="Camera" parent="." index="4"]
-position = Vector2(136, 320)

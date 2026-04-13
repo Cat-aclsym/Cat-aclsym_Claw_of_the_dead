@@ -163,9 +163,9 @@ func _physics_process(delta: float) -> void:
 
 	poison_particle.emitting = not active_poison_timers.is_empty()
 	poison_particle.visible = poison_particle.emitting
-	
+
 	if is_stunned:
-		_update_stun_stars(delta)
+		_update_stun_stars()
 
 
 # Public functions
@@ -287,13 +287,13 @@ func apply_electrify_effect(duration: float, slow_amount: float, tick_damage: fl
 func stun(duration: float) -> void:
 	if is_already_dead or is_stunned:
 		return
-	
+
 	is_stunned = true
 	sprite.pause() # Freeze the walking animation
 	_create_stun_stars()
 	_apply_idle_modulate() # Apply yellow tint immediately
 	_damage_effect(DAMAGES[DamageType.STUN]["color"])
-	
+
 	var timer := get_tree().create_timer(duration)
 	timer.timeout.connect(func() -> void:
 		# Fade out stars
@@ -302,7 +302,7 @@ func stun(duration: float) -> void:
 		for star in _stun_stars:
 			if is_instance_valid(star):
 				fade_tween.tween_property(star, "modulate:a", 0.0, 0.5)
-		
+
 		# Wait for the stars fade to finish
 		# to set is_stunned to false, which will refresh the modulate
 		fade_tween.finished.connect(func() -> void:
@@ -365,15 +365,15 @@ func _remove_stun_stars() -> void:
 	_stun_stars.clear()
 
 
-func _update_stun_stars(delta: float) -> void:
+func _update_stun_stars() -> void:
 	if _stun_stars.is_empty():
 		return
-	
+
 	var time := Time.get_ticks_msec() / 1000.0
 	var radius_x := 15.0
 	var radius_y := 5.0 # Isometric perspective
 	var center_offset := Vector2(0, -30) # Above head
-	
+
 	for i in range(_stun_stars.size()):
 		var angle := time * 5.0 + (i * PI * 2.0 / 3.0)
 		_stun_stars[i].position = center_offset + Vector2(
@@ -423,7 +423,7 @@ func _damage_effect(color: Color) -> void:
 		_damage_tween.kill()
 
 	_damage_tween = create_tween()
-	
+
 	# Flash color: white/glowing white or colored based on damage type
 	var flash_color = Color(2.5, 2.5, 2.5, 1.0)
 	if color != Color.WHITE and color != Color(1, 1, 1, 1):
@@ -433,7 +433,7 @@ func _damage_effect(color: Color) -> void:
 	# Apply initial state immediately
 	sprite.modulate = flash_color
 	sprite.offset.x = 4.0
-	
+
 	# Wait a tiny bit then tween back
 	_damage_tween.tween_interval(0.04)
 	_damage_tween.set_parallel(true)

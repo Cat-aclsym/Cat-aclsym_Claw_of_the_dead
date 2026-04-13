@@ -1,7 +1,7 @@
 [gd_scene load_steps=8 format=3 uid="uid://dmap04dynamic"]
 
 [ext_resource type="PackedScene" uid="uid://crdosg1fmycsi" path="res://scenes/gameplay/world/map/i_map.tscn" id="1_imap"]
-[ext_resource type="Script" uid="uid://dqfn3lllb58lj" path="res://scenes/gameplay/world/map/maps/map_events.gd" id="2_events"]
+[ext_resource type="Script" uid="uid://olcyomnjkvna" path="res://scenes/gameplay/world/map/maps/map_events.gd" id="2_events"]
 
 [sub_resource type="Curve2D" id="Curve2D_path1"]
 _data = {
