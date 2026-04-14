@@ -83,6 +83,14 @@ var reward_multiplier: float = 1.0
 ## Prioritize enemies that are not electrified
 var prefer_non_electrified_targets: bool = false
 
+## If true, enemies hit by this tower will use a shorter, more subtle damage flash effect.
+## Recommended for continuous or high-fire-rate towers.
+@export var use_short_damage_flash: bool = false
+
+## If true, damage popups from this tower will accumulate into a single number that updates.
+## Recommended for continuous beams or extremely high-fire-rate towers.
+@export var use_accumulative_popups: bool = false
+
 ## Dictionary of modifiers applied to this tower (stat_name -> multiplier)
 var _special_modifiers: Dictionary = {}
 
@@ -126,10 +134,8 @@ var _cancel_animations: bool = false
 var _menu_open: bool = false
 ## The target of the tower
 var target: IEnemy
-## The time the tower has been locked on the current target
+## Active time the tower has been locked on the current target
 var target_lock_time: float = 0.0
-## Active beams for continuous fire towers (bullet_instance -> target)
-var _active_beams: Dictionary = {}
 ## The type of target the tower will shoot at
 var target_type: TargetType
 ## The pending upgrade to be applied
@@ -149,7 +155,7 @@ func _ready() -> void:
 	_resolve_initial_upgrade_ids()
 	ArmoryManager.append_unlocked_upgrade_ids(self)
 	available_upgrade_ids = _filter_upgrade_ids(available_upgrade_ids)
-	sell_price = ceil(cost / 2.0)
+	sell_price = int(ceil(cost / 2.0))
 	hover_box.z_index = 3
 	update_dependent_properties()
 	# Sync range visibility with selected state (especially for duplicated towers)
@@ -172,13 +178,13 @@ func _process(delta: float) -> void:
 		return
 	
 	if is_instance_valid(target):
-		# Vérifier si la cible est toujours valide (vivante et à portée avec une marge de 10px pour éviter le clignotement)
+		# Verify if target is still valid (alive and in range with a 10px margin to avoid flickering)
 		if target.is_already_dead or global_position.distance_to(target.global_position) > shoot_range + 10.0:
 			target = null
 			target_lock_time = 0.0
-			_cleanup_beams()
+			_on_target_lost()
 		else:
-			target_lock_time += delta
+			_on_target_locked(delta)
 
 	if fire_rate_timer.is_stopped():
 		fire()
@@ -241,12 +247,7 @@ func fire() -> void:
 	if not target:
 		return
 
-	var is_inferno = bullet_scene and "inferno_beam" in bullet_scene.resource_path
-	
-	# For continuous beams, we need to handle multiple targets if projectile_count > 1
-	if is_inferno and projectile_count > 1:
-		_fire_inferno_multi_target()
-		fire_rate_timer.start()
+	if _handle_custom_fire():
 		return
 
 	var enemy_position: Vector2 = target.global_position
@@ -258,20 +259,6 @@ func fire() -> void:
 
 	# Spawn each projectile
 	for i in range(projectile_count):
-		# For continuous beams, check if we already have an active beam for this target
-		if is_inferno:
-			var existing_beam = null
-			for beam in _active_beams.keys():
-				if is_instance_valid(beam) and _active_beams[beam] == target:
-					existing_beam = beam
-					break
-			
-			if existing_beam:
-				# Re-trigger damage and visual update on existing beam
-				if existing_beam.has_method("fire_tick"):
-					existing_beam.fire_tick()
-				continue
-
 		var bullet_instance: IBullet = bullet_scene.instantiate()
 
 		# Calculate angle for this projectile
@@ -282,73 +269,23 @@ func fire() -> void:
 		bullet_instance.rotation = rotated_direction.angle()
 		bullet_instance.target = enemy_position
 		if "enemy_target" in bullet_instance:
-			bullet_instance.enemy_target = target
+			bullet_instance.set("enemy_target", target)
 
 		# Set tower owner to allow reward multiplier logic
 		if "tower_owner" in bullet_instance:
 			bullet_instance.tower_owner = self
 
+		_on_projectile_instantiated(bullet_instance, target)
+		
+		# If the specialized script handled the instance (e.g. by freeing it and reusing another), skip adding it
+		if not is_instance_valid(bullet_instance):
+			continue
+
 		_apply_projectile_config(bullet_instance)
 		add_child(bullet_instance)
 
-		if is_inferno:
-			_active_beams[bullet_instance] = target
-
 	fire_rate_timer.start()
 
-## Specific logic for multi-target Inferno Tower
-func _fire_inferno_multi_target() -> void:
-	# Get all valid enemies in range
-	var valid_enemies = enemy_array.filter(func(e): 
-		return is_instance_valid(e) and not e.is_already_dead and global_position.distance_to(e.global_position) <= shoot_range + 5.0
-	)
-	
-	if valid_enemies.is_empty():
-		_cleanup_beams()
-		return
-
-	# Sort or prioritize targets based on target_type if needed, 
-	# but for multishot we usually just take the first N unique targets.
-	var targets_to_hit: Array[IEnemy] = []
-	for e in valid_enemies:
-		if targets_to_hit.size() >= projectile_count:
-			break
-		targets_to_hit.append(e)
-
-	# Cleanup beams for targets that are no longer being hit
-	var beams_to_remove = []
-	for beam in _active_beams.keys():
-		if not is_instance_valid(beam):
-			beams_to_remove.append(beam)
-			continue
-		var beam_target = _active_beams[beam]
-		if not beam_target in targets_to_hit:
-			beam.queue_free()
-			beams_to_remove.append(beam)
-	
-	for b in beams_to_remove:
-		_active_beams.erase(b)
-
-	# Fire or update beams for selected targets
-	for t in targets_to_hit:
-		var existing_beam = null
-		for beam in _active_beams.keys():
-			if is_instance_valid(beam) and _active_beams[beam] == t:
-				existing_beam = beam
-				break
-		
-		if existing_beam:
-			if existing_beam.has_method("fire_tick"):
-				existing_beam.fire_tick()
-		else:
-			var bullet_instance: IBullet = bullet_scene.instantiate()
-			bullet_instance.tower_owner = self
-			if "enemy_target" in bullet_instance:
-				bullet_instance.enemy_target = t
-			
-			_apply_projectile_config(bullet_instance)
-			add_child(bullet_instance)
-			_active_beams[bullet_instance] = t
 
 ## Starts the upgrade process with the given upgrade id
 func start_upgrade(upgrade_id: String) -> void:
@@ -382,32 +319,30 @@ func apply_upgrade() -> void:
 	if changes.get("bullet_stat", false):
 		_apply_bullet_stat_changes(bullet_stats_delta)
 	
-	# S'assurer que le flag is_charging est bien synchronisé si présent dans l'upgrade
+	# Ensure the is_charging flag is correctly synchronized if present in the upgrade
 	if upgrade_data.has("bullet_stats") and upgrade_data["bullet_stats"].has("is_charging"):
 		bullet_stats["is_charging"] = bool(upgrade_data["bullet_stats"]["is_charging"])
 	
-	# Mettre à jour les rayons existants immédiatement
-	for beam in _active_beams.keys():
-		if is_instance_valid(beam):
-			_apply_projectile_config(beam)
+	_on_upgrade_applied()
 
 	if changes.get("tower_model", false):
 		var tower_model_path: String = str(upgrade_data.get("tower_model_path", ""))
 		var tower_model_res: Resource = load(tower_model_path) if not tower_model_path.is_empty() else null
 		if tower_model_res is Texture2D:
 			if sprite.sprite_frames != null and sprite.sprite_frames.has_animation("idle"):
-				var idle_anim = sprite.sprite_frames.get_animation("idle")
+				var idle_anim: SpriteFrames = sprite.sprite_frames
+				var anim_name: StringName = &"idle"
 				# Determine frame index: 0 to add if empty, or last frame index to update
-				var frame_idx = 0
-				if idle_anim.get_frame_count() > 0:
-					frame_idx = idle_anim.get_frame_count() - 1
+				var frame_idx: int = 0
+				if idle_anim.get_frame_count(anim_name) > 0:
+					frame_idx = idle_anim.get_frame_count(anim_name) - 1
 
-				idle_anim.set_frame_texture(frame_idx, tower_model_res)
+				idle_anim.set_frame_texture(anim_name, frame_idx, tower_model_res)
 
-				if not sprite.is_playing() or sprite.animation != "idle":
-					sprite.play("idle")
+				if not sprite.is_playing() or sprite.animation != anim_name:
+					sprite.play(anim_name)
 			else:
-				var reason = "'idle' animation missing"
+				var reason: String = "'idle' animation missing"
 				if sprite.sprite_frames == null:
 					reason = "no sprite_frames assigned"
 				elif not sprite.sprite_frames.has_animation("idle"):
@@ -593,14 +528,14 @@ func _apply_tower_stat_changes(tower_stats: Dictionary) -> void:
 			else:
 				self.set(stat, delta_value)
 		elif stat in bullet_stats:
-			# Si la stat n'est pas dans la tour mais dans bullet_stats, on l'applique là
+			# If the stat is not in the tower but in bullet_stats, apply it there
 			_apply_bullet_stat_changes({stat: tower_stats[stat]})
 
 func _apply_bullet_stat_changes(bullet_stats_delta: Dictionary) -> void:
 	for stat in bullet_stats_delta.keys():
 		var delta: Variant = bullet_stats_delta[stat]
 		if bullet_stats.has(stat):
-			var current_value = bullet_stats[stat]
+			var current_value: Variant = bullet_stats[stat]
 			if typeof(current_value) == TYPE_BOOL:
 				bullet_stats[stat] = bool(delta)
 			else:
@@ -646,12 +581,13 @@ func _resolve_initial_upgrade_ids() -> void:
 		available_upgrade_ids = StatsDB.get_upgrade_ids_for_tower(tower_id)
 
 func _choose_target() -> void:
-	var old_target = target
+	var old_target: IEnemy = target
 	
-	# Filtrer les ennemis pour ne garder que ceux qui sont réellement à portée (avec une petite marge)
-	var valid_candidates = enemy_array.filter(func(e): 
-		return is_instance_valid(e) and not e.is_already_dead and global_position.distance_to(e.global_position) <= shoot_range + 5.0
-	)
+	# Filter enemies to keep only those actually in range (with a small margin)
+	var valid_candidates: Array[IEnemy] = []
+	for e in enemy_array:
+		if is_instance_valid(e) and not e.is_already_dead and global_position.distance_to(e.global_position) <= shoot_range + 5.0:
+			valid_candidates.append(e)
 
 	if prefer_non_electrified_targets:
 		var non_electrified_enemies: Array[IEnemy] = valid_candidates.filter(
@@ -662,19 +598,39 @@ func _choose_target() -> void:
 			_choose_target_from_list(non_electrified_enemies)
 			if target != old_target:
 				target_lock_time = 0.0
-				_cleanup_beams()
+				_on_target_lost()
 			return
 
 	_choose_target_from_list(valid_candidates)
 	if target != old_target:
 		target_lock_time = 0.0
-		_cleanup_beams()
+		_on_target_lost()
 
-func _cleanup_beams() -> void:
-	for beam in _active_beams.keys():
-		if is_instance_valid(beam):
-			beam.queue_free()
-	_active_beams.clear()
+
+## Virtual method called when the tower's target is lost or changed.
+func _on_target_lost() -> void:
+	pass
+
+
+## Virtual method called every frame when a target is locked.
+func _on_target_locked(_delta: float) -> void:
+	target_lock_time += _delta
+
+
+## Virtual method to handle custom firing logic. Returns true if the fire event was handled.
+func _handle_custom_fire() -> bool:
+	return false
+
+
+## Virtual method called after a standard projectile is instantiated, before it's added to the tree.
+func _on_projectile_instantiated(_bullet: IBullet, _target_enemy: IEnemy) -> void:
+	pass
+
+
+## Virtual method called after an upgrade is applied.
+func _on_upgrade_applied() -> void:
+	pass
+
 
 func _choose_target_from_list(candidates: Array[IEnemy]) -> void:
 	if candidates.is_empty():
@@ -702,7 +658,7 @@ func _create_range_polygon(radius: float, precision: int) -> void:
 	## Create an array of Vector2 points for the range polygon
 	var points: Array[Vector2] = []
 	for i in range(precision):
-		var angle = 2 * PI * i / precision
+		var angle: float = 2 * PI * i / precision
 		var x: float = radius * cos(angle)
 		var y: float = radius * sin(angle)
 
@@ -862,8 +818,8 @@ func _on_tower_pressed() -> void:
 		Log.trace(Log.Level.DEBUG, "Tower upgrade menu already exists")
 		return
 
-	var tower_upgrade_menu : PackedScene = load("res://scenes/ui/menus/tower_upgrade/radial_menu_tower_upgrade.tscn")
-	if tower_upgrade_menu == null :
+	var tower_upgrade_menu: PackedScene = load("res://scenes/ui/menus/tower_upgrade/radial_menu_tower_upgrade.tscn")
+	if tower_upgrade_menu == null:
 		Log.trace(Log.Level.ERROR, "Failed to load tower upgrade menu scene")
 		return
 
