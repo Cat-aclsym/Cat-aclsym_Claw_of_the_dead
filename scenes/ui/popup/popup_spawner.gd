@@ -24,17 +24,23 @@ func display_damage(amount: float, color: Color = Color.WHITE, is_critical: bool
 	if damage_popup_node == null:
 		return
 	
-	# Check if this source is an Inferno Tower
-	var is_inferno = false
-	var source = null
+	# Check if the damage source requires popup accumulation (e.g., continuous fire)
+	var should_accumulate: bool = false
 	if get_parent() is IEnemy:
-		source = get_parent().last_source
-		if source is ITower and source.tower_id == "bat_09":
-			is_inferno = true
+		var source: Variant = get_parent().last_source
+		var tower: ITower = null
+		
+		if source is ITower:
+			tower = source
+		elif source is IBullet and is_instance_valid(source.tower_owner):
+			tower = source.tower_owner
+			
+		if tower != null and tower.use_accumulative_popups:
+			should_accumulate = true
 	
-	# Optimization for Inferno: check if an active popup already exists
-	if is_inferno and _active_popups.has(self) and is_instance_valid(_active_popups[self]):
-		var popup = _active_popups[self]
+	# Optimization: check if an active popup already exists for accumulation
+	if should_accumulate and _active_popups.has(self) and is_instance_valid(_active_popups[self]):
+		var popup: DamagePopup = _active_popups[self]
 		if popup.has_method("update_value"):
 			popup.update_value(amount)
 			return
@@ -44,7 +50,7 @@ func display_damage(amount: float, color: Color = Color.WHITE, is_critical: bool
 	damage_popup.color = color
 	damage_popup.is_critical = is_critical
 	
-	if is_inferno:
+	if should_accumulate:
 		damage_popup.target_node = self
 		damage_popup.is_accumulative = true
 		_active_popups[self] = damage_popup
@@ -61,7 +67,7 @@ func display_damage(amount: float, color: Color = Color.WHITE, is_critical: bool
 ## [br]The popup will move upward and display the given text.
 ## [param text] The score value to display
 func score(text: String) -> void:
-	var damage_popup: Node2D = popup_node.instantiate()
+	var damage_popup: Control = popup_node.instantiate()
 	var label: Label = damage_popup.get_node("FloatingNumbers/Label")
 	damage_popup.position = global_position
 
