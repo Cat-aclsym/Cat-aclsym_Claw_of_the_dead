@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://c8y7x3n8u5r4e"]
 
-[ext_resource type="Script" uid="uid://bt4r5n8u5r4e" path="res://scenes/gameplay/entities/bullet/inferno_beam.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://cl1yhtpukhc3r" path="res://scenes/gameplay/entities/bullet/inferno_beam.gd" id="1_script"]
 
 [sub_resource type="Gradient" id="Gradient_sparks"]
 colors = PackedColorArray(1, 1, 1, 1, 1, 0.5, 0, 0)
@@ -10,7 +10,6 @@ z_index = 10
 script = ExtResource("1_script")
 
 [node name="LineGlow" type="Line2D" parent="."]
-width = 10.0
 begin_cap_mode = 2
 end_cap_mode = 2
 antialiased = true
@@ -31,10 +30,6 @@ antialiased = true
 emitting = false
 amount = 20
 lifetime = 0.5
-one_shot = false
-preprocess = 0.0
-speed_scale = 1.0
-explosiveness = 0.0
 randomness = 0.5
 lifetime_randomness = 0.5
 direction = Vector2(0, -1)
@@ -44,35 +39,16 @@ initial_velocity_min = 20.0
 initial_velocity_max = 50.0
 angular_velocity_min = -180.0
 angular_velocity_max = 180.0
-orbit_velocity_min = 0.0
-orbit_velocity_max = 0.0
-linear_accel_min = 0.0
-linear_accel_max = 0.0
-radial_accel_min = 0.0
-radial_accel_max = 0.0
-tangential_accel_min = 0.0
-tangential_accel_max = 0.0
-damping_min = 0.0
-damping_max = 0.0
-angle_min = 0.0
 angle_max = 360.0
-scale_amount_min = 1.0
 scale_amount_max = 3.0
 color = Color(1, 0.5, 0.1, 1)
 hue_variation_min = -0.1
 hue_variation_max = 0.1
-anim_speed_min = 0.0
-anim_speed_max = 0.0
-anim_offset_min = 0.0
-anim_offset_max = 0.0
 
 [node name="SparkParticles" type="CPUParticles2D" parent="."]
 emitting = false
 amount = 30
 lifetime = 0.3
-preprocess = 0.0
-speed_scale = 1.0
-explosiveness = 0.0
 randomness = 1.0
 lifetime_randomness = 0.5
 emission_shape = 3
@@ -91,7 +67,6 @@ color_ramp = SubResource("Gradient_sparks")
 emitting = false
 amount = 20
 lifetime = 0.4
-preprocess = 0.0
 speed_scale = 1.2
 explosiveness = 0.1
 randomness = 0.5
