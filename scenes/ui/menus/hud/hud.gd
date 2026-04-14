@@ -155,7 +155,7 @@ func _trigger_coin_effects(amount: int) -> void:
 	tween.tween_property(coins_rich_text_label, "scale", Vector2(1.0, 1.0), 0.1).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 
 	# Floating notification (+X with coin icon)
-	var popup = POPUP_SCORE_SCENE.instantiate()
+	var popup: Node = POPUP_SCORE_SCENE.instantiate()
 	var label: Label = popup.get_node("FloatingNumbers/PriceRow/Label") as Label
 
 	# Configure label with requested style
@@ -173,16 +173,16 @@ func _trigger_coin_effects(amount: int) -> void:
 	popup.global_position = coins_rich_text_label.global_position + Vector2(coins_rich_text_label.size.x / 2, -10)
 
 	# Physics simulation (Arc movement with gravity and slight random direction)
-	var random_x = randf_range(-10, 10) # Even more vertical
-	var jump_height = randf_range(30, 45)
-	var duration = 0.75 # Match the popup animation length
+	var random_x: float = randf_range(-10, 10) # Even more vertical
+	var jump_height: float = randf_range(30, 45)
+	var duration: float = 0.75 # Match the popup animation length
 
-	var movement_tween = create_tween().set_parallel(true)
+	var movement_tween: Tween = create_tween().set_parallel(true)
 	# Horizontal movement
 	movement_tween.tween_property(popup, "position:x", popup.position.x + random_x, duration).set_trans(Tween.TRANS_LINEAR)
 
 	# Vertical movement (arc simulating gravity)
-	var vertical_tween = create_tween()
+	var vertical_tween: Tween = create_tween()
 	vertical_tween.tween_property(popup, "position:y", popup.position.y - jump_height, duration * 0.4).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	vertical_tween.tween_property(popup, "position:y", popup.position.y + 15, duration * 0.6).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 
@@ -193,9 +193,9 @@ func _trigger_coin_effects(amount: int) -> void:
 func _spawn_coin_explosion(start_pos: Vector2) -> void:
 	if COIN_ICON_TEXTURE == null:
 		return
-	var num_coins = randi_range(5, 10)
+	var num_coins: int = randi_range(5, 10)
 	for i in range(num_coins):
-		var coin = Sprite2D.new()
+		var coin: Sprite2D = Sprite2D.new()
 		coin.texture = COIN_ICON_TEXTURE
 		coin.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 		coin.scale = Vector2(1, 1)
@@ -203,7 +203,7 @@ func _spawn_coin_explosion(start_pos: Vector2) -> void:
 		coin.global_position = start_pos
 
 		# Use angles 10° to 45° (left) and 170° to 135° (right), in radians, but flip direction upward
-		var use_left = randf() < 0.5
+		var use_left: bool = randf() < 0.5
 		var angle: float
 		if use_left:
 			# Left arc: 10° to 45° UP (flip y-axis)
@@ -211,10 +211,10 @@ func _spawn_coin_explosion(start_pos: Vector2) -> void:
 		else:
 			# Right arc: 170° to 135° UP (flip y-axis)
 			angle = -deg_to_rad(randf_range(135, 170))
-		var distance = randf_range(40, 80) # Increased travel distance
-		var target_pos = start_pos + Vector2(cos(angle), sin(angle)) * distance
+		var distance: float = randf_range(40, 80) # Increased travel distance
+		var target_pos: Vector2 = start_pos + Vector2(cos(angle), sin(angle)) * distance
 
-		var coin_tween = create_tween().set_parallel(true)
+		var coin_tween: Tween = create_tween().set_parallel(true)
 		coin_tween.tween_property(coin, "global_position", target_pos, 0.5).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 		coin_tween.tween_property(coin, "modulate:a", 0.0, 0.5).set_delay(0.2)
 		coin_tween.tween_property(coin, "scale", Vector2.ZERO, 0.5).set_ease(Tween.EASE_IN)
@@ -244,18 +244,18 @@ func _trigger_health_damage_effects() -> void:
 		flash_tween.tween_method(_set_health_flash_intensity, 1.0, 0.0, 0.2)
 
 	# Shake effect
-	var original_pos = health_texture_progress_bar.position
-	var shake_tween = create_tween()
+	var original_pos: Vector2 = health_texture_progress_bar.position
+	var shake_tween: Tween = create_tween()
 	for i in range(4):
-		var offset = Vector2(randf_range(-5, 5), randf_range(-3, 3))
+		var offset: Vector2 = Vector2(randf_range(-5, 5), randf_range(-3, 3))
 		shake_tween.tween_property(health_texture_progress_bar, "position", original_pos + offset, 0.04)
 	shake_tween.tween_property(health_texture_progress_bar, "position", original_pos, 0.04)
 
 	# Also shake ghost bar to keep them aligned
-	var ghost_original_pos = health_ghost_progress_bar.position
-	var ghost_shake_tween = create_tween()
+	var ghost_original_pos: Vector2 = health_ghost_progress_bar.position
+	var ghost_shake_tween: Tween = create_tween()
 	for i in range(4):
-		var offset = Vector2(randf_range(-5, 5), randf_range(-3, 3))
+		var offset: Vector2 = Vector2(randf_range(-5, 5), randf_range(-3, 3))
 		ghost_shake_tween.tween_property(health_ghost_progress_bar, "position", ghost_original_pos + offset, 0.04)
 	ghost_shake_tween.tween_property(health_ghost_progress_bar, "position", ghost_original_pos, 0.04)
 
@@ -264,12 +264,12 @@ func _update() -> void:
 	if !_is_ready:
 		return
 
-	var current_coins = ILevel.current_level.coins
+	var current_coins: int = ILevel.current_level.coins
 	if current_coins > _last_coins:
 		_trigger_coin_effects(current_coins - _last_coins)
 	_last_coins = current_coins
 
-	var current_health = ILevel.current_level.health
+	var current_health: int = ILevel.current_level.health
 	if current_health < _last_health:
 		# DAMAGE: Do NOT reset ghost bar value here, let it stay at its current (higher) value
 		# so it represents the health BEFORE the sequence of hits started.

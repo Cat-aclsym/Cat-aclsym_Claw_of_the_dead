@@ -217,7 +217,7 @@ func _stop_all_attack_timers_and_reset_state() -> void:
 # --- Target Management ---
 
 func _find_new_target() -> void:
-	var old_target_body = current_target # current_target is the body
+	var old_target_body: Node2D = current_target # current_target is the body
 	var closest_tower_body: Node2D = null # This will be the body node (e.g. TowerBody)
 	var min_dist_sq: float = INF
 
@@ -226,7 +226,7 @@ func _find_new_target() -> void:
 			# Log.trace(Log.Level.DEBUG, "BigDaddy: Invalid instance in towers_in_range, skipping.")
 			continue
 
-		var tower_script_node = detected_body.get_parent()
+		var tower_script_node: Node = detected_body.get_parent()
 		if not (tower_script_node is ITower):
 			Log.trace(Log.Level.WARN, "BigDaddy: Body '%s' in towers_in_range (group 'towers') does not have ITower as parent. Skipping." % detected_body.name)
 			continue
@@ -245,8 +245,8 @@ func _find_new_target() -> void:
 
 	if old_target_body != current_target:
 		if current_target:
-			var parent_tower_name = "UNKNOWN_PARENT"
-			var parent_tower_state = "UNKNOWN_STATE"
+			var parent_tower_name: String = "UNKNOWN_PARENT"
+			var parent_tower_state: String = "UNKNOWN_STATE"
 			if current_target.get_parent() is ITower:
 				parent_tower_name = current_target.get_parent().name
 				parent_tower_state = ITower.TowerState.keys()[current_target.get_parent().state] # Get state name
@@ -269,7 +269,7 @@ func _shoot() -> void:
 			return
 
 	# current_target is a body (e.g. "TowerBody"). Get its parent ITower for state check.
-	var tower_script_node = current_target.get_parent()
+	var tower_script_node: Node = current_target.get_parent()
 
 	if not (tower_script_node is ITower):
 		Log.trace(Log.Level.ERROR, "BigDaddy: current_target '%s' (body) does not have an ITower parent. Critical issue. Interrupting attack." % current_target.name)
@@ -282,7 +282,7 @@ func _shoot() -> void:
 		return
 
 	if tower_script_node.state != ITower.TowerState.ACTIVE:
-		var current_state_name = ITower.TowerState.keys()[tower_script_node.state]
+		var current_state_name: String = ITower.TowerState.keys()[tower_script_node.state]
 		Log.trace(Log.Level.DEBUG, "BigDaddy: Tower '%s' (parent of '%s') is no longer ACTIVE (state: %s). Aborting shot." % [tower_script_node.name, current_target.name, current_state_name])
 		_interrupt_attack_cycle()
 		current_target = null # Clear this non-active target
@@ -294,12 +294,12 @@ func _shoot() -> void:
 		Log.trace(Log.Level.ERROR, "BigDaddy: Missing projectile scene!")
 		return
 
-	var projectile = projectile_scene.instantiate()
+	var projectile: Node = projectile_scene.instantiate()
 
-	var bullet_container = get_tree().get_first_node_in_group("bullet_container")
+	var bullet_container: Node = get_tree().get_first_node_in_group("bullet_container")
 	if bullet_container:
 		bullet_container.add_child(projectile)
-		projectile.z_index = 100
+		projectile.set("z_index", 100)
 	elif get_parent():
 		get_parent().add_child(projectile)
 		Log.trace(Log.Level.WARN, "BigDaddy: 'bullet_container' group not found. Adding projectile to get_parent().")
@@ -308,10 +308,10 @@ func _shoot() -> void:
 		projectile.queue_free()
 		return
 
-	projectile.global_position = global_position
+	projectile.set("global_position", global_position)
 	if is_instance_valid(current_target):
-		var direction_to_target = global_position.direction_to(current_target.global_position)
-		projectile.rotation = direction_to_target.angle()
+		var direction_to_target: Vector2 = global_position.direction_to(current_target.global_position)
+		projectile.set("rotation", direction_to_target.angle())
 
 		if projectile.has_method("init"):
 			projectile.init(direction_to_target, tower_disable_duration)

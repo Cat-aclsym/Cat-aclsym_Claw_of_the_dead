@@ -432,8 +432,8 @@ func _idle_modulate() -> Color:
 
 ## Apply a damage effect to the enemy sprite
 func _damage_effect(color: Color) -> void:
-	if last_source is ITower and last_source.tower_id == "bat_09":
-		# Effet réduit pour l'Inferno Tower
+	if last_source is ITower and last_source.use_short_damage_flash:
+		# Reduced effect for specific towers (e.g. Inferno Tower)
 		sprite.modulate = color.lerp(old_modulate, 0.7)
 		await get_tree().create_timer(0.05).timeout
 		sprite.modulate = _idle_modulate()
@@ -451,7 +451,7 @@ func _damage_effect(color: Color) -> void:
 	_damage_tween = create_tween()
 
 	# Flash color: white/glowing white or colored based on damage type
-	var flash_color = Color(2.5, 2.5, 2.5, 1.0)
+	var flash_color: Color = Color(2.5, 2.5, 2.5, 1.0)
 	if color != Color.WHITE and color != Color(1, 1, 1, 1):
 		flash_color = color.lightened(0.5)
 		flash_color.a = 1.0
@@ -607,8 +607,8 @@ func _apply_stats_override() -> void:
 		return
 	var data: Dictionary = stats_db.get_enemy(enemy_id)
 	Log.trace(Log.Level.INFO, "Applying enemy stats from StatsDB for %s: %s" % [enemy_id, data])
-	var hp = data.get("max_health", null)
-	var spd = data.get("speed", null)
+	var hp: Variant = data.get("max_health", null)
+	var spd: Variant = data.get("speed", null)
 	if hp != null:
 		max_health = float(hp)
 	if spd != null:
