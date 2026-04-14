@@ -77,7 +77,7 @@
 					"aoe_tick": 0,
 					"burn_damage_base": 0,
 					"burn_duration": 0,
-					"damage": 1,
+					"damage": 100,
 					"damage_multiplier": 0,
 					"dot_damage": 0,
 					"pierce_count": 0,
