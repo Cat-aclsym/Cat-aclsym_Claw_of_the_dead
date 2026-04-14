@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://c8v8y8y8y8y80"]
+[gd_scene load_steps=9 format=3 uid="uid://c8v8y8y8y8y80"]
 
 [ext_resource type="Script" uid="uid://e0qqc3xugp8k" path="res://scenes/ui/menus/building_selection/building_cards/build_card.gd" id="1_hl5pg"]
 [ext_resource type="Texture2D" uid="uid://85310xv6g30a" path="res://assets/ui/building_cards/Construction Tower Title.svg" id="2_6d6oa"]
@@ -6,7 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://cdesir3miwmug" path="res://assets/ui/building_cards/Green Frame.svg" id="4_wyqnw"]
 [ext_resource type="Texture2D" uid="uid://yayv0hygrr3u" path="res://assets/ui/building_cards/Blue Backgrond.svg" id="5_4himi"]
 [ext_resource type="Texture2D" uid="uid://dlsa1m6s2rklo" path="res://assets/gameplay/towers/tower_1_LVL_1.png" id="6_lwhdy"]
-[ext_resource type="Texture2D" uid="uid://b8qklmpagmiaj" path="res://assets/ui/huds/Coin.png" id="8_coin"]
+[ext_resource type="Texture2D" uid="uid://b6lrh02vg30l3" path="res://assets/ui/huds/Coin.png" id="8_coin"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_inferno"]
 atlas = ExtResource("6_lwhdy")
@@ -105,13 +105,12 @@ anchor_right = 1.009
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 0
-alignment = 1
 theme_override_constants/separation = 4
+alignment = 1
 
 [node name="PriceLabel" type="Label" parent="CardVBoxContainer/CardAspectRatioContainer/CardTextureButton/PriceRow"]
 texture_filter = 5
 layout_mode = 2
-size_flags_vertical = 4
 theme = ExtResource("3_r2ha7")
 theme_override_font_sizes/font_size = 15
 text = "100"
@@ -119,8 +118,8 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="CoinIcon" type="TextureRect" parent="CardVBoxContainer/CardAspectRatioContainer/CardTextureButton/PriceRow"]
-layout_mode = 2
 custom_minimum_size = Vector2(18, 18)
+layout_mode = 2
 size_flags_vertical = 4
 texture = ExtResource("8_coin")
 expand_mode = 1

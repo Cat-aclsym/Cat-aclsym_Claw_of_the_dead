@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://n3whw75fypkc"]
+[gd_scene load_steps=17 format=3 uid="uid://n3whw75fypkc"]
 
 [ext_resource type="Script" uid="uid://b4kvii87dw7yj" path="res://scenes/ui/menus/building_selection/build_selection.gd" id="1_1guy3"]
 [ext_resource type="Texture2D" uid="uid://c8eh0l6o5swnq" path="res://assets/ui/background/Construction Background.svg" id="2_tcv0b"]
@@ -7,13 +7,12 @@
 [ext_resource type="PackedScene" uid="uid://cq705nqdp8fnw" path="res://scenes/gameplay/entities/tower/towers/bat_01.tscn" id="7_bat01"]
 [ext_resource type="PackedScene" uid="uid://b2qklmpagmiaj" path="res://scenes/ui/menus/building_selection/building_cards/build_card_bat_03.tscn" id="8_bat_03_card"]
 [ext_resource type="PackedScene" uid="uid://b2qklmpag4poo" path="res://scenes/ui/menus/building_selection/building_cards/build_card_bat_04.tscn" id="11_bat_04_card"]
-[ext_resource type="PackedScene" path="res://scenes/ui/menus/building_selection/building_cards/build_card_bat_08.tscn" id="12_bat_08_card"]
 [ext_resource type="PackedScene" uid="uid://b2qklmpagmiak" path="res://scenes/ui/menus/building_selection/building_cards/build_card_bat_05.tscn" id="12_bat_05_card"]
+[ext_resource type="PackedScene" uid="uid://g880dtp4ta31" path="res://scenes/ui/menus/building_selection/building_cards/build_card_bat_08.tscn" id="12_bat_08_card"]
 [ext_resource type="PackedScene" uid="uid://b2qklmpagmiap" path="res://scenes/ui/menus/building_selection/building_cards/build_card_bat_06.tscn" id="13_bat_06_card"]
 [ext_resource type="PackedScene" uid="uid://b2qklmpagmiaq" path="res://scenes/ui/menus/building_selection/building_cards/build_card_bat_07.tscn" id="14_bat_07_card"]
-
-[ext_resource type="PackedScene" uid="uid://c8v8y8y8y8y8z" path="res://scenes/ui/menus/building_selection/building_cards/build_card_bat_09.tscn" id="15_bat_09_card"]
-[ext_resource type="PackedScene" uid="uid://c8v8y8y8y8y8y" path="res://scenes/gameplay/entities/tower/towers/bat_09.tscn" id="16_bat09"]
+[ext_resource type="PackedScene" uid="uid://c8v8y8y8y8y80" path="res://scenes/ui/menus/building_selection/building_cards/build_card_bat_09.tscn" id="15_bat_09_card"]
+[ext_resource type="PackedScene" uid="uid://b3yjruvh66oak" path="res://scenes/gameplay/entities/tower/towers/bat_09.tscn" id="16_bat09"]
 
 [sub_resource type="Animation" id="Animation_fpn5b"]
 length = 0.35
