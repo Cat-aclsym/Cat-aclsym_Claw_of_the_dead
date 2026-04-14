@@ -4,6 +4,8 @@ class_name WaveStepSpawn
 extends WaveStep
 ## A wave step that spawns a number of enemies of a specific type.
 
+const ENEMY_SCENE_PATH_FORMAT: String = "res://scenes/gameplay/entities/enemy/enemies/%s.tscn"
+
 
 # core
 func _init(in_data: Dictionary) -> void:
@@ -25,13 +27,8 @@ func exec() -> void:
 		Log.trace(Log.Level.ERROR, "Cannot spawn enemies without a valid map.")
 		return
 
-	if not ScenesLoader.enemies_scene.has(enemy_id):
-		var enemy_scene_path: String = "res://scenes/gameplay/entities/enemy/enemies/%s.tscn" % enemy_id
-		ScenesLoader.enemies_scene[enemy_id] = load(enemy_scene_path)
-
-	var enemy_scene: PackedScene = ScenesLoader.enemies_scene[enemy_id]
+	var enemy_scene: PackedScene = _resolve_enemy_scene(enemy_id)
 	if enemy_scene == null:
-		Log.trace(Log.Level.ERROR, "Failed to load enemy scene: %s" % enemy_id)
 		return
 
 	var enemy: IEnemy = enemy_scene.instantiate()
@@ -40,7 +37,7 @@ func exec() -> void:
 
 	var spawn_path: Path2D = _resolve_spawn_path(level.map, spawner_index)
 	if spawn_path == null:
-		Log.trace(Log.Level.ERROR, "No valid path available for spawning.")
+		Log.trace(Log.Level.ERROR, "No valid active path available for spawning.")
 		return
 
 	EnemySpawner.spawn_enemy(spawn_path, enemy)
@@ -53,14 +50,38 @@ func is_over() -> bool:
 
 
 func _resolve_spawn_path(map: IMap, spawner_index: int) -> Path2D:
-	if map.paths.is_empty():
+	var spawn_paths: Array[Path2D] = map.get_spawn_paths()
+	if spawn_paths.is_empty():
+		Log.trace(Log.Level.ERROR, "Cannot spawn enemy: map has no active paths.")
 		return null
 
 	if spawner_index == -1:
-		return map.paths[randi() % map.paths.size()]
+		return map.get_random_active_path()
 
 	if spawner_index >= 0 and spawner_index < map.paths.size():
+		if not map.is_path_active(spawner_index):
+			Log.trace(Log.Level.ERROR, "Spawner index %d points to an inactive path." % spawner_index)
+			return null
 		return map.paths[spawner_index]
 
-	Log.trace(Log.Level.WARN, "Invalid spawner index %d, using random path." % spawner_index)
-	return map.paths[randi() % map.paths.size()]
+	Log.trace(Log.Level.WARN, "Invalid spawner index %d, using random active path." % spawner_index)
+	return map.get_random_active_path()
+
+
+func _resolve_enemy_scene(enemy_id: String) -> PackedScene:
+	var enemy_scene_path: String = ENEMY_SCENE_PATH_FORMAT % enemy_id
+
+	if ScenesLoader.enemies_scene.has(enemy_id):
+		var cached_scene: PackedScene = ScenesLoader.enemies_scene[enemy_id]
+		if cached_scene != null:
+			return cached_scene
+
+		ScenesLoader.enemies_scene.erase(enemy_id)
+
+	var loaded_scene: PackedScene = load(enemy_scene_path) as PackedScene
+	if loaded_scene == null:
+		Log.trace(Log.Level.ERROR, "Failed to load enemy scene from path: %s" % enemy_scene_path)
+		return null
+
+	ScenesLoader.enemies_scene[enemy_id] = loaded_scene
+	return loaded_scene
