@@ -48,6 +48,7 @@ func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	visible = false
 	_overlay.hide_overlay()
+	Log.trace(Log.Level.DEBUG, "TutorialManager ready: visible=%s running=%s" % [visible, _is_running])
 
 	if not get_tree().node_added.is_connected(_on_tree_node_added):
 		get_tree().node_added.connect(_on_tree_node_added)
@@ -81,19 +82,24 @@ func _process(_delta: float) -> void:
 ## Called when a level starts from the main UI flow.
 ## [param level] Running level instance
 func on_level_started(level: ILevel) -> void:
+	Log.trace(Log.Level.DEBUG, "TutorialManager.on_level_started level=%s valid=%s tutorial_completed=%s" % [level, is_instance_valid(level), ProgressionManager.is_tutorial_completed()])
 	_tracked_level = level
 	if not is_instance_valid(level):
+		Log.trace(Log.Level.WARN, "TutorialManager.on_level_started aborted: invalid level")
 		_stop_tutorial(false)
 		return
 
 	if ProgressionManager.is_tutorial_completed():
+		Log.trace(Log.Level.INFO, "TutorialManager.on_level_started aborted: tutorial already completed")
 		_stop_tutorial(false)
 		return
 
 	if level.level_id != LEVEL_ID_TUTORIAL:
+		Log.trace(Log.Level.INFO, "TutorialManager.on_level_started aborted: level_id=%s" % level.level_id)
 		_stop_tutorial(false)
 		return
 
+	Log.trace(Log.Level.DEBUG, "TutorialManager scheduling _start_tutorial for level_id=%s" % level.level_id)
 	call_deferred("_start_tutorial")
 
 
@@ -105,9 +111,11 @@ func on_level_ended() -> void:
 
 # Private
 func _activate_objective(objective: Objective) -> void:
+	Log.trace(Log.Level.DEBUG, "Tutorial objective activate: %s -> %s" % [_active_objective, objective])
 	_active_objective = objective
 	if objective == Objective.PLACE_CONFIRM:
 		_place_confirm_tower_count = _count_visible_towers()
+		Log.trace(Log.Level.DEBUG, "Tutorial PLACE_CONFIRM baseline tower count=%d" % _place_confirm_tower_count)
 	_pause_resume_waiting_for_resume = false
 	Dialogic.paused = true
 	_pause_level_for_dialogue()
@@ -121,6 +129,7 @@ func _complete_active_objective() -> void:
 	var previous_objective: Objective = _active_objective
 	if _active_objective == Objective.NONE:
 		return
+	Log.trace(Log.Level.DEBUG, "Tutorial objective complete: %s" % previous_objective)
 	_active_objective = Objective.NONE
 	_place_confirm_tower_count = 0
 	_pause_resume_waiting_for_resume = false
@@ -134,6 +143,7 @@ func _complete_active_objective() -> void:
 
 func _connect_cursor_signals() -> void:
 	var cursor: BuildPlacement = Global.get("cursor") as BuildPlacement
+	Log.trace(Log.Level.DEBUG, "Tutorial connect cursor requested: cursor=%s valid=%s connected=%s" % [cursor, is_instance_valid(cursor), _connected_cursor])
 	if cursor == null:
 		return
 	_connect_cursor_signals_for(cursor)
@@ -143,12 +153,14 @@ func _connect_cursor_signals_for(cursor: BuildPlacement) -> void:
 	if cursor == null:
 		return
 	if _connected_cursor == cursor:
+		Log.trace(Log.Level.DEBUG, "Tutorial cursor already connected")
 		return
 
 	if _connected_cursor != null:
 		_disconnect_cursor_signals()
 
 	_connected_cursor = cursor
+	Log.trace(Log.Level.DEBUG, "Tutorial cursor connected: %s" % _connected_cursor)
 	if not _connected_cursor.trigger_state_build.is_connected(_on_cursor_trigger_state_build):
 		_connected_cursor.trigger_state_build.connect(_on_cursor_trigger_state_build)
 	if not _connected_cursor.building_placed.is_connected(_on_cursor_building_placed):
@@ -157,14 +169,17 @@ func _connect_cursor_signals_for(cursor: BuildPlacement) -> void:
 
 func _connect_hud_signals() -> void:
 	if Global.hud == null:
+		Log.trace(Log.Level.DEBUG, "Tutorial connect HUD skipped: Global.hud is null")
 		return
 	if _connected_hud == Global.hud:
+		Log.trace(Log.Level.DEBUG, "Tutorial HUD already connected")
 		return
 
 	if _connected_hud != null:
 		_disconnect_hud_signals()
 
 	_connected_hud = Global.hud
+	Log.trace(Log.Level.DEBUG, "Tutorial HUD connected: %s" % _connected_hud)
 	if not _connected_hud.pause_requested.is_connected(_on_hud_pause_requested):
 		_connected_hud.pause_requested.connect(_on_hud_pause_requested)
 	if not _connected_hud.build_menu_opened.is_connected(_on_hud_build_menu_opened):
@@ -175,7 +190,9 @@ func _connect_tower_signal(tower: ITower) -> void:
 	if tower == null:
 		return
 	if tower in _connected_towers:
+		Log.trace(Log.Level.DEBUG, "Tutorial tower already connected: %s" % tower)
 		return
+	Log.trace(Log.Level.DEBUG, "Tutorial tower connected: %s" % tower)
 	if not tower.upgrade_completed.is_connected(_on_tower_upgrade_completed):
 		tower.upgrade_completed.connect(_on_tower_upgrade_completed)
 	_connected_towers.append(tower)
@@ -183,10 +200,13 @@ func _connect_tower_signal(tower: ITower) -> void:
 
 func _connect_visible_towers() -> void:
 	if not is_instance_valid(_tracked_level):
+		Log.trace(Log.Level.DEBUG, "Tutorial visible tower scan skipped: tracked level invalid")
 		return
 	if not is_instance_valid(_tracked_level.map):
+		Log.trace(Log.Level.DEBUG, "Tutorial visible tower scan skipped: map invalid")
 		return
 
+	Log.trace(Log.Level.DEBUG, "Tutorial scanning visible towers in map children=%d" % _tracked_level.map.get_child_count())
 	for child in _tracked_level.map.get_children():
 		if child is ITower:
 			_connect_tower_signal(child as ITower)
@@ -223,6 +243,7 @@ func _disconnect_cursor_signals() -> void:
 	if _connected_cursor == null:
 		return
 	if not is_instance_valid(_connected_cursor):
+		Log.trace(Log.Level.WARN, "Tutorial cursor became invalid before disconnect")
 		_connected_cursor = null
 		return
 	if _connected_cursor.trigger_state_build.is_connected(_on_cursor_trigger_state_build):
@@ -459,12 +480,16 @@ func _unlock_camera_after_tutorial() -> void:
 
 func _start_tutorial() -> void:
 	if not is_instance_valid(_tracked_level):
+		Log.trace(Log.Level.WARN, "Tutorial start aborted: tracked level invalid")
 		return
 	if ProgressionManager.is_tutorial_completed():
+		Log.trace(Log.Level.INFO, "Tutorial start aborted: already completed")
 		return
 	if _tracked_level.level_id != LEVEL_ID_TUTORIAL:
+		Log.trace(Log.Level.INFO, "Tutorial start aborted: tracked level_id=%s" % _tracked_level.level_id)
 		return
 
+	Log.trace(Log.Level.INFO, "Tutorial start requested for level_id=%s" % _tracked_level.level_id)
 	_is_running = true
 	visible = true
 	_active_objective = Objective.NONE
@@ -475,11 +500,13 @@ func _start_tutorial() -> void:
 	_connect_cursor_signals()
 	_connect_hud_signals()
 	_connect_visible_towers()
+	Log.trace(Log.Level.DEBUG, "Tutorial start: connected_cursor=%s connected_hud=%s connected_towers=%d" % [_connected_cursor, _connected_hud, _connected_towers.size()])
 	_lock_camera_for_tutorial()
 	_pause_level_for_dialogue()
 	_prepare_dialog_layout_parent()
 
 	var timeline_path: String = _get_timeline_path()
+	Log.trace(Log.Level.INFO, "Tutorial timeline path=%s" % timeline_path)
 	var timeline_resource: Resource = load(timeline_path)
 	if timeline_resource == null:
 		Log.trace(Log.Level.ERROR, "Tutorial timeline not found: %s" % timeline_path)
@@ -489,6 +516,7 @@ func _start_tutorial() -> void:
 	var dialog_layout: Node = Dialogic.start(timeline_resource)
 	if dialog_layout != null:
 		_dialog_layout = dialog_layout
+		Log.trace(Log.Level.DEBUG, "Tutorial dialog layout returned by Dialogic: %s" % _dialog_layout)
 
 	if _dialog_layout == null and Dialogic.Styles.has_active_layout_node():
 		_dialog_layout = Dialogic.Styles.get_layout_node()
@@ -498,9 +526,11 @@ func _start_tutorial() -> void:
 		if _dialog_layout is CanvasItem:
 			(_dialog_layout as CanvasItem).z_index = 9000
 		_set_dialog_layout_visible(true)
+		Log.trace(Log.Level.DEBUG, "Tutorial dialog layout visible and process always")
 
 
 func _stop_tutorial(mark_completed: bool) -> void:
+	Log.trace(Log.Level.INFO, "Tutorial stop requested: mark_completed=%s running=%s active_objective=%s" % [mark_completed, _is_running, _active_objective])
 	if mark_completed:
 		ProgressionManager.mark_tutorial_completed()
 
@@ -565,12 +595,15 @@ func _update_objective_target() -> void:
 			pass
 
 	if is_instance_valid(target):
+		Log.trace(Log.Level.DEBUG, "Tutorial objective target resolved: objective=%s target=%s" % [_active_objective, target])
 		_overlay.show_for_target(target)
 	else:
+		Log.trace(Log.Level.DEBUG, "Tutorial objective target missing: objective=%s" % _active_objective)
 		_overlay.hide_overlay()
 
 # Signal callbacks
 func _on_cursor_building_placed(building: IBuilding) -> void:
+	Log.trace(Log.Level.DEBUG, "Tutorial cursor building placed: building=%s objective=%s" % [building, _active_objective])
 	if building is ITower:
 		_last_placed_tower = building as ITower
 		_connect_tower_signal(_last_placed_tower)
@@ -584,6 +617,7 @@ func _try_complete_place_confirm_from_scene() -> void:
 		return
 
 	var visible_tower_count: int = _count_visible_towers()
+	Log.trace(Log.Level.DEBUG, "Tutorial PLACE_CONFIRM fallback check: baseline=%d visible=%d last_tower=%s" % [_place_confirm_tower_count, visible_tower_count, _last_placed_tower])
 	if visible_tower_count <= _place_confirm_tower_count:
 		return
 
@@ -605,12 +639,14 @@ func _on_dialogic_signal_event(argument: Variant) -> void:
 		return
 	if typeof(argument) != TYPE_STRING:
 		return
+	Log.trace(Log.Level.DEBUG, "Tutorial Dialogic signal: %s" % argument)
 	_handle_tutorial_event(argument as String)
 
 
 func _on_dialogic_event_handled(event: DialogicEvent) -> void:
 	if not _is_running:
 		return
+	Log.trace(Log.Level.DEBUG, "Tutorial Dialogic event handled: %s" % event)
 	if event is DialogicCharacterEvent or event is DialogicTextEvent:
 		_set_dialog_layout_visible(true)
 
@@ -618,10 +654,12 @@ func _on_dialogic_event_handled(event: DialogicEvent) -> void:
 func _on_dialogic_timeline_ended() -> void:
 	if not _is_running:
 		return
+	Log.trace(Log.Level.INFO, "Tutorial timeline ended")
 	_stop_tutorial(true)
 
 
 func _on_hud_pause_requested() -> void:
+	Log.trace(Log.Level.DEBUG, "Tutorial HUD pause requested: objective=%s waiting_resume=%s" % [_active_objective, _pause_resume_waiting_for_resume])
 	if _active_objective != Objective.PAUSE_AND_RESUME:
 		return
 	if _pause_resume_waiting_for_resume:
@@ -632,6 +670,7 @@ func _on_hud_pause_requested() -> void:
 
 
 func _on_pause_menu_resumed() -> void:
+	Log.trace(Log.Level.DEBUG, "Tutorial pause menu resumed: objective=%s waiting_resume=%s" % [_active_objective, _pause_resume_waiting_for_resume])
 	if _active_objective != Objective.PAUSE_AND_RESUME:
 		return
 	if not _pause_resume_waiting_for_resume:
@@ -640,6 +679,7 @@ func _on_pause_menu_resumed() -> void:
 
 
 func _on_tower_upgrade_completed() -> void:
+	Log.trace(Log.Level.DEBUG, "Tutorial tower upgrade completed: objective=%s" % _active_objective)
 	if _active_objective == Objective.CONFIRM_UPGRADE:
 		_complete_active_objective()
 
@@ -647,8 +687,10 @@ func _on_tower_upgrade_completed() -> void:
 func _on_tree_node_added(node: Node) -> void:
 	if not _is_running:
 		return
+	Log.trace(Log.Level.DEBUG, "Tutorial tree node added: %s" % node)
 
 	if node is BuildPlacement:
+		Log.trace(Log.Level.DEBUG, "Tutorial detected BuildPlacement node: %s" % node)
 		_connect_cursor_signals_for(node as BuildPlacement)
 
 	if node is ITower:
@@ -677,10 +719,12 @@ func _on_tree_node_added(node: Node) -> void:
 
 
 func _on_upgrade_menu_confirmed() -> void:
+	Log.trace(Log.Level.DEBUG, "Tutorial upgrade menu confirmed: objective=%s" % _active_objective)
 	if _active_objective == Objective.CONFIRM_UPGRADE:
 		_complete_active_objective()
 
 
 func _on_hud_build_menu_opened() -> void:
+	Log.trace(Log.Level.DEBUG, "Tutorial HUD build menu opened: objective=%s" % _active_objective)
 	if _active_objective == Objective.OPEN_BUILD_MENU:
 		_complete_active_objective()
