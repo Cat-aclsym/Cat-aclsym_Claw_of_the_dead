@@ -1,0 +1,11 @@
+{
+  "enemies": {
+	"ene.01": {"max_health": 20.0, "speed": 45.0, "type": "DEFAULT"},
+	"ene.02": {"max_health": 100.0, "speed": 30.0, "type": "FAT"},
+	"big_daddy": {"max_health": 1000.0, "speed": 20.0, "type": "BOSS"}
+  },
+  "towers": {
+	"bat_01": {"cost": 50, "fire_rate": 1.5, "range": 100.0, "damage": 10.0}
+  },
+  "upgrades": {}
+}

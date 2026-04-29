@@ -1,0 +1,196 @@
+[gd_scene load_steps=2 format=3 uid="uid://map_generator_menu"]
+
+[ext_resource type="Script" path="res://scenes/gameplay/world/tower_generator_beau/ui/map_generator_menu.gd" id="1_mapgen"]
+
+[node name="MapGeneratorMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_mapgen")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 50
+theme_override_constants/margin_top = 50
+theme_override_constants/margin_right = 50
+theme_override_constants/margin_bottom = 50
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+
+[node name="HeaderContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 0
+
+[node name="TitleLabel" type="Label" parent="MarginContainer/VBoxContainer/HeaderContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Générateur de Maps"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MainMenuButton" type="Button" parent="MarginContainer/VBoxContainer/HeaderContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+text = "Retour"
+
+[node name="BodyContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 10
+
+[node name="MainSplit" type="HSplitContainer" parent="MarginContainer/VBoxContainer/BodyContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+split_offset = 380
+
+[node name="LeftPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer/BodyContainer/MainSplit"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Margin" type="MarginContainer" parent="MarginContainer/VBoxContainer/BodyContainer/MainSplit/LeftPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="ParamsVBox" type="VBoxContainer" parent="MarginContainer/VBoxContainer/BodyContainer/MainSplit/LeftPanel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="ParamsTitle" type="Label" parent="MarginContainer/VBoxContainer/BodyContainer/MainSplit/LeftPanel/Margin/ParamsVBox"]
+layout_mode = 2
+text = "Paramètres de génération"
+
+[node name="ParamsContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/BodyContainer/MainSplit/LeftPanel/Margin/ParamsVBox"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="SeedContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/BodyContainer/MainSplit/LeftPanel/Margin/ParamsVBox/ParamsContainer"]
+layout_mode = 2
+
+[node name="SeedSpinBox" type="SpinBox" parent="MarginContainer/VBoxContainer/BodyContainer/MainSplit/LeftPanel/Margin/ParamsVBox/ParamsContainer/SeedContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 0.0
+max_value = 2147483647.0
+step = 1.0
+value = 0.0
+suffix = " Seed (0 = auto)"
+
+[node name="RandomSeedButton" type="Button" parent="MarginContainer/VBoxContainer/BodyContainer/MainSplit/LeftPanel/Margin/ParamsVBox/ParamsContainer/SeedContainer"]
+layout_mode = 2
+text = "Seed aléatoire"
+
+[node name="WidthSpinBox" type="SpinBox" parent="MarginContainer/VBoxContainer/BodyContainer/MainSplit/LeftPanel/Margin/ParamsVBox/ParamsContainer"]
+layout_mode = 2
+min_value = 10.0
+max_value = 50.0
+step = 1.0
+value = 25.0
+suffix = " Largeur"
+
+[node name="HeightSpinBox" type="SpinBox" parent="MarginContainer/VBoxContainer/BodyContainer/MainSplit/LeftPanel/Margin/ParamsVBox/ParamsContainer"]
+layout_mode = 2
+min_value = 10.0
+max_value = 50.0
+step = 1.0
+value = 15.0
+suffix = " Hauteur"
+
+[node name="StyleOption" type="OptionButton" parent="MarginContainer/VBoxContainer/BodyContainer/MainSplit/LeftPanel/Margin/ParamsVBox/ParamsContainer"]
+layout_mode = 2
+
+[node name="DifficultyOption" type="OptionButton" parent="MarginContainer/VBoxContainer/BodyContainer/MainSplit/LeftPanel/Margin/ParamsVBox/ParamsContainer"]
+layout_mode = 2
+
+[node name="StrictTargetCheck" type="CheckBox" parent="MarginContainer/VBoxContainer/BodyContainer/MainSplit/LeftPanel/Margin/ParamsVBox/ParamsContainer"]
+layout_mode = 2
+text = "Mode strict cible (plus lent)"
+
+[node name="NumPathsSpinBox" type="SpinBox" parent="MarginContainer/VBoxContainer/BodyContainer/MainSplit/LeftPanel/Margin/ParamsVBox/ParamsContainer"]
+layout_mode = 2
+min_value = 1.0
+max_value = 3.0
+step = 1.0
+value = 1.0
+suffix = " Chemins"
+
+[node name="BuildableDensitySlider" type="HSlider" parent="MarginContainer/VBoxContainer/BodyContainer/MainSplit/LeftPanel/Margin/ParamsVBox/ParamsContainer"]
+layout_mode = 2
+min_value = 0.0
+max_value = 0.5
+step = 0.05
+value = 0.2
+
+[node name="BuildableDensityLabel" type="Label" parent="MarginContainer/VBoxContainer/BodyContainer/MainSplit/LeftPanel/Margin/ParamsVBox/ParamsContainer"]
+layout_mode = 2
+text = "Densité zones constructibles: 20%"
+
+[node name="RightPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer/BodyContainer/MainSplit"]
+layout_mode = 2
+size_flags_horizontal = 2
+
+[node name="Margin" type="MarginContainer" parent="MarginContainer/VBoxContainer/BodyContainer/MainSplit/RightPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="ActionsVBox" type="VBoxContainer" parent="MarginContainer/VBoxContainer/BodyContainer/MainSplit/RightPanel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="GenerateTitle" type="Label" parent="MarginContainer/VBoxContainer/BodyContainer/MainSplit/RightPanel/Margin/ActionsVBox"]
+layout_mode = 2
+text = "Actions"
+
+[node name="GenerateButton" type="Button" parent="MarginContainer/VBoxContainer/BodyContainer/MainSplit/RightPanel/Margin/ActionsVBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 34)
+text = "Générer"
+
+[node name="ToolsContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/BodyContainer/MainSplit/RightPanel/Margin/ActionsVBox"]
+layout_mode = 2
+
+[node name="PreviewButton" type="Button" parent="MarginContainer/VBoxContainer/BodyContainer/MainSplit/RightPanel/Margin/ActionsVBox/ToolsContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Prévisualiser"
+disabled = true
+
+[node name="EditButton" type="Button" parent="MarginContainer/VBoxContainer/BodyContainer/MainSplit/RightPanel/Margin/ActionsVBox/ToolsContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Éditer"
+disabled = true
+
+[node name="PlayButton" type="Button" parent="MarginContainer/VBoxContainer/BodyContainer/MainSplit/RightPanel/Margin/ActionsVBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 34)
+text = "Jouer la Map"
+disabled = true
+
+[node name="SaveButton" type="Button" parent="MarginContainer/VBoxContainer/BodyContainer/MainSplit/RightPanel/Margin/ActionsVBox"]
+layout_mode = 2
+text = "Sauvegarder la Map"
+disabled = true
+
+[node name="LoadButton" type="Button" parent="MarginContainer/VBoxContainer/BodyContainer/MainSplit/RightPanel/Margin/ActionsVBox"]
+layout_mode = 2
+text = "Charger une Map"
+
+[node name="StatusLabel" type="Label" parent="MarginContainer/VBoxContainer/BodyContainer/MainSplit/RightPanel/Margin/ActionsVBox"]
+layout_mode = 2
+text = "Configurez les paramètres et cliquez sur 'Générer'"
+autowrap_mode = 2

@@ -1,0 +1,48 @@
+[gd_scene load_steps=2 format=3 uid="uid://jcu2dxf0tu8k"]
+
+[ext_resource type="Script" uid="uid://bljuy8d0wwmq5" path="res://scenes/gameplay/world/tower_generator_beau/map_generator_bridge.gd" id="1_bridge"]
+
+[node name="MapGeneratorTool" type="Node2D"]
+script = ExtResource("1_bridge")
+width = 30
+height = 30
+difficulty = "hard"
+max_buildable_zones = 20
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="GeneratorPanel" type="PanelContainer" parent="CanvasLayer"]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -300.0
+offset_top = 16.0
+offset_right = -16.0
+offset_bottom = 170.0
+
+[node name="Margin" type="MarginContainer" parent="CanvasLayer/GeneratorPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="VBox" type="VBoxContainer" parent="CanvasLayer/GeneratorPanel/Margin"]
+layout_mode = 2
+
+[node name="TitleLabel" type="Label" parent="CanvasLayer/GeneratorPanel/Margin/VBox"]
+layout_mode = 2
+text = "Génération de map"
+
+[node name="GenerateButton" type="Button" parent="CanvasLayer/GeneratorPanel/Margin/VBox"]
+layout_mode = 2
+text = "Générer la map"
+
+[node name="RandomSeedButton" type="Button" parent="CanvasLayer/GeneratorPanel/Margin/VBox"]
+layout_mode = 2
+text = "Seed aléatoire"
+
+[node name="StatusLabel" type="Label" parent="CanvasLayer/GeneratorPanel/Margin/VBox"]
+layout_mode = 2
+text = "Prêt à générer une map"
+autowrap_mode = 2
