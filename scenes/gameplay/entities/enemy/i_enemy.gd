@@ -109,7 +109,7 @@ var _stun_stars: Array[Sprite2D] = []
 @onready var path_points_size: int = path.curve.point_count
 @onready var poison_particle: GPUParticles2D = $GPUParticles2D
 @onready var popup_score_spawner: PopupSpawner = $PopupScoreSpawner
-@onready var stats_db = get_node("/root/StatsDB")
+@onready var stats_db: StatsDB = get_node("/root/StatsDB")
 
 ## Store the last source of damage
 var last_source: Variant = null

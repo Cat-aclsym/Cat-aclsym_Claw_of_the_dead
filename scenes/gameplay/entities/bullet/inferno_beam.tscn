@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://c8y7x3n8u5r4e"]
 
-[ext_resource type="Script" uid="uid://cl1yhtpukhc3r" path="res://scenes/gameplay/entities/bullet/inferno_beam.gd" id="1_script"]
+[ext_resource type="Script" path="res://scenes/gameplay/entities/bullet/inferno_beam.gd" id="1_script"]
 
 [sub_resource type="Gradient" id="Gradient_sparks"]
 colors = PackedColorArray(1, 1, 1, 1, 1, 0.5, 0, 0)

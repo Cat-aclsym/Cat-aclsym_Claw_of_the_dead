@@ -177,7 +177,7 @@ func _process(delta: float) -> void:
 		_update_z_index()
 		# Allow range display even during building
 		return
-	
+
 	if is_instance_valid(target):
 		# Verify if target is still valid (alive and in range with a 10px margin to avoid flickering)
 		if target.is_already_dead or global_position.distance_to(target.global_position) > shoot_range + 10.0:
@@ -231,7 +231,7 @@ func apply_stats_from_db() -> void:
 		spread_angle = float(base["spread_angle"])
 	if base.has("bullet_stats"):
 		var bs: Dictionary = base["bullet_stats"]
-		for k in bs.keys():
+		for k: String in bs.keys():
 			bullet_stats[k] = bs[k]
 
 ## Fires a bullet at the current target if conditions are met
@@ -277,7 +277,7 @@ func fire() -> void:
 			bullet_instance.tower_owner = self
 
 		_on_projectile_instantiated(bullet_instance, target)
-		
+
 		# If the specialized script handled the instance (e.g. by freeing it and reusing another), skip adding it
 		if not is_instance_valid(bullet_instance):
 			continue
@@ -319,11 +319,11 @@ func apply_upgrade() -> void:
 
 	if changes.get("bullet_stat", false):
 		_apply_bullet_stat_changes(bullet_stats_delta)
-	
+
 	# Ensure the is_charging flag is correctly synchronized if present in the upgrade
 	if upgrade_data.has("bullet_stats") and upgrade_data["bullet_stats"].has("is_charging"):
 		bullet_stats["is_charging"] = bool(upgrade_data["bullet_stats"]["is_charging"])
-	
+
 	_on_upgrade_applied()
 
 	if changes.get("tower_model", false):
@@ -384,7 +384,7 @@ func apply_special_modifier(modifiers: Dictionary) -> void:
 	if modifiers.is_empty():
 		_special_modifiers.clear()
 	else:
-		for stat in modifiers.keys():
+		for stat: String in modifiers.keys():
 			_special_modifiers[stat] = modifiers[stat]
 
 	# Apply base stats first to avoid stacking multipliers incorrectly
@@ -451,7 +451,7 @@ func build_tower() -> void:
 ## Sells the tower
 func sell_tower() -> void:
 	ILevel.current_level.coins += sell_price
-	var placement_system: BuildPlacement = Global.get("cursor") as BuildPlacement
+	var placement_system: BuildPlacement = Global.cursor
 	if placement_system:
 		placement_system.remove_invalid_cell(tile_pos)
 	queue_free()
@@ -477,7 +477,7 @@ func _register_with_cursor() -> void:
 		return
 
 	# Safe access to Global.cursor to avoid assertion if it's not yet set
-	var placement_system: BuildPlacement = Global.get("cursor") as BuildPlacement
+	var placement_system: BuildPlacement = Global.cursor
 	if placement_system:
 		if tile_pos == Vector2i.ZERO:
 			if placement_system.tm_ref:
@@ -529,7 +529,7 @@ func show_range(p_show: bool, smooth: bool = true) -> void:
 			outline.visible = false
 
 func _apply_tower_stat_changes(tower_stats: Dictionary) -> void:
-	for stat in tower_stats.keys():
+	for stat: String in tower_stats.keys():
 		if stat == "level":
 			continue
 		if stat in self:
@@ -562,7 +562,7 @@ func _apply_bullet_stat_changes(bullet_stats_delta: Dictionary) -> void:
 
 
 ## Overwrites gameplay fields on the projectile from [member bullet_stats] (tower-owned balance; scenes are VFX-only).
-func _apply_projectile_config(bullet_instance: Node) -> void:
+func _apply_projectile_config(bullet_instance: IBullet) -> void:
 	if bullet_instance == null:
 		return
 	for key in PROJECTILE_GAMEPLAY_KEYS:
@@ -599,7 +599,7 @@ func _resolve_initial_upgrade_ids() -> void:
 
 func _choose_target() -> void:
 	var old_target: IEnemy = target
-	
+
 	# Filter enemies to keep only those actually in range (with a small margin)
 	var valid_candidates: Array[IEnemy] = []
 	for e in enemy_array:
@@ -840,7 +840,7 @@ func _on_tower_pressed() -> void:
 		Log.trace(Log.Level.ERROR, "Failed to load tower upgrade menu scene")
 		return
 
-	var tower_upgrade_menu_instance: Control = tower_upgrade_menu.instantiate()
+	var tower_upgrade_menu_instance: RadialTowerUpgradeMenu = tower_upgrade_menu.instantiate()
 	tower_upgrade_menu_instance.position = position
 	tower_upgrade_menu_instance.name = "TowerUpgrade"
 	self.add_child(tower_upgrade_menu_instance)

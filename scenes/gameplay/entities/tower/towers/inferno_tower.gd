@@ -29,12 +29,12 @@ func _on_projectile_instantiated(bullet: IBullet, target_enemy: IEnemy) -> void:
 	# For continuous beams, check if we already have an active beam for this target
 	# Note: This is only called when projectile_count == 1 (standard fire loop)
 	# because _handle_custom_fire returns true for projectile_count > 1.
-	var existing_beam: Node = null
+	var existing_beam: IBullet = null
 	for beam in _active_beams.keys():
 		if is_instance_valid(beam) and _active_beams[beam] == target_enemy:
 			existing_beam = beam
 			break
-	
+
 	if existing_beam:
 		# If we already have a beam, we don't need the new one
 		# This is a bit tricky because ITower.fire() just instantiated it.
@@ -60,7 +60,7 @@ func _fire_inferno_multi_target() -> void:
 	for e in enemy_array:
 		if is_instance_valid(e) and not e.is_already_dead and global_position.distance_to(e.global_position) <= shoot_range + 5.0:
 			valid_enemies.append(e)
-	
+
 	if valid_enemies.is_empty():
 		_cleanup_beams()
 		return
@@ -73,28 +73,28 @@ func _fire_inferno_multi_target() -> void:
 		targets_to_hit.append(e)
 
 	# Cleanup beams for targets that are no longer being hit
-	var beams_to_remove: Array[Node] = []
+	var beams_to_remove: Array = []
 	for beam in _active_beams.keys():
 		if not is_instance_valid(beam):
 			beams_to_remove.append(beam)
 			continue
-		
-		var beam_target = _active_beams[beam]
+
+		var beam_target: IEnemy = _active_beams[beam]
 		if not is_instance_valid(beam_target) or not beam_target in targets_to_hit:
 			beam.queue_free()
 			beams_to_remove.append(beam)
-	
+
 	for b in beams_to_remove:
 		_active_beams.erase(b)
 
 	# Fire or update beams for selected targets
 	for t in targets_to_hit:
-		var existing_beam: Node = null
+		var existing_beam: IBullet = null
 		for beam in _active_beams.keys():
 			if is_instance_valid(beam) and _active_beams[beam] == t:
 				existing_beam = beam
 				break
-		
+
 		if existing_beam:
 			if existing_beam.has_method("fire_tick"):
 				existing_beam.call("fire_tick")
@@ -103,7 +103,7 @@ func _fire_inferno_multi_target() -> void:
 			bullet_instance.tower_owner = self
 			if "enemy_target" in bullet_instance:
 				bullet_instance.set("enemy_target", t)
-			
+
 			_apply_projectile_config(bullet_instance)
 			add_child(bullet_instance)
 			_active_beams[bullet_instance] = t

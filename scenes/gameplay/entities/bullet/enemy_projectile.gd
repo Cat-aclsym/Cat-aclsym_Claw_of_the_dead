@@ -11,7 +11,7 @@ const DESTROY_TIMEOUT: float = 5.0
 @export var speed: float = 200.0
 
 # Public variables
-var direction: Vector2 = Vector2.ZERO
+var direction := Vector2.ZERO
 var disable_duration: float = 3.0
 
 
@@ -55,7 +55,7 @@ func _disable_tower(tower: ITower) -> void:
 	tower.disable_tower()
 
 	# Store the original modulate color
-	var sprite: CanvasItem = tower.sprite
+	var sprite: AnimatedSprite2D = tower.sprite
 	if not is_instance_valid(sprite):
 		return
 
@@ -69,7 +69,7 @@ func _disable_tower(tower: ITower) -> void:
 	restore_timer.timeout.connect(func():
 		if not is_instance_valid(tower):
 			return
-		
+
 		if is_instance_valid(sprite):
 			# Reset visual appearance
 			sprite.modulate = original_modulate
@@ -88,7 +88,7 @@ func _on_body_entered(body: Node2D) -> void:
 
 		# Get the parent tower node
 		var tower: Node = body.get_parent()
-		if tower is ITower:
+		if is_instance_valid(tower) and tower is ITower:
 			# Disable the tower
 			_disable_tower(tower)
 
@@ -100,12 +100,12 @@ func _spawn_impact_particles(pos: Vector2) -> void:
 	## Creates bubble particles at the impact point.
 	## [param pos] The global position where particles will appear
 	# Create a particles node
-	var particles: CPUParticles2D = CPUParticles2D.new()
+	var particles := CPUParticles2D.new()
 	particles.position = pos
 	particles.z_index = 100  # Ensure particles appear above other elements
 
 	# Get scene tree root to add particles at top level
-	var root: Node = get_tree().root
+	var root: Window = get_tree().root
 	root.add_child(particles)
 
 	# Set emission shape
