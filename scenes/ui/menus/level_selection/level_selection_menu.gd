@@ -23,7 +23,6 @@ var level_index: int = 0
 @onready var locked_frame: CenterContainer = $MarginContainer/VBoxContainer/BodyContainer/LockedFrame
 
 @onready var indicators_container: HBoxContainer = $MarginContainer/VBoxContainer/VBoxContainer/IndicatorsContainer
-
 @onready var signals: Array[Dictionary] = [
 	{SignalUtil.WHO: previous_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_previous_button_pressed},
 	{SignalUtil.WHO: next_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_next_button_pressed},
@@ -32,13 +31,16 @@ var level_index: int = 0
 
 
 func _ready() -> void:
+	assert(previous_button != null, "previous_button is required")
+	assert(next_button != null, "next_button is required")
+	assert(main_menu_button != null, "main_menu_button is required")
 	configure()
 
 
 func configure() -> void:
+	SignalUtil.connects(signals)
 	_load_levels()
 	_update()
-	SignalUtil.connects(signals)
 
 	ButtonEffects.apply(previous_button)
 	ButtonEffects.apply(next_button)
@@ -70,6 +72,13 @@ func _update() -> void:
 		arc_title_label.text = current_frame.arc_title
 
 func _load_levels() -> void:
+	level_frames.clear()
+	level_statuses.clear()
+
+	for child in indicators_container.get_children():
+		child.queue_free()
+
+	var dynamic_signals: Array[Dictionary] = []
 	var i := 1
 
 	for child: Node in body_container.get_children():
@@ -88,12 +97,12 @@ func _load_levels() -> void:
 		level_statuses[level_frame.level_id] = status
 
 		level_frames.append(level_frame)
-		signals.append({SignalUtil.WHO: level_frame, SignalUtil.WHAT: "start_level", SignalUtil.TO: _on_frame_start_level})
+		dynamic_signals.append({SignalUtil.WHO: level_frame, SignalUtil.WHAT: "start_level", SignalUtil.TO: _on_frame_start_level})
 
 		var indicator := indicator_scene.instantiate() as LevelIndicator
 		indicators_container.add_child(indicator)
 		indicator.configure(i, status)
-		signals.append({SignalUtil.WHO: indicator, SignalUtil.WHAT: "selected", SignalUtil.TO: _on_level_indicator_selected})
+		dynamic_signals.append({SignalUtil.WHO: indicator, SignalUtil.WHAT: "selected", SignalUtil.TO: _on_level_indicator_selected})
 
 		var separator := separator_scene.instantiate() as Control
 		indicators_container.add_child(separator)
@@ -105,6 +114,8 @@ func _load_levels() -> void:
 
 	if not indicators_container.get_children().is_empty():
 		indicators_container.get_children().back().queue_free()
+
+	SignalUtil.connects(dynamic_signals)
 
 
 func _on_frame_start_level(level: ILevel) -> void:
