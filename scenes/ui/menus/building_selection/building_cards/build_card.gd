@@ -95,13 +95,25 @@ func update() -> void:
 		price_label.add_theme_color_override("font_color", PRICE_LABEL_COLOR_UNAFFORDABLE)
 
 # private
-## Fills the card icon from the entity when it uses a [Sprite2D] (e.g. traps). Towers use [AnimatedSprite2D] and keep their scene texture.
+## Fills the card icon from the entity. 
+## Traps often use [Sprite2D], while Towers use [AnimatedSprite2D] (named 'Sprite').
 func _apply_entity_preview_texture() -> void:
-	var sprite_2d := _entity.get_node_or_null("Sprite2D") as Sprite2D
-	if sprite_2d == null or sprite_2d.texture == null:
-		return
-	preview_texture_rect.texture = sprite_2d.texture
-	preview_texture_rect.modulate = sprite_2d.modulate
+	var sprite_node: Node = _entity.get_node_or_null("Sprite")
+	if sprite_node == null:
+		sprite_node = _entity.get_node_or_null("Sprite2D")
+	
+	if sprite_node is Sprite2D:
+		if sprite_node.texture:
+			preview_texture_rect.texture = sprite_node.texture
+			preview_texture_rect.modulate = sprite_node.modulate
+			preview_texture_rect.self_modulate = sprite_node.self_modulate
+	elif sprite_node is AnimatedSprite2D:
+		if sprite_node.sprite_frames and sprite_node.sprite_frames.has_animation("idle"):
+			var texture = sprite_node.sprite_frames.get_frame_texture("idle", 0)
+			if texture:
+				preview_texture_rect.texture = texture
+				preview_texture_rect.modulate = sprite_node.modulate
+				preview_texture_rect.self_modulate = sprite_node.self_modulate
 
 ## Handles the build button press event.
 ## [br]Changes cursor state to build mode and closes the build menu.
