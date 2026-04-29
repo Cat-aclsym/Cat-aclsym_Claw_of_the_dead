@@ -23,6 +23,7 @@ enum TowerState {
 	BUILDING,  ## The tower is being built
 	UPGRADING, ## The tower is being upgraded
 	ACTIVE,    ## The tower is placed and active
+	DISABLED,  ## The tower is disabled by an enemy
 }
 
 ## Enum for the type of the tower
@@ -169,7 +170,7 @@ func _ready() -> void:
 	SignalUtil.connects(signals)
 
 func _process(delta: float) -> void:
-	if Global.paused:
+	if Global.paused or state == TowerState.DISABLED:
 		return
 
 	if state == TowerState.BUILDING:
@@ -454,6 +455,22 @@ func sell_tower() -> void:
 	if placement_system:
 		placement_system.remove_invalid_cell(tile_pos)
 	queue_free()
+
+## Disables the tower functionality
+func disable_tower() -> void:
+	if state == TowerState.DISABLED:
+		return
+	state = TowerState.DISABLED
+	if is_instance_valid(fire_rate_timer):
+		fire_rate_timer.stop()
+
+## Enables the tower functionality back
+func enable_tower() -> void:
+	if state != TowerState.DISABLED:
+		return
+	state = TowerState.ACTIVE
+	if is_instance_valid(fire_rate_timer) and fire_rate_timer.is_stopped():
+		fire_rate_timer.start()
 
 func _register_with_cursor() -> void:
 	if not is_inside_tree():

@@ -78,8 +78,9 @@ func _fire_inferno_multi_target() -> void:
 		if not is_instance_valid(beam):
 			beams_to_remove.append(beam)
 			continue
-		var beam_target: IEnemy = _active_beams[beam]
-		if not beam_target in targets_to_hit:
+		
+		var beam_target = _active_beams[beam]
+		if not is_instance_valid(beam_target) or not beam_target in targets_to_hit:
 			beam.queue_free()
 			beams_to_remove.append(beam)
 	
@@ -113,3 +114,8 @@ func _cleanup_beams() -> void:
 		if is_instance_valid(beam):
 			beam.queue_free()
 	_active_beams.clear()
+
+
+func disable_tower() -> void:
+	super.disable_tower()
+	_cleanup_beams()
