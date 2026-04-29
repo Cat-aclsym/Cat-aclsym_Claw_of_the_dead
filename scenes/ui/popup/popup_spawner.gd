@@ -8,6 +8,14 @@ extends Marker2D
 @export var damage_popup_node: PackedScene
 @export var popup_node: PackedScene
 
+# Constants
+const TOWER_COLORS: Dictionary = {
+	"bat_01": Color.WHITE, # Arbre à chat'rché (White)
+	"bat_02": Color("#744187"), # Tour Cataboom (Purple)
+	"bat_08": Color("#00ffff"), # Tour Tesla (Cyan)
+	"bat_09": Color("#ff8c00"), # Tour Inferno (Dark Orange)
+}
+
 # core
 func _ready() -> void:
 	assert(popup_node != null, "popup_node scene not assigned")
@@ -24,6 +32,8 @@ func display_damage(amount: float, color: Color = Color.WHITE, is_critical: bool
 	if damage_popup_node == null:
 		return
 	
+	var final_color: Color = color
+	
 	# Check if the damage source requires popup accumulation (e.g., continuous fire)
 	var should_accumulate: bool = false
 	if get_parent() is IEnemy:
@@ -35,8 +45,13 @@ func display_damage(amount: float, color: Color = Color.WHITE, is_critical: bool
 		elif source is IBullet and is_instance_valid(source.tower_owner):
 			tower = source.tower_owner
 			
-		if tower != null and tower.use_accumulative_popups:
-			should_accumulate = true
+		if tower != null:
+			if tower.use_accumulative_popups:
+				should_accumulate = true
+			
+			# Apply tower-specific color if defined
+			if TOWER_COLORS.has(tower.tower_id):
+				final_color = TOWER_COLORS[tower.tower_id]
 	
 	# Optimization: check if an active popup already exists for accumulation
 	if should_accumulate and _active_popups.has(self) and is_instance_valid(_active_popups[self]):
@@ -47,7 +62,7 @@ func display_damage(amount: float, color: Color = Color.WHITE, is_critical: bool
 
 	var damage_popup: DamagePopup = damage_popup_node.instantiate()
 	damage_popup.amount = amount
-	damage_popup.color = color
+	damage_popup.color = final_color
 	damage_popup.is_critical = is_critical
 	
 	if should_accumulate:
