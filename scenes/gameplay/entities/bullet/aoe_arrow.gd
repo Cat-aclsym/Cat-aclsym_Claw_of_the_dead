@@ -107,7 +107,7 @@ func _apply_aoe_damage(direct_hit_enemy: IEnemy) -> void:
 			Global.console.push_debug("Applying AOE damage to " + str(len(aoe_enemies)) + " enemies")
 		for nearby_enemy in aoe_enemies:
 			if nearby_enemy != direct_hit_enemy and is_instance_valid(nearby_enemy):
-				var aoe_damage = roundi(damage * AOE_DAMAGE_MULTIPLIER)
+				var aoe_damage: int = roundi(damage * AOE_DAMAGE_MULTIPLIER)
 				nearby_enemy.take_damage(aoe_damage, IEnemy.DamageType.DEFAULT)
 
 
@@ -122,7 +122,7 @@ func _stop_arrow_movement() -> void:
 func _adjust_effect_circle_size() -> void:
 	# Adjust the effect circle scale based on AOE range
 	if effect_circle:
-		var visual_scale = _area_size_ratio
+		var visual_scale: float = _area_size_ratio
 		effect_circle.scale = Vector2(visual_scale, visual_scale)
 
 

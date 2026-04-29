@@ -74,34 +74,42 @@ func _exit_tree() -> void:
 func update() -> void:
 	var can_afford: bool = ILevel.current_level != null and ILevel.current_level.coins >= _cost
 	var can_build: bool = not _locked and can_afford
+	
 	button_texture.disabled = not can_build
+	price_coin_icon.visible = not _locked
+	modulate = CARD_MODULATE_AFFORDABLE if can_build else CARD_MODULATE_UNAFFORDABLE
+	
 	if _locked:
 		price_label.text = tr("BUILD.CARD.LOCKED")
-		price_coin_icon.visible = false
-		modulate = CARD_MODULATE_UNAFFORDABLE
 		price_label.modulate = Color(0.75, 0.78, 0.8, 1.0)
-		price_label.remove_theme_color_override("font_color")
-	elif can_afford:
-		price_label.text = str(_cost)
-		price_coin_icon.visible = true
-		modulate = CARD_MODULATE_AFFORDABLE
-		price_label.modulate = Color.WHITE
 		price_label.remove_theme_color_override("font_color")
 	else:
 		price_label.text = str(_cost)
-		price_coin_icon.visible = true
-		modulate = CARD_MODULATE_UNAFFORDABLE
-		price_label.modulate = PRICE_LABEL_MODULATE_VS_DIM
-		price_label.add_theme_color_override("font_color", PRICE_LABEL_COLOR_UNAFFORDABLE)
+		if can_afford:
+			price_label.modulate = Color.WHITE
+			price_label.remove_theme_color_override("font_color")
+		else:
+			price_label.modulate = PRICE_LABEL_MODULATE_VS_DIM
+			price_label.add_theme_color_override("font_color", PRICE_LABEL_COLOR_UNAFFORDABLE)
+
 
 # private
-## Fills the card icon from the entity when it uses a [Sprite2D] (e.g. traps). Towers use [AnimatedSprite2D] and keep their scene texture.
+## Fills the card icon from the entity. 
+## Traps often use [Sprite2D], while Towers use [AnimatedSprite2D] (named 'Sprite').
 func _apply_entity_preview_texture() -> void:
-	var sprite_2d := _entity.get_node_or_null("Sprite2D") as Sprite2D
-	if sprite_2d == null or sprite_2d.texture == null:
-		return
-	preview_texture_rect.texture = sprite_2d.texture
-	preview_texture_rect.modulate = sprite_2d.modulate
+	var sprite_node: Node = _entity.get_node_or_null("Sprite")
+	if sprite_node == null:
+		sprite_node = _entity.get_node_or_null("Sprite2D")
+	
+	var texture: Texture2D = null
+	if sprite_node is Sprite2D:
+		texture = sprite_node.texture
+	elif sprite_node is AnimatedSprite2D:
+		if sprite_node.sprite_frames and sprite_node.sprite_frames.has_animation("idle"):
+			texture = sprite_node.sprite_frames.get_frame_texture("idle", 0)
+	
+	if texture:
+		preview_texture_rect.texture = texture
 
 ## Handles the build button press event.
 ## [br]Changes cursor state to build mode and closes the build menu.

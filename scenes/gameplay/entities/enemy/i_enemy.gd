@@ -67,6 +67,9 @@ const POISON_VISUAL_TINT: Color = Color(0.85, 0.75, 0.9, 1.0)
 ## Multiplied with [member old_modulate] while stunned; yellow feel.
 const STUN_VISUAL_TINT: Color = Color(1.0, 1.0, 0.6, 1.0)
 
+## Multiplied with [member old_modulate] while being hit by Inferno Tower; red/orange feel.
+const INFERNO_VISUAL_TINT: Color = Color(1.0, 0.7, 0.7, 1.0)
+
 ## Stun star texture cached for performance.
 const STUN_STAR_TEX := preload("res://assets/gameplay/enemies/Stunned_Star.png")
 
@@ -106,7 +109,7 @@ var _stun_stars: Array[Sprite2D] = []
 @onready var path_points_size: int = path.curve.point_count
 @onready var poison_particle: GPUParticles2D = $GPUParticles2D
 @onready var popup_score_spawner: PopupSpawner = $PopupScoreSpawner
-@onready var stats_db = get_node("/root/StatsDB")
+@onready var stats_db: StatsDB = get_node("/root/StatsDB")
 
 ## Store the last source of damage
 var last_source: Variant = null
@@ -115,6 +118,8 @@ var _damage_tween: Tween
 
 ## Stacked slow visuals (traps, debuffs); each source must pair pop with push.
 var _slow_visual_refcount: int = 0
+## Stacked inferno visuals; each beam must pair pop with push.
+var _inferno_visual_refcount: int = 0
 var _electrified: bool = false
 var _electrify_base_speed: float = 0.0
 var _electrify_speed_factor: float = 1.0
@@ -249,6 +254,18 @@ func pop_slow_visual() -> void:
 ## Adds one stacked slow visual tint (e.g. entering a slow zone).
 func push_slow_visual() -> void:
 	_slow_visual_refcount += 1
+	_apply_idle_modulate()
+
+
+## Removes one stacked inferno visual tint.
+func pop_inferno_visual() -> void:
+	_inferno_visual_refcount = maxi(0, _inferno_visual_refcount - 1)
+	_apply_idle_modulate()
+
+
+## Adds one stacked inferno visual tint.
+func push_inferno_visual() -> void:
+	_inferno_visual_refcount += 1
 	_apply_idle_modulate()
 
 ## Returns true while enemy is under electrified effect.
@@ -408,11 +425,20 @@ func _idle_modulate() -> Color:
 		tint *= POISON_VISUAL_TINT
 	if is_stunned:
 		tint *= STUN_VISUAL_TINT
+	if _inferno_visual_refcount > 0:
+		tint *= INFERNO_VISUAL_TINT
 	return tint
 
 
 ## Apply a damage effect to the enemy sprite
 func _damage_effect(color: Color) -> void:
+	if last_source is ITower and last_source.use_short_damage_flash:
+		# Reduced effect for specific towers (e.g. Inferno Tower)
+		sprite.modulate = color.lerp(old_modulate, 0.7)
+		await get_tree().create_timer(0.05).timeout
+		sprite.modulate = _idle_modulate()
+		return
+
 	sprite.modulate = color
 	await get_tree().create_timer(0.1).timeout
 	sprite.modulate = _idle_modulate()
@@ -425,7 +451,7 @@ func _damage_effect(color: Color) -> void:
 	_damage_tween = create_tween()
 
 	# Flash color: white/glowing white or colored based on damage type
-	var flash_color = Color(2.5, 2.5, 2.5, 1.0)
+	var flash_color: Color = Color(2.5, 2.5, 2.5, 1.0)
 	if color != Color.WHITE and color != Color(1, 1, 1, 1):
 		flash_color = color.lightened(0.5)
 		flash_color.a = 1.0
@@ -581,8 +607,8 @@ func _apply_stats_override() -> void:
 		return
 	var data: Dictionary = stats_db.get_enemy(enemy_id)
 	Log.trace(Log.Level.INFO, "Applying enemy stats from StatsDB for %s: %s" % [enemy_id, data])
-	var hp = data.get("max_health", null)
-	var spd = data.get("speed", null)
+	var hp: Variant = data.get("max_health", null)
+	var spd: Variant = data.get("speed", null)
 	if hp != null:
 		max_health = float(hp)
 	if spd != null:
