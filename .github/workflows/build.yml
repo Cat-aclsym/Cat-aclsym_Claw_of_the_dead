@@ -93,5 +93,3 @@ jobs:
         with:
           name: Cataclysm-apk
           path: exports/Cataclysm.apk
-
-"test"
