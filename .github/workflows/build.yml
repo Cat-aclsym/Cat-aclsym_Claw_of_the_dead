@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - develop
+      - feature/workflow
 
 jobs:
   build:
@@ -12,10 +13,10 @@ jobs:
 
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Java
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: 21
@@ -37,20 +38,59 @@ jobs:
         run: |
           echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > ~/Cataclysm.keystore
 
-      - name: Configure keystore in export presets
+      - name: Verify keystore
         run: |
-          sed -i "s|keystore/release=\"\"|keystore/release=\"/home/runner/Cataclysm.keystore\"|" export_presets.cfg
-          sed -i "s|keystore/release_password=\"\"|keystore/release_password=\"${{ secrets.KEYSTORE_PASSWORD }}\"|" export_presets.cfg
-          sed -i "s|keystore/release_user=\"\"|keystore/release_user=\"Cataclysm\"|" export_presets.cfg
-          grep -n "keystore" export_presets.cfg
+          keytool -list -keystore ~/Cataclysm.keystore -storepass "${{ secrets.KEYSTORE_PASSWORD }}" -v 2>&1 | head -20 || true
+
+      - name: Configure keystore in export presets
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+        run: |
+          cat > /tmp/patch_presets.py << 'PYEOF'
+          import os
+          import sys
+
+          password = os.environ["KEYSTORE_PASSWORD"]
+          with open("export_presets.cfg", "r") as f:
+              content = f.read()
+
+          injection = (
+              'package/signed=true\n'
+              'keystore/release="/home/runner/Cataclysm.keystore"\n'
+              f'keystore/release_password="{password}"\n'
+              'keystore/release_user="Cataclysm"\n'
+              'keystore/debug="/home/runner/Cataclysm.keystore"\n'
+              f'keystore/debug_password="{password}"\n'
+              'keystore/debug_user="Cataclysm"'
+          )
+
+          if 'package/signed=true' not in content:
+              print("ERROR: package/signed=true not found in export_presets.cfg")
+              sys.exit(1)
+
+          content = content.replace('package/signed=true', injection)
+
+          with open("export_presets.cfg", "w") as f:
+              f.write(content)
+
+          print("Done!")
+          PYEOF
+          python3 /tmp/patch_presets.py
+          grep -n "keystore" export_presets.cfg || true
 
       - name: Import project
         run: |
           godot --headless --import || true
 
+      - name: Force Godot resource import
+        run: |
+          mkdir -p .godot/editor .godot/imported
+          godot --headless --editor --quit || true
+
       - name: Build APK
         run: |
           mkdir -p exports
+          godot --headless --export-release "Android" exports/Cataclysm.apk || true
           godot --headless --export-release "Android" exports/Cataclysm.apk
 
       - name: Upload APK artifact
