@@ -1,4 +1,4 @@
-## © [2024] A7 Studio. All rights reserved. Trademark.
+## © [2026] A7 Studio. All rights reserved. Trademark.
 ##
 ## Small level indicator on level selection menu
 ## @experimental
@@ -17,8 +17,8 @@ var status := LevelIndicator.Status.CURRENT
 var level := 0
 
 var textures: Dictionary = {
-	LevelIndicator.Status.CURRENT: preload("res://assets/ui/level_selection/bt_level/level_current.svg"),
-	LevelIndicator.Status.COMPLETED: preload("res://assets/ui/level_selection/bt_level/level_done.svg"),
+	LevelIndicator.Status.CURRENT: preload("res://assets/ui/level_selection/bt_level/Level_number.png"),
+	LevelIndicator.Status.COMPLETED: preload("res://assets/ui/level_selection/bt_level/Level_number2.png"),
 	LevelIndicator.Status.LOCKED: null
 }
 
@@ -37,6 +37,7 @@ func configure(in_level: int, in_status: LevelIndicator.Status) -> void:
 	status = in_status
 	SignalUtil.connects(signals)
 	update()
+	ButtonEffects.apply(self)
 
 
 func update() -> void:

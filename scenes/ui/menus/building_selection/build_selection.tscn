@@ -1,0 +1,175 @@
+[gd_scene load_steps=17 format=3 uid="uid://n3whw75fypkc"]
+
+[ext_resource type="Script" uid="uid://b4kvii87dw7yj" path="res://scenes/ui/menus/building_selection/build_selection.gd" id="1_1guy3"]
+[ext_resource type="Texture2D" uid="uid://c8eh0l6o5swnq" path="res://assets/ui/background/Construction Background.svg" id="2_tcv0b"]
+[ext_resource type="PackedScene" uid="uid://3noiaamd0p84" path="res://scenes/ui/menus/building_selection/building_cards/build_card_bat_01.tscn" id="3_60iow"]
+[ext_resource type="PackedScene" uid="uid://6kkbpbexa8ec" path="res://scenes/ui/menus/building_selection/building_cards/build_card_bat_02.tscn" id="5_aw86t"]
+[ext_resource type="PackedScene" uid="uid://cq705nqdp8fnw" path="res://scenes/gameplay/entities/tower/towers/bat_01.tscn" id="7_bat01"]
+[ext_resource type="PackedScene" uid="uid://b2qklmpagmiaj" path="res://scenes/ui/menus/building_selection/building_cards/build_card_bat_03.tscn" id="8_bat_03_card"]
+[ext_resource type="PackedScene" uid="uid://b2qklmpag4poo" path="res://scenes/ui/menus/building_selection/building_cards/build_card_bat_04.tscn" id="11_bat_04_card"]
+[ext_resource type="PackedScene" uid="uid://b2qklmpagmiak" path="res://scenes/ui/menus/building_selection/building_cards/build_card_bat_05.tscn" id="12_bat_05_card"]
+[ext_resource type="PackedScene" uid="uid://g880dtp4ta31" path="res://scenes/ui/menus/building_selection/building_cards/build_card_bat_08.tscn" id="12_bat_08_card"]
+[ext_resource type="PackedScene" uid="uid://b2qklmpagmiap" path="res://scenes/ui/menus/building_selection/building_cards/build_card_bat_06.tscn" id="13_bat_06_card"]
+[ext_resource type="PackedScene" uid="uid://b2qklmpagmiaq" path="res://scenes/ui/menus/building_selection/building_cards/build_card_bat_07.tscn" id="14_bat_07_card"]
+[ext_resource type="PackedScene" uid="uid://c8v8y8y8y8y80" path="res://scenes/ui/menus/building_selection/building_cards/build_card_bat_09.tscn" id="15_bat_09_card"]
+[ext_resource type="PackedScene" uid="uid://b3yjruvh66oak" path="res://scenes/gameplay/entities/tower/towers/bat_09.tscn" id="16_bat09"]
+
+[sub_resource type="Animation" id="Animation_fpn5b"]
+length = 0.35
+step = 0.05
+
+[sub_resource type="Animation" id="Animation_wc0kk"]
+resource_name = "show_build_list"
+length = 0.35
+step = 0.05
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_omyie"]
+_data = {
+&"RESET": SubResource("Animation_fpn5b"),
+&"show_build_list": SubResource("Animation_wc0kk")
+}
+
+[node name="BuildSelection" type="Control"]
+layout_mode = 3
+anchor_top = 0.747
+anchor_right = 0.877
+anchor_bottom = 1.0
+offset_top = -0.0560303
+offset_right = -0.304016
+grow_horizontal = 2
+grow_vertical = 0
+script = ExtResource("1_1guy3")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 0
+theme_override_constants/margin_bottom = 4
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = -5
+
+[node name="TabsHBox" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_constants/separation = 10
+alignment = 1
+
+[node name="TowerTabButton" type="Button" parent="MarginContainer/VBoxContainer/TabsHBox"]
+layout_mode = 2
+size_flags_vertical = 4
+focus_mode = 0
+theme_override_font_sizes/font_size = 14
+text = "BUILD.TAB.TOWERS"
+
+[node name="TrapTabButton" type="Button" parent="MarginContainer/VBoxContainer/TabsHBox"]
+layout_mode = 2
+size_flags_vertical = 4
+focus_mode = 0
+theme_override_font_sizes/font_size = 14
+text = "BUILD.TAB.TRAPS"
+
+[node name="BackgroundTextureRect" type="TextureRect" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+texture = ExtResource("2_tcv0b")
+expand_mode = 1
+flip_h = true
+
+[node name="BuildListMarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/BackgroundTextureRect"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 3
+theme_override_constants/margin_left = 90
+theme_override_constants/margin_top = 7
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_bottom = 7
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/BackgroundTextureRect/BuildListMarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 3
+theme_override_constants/separation = 150
+alignment = 1
+
+[node name="Bat01AspectRatioContainer" type="AspectRatioContainer" parent="MarginContainer/VBoxContainer/BackgroundTextureRect/BuildListMarginContainer/HBoxContainer"]
+layout_mode = 2
+stretch_mode = 1
+
+[node name="BuildCardBat01" parent="MarginContainer/VBoxContainer/BackgroundTextureRect/BuildListMarginContainer/HBoxContainer/Bat01AspectRatioContainer" instance=ExtResource("3_60iow")]
+layout_mode = 2
+entity = ExtResource("7_bat01")
+
+[node name="Bat02AspectRatioContainer" type="AspectRatioContainer" parent="MarginContainer/VBoxContainer/BackgroundTextureRect/BuildListMarginContainer/HBoxContainer"]
+layout_mode = 2
+stretch_mode = 1
+
+[node name="BuildCardBat02" parent="MarginContainer/VBoxContainer/BackgroundTextureRect/BuildListMarginContainer/HBoxContainer/Bat02AspectRatioContainer" instance=ExtResource("5_aw86t")]
+layout_mode = 2
+
+[node name="Bat09AspectRatioContainer" type="AspectRatioContainer" parent="MarginContainer/VBoxContainer/BackgroundTextureRect/BuildListMarginContainer/HBoxContainer"]
+layout_mode = 2
+stretch_mode = 1
+
+[node name="BuildCardBat09" parent="MarginContainer/VBoxContainer/BackgroundTextureRect/BuildListMarginContainer/HBoxContainer/Bat09AspectRatioContainer" instance=ExtResource("15_bat_09_card")]
+layout_mode = 2
+entity = ExtResource("16_bat09")
+
+[node name="Bat03AspectRatioContainer" type="AspectRatioContainer" parent="MarginContainer/VBoxContainer/BackgroundTextureRect/BuildListMarginContainer/HBoxContainer"]
+layout_mode = 2
+stretch_mode = 1
+
+[node name="BuildCardBat03" parent="MarginContainer/VBoxContainer/BackgroundTextureRect/BuildListMarginContainer/HBoxContainer/Bat03AspectRatioContainer" instance=ExtResource("8_bat_03_card")]
+layout_mode = 2
+
+[node name="Bat04AspectRatioContainer" type="AspectRatioContainer" parent="MarginContainer/VBoxContainer/BackgroundTextureRect/BuildListMarginContainer/HBoxContainer"]
+layout_mode = 2
+stretch_mode = 1
+
+[node name="BuildCardBat04" parent="MarginContainer/VBoxContainer/BackgroundTextureRect/BuildListMarginContainer/HBoxContainer/Bat04AspectRatioContainer" instance=ExtResource("11_bat_04_card")]
+layout_mode = 2
+
+[node name="Bat08AspectRatioContainer" type="AspectRatioContainer" parent="MarginContainer/VBoxContainer/BackgroundTextureRect/BuildListMarginContainer/HBoxContainer"]
+layout_mode = 2
+stretch_mode = 1
+
+[node name="BuildCardBat08" parent="MarginContainer/VBoxContainer/BackgroundTextureRect/BuildListMarginContainer/HBoxContainer/Bat08AspectRatioContainer" instance=ExtResource("12_bat_08_card")]
+layout_mode = 2
+
+[node name="Bat05AspectRatioContainer" type="AspectRatioContainer" parent="MarginContainer/VBoxContainer/BackgroundTextureRect/BuildListMarginContainer/HBoxContainer"]
+layout_mode = 2
+stretch_mode = 1
+
+[node name="BuildCardBat05" parent="MarginContainer/VBoxContainer/BackgroundTextureRect/BuildListMarginContainer/HBoxContainer/Bat05AspectRatioContainer" instance=ExtResource("12_bat_05_card")]
+layout_mode = 2
+
+[node name="Bat06AspectRatioContainer" type="AspectRatioContainer" parent="MarginContainer/VBoxContainer/BackgroundTextureRect/BuildListMarginContainer/HBoxContainer"]
+layout_mode = 2
+stretch_mode = 1
+
+[node name="BuildCardBat06" parent="MarginContainer/VBoxContainer/BackgroundTextureRect/BuildListMarginContainer/HBoxContainer/Bat06AspectRatioContainer" instance=ExtResource("13_bat_06_card")]
+layout_mode = 2
+
+[node name="Bat07AspectRatioContainer" type="AspectRatioContainer" parent="MarginContainer/VBoxContainer/BackgroundTextureRect/BuildListMarginContainer/HBoxContainer"]
+layout_mode = 2
+stretch_mode = 1
+
+[node name="BuildCardBat07" parent="MarginContainer/VBoxContainer/BackgroundTextureRect/BuildListMarginContainer/HBoxContainer/Bat07AspectRatioContainer" instance=ExtResource("14_bat_07_card")]
+layout_mode = 2
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+root_node = NodePath("../MarginContainer")
+libraries = {
+&"": SubResource("AnimationLibrary_omyie")
+}
+autoplay = "show_build_list"

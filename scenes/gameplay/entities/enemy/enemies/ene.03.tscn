@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://b01fv7yq6ie7c"]
+[gd_scene load_steps=10 format=3 uid="uid://c320vbgx83xlc"]
 
 [ext_resource type="PackedScene" uid="uid://tmlcshxut7kv" path="res://scenes/gameplay/entities/enemy/i_enemy.tscn" id="1_dhx8w"]
 [ext_resource type="Texture2D" uid="uid://cfxkadf64p7m6" path="res://assets/gameplay/enemies/Zombie_Deliverer.png" id="2_1oooy"]
@@ -47,21 +47,36 @@ animations = [{
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_6dscd"]
 size = Vector2(44, 66)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_feet"]
+size = Vector2(44, 15)
+
 [node name="Rat" instance=ExtResource("1_dhx8w")]
 position = Vector2(0, -10)
-max_health = 10.0
-speed = 100.0
+enemy_id = "rat"
 type = 3
 
 [node name="AnimatedSprite2D" parent="." index="0"]
+position = Vector2(0, -5)
 sprite_frames = SubResource("SpriteFrames_ojixu")
 animation = &"walk_up"
-frame_progress = 0.448919
 offset = Vector2(0, -16)
 
 [node name="CollisionShape2D" parent="." index="2"]
-position = Vector2(0, -4)
+position = Vector2(0, -18)
 shape = SubResource("RectangleShape2D_6dscd")
 
-[node name="PopupScoreSpawner" parent="." index="4"]
-position = Vector2(0, -22)
+[node name="FeetArea" type="Area2D" parent="." index="3"]
+position = Vector2(0, -6)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="FeetArea" index="0"]
+position = Vector2(0, 18.5)
+shape = SubResource("RectangleShape2D_feet")
+
+[node name="GPUParticles2D" parent="." index="4"]
+position = Vector2(0, -19)
+
+[node name="PopupScoreSpawner" parent="." index="5"]
+position = Vector2(0, -41)
+
+[node name="HealthBar" parent="." index="6"]
+position = Vector2(0, -51)

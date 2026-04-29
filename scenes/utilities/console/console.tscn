@@ -1,7 +1,6 @@
-[gd_scene load_steps=10 format=3 uid="uid://wyaikwouv3ik"]
+[gd_scene load_steps=9 format=3 uid="uid://wyaikwouv3ik"]
 
-[ext_resource type="FontFile" uid="uid://247w751m8yed" path="res://assets/ui/fonts/ibm_plex_mono/IBMPlexMono-Regular.ttf" id="1_13l6w"]
-[ext_resource type="Script" path="res://scenes/utilities/console/console.gd" id="1_vvhre"]
+[ext_resource type="Script" uid="uid://d3dqfa8a6ivj7" path="res://scenes/utilities/console/console.gd" id="1_vvhre"]
 [ext_resource type="FontFile" uid="uid://ddo3rokwsadq0" path="res://assets/ui/fonts/dotgothic/DotGothic16-Regular.ttf" id="3_ecciw"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_eg4vq"]
@@ -9,38 +8,38 @@ content_margin_left = 8.0
 content_margin_top = 8.0
 content_margin_right = 8.0
 content_margin_bottom = 8.0
-bg_color = Color(0, 0, 0, 0.921569)
+bg_color = Color(0, 0, 0, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8akmk"]
 content_margin_left = 8.0
 content_margin_top = 8.0
 content_margin_right = 8.0
 content_margin_bottom = 8.0
-bg_color = Color(0, 0, 0, 0.921569)
+bg_color = Color(0, 0, 0, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_65kwq"]
 content_margin_left = 8.0
 content_margin_top = 8.0
 content_margin_right = 8.0
 content_margin_bottom = 8.0
-bg_color = Color(0, 0, 0, 0.921569)
+bg_color = Color(0, 0, 0, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7ygnh"]
 content_margin_left = 8.0
 content_margin_top = 8.0
 content_margin_right = 8.0
 content_margin_bottom = 8.0
-bg_color = Color(0, 0, 0, 0.921569)
+bg_color = Color(0, 0, 0, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dp306"]
 content_margin_left = 8.0
 content_margin_top = 8.0
 content_margin_right = 8.0
 content_margin_bottom = 8.0
-bg_color = Color(0, 0, 0, 0.921569)
+bg_color = Color(0, 0, 0, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6408q"]
-bg_color = Color(0, 0, 0, 0.784314)
+bg_color = Color(0, 0, 0, 1)
 expand_margin_left = 2.0
 expand_margin_top = 2.0
 expand_margin_right = 2.0
@@ -55,22 +54,24 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+mouse_filter = 2
 script = ExtResource("1_vvhre")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
+[node name="MainLayout" type="VBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 theme_override_constants/separation = 0
 
-[node name="Output" type="RichTextLabel" parent="VBoxContainer"]
+[node name="Output" type="RichTextLabel" parent="MainLayout"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_fonts/normal_font = ExtResource("1_13l6w")
+theme_override_fonts/normal_font = ExtResource("3_ecciw")
 theme_override_font_sizes/bold_italics_font_size = 12
 theme_override_font_sizes/italics_font_size = 12
 theme_override_font_sizes/mono_font_size = 12
@@ -82,19 +83,21 @@ theme_override_styles/focus = SubResource("StyleBoxFlat_65kwq")
 theme_override_styles/normal = SubResource("StyleBoxFlat_7ygnh")
 bbcode_enabled = true
 scroll_following = true
+mouse_filter = 2
 
-[node name="Input" type="TextEdit" parent="VBoxContainer"]
+[node name="Input" type="TextEdit" parent="MainLayout"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 32)
 layout_mode = 2
-theme_override_fonts/font = ExtResource("1_13l6w")
+theme_override_fonts/font = ExtResource("3_ecciw")
 theme_override_font_sizes/font_size = 12
 theme_override_styles/normal = SubResource("StyleBoxFlat_dp306")
 placeholder_text = "Command..."
 scroll_past_end_of_file = true
 scroll_fit_content_height = true
+mouse_filter = 2
 
-[node name="VBoxContainer2" type="VBoxContainer" parent="."]
+[node name="SuggestionsLayout" type="VBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
@@ -105,8 +108,9 @@ offset_right = 201.0
 offset_bottom = -48.0
 grow_vertical = 0
 alignment = 2
+mouse_filter = 2
 
-[node name="Suggestions" type="RichTextLabel" parent="VBoxContainer2"]
+[node name="Suggestions" type="RichTextLabel" parent="SuggestionsLayout"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 0
@@ -119,7 +123,7 @@ exit[/code]"
 fit_content = true
 scroll_active = false
 
-[node name="Panel" type="Panel" parent="VBoxContainer2/Suggestions"]
+[node name="Panel" type="Panel" parent="SuggestionsLayout/Suggestions"]
 show_behind_parent = true
 layout_mode = 1
 anchors_preset = 15

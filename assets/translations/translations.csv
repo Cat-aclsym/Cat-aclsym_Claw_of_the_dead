@@ -1,4 +1,4 @@
-﻿keys,en,fr
+keys,en,fr
 SETTINGS.TEXT.LABEL,Settings,Paramètres
 SOCIALS.TEXT.LABEL,Socials,Réseaux sociaux
 MISC.TEXT.LABEL,Misc.,Divers
@@ -7,6 +7,7 @@ LEVEL.MENU.TITLE,Choose level:,Choisissez un niveau :
 FIRST.LEVEL.NAME,First level,Premier niveau
 SECOND.LEVEL.NAME,Second level,Deuxième niveau
 THIRD.LEVEL.NAME,Third level,Troisième niveau
+BUILD.CARD.LOCKED,Locked,Verrouillé
 HOME.PLAY.BUTTON,Play,Jouer
 HOME.SETTINGS.BUTTON,Settings,Paramètres
 INGAMEHUD.COINS.LABEL,%s,%s
@@ -17,3 +18,106 @@ ENDGAMEMENU.TIMESTATISTIC.LABEL,%s,%s
 ENDGAMEMENU.LEVEL.TITLE.WIN,Victory,Victoire
 ENDGAMEMENU.LEVEL.TITLE.LOOSE,Defeat,Défaite
 HOME.COPYRIGHT,© [2024] A7 Studio. All rights reserved. Trademark.,© [2024] A7 Studio. Tous droits réservés. Marque déposée.
+TOWER.BAT_01.NAME,Cat Tree,Arbre à Chat'rchés
+TOWER.BAT_02.NAME,Cataboom Tower,Tour Cataboom
+TOWER.LEVEL.DISPLAY,%s - lvl %d,%s - niv %d
+TOWER.UPGRADE.PRICE,%d,%d
+TOWER.UPGRADE.MAX,MAX,MAX
+TOWER.UPGRADE.TITLE,Upgrade to level %d,Améliorer au niveau %d
+HOME.ENCYCLOPEDIA.BUTTON,Encyclopedia,Encyclopédie
+ENCYCLOPEDIA.TITLE,Encyclopedia,Encyclopédie
+ENCYCLOPEDIA.STATS.HEALTH,Health,Vie
+ENCYCLOPEDIA.STATS.SPEED,Speed,Vitesse
+ENCYCLOPEDIA.STATS.DAMAGE,Damage,Dégâts
+ENCYCLOPEDIA.STATS.RANGE,Range,Portée
+ENCYCLOPEDIA.STATS.FIRERATE,Fire Rate,Cadence
+ENCYCLOPEDIA.STATS.COST,Cost,Coût
+ENCYCLOPEDIA.STATS.REWARD,Reward,Récompense
+ENCYCLOPEDIA.STATS.DISABLE_DURATION,Stun Duration,Durée d'étourdissement
+ENCYCLOPEDIA.STATS.PRE_ATTACK,Pre-attack,Pré-attaque
+ENCYCLOPEDIA.STATS.ATTACK_DURATION,Attack Duration,Durée d'attaque
+ENCYCLOPEDIA.STATS.POST_ATTACK,Post-attack,Post-attaque
+ENCYCLOPEDIA.STATS.COOLDOWN,Cooldown,Récupération
+ENCYCLOPEDIA.SECTION.TOWERS,Towers,Tours
+ENCYCLOPEDIA.SECTION.ENEMIES,Enemies,Ennemis
+ENCYCLOPEDIA.CATEGORY.COMBAT,Combat,Combat
+ENCYCLOPEDIA.CATEGORY.ECONOMY,Economy,Économie
+ENCYCLOPEDIA.NOT_DISCOVERED,NOT DISCOVERED,NON DÉCOUVERT
+ENEMY.RAT.NAME,Rat,Rat
+ENEMY.DEFAULT.NAME,Zombie,Zombie
+ENEMY.FAT.NAME,Fat Zombie,Zombie Gras
+ENEMY.BIGDADDY.NAME,Big Daddy,Big Daddy
+CHALLENGE.CHA.000.NAME,Victory,Vaincre
+CHALLENGE.CHA.000.DESC,Finish the level.,Finir le niveau.
+CHALLENGE.CHA.001.NAME,Untouchable,Intouchable
+CHALLENGE.CHA.001.DESC,Finish the level without taking damage.,Finir le niveau sans prendre de dégâts.
+CHALLENGE.CHA.002.NAME,No trap,No trap
+CHALLENGE.CHA.002.DESC,Do not use traps.,Ne pas utiliser de pièges.
+CHALLENGE.CHA.003.NAME,Unique Tower,Tour unique
+CHALLENGE.CHA.003.DESC,Use only one type of tower.,Utilisez un seul même type de tour.
+CHALLENGE.CHA.004.NAME,By Fire,Par le feu
+CHALLENGE.CHA.004.DESC,Kill 10 rats with fire.,Tuez 10 rats par le feu.
+CHALLENGE.CHA.005.NAME,One Tower One Kill,Une tour un mort
+CHALLENGE.CHA.005.DESC,Every tower must kill at least one enemy.,Chaque tour placée doit au moins éliminer un ennemi.
+CHALLENGE.CHA.101.NAME,Versatile,Versatile
+CHALLENGE.CHA.101.DESC,Limit one of each tower type.,Un seul exemplaire pour chaque tour ne peut être posé sur la carte.
+CHALLENGE.CHA.102.NAME,Safety Distance,Distance de sécurité
+CHALLENGE.CHA.102.DESC,No tower should be in range of another.,Aucune tour ne doit être dans le champ de tir d'une autre.
+CHALLENGE.CHA.103.NAME,Half-Half,Moitié moitié
+CHALLENGE.CHA.103.DESC,No enemy must reach halfway.,Ne laisser aucun ennemi atteindre plus de la moitié du chemin.
+CHALLENGE.CHA.104.NAME,Some Rats,Quelques rats
+CHALLENGE.CHA.104.DESC,Let exactly N rats pass.,Laisser passer exactement N rats jusqu'à la base.
+CHALLENGE.CHA.105.NAME,Three in One,Trois dans un
+CHALLENGE.CHA.105.DESC,Boss must be hit by every trap type (passive and limited).,"Le boss doit subir au moins une fois chaque type de piège (passif et limité)."
+CHALLENGE.CHA.106.NAME,Survive,Survivre
+CHALLENGE.CHA.106.DESC,Survive until the end.,Survivre jusqu'à la fin.
+CHALLENGE.CHA.201.NAME,Sample,Echantillon
+CHALLENGE.CHA.201.DESC,Let one of each enemy type pass.,Laissez passer un unique membre de chaque type d'ennemi.
+CHALLENGE.CHA.202.NAME,On the Edge,Sur le fil
+CHALLENGE.CHA.202.DESC,Finish with 1 HP.,Finir le niveau avec un unique PV.
+CHALLENGE.CHA.203.NAME,Not One More,Pas un de plus
+CHALLENGE.CHA.203.DESC,Max N buildings per wave.,Finir chaque vague avec un maximum de N bâtiments.
+CHALLENGE.CHA.204.NAME,I love traps,J'adore les pièges
+CHALLENGE.CHA.204.DESC,Use only traps.,Finir le niveau en utilisant uniquement des pièges.
+CHALLENGE.CHA.205.NAME,Fast and Furious,Fast and Furious
+CHALLENGE.CHA.205.DESC,Finish in less than N seconds.,Finir le niveau en moins de N secondes.
+CHALLENGES.PANEL.TITLE,Challenges,Défis
+CHALLENGE.STATUS.FAILED,Failed,Échoué
+CHALLENGE.DIFFICULTY.EASY,Easy,Facile
+CHALLENGE.DIFFICULTY.HARD,Hard,Difficile
+CHALLENGE.DIFFICULTY.IMPOSSIBLE,Impossible,Impossible
+CHALLENGE.DIFFICULTY.MEDIUM,Medium,Moyen
+HOME.ARMORY.BUTTON,Armory,Armurerie
+ARMORY.TITLE,Armory,Armurerie
+ARMORY.TAB.BUILDINGS,Buildings,Bâtiments
+ARMORY.TAB.BUFFS,Buffs,Bonus
+ARMORY.STARS_LINE,Available: %d | Earned: %d,Disponibles : %d | Gagnées : %d
+ARMORY.RESET_SPENT_STARS,Reset,Réinitialiser
+ARMORY.RESET_STARS_CONFIRM,Are you sure you want to reset the armory?,Êtes-vous sûr de vouloir réinitialiser l'armurerie ?
+ARMORY.RESET_CONFIRM_OK,OK,Confirmer
+ARMORY.RESET_CANCEL,Cancel,Annuler
+BUILD.TAB.TOWERS,Towers,Tours
+BUILD.TAB.TRAPS,Traps,Pièges
+ARMORY.STAR_COST,%d stars,%d étoiles
+ARMORY.BUY,Buy,Acheter
+ARMORY.BUY_BLOCKED,BLOCKED,BLOQUÉ
+ARMORY.OWNED,Owned,Obtenu
+ARMORY.CANT_AFFORD,Not enough stars,Pas assez d'étoiles
+ARMORY.PREREQ_BLOCK_DETAIL,"Unlock first: %s","Débloquer d'abord : %s"
+ARMORY.LOCKED_PREREQ,Requirements missing,Prérequis manquants
+ARMORY.LEGACY_NOTICE,Legacy save: all buildings stay unlocked. Armory purchases are optional.,Sauvegarde antérieure : tous les bâtiments restent débloqués. L'armurerie est optionnelle.
+ARMORY.LEGACY_SKIP,-,-
+ARMORY.NODE.UNLOCK_BAT_02.NAME,Cataboom Tower,Tour Cataboom
+ARMORY.NODE.UNLOCK_BAT_02.DESC,"Adds the Cataboom to the build menu. It lobs explosive shots that deal area damage to every enemy caught in the blast.","La Cataboom arrive au menu : elle balance des trucs qui pètent en zone : tout ce qui traîne dans le rayon, ça prend cher. Simple et efficace."
+ARMORY.NODE.UNLOCK_BAT_03.NAME,Blade trap,Piège à lames
+ARMORY.NODE.UNLOCK_BAT_03.DESC,"Adds the blade trap to the build menu. Enemies that trigger it take a burst of damage; each trap only works a limited number of times.","Le piège à lames : un coup sec dans les pattes, ça fait mal tout de suite. Petit bémol : ça s'use vite."
+ARMORY.NODE.UNLOCK_BAT_04.NAME,Slow trap,Piège ralentissant
+ARMORY.NODE.UNLOCK_BAT_04.DESC,"Adds the slow trap to the build menu. Enemies crossing it are slowed so your towers have more time to finish them off.","Le piège ralentissant : les zombies passent au ralenti, histoire que tes tours aient le temps de leur dire bonjour."
+ARMORY.NODE.UNLOCK_BAT_01_BRANCH_A.NAME,Branch A (Cat Tree),Branche A (Arbre à Chat'rchés)
+ARMORY.NODE.UNLOCK_BAT_01_BRANCH_A.DESC,"Unlocks the A upgrade line for the Cat Tree: piercing arrows with very high single-shot damage and multi-enemy pierce, extra range, and slower projectiles, ideal for dense lines of foes.","Branche A : des flèches qui traversent toute la meute comme si la vie privée n'existait pas, gros dégâts, plus de portée : les tirs sont un peu paresseux mais ça compense."
+ARMORY.NODE.UNLOCK_BAT_01_BRANCH_B.NAME,Branch B (Cat Tree),Branche B (Arbre à Chat'rchés)
+ARMORY.NODE.UNLOCK_BAT_01_BRANCH_B.DESC,"Unlocks the B upgrade line for the Cat Tree: higher fire rate, an extra projectile, and a wider firing spread, better for shredding groups up close.","Branche B : tu tires plus vite, tu doubles les flèches, tu éclates la dispersion : le mode mitraillette de l'arbre, pour ceux qui aiment le bruit de près."
+ARMORY.NODE.UNLOCK_BAT_02_BRANCH_A.NAME,Branch A (Cataboom),Branche A (Cataboom)
+ARMORY.NODE.UNLOCK_BAT_02_BRANCH_A.DESC,"Unlocks the A upgrade line for the Cataboom: fire-tipped shells that apply burn damage over time and trade some blast radius for a tighter, more focused explosion.","Branche feu : ça crame dans la durée, l'explosion est plus modeste mais le barbecue est assuré. Les morts-vivants détestent quand c'est bien cuit."
+ARMORY.NODE.UNLOCK_BAT_02_BRANCH_B.NAME,Branch B (Cataboom),Branche B (Cataboom)
+ARMORY.NODE.UNLOCK_BAT_02_BRANCH_B.DESC,"Unlocks the B upgrade line: larger explosion radius on each tier so one shot can clip more enemies in the AoE.","Branche gros boom : à chaque palier le rayon grossit : un seul tir, et tu invites plus de monde à la fête."

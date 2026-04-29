@@ -46,6 +46,10 @@ func clamp_zoom() -> void:
 func shake_camera() -> void:
     _shake_strength = random_strength
 
+## Initiates a camera shake effect with a custom strength.
+func shake_camera_with_strength(strength: float) -> void:
+    _shake_strength = strength
+
 ## Handles touch input events
 func handle_touch(event: InputEventScreenTouch) -> void:
     if event.pressed:
@@ -70,11 +74,14 @@ func handle_drag(event: InputEventScreenDrag) -> void:
         _handle_pinch_zoom()
 
 ## Handles camera effects
-func handle_effect(effect: String) -> void:
+func handle_effect(effect: String, value: Variant = null) -> void:
     # Log.trace(Log.Level.DEBUG, "Playing '%s' camera effect" % effect)
     match effect:
         "shake":
-            shake_camera()
+            if value is float or value is int:
+                shake_camera_with_strength(float(value))
+            else:
+                shake_camera()
         _:
             pass
 

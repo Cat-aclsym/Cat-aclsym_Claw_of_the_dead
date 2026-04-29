@@ -1,17 +1,20 @@
-[gd_scene load_steps=11 format=3 uid="uid://bumh57lmx1jlc"]
+[gd_scene load_steps=13 format=3 uid="uid://bumh57lmx1jlc"]
 
 [ext_resource type="Script" path="res://scenes/ui/menus/pause/pause.gd" id="1_i4s0k"]
 [ext_resource type="Texture2D" uid="uid://c8b8irfugbxdj" path="res://assets/environment/backgrounds/Fond Menu 02.svg" id="2_70uiq"]
-[ext_resource type="Texture2D" uid="uid://ddk5xo6vibq1t" path="res://assets/ui/icons/Button Replay.svg" id="4_242jj"]
-[ext_resource type="Texture2D" uid="uid://bm2mc3oc02tx" path="res://assets/ui/icons/Button Play.svg" id="5_bqgxy"]
+[ext_resource type="Texture2D" uid="uid://c8haaogs5jrow" path="res://assets/ui/icons/Retry_Button.png" id="4_242jj"]
+[ext_resource type="Texture2D" uid="uid://dspulp5k6gi3b" path="res://assets/ui/icons/Play_Button.png" id="5_bqgxy"]
 [ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="6_8ptoc"]
-[ext_resource type="Texture2D" uid="uid://dksoj327amr1a" path="res://assets/ui/icons/Button Home Menu.svg" id="6_ol8q3"]
-[ext_resource type="Texture2D" uid="uid://dqm3a3tfnyu2r" path="res://assets/ui/icons/Button Music On.svg" id="7_gxx80"]
-[ext_resource type="Texture2D" uid="uid://bftxjalenxriu" path="res://assets/ui/icons/Button Music Off.svg" id="8_f8w4k"]
-[ext_resource type="Texture2D" uid="uid://b72djafe25kjf" path="res://assets/ui/icons/Button Sound On.svg" id="9_yy2d7"]
-[ext_resource type="Texture2D" uid="uid://sn02kb1pfkvd" path="res://assets/ui/icons/Button Sound Off.svg" id="10_dy38s"]
+[ext_resource type="Texture2D" uid="uid://b7734rs8y770c" path="res://assets/ui/icons/Home_Button.png" id="6_ol8q3"]
+[ext_resource type="Texture2D" uid="uid://lyhp13rlx7r1" path="res://assets/ui/icons/Music_Button.png" id="7_gxx80"]
+[ext_resource type="Texture2D" uid="uid://bomhxmoxwsuiu" path="res://assets/ui/icons/Music_Off_Button.png" id="8_f8w4k"]
+[ext_resource type="Texture2D" uid="uid://5vx07x57xqmc" path="res://assets/ui/icons/Sound_Button.png" id="9_yy2d7"]
+[ext_resource type="Texture2D" path="res://assets/ui/icons/Sound_Off_Button.png" id="10_dy38s"]
+[ext_resource type="Texture2D" uid="uid://v4ol57tfife6" path="res://assets/ui/icons/Encyclopedia_Button.png" id="11_clue"]
+[ext_resource type="Texture2D" uid="uid://c1f4e2f8oknku" path="res://assets/ui/icons/exclamation.png" id="12_excl"]
 
 [node name="PauseMenu" type="Control"]
+texture_filter = 1
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -99,13 +102,37 @@ texture_normal = ExtResource("6_ol8q3")
 ignore_texture_size = true
 stretch_mode = 5
 
+[node name="EncyclopediaButton" type="TextureButton" parent="Panel/MarginContainer/PanelContainer/CenterContainer/VBoxContainer/ButtonLayer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(100, 87.5)
+layout_mode = 2
+texture_normal = ExtResource("11_clue")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="EncyclopediaExclamation" type="TextureRect" parent="Panel/MarginContainer/PanelContainer/CenterContainer/VBoxContainer/ButtonLayer/EncyclopediaButton"]
+unique_name_in_owner = true
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -20.0
+offset_top = -10.0
+offset_right = 10.0
+offset_bottom = 20.0
+grow_horizontal = 0
+texture = ExtResource("12_excl")
+expand_mode = 1
+stretch_mode = 5
+
 [node name="TopLeftIcon" type="HBoxContainer" parent="Panel/MarginContainer/PanelContainer/CenterContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_constants/separation = 60
 alignment = 1
 
 [node name="MusicButton" type="TextureButton" parent="Panel/MarginContainer/PanelContainer/CenterContainer/VBoxContainer/TopLeftIcon"]
-texture_filter = 6
+texture_filter = 1
 custom_minimum_size = Vector2(80, 70)
 layout_mode = 2
 toggle_mode = true
@@ -115,6 +142,7 @@ ignore_texture_size = true
 stretch_mode = 5
 
 [node name="SoundButton" type="TextureButton" parent="Panel/MarginContainer/PanelContainer/CenterContainer/VBoxContainer/TopLeftIcon"]
+texture_filter = 1
 custom_minimum_size = Vector2(80, 70)
 layout_mode = 2
 toggle_mode = true

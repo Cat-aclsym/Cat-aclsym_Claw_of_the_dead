@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://scenes/gameplay/world/map/i_map.gd" id="1_vhs3p"]
 [ext_resource type="PackedScene" uid="uid://cvxtqnnr7606b" path="res://scenes/gameplay/world/map/tile_map_debug.tscn" id="2_g4v36"]
-[ext_resource type="PackedScene" uid="uid://ddcvda2tcbdq8" path="res://scenes/gameplay/entities/tower_placement/tower_placement.tscn" id="3_ndsux"]
+[ext_resource type="PackedScene" uid="uid://ddcvda2tcbdq8" path="res://scenes/gameplay/entities/building_placement/build_placement.tscn" id="3_ndsux"]
 [ext_resource type="PackedScene" uid="uid://b2gwi4t3c87aw" path="res://scenes/gameplay/world/map/tile_map_plains.tscn" id="4_f6jio"]
 [ext_resource type="Script" path="res://scripts/camera/camera.gd" id="5_6tbgf"]
 

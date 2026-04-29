@@ -73,7 +73,7 @@ func _physics_process(delta: float) -> void:
 		super._physics_process(delta)
 
 # public
-func _on_impact_effect(enemy: IEnemy, impact_position: Vector2) -> void:
+func _on_impact_effect(_enemy: IEnemy, impact_position: Vector2) -> void:
 	# Don't call super - we want burning area instead of explosion
 	_create_explosion_effect(impact_position)
 	_activate_burning_area()
@@ -113,7 +113,7 @@ func _apply_burn_damage() -> void:
 	# Apply burn damage to all enemies in burn area
 	for enemy in _burning_enemies:
 		if is_instance_valid(enemy):
-			var burn_damage = burn_damage_base + roundi(damage * BURN_DAMAGE_MULTIPLIER)
+			var burn_damage: int = burn_damage_base + roundi(damage * BURN_DAMAGE_MULTIPLIER)
 			enemy.take_damage(burn_damage, IEnemy.DamageType.FIRE)
 
 # Activate the burning area effect
@@ -148,21 +148,21 @@ func _start_grow_animation() -> void:
 	effect_circle.scale = Vector2(0.1, 0.1) * _area_size_ratio
 	
 	# Create a tween for smooth, realistic growth - but fast
-	var tween = create_tween()
-	tween.set_ease(Tween.EASE_OUT)
-	tween.set_trans(Tween.TRANS_SINE)
+	var growth_tween := create_tween()
+	growth_tween.set_ease(Tween.EASE_OUT)
+	growth_tween.set_trans(Tween.TRANS_SINE)
 	
 	# Final target with size multiplier
-	var target_scale = Vector2(1.0, 1.0) * _area_size_ratio
-	var overshoot_scale = Vector2(1.05, 1.05) * _area_size_ratio
+	var target_scale := Vector2(1.0, 1.0) * _area_size_ratio
+	var overshoot_scale := Vector2(1.05, 1.05) * _area_size_ratio
 	
 	# Very fast growth at the beginning
-	tween.tween_property(effect_circle, "scale", overshoot_scale, 0.18)
-	tween.tween_property(effect_circle, "scale", target_scale, 0.12)
+	growth_tween.tween_property(effect_circle, "scale", overshoot_scale, 0.18)
+	growth_tween.tween_property(effect_circle, "scale", target_scale, 0.12)
 	
 	# Adjust opacity normally but with a more visible start
 	effect_circle.modulate.a = 0.5
-	var opacity_tween = create_tween()
+	var opacity_tween := create_tween()
 	opacity_tween.tween_property(effect_circle, "modulate:a", 1.0, 0.35)
 	
 	# Start particles quickly
@@ -170,7 +170,7 @@ func _start_grow_animation() -> void:
 	burn_particles.emitting = true
 	
 	# Increase number of particles
-	var particle_tween = create_tween()
+	var particle_tween := create_tween()
 	particle_tween.tween_property(burn_particles, "amount", 30, 0.35)
 	
 	# Heat effect with slight pulsation - kept as before
@@ -187,12 +187,12 @@ func _add_heat_pulse() -> void:
 		return
 		
 	# Creates a subtle pulsation effect
-	var pulse_tween = create_tween()
+	var pulse_tween := create_tween()
 	pulse_tween.set_loops() # Continuous loop
 	pulse_tween.set_trans(Tween.TRANS_SINE)
 	
 	# Base scale with size factor
-	var base_scale = Vector2(1.0, 1.0) * _area_size_ratio
+	var base_scale := Vector2(1.0, 1.0) * _area_size_ratio
 	
 	# Slight faster pulsation
 	pulse_tween.tween_property(effect_circle, "scale", base_scale * 1.02, 1.0)
@@ -203,7 +203,7 @@ func _add_heat_pulse() -> void:
 	pulse_tween.kill()
 	
 	# Return to normal scale
-	var reset_tween = create_tween()
+	var reset_tween := create_tween()
 	reset_tween.tween_property(effect_circle, "scale", base_scale, 0.2)
 
 # Start a partial fade when approaching the end of duration
@@ -212,11 +212,11 @@ func _start_partial_fade() -> void:
 		return
 		
 	# Create a subtle fade to indicate the effect is about to end
-	var tween = create_tween()
-	tween.tween_property(effect_circle, "modulate:a", 0.7, 0.3)
-	tween.parallel().tween_property(burn_particles, "modulate:a", 0.7, 0.3)
-	tween.tween_property(effect_circle, "modulate:a", 1.0, 0.3)
-	tween.parallel().tween_property(burn_particles, "modulate:a", 1.0, 0.3)
+	var fade_tween := create_tween()
+	fade_tween.tween_property(effect_circle, "modulate:a", 0.7, 0.3)
+	fade_tween.parallel().tween_property(burn_particles, "modulate:a", 0.7, 0.3)
+	fade_tween.tween_property(effect_circle, "modulate:a", 1.0, 0.3)
+	fade_tween.parallel().tween_property(burn_particles, "modulate:a", 1.0, 0.3)
 
 # Start the fade out animation when the effect is completely over
 func _start_fade_out() -> void:
@@ -224,21 +224,21 @@ func _start_fade_out() -> void:
 	burn_area_collision.set_deferred("disabled", true)
 	
 	# Base scale with size factor
-	var base_scale = Vector2(1.0, 1.0) * _area_size_ratio
+	var base_scale := Vector2(1.0, 1.0) * _area_size_ratio
 	
 	# Create a tween for smooth fade out
-	var tween = create_tween()
+	var fade_out_tween := create_tween()
 	if effect_circle:
-		tween.tween_property(effect_circle, "modulate:a", 0, 0.8)
-	tween.parallel().tween_property(burn_particles, "modulate:a", 0, 0.8)
+		fade_out_tween.tween_property(effect_circle, "modulate:a", 0, 0.8)
+	fade_out_tween.parallel().tween_property(burn_particles, "modulate:a", 0, 0.8)
 	
 	# Slightly reduce size during fade out
 	if effect_circle:
-		var scale_tween = create_tween()
+		var scale_tween := create_tween()
 		scale_tween.tween_property(effect_circle, "scale", base_scale * 0.9, 0.8)
 	
 	# Once the tween completes, free the object
-	await tween.finished
+	await fade_out_tween.finished
 	queue_free()
 
 # Adjusts all properties related to fire area size
@@ -246,15 +246,16 @@ func _adjust_burn_area_size() -> void:
 	# Calculate scale ratio for Polygon2D
 	# We adapt the Polygon2D scale because its geometry is defined for a size of 80
 	if effect_circle:
-		var visual_scale = _area_size_ratio
+		var visual_scale: float = _area_size_ratio
 		effect_circle.scale = Vector2(visual_scale, visual_scale)
 	
 	# Adjust particle system
 	burn_particles.process_material.emission_sphere_radius = 50 * _area_size_ratio
 	
 	# Adjust particle amount based on area (which increases with square)
-	var particle_amount = round(30 * _area_size_ratio * _area_size_ratio)
+	var particle_amount: float = round(30 * _area_size_ratio * _area_size_ratio)
 	burn_particles.amount = int(clamp(particle_amount, 10, 100))
 	
-	# Adjust damage strength proportionally to size
-	burn_damage_base = int(BASE_BURN_DAMAGE * _area_size_ratio)
+	# Scale burn tick damage from tower-provided [member burn_damage_base] (set before [method _ready]).
+	var burn_base: int = burn_damage_base if burn_damage_base > 0 else BASE_BURN_DAMAGE
+	burn_damage_base = int(round(float(burn_base) * _area_size_ratio))

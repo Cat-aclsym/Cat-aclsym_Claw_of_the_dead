@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3 uid="uid://d2dn1mied6oud"]
+[gd_scene load_steps=22 format=3 uid="uid://pta23043ehss"]
 
 [ext_resource type="PackedScene" uid="uid://tmlcshxut7kv" path="res://scenes/gameplay/entities/enemy/i_enemy.tscn" id="1_pdmcd"]
 [ext_resource type="Texture2D" uid="uid://ddu35rooifyex" path="res://assets/gameplay/enemies/Zombie_lOM_Damage-Sheet.png" id="2_bs1pf"]
@@ -131,19 +131,34 @@ animations = [{
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_o17gm"]
 size = Vector2(22, 63)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_feet"]
+size = Vector2(22, 10)
+
 [node name="DamageZombie" instance=ExtResource("1_pdmcd")]
 position = Vector2(0, -27)
-max_health = 100.0
-speed = 30.0
-type = 1
+enemy_id = "damage_zombie"
 
 [node name="AnimatedSprite2D" parent="." index="0"]
+position = Vector2(1, -4)
 sprite_frames = SubResource("SpriteFrames_7k5ey")
 animation = &"walk_down"
 
 [node name="CollisionShape2D" parent="." index="2"]
-position = Vector2(0, 0)
+position = Vector2(0, 3)
 shape = SubResource("RectangleShape2D_o17gm")
 
-[node name="PopupScoreSpawner" parent="." index="4"]
-position = Vector2(0, -28)
+[node name="FeetArea" type="Area2D" parent="." index="3"]
+position = Vector2(-1, 14)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="FeetArea" index="0"]
+position = Vector2(1, 16)
+shape = SubResource("RectangleShape2D_feet")
+
+[node name="GPUParticles2D" parent="." index="4"]
+position = Vector2(1, -4)
+
+[node name="PopupScoreSpawner" parent="." index="5"]
+position = Vector2(0, -24)
+
+[node name="HealthBar" parent="." index="6"]
+position = Vector2(0, -30)

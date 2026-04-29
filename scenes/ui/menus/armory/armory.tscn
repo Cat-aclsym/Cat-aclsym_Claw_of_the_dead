@@ -1,0 +1,309 @@
+[gd_scene load_steps=12 format=3 uid="uid://dygxxtpara021"]
+
+[ext_resource type="Script" uid="uid://6soot5tpvyhx" path="res://scenes/ui/menus/armory/armory.gd" id="1_arm"]
+[ext_resource type="Texture2D" uid="uid://0lgpu16nkbho" path="res://assets/ui/icons/Button Close.svg" id="2_close"]
+[ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="3_theme"]
+[ext_resource type="Texture2D" uid="uid://8y5uhgfsgmp8" path="res://assets/ui/icons/Star.png" id="3_uh7sf"]
+[ext_resource type="Texture2D" uid="uid://cvut87og2mth" path="res://assets/ui/buttons/Bouton orange.svg" id="5_orange_button"]
+[ext_resource type="Texture2D" uid="uid://c8b8irfugbxdj" path="res://assets/environment/backgrounds/Fond Menu 02.svg" id="6_x4aod"]
+[ext_resource type="Texture2D" uid="uid://c5jwmpccl40pb" path="res://assets/environment/backgrounds/Fond Menu 01.svg" id="7_fond01"]
+[ext_resource type="FontFile" uid="uid://ddo3rokwsadq0" path="res://assets/ui/fonts/dotgothic/DotGothic16-Regular.ttf" id="8_dgfont"]
+[ext_resource type="Texture2D" uid="uid://nsf3nkto3p0t" path="res://assets/ui/buttons/Bouton Vert.svg" id="9_vertbtn"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_desc_bg"]
+texture = ExtResource("6_x4aod")
+expand_margin_left = 20.0
+expand_margin_top = 30.0
+expand_margin_right = 20.0
+expand_margin_bottom = 30.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_reset_panel"]
+texture = ExtResource("7_fond01")
+expand_margin_left = 20.0
+expand_margin_top = 30.0
+expand_margin_right = 20.0
+expand_margin_bottom = 30.0
+
+[node name="Armory" type="Control"]
+clip_contents = true
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_arm")
+
+[node name="MainMargin" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 24
+
+[node name="VBox" type="VBoxContainer" parent="MainMargin"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="HeaderHBox" type="HBoxContainer" parent="MainMargin/VBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="TitleLabel" type="Label" parent="MainMargin/VBox/HeaderHBox"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme = ExtResource("3_theme")
+theme_override_font_sizes/font_size = 42
+text = "ARMORY.TITLE"
+autowrap_mode = 3
+
+[node name="StarsStrip" type="HBoxContainer" parent="MainMargin/VBox/HeaderHBox"]
+layout_mode = 2
+theme_override_constants/separation = 6
+alignment = 1
+
+[node name="StarsIconTextureRect" type="TextureRect" parent="MainMargin/VBox/HeaderHBox/StarsStrip"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+texture = ExtResource("3_uh7sf")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="StarsCountLabel" type="Label" parent="MainMargin/VBox/HeaderHBox/StarsStrip"]
+unique_name_in_owner = true
+layout_mode = 2
+theme = ExtResource("3_theme")
+theme_override_font_sizes/font_size = 22
+text = "0"
+vertical_alignment = 1
+
+[node name="ResetSpentStarsButton" type="TextureButton" parent="MainMargin/VBox/HeaderHBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(220, 56)
+layout_mode = 2
+texture_normal = ExtResource("5_orange_button")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="ResetSpentStarsLabel" type="Label" parent="MainMargin/VBox/HeaderHBox/ResetSpentStarsButton"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("3_theme")
+theme_override_colors/font_color = Color(0.137255, 0.215686, 0.223529, 1)
+theme_override_colors/font_outline_color = Color(0.137255, 0.215686, 0.223529, 1)
+theme_override_constants/outline_size = 5
+theme_override_font_sizes/font_size = 24
+text = "Reinitialiser"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CloseTextureButton" type="TextureButton" parent="MainMargin/VBox/HeaderHBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+texture_normal = ExtResource("2_close")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="LegacyLabel" type="Label" parent="MainMargin/VBox"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+theme = ExtResource("3_theme")
+theme_override_font_sizes/font_size = 18
+text = "ARMORY.LEGACY_NOTICE"
+autowrap_mode = 3
+
+[node name="ScrollBuildings" type="ScrollContainer" parent="MainMargin/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+follow_focus = true
+horizontal_scroll_mode = 3
+vertical_scroll_mode = 0
+
+[node name="ScrollContentVBox" type="VBoxContainer" parent="MainMargin/VBox/ScrollBuildings"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 0
+
+[node name="ScrollTopSpacer" type="Control" parent="MainMargin/VBox/ScrollBuildings/ScrollContentVBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 2
+
+[node name="ItemsHBox" type="HBoxContainer" parent="MainMargin/VBox/ScrollBuildings/ScrollContentVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_override_constants/separation = 24
+
+[node name="ScrollBottomSpacer" type="Control" parent="MainMargin/VBox/ScrollBuildings/ScrollContentVBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 3.0
+mouse_filter = 2
+
+[node name="DescriptionPanel" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+offset_left = 24.0
+offset_top = 511.0
+offset_right = 1128.0
+offset_bottom = 608.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+theme = ExtResource("3_theme")
+theme_override_styles/panel = SubResource("StyleBoxTexture_desc_bg")
+
+[node name="DescriptionMargin" type="MarginContainer" parent="DescriptionPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 10
+
+[node name="DescriptionVBox" type="VBoxContainer" parent="DescriptionPanel/DescriptionMargin"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="DescriptionTitleLabel" type="Label" parent="DescriptionPanel/DescriptionMargin/DescriptionVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme = ExtResource("3_theme")
+theme_override_font_sizes/font_size = 24
+autowrap_mode = 3
+
+[node name="DescriptionLabel" type="Label" parent="DescriptionPanel/DescriptionMargin/DescriptionVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+theme = ExtResource("3_theme")
+theme_override_font_sizes/font_size = 20
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="ResetConfirmRoot" type="Control" parent="."]
+unique_name_in_owner = true
+visible = false
+z_index = 50
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="DimOverlay" type="ColorRect" parent="ResetConfirmRoot"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.5)
+
+[node name="ResetPanel" type="PanelContainer" parent="ResetConfirmRoot"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -313.0
+offset_top = -101.0
+offset_right = 327.0
+offset_bottom = 79.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_reset_panel")
+
+[node name="ResetMargin" type="MarginContainer" parent="ResetConfirmRoot/ResetPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="ResetVBox" type="VBoxContainer" parent="ResetConfirmRoot/ResetPanel/ResetMargin"]
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="ResetMessageLabel" type="Label" parent="ResetConfirmRoot/ResetPanel/ResetMargin/ResetVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_fonts/font = ExtResource("8_dgfont")
+theme_override_font_sizes/font_size = 30
+text = "ARMORY.RESET_STARS_CONFIRM"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="ResetButtonsHBox" type="HBoxContainer" parent="ResetConfirmRoot/ResetPanel/ResetMargin/ResetVBox"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="ResetConfirmButton" type="TextureButton" parent="ResetConfirmRoot/ResetPanel/ResetMargin/ResetVBox/ResetButtonsHBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 65)
+layout_mode = 2
+texture_normal = ExtResource("9_vertbtn")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="ResetConfirmRoot/ResetPanel/ResetMargin/ResetVBox/ResetButtonsHBox/ResetConfirmButton"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_fonts/font = ExtResource("8_dgfont")
+text = "Confirmer"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ResetCancelButton" type="TextureButton" parent="ResetConfirmRoot/ResetPanel/ResetMargin/ResetVBox/ResetButtonsHBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 65)
+layout_mode = 2
+texture_normal = ExtResource("5_orange_button")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="ResetConfirmRoot/ResetPanel/ResetMargin/ResetVBox/ResetButtonsHBox/ResetCancelButton"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_fonts/font = ExtResource("8_dgfont")
+text = "Annuler"
+horizontal_alignment = 1
+vertical_alignment = 1

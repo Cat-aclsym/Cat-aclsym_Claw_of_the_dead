@@ -1,0 +1,104 @@
+[gd_scene load_steps=12 format=3 uid="uid://ddcvda2tcbdq8"]
+
+[ext_resource type="Script" uid="uid://du3smf4s8h4d2" path="res://scenes/gameplay/entities/building_placement/build_placement.gd" id="1_3aclw"]
+[ext_resource type="Texture2D" uid="uid://dn7sa2jf2kvor" path="res://assets/environment/grid_placement/moving_arrow.png" id="2_8yjt0"]
+[ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="3_bj1wi"]
+[ext_resource type="Texture2D" uid="uid://c3eyakb4oxqkc" path="res://assets/ui/icons/Build_Button.png" id="4_updrk"]
+[ext_resource type="Texture2D" path="res://assets/ui/icons/Red_Button.png" id="5_4oww3"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xhnpy"]
+atlas = ExtResource("2_8yjt0")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uwgu8"]
+atlas = ExtResource("2_8yjt0")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hojar"]
+atlas = ExtResource("2_8yjt0")
+region = Rect2(128, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ajtjg"]
+atlas = ExtResource("2_8yjt0")
+region = Rect2(192, 0, 64, 64)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_o400i"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xhnpy")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_uwgu8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hojar")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ajtjg")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_bapwk"]
+size = Vector2(14, 14)
+
+[node name="BuildPlacement" type="Node2D"]
+texture_filter = 1
+script = ExtResource("1_3aclw")
+
+[node name="cursor" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_o400i")
+autoplay = "default"
+offset = Vector2(0, -3)
+
+[node name="Area2D" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+shape = SubResource("RectangleShape2D_bapwk")
+
+[node name="PlaceHUD" type="Control" parent="."]
+z_index = 4096
+layout_mode = 3
+anchors_preset = 0
+scale = Vector2(0.5, 0.5)
+mouse_filter = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="PlaceHUD"]
+layout_mode = 0
+offset_left = -84.0
+offset_top = 54.0
+offset_right = 84.0
+offset_bottom = 124.0
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="PlaceButton" type="TextureButton" parent="PlaceHUD/HBoxContainer"]
+texture_filter = 1
+z_index = 1
+custom_minimum_size = Vector2(80, 70)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 8
+theme = ExtResource("3_bj1wi")
+texture_normal = ExtResource("4_updrk")
+ignore_texture_size = true
+stretch_mode = 4
+
+[node name="CancelPlaceButton" type="TextureButton" parent="PlaceHUD/HBoxContainer"]
+texture_filter = 1
+z_index = 1
+custom_minimum_size = Vector2(80, 70)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 8
+theme = ExtResource("3_bj1wi")
+texture_normal = ExtResource("5_4oww3")
+ignore_texture_size = true
+stretch_mode = 4

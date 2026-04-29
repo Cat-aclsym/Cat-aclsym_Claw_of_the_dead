@@ -1,51 +1,266 @@
+## © [2026] A7 Studio. All rights reserved. Trademark.
+##
+## Manages the display of tower upgrade statistics with dynamic gauge bars.
+class_name TowerUpgradeMenu
 extends Control
 
-class_name TowerUpgradeMenu
-
-var sell_price: int
-var upgrade_price: int
+## Reference to the tower being upgraded
 var tower: ITower
+var selected_upgrade_id: String = ""
+var _upgrade_ids: Array[String] = []
+var _current_upgrade_index: int = 0
 
-@onready var sell_button: TextureButton = $VBoxContainer/HBoxContainer/SellAspectRatioContainer/SellTextureButton
-@onready var sell_label: Label = $VBoxContainer/HBoxContainer/SellAspectRatioContainer/SellLabel
-@onready var upgrade_button: TextureButton = $VBoxContainer/HBoxContainer/UpgradeAspectRatioContainer/UpgradeTextureButton
-@onready var upgrade_label: Label = $VBoxContainer/HBoxContainer/UpgradeAspectRatioContainer/UpgradeLabel
-@onready var close_button: TextureButton = $VBoxContainer/CloseAspectRatioContainer/CloseTextureButton
+@onready var _cancel_button: TextureButton = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/ButtonsHBoxContainer/CancelButton
+@onready var _confirm_button: TextureButton = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/ButtonsHBoxContainer/ConfirmButton
+@onready var _confirm_label: Label = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/ButtonsHBoxContainer/ConfirmButton/PriceRow/Label
+@onready var _panel: Control = $UpgradeDescriptionTextureRect
+@onready var _stats_container: VBoxContainer = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/StatsScrollContainer/VBoxContainer
+@onready var _stats_scroll: ScrollContainer = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/StatsScrollContainer
+@onready var _upgrade_title_label: Label = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/UpgradeTitleLabel
+@onready var _tabs_container: HBoxContainer = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/TabsHBoxContainer
+@onready var _option1_button: Button = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/TabsHBoxContainer/UpgradeOption1Button
+@onready var _option2_button: Button = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/TabsHBoxContainer/UpgradeOption2Button
 
 @onready var signals: Array[Dictionary] = [
-	{SignalUtil.WHO: close_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_close_button_pressed},
-	{SignalUtil.WHO: upgrade_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_upgrade_button_pressed},
-	{SignalUtil.WHO: sell_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_sell_button_pressed}
+	{SignalUtil.WHO: _cancel_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_cancel_button_pressed},
+	{SignalUtil.WHO: _confirm_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_confirm_button_pressed},
+	{SignalUtil.WHO: _option1_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_option1_button_pressed},
+	{SignalUtil.WHO: _option2_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_option2_button_pressed}
 ]
 
-# Called when the node enters the scene tree for the first time.
+# Preloaded resources
+const ICON_TEXTURE: Texture2D = preload("res://assets/ui/icons/Icon Attack.svg")
+const OPTION_ACTIVE_TEXTURE: Texture2D = preload("res://assets/ui/buttons/Bouton Vert.svg")
+const OPTION_INACTIVE_TEXTURE: Texture2D = preload("res://assets/ui/buttons/Bouton Bleu.svg")
+const STAT_BAR_SCENE: PackedScene = preload("res://scenes/ui/menus/tower_upgrade/stat_bar.tscn")
+
+# Constants
+const MAX_STAT_VALUE: float = 200.0
+## Same color for all interaction states (no desktop-only hover/pressed tint; mobile-friendly).
+const OPTION_TAB_FONT_COLOR: Color = Color.WHITE
+var _option_active_style: StyleBoxTexture
+var _option_inactive_style: StyleBoxTexture
+
+# Core methods
 func _ready() -> void:
-	tower = get_parent() as ITower
-	sell_price = tower.sell_price
-	sell_label.text = str(sell_price)+"$"
-	if !tower.available_upgrade.is_empty():
-		var upg: IUpgrade = tower.available_upgrade[0].instantiate()
-		upgrade_price = upg.price
-		upgrade_label.text = str(upgrade_price)+"$"
-	else:
-		upgrade_button.disabled = true
-		# Change upgrade button to gray rbg #525252
-		upgrade_button.modulate = Color(0.325, 0.325, 0.325)  # Gray color
-		upgrade_label.text = "MAX"
 	SignalUtil.connects(signals)
+	_setup_option_button_styles()
+	_flatten_option_tab_font_colors(_option1_button)
+	_flatten_option_tab_font_colors(_option2_button)
+	_option1_button.focus_mode = Control.FOCUS_NONE
+	_option2_button.focus_mode = Control.FOCUS_NONE
+	Global.paused = true
+	if ILevel.current_level != null:
+		ILevel.current_level.pause()
+
+func _input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.pressed:
+		var mouse_pos: Vector2 = get_global_mouse_position()
+		if _panel == null or not _panel.get_global_rect().has_point(mouse_pos):
+			queue_free()
 
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
-	pass
+func _unhandled_input(event: InputEvent) -> void:
+	var mouse_pos: Vector2 = get_global_mouse_position()
+	var inside_panel: bool = _panel != null and _panel.get_global_rect().has_point(mouse_pos)
+	if inside_panel and (event is InputEventMouseButton or (event is InputEventMouseMotion and event.button_mask != 0)):
+		get_viewport().set_input_as_handled()
 
-func _on_close_button_pressed():
+
+func _exit_tree() -> void:
+	Global.paused = false
+	if ILevel.current_level != null:
+		ILevel.current_level.resume_from_pause()
+
+## Initializes the upgrade description with tower and one or more upgrade options
+func setup(p_tower: ITower, p_upgrade_ids: Array[String]) -> void:
+	tower = p_tower
+	_upgrade_ids = p_upgrade_ids.duplicate()
+	_current_upgrade_index = 0
+	_update_tabs_visibility()
+	_refresh_upgrade_view()
+
+
+func _refresh_upgrade_view() -> void:
+	if _upgrade_ids.is_empty():
+		queue_free()
+		return
+
+	_current_upgrade_index = clamp(_current_upgrade_index, 0, _upgrade_ids.size() - 1)
+	selected_upgrade_id = _upgrade_ids[_current_upgrade_index]
+	var upgrade: Dictionary = StatsDB.get_upgrade(selected_upgrade_id)
+	if upgrade.is_empty():
+		Log.trace(Log.Level.ERROR, "Unknown upgrade id in menu: %s" % selected_upgrade_id)
+		queue_free()
+		return
+
+	# Set title and confirm price
+	var upgrade_price: int = int(upgrade.get("price", 0))
+	_confirm_label.text = tr("TOWER.UPGRADE.PRICE") % upgrade.price
+	_upgrade_title_label.text = _get_upgrade_title(upgrade)
+	_set_active_tab_button(_current_upgrade_index)
+
+	# Check if player has enough money
+	if ILevel.current_level != null and ILevel.current_level.coins < upgrade_price:
+		_confirm_button.disabled = true
+		_confirm_button.modulate = Color(0.5, 0.5, 0.5)  # Gray out the button
+	else:
+		_confirm_button.disabled = false
+		_confirm_button.modulate = Color(1.0, 1.0, 1.0)  # Normal color
+
+	# Clear existing stat displays
+	for child in _stats_container.get_children():
+		child.queue_free()
+
+	var displayed_stats: int = 0
+
+	# Create dynamic stat displays for tower stats
+	var tower_stats: Dictionary = upgrade.get("tower_stats", {})
+	for stat_name in tower_stats.keys():
+		var stat_change: float = float(tower_stats[stat_name])
+
+		# Skip level stat
+		if stat_name == "level":
+			continue
+
+		# Skip projectile_count if resulting value would be 1 or less
+		if stat_name == "projectile_count":
+			var current_value: float = _get_current_stat_value(stat_name, true)
+			var new_value: float = current_value + stat_change
+			if new_value <= 1.0:
+				continue
+
+		if stat_change != 0.0:
+			_create_stat_display(stat_name, stat_change, true)
+			displayed_stats += 1
+
+	# Create dynamic stat displays for bullet stats
+	var bullet_stats: Dictionary = upgrade.get("bullet_stats", {})
+	for stat_name in bullet_stats.keys():
+		var stat_change: float = float(bullet_stats[stat_name])
+		if stat_change != 0.0:
+			_create_stat_display(stat_name, stat_change, false)
+			displayed_stats += 1
+
+	_update_scroll_mode(displayed_stats)
+
+## Gets the upgrade title based on the current tower level and upgrade data
+func _get_upgrade_title(upgrade: Dictionary) -> String:
+	var delta_level: int = 1
+	var tower_stats: Dictionary = upgrade.get("tower_stats", {})
+	if tower_stats.has("level"):
+		delta_level = int(tower_stats["level"])
+
+	var next_level: int = delta_level
+	if tower != null:
+		next_level = tower.level + delta_level
+
+	return tr("TOWER.UPGRADE.TITLE") % next_level
+
+## Creates a stat display for a given stat
+func _create_stat_display(stat_name: String, stat_change: float, is_tower_stat: bool) -> void:
+	# Get current and new values
+	var current_value: float = _get_current_stat_value(stat_name, is_tower_stat)
+	var new_value: float = current_value + stat_change
+
+	# Instantiate the stat bar scene
+	var stat_bar: StatBar = STAT_BAR_SCENE.instantiate()
+	_stats_container.add_child(stat_bar)
+
+	# Setup the stat bar with data
+	stat_bar.setup(stat_name, current_value, new_value, ICON_TEXTURE, MAX_STAT_VALUE, true)
+
+## Gets the current value of a stat
+func _get_current_stat_value(stat_name: String, is_tower_stat: bool) -> float:
+	if is_tower_stat:
+		# Tower stats
+		if stat_name in tower:
+			var value = tower.get(stat_name)
+			return float(value) if value != null else 0.0
+	else:
+		return tower.get_display_bullet_stats().get(stat_name, 0.0)
+
+	return 0.0
+
+# Signal handlers
+func _on_cancel_button_pressed() -> void:
 	queue_free()
 
-func _on_upgrade_button_pressed():
-	tower.start_upgrade(tower.available_upgrade[0])
-	_on_close_button_pressed()
-
-func _on_sell_button_pressed():
-	tower.sell_tower()
+func _on_confirm_button_pressed() -> void:
+	if tower != null and not selected_upgrade_id.is_empty():
+		tower.start_upgrade(selected_upgrade_id)
 	queue_free()
+
+
+func _update_tabs_visibility() -> void:
+	var count: int = _upgrade_ids.size()
+	if _tabs_container == null:
+		return
+	_tabs_container.visible = count > 1
+	_option1_button.visible = count >= 1
+	_option2_button.visible = count >= 2
+
+
+func _set_active_tab_button(index: int) -> void:
+	if _tabs_container == null:
+		return
+	_option1_button.button_pressed = index == 0
+	_option2_button.button_pressed = index == 1
+	_apply_option_button_style(_option1_button, index == 0)
+	_apply_option_button_style(_option2_button, index == 1)
+
+
+func _on_option1_button_pressed() -> void:
+	_current_upgrade_index = 0
+	_refresh_upgrade_view()
+
+
+func _on_option2_button_pressed() -> void:
+	if _upgrade_ids.size() < 2:
+		return
+	_current_upgrade_index = 1
+	_refresh_upgrade_view()
+
+
+func _update_scroll_mode(displayed_stats: int) -> void:
+	if _stats_scroll == null:
+		return
+	if displayed_stats > 2:
+		_stats_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
+	else:
+		_stats_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+
+
+func _setup_option_button_styles() -> void:
+	_option_active_style = StyleBoxTexture.new()
+	_option_active_style.texture = OPTION_ACTIVE_TEXTURE
+	_option_active_style.texture_margin_left = 8.0
+	_option_active_style.texture_margin_top = 8.0
+	_option_active_style.texture_margin_right = 8.0
+	_option_active_style.texture_margin_bottom = 8.0
+
+	_option_inactive_style = StyleBoxTexture.new()
+	_option_inactive_style.texture = OPTION_INACTIVE_TEXTURE
+	_option_inactive_style.texture_margin_left = 8.0
+	_option_inactive_style.texture_margin_top = 8.0
+	_option_inactive_style.texture_margin_right = 8.0
+	_option_inactive_style.texture_margin_bottom = 8.0
+
+
+func _apply_option_button_style(button: Button, is_active: bool) -> void:
+	var style: StyleBoxTexture = _option_active_style if is_active else _option_inactive_style
+	button.add_theme_stylebox_override("normal", style)
+	button.add_theme_stylebox_override("hover", style)
+	button.add_theme_stylebox_override("pressed", style)
+	button.add_theme_stylebox_override("focus", style)
+	button.add_theme_stylebox_override("disabled", style)
+
+
+func _flatten_option_tab_font_colors(button: Button) -> void:
+	var c: Color = OPTION_TAB_FONT_COLOR
+	button.add_theme_color_override("font_color", c)
+	button.add_theme_color_override("font_hover_color", c)
+	button.add_theme_color_override("font_pressed_color", c)
+	button.add_theme_color_override("font_hover_pressed_color", c)
+	button.add_theme_color_override("font_focus_color", c)
+	button.add_theme_color_override("font_disabled_color", c)

@@ -1,4 +1,6 @@
-[gd_resource type="Theme" load_steps=2 format=3 uid="uid://dr31fy67cgji3"]
+[gd_resource type="Theme" load_steps=3 format=3 uid="uid://dr31fy67cgji3"]
+
+[ext_resource type="FontFile" uid="uid://ddo3rokwsadq0" path="res://assets/ui/fonts/dotgothic/DotGothic16-Regular.ttf" id="1_dotgothic"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_v5n3m"]
 texture_margin_left = 40.0
@@ -9,10 +11,12 @@ axis_stretch_horizontal = 2
 axis_stretch_vertical = 2
 
 [resource]
+default_font = ExtResource("1_dotgothic")
 default_font_size = 30
+Button/fonts/font = ExtResource("1_dotgothic")
 Fonts/colors/color = Color(0.137255, 0.215686, 0.223529, 1)
-Fonts/fonts/text = null
-Fonts/fonts/title = null
+Fonts/fonts/text = ExtResource("1_dotgothic")
+Fonts/fonts/title = ExtResource("1_dotgothic")
 Fonts/styles/test = null
 HeaderLarge/base_type = &"Label"
 HeaderLarge/colors/font_color = Color(1, 1, 1, 1)
@@ -20,15 +24,19 @@ HeaderLarge/colors/font_outline_color = Color(1, 1, 1, 1)
 HeaderLarge/constants/line_spacing = 0
 HeaderLarge/constants/outline_size = 2
 HeaderLarge/font_sizes/font_size = 28
-HeaderLarge/fonts/font = null
+HeaderLarge/fonts/font = ExtResource("1_dotgothic")
 HeaderMedium/base_type = &"Label"
 HeaderMedium/colors/font_color = Color(1, 1, 1, 1)
 HeaderMedium/colors/font_outline_color = Color(1, 1, 1, 1)
 HeaderMedium/constants/line_spacing = 0
 HeaderMedium/constants/outline_size = 0
 HeaderMedium/font_sizes/font_size = 24
-HeaderMedium/fonts/font = null
+HeaderMedium/fonts/font = ExtResource("1_dotgothic")
+Label/fonts/font = ExtResource("1_dotgothic")
+LineEdit/fonts/font = ExtResource("1_dotgothic")
 PanelContainer/styles/panel = SubResource("StyleBoxTexture_v5n3m")
+RichTextLabel/fonts/font = ExtResource("1_dotgothic")
+TextEdit/fonts/font = ExtResource("1_dotgothic")
 UILabel/base_type = &"Label"
 UILabel/colors/font_color = Color(0.137255, 0.215686, 0.223529, 1)
 UILabel/colors/font_outline_color = Color(0.137255, 0.215686, 0.223529, 1)
@@ -39,3 +47,4 @@ UILabel/constants/shadow_offset_x = 0
 UILabel/constants/shadow_offset_y = 0
 UILabel/constants/shadow_outline_size = 0
 UILabel/font_sizes/font_size = 16
+UILabel/fonts/font = ExtResource("1_dotgothic")
