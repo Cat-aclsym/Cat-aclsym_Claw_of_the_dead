@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b25uthfv5ggd2"
-path="res://.godot/imported/right.svg-26fa679b0427221b20584fc7038d3c7d.ctex"
+uid="uid://dmekwx438jcjj"
+path="res://.godot/imported/Side_Arrow_2.png-dd99116a855d8496b24f7c70c6a246d7.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ui/icons/right.svg"
-dest_files=["res://.godot/imported/right.svg-26fa679b0427221b20584fc7038d3c7d.ctex"]
+source_file="res://assets/ui/icons/Side_Arrow_2.png"
+dest_files=["res://.godot/imported/Side_Arrow_2.png-dd99116a855d8496b24f7c70c6a246d7.ctex"]
 
 [params]
 
@@ -32,6 +32,3 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
-svg/scale=1.0
-editor/scale_with_editor_scale=false
-editor/convert_colors_with_editor_theme=false

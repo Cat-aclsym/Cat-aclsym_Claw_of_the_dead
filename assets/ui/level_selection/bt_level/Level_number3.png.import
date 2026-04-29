@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dfb5h521uwj4o"
-path="res://.godot/imported/level_current.svg-af23cd955bf26c239f245acac4f5e234.ctex"
+uid="uid://c22ao4ruxhw82"
+path="res://.godot/imported/Level_number3.png-ed6c5ee454994eb6ec4ca6520ab3a97d.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ui/level_selection/bt_level/level_current.svg"
-dest_files=["res://.godot/imported/level_current.svg-af23cd955bf26c239f245acac4f5e234.ctex"]
+source_file="res://assets/ui/level_selection/bt_level/Level_number3.png"
+dest_files=["res://.godot/imported/Level_number3.png-ed6c5ee454994eb6ec4ca6520ab3a97d.ctex"]
 
 [params]
 
@@ -32,6 +32,3 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
-svg/scale=1.0
-editor/scale_with_editor_scale=false
-editor/convert_colors_with_editor_theme=false

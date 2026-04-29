@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c2uqlay1r2d1d"
-path="res://.godot/imported/Button Cancel.svg-42a8ff6ef3945447a79affa95bad4f84.ctex"
+uid="uid://brswu0pn3h3eo"
+path="res://.godot/imported/Back_Button.png-ab24e3a8f7b5e6df29e2beeb6644f467.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ui/icons/Button Cancel.svg"
-dest_files=["res://.godot/imported/Button Cancel.svg-42a8ff6ef3945447a79affa95bad4f84.ctex"]
+source_file="res://assets/ui/level_selection/bt_cancel/Back_Button.png"
+dest_files=["res://.godot/imported/Back_Button.png-ab24e3a8f7b5e6df29e2beeb6644f467.ctex"]
 
 [params]
 
@@ -32,6 +32,3 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
-svg/scale=2.0
-editor/scale_with_editor_scale=false
-editor/convert_colors_with_editor_theme=false
