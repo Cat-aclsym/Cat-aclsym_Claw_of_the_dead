@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bd5k4jcdkwps8"
-path="res://.godot/imported/Button Close Upgrade.svg-3ea4a14558fbeb3b7a4f939527a17513.ctex"
+uid="uid://c4aex7baq8sj8"
+path="res://.godot/imported/Green_I_Button_Hexa.png-799fb2bad174f1def34ed0109d00be97.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ui/icons/Button Close Upgrade.svg"
-dest_files=["res://.godot/imported/Button Close Upgrade.svg-3ea4a14558fbeb3b7a4f939527a17513.ctex"]
+source_file="res://assets/ui/icons/Green_I_Button_Hexa.png"
+dest_files=["res://.godot/imported/Green_I_Button_Hexa.png-799fb2bad174f1def34ed0109d00be97.ctex"]
 
 [params]
 
@@ -32,6 +32,3 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
-svg/scale=5.0
-editor/scale_with_editor_scale=false
-editor/convert_colors_with_editor_theme=false

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bl0d86xk2px4c"
-path="res://.godot/imported/Bouton Info Batiment.svg-4a07c21c54948112f0f3ba32d53accf5.ctex"
+uid="uid://cm6i8t87f4ru"
+path="res://.godot/imported/Side_Arrow.png-c285fa7635a9f023049c256eef191670.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ui/icons/Bouton Info Batiment.svg"
-dest_files=["res://.godot/imported/Bouton Info Batiment.svg-4a07c21c54948112f0f3ba32d53accf5.ctex"]
+source_file="res://assets/ui/icons/Side_Arrow.png"
+dest_files=["res://.godot/imported/Side_Arrow.png-c285fa7635a9f023049c256eef191670.ctex"]
 
 [params]
 
@@ -32,6 +32,3 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
-svg/scale=1.0
-editor/scale_with_editor_scale=false
-editor/convert_colors_with_editor_theme=false

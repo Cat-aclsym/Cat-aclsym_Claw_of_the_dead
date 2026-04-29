@@ -1,10 +1,10 @@
 [gd_scene load_steps=7 format=3 uid="uid://bl1lywmexedvo"]
 
 [ext_resource type="Script" uid="uid://ck6h8104eswk3" path="res://scenes/ui/menus/tower_upgrade/radial_menu_tower_upgrade.gd" id="1_1xpnn"]
-[ext_resource type="Texture2D" uid="uid://y5tjtxraiimh" path="res://assets/ui/icons/Button Sell.svg" id="2_v84gu"]
-[ext_resource type="Texture2D" uid="uid://bl0d86xk2px4c" path="res://assets/ui/icons/Bouton Info Batiment.svg" id="3_10ow3"]
-[ext_resource type="Texture2D" uid="uid://dt6gdmmcgr3c7" path="res://assets/ui/icons/Button Upgrade.svg" id="3_ki7m7"]
-[ext_resource type="Texture2D" uid="uid://bd5k4jcdkwps8" path="res://assets/ui/icons/Button Close Upgrade.svg" id="4_3n0fm"]
+[ext_resource type="Texture2D" path="res://assets/ui/icons/DollarButton_Hexa.png" id="2_v84gu"]
+[ext_resource type="Texture2D" path="res://assets/ui/icons/Green_I_Button_Hexa.png" id="3_10ow3"]
+[ext_resource type="Texture2D" path="res://assets/ui/icons/Green_Arrow_Button_Hexa.png" id="3_ki7m7"]
+[ext_resource type="Texture2D" path="res://assets/ui/icons/Red_Button_Hexa.png" id="4_3n0fm"]
 [ext_resource type="Texture2D" path="res://assets/ui/huds/Coin.png" id="5_coin"]
 
 [node name="RadialMenuTowerUpgrade" type="Control"]
@@ -26,6 +26,7 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="CloseTextureButton" type="TextureButton" parent="Buttons"]
+texture_filter = 1
 z_index = 4096
 layout_mode = 1
 anchors_preset = 8
@@ -33,10 +34,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -64.0
-offset_top = -64.0
-offset_right = 64.0
-offset_bottom = 64.0
+offset_left = -32.0
+offset_top = -32.0
+offset_right = 32.0
+offset_bottom = 32.0
 grow_horizontal = 2
 grow_vertical = 2
 texture_normal = ExtResource("4_3n0fm")
@@ -44,6 +45,7 @@ ignore_texture_size = true
 stretch_mode = 5
 
 [node name="InfoTextureButton" type="TextureButton" parent="Buttons"]
+texture_filter = 1
 z_index = 4096
 layout_mode = 1
 anchors_preset = 8
@@ -51,10 +53,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -64.0
-offset_top = -64.0
-offset_right = 64.0
-offset_bottom = 64.0
+offset_left = -32.0
+offset_top = -32.0
+offset_right = 32.0
+offset_bottom = 32.0
 grow_horizontal = 2
 grow_vertical = 2
 texture_normal = ExtResource("3_10ow3")
@@ -62,6 +64,7 @@ ignore_texture_size = true
 stretch_mode = 5
 
 [node name="UpgradeTextureButton" type="TextureButton" parent="Buttons"]
+texture_filter = 1
 z_index = 4096
 layout_mode = 1
 anchors_preset = 8
@@ -69,10 +72,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -64.0
-offset_top = -64.0
-offset_right = 64.0
-offset_bottom = 64.0
+offset_left = -32.0
+offset_top = -32.0
+offset_right = 32.0
+offset_bottom = 32.0
 grow_horizontal = 2
 grow_vertical = 2
 texture_normal = ExtResource("3_ki7m7")
@@ -87,10 +90,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -48.0
-offset_top = 64.0
-offset_right = 48.0
-offset_bottom = 86.0
+offset_left = -32.0
+offset_top = 32.0
+offset_right = 32.0
+offset_bottom = 54.0
 grow_horizontal = 2
 grow_vertical = 2
 alignment = 1
@@ -100,7 +103,7 @@ theme_override_constants/separation = 2
 z_index = 4096
 layout_mode = 2
 size_flags_vertical = 4
-theme_override_font_sizes/font_size = 22
+theme_override_font_sizes/font_size = 18
 text = "20"
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -108,13 +111,14 @@ vertical_alignment = 1
 [node name="CoinIcon" type="TextureRect" parent="Buttons/UpgradeTextureButton/PriceRow"]
 z_index = 4096
 layout_mode = 2
-custom_minimum_size = Vector2(20, 20)
+custom_minimum_size = Vector2(16, 16)
 size_flags_vertical = 4
 texture = ExtResource("5_coin")
 expand_mode = 1
 stretch_mode = 5
 
 [node name="SellTextureButton" type="TextureButton" parent="Buttons"]
+texture_filter = 1
 z_index = 4096
 layout_mode = 1
 anchors_preset = 8
@@ -122,10 +126,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -64.0
-offset_top = -64.0
-offset_right = 64.0
-offset_bottom = 64.0
+offset_left = -32.0
+offset_top = -32.0
+offset_right = 32.0
+offset_bottom = 32.0
 grow_horizontal = 2
 grow_vertical = 2
 texture_normal = ExtResource("2_v84gu")
@@ -140,10 +144,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -48.0
-offset_top = 64.0
-offset_right = 48.0
-offset_bottom = 86.0
+offset_left = -32.0
+offset_top = 32.0
+offset_right = 32.0
+offset_bottom = 54.0
 grow_horizontal = 2
 grow_vertical = 2
 alignment = 1
@@ -153,7 +157,7 @@ theme_override_constants/separation = 2
 z_index = 4096
 layout_mode = 2
 size_flags_vertical = 4
-theme_override_font_sizes/font_size = 22
+theme_override_font_sizes/font_size = 18
 text = "20"
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -161,7 +165,7 @@ vertical_alignment = 1
 [node name="CoinIcon" type="TextureRect" parent="Buttons/SellTextureButton/PriceRow"]
 z_index = 4096
 layout_mode = 2
-custom_minimum_size = Vector2(20, 20)
+custom_minimum_size = Vector2(16, 16)
 size_flags_vertical = 4
 texture = ExtResource("5_coin")
 expand_mode = 1
