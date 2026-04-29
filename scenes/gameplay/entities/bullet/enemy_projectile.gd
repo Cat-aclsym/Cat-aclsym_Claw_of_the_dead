@@ -1,20 +1,26 @@
-## © [2024] A7 Studio. All rights reserved. Trademark.
+## © [2026] A7 Studio. All rights reserved. Trademark.
 ##
 ## Projectile fired by enemies, targeting towers.
 class_name EnemyProjectile
 extends Area2D
 
+# Constants
+const DESTROY_TIMEOUT: float = 5.0
+
+# Exported variables
 @export var speed: float = 200.0
 
-var direction: Vector2 = Vector2.ZERO
+# Public variables
+var direction := Vector2.ZERO
 var disable_duration: float = 3.0
 
 
+# Built-in functions
 func _ready() -> void:
 	# Connect the collision signal
 	body_entered.connect(_on_body_entered)
 	# Destroy the projectile after a short lifetime if it misses
-	await get_tree().create_timer(5.0).timeout
+	await get_tree().create_timer(DESTROY_TIMEOUT).timeout
 	if is_instance_valid(self):
 		queue_free()
 
@@ -26,17 +32,52 @@ func _physics_process(delta: float) -> void:
 	global_position += direction * speed * delta
 
 
+# Public functions
+## Initializes the projectile with a direction and disable duration.
+## [br]
+## [param _direction] The direction the projectile will travel
+## [param _disable_duration] How long the tower will be disabled when hit
 func init(_direction: Vector2, _disable_duration: float = 3.0) -> void:
-	"""Initializes the projectile with a direction and disable duration.
-
-	Args:
-		_direction: The direction the projectile will travel
-		_disable_duration: How long the tower will be disabled when hit
-	"""
 	direction = _direction
 	disable_duration = _disable_duration
 	# Adjust sprite rotation based on direction
 	rotation = direction.angle()
+
+
+# Private functions
+func _disable_tower(tower: ITower) -> void:
+	## Disables a tower for the specified duration.
+	## [param tower] The tower to disable
+	if tower.state == ITower.TowerState.DISABLED:
+		return
+
+	# Mark tower as disabled and stop its timers/processing
+	tower.disable_tower()
+
+	# Store the original modulate color
+	var sprite: AnimatedSprite2D = tower.sprite
+	if not is_instance_valid(sprite):
+		return
+
+	var original_modulate: Color = sprite.modulate
+
+	# Visually indicate the tower is disabled by reducing opacity
+	sprite.modulate = Color(original_modulate.r, original_modulate.g, original_modulate.b, 0.5)
+
+	# Re-enable the tower when the timer expires
+	var restore_timer := get_tree().create_timer(disable_duration)
+	restore_timer.timeout.connect(func():
+		if not is_instance_valid(tower):
+			return
+
+		if is_instance_valid(sprite):
+			# Reset visual appearance
+			sprite.modulate = original_modulate
+
+		# Restore functionality if still disabled
+		if tower.state == ITower.TowerState.DISABLED:
+			tower.enable_tower()
+	)
 
 
 func _on_body_entered(body: Node2D) -> void:
@@ -46,32 +87,25 @@ func _on_body_entered(body: Node2D) -> void:
 		_spawn_impact_particles(body.global_position)
 
 		# Get the parent tower node
-		var tower = body.get_parent()
-		if tower is ITower:
+		var tower: Node = body.get_parent()
+		if is_instance_valid(tower) and tower is ITower:
 			# Disable the tower
 			_disable_tower(tower)
 
 		# Destroy the projectile after hitting a tower
 		queue_free()
 
-	# Optional: Check if it hit terrain/obstacles and destroy
-	# elif body.is_in_group("obstacles"):
-	# 	 queue_free()
-
 
 func _spawn_impact_particles(pos: Vector2) -> void:
-	"""Creates bubble particles at the impact point.
-
-	Args:
-		pos: The global position where particles will appear
-	"""
+	## Creates bubble particles at the impact point.
+	## [param pos] The global position where particles will appear
 	# Create a particles node
-	var particles = CPUParticles2D.new()  # Using CPUParticles2D instead of GPUParticles2D
+	var particles := CPUParticles2D.new()
 	particles.position = pos
 	particles.z_index = 100  # Ensure particles appear above other elements
 
 	# Get scene tree root to add particles at top level
-	var root = get_tree().root
+	var root: Window = get_tree().root
 	root.add_child(particles)
 
 	# Set emission shape
@@ -107,49 +141,4 @@ func _spawn_impact_particles(pos: Vector2) -> void:
 	cleanup_timer.timeout.connect(func():
 		if is_instance_valid(particles):
 			particles.queue_free()
-	)
-
-
-func _disable_tower(tower: ITower) -> void:
-	"""Disables a tower for the specified duration.
-
-	Args:
-		tower: The tower to disable
-	"""
-	# Don't do anything if the tower already has a disable timer
-	if tower.has_meta("is_disabled") and tower.get_meta("is_disabled") == true:
-		return
-
-	# Mark tower as disabled
-	tower.set_meta("is_disabled", true)
-
-	# Store the original modulate color
-	var original_modulate: Color = tower.animated_sprite_2d.modulate
-
-	# Visually indicate the tower is disabled by reducing opacity
-	tower.animated_sprite_2d.modulate = Color(original_modulate.r, original_modulate.g,
-		original_modulate.b, 0.5)
-
-	# Functionally disable the tower
-	tower.fire_rate_timer.stop()
-	tower.set_process(false)
-
-	# Re-enable the tower when the timer expires
-	var restore_timer := get_tree().create_timer(disable_duration)
-	restore_timer.timeout.connect(func():
-		if not is_instance_valid(tower):
-			return
-
-		# Reset visual appearance
-		tower.animated_sprite_2d.modulate = original_modulate
-
-		# Restore functionality
-		tower.set_process(true)
-
-		# Reset the fire rate timer to allow the tower to resume firing
-		if is_instance_valid(tower) and is_instance_valid(tower.fire_rate_timer):
-			tower.fire_rate_timer.start()
-
-		# Mark tower as enabled
-		tower.set_meta("is_disabled", false)
 	)
