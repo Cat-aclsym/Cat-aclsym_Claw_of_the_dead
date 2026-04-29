@@ -85,6 +85,7 @@ expand_mode = 1
 stretch_mode = 4
 
 [node name="BuildPreviewTextureRect" type="TextureRect" parent="CardVBoxContainer/CardAspectRatioContainer/CardTextureButton"]
+modulate = Color(1, 0.2, 0.2, 1)
 z_index = -1
 layout_mode = 1
 anchors_preset = 15
