@@ -6,14 +6,14 @@ extends Control
 
 signal start_level(level: ILevel)
 
-# Constants
+## Constants
 const CONDITION_DONE: Texture2D = preload("res://assets/ui/icons/Star.png")
 const CONDITION_TODO: Texture2D = preload("res://assets/ui/icons/Star_Empty.png")
 const LVL_DESC: String = "desc"
 const LVL_IDEN: String = "id"
 const LVL_NAME: String = "name"
 
-# Variables
+## Variables
 @export var arc_title: String
 @export var level_id: String = "lev.XX"
 
@@ -31,7 +31,7 @@ var level: ILevel = null : get = _get_level
 ]
 
 
-# Built-in functions
+## Built-in functions
 func _ready() -> void:
 	configure()
 
@@ -40,7 +40,7 @@ func _exit_tree() -> void:
 	unload_level()
 
 
-# Public functions
+## Public functions
 func configure() -> void:
 	level_name_label.text = level.level_name
 	description_label.text = level.level_description
@@ -53,12 +53,11 @@ func configure() -> void:
 	ButtonEffects.apply(play_button)
 
 
-# Private functions
-# private
+## Private functions
 func _get_level() -> ILevel:
 	if _level != null:
 		return _level
-	var level_scene := load("res://scenes/gameplay/world/level/levels/%s.tscn" % level_id)
+	var level_scene: PackedScene = load("res://scenes/gameplay/world/level/levels/%s.tscn" % level_id)
 	_level = level_scene.instantiate() as ILevel
 	return _level
 
@@ -77,7 +76,7 @@ func unload_level() -> void:
 
 
 func _load_challenges() -> void:
-	# Load level config to find challenges
+	## Loads level config to resolve displayed challenge entries.
 	var level_path := "res://resources/levels/%s.json" % level_id
 	if not FileAccess.file_exists(level_path):
 		challenges_container.visible = false
@@ -100,12 +99,12 @@ func _load_challenges() -> void:
 	if ProgressionManager.data.levels.has(level_id):
 		completed_challenges = ProgressionManager.data.levels[level_id].challenges_completed
 
-	# Update existing challenge UI nodes
+	## Reuses authored UI slots instead of building nodes dynamically.
 	for i in range(3):
-		var challenge_node = challenges_container.get_child(i)
+		var challenge_node: HBoxContainer = challenges_container.get_child(i)
 		if i < challenge_ids.size():
 			challenge_node.visible = true
-			var c_id = challenge_ids[i]
+			var c_id: String = challenge_ids[i]
 			_setup_challenge_ui(challenge_node, c_id, c_id in completed_challenges)
 		else:
 			challenge_node.visible = false
@@ -123,7 +122,7 @@ func _setup_challenge_ui(node: HBoxContainer, c_id: String, is_completed: bool) 
 
 	indicator.texture = CONDITION_DONE if is_completed else CONDITION_TODO
 
-	# Load challenge metadata for translation keys
+	## Loads challenge metadata to resolve translation keys.
 	var path := "res://resources/challenges/%s.json" % c_id
 	if FileAccess.file_exists(path):
 		var file := FileAccess.open(path, FileAccess.READ)
@@ -132,9 +131,9 @@ func _setup_challenge_ui(node: HBoxContainer, c_id: String, is_completed: bool) 
 		var content := file.get_as_text()
 		var data: Variant = JSON.parse_string(content)
 		if data:
-			# Display Name and Description
-			var c_name = tr(data.get("name", ""))
-			var c_desc = tr(data.get("description", ""))
+			## Displays translated challenge name and description.
+			var c_name: String = tr(data.get("name", ""))
+			var c_desc: String = tr(data.get("description", ""))
 			label.text = "%s: %s" % [c_name, c_desc]
 		else:
 			label.text = c_id
