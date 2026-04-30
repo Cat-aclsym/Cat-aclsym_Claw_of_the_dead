@@ -293,10 +293,14 @@ func start_upgrade(upgrade_id: String) -> void:
 	if upgrade_id.is_empty() or not StatsDB.has_upgrade(upgrade_id):
 		Log.trace(Log.Level.ERROR, "Invalid upgrade id: %s" % upgrade_id)
 		return
+	if ILevel.current_level == null:
+		Log.trace(Log.Level.ERROR, "Cannot start upgrade: current level is null")
+		return
 	var upgrade_price: int = StatsDB.get_upgrade_price(upgrade_id)
 	if ILevel.current_level.coins < upgrade_price:
 		Log.trace(Log.Level.ERROR, "Not enough coins to upgrade")
 		return
+	ILevel.current_level.coins -= upgrade_price
 	pending_upgrade_id = upgrade_id
 	state = TowerState.UPGRADING
 	$ProgressBar.value = 0
