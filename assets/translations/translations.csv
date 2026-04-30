@@ -116,6 +116,12 @@ ARMORY.NODE.UNLOCK_BAT_03.NAME,Blade trap,Piège à lames
 ARMORY.NODE.UNLOCK_BAT_03.DESC,"Adds the blade trap to the build menu. Enemies that trigger it take a burst of damage; each trap only works a limited number of times.","Le piège à lames : un coup sec dans les pattes, ça fait mal tout de suite. Petit bémol : ça s'use vite."
 ARMORY.NODE.UNLOCK_BAT_04.NAME,Slow trap,Piège ralentissant
 ARMORY.NODE.UNLOCK_BAT_04.DESC,"Adds the slow trap to the build menu. Enemies crossing it are slowed so your towers have more time to finish them off.","Le piège ralentissant : les zombies passent au ralenti, histoire que tes tours aient le temps de leur dire bonjour."
+ARMORY.NODE.UNLOCK_BAT_05.NAME,Bomb trap,Bombe
+ARMORY.NODE.UNLOCK_BAT_05.DESC,"Adds the bomb trap to the build menu. It detonates when an enemy steps on it, dealing heavy area damage.","Ajoute la bombe au menu de construction. Elle explose lorsqu'un zombie passe dessus, infligeant des dégats de zones élevés."
+ARMORY.NODE.UNLOCK_BAT_06.NAME,Poison trap,Piège empoisonné
+ARMORY.NODE.UNLOCK_BAT_06.DESC,"Adds the poison trap to the build menu. Enemies crossing it take poison damage over time.","Ajoute le piège empoisonné au menu de construction. Les ennemis qui le traversent subissent des dégâts de poison sur la durée."
+ARMORY.NODE.UNLOCK_BAT_07.NAME,Stun trap,Piège étourdissant
+ARMORY.NODE.UNLOCK_BAT_07.DESC,"Adds the stun trap to the build menu. It briefly stuns enemies in range, buying time for nearby defenses.","Ajoute le piège étourdissant au menu de construction. Il étourdit brièvement les ennemis dans sa zone et offre du temps aux défenses proches."
 ARMORY.NODE.UNLOCK_BAT_01_BRANCH_A.NAME,Branch A (Cat Tree),Branche A (Arbre à Chat'rchés)
 ARMORY.NODE.UNLOCK_BAT_01_BRANCH_A.DESC,"Unlocks the A upgrade line for the Cat Tree: piercing arrows with very high single-shot damage and multi-enemy pierce, extra range, and slower projectiles, ideal for dense lines of foes.","Branche A : des flèches qui traversent toute la meute comme si la vie privée n'existait pas, gros dégâts, plus de portée : les tirs sont un peu paresseux mais ça compense."
 ARMORY.NODE.UNLOCK_BAT_01_BRANCH_B.NAME,Branch B (Cat Tree),Branche B (Arbre à Chat'rchés)
@@ -124,3 +130,15 @@ ARMORY.NODE.UNLOCK_BAT_02_BRANCH_A.NAME,Branch A (Cataboom),Branche A (Cataboom)
 ARMORY.NODE.UNLOCK_BAT_02_BRANCH_A.DESC,"Unlocks the A upgrade line for the Cataboom: fire-tipped shells that apply burn damage over time and trade some blast radius for a tighter, more focused explosion.","Branche feu : ça crame dans la durée, l'explosion est plus modeste mais le barbecue est assuré. Les morts-vivants détestent quand c'est bien cuit."
 ARMORY.NODE.UNLOCK_BAT_02_BRANCH_B.NAME,Branch B (Cataboom),Branche B (Cataboom)
 ARMORY.NODE.UNLOCK_BAT_02_BRANCH_B.DESC,"Unlocks the B upgrade line: larger explosion radius on each tier so one shot can clip more enemies in the AoE.","Branche gros boom : à chaque palier le rayon grossit : un seul tir, et tu invites plus de monde à la fête."
+ARMORY.NODE.UNLOCK_BAT_08.NAME,Tesla Tower,Tour Tesla
+ARMORY.NODE.UNLOCK_BAT_08.DESC,"Adds the Tesla Tower to the build menu. It fires electric shots with fast cadence to pressure enemies continuously.","Ajoute la Tour Tesla au menu de construction. Elle tire des projectiles électriques à cadence rapide pour maintenir une pression constante."
+ARMORY.NODE.UNLOCK_BAT_08_BRANCH_A.NAME,Branch A (Tesla),Branche A (Tesla)
+ARMORY.NODE.UNLOCK_BAT_08_BRANCH_A.DESC,"Unlocks the A upgrade line for the Tesla Tower: chain lightning that jumps between enemies to spread damage.","Débloque la branche A de la Tour Tesla : des chaines d'éclairs qui rebondissent entre les ennemis pour répartir les dégâts."
+ARMORY.NODE.UNLOCK_BAT_08_BRANCH_B.NAME,Branch B (Tesla),Branche B (Tesla)
+ARMORY.NODE.UNLOCK_BAT_08_BRANCH_B.DESC,"Unlocks the B upgrade line for the Tesla Tower: electrify effects that add damage over time and slow targets.","Débloque la branche B de la Tour Tesla : des effets d'électrisation qui ajoutent des dégâts dans le temps et ralentissent les cibles."
+ARMORY.NODE.UNLOCK_BAT_09.NAME,Inferno Tower,Tour de l'enfer
+ARMORY.NODE.UNLOCK_BAT_09.DESC,"Adds the Inferno Tower to the build menu. It applies continuous fire damage to enemies.","Ajoute la Tour de l'enfer au menu de construction. Elle projette des dégâts continus pour faire fondre les ennemis."
+ARMORY.NODE.UNLOCK_BAT_09_BRANCH_A.NAME,Branch A (Inferno),Branche A (Tour de l'enfer)
+ARMORY.NODE.UNLOCK_BAT_09_BRANCH_A.DESC,"Unlocks the A upgrade line for the Inferno Tower: a charging mode that greatly increases damage over time.","Débloque la branche A de la Tour de l'enfer : un mode de charge qui augmente fortement les dégâts dans le temps."
+ARMORY.NODE.UNLOCK_BAT_09_BRANCH_B.NAME,Branch B (Inferno),Branche B (Tour de l'enfer)
+ARMORY.NODE.UNLOCK_BAT_09_BRANCH_B.DESC,"Unlocks the B upgrade line for the Inferno Tower: a multi-beam mode that can hit several enemies at once.","Débloque la branche B de la Tour de l'enfer : un mode multi-rayons qui peut toucher plusieurs ennemis à la fois."
