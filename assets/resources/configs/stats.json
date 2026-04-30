@@ -1,5 +1,23 @@
 {
 	"enemies": {
+		"default_zombie": {
+			"max_health": 20,
+			"reward": 10,
+			"scene": "res://scenes/gameplay/entities/enemy/enemies/ene.01.tscn",
+			"speed": 45
+		},
+		"damage_zombie": {
+			"max_health": 100,
+			"reward": 10,
+			"scene": "res://scenes/gameplay/entities/enemy/enemies/ene.02.tscn",
+			"speed": 30
+		},
+		"rat": {
+			"max_health": 10,
+			"reward": 10,
+			"scene": "res://scenes/gameplay/entities/enemy/enemies/ene.03.tscn",
+			"speed": 100
+		},
 		"splitter_zombie": {
 			"extra": {
 				"spawn_count": 4
@@ -29,24 +47,6 @@
 			"reward": 10,
 			"scene": "res://scenes/gameplay/entities/enemy/enemies/big_daddy.tscn",
 			"speed": 20
-		},
-		"damage_zombie": {
-			"max_health": 100,
-			"reward": 10,
-			"scene": "res://scenes/gameplay/entities/enemy/enemies/ene.02.tscn",
-			"speed": 30
-		},
-		"default_zombie": {
-			"max_health": 20,
-			"reward": 10,
-			"scene": "res://scenes/gameplay/entities/enemy/enemies/ene.01.tscn",
-			"speed": 45
-		},
-		"rat": {
-			"max_health": 10,
-			"reward": 10,
-			"scene": "res://scenes/gameplay/entities/enemy/enemies/ene.03.tscn",
-			"speed": 100
 		}
 	},
 	"towers": {
