@@ -88,7 +88,7 @@ func _handle_impact(enemy: IEnemy) -> void:
 	_is_exploding = true
 
 	# Apply direct hit damage
-	enemy.take_damage(damage, IEnemy.DamageType.DEFAULT)
+	enemy.take_damage(damage, IEnemy.DamageType.DEFAULT, self)
 
 	# Apply AOE damage to nearby enemies
 	_apply_aoe_damage(enemy)
@@ -108,7 +108,7 @@ func _apply_aoe_damage(direct_hit_enemy: IEnemy) -> void:
 		for nearby_enemy in aoe_enemies:
 			if nearby_enemy != direct_hit_enemy and is_instance_valid(nearby_enemy):
 				var aoe_damage: int = roundi(damage * AOE_DAMAGE_MULTIPLIER)
-				nearby_enemy.take_damage(aoe_damage, IEnemy.DamageType.DEFAULT)
+				nearby_enemy.take_damage(aoe_damage, IEnemy.DamageType.DEFAULT, self)
 
 
 ## Stop arrow movement and hide sprite (factorized)

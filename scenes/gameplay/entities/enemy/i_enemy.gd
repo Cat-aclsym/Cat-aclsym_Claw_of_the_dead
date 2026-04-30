@@ -127,6 +127,7 @@ var _electrify_remaining: float = 0.0
 var _electrify_tick_damage: float = 0.0
 var _electrify_tick_interval: float = 0.0
 var _electrify_tick_remaining: float = 0.0
+var _electrify_source: Variant = null
 
 
 # Built-in functions
@@ -273,7 +274,7 @@ func is_electrified() -> bool:
 	return _electrified
 
 ## Applies an electrified debuff: temporary slow + periodic electric damage.
-func apply_electrify_effect(duration: float, slow_amount: float, tick_damage: float, tick_interval: float, _source: Variant = null) -> void:
+func apply_electrify_effect(duration: float, slow_amount: float, tick_damage: float, tick_interval: float, source: Variant = null) -> void:
 	if duration <= 0.0:
 		return
 
@@ -297,6 +298,7 @@ func apply_electrify_effect(duration: float, slow_amount: float, tick_damage: fl
 	_electrify_tick_damage = maxf(_electrify_tick_damage, tick_damage)
 	_electrify_tick_interval = normalized_interval
 	_electrify_tick_remaining = minf(_electrify_tick_remaining if _electrify_tick_remaining > 0.0 else normalized_interval, normalized_interval)
+	_electrify_source = source
 
 
 ## Applies a stun effect to the enemy.
@@ -341,7 +343,7 @@ func _process_electrify(delta: float) -> void:
 	_electrify_tick_remaining -= delta
 
 	if _electrify_tick_remaining <= 0.0 and _electrify_tick_damage > 0.0:
-		take_damage(_electrify_tick_damage, DamageType.DEFAULT)
+		take_damage(_electrify_tick_damage, DamageType.DEFAULT, _electrify_source)
 		_electrify_tick_remaining = _electrify_tick_interval
 
 	if _electrify_remaining <= 0.0:
@@ -359,6 +361,7 @@ func _clear_electrify_effect() -> void:
 	_electrify_tick_damage = 0.0
 	_electrify_tick_interval = 0.0
 	_electrify_tick_remaining = 0.0
+	_electrify_source = null
 	pop_slow_visual()
 
 func _apply_idle_modulate() -> void:
