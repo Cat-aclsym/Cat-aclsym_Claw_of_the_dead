@@ -283,7 +283,7 @@ func _on_area_2d_body_entered(body: Node2D) -> void:
 	if enemy == null:
 		return
 
-	if enemy is Minesweeper:
+	if enemy.enemy_id == "minesweeper":
 		disable_temporarily(MINESWEEPER_DISABLE_DURATION_SECONDS)
 		return
 
