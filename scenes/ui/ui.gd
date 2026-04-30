@@ -32,3 +32,9 @@ func end_level() -> void:
 	hud.unload_ui()
 	# Auto-save progression when exiting a level
 	ProgressionManager.save_game()
+
+
+## Displays the "new challenger" reveal for a newly discovered enemy.
+func notify_new_enemy_reveal(enemy_id: String, texture: Texture2D, enemy_scale: Vector2 = Vector2.ONE) -> void:
+	assert(_initialized, "UI not properly initialized")
+	hud.queue_new_enemy_reveal(enemy_id, texture, enemy_scale)
