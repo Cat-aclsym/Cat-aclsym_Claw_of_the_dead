@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bjde51xuyor3t"
-path="res://.godot/imported/right.svg-0f8f8d0a72f1cf907d1aa331e639da37.ctex"
+uid="uid://chg8m6vgnbbe0"
+path="res://.godot/imported/Green_Arrow_Button_Hexa.png-c3e845b90bcbb6f7e67fb0fd132d3931.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ui/level_selection/arrows/right.svg"
-dest_files=["res://.godot/imported/right.svg-0f8f8d0a72f1cf907d1aa331e639da37.ctex"]
+source_file="res://assets/ui/icons/Green_Arrow_Button_Hexa.png"
+dest_files=["res://.godot/imported/Green_Arrow_Button_Hexa.png-c3e845b90bcbb6f7e67fb0fd132d3931.ctex"]
 
 [params]
 
@@ -31,7 +31,4 @@ process/normal_map_invert_y=false
 process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
-detect_3d/compress_to=0
-svg/scale=2.0
-editor/scale_with_editor_scale=false
-editor/convert_colors_with_editor_theme=false
+detect_3d/compress_to=1

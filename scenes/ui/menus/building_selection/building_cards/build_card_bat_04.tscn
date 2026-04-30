@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://b2qklmpag4poo"]
+[gd_scene load_steps=9 format=3 uid="uid://b2qklmpag4poo"]
 
 [ext_resource type="Script" uid="uid://e0qqc3xugp8k" path="res://scenes/ui/menus/building_selection/building_cards/build_card.gd" id="1_script"]
 [ext_resource type="PackedScene" uid="uid://cekitu5ltqrp7" path="res://scenes/gameplay/entities/trap/traps/bat_04.tscn" id="2_entity"]
@@ -7,7 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://cdesir3miwmug" path="res://assets/ui/building_cards/Green Frame.svg" id="5_frame"]
 [ext_resource type="Texture2D" uid="uid://yayv0hygrr3u" path="res://assets/ui/building_cards/Blue Backgrond.svg" id="6_bg"]
 [ext_resource type="Texture2D" uid="uid://do0ybx58p4dnq" path="res://assets/gameplay/traps/spikes.png" id="7_icon"]
-[ext_resource type="Texture2D" path="res://assets/ui/huds/Coin.png" id="8_coin"]
+[ext_resource type="Texture2D" uid="uid://b6lrh02vg30l3" path="res://assets/ui/huds/Coin.png" id="8_coin"]
 
 [node name="BuildCardBat04" type="Control"]
 z_index = 1
@@ -109,13 +109,12 @@ offset_right = -4.05896
 offset_bottom = -5.0
 grow_horizontal = 2
 grow_vertical = 0
-alignment = 1
 theme_override_constants/separation = 4
+alignment = 1
 
 [node name="PriceLabel" type="Label" parent="CardVBoxContainer/CardAspectRatioContainer/CardTextureButton/PriceRow"]
 texture_filter = 5
 layout_mode = 2
-size_flags_vertical = 4
 theme = ExtResource("4_theme")
 theme_override_font_sizes/font_size = 15
 text = "75"
@@ -123,8 +122,8 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="CoinIcon" type="TextureRect" parent="CardVBoxContainer/CardAspectRatioContainer/CardTextureButton/PriceRow"]
-layout_mode = 2
 custom_minimum_size = Vector2(18, 18)
+layout_mode = 2
 size_flags_vertical = 4
 texture = ExtResource("8_coin")
 expand_mode = 1

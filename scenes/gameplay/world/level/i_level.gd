@@ -3,6 +3,7 @@
 class_name ILevel extends Node2D
 
 signal stats_updated
+signal wave_started(wave_number: int)
 
 # Constants
 const STATE_CONFIGURING: String = "CONFIGURING"
@@ -74,6 +75,7 @@ func start_level() -> void:
 	state_machine.toggle_initial_state()
 	start_time = Time.get_unix_time_from_system()
 	popup_spawner.wave(tr("Wave %s") % [current_wave + 1])
+	_emit_wave_started()
 
 	clock.subscribe(_process_tick, 5)
 	clock.start()
@@ -143,11 +145,17 @@ func _next_wave() -> void:
 		return
 	current_wave += 1
 	popup_spawner.wave(tr("Wave %s") % [current_wave + 1])
+	_emit_wave_started()
 	state_machine.toggle_state(STATE_WAVE % current_wave)
 
 
 func _next_step() -> void:
 	current_step = waves.front().pop()
+
+
+func _emit_wave_started() -> void:
+	var wave_number: int = current_wave + 1
+	wave_started.emit(wave_number)
 
 
 # states

@@ -2,10 +2,10 @@
 
 [ext_resource type="Script" uid="uid://b5tuo5eh0j8iw" path="res://scenes/ui/menus/level_selection/level_selection_menu.gd" id="1_3d0bw"]
 [ext_resource type="Texture2D" uid="uid://cuyo3k1ec4f18" path="res://assets/ui/level_selection/bg_arcs/arc.01.png" id="1_hmbw8"]
-[ext_resource type="Texture2D" uid="uid://lh0y2k7t6cat" path="res://assets/ui/level_selection/bt_cancel/bt_cancel.svg" id="3_cju3k"]
+[ext_resource type="Texture2D" path="res://assets/ui/level_selection/bt_cancel/Back_Button.png" id="3_cju3k"]
 [ext_resource type="FontFile" uid="uid://ddo3rokwsadq0" path="res://assets/ui/fonts/dotgothic/DotGothic16-Regular.ttf" id="3_kbg2u"]
-[ext_resource type="Texture2D" uid="uid://b282kcmxfhwo1" path="res://assets/ui/level_selection/arrows/left.svg" id="4_cs7f2"]
-[ext_resource type="Texture2D" uid="uid://bjde51xuyor3t" path="res://assets/ui/level_selection/arrows/right.svg" id="5_m6wuc"]
+[ext_resource type="Texture2D" path="res://assets/ui/icons/Side_Arrow_2.png" id="4_cs7f2"]
+[ext_resource type="Texture2D" path="res://assets/ui/icons/Side_Arrow.png" id="5_m6wuc"]
 [ext_resource type="PackedScene" uid="uid://dx5t3ko8f6o27" path="res://scenes/ui/menus/level_selection/components/level_frame.tscn" id="5_x0b1a"]
 [ext_resource type="Texture2D" uid="uid://b5q25yrnofsly" path="res://assets/ui/level_selection/window/locked.svg" id="6_miktb"]
 
@@ -122,7 +122,7 @@ theme_override_constants/separation = 96
 alignment = 1
 
 [node name="PreviousButton" type="TextureButton" parent="MarginContainer/VBoxContainer/BodyContainer"]
-texture_filter = 2
+texture_filter = 1
 texture_repeat = 1
 custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
@@ -207,7 +207,7 @@ text = "suite à la prochaine mise à jour"
 uppercase = true
 
 [node name="NextButton" type="TextureButton" parent="MarginContainer/VBoxContainer/BodyContainer"]
-texture_filter = 2
+texture_filter = 1
 texture_repeat = 1
 custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
@@ -233,6 +233,7 @@ size_flags_vertical = 4
 alignment = 1
 
 [node name="MainMenuButton" type="TextureButton" parent="MarginContainer"]
+texture_filter = 1
 custom_minimum_size = Vector2(80, 70)
 layout_mode = 2
 size_flags_horizontal = 0

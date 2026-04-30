@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://7wb4hm8xi87c"
-path="res://.godot/imported/level_lock.svg-fb6aab480d50bdbd7b1ad2bfcafd54f7.ctex"
+uid="uid://da28tcp6tnory"
+path="res://.godot/imported/Red_Button_Hexa.png-f5f40d015fffa3617d4f3f172f1e8422.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ui/level_selection/bt_level/level_lock.svg"
-dest_files=["res://.godot/imported/level_lock.svg-fb6aab480d50bdbd7b1ad2bfcafd54f7.ctex"]
+source_file="res://assets/ui/icons/Red_Button_Hexa.png"
+dest_files=["res://.godot/imported/Red_Button_Hexa.png-f5f40d015fffa3617d4f3f172f1e8422.ctex"]
 
 [params]
 
@@ -32,6 +32,3 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
-svg/scale=1.0
-editor/scale_with_editor_scale=false
-editor/convert_colors_with_editor_theme=false

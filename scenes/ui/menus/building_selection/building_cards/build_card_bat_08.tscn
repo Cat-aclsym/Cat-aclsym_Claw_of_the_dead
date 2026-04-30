@@ -1,13 +1,13 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene load_steps=10 format=3 uid="uid://g880dtp4ta31"]
 
-[ext_resource type="Script" path="res://scenes/ui/menus/building_selection/building_cards/build_card.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://e0qqc3xugp8k" path="res://scenes/ui/menus/building_selection/building_cards/build_card.gd" id="1_script"]
 [ext_resource type="PackedScene" path="res://scenes/gameplay/entities/tower/towers/bat_08.tscn" id="2_entity"]
-[ext_resource type="Texture2D" path="res://assets/ui/building_cards/Construction Tower Title.svg" id="3_title"]
-[ext_resource type="Theme" path="res://assets/resources/themes/generic.tres" id="4_theme"]
-[ext_resource type="Texture2D" path="res://assets/ui/building_cards/Green Frame.svg" id="5_frame"]
-[ext_resource type="Texture2D" path="res://assets/ui/building_cards/Blue Backgrond.svg" id="6_bg"]
-[ext_resource type="Texture2D" path="res://assets/gameplay/towers/tower_1_LVL_1.png" id="7_preview"]
-[ext_resource type="Texture2D" path="res://assets/ui/huds/Coin.png" id="8_coin"]
+[ext_resource type="Texture2D" uid="uid://85310xv6g30a" path="res://assets/ui/building_cards/Construction Tower Title.svg" id="3_title"]
+[ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="4_theme"]
+[ext_resource type="Texture2D" uid="uid://cdesir3miwmug" path="res://assets/ui/building_cards/Green Frame.svg" id="5_frame"]
+[ext_resource type="Texture2D" uid="uid://yayv0hygrr3u" path="res://assets/ui/building_cards/Blue Backgrond.svg" id="6_bg"]
+[ext_resource type="Texture2D" uid="uid://dlsa1m6s2rklo" path="res://assets/gameplay/towers/tower_1_LVL_1.png" id="7_preview"]
+[ext_resource type="Texture2D" uid="uid://b6lrh02vg30l3" path="res://assets/ui/huds/Coin.png" id="8_coin"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_preview"]
 atlas = ExtResource("7_preview")
@@ -91,6 +91,7 @@ expand_mode = 1
 stretch_mode = 4
 
 [node name="BuildPreviewTextureRect" type="TextureRect" parent="CardVBoxContainer/CardAspectRatioContainer/CardTextureButton"]
+modulate = Color(1, 0.93, 0.2, 1)
 z_index = -1
 layout_mode = 1
 anchors_preset = 15
@@ -99,7 +100,6 @@ anchor_bottom = 1.0
 offset_bottom = -5.0
 grow_horizontal = 2
 grow_vertical = 2
-modulate = Color(1, 0.93, 0.2, 1)
 texture = SubResource("AtlasTexture_preview")
 expand_mode = 1
 stretch_mode = 4
@@ -115,13 +115,12 @@ offset_right = -4.05896
 offset_bottom = -5.0
 grow_horizontal = 2
 grow_vertical = 0
-alignment = 1
 theme_override_constants/separation = 4
+alignment = 1
 
 [node name="PriceLabel" type="Label" parent="CardVBoxContainer/CardAspectRatioContainer/CardTextureButton/PriceRow"]
 texture_filter = 5
 layout_mode = 2
-size_flags_vertical = 4
 theme = ExtResource("4_theme")
 theme_override_font_sizes/font_size = 15
 text = "75"
@@ -129,8 +128,8 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="CoinIcon" type="TextureRect" parent="CardVBoxContainer/CardAspectRatioContainer/CardTextureButton/PriceRow"]
-layout_mode = 2
 custom_minimum_size = Vector2(18, 18)
+layout_mode = 2
 size_flags_vertical = 4
 texture = ExtResource("8_coin")
 expand_mode = 1

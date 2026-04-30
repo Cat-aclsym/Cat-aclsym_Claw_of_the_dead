@@ -32,6 +32,7 @@ const PATH_INDICATOR_END_TYPE: int = 1
 const PATH_INDICATOR_START_TYPE: int = 0
 
 @export var debug_show_spawnable_special_tiles: bool = false
+@export var initial_path_index: int = 0
 @export_range(0.0, 100.0, 0.1) var special_tile_percentage: float = 2.0
 
 ## Reference to the TileMap node for map layout
@@ -39,6 +40,7 @@ const PATH_INDICATOR_START_TYPE: int = 0
 
 ## Array of paths that enemies can follow
 var paths: Array[Path2D] = []
+var _active_paths_lookup: Dictionary = {}
 
 var _debug_exclusion_overlays: Array[Node2D] = []
 var _debug_spawnable_overlays: Array[Node2D] = []
@@ -115,6 +117,74 @@ func get_tower_by_name(tower_name: String) -> ITower:
 				return tower
 	return null
 
+
+## Activates a path so enemy spawners can use it.
+func activate_path(path_index: int) -> bool:
+	if not _is_valid_path_index(path_index):
+		return false
+
+	_active_paths_lookup[path_index] = true
+	return true
+
+
+## Deactivates a path so enemy spawners stop using it.
+func deactivate_path(path_index: int) -> bool:
+	if not _is_valid_path_index(path_index):
+		return false
+
+	_active_paths_lookup.erase(path_index)
+	return true
+
+
+## Returns all currently active spawn paths.
+func get_active_paths() -> Array[Path2D]:
+	var active_paths: Array[Path2D] = []
+	for index in get_active_path_indices():
+		active_paths.append(paths[index])
+
+	return active_paths
+
+
+## Returns currently active path indices.
+func get_active_path_indices() -> Array[int]:
+	var active_indices: Array[int] = []
+	for index in range(paths.size()):
+		if _active_paths_lookup.has(index):
+			active_indices.append(index)
+
+	return active_indices
+
+
+## Returns a random active path, or null if none are active.
+func get_random_active_path() -> Path2D:
+	var active_paths: Array[Path2D] = get_spawn_paths()
+	if active_paths.is_empty():
+		return null
+
+	return active_paths[randi() % active_paths.size()]
+
+
+## Returns paths allowed for enemy spawning.
+func get_spawn_paths() -> Array[Path2D]:
+	return get_active_paths()
+
+
+## Returns true when the path index is currently active.
+func is_path_active(path_index: int) -> bool:
+	return _active_paths_lookup.has(path_index)
+
+
+## Replaces current active paths with the provided indices.
+func set_active_paths_only(path_indices: Array[int]) -> void:
+	_active_paths_lookup.clear()
+
+	for path_index in path_indices:
+		if _is_valid_path_index(path_index):
+			_active_paths_lookup[path_index] = true
+
+	if _active_paths_lookup.is_empty():
+		Log.trace(Log.Level.WARN, "Map has no active paths after set_active_paths_only().")
+
 # private
 
 ## Loads path nodes from the Paths node
@@ -123,11 +193,14 @@ func _load_paths() -> void:
 		Log.trace(Log.Level.WARN, "No Paths node found in map")
 		return
 
+	paths.clear()
 	var children: Array[Node] = $Paths.get_children()
 
 	for child in children:
 		if (child is Path2D):
 			paths.append(child as Path2D)
+
+	_initialize_active_paths()
 
 func _create_path_indicators() -> void:
 	for path in paths:
@@ -560,5 +633,27 @@ func _is_tile_buildable(coords: Vector2i) -> bool:
 		var distance = world_pos.distance_to(path.to_global(closest_point))
 		if distance < placement_half_size:
 			return false
+
+	return true
+
+
+func _initialize_active_paths() -> void:
+	_active_paths_lookup.clear()
+
+	for index in range(paths.size()):
+		_active_paths_lookup[index] = true
+
+	if paths.is_empty():
+		return
+
+	if initial_path_index < 0 or initial_path_index >= paths.size():
+		Log.trace(Log.Level.WARN, "Invalid initial_path_index %d for map with %d paths. Falling back to 0." % [initial_path_index, paths.size()])
+		initial_path_index = 0
+
+
+func _is_valid_path_index(path_index: int) -> bool:
+	if path_index < 0 or path_index >= paths.size():
+		Log.trace(Log.Level.WARN, "Invalid path index %d for map with %d paths." % [path_index, paths.size()])
+		return false
 
 	return true
