@@ -11,6 +11,7 @@ const CHALLENGES_MENU: PackedScene = preload("res://scenes/ui/menus/hud/challeng
 const COIN_ICON_TEXTURE: Texture2D = preload("res://assets/ui/huds/Coin.png")
 const DEFAULT_TIME_SCALE: float = 1.0
 const DOTGOTHIC_FONT: Font = preload("res://assets/ui/fonts/dotgothic/DotGothic16-Regular.ttf")
+const NEW_ENEMY_CHALLENGER_SCENE: PackedScene = preload("res://scenes/ui/menus/hud/new_enemy_challenger.tscn")
 const PAUSE_MENU: PackedScene = preload("res://scenes/ui/menus/pause/pause.tscn")
 const POPUP_SCORE_SCENE: PackedScene = preload("res://scenes/ui/popup/popup_score.tscn")
 const SKIP_COLOR_INACTIVE: Color = Color(1.0, 1.0, 1.0, 1.0)
@@ -45,6 +46,11 @@ const BUILD_SELECTION_MENU: PackedScene = preload("res://scenes/ui/menus/buildin
 var _is_ready: bool = false
 var _last_coins: int = 0
 var _last_health: int = 0
+var _new_enemy_challenger: NewEnemyChallenger = null
+var _new_enemy_reveal_queue: Array[Dictionary] = []
+var _new_enemy_reveal_running: bool = false
+var _new_enemy_previous_paused: bool = false
+var _new_enemy_previous_global_paused: bool = false
 var _ghost_tween: Tween
 
 # Built-in functions
@@ -68,6 +74,9 @@ func _ready() -> void:
 	ButtonEffects.apply(pause_button)
 	ButtonEffects.apply(skip_time_scale_button)
 	ButtonEffects.apply(build_selection_button)
+
+	_new_enemy_challenger = NEW_ENEMY_CHALLENGER_SCENE.instantiate() as NewEnemyChallenger
+	add_child(_new_enemy_challenger)
 
 
 func _process(_delta: float) -> void:
@@ -97,6 +106,19 @@ func unload_ui() -> void:
 	visible = false
 	if ILevel.current_level:
 		ILevel.current_level.disconnect("stats_updated", _update)
+
+
+## Queues a reveal animation for a newly discovered enemy.
+func queue_new_enemy_reveal(enemy_id: String, texture: Texture2D, enemy_scale: Vector2 = Vector2.ONE) -> void:
+	if enemy_id.is_empty() or texture == null:
+		return
+
+	_new_enemy_reveal_queue.append({
+		"enemy_id": enemy_id,
+		"scale": enemy_scale,
+		"texture": texture
+	})
+	_try_play_next_enemy_reveal()
 
 # Private functions
 func _apply_time_scale(time_scale: float, is_fast: bool) -> void:
@@ -145,6 +167,38 @@ func _on_build_selection_button_pressed() -> void:
 		Global.ui.add_child(build_selection_menu_instance)
 	else:
 		Global.ui.get_node("BuildSelection").queue_free()
+
+
+func _try_play_next_enemy_reveal() -> void:
+	if _new_enemy_reveal_running:
+		return
+	if _new_enemy_reveal_queue.is_empty():
+		return
+	if not is_instance_valid(_new_enemy_challenger):
+		return
+
+	_new_enemy_reveal_running = true
+	_set_reveal_paused(true)
+	var reveal_data: Dictionary = _new_enemy_reveal_queue.pop_front()
+	await _new_enemy_challenger.play_reveal(
+		reveal_data.get("enemy_id", ""),
+		reveal_data.get("texture", null),
+		reveal_data.get("scale", Vector2.ONE)
+	)
+	_set_reveal_paused(false)
+	_new_enemy_reveal_running = false
+	_try_play_next_enemy_reveal()
+
+
+func _set_reveal_paused(is_paused: bool) -> void:
+	if is_paused:
+		_new_enemy_previous_paused = get_tree().paused
+		_new_enemy_previous_global_paused = Global.paused
+		get_tree().paused = true
+		Global.paused = true
+		return
+	get_tree().paused = _new_enemy_previous_paused
+	Global.paused = _new_enemy_previous_global_paused
 
 
 func _trigger_coin_effects(amount: int) -> void:

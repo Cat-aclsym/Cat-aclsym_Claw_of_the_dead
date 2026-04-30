@@ -12,6 +12,9 @@ HOME.PLAY.BUTTON,Play,Jouer
 HOME.SETTINGS.BUTTON,Settings,Paramètres
 INGAMEHUD.COINS.LABEL,%s,%s
 INGAMEHUD.HEALTH.LABEL,%s,%s
+INGAMEHUD.NEW_ENEMY.SUBTITLE,Discovered: %s,Découvert : %s
+INGAMEHUD.NEW_ENEMY.TITLE,A new challenger approaches!,Un nouvel adversaire approche !
+INGAMEHUD.NEW_ENEMY.CONTINUE,Click to continue,Cliquez pour continuer
 INGAMEHUD.WAVES.LABEL,%s,%s
 ENDGAMEMENU.LIFESTATISTIC.LABEL,%s,%s
 ENDGAMEMENU.TIMESTATISTIC.LABEL,%s,%s
