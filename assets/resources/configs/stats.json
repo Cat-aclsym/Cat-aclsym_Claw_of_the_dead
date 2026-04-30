@@ -50,25 +50,6 @@
 		}
 	},
 	"towers": {
-		"bat_09": {
-			"base": {
-				"bullet_stats": {
-					"damage": 0.5,
-					"is_charging": false
-				},
-				"cost": 10,
-				"fire_rate": 10.0,
-				"projectile_count": 1,
-				"shoot_range": 100,
-				"spread_angle": 0
-			},
-			"level": 1,
-			"name": "Tour Inferno",
-			"scene": "res://scenes/gameplay/entities/tower/towers/bat_09.tscn",
-			"upgrades": [
-				"bat_09_02"
-			]
-		},
 		"bat_01": {
 			"base": {
 				"bullet_stats": {
@@ -160,6 +141,25 @@
 			"scene": "res://scenes/gameplay/entities/tower/towers/bat_08.tscn",
 			"upgrades": [
 				"bat_08_02"
+			]
+		},
+		"bat_09": {
+			"base": {
+				"bullet_stats": {
+					"damage": 0.5,
+					"is_charging": false
+				},
+				"cost": 10,
+				"fire_rate": 10.0,
+				"projectile_count": 1,
+				"shoot_range": 100,
+				"spread_angle": 0
+			},
+			"level": 1,
+			"name": "Tour Inferno",
+			"scene": "res://scenes/gameplay/entities/tower/towers/bat_09.tscn",
+			"upgrades": [
+				"bat_09_02"
 			]
 		}
 	},
