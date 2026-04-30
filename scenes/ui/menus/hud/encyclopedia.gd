@@ -318,19 +318,40 @@ func _get_sprite_from_instance(p_node: Node) -> Dictionary:
 		"scale": Vector2.ONE,
 		"texture": null
 	}
-	if p_node.has_node("AnimatedSprite2D"):
-		var anim_sprite: AnimatedSprite2D = p_node.get_node("AnimatedSprite2D") as AnimatedSprite2D
+	var sprite_node: Node = null
+	var sprite_node_names: Array[String] = ["Sprite", "AnimatedSprite2D", "Sprite2D"]
+	for node_name in sprite_node_names:
+		if p_node.has_node(node_name):
+			sprite_node = p_node.get_node(node_name)
+			break
+
+	if sprite_node == null:
+		for child in p_node.get_children():
+			if child is AnimatedSprite2D:
+				sprite_node = child
+				break
+
+	if sprite_node == null:
+		for child in p_node.get_children():
+			if child is Sprite2D:
+				sprite_node = child
+				break
+
+	if sprite_node is AnimatedSprite2D:
+		var anim_sprite: AnimatedSprite2D = sprite_node as AnimatedSprite2D
 		if anim_sprite.sprite_frames:
 			var animation_names: PackedStringArray = anim_sprite.sprite_frames.get_animation_names()
 			if not animation_names.is_empty():
 				var anim: String = "idle" if anim_sprite.sprite_frames.has_animation("idle") else str(animation_names[0])
-				data["texture"] = anim_sprite.sprite_frames.get_frame_texture(anim, 0)
+				var frame_count: int = anim_sprite.sprite_frames.get_frame_count(anim)
+				if frame_count > 0:
+					data["texture"] = anim_sprite.sprite_frames.get_frame_texture(anim, 0)
 				data["frames"] = anim_sprite.sprite_frames
 				data["animation"] = StringName(anim)
 				data["fps"] = anim_sprite.sprite_frames.get_animation_speed(anim)
 				data["scale"] = anim_sprite.scale
-	elif p_node.has_node("Sprite2D"):
-		var sprite_2d: Sprite2D = p_node.get_node("Sprite2D") as Sprite2D
+	elif sprite_node is Sprite2D:
+		var sprite_2d: Sprite2D = sprite_node as Sprite2D
 		data["texture"] = sprite_2d.texture
 		data["scale"] = sprite_2d.scale
 	return data
@@ -493,8 +514,26 @@ func _update_ui_elements() -> void:
 		name_label.add_theme_font_size_override("font_size", 120)
 		name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
-		sprite_rect.texture = null
-		sprite_rect.custom_minimum_size = Vector2.ZERO
+		if entry.get("sprite") == null:
+			var hidden_scene_path: String = entry.get("scene_path", "")
+			if not hidden_scene_path.is_empty() and ResourceLoader.exists(hidden_scene_path):
+				var hidden_scene_res: PackedScene = load(hidden_scene_path) as PackedScene
+				if hidden_scene_res:
+					var hidden_obj: Node = hidden_scene_res.instantiate()
+					if hidden_obj:
+						entry["sprite"] = _get_sprite_from_instance(hidden_obj)
+						hidden_obj.queue_free()
+
+		var hidden_anim_data: Dictionary = entry.get("sprite", {})
+		if hidden_anim_data.has("texture") and hidden_anim_data["texture"] != null:
+			sprite_rect.texture = hidden_anim_data["texture"]
+			var hidden_scale: Vector2 = hidden_anim_data.get("scale", Vector2.ONE)
+			sprite_rect.custom_minimum_size = Vector2(160, 160) * hidden_scale
+			sprite_rect.modulate = Color(0.0, 0.0, 0.0, 0.85)
+		else:
+			sprite_rect.texture = null
+			sprite_rect.custom_minimum_size = Vector2.ZERO
+			sprite_rect.modulate = Color.WHITE
 
 		_add_stat_category_header("ENCYCLOPEDIA.NOT_DISCOVERED")
 
@@ -543,9 +582,11 @@ func _update_ui_elements() -> void:
 		sprite_rect.texture = _current_anim_data["texture"]
 		var base_scale: Vector2 = _current_anim_data.get("scale", Vector2.ONE)
 		sprite_rect.custom_minimum_size = Vector2(160, 160) * base_scale
+		sprite_rect.modulate = Color.WHITE
 	else:
 		sprite_rect.texture = null
 		sprite_rect.custom_minimum_size = Vector2.ZERO
+		sprite_rect.modulate = Color.WHITE
 
 	stats_scroll.scroll_vertical = 0
 
