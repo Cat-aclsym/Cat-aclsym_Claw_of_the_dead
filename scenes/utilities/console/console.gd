@@ -33,9 +33,16 @@ var _is_output_manual_scroll: bool = false
 
 # Built-in functions
 func _ready() -> void:
+	if not Global.debug:
+		queue_free()
+		return
 	Global.console = self
 	set_process_input(true)
-	input.grab_focus()
+	# Hidden console must not focus the TextEdit: Android shows the soft keyboard for a focused TextEdit
+	# even when the control is not visible.
+	input.virtual_keyboard_enabled = visible
+	if visible:
+		input.grab_focus()
 	output.scroll_active = true
 	output.scroll_following = false
 	output.selection_enabled = true
@@ -138,15 +145,19 @@ func _listen_inputs() -> void:
 	if Input.is_action_just_pressed("toggle_console"):
 		visible = not visible
 		if visible:
+			input.virtual_keyboard_enabled = true
 			input.grab_focus()
 		else:
+			_release_console_text_input()
 			_clear_suggestions()
 
 	if Input.is_action_just_pressed("ui_cancel"):
 		if suggestions_label.visible:
 			_clear_suggestions()
-		else:
+		elif visible:
 			visible = false
+			_release_console_text_input()
+			_clear_suggestions()
 		return
 
 	if Input.is_action_just_pressed("console_push"):
@@ -154,6 +165,15 @@ func _listen_inputs() -> void:
 		input.text = ""
 		_clear_suggestions()
 		return
+
+
+## Drops focus and hides the soft keyboard after the console is closed.
+func _release_console_text_input() -> void:
+	input.virtual_keyboard_enabled = false
+	input.release_focus()
+	if OS.get_name() == "Android":
+		DisplayServer.virtual_keyboard_hide()
+
 
 ## Scrolls the output and updates follow state.
 func _scroll_output(amount: float) -> void:
