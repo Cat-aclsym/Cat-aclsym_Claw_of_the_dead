@@ -13,8 +13,9 @@ var hud: HUD = null: get = _get_hud
 var ui: UI = null: get = _get_ui
 var paused: bool = false
 
-## Represents the current game release status
-var debug: bool = true: set = _set_debug
+## Debug-only builds (console, watchers, etc.). Mirrors the Godot export feature `debug`
+## (true in the editor and debug export templates, false in release exports).
+var debug: bool = OS.has_feature("debug"): set = _set_debug
 
 var _initialized: bool = false: set = _set_initialized
 
