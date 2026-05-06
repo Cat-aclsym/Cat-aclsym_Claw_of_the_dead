@@ -3,19 +3,48 @@
 [ext_resource type="Script" uid="uid://yn0xr1v34u6y" path="res://scenes/ui/menus/armory/armory_item.gd" id="1_armory_item_script"]
 [ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="2_theme"]
 [ext_resource type="Texture2D" uid="uid://cdesir3miwmug" path="res://assets/ui/building_cards/Green Frame.svg" id="3_green_frame"]
-[ext_resource type="Texture2D" uid="uid://yayv0hygrr3u" path="res://assets/ui/building_cards/Blue Backgrond.svg" id="4_blue_background"]
-[ext_resource type="Texture2D" uid="uid://deifsvtkdkqo1" path="res://assets/ui/buttons/Bouton Bleu.svg" id="5_blue_button"]
-[ext_resource type="Texture2D" uid="uid://8y5uhgfsgmp8" path="res://assets/ui/icons/Star.png" id="6_krslc"]
+[ext_resource type="Texture2D" uid="uid://85310xv6g30a" path="res://assets/ui/building_cards/Construction Tower Title.svg" id="4_title_bg"]
+[ext_resource type="Texture2D" uid="uid://yayv0hygrr3u" path="res://assets/ui/building_cards/Blue Backgrond.svg" id="5_blue_background"]
+[ext_resource type="Texture2D" uid="uid://deifsvtkdkqo1" path="res://assets/ui/buttons/Bouton Bleu.svg" id="6_blue_button"]
+[ext_resource type="Texture2D" uid="uid://8y5uhgfsgmp8" path="res://assets/ui/icons/Star.png" id="7_star"]
 
 [node name="ArmoryItem" type="VBoxContainer"]
 custom_minimum_size = Vector2(180, 260)
-theme_override_constants/separation = 8
+theme_override_constants/separation = 4
 alignment = 1
 script = ExtResource("1_armory_item_script")
+
+[node name="TitleAspectRatioContainer" type="AspectRatioContainer" parent="."]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.25
+ratio = 3.0
+
+[node name="TitleTextureRect" type="TextureRect" parent="TitleAspectRatioContainer"]
+layout_mode = 2
+texture = ExtResource("4_title_bg")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="TitleLabel" type="Label" parent="TitleAspectRatioContainer/TitleTextureRect"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("2_theme")
+theme_override_font_sizes/font_size = 14
+text = "NODE NAME"
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true
 
 [node name="CardAspectRatioContainer" type="AspectRatioContainer" parent="."]
 custom_minimum_size = Vector2(160, 160)
 layout_mode = 2
+size_flags_vertical = 3
 
 [node name="CardTextureButton" type="TextureButton" parent="CardAspectRatioContainer"]
 unique_name_in_owner = true
@@ -49,7 +78,7 @@ offset_right = 0.51001
 offset_bottom = -0.48999
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("4_blue_background")
+texture = ExtResource("5_blue_background")
 expand_mode = 1
 stretch_mode = 4
 
@@ -74,7 +103,7 @@ unique_name_in_owner = true
 visible = false
 custom_minimum_size = Vector2(170, 52)
 layout_mode = 2
-texture_normal = ExtResource("5_blue_button")
+texture_normal = ExtResource("6_blue_button")
 ignore_texture_size = true
 stretch_mode = 5
 
@@ -110,7 +139,7 @@ uppercase = true
 unique_name_in_owner = true
 custom_minimum_size = Vector2(20, 20)
 layout_mode = 2
-texture = ExtResource("6_krslc")
+texture = ExtResource("7_star")
 expand_mode = 1
 stretch_mode = 5
 

@@ -1,7 +1,7 @@
 [gd_scene load_steps=10 format=3 uid="uid://g880dtp4ta31"]
 
 [ext_resource type="Script" uid="uid://e0qqc3xugp8k" path="res://scenes/ui/menus/building_selection/building_cards/build_card.gd" id="1_script"]
-[ext_resource type="PackedScene" path="res://scenes/gameplay/entities/tower/towers/bat_08.tscn" id="2_entity"]
+[ext_resource type="PackedScene" uid="uid://vsaqk62gl8qk" path="res://scenes/gameplay/entities/tower/towers/bat_08.tscn" id="2_entity"]
 [ext_resource type="Texture2D" uid="uid://85310xv6g30a" path="res://assets/ui/building_cards/Construction Tower Title.svg" id="3_title"]
 [ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="4_theme"]
 [ext_resource type="Texture2D" uid="uid://cdesir3miwmug" path="res://assets/ui/building_cards/Green Frame.svg" id="5_frame"]

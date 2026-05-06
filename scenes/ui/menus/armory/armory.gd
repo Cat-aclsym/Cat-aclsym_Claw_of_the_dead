@@ -159,8 +159,11 @@ func _create_armory_item(node_id: String) -> ArmoryItem:
 		return null
 	var cost: int = int(node.get("cost_stars", 0))
 	item.node_id = node_id
+	item.node_name = _get_node_name(node_id)
 	item.cost_stars = cost
-	item.icon_texture = _resolve_icon_texture(node)
+	var icon_data: Dictionary = _resolve_icon_data(node)
+	item.icon_texture = icon_data.get("texture")
+	item.icon_modulate = icon_data.get("modulate", Color.WHITE)
 	if not item.buy_requested.is_connected(_on_buy_requested):
 		item.buy_requested.connect(_on_buy_requested)
 	if not item.selected.is_connected(_on_item_selected):
@@ -168,31 +171,51 @@ func _create_armory_item(node_id: String) -> ArmoryItem:
 	return item
 
 
-## Loads a tower/trap scene and returns the first useful preview ([Sprite2D] texture or first [AnimatedSprite2D] idle frame).
-func _extract_preview_texture(scene_path: String) -> Texture2D:
+## Loads a tower/trap scene and returns preview data: [code]texture[/code] and [code]modulate[/code].
+func _extract_preview_data(scene_path: String) -> Dictionary:
+	var out: Dictionary = {"texture": _FALLBACK_ICON, "modulate": Color.WHITE}
 	var packed_scene: PackedScene = StatsDB.load_packed_scene(scene_path)
 	if packed_scene == null:
-		return _FALLBACK_ICON
+		return out
 	var entity: Node = packed_scene.instantiate()
 	if entity == null:
-		return _FALLBACK_ICON
-	var sprite: Sprite2D = entity.find_child("Sprite2D", true, false) as Sprite2D
-	if sprite != null and sprite.texture != null:
-		entity.queue_free()
-		return sprite.texture
-	var animated: AnimatedSprite2D = entity.find_child("AnimatedSprite2D", true, false) as AnimatedSprite2D
-	if animated != null and animated.sprite_frames != null:
-		var animation_name: StringName = &"idle"
-		if not animated.sprite_frames.has_animation(animation_name):
-			var names: PackedStringArray = animated.sprite_frames.get_animation_names()
-			if not names.is_empty():
-				animation_name = StringName(names[0])
-		if animated.sprite_frames.has_animation(animation_name) and animated.sprite_frames.get_frame_count(animation_name) > 0:
-			var texture: Texture2D = animated.sprite_frames.get_frame_texture(animation_name, 0)
-			entity.queue_free()
-			return texture if texture != null else _FALLBACK_ICON
+		return out
+	
+	# Match build_card.gd logic: look for "Sprite" or "Sprite2D"
+	var sprite_node: Node = entity.get_node_or_null("Sprite")
+	if sprite_node == null:
+		sprite_node = entity.get_node_or_null("Sprite2D")
+	
+	# Better way to find by type in Godot 4
+	if sprite_node == null:
+		var sprites = entity.find_children("*", "Sprite2D", true, false)
+		if not sprites.is_empty():
+			sprite_node = sprites[0]
+	if sprite_node == null:
+		var anim_sprites = entity.find_children("*", "AnimatedSprite2D", true, false)
+		if not anim_sprites.is_empty():
+			sprite_node = anim_sprites[0]
+	
+	if sprite_node is Sprite2D:
+		var s: Sprite2D = sprite_node as Sprite2D
+		out["texture"] = s.texture
+		# Traps use modulate; favour self_modulate when non-white
+		out["modulate"] = s.self_modulate if s.self_modulate != Color.WHITE else s.modulate
+	elif sprite_node is AnimatedSprite2D:
+		var anim_sprite: AnimatedSprite2D = sprite_node as AnimatedSprite2D
+		# Towers use self_modulate on AnimatedSprite2D
+		out["modulate"] = anim_sprite.self_modulate if anim_sprite.self_modulate != Color.WHITE else anim_sprite.modulate
+		if anim_sprite.sprite_frames:
+			var animation_name: StringName = &"idle"
+			if not anim_sprite.sprite_frames.has_animation(animation_name):
+				var names: PackedStringArray = anim_sprite.sprite_frames.get_animation_names()
+				if not names.is_empty():
+					animation_name = StringName(names[0])
+			if anim_sprite.sprite_frames.has_animation(animation_name) and anim_sprite.sprite_frames.get_frame_count(animation_name) > 0:
+				out["texture"] = anim_sprite.sprite_frames.get_frame_texture(animation_name, 0)
+	
 	entity.queue_free()
-	return _FALLBACK_ICON
+	return out
 
 
 ## Translation for [code]ARMORY.NODE.{ID}.DESC[/code], or empty if the key is missing.
@@ -293,7 +316,9 @@ func _refresh() -> void:
 
 
 ## Picks a card icon from the first [code]unlock_tower[/code] or [code]unlock_trap[/code] effect by previewing the linked scene.
-func _resolve_icon_texture(node: Dictionary) -> Texture2D:
+## [br]Fallback: tries to find a tower or trap ID within the node ID string.
+func _resolve_icon_data(node: Dictionary) -> Dictionary:
+	var fallback: Dictionary = {"texture": _FALLBACK_ICON, "modulate": Color.WHITE}
 	for effect in node.get("effects", []):
 		if typeof(effect) != TYPE_DICTIONARY:
 			continue
@@ -302,13 +327,25 @@ func _resolve_icon_texture(node: Dictionary) -> Texture2D:
 			var tower_id: String = str(effect.get("tower_id", ""))
 			if StatsDB.has_tower(tower_id):
 				var tower: Dictionary = StatsDB.get_tower(tower_id)
-				return _extract_preview_texture(str(tower.get("scene", "")))
+				return _extract_preview_data(str(tower.get("scene", "")))
 		elif effect_type == "unlock_trap":
 			var trap_id: String = str(effect.get("trap_id", ""))
 			if StatsDB.has_trap(trap_id):
 				var trap: Dictionary = StatsDB.get_trap(trap_id)
-				return _extract_preview_texture(str(trap.get("scene", "")))
-	return _FALLBACK_ICON
+				return _extract_preview_data(str(trap.get("scene", "")))
+	
+	# Fallback: try to find a tower/trap ID in the node ID (e.g. "unlock_bat_01_branch_a" -> "bat_01")
+	var node_id: String = node.get("id", "")
+	for tid in StatsDB.get_tower_ids():
+		if tid in node_id:
+			var tower: Dictionary = StatsDB.get_tower(tid)
+			return _extract_preview_data(str(tower.get("scene", "")))
+	for trap_id in StatsDB.get_trap_ids():
+		if trap_id in node_id:
+			var trap: Dictionary = StatsDB.get_trap(trap_id)
+			return _extract_preview_data(str(trap.get("scene", "")))
+			
+	return fallback
 
 
 ## Highlights one card, shows title and either prerequisite hint or full description depending on purchase/prereq state.

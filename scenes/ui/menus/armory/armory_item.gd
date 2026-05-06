@@ -17,6 +17,10 @@ const COLOR_BUY_BLOCKED_MODULATE: Color = Color(0.55, 0.55, 0.55, 1.0)
 const COLOR_BUY_LABEL_DEFAULT: Color = Color(0.137255, 0.215686, 0.223529, 1.0)
 const COLOR_PRICE_AFFORDABLE: Color = Color(1.0, 1.0, 1.0, 1.0)
 const COLOR_PRICE_UNAFFORDABLE: Color = Color(0.92, 0.26, 0.22, 1.0)
+const CARD_DIM_UNAFFORDABLE: float = 0.82
+const CARD_MODULATE_AFFORDABLE: Color = Color.WHITE
+const CARD_MODULATE_UNAFFORDABLE: Color = Color(CARD_DIM_UNAFFORDABLE, CARD_DIM_UNAFFORDABLE, CARD_DIM_UNAFFORDABLE, 1.0)
+const PRICE_LABEL_MODULATE_VS_DIM: Color = Color(1.0 / CARD_DIM_UNAFFORDABLE, 1.0 / CARD_DIM_UNAFFORDABLE, 1.0 / CARD_DIM_UNAFFORDABLE, 1.0)
 const BUY_BUTTON_BLUE: Texture2D = preload("res://assets/ui/buttons/Bouton Bleu.svg")
 const BUY_BUTTON_GREEN: Texture2D = preload("res://assets/ui/buttons/Bouton Vert.svg")
 const FRAME_BLUE: Texture2D = preload("res://assets/ui/building_cards/Blue Frame.svg")
@@ -25,11 +29,13 @@ const FRAME_GREY: Texture2D = preload("res://assets/ui/building_cards/Grey Frame
 
 @export var cost_stars: int = 0
 @export var icon_texture: Texture2D = null
+@export var icon_modulate: Color = Color.WHITE
 @export var is_affordable: bool = false
 @export var is_legacy_mode: bool = false
 @export var is_prerequisites_met: bool = true
 @export var is_purchased: bool = false
 @export var node_id: String = ""
+@export var node_name: String = ""
 
 var _is_card_selected: bool = false
 
@@ -40,6 +46,7 @@ var _is_card_selected: bool = false
 @onready var preview_texture_rect: TextureRect = %PreviewTextureRect
 @onready var price_label: Label = %PriceLabel
 @onready var stars_icon_texture_rect: TextureRect = %StarsIconTextureRect
+@onready var title_label: Label = %TitleLabel
 
 @onready var signals: Array[Dictionary] = [
 	{SignalUtil.WHO: buy_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_buy_button_pressed},
@@ -56,6 +63,7 @@ func _ready() -> void:
 	assert(preview_texture_rect != null, "preview_texture_rect node not found")
 	assert(price_label != null, "price_label node not found")
 	assert(stars_icon_texture_rect != null, "stars_icon_texture_rect node not found")
+	assert(title_label != null, "title_label node not found")
 	SignalUtil.connects(signals)
 	# Keep button layout space at all times to avoid vertical jumps on selection.
 	buy_button.visible = true
@@ -91,9 +99,24 @@ func _on_card_texture_button_pressed() -> void:
 
 ## Applies textures, labels, price visibility, disabled/mouse_filter rules, and buy-row alpha from current flags.
 func _update_visuals() -> void:
+	title_label.text = node_name
 	preview_texture_rect.texture = icon_texture
+	preview_texture_rect.modulate = icon_modulate
 	price_label.text = "%d" % cost_stars
-	price_label.add_theme_color_override("font_color", COLOR_PRICE_AFFORDABLE if is_affordable else COLOR_PRICE_UNAFFORDABLE)
+	
+	var can_buy: bool = not is_purchased and not is_legacy_mode and is_prerequisites_met and is_affordable
+	var only_blocked_by_stars: bool = is_prerequisites_met and not is_affordable and not is_purchased and not is_legacy_mode
+	
+	# Match build_card.gd color correction
+	modulate = CARD_MODULATE_AFFORDABLE if (can_buy or is_purchased or is_legacy_mode) else CARD_MODULATE_UNAFFORDABLE
+	
+	if not is_affordable and not is_purchased and not is_legacy_mode:
+		price_label.modulate = PRICE_LABEL_MODULATE_VS_DIM
+		price_label.add_theme_color_override("font_color", COLOR_PRICE_UNAFFORDABLE)
+	else:
+		price_label.modulate = Color.WHITE
+		price_label.add_theme_color_override("font_color", COLOR_PRICE_AFFORDABLE)
+
 	var buy_rgb: Color = Color.WHITE
 	if is_purchased:
 		buy_button.texture_normal = BUY_BUTTON_GREEN
@@ -126,14 +149,14 @@ func _update_visuals() -> void:
 		buy_label.text = tr("ARMORY.BUY")
 		price_label.visible = true
 		stars_icon_texture_rect.visible = true
-	var only_blocked_by_stars: bool = is_prerequisites_met and not is_affordable and not is_purchased and not is_legacy_mode
 	if only_blocked_by_stars:
 		buy_label.add_theme_color_override("font_color", COLOR_PRICE_UNAFFORDABLE)
 	else:
 		buy_label.add_theme_color_override("font_color", COLOR_BUY_LABEL_DEFAULT)
-	var can_buy: bool = not is_purchased and not is_legacy_mode and is_prerequisites_met and is_affordable
+	
 	buy_button.disabled = not can_buy and not only_blocked_by_stars
 	var allow_buy_click: bool = _is_card_selected and can_buy
 	buy_button.mouse_filter = Control.MOUSE_FILTER_STOP if allow_buy_click else Control.MOUSE_FILTER_IGNORE
+	
 	var alpha: float = 1.0 if _is_card_selected else 0.0
 	buy_button.modulate = Color(buy_rgb.r, buy_rgb.g, buy_rgb.b, alpha)
