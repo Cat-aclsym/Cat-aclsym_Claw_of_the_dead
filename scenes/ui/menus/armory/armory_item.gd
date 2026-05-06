@@ -35,7 +35,6 @@ const FRAME_GREY: Texture2D = preload("res://assets/ui/building_cards/Grey Frame
 @export var is_prerequisites_met: bool = true
 @export var is_purchased: bool = false
 @export var node_id: String = ""
-@export var node_name: String = ""
 
 var _is_card_selected: bool = false
 
@@ -46,7 +45,6 @@ var _is_card_selected: bool = false
 @onready var preview_texture_rect: TextureRect = %PreviewTextureRect
 @onready var price_label: Label = %PriceLabel
 @onready var stars_icon_texture_rect: TextureRect = %StarsIconTextureRect
-@onready var title_label: Label = %TitleLabel
 
 @onready var signals: Array[Dictionary] = [
 	{SignalUtil.WHO: buy_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_buy_button_pressed},
@@ -63,7 +61,6 @@ func _ready() -> void:
 	assert(preview_texture_rect != null, "preview_texture_rect node not found")
 	assert(price_label != null, "price_label node not found")
 	assert(stars_icon_texture_rect != null, "stars_icon_texture_rect node not found")
-	assert(title_label != null, "title_label node not found")
 	SignalUtil.connects(signals)
 	# Keep button layout space at all times to avoid vertical jumps on selection.
 	buy_button.visible = true
@@ -99,7 +96,6 @@ func _on_card_texture_button_pressed() -> void:
 
 ## Applies textures, labels, price visibility, disabled/mouse_filter rules, and buy-row alpha from current flags.
 func _update_visuals() -> void:
-	title_label.text = node_name
 	preview_texture_rect.texture = icon_texture
 	preview_texture_rect.modulate = icon_modulate
 	price_label.text = "%d" % cost_stars

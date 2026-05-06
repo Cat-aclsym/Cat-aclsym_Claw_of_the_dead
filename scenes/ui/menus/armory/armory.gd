@@ -159,7 +159,6 @@ func _create_armory_item(node_id: String) -> ArmoryItem:
 		return null
 	var cost: int = int(node.get("cost_stars", 0))
 	item.node_id = node_id
-	item.node_name = _get_node_name(node_id)
 	item.cost_stars = cost
 	var icon_data: Dictionary = _resolve_icon_data(node)
 	item.icon_texture = icon_data.get("texture")
