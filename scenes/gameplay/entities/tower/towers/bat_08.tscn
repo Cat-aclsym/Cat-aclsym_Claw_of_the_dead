@@ -1,92 +1,85 @@
-[gd_scene load_steps=18 format=3 uid="uid://vsaqk62gl8qk"]
+[gd_scene load_steps=17 format=3 uid="uid://vsaqk62gl8qk"]
 
 [ext_resource type="PackedScene" uid="uid://064cnqw4xlus" path="res://scenes/gameplay/entities/tower/i_tower.tscn" id="1_tower"]
 [ext_resource type="PackedScene" uid="uid://bacjy0ad1e7bl" path="res://scenes/gameplay/entities/bullet/instant_lightning.tscn" id="2_bullet"]
-[ext_resource type="Texture2D" uid="uid://dlsa1m6s2rklo" path="res://assets/gameplay/towers/tower_1_LVL_1.png" id="3_sprite"]
+[ext_resource type="Texture2D" uid="uid://buvtoq24t424x" path="res://assets/gameplay/towers/Tesla_Tower_Blue.png" id="3_sprite"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_auv34"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_01"]
 atlas = ExtResource("3_sprite")
-region = Rect2(0, 0, 64, 64)
+region = Rect2(0, 0, 98, 94)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_jqe55"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_02"]
 atlas = ExtResource("3_sprite")
-region = Rect2(64, 0, 64, 64)
+region = Rect2(98, 0, 98, 94)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_6v1vh"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_03"]
 atlas = ExtResource("3_sprite")
-region = Rect2(128, 0, 64, 64)
+region = Rect2(196, 0, 98, 94)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_8ers3"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_04"]
 atlas = ExtResource("3_sprite")
-region = Rect2(192, 0, 64, 64)
+region = Rect2(294, 0, 98, 94)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_fsc74"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_05"]
 atlas = ExtResource("3_sprite")
-region = Rect2(256, 0, 64, 64)
+region = Rect2(392, 0, 98, 94)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_wev4n"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_06"]
 atlas = ExtResource("3_sprite")
-region = Rect2(320, 0, 64, 64)
+region = Rect2(490, 0, 98, 94)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_h5hk7"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_07"]
 atlas = ExtResource("3_sprite")
-region = Rect2(384, 0, 64, 64)
+region = Rect2(588, 0, 98, 94)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_ssqwa"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_08"]
 atlas = ExtResource("3_sprite")
-region = Rect2(448, 0, 64, 64)
+region = Rect2(686, 0, 98, 94)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_wnsnn"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_09"]
 atlas = ExtResource("3_sprite")
-region = Rect2(512, 0, 64, 64)
+region = Rect2(784, 0, 98, 94)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_dbe1b"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_10"]
 atlas = ExtResource("3_sprite")
-region = Rect2(576, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_ufdld"]
-atlas = ExtResource("3_sprite")
-region = Rect2(640, 0, 64, 64)
+region = Rect2(882, 0, 98, 94)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_1t44q"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_auv34")
+"texture": SubResource("AtlasTexture_01")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_jqe55")
+"texture": SubResource("AtlasTexture_02")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_6v1vh")
+"texture": SubResource("AtlasTexture_03")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_8ers3")
+"texture": SubResource("AtlasTexture_04")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_fsc74")
+"texture": SubResource("AtlasTexture_05")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_wev4n")
+"texture": SubResource("AtlasTexture_06")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_h5hk7")
+"texture": SubResource("AtlasTexture_07")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_ssqwa")
+"texture": SubResource("AtlasTexture_08")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_wnsnn")
+"texture": SubResource("AtlasTexture_09")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_dbe1b")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_ufdld")
+"texture": SubResource("AtlasTexture_10")
 }],
 "loop": true,
 "name": &"idle",
-"speed": 8.0
+"speed": 10.0
 }]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_jmpep"]
@@ -103,7 +96,7 @@ tower_id = "bat_08"
 
 [node name="Sprite" parent="." index="0"]
 unique_name_in_owner = true
-self_modulate = Color(1, 0.93, 0.2, 1)
+position = Vector2(0, -16)
 sprite_frames = SubResource("SpriteFrames_1t44q")
 animation = &"idle"
 
