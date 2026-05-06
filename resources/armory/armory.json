@@ -119,6 +119,13 @@
 			"effects": []
 		},
 		{
+			"id": "unlock_bat_09_branch_b",
+			"cost_stars": 1,
+			"prerequisites": ["unlock_bat_09"],
+			"category": "periphery_upgrade",
+			"effects": []
+		},
+		{
 			"id": "unlock_bat_08",
 			"cost_stars": 1,
 			"prerequisites": ["unlock_bat_02"],
@@ -129,13 +136,6 @@
 			"id": "unlock_bat_08_branch_a",
 			"cost_stars": 1,
 			"prerequisites": ["unlock_bat_08"],
-			"category": "periphery_upgrade",
-			"effects": []
-		},
-		{
-			"id": "unlock_bat_09_branch_b",
-			"cost_stars": 1,
-			"prerequisites": ["unlock_bat_09"],
 			"category": "periphery_upgrade",
 			"effects": []
 		},
