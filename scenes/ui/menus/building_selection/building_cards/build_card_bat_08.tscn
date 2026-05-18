@@ -1,17 +1,17 @@
 [gd_scene load_steps=10 format=3 uid="uid://g880dtp4ta31"]
 
 [ext_resource type="Script" uid="uid://e0qqc3xugp8k" path="res://scenes/ui/menus/building_selection/building_cards/build_card.gd" id="1_script"]
-[ext_resource type="PackedScene" path="res://scenes/gameplay/entities/tower/towers/bat_08.tscn" id="2_entity"]
+[ext_resource type="PackedScene" uid="uid://vsaqk62gl8qk" path="res://scenes/gameplay/entities/tower/towers/bat_08.tscn" id="2_entity"]
 [ext_resource type="Texture2D" uid="uid://85310xv6g30a" path="res://assets/ui/building_cards/Construction Tower Title.svg" id="3_title"]
 [ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="4_theme"]
 [ext_resource type="Texture2D" uid="uid://cdesir3miwmug" path="res://assets/ui/building_cards/Green Frame.svg" id="5_frame"]
 [ext_resource type="Texture2D" uid="uid://yayv0hygrr3u" path="res://assets/ui/building_cards/Blue Backgrond.svg" id="6_bg"]
-[ext_resource type="Texture2D" uid="uid://dlsa1m6s2rklo" path="res://assets/gameplay/towers/tower_1_LVL_1.png" id="7_preview"]
+[ext_resource type="Texture2D" uid="uid://buvtoq24t424x" path="res://assets/gameplay/towers/Tesla_Tower_Blue.png" id="7_preview"]
 [ext_resource type="Texture2D" uid="uid://b6lrh02vg30l3" path="res://assets/ui/huds/Coin.png" id="8_coin"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_preview"]
 atlas = ExtResource("7_preview")
-region = Rect2(0, -2, 64, 64)
+region = Rect2(0, 0, 98, 94)
 
 [node name="BuildCardBat08" type="Control"]
 z_index = 1
@@ -91,7 +91,6 @@ expand_mode = 1
 stretch_mode = 4
 
 [node name="BuildPreviewTextureRect" type="TextureRect" parent="CardVBoxContainer/CardAspectRatioContainer/CardTextureButton"]
-modulate = Color(1, 0.93, 0.2, 1)
 z_index = -1
 layout_mode = 1
 anchors_preset = 15

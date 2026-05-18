@@ -103,7 +103,7 @@ audio/channel_defaults={
 [display]
 
 window/stretch/mode="canvas_items"
-window/stretch/aspect="keep_height"
+window/stretch/aspect="expand"
 
 [editor]
 

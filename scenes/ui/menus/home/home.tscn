@@ -82,8 +82,6 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -59.0
-offset_right = 59.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/margin_left = 20
@@ -91,16 +89,13 @@ theme_override_constants/margin_top = 20
 theme_override_constants/margin_right = 20
 theme_override_constants/margin_bottom = 40
 
-[node name="GuiHBoxContainer" type="Control" parent="GuiMarginContainer"]
+[node name="GuiHBoxContainer" type="HBoxContainer" parent="GuiMarginContainer"]
 layout_mode = 2
+alignment = 1
 
 [node name="LogoTextureRect" type="TextureRect" parent="GuiMarginContainer/GuiHBoxContainer"]
 texture_filter = 1
 layout_mode = 2
-offset_left = 41.0
-offset_top = 12.0
-offset_right = 789.0
-offset_bottom = 595.0
 size_flags_horizontal = 3
 texture = ExtResource("4_aa1tm")
 expand_mode = 3
@@ -108,11 +103,7 @@ stretch_mode = 5
 
 [node name="HomeScreenVBoxContainer" type="VBoxContainer" parent="GuiMarginContainer/GuiHBoxContainer"]
 layout_mode = 2
-offset_left = 683.0
-offset_top = -13.0
-offset_right = 1183.0
-offset_bottom = 624.0
-size_flags_horizontal = 3
+size_flags_horizontal = 8
 theme_override_constants/separation = 20
 alignment = 1
 
