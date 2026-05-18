@@ -14,11 +14,16 @@ var tower: ITower
 @onready var _tower_title_label: Label = $InfoPanel/InfoVBoxContainer/TowerTitleLabel
 
 # Preloaded resources
-const ICON_TEXTURE: Texture2D = preload("res://assets/ui/icons/Icon Attack.svg")
 const STAT_BAR_SCENE: PackedScene = preload("res://scenes/ui/menus/tower_upgrade/stat_bar.tscn")
 
 # Constants
 const MAX_STAT_VALUE: float = 200.0
+## Bullet stats that are visual/internal only and must not be shown in the UI.
+const _SKIP_BULLET_STATS: Array[String] = [
+	"is_charging",
+	"lightning_blue_tint_strength",
+	"lightning_width_scale",
+]
 
 # Core methods
 func _ready() -> void:
@@ -65,15 +70,10 @@ func setup(p_tower: ITower) -> void:
 	_display_tower_stat("projectile_count")
 	_display_tower_stat("spread_angle")
 
-	# Display all current bullet stats
-	_display_bullet_stat("damage")
-	_display_bullet_stat("speed")
-	_display_bullet_stat("pierce_count")
-	_display_bullet_stat("pierce_reduction")
-	_display_bullet_stat("aoe_range")
-	_display_bullet_stat("aoe_duration")
-	_display_bullet_stat("aoe_tick")
-	_display_bullet_stat("damage_multiplier")
+	# Display all current bullet stats, skipping internal/visual-only keys
+	for stat_name: String in tower.get_display_bullet_stats().keys():
+		if stat_name not in _SKIP_BULLET_STATS:
+			_display_bullet_stat(stat_name)
 
 	_update_scroll_mode(_stats_container.get_child_count())
 
@@ -126,7 +126,7 @@ func _create_stat_display(stat_name: String, current_value: float) -> void:
 	_stats_container.add_child(stat_bar)
 
 	# Setup the stat bar with data (current value displayed, no "new" value for info display)
-	stat_bar.setup(stat_name, 0.0, current_value, ICON_TEXTURE, MAX_STAT_VALUE)
+	stat_bar.setup(stat_name, 0.0, current_value, MAX_STAT_VALUE)
 
 
 func _update_scroll_mode(displayed_stats: int) -> void:

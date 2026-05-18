@@ -21,21 +21,27 @@ script = ExtResource("1_tivcp")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 2
+size_flags_horizontal = 3
 
 [node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
 layout_mode = 2
+theme_override_constants/separation = 8
 
 [node name="StatIcon" type="TextureRect" parent="VBoxContainer/HBoxContainer"]
-custom_minimum_size = Vector2(50, 50)
+custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
-size_flags_vertical = 8
+texture_filter = 1
+size_flags_vertical = 4
 expand_mode = 1
 stretch_mode = 5
 
 [node name="StatName" type="Label" parent="VBoxContainer/HBoxContainer"]
 layout_mode = 2
-size_flags_horizontal = 0
+size_flags_horizontal = 3
+size_flags_vertical = 4
+text_overrun_behavior = 3
 theme_override_fonts/font = ExtResource("2_53wfa")
+theme_override_font_sizes/font_size = 14
 
 [node name="TextureProgressBar" type="TextureProgressBar" parent="VBoxContainer"]
 texture_repeat = 2
