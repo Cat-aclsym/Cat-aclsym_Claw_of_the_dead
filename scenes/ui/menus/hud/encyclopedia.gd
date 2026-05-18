@@ -9,6 +9,14 @@ extends Control
 signal menu_close
 
 
+const _ICON_ATTACK: Texture2D = preload("res://assets/ui/stats/attack.png")
+const _ICON_COIN: Texture2D = preload("res://assets/ui/huds/Coin.png")
+const _ICON_FIRE_RATE: Texture2D = preload("res://assets/ui/stats/fire-rate.png")
+const _ICON_HEALTH: Texture2D = preload("res://assets/ui/huds/Coeur.png")
+const _ICON_RANGE: Texture2D = preload("res://assets/ui/stats/range.png")
+const _ICON_SPEED: Texture2D = preload("res://assets/ui/stats/speed.png")
+
+
 ## Internal data structure for all entries.
 var _all_entries: Dictionary = {
 	"ENEMIES": [],
@@ -206,28 +214,44 @@ func _add_stat_category_header(p_text: String) -> void:
 ## [param p_key] The stat label.
 ## [param p_val] The stat value.
 func _add_stat_row(p_key: String, p_val: String) -> void:
+	var icon: Texture2D = _get_icon_for_encyclopedia_stat(p_key)
+
 	var key_container := Control.new()
 	key_container.custom_minimum_size = Vector2(220, _current_stat_font_size + 10)
 	key_container.clip_contents = true
 	key_container.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	stats_grid.add_child(key_container)
 
-	var label_key: Label = Label.new()
-	label_key.text = p_key
-	label_key.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	label_key.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT if p_key.length() > 15 else HORIZONTAL_ALIGNMENT_RIGHT
-	label_key.autowrap_mode = TextServer.AUTOWRAP_OFF
-	label_key.add_theme_font_override("font", _font)
-	label_key.add_theme_font_size_override("font_size", _current_stat_font_size)
-	label_key.add_theme_color_override("font_color", Color("874c2b"))
-	key_container.add_child(label_key)
+	if icon != null:
+		var icon_size: float = minf(float(_current_stat_font_size) + 8.0, 36.0)
+		var icon_rect := TextureRect.new()
+		icon_rect.texture = icon
+		icon_rect.custom_minimum_size = Vector2(icon_size, icon_size)
+		icon_rect.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+		icon_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		icon_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		icon_rect.mouse_filter = Control.MOUSE_FILTER_STOP
+		icon_rect.tooltip_text = tr(p_key)
+		icon_rect.set_anchors_and_offsets_preset(Control.PRESET_CENTER_RIGHT)
+		icon_rect.size = Vector2(icon_size, icon_size)
+		key_container.add_child(icon_rect)
+	else:
+		var label_key: Label = Label.new()
+		label_key.text = p_key
+		label_key.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		label_key.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT if p_key.length() > 15 else HORIZONTAL_ALIGNMENT_RIGHT
+		label_key.autowrap_mode = TextServer.AUTOWRAP_OFF
+		label_key.add_theme_font_override("font", _font)
+		label_key.add_theme_font_size_override("font_size", _current_stat_font_size)
+		label_key.add_theme_color_override("font_color", Color("874c2b"))
+		key_container.add_child(label_key)
 
-	label_key.size = label_key.get_combined_minimum_size()
-	if p_key.length() <= 15:
-		label_key.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		label_key.size = label_key.get_combined_minimum_size()
+		if p_key.length() <= 15:
+			label_key.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 
-	if p_key.length() > 15:
-		_animate_marquee(label_key, key_container)
+		if p_key.length() > 15:
+			_animate_marquee(label_key, key_container)
 
 	var label_val: Label = Label.new()
 	label_val.text = p_val
@@ -599,3 +623,22 @@ func _update_ui_elements() -> void:
 	enemies_button.disabled = (_current_category == "ENEMIES")
 
 	get_tree().process_frame.connect(_check_scroll_indicator, CONNECT_ONE_SHOT)
+
+
+## Returns the icon texture for a given encyclopedia stat key, or null if unmapped.
+func _get_icon_for_encyclopedia_stat(p_key: String) -> Texture2D:
+	match p_key:
+		"ENCYCLOPEDIA.STATS.COST", "ENCYCLOPEDIA.STATS.REWARD":
+			return _ICON_COIN
+		"ENCYCLOPEDIA.STATS.DAMAGE":
+			return _ICON_ATTACK
+		"ENCYCLOPEDIA.STATS.FIRERATE":
+			return _ICON_FIRE_RATE
+		"ENCYCLOPEDIA.STATS.HEALTH":
+			return _ICON_HEALTH
+		"ENCYCLOPEDIA.STATS.RANGE":
+			return _ICON_RANGE
+		"ENCYCLOPEDIA.STATS.SPEED":
+			return _ICON_SPEED
+		_:
+			return null
