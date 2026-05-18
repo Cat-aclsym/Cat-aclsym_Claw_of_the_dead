@@ -74,7 +74,6 @@ func setup(p_tower: ITower) -> void:
 	_display_bullet_stat("aoe_duration")
 	_display_bullet_stat("aoe_tick")
 	_display_bullet_stat("damage_multiplier")
-	_display_bullet_stat("dot_damage")
 
 	_update_scroll_mode(_stats_container.get_child_count())
 
