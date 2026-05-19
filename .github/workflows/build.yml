@@ -34,6 +34,14 @@ jobs:
           unzip -q Godot_v4.4-stable_export_templates.tpz
           mv templates/* ~/.local/share/godot/export_templates/4.4.stable/
 
+      - name: Setup Android build template
+        run: |
+          mkdir -p android/build
+          unzip -q ~/.local/share/godot/export_templates/4.4.stable/../../../export_templates/4.4.stable/android_source.zip -d android/build || \
+          unzip -q Godot_v4.4-stable_export_templates.tpz templates/android_source.zip -d /tmp && \
+          unzip -q /tmp/templates/android_source.zip -d android/build
+          echo "4.4.stable" > android/.build_version
+
       - name: Decode keystore
         run: |
           echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > ~/Cataclysm.keystore
