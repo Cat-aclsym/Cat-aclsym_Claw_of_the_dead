@@ -95,8 +95,11 @@ jobs:
 
       - name: Install apktool
         run: |
-          sudo apt-get install -y apktool
-
+          wget -q https://github.com/iBotPeaches/Apktool/releases/download/v2.9.3/apktool_2.9.3.jar -O /usr/local/bin/apktool.jar
+          echo '#!/bin/bash' > /usr/local/bin/apktool
+          echo 'java -jar /usr/local/bin/apktool.jar "$@"' >> /usr/local/bin/apktool
+          chmod +x /usr/local/bin/apktool
+          
       - name: Inject Firebase Game Loop intent filter
         run: |
           apktool d -f exports/Cataclysm.apk -o exports/apk_decoded
