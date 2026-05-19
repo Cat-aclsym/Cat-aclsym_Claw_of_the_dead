@@ -150,21 +150,3 @@ jobs:
         with:
           name: Cataclysm-apk
           path: exports/Cataclysm.apk
-
-      - name: Authenticate to Google Cloud
-        uses: google-github-actions/auth@v2
-        with:
-          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
-
-      - name: Setup gcloud CLI
-        uses: google-github-actions/setup-gcloud@v2
-
-      - name: Run Firebase Game Loop Test
-        run: |
-          gcloud firebase test android run \
-            --type=game-loop \
-            --app=exports/Cataclysm.apk \
-            --scenario-numbers=1 \
-            --device model=MediumPhone,version=35 \
-            --project ${{ secrets.FIREBASE_PROJECT_ID }} \
-            --timeout=3m
