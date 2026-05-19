@@ -34,13 +34,7 @@ const OPTION_INACTIVE_TEXTURE: Texture2D = preload("res://assets/ui/buttons/Bout
 const STAT_BAR_SCENE: PackedScene = preload("res://scenes/ui/menus/tower_upgrade/stat_bar.tscn")
 
 # Constants
-const MAX_STAT_VALUE: float = 200.0
-## Bullet stats that are visual/internal only and must not be shown in the UI.
-const _SKIP_BULLET_STATS: Array[String] = [
-	"is_charging",
-	"lightning_blue_tint_strength",
-	"lightning_width_scale",
-]
+const MAX_STAT_VALUE: float = StatBar.MAX_STAT_VALUE
 ## Same color for all interaction states (no desktop-only hover/pressed tint; mobile-friendly).
 const OPTION_TAB_FONT_COLOR: Color = Color.WHITE
 var _option_active_style: StyleBoxTexture
@@ -142,7 +136,7 @@ func _refresh_upgrade_view() -> void:
 	# Create dynamic stat displays for bullet stats
 	var bullet_stats: Dictionary = upgrade.get("bullet_stats", {})
 	for stat_name in bullet_stats.keys():
-		if stat_name in _SKIP_BULLET_STATS:
+		if stat_name in StatBar.SKIP_BULLET_STATS:
 			continue
 		var stat_change: float = float(bullet_stats[stat_name])
 		if stat_change != 0.0:

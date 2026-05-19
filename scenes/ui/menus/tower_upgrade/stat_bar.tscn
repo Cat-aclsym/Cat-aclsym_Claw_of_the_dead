@@ -3,20 +3,33 @@
 [ext_resource type="Script" uid="uid://ciqb5io4hpx6q" path="res://scenes/ui/menus/tower_upgrade/stat_bar.gd" id="1_tivcp"]
 [ext_resource type="FontFile" uid="uid://ddo3rokwsadq0" path="res://assets/ui/fonts/dotgothic/DotGothic16-Regular.ttf" id="2_53wfa"]
 
-[node name="StatBar" type="VBoxContainer"]
+[node name="StatBar" type="HBoxContainer"]
 offset_right = 300.0
-offset_bottom = 60.0
-theme_override_constants/separation = 4
+offset_bottom = 72.0
+theme_override_constants/separation = 10
 script = ExtResource("1_tivcp")
 
-[node name="StatName" type="Label" parent="."]
+[node name="StatIcon" type="TextureRect" parent="."]
+custom_minimum_size = Vector2(36, 36)
+layout_mode = 2
+texture_filter = 1
+size_flags_vertical = 4
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ContentColumn" type="VBoxContainer" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+
+[node name="StatName" type="Label" parent="ContentColumn"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_fonts/font = ExtResource("2_53wfa")
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 20
 
-[node name="TicksContainer" type="HBoxContainer" parent="."]
+[node name="TicksContainer" type="HBoxContainer" parent="ContentColumn"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/separation = 4
+theme_override_constants/separation = 2
 alignment = 2

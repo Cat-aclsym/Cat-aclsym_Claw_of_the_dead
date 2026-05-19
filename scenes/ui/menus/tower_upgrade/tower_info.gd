@@ -17,13 +17,7 @@ var tower: ITower
 const STAT_BAR_SCENE: PackedScene = preload("res://scenes/ui/menus/tower_upgrade/stat_bar.tscn")
 
 # Constants
-const MAX_STAT_VALUE: float = 200.0
-## Bullet stats that are visual/internal only and must not be shown in the UI.
-const _SKIP_BULLET_STATS: Array[String] = [
-	"is_charging",
-	"lightning_blue_tint_strength",
-	"lightning_width_scale",
-]
+const MAX_STAT_VALUE: float = StatBar.MAX_STAT_VALUE
 
 # Core methods
 func _ready() -> void:
@@ -72,7 +66,7 @@ func setup(p_tower: ITower) -> void:
 
 	# Display all current bullet stats, skipping internal/visual-only keys
 	for stat_name: String in tower.get_display_bullet_stats().keys():
-		if stat_name not in _SKIP_BULLET_STATS:
+		if stat_name not in StatBar.SKIP_BULLET_STATS:
 			_display_bullet_stat(stat_name)
 
 	_update_scroll_mode(_stats_container.get_child_count())
