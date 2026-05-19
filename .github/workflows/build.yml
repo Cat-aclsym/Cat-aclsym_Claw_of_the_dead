@@ -19,7 +19,7 @@ jobs:
         uses: actions/setup-java@v5
         with:
           distribution: temurin
-          java-version: 21
+          java-version: 17
 
       - name: Setup Godot
         uses: chickensoft-games/setup-godot@v2
@@ -92,6 +92,58 @@ jobs:
           mkdir -p exports
           godot --headless --export-release "Android" exports/Cataclysm.apk || true
           godot --headless --export-release "Android" exports/Cataclysm.apk
+
+      - name: Install apktool
+        run: |
+          wget -q https://github.com/iBotPeaches/Apktool/releases/download/v2.9.3/apktool_2.9.3.jar -O /usr/local/bin/apktool.jar
+          echo '#!/bin/bash' > /usr/local/bin/apktool
+          echo 'java -jar /usr/local/bin/apktool.jar "$@"' >> /usr/local/bin/apktool
+          chmod +x /usr/local/bin/apktool
+
+      - name: Inject Firebase Game Loop intent filter
+        run: |
+          apktool d -f exports/Cataclysm.apk -o exports/apk_decoded
+          python3 - <<'EOF'
+          with open("exports/apk_decoded/AndroidManifest.xml", "r") as f:
+              content = f.read()
+
+          intent_filter = '''
+              <intent-filter>
+                  <action android:name="com.google.intent.action.TEST_LOOP"/>
+                  <category android:name="android.intent.category.DEFAULT"/>
+                  <data android:mimeType="application/javascript"/>
+              </intent-filter>
+              <meta-data android:name="com.google.test.loops" android:value="2"/>'''
+
+          content = content.replace(
+              '</activity>',
+              intent_filter + '\n    </activity>',
+              1
+          )
+
+          with open("exports/apk_decoded/AndroidManifest.xml", "w") as f:
+              f.write(content)
+
+          # Supprimer la référence themed_icon de public.xml
+          with open("exports/apk_decoded/res/values/public.xml", "r") as f:
+              pub = f.read()
+          pub = "\n".join([l for l in pub.splitlines() if "themed_icon" not in l])
+          with open("exports/apk_decoded/res/values/public.xml", "w") as f:
+              f.write(pub)
+
+          print("Done!")
+          EOF
+          rm -rf exports/apk_decoded/res/values-anydpi-v26/
+          apktool b exports/apk_decoded -o exports/Cataclysm_unsigned.apk
+
+      - name: Sign patched APK
+        run: |
+          /usr/local/lib/android/sdk/build-tools/34.0.0/apksigner sign \
+            --ks ~/Cataclysm.keystore \
+            --ks-pass pass:${{ secrets.KEYSTORE_PASSWORD }} \
+            --ks-key-alias Cataclysm \
+            --out exports/Cataclysm.apk \
+            exports/Cataclysm_unsigned.apk
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4

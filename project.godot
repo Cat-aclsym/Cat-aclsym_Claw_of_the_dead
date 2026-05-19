@@ -25,6 +25,7 @@ ProgressionManager="*res://scripts/autoloads/progression_manager.gd"
 StatsDB="*res://scripts/autoloads/stats_db.gd"
 ChallengeManager="*res://scripts/autoloads/challenge_manager.gd"
 ArmoryManager="*res://scripts/autoloads/armory_manager.gd"
+FirebaseTestLab="*res://scripts/autoloads/firebase_test_lab.gd"
 
 [dialogic]
 
