@@ -1,12 +1,12 @@
 [gd_scene load_steps=12 format=3 uid="uid://cqfsr6yjn6hm8"]
 
 [ext_resource type="Script" uid="uid://cibbgvfpeyya0" path="res://scenes/ui/menus/home/home.gd" id="1_dvove"]
-[ext_resource type="Texture2D" uid="uid://deifsvtkdkqo1" path="res://assets/ui/buttons/Bouton Bleu.svg" id="3_0g4o3"]
+[ext_resource type="Texture2D" uid="uid://cstart001blue" path="res://assets/ui/buttons/Bouton démarrage.png" id="3_0g4o3"]
 [ext_resource type="Texture2D" uid="uid://bsir4xrig5yqd" path="res://assets/ui/icons/LogoChatVertFonce.png" id="3_gislx"]
 [ext_resource type="Texture2D" uid="uid://c2pj8fxbv5usu" path="res://assets/ui/icons/LogoTypoBlancTransp.png" id="4_aa1tm"]
 [ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="4_ay1j5"]
-[ext_resource type="Texture2D" uid="uid://nsf3nkto3p0t" path="res://assets/ui/buttons/Bouton Vert.svg" id="5_db01i"]
-[ext_resource type="Texture2D" uid="uid://cvut87og2mth" path="res://assets/ui/buttons/Bouton orange.svg" id="6_tu8js"]
+[ext_resource type="Texture2D" uid="uid://cstart003grn" path="res://assets/ui/buttons/Bouton démarrage 2.png" id="5_db01i"]
+[ext_resource type="Texture2D" uid="uid://cstart002org" path="res://assets/ui/buttons/Bouton démarrage 1.png" id="6_tu8js"]
 [ext_resource type="Texture2D" uid="uid://c1f4e2f8oknku" path="res://assets/ui/icons/exclamation.png" id="7_exclamation"]
 [ext_resource type="FontVariation" uid="uid://c5y1j2k3l4m5n" path="res://assets/ui/fonts/dotgothic/dotgothic_variation.tres" id="8_variation"]
 
@@ -109,6 +109,7 @@ alignment = 1
 
 [node name="PlayButton" type="TextureButton" parent="GuiMarginContainer/GuiHBoxContainer/HomeScreenVBoxContainer"]
 unique_name_in_owner = true
+texture_filter = 1
 custom_minimum_size = Vector2(500, 160)
 layout_mode = 2
 size_flags_horizontal = 4
@@ -136,6 +137,7 @@ uppercase = true
 
 [node name="EncyclopediaButton" type="TextureButton" parent="GuiMarginContainer/GuiHBoxContainer/HomeScreenVBoxContainer"]
 unique_name_in_owner = true
+texture_filter = 1
 custom_minimum_size = Vector2(350, 110)
 layout_mode = 2
 size_flags_horizontal = 4
@@ -179,6 +181,7 @@ uppercase = true
 
 [node name="ArmoryButton" type="TextureButton" parent="GuiMarginContainer/GuiHBoxContainer/HomeScreenVBoxContainer"]
 unique_name_in_owner = true
+texture_filter = 1
 custom_minimum_size = Vector2(350, 110)
 layout_mode = 2
 size_flags_horizontal = 4
@@ -205,6 +208,7 @@ uppercase = true
 
 [node name="SettingsButton" type="TextureButton" parent="GuiMarginContainer/GuiHBoxContainer/HomeScreenVBoxContainer"]
 unique_name_in_owner = true
+texture_filter = 1
 custom_minimum_size = Vector2(350, 110)
 layout_mode = 2
 size_flags_horizontal = 4
