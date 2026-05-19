@@ -10,6 +10,7 @@ extends Camera2D
 @export var shake_fade: float = 5.0
 @export var min_zoom: float = 1.0
 @export var max_zoom: float = 10.0
+@export var bottom_padding: float = 650.0
 
 var _touch_points: Dictionary = {}
 var _start_distance: float
@@ -117,4 +118,4 @@ func _handle_pinch_zoom() -> void:
 func _clamp_position_to_limits() -> void:
     var half: Vector2 = get_viewport_rect().size / zoom / 2.0
     position.x = clamp(position.x, limit_left + half.x, limit_right - half.x)
-    position.y = clamp(position.y, limit_top + half.y, limit_bottom - half.y)
+    position.y = clamp(position.y, limit_top + half.y, limit_bottom - half.y - bottom_padding)

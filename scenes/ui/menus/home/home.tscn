@@ -6,7 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://c2pj8fxbv5usu" path="res://assets/ui/icons/LogoTypoBlancTransp.png" id="4_aa1tm"]
 [ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="4_ay1j5"]
 [ext_resource type="Texture2D" uid="uid://cstart003grn" path="res://assets/ui/buttons/Bouton démarrage 2.png" id="5_db01i"]
-[ext_resource type="Texture2D" uid="uid://cstart002org" path="res://assets/ui/buttons/Bouton démarrage 1.png" id="6_tu8js"]
+[ext_resource type="Texture2D" uid="uid://du2xmbin21dyn" path="res://assets/ui/buttons/Bouton démarrage 1.png" id="6_tu8js"]
 [ext_resource type="Texture2D" uid="uid://c1f4e2f8oknku" path="res://assets/ui/icons/exclamation.png" id="7_exclamation"]
 [ext_resource type="FontVariation" uid="uid://c5y1j2k3l4m5n" path="res://assets/ui/fonts/dotgothic/dotgothic_variation.tres" id="8_variation"]
 

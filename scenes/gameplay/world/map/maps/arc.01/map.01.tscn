@@ -2,7 +2,7 @@
 
 [ext_resource type="PackedScene" uid="uid://crdosg1fmycsi" path="res://scenes/gameplay/world/map/i_map.tscn" id="1_ja0gd"]
 [ext_resource type="Texture2D" uid="uid://bcxnwyojlu45a" path="res://assets/environment/backgrounds/Canoé.png" id="2_canoe"]
-[ext_resource type="Script" uid="uid://cnuf2o38j23fk" path="res://scenes/gameplay/world/map/map_placement_blocker.gd" id="3_blocker"]
+[ext_resource type="Script" path="res://scenes/gameplay/world/map/map_placement_blocker.gd" id="3_blocker"]
 [ext_resource type="Texture2D" uid="uid://flaepau3golb" path="res://assets/environment/backgrounds/Rock.png" id="4_f2xnt"]
 [ext_resource type="Texture2D" uid="uid://cmmi14tmwjokk" path="res://assets/environment/backgrounds/Voilier.png" id="4_sailboat"]
 [ext_resource type="Texture2D" uid="uid://cn648qxrvbcqx" path="res://assets/environment/backgrounds/Rock2.png" id="5_rock"]
@@ -71,17 +71,32 @@ script = ExtResource("3_blocker")
 [node name="LeftRockWall5" type="Sprite2D" parent="BorderWalls" index="4"]
 z_index = 2
 texture_filter = 1
-position = Vector2(1211, 690)
+position = Vector2(1222, 676)
 scale = Vector2(-0.907787, 0.936607)
 texture = ExtResource("4_f2xnt")
 script = ExtResource("3_blocker")
 
-[node name="behind" type="Node2D" parent="BorderWalls" index="5"]
+[node name="LeftRockWall7" type="Sprite2D" parent="BorderWalls" index="5"]
+z_index = 2
+texture_filter = 1
+position = Vector2(1687, 664)
+scale = Vector2(-1.29753, 1.3568)
+texture = ExtResource("4_f2xnt")
+script = ExtResource("3_blocker")
+
+[node name="behind" type="Node2D" parent="BorderWalls" index="6"]
 position = Vector2(1038, 235)
 rotation = 3.14159
 scale = Vector2(1.442, -1.662)
 
-[node name="LeftRockWall2" type="Sprite2D" parent="BorderWalls/behind" index="0"]
+[node name="LeftRockWall6" type="Sprite2D" parent="BorderWalls/behind" index="0"]
+texture_filter = 1
+position = Vector2(-319.001, 167.269)
+scale = Vector2(0.976903, 0.996327)
+texture = ExtResource("5_rock")
+script = ExtResource("3_blocker")
+
+[node name="LeftRockWall2" type="Sprite2D" parent="BorderWalls/behind" index="1"]
 modulate = Color(0.644, 0.664533, 0.7, 1)
 z_index = -8
 texture_filter = 1
@@ -90,14 +105,7 @@ scale = Vector2(1.27232, 1.34505)
 texture = ExtResource("5_rock")
 script = ExtResource("3_blocker")
 
-[node name="LeftRockWall2" type="Sprite2D" parent="BorderWalls/behind/LeftRockWall2" index="0"]
-texture_filter = 1
-position = Vector2(-153.119, 140.154)
-scale = Vector2(0.767812, 0.740736)
-texture = ExtResource("5_rock")
-script = ExtResource("3_blocker")
-
-[node name="LeftRockWall" type="Sprite2D" parent="BorderWalls/behind" index="1"]
+[node name="LeftRockWall" type="Sprite2D" parent="BorderWalls/behind" index="2"]
 modulate = Color(0.644, 0.664533, 0.7, 1)
 z_index = -8
 texture_filter = 1
@@ -106,7 +114,7 @@ scale = Vector2(1.7, 1.62812)
 texture = ExtResource("4_f2xnt")
 script = ExtResource("3_blocker")
 
-[node name="LeftRockWall5" type="Sprite2D" parent="BorderWalls/behind" index="2"]
+[node name="LeftRockWall5" type="Sprite2D" parent="BorderWalls/behind" index="3"]
 modulate = Color(0.644, 0.664533, 0.7, 1)
 z_index = -9
 texture_filter = 1
@@ -115,7 +123,7 @@ scale = Vector2(1.7, 1.62812)
 texture = ExtResource("4_f2xnt")
 script = ExtResource("3_blocker")
 
-[node name="LeftRockWall4" type="Sprite2D" parent="BorderWalls/behind" index="3"]
+[node name="LeftRockWall4" type="Sprite2D" parent="BorderWalls/behind" index="4"]
 modulate = Color(0.644, 0.664533, 0.7, 1)
 z_index = -8
 texture_filter = 1
@@ -125,7 +133,7 @@ scale = Vector2(1.48908, -1.61201)
 texture = ExtResource("4_f2xnt")
 script = ExtResource("3_blocker")
 
-[node name="LeftRockWall3" type="Sprite2D" parent="BorderWalls/behind" index="4"]
+[node name="LeftRockWall3" type="Sprite2D" parent="BorderWalls/behind" index="5"]
 modulate = Color(0.644, 0.664533, 0.7, 1)
 z_index = -8
 texture_filter = 1
@@ -135,14 +143,21 @@ scale = Vector2(1.442, -1.662)
 texture = ExtResource("5_rock")
 script = ExtResource("3_blocker")
 
-[node name="behind2" type="Node2D" parent="BorderWalls" index="6"]
+[node name="behind2" type="Node2D" parent="BorderWalls" index="7"]
 modulate = Color(0.6264, 0.65448, 0.72, 1)
 z_index = -1
 position = Vector2(1038, 235)
 rotation = 3.14159
 scale = Vector2(1.442, -1.662)
 
-[node name="LeftRockWall2" type="Sprite2D" parent="BorderWalls/behind2" index="0"]
+[node name="LeftRockWall6" type="Sprite2D" parent="BorderWalls/behind2" index="0"]
+texture_filter = 1
+position = Vector2(-441.054, 77.0166)
+scale = Vector2(1.1, 1.15)
+texture = ExtResource("5_rock")
+script = ExtResource("3_blocker")
+
+[node name="LeftRockWall2" type="Sprite2D" parent="BorderWalls/behind2" index="1"]
 modulate = Color(0.644, 0.664533, 0.7, 1)
 z_index = -8
 texture_filter = 1
@@ -151,14 +166,16 @@ scale = Vector2(1.27232, 1.34505)
 texture = ExtResource("5_rock")
 script = ExtResource("3_blocker")
 
-[node name="LeftRockWall2" type="Sprite2D" parent="BorderWalls/behind2/LeftRockWall2" index="0"]
+[node name="LeftRockWall7" type="Sprite2D" parent="BorderWalls/behind2" index="2"]
+modulate = Color(0.644, 0.664533, 0.7, 1)
+z_index = -8
 texture_filter = 1
-position = Vector2(-235.14, 195.007)
-scale = Vector2(0.767812, 0.740736)
+position = Vector2(-368.932, -105.294)
+scale = Vector2(1.30882, 1.45589)
 texture = ExtResource("5_rock")
 script = ExtResource("3_blocker")
 
-[node name="LeftRockWall" type="Sprite2D" parent="BorderWalls/behind2" index="1"]
+[node name="LeftRockWall" type="Sprite2D" parent="BorderWalls/behind2" index="3"]
 modulate = Color(0.644, 0.664533, 0.7, 1)
 z_index = -8
 texture_filter = 1
@@ -167,7 +184,7 @@ scale = Vector2(1.7, 1.62812)
 texture = ExtResource("4_f2xnt")
 script = ExtResource("3_blocker")
 
-[node name="LeftRockWall5" type="Sprite2D" parent="BorderWalls/behind2" index="2"]
+[node name="LeftRockWall5" type="Sprite2D" parent="BorderWalls/behind2" index="4"]
 modulate = Color(0.644, 0.664533, 0.7, 1)
 z_index = -9
 texture_filter = 1
@@ -176,7 +193,7 @@ scale = Vector2(1.7, 1.62812)
 texture = ExtResource("4_f2xnt")
 script = ExtResource("3_blocker")
 
-[node name="LeftRockWall4" type="Sprite2D" parent="BorderWalls/behind2" index="3"]
+[node name="LeftRockWall4" type="Sprite2D" parent="BorderWalls/behind2" index="5"]
 modulate = Color(0.644, 0.664533, 0.7, 1)
 z_index = -8
 texture_filter = 1
@@ -186,7 +203,7 @@ scale = Vector2(1.48908, -1.61201)
 texture = ExtResource("4_f2xnt")
 script = ExtResource("3_blocker")
 
-[node name="LeftRockWall3" type="Sprite2D" parent="BorderWalls/behind2" index="4"]
+[node name="LeftRockWall3" type="Sprite2D" parent="BorderWalls/behind2" index="6"]
 modulate = Color(0.644, 0.664533, 0.7, 1)
 z_index = -8
 texture_filter = 1
@@ -196,7 +213,7 @@ scale = Vector2(1.442, -1.662)
 texture = ExtResource("5_rock")
 script = ExtResource("3_blocker")
 
-[node name="LeftRockWall3" type="Sprite2D" parent="BorderWalls" index="7"]
+[node name="LeftRockWall3" type="Sprite2D" parent="BorderWalls" index="8"]
 texture_filter = 1
 position = Vector2(999, 221)
 rotation = -3.14159
