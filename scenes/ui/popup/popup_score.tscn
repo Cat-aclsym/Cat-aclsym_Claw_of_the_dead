@@ -78,9 +78,13 @@ _data = {
 &"popup": SubResource("Animation_yjn6s")
 }
 
-[node name="PopupScore" type="Node2D"]
+[node name="PopupScore" type="Control"]
+layout_mode = 3
+anchors_preset = 0
 
-[node name="FloatingNumbers" type="Marker2D" parent="."]
+[node name="FloatingNumbers" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 0
 z_index = 4096
 
 [node name="PriceRow" type="HBoxContainer" parent="FloatingNumbers"]

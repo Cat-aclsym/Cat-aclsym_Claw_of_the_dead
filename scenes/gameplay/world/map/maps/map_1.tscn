@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=3 uid="uid://oc6r5kow8d7i"]
+[gd_scene load_steps=6 format=3 uid="uid://cwsa5lj502lvt"]
 
 [ext_resource type="PackedScene" uid="uid://crdosg1fmycsi" path="res://scenes/gameplay/world/map/i_map.tscn" id="1_18xh2"]
 [ext_resource type="Script" uid="uid://bpx6dilajh058" path="res://scenes/ui/popup/popup_spawner.gd" id="2_ue4yl"]
