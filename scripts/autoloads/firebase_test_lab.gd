@@ -1,11 +1,11 @@
 extends Node
 
-const RESULT_PATH := "/sdcard/Android/data/fr.a7studio.cataclysm/files/results.json"
 const SCENARIO_TIMEOUT := 30.0
 
 var _scenario: int = 0
 var _timer: float = 0.0
 var _running: bool = false
+var _log_file_uri = null
 
 func _ready() -> void:
 	if not _is_test_lab():
@@ -21,7 +21,7 @@ func _process(delta: float) -> void:
 		return
 	_timer += delta
 	if _timer >= SCENARIO_TIMEOUT:
-		Log.trace(Log.Level.WARN, "FirebaseTestLab: scenario timeout reached")
+		Log.trace(Log.Level.WARN, "FirebaseTestLab: timeout reached, finishing scenario")
 		_finish_scenario(_scenario, true)
 
 func _is_test_lab() -> bool:
@@ -29,7 +29,7 @@ func _is_test_lab() -> bool:
 		return false
 	var runtime = Engine.get_singleton("AndroidRuntime")
 	if not runtime:
-		Log.trace(Log.Level.WARN, "FirebaseTestLab: AndroidRuntime singleton not available")
+		Log.trace(Log.Level.WARN, "FirebaseTestLab: AndroidRuntime not available")
 		return false
 	var activity = runtime.getActivity()
 	if not activity:
@@ -37,10 +37,13 @@ func _is_test_lab() -> bool:
 	var intent = activity.getIntent()
 	if not intent:
 		return false
-	# getAction() returns a Java String object — must use str() for GDScript comparison
 	var action = str(intent.getAction())
-	Log.trace(Log.Level.INFO, "FirebaseTestLab: detected intent action = {0}".format([action]))
-	return action == "com.google.intent.action.TEST_LOOP"
+	Log.trace(Log.Level.INFO, "FirebaseTestLab: intent action = [{0}]".format([action]))
+	if action == "com.google.intent.action.TEST_LOOP":
+		_log_file_uri = intent.getData()
+		Log.trace(Log.Level.INFO, "FirebaseTestLab: log file URI = {0}".format([str(_log_file_uri)]))
+		return true
+	return false
 
 func _get_scenario() -> int:
 	var runtime = Engine.get_singleton("AndroidRuntime")
@@ -52,7 +55,6 @@ func _get_scenario() -> int:
 	var intent = activity.getIntent()
 	if not intent:
 		return 1
-	# getIntExtra returns a Java int — convert to GDScript int
 	return int(intent.getIntExtra("scenario", 1))
 
 func _run_scenario(scenario: int) -> void:
@@ -82,16 +84,37 @@ func _finish_scenario(scenario: int, success: bool) -> void:
 	get_tree().quit()
 
 func _write_results(scenario: int, success: bool) -> void:
-	var result := {
+	var json_str := JSON.stringify({
 		"scenario": scenario,
 		"status": "success" if success else "failure",
-	}
-	var dir_path := RESULT_PATH.get_base_dir()
+	})
+
+	# Method 1 : write to the URI provided by Firebase via getData()
+	if _log_file_uri != null:
+		var runtime = Engine.get_singleton("AndroidRuntime")
+		if runtime:
+			var activity = runtime.getActivity()
+			if activity:
+				var content_resolver = activity.getContentResolver()
+				if content_resolver:
+					var output_stream = content_resolver.openOutputStream(_log_file_uri)
+					if output_stream:
+						var String_class = JavaClassWrapper.wrap("java.lang.String")
+						var bytes = String_class.new_(json_str).getBytes("UTF-8")
+						output_stream.write(bytes)
+						output_stream.flush()
+						output_stream.close()
+						Log.trace(Log.Level.INFO, "FirebaseTestLab: results written via getData() URI")
+						return
+
+	# Method 2 : fallback — write to GameLoopsResults directory on sdcard
+	var dir_path := "/sdcard/Android/data/fr.a7studio.cataclysm/files/GameLoopsResults"
 	DirAccess.make_dir_recursive_absolute(dir_path)
-	var file := FileAccess.open(RESULT_PATH, FileAccess.WRITE)
-	if file == null:
-		Log.trace(Log.Level.ERROR, "FirebaseTestLab: failed to write results to {0}".format([RESULT_PATH]))
-		return
-	file.store_string(JSON.stringify(result))
-	file.close()
-	Log.trace(Log.Level.INFO, "FirebaseTestLab: results written to {0}".format([RESULT_PATH]))
+	var file_path := dir_path + "/results" + str(scenario) + ".json"
+	var file := FileAccess.open(file_path, FileAccess.WRITE)
+	if file:
+		file.store_string(json_str)
+		file.close()
+		Log.trace(Log.Level.INFO, "FirebaseTestLab: results written to {0}".format([file_path]))
+	else:
+		Log.trace(Log.Level.ERROR, "FirebaseTestLab: failed to write results")
