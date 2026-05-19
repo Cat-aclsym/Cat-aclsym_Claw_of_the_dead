@@ -124,9 +124,16 @@ jobs:
           with open("exports/apk_decoded/AndroidManifest.xml", "w") as f:
               f.write(content)
 
+          # Supprimer la référence themed_icon de public.xml
+          with open("exports/apk_decoded/res/values/public.xml", "r") as f:
+              pub = f.read()
+          pub = "\n".join([l for l in pub.splitlines() if "themed_icon" not in l])
+          with open("exports/apk_decoded/res/values/public.xml", "w") as f:
+              f.write(pub)
+
           print("Done!")
           EOF
-          rm -f exports/apk_decoded/res/values-anydpi-v26/mipmaps.xml
+          rm -rf exports/apk_decoded/res/values-anydpi-v26/
           apktool b exports/apk_decoded -o exports/Cataclysm_unsigned.apk
 
       - name: Sign patched APK
