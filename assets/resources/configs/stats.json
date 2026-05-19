@@ -33,6 +33,12 @@
 			"scene": "res://scenes/gameplay/entities/enemy/enemies/small_zombie.tscn",
 			"speed": 70
 		},
+    "minesweeper": {
+			"max_health": 70,
+			"reward": 12,
+			"scene": "res://scenes/gameplay/entities/enemy/enemies/minesweeper.tscn",
+			"speed": 45
+		},
 		"big_daddy": {
 			"extra": {
 				"attack_cooldown": 5,
