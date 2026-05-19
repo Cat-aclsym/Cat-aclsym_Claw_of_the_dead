@@ -99,10 +99,10 @@ jobs:
           echo '#!/bin/bash' > /usr/local/bin/apktool
           echo 'java -jar /usr/local/bin/apktool.jar "$@"' >> /usr/local/bin/apktool
           chmod +x /usr/local/bin/apktool
-          
+
       - name: Inject Firebase Game Loop intent filter
         run: |
-          apktool d -f exports/Cataclysm.apk -o exports/apk_decoded
+          apktool d -f --no-res exports/Cataclysm.apk -o exports/apk_decoded
           python3 - <<'EOF'
           with open("exports/apk_decoded/AndroidManifest.xml", "r") as f:
               content = f.read()
@@ -126,7 +126,7 @@ jobs:
 
           print("Done!")
           EOF
-          apktool b exports/apk_decoded -o exports/Cataclysm_unsigned.apk
+          apktool b --no-aapt2 exports/apk_decoded -o exports/Cataclysm_unsigned.apk
 
       - name: Sign patched APK
         run: |
