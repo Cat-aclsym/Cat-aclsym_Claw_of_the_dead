@@ -1,50 +1,45 @@
 ## © [2026] A7 Studio. All rights reserved. Trademark.
 ##
-## Displays a stat bar with icon, name and progress bar.
+## Displays a stat entry with name label and tick icons.
 class_name StatBar
-extends HBoxContainer
+extends VBoxContainer
 
-const _ICON_AOE_RANGE: Texture2D = preload("res://assets/ui/stats/aoe-range.png")
-const _ICON_ATTACK: Texture2D = preload("res://assets/ui/stats/attack.png")
-const _ICON_ATTACK_MULTIPLIER: Texture2D = preload("res://assets/ui/stats/attack-multiplier.png")
-const _ICON_BULLETS: Texture2D = preload("res://assets/ui/stats/bullets.png")
-const _ICON_BURN_DAMAGE: Texture2D = preload("res://assets/ui/stats/burn-damage.png")
-const _ICON_BURN_DURATION: Texture2D = preload("res://assets/ui/stats/burn-duration.png")
-const _ICON_ELECTRICITY_BASE: Texture2D = preload("res://assets/ui/stats/electricity-base.png")
-const _ICON_ELECTRICITY_CHAIN: Texture2D = preload("res://assets/ui/stats/electricity-chain-bounces.png")
-const _ICON_ELECTRICITY_CHAIN_FALLOFF: Texture2D = preload("res://assets/ui/stats/electricity-chain-falloff.png")
-const _ICON_ELECTRICITY_CHAIN_RANGE: Texture2D = preload("res://assets/ui/stats/electricity-chain-range.png")
-const _ICON_ELECTRICITY_DURATION: Texture2D = preload("res://assets/ui/stats/electricity-duration.png")
-const _ICON_ELECTRICITY_INTERVAL: Texture2D = preload("res://assets/ui/stats/electricity-interval.png")
-const _ICON_ELECTRICITY_SLOW: Texture2D = preload("res://assets/ui/stats/electricity-slow.png")
-const _ICON_FIRE_RATE: Texture2D = preload("res://assets/ui/stats/fire-rate.png")
-const _ICON_PIERCE_COUNT: Texture2D = preload("res://assets/ui/stats/pierce-count.png")
-const _ICON_PIERCE_REDUCTION: Texture2D = preload("res://assets/ui/stats/pierce-reduction.png")
-const _ICON_RANGE: Texture2D = preload("res://assets/ui/stats/range.png")
-const _ICON_SPEED: Texture2D = preload("res://assets/ui/stats/speed.png")
-const _ICON_SPREAD: Texture2D = preload("res://assets/ui/stats/spread.png")
+const TICK_FULL: Texture2D = preload("res://assets/ui/icons/stat-tick-full.png")
+const TICK_EMPTY: Texture2D = preload("res://assets/ui/icons/stat-tick-empty.png")
+const TICK_COUNT: int = 10
+const TICK_SIZE: int = 20
 
-@onready var _icon: TextureRect = $VBoxContainer/HBoxContainer/StatIcon
-@onready var _progress_bar: TextureProgressBar = $VBoxContainer/TextureProgressBar
-@onready var _stat_name_label: Label = $VBoxContainer/HBoxContainer/StatName
+@onready var _stat_name_label: Label = $StatName
+@onready var _ticks_container: HBoxContainer = $TicksContainer
 
-## Sets up the stat bar with the given data.
-## [br] [param stat_name] determines the icon and label text.
-## [br] [param show_change] if true, appends the change arrow to the tooltip.
+## Sets up the stat entry with tick icons representing the stat value.
+## [br] [param stat_name] The stat identifier used for the label text.
+## [br] [param current_value] The current stat value before the upgrade.
+## [br] [param new_value] The stat value after the upgrade.
+## [br] [param max_value] The reference ceiling for normalizing tick count.
+## [br] [param show_change] If true, blinking ticks highlight the changed portion.
 func setup(stat_name: String, current_value: float, new_value: float, max_value: float = 200.0, show_change: bool = false) -> void:
-	var icon: Texture2D = _get_icon_for_stat(stat_name)
-	if icon != null:
-		_icon.texture = icon
-
 	_stat_name_label.text = _format_stat_name(stat_name)
 
-	var normalized: float = clamp(new_value / max_value, 0.0, 1.0)
-	_progress_bar.value = normalized * max_value
+	var current_ticks: int = int(round(clamp(current_value / max_value, 0.0, 1.0) * TICK_COUNT))
+	var new_ticks: int = int(round(clamp(new_value / max_value, 0.0, 1.0) * TICK_COUNT))
 
-	if show_change:
-		_progress_bar.tooltip_text = "%s: %.2f → %.2f" % [_stat_name_label.text, current_value, new_value]
-	else:
-		_progress_bar.tooltip_text = "%s: %.2f" % [_stat_name_label.text, new_value]
+	for i in TICK_COUNT:
+		var tick: TextureRect = TextureRect.new()
+		tick.custom_minimum_size = Vector2(TICK_SIZE, TICK_SIZE)
+		tick.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		tick.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		tick.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+
+		var is_gained: bool = new_ticks > current_ticks and i >= current_ticks and i < new_ticks
+		var is_lost: bool = new_ticks < current_ticks and i >= new_ticks and i < current_ticks
+		var is_filled: bool = i < new_ticks or is_lost
+
+		tick.texture = TICK_FULL if is_filled else TICK_EMPTY
+		_ticks_container.add_child(tick)
+
+		if show_change and (is_gained or is_lost):
+			_animate_tick(tick)
 
 ## Formats snake_case stat name to Title Case.
 func _format_stat_name(stat_name: String) -> String:
@@ -55,46 +50,11 @@ func _format_stat_name(stat_name: String) -> String:
 			formatted_words.append(word.capitalize())
 	return " ".join(formatted_words)
 
-## Returns the icon matching [param stat_name], or null if unmapped.
-func _get_icon_for_stat(stat_name: String) -> Texture2D:
-	match stat_name:
-		"aoe_range":
-			return _ICON_AOE_RANGE
-		"damage":
-			return _ICON_ATTACK
-		"chain_damage_falloff":
-			return _ICON_ELECTRICITY_CHAIN_FALLOFF
-		"damage_multiplier":
-			return _ICON_ATTACK_MULTIPLIER
-		"projectile_count":
-			return _ICON_BULLETS
-		"aoe_tick", "burn_damage_base":
-			return _ICON_BURN_DAMAGE
-		"aoe_duration", "burn_duration":
-			return _ICON_BURN_DURATION
-		"electrify_tick_damage":
-			return _ICON_ELECTRICITY_BASE
-		"chain_bounces":
-			return _ICON_ELECTRICITY_CHAIN
-		"chain_range":
-			return _ICON_ELECTRICITY_CHAIN_RANGE
-		"electrify_duration":
-			return _ICON_ELECTRICITY_DURATION
-		"electrify_tick_interval":
-			return _ICON_ELECTRICITY_INTERVAL
-		"electrify_slow_amount":
-			return _ICON_ELECTRICITY_SLOW
-		"fire_rate":
-			return _ICON_FIRE_RATE
-		"pierce_count":
-			return _ICON_PIERCE_COUNT
-		"pierce_reduction":
-			return _ICON_PIERCE_REDUCTION
-		"shoot_range":
-			return _ICON_RANGE
-		"speed":
-			return _ICON_SPEED
-		"spread_angle":
-			return _ICON_SPREAD
-		_:
-			return null
+## Repeating sine fade to highlight a tick that is being gained or lost.
+func _animate_tick(tick: TextureRect) -> void:
+	var tween: Tween = create_tween()
+	tween.set_loops()
+	tween.set_trans(Tween.TRANS_SINE)
+	tween.set_ease(Tween.EASE_IN_OUT)
+	tween.tween_property(tick, "modulate:a", 0.15, 0.55)
+	tween.tween_property(tick, "modulate:a", 1.0, 0.55)
