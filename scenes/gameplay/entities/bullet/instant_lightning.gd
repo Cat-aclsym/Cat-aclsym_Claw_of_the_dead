@@ -124,6 +124,9 @@ func _find_next_chain_target(source_enemy: IEnemy, excluded_enemies: Array[IEnem
 		if not is_instance_valid(candidate_enemy) or excluded_enemies.has(candidate_enemy):
 			continue
 
+		if candidate_enemy.path != source_enemy.path:
+			continue
+
 		var distance: float = source_position.distance_to(candidate_enemy.global_position)
 		if distance > chain_range:
 			continue

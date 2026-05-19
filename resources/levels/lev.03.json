@@ -8,12 +8,12 @@
   "waves": [
 	[
 	  {
-		"enemy_id": "ene.01",
+		"enemy_id": "minesweeper",
 		"count": 1,
 		"spawner": 0
 	  },
 	  {
-		"wait_s": 3
+		"wait_s": 0.5
 	  },
 	  {
 		"enemy_id": "ene.02",

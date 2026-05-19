@@ -5,12 +5,16 @@
 class_name Home
 extends Control
 
+const _DEBUG_STATS_MENU: PackedScene = preload("res://scenes/ui/debug/stats_icons_debug.tscn")
+
 var _armory_menu_instance: Node = null
+var _debug_stats_menu_instance: Node = null
 var _encyclopedia_menu_instance: Encyclopedia
 var _levels_menu_instance: LevelSelectionMenu
 var _option_menu_instance: Options
 
 @onready var armory_button: TextureButton = %ArmoryButton
+@onready var debug_stats_button: Button = %DebugStatsButton
 @onready var encyclopedia_button: TextureButton = %EncyclopediaButton
 @onready var encyclopedia_exclamation: TextureRect = %EncyclopediaExclamation
 @onready var gui_margin_container: MarginContainer = $GuiMarginContainer
@@ -23,6 +27,7 @@ var _option_menu_instance: Options
 @onready var _option_menu: PackedScene = preload("res://scenes/ui/menus/options/options.tscn")
 
 @onready var signals: Array[Dictionary] = [
+	{SignalUtil.WHO: debug_stats_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_debug_stats_button_pressed},
 	{SignalUtil.WHO: armory_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_armory_button_pressed},
 	{SignalUtil.WHO: encyclopedia_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_encyclopedia_button_pressed},
 	{SignalUtil.WHO: settings_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_parameter_button_pressed},
@@ -32,6 +37,7 @@ var _option_menu_instance: Options
 # core
 func _ready() -> void:
 	assert(armory_button != null, "armory_button node not found")
+	assert(debug_stats_button != null, "debug_stats_button node not found")
 	assert(encyclopedia_button != null, "encyclopedia_button node not found")
 	assert(encyclopedia_exclamation != null, "encyclopedia_exclamation node not found")
 	assert(gui_margin_container != null, "gui_margin_container node not found")
@@ -47,8 +53,18 @@ func _ready() -> void:
 	ButtonEffects.apply(encyclopedia_button)
 	ButtonEffects.apply(play_button)
 	ButtonEffects.apply(settings_button)
+	if Global.debug:
+		debug_stats_button.visible = true
 
 # private
+## Opens the stats icons debug overlay. Only reachable when [member Global.debug] is true.
+func _on_debug_stats_button_pressed() -> void:
+	gui_margin_container.visible = false
+	_debug_stats_menu_instance = _DEBUG_STATS_MENU.instantiate()
+	add_child(_debug_stats_menu_instance)
+	_debug_stats_menu_instance.menu_close.connect(_on_menu_close.bind(_debug_stats_menu_instance))
+
+
 ## Handles the armory button press event.
 func _on_armory_button_pressed() -> void:
 	gui_margin_container.visible = false

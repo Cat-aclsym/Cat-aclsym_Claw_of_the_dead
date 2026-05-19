@@ -14,11 +14,11 @@ var unlocked: bool = false
 ## Converts the object to a dictionary for serialization.
 func save() -> Dictionary:
 	return {
-		"challenges_completed": challenges_completed,
+		"challenges_completed": challenges_completed.duplicate(),
 		"unlocked": unlocked
 	}
 
 ## Populates the object from a dictionary.
 func from_dictionary(data: Dictionary) -> void:
-	challenges_completed.assign(data.get("challenges_completed", []))
+	challenges_completed.assign(data.get("challenges_completed", []).duplicate())
 	unlocked = data.get("unlocked", false)
