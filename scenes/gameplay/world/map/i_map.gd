@@ -16,6 +16,9 @@ const SPECIAL_TILE_DEBUG_EXCLUSION_COLOR: Color = Color(1.0, 0.2, 0.2, 0.35)
 const SPECIAL_TILE_LAYER_INDEX: int = 3
 const SPECIAL_TILE_MAX_DISTANCE_TILES: float = 2.0
 const SPECIAL_TILE_MIN_DISTANCE_BETWEEN_TILES: float = 2.0
+const MAP_PLACEMENT_BLOCKER_SCRIPT: Script = preload(
+	"res://scenes/gameplay/world/map/map_placement_blocker.gd"
+)
 
 ## Intro sequence timings for special tiles.
 const SPECIAL_TILE_INTRO_INITIAL_DELAY_SECONDS: float = 1.5
@@ -49,6 +52,7 @@ var _bonus_tile_scene_source_id: int = -1
 var _bonus_tile_scene_tile_id: int = -1
 var _malus_tile_scene_source_id: int = -1
 var _malus_tile_scene_tile_id: int = -1
+var _placement_blocked_cells: Dictionary = {}
 
 ## Dictionary of special tiles (position -> modifier data)
 var special_tiles: Dictionary = {}
@@ -71,6 +75,9 @@ func _ready() -> void:
 		# If cursor is not yet initialized, wait a frame
 		call_deferred("_assign_tilemap_to_cursor")
 
+	_register_placement_blockers()
+	_sync_placement_blocked_cells_to_cursor()
+
 	# Generate special tiles immediately
 	_generate_special_tiles()
 
@@ -78,6 +85,7 @@ func _assign_tilemap_to_cursor() -> void:
 	var placement_system: BuildPlacement = Global.get("cursor") as BuildPlacement
 	if placement_system:
 		placement_system.tm_ref = tilemap
+		_sync_placement_blocked_cells_to_cursor()
 
 #public
 func play_special_tiles_intro_sequence() -> void:
@@ -611,6 +619,9 @@ func _ensure_malus_tile_scene_source() -> void:
 		_malus_tile_scene_tile_id = -1
 
 func _is_tile_buildable(coords: Vector2i) -> bool:
+	if _placement_blocked_cells.has(coords):
+		return false
+
 	# 1. Check if the base tile is valid
 	if tilemap.get_cell_source_id(0, coords) != BuildPlacement.VALID_SOURCE_ID or not tilemap.get_cell_atlas_coords(0, coords) in BuildPlacement.VALID_TILES:
 		return false
@@ -635,6 +646,46 @@ func _is_tile_buildable(coords: Vector2i) -> bool:
 			return false
 
 	return true
+
+
+func _collect_placement_blockers(node: Node, blockers: Array[Node2D]) -> void:
+	for child: Node in node.get_children():
+		if _is_map_placement_blocker(child):
+			blockers.append(child as Node2D)
+		_collect_placement_blockers(child, blockers)
+
+
+func _find_placement_blockers() -> Array[Node2D]:
+	var blockers: Array[Node2D] = []
+	_collect_placement_blockers(self, blockers)
+	return blockers
+
+
+func _get_placement_blocker_cells(blocker: Node2D) -> Array[Vector2i]:
+	return blocker.call(&"get_blocked_cells", tilemap) as Array[Vector2i]
+
+
+func _is_map_placement_blocker(node: Node) -> bool:
+	return node.get_script() == MAP_PLACEMENT_BLOCKER_SCRIPT
+
+
+func _register_placement_blockers() -> void:
+	if tilemap == null:
+		return
+
+	_placement_blocked_cells.clear()
+	for blocker: Node2D in _find_placement_blockers():
+		for cell: Vector2i in _get_placement_blocker_cells(blocker):
+			_placement_blocked_cells[cell] = true
+
+
+func _sync_placement_blocked_cells_to_cursor() -> void:
+	var placement_system: BuildPlacement = Global.cursor as BuildPlacement
+	if placement_system == null:
+		return
+
+	for cell: Vector2i in _placement_blocked_cells.keys():
+		placement_system.add_invalid_cell(cell)
 
 
 func _initialize_active_paths() -> void:
