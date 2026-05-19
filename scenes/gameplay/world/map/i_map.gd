@@ -38,6 +38,8 @@ const PATH_INDICATOR_START_TYPE: int = 0
 @export var initial_path_index: int = 0
 @export_range(0.0, 100.0, 0.1) var special_tile_percentage: float = 2.0
 
+## Optional square-grid props overlay (for example [TileMapProps]).
+@export var props_tilemap: TileMap
 ## Reference to the TileMap node for map layout
 @export var tilemap: TileMap
 
@@ -678,14 +680,34 @@ func _register_placement_blockers() -> void:
 		for cell: Vector2i in _get_placement_blocker_cells(blocker):
 			_placement_blocked_cells[cell] = true
 
+	_register_props_blocked_cells()
+
+
+func _register_props_blocked_cells() -> void:
+	if props_tilemap == null or tilemap == null:
+		return
+
+	for props_cell: Vector2i in props_tilemap.get_used_cells(0):
+		var world_pos: Vector2 = props_tilemap.to_global(props_tilemap.map_to_local(props_cell))
+		var iso_cell: Vector2i = tilemap.local_to_map(tilemap.to_local(world_pos))
+		_placement_blocked_cells[iso_cell] = true
+
 
 func _sync_placement_blocked_cells_to_cursor() -> void:
 	var placement_system: BuildPlacement = Global.cursor as BuildPlacement
 	if placement_system == null:
 		return
 
+	var blocked_cells: Array[Vector2i] = []
 	for cell: Vector2i in _placement_blocked_cells.keys():
-		placement_system.add_invalid_cell(cell)
+		blocked_cells.append(cell)
+
+	var added_count: int = placement_system.register_invalid_cells(blocked_cells)
+	if added_count > 0:
+		Log.trace(
+			Log.Level.INFO,
+			"Registered {0} blocked placement cells from map obstacles and props".format([added_count])
+		)
 
 
 func _initialize_active_paths() -> void:

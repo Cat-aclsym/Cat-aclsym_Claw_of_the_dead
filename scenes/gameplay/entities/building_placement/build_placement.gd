@@ -37,7 +37,7 @@ enum CursorState {
 ## Reference to the tilemap node
 var tm_ref: TileMap = null
 
-var _invalid_cells: Array[Vector2i] = []
+var _invalid_cells: Dictionary = {}
 var _is_dragging: bool = false
 var _is_holding_click: bool = false
 var _can_reposition_build_cursor: bool = true
@@ -93,11 +93,25 @@ func _unhandled_input(event: InputEvent) -> void:
 	if _state == CursorState.BUILD:
 		_state_build_input(event)
 
+## Registers multiple invalid cells in one pass (used at map load).
+## [param cells] Tilemap cells where buildings cannot be placed.
+## [return] Number of newly blocked cells.
+func register_invalid_cells(cells: Array[Vector2i]) -> int:
+	var added_count: int = 0
+	for tm_pos: Vector2i in cells:
+		if _invalid_cells.has(tm_pos):
+			continue
+		_invalid_cells[tm_pos] = true
+		added_count += 1
+	return added_count
+
+
 ## Adds a cell to the invalid cells list
 func add_invalid_cell(tm_pos: Vector2i) -> void:
-	if not tm_pos in _invalid_cells:
-		_invalid_cells.append(tm_pos)
-		Log.trace(Log.Level.INFO, "Cell {0} is now occupied".format([tm_pos]))
+	if _invalid_cells.has(tm_pos):
+		return
+	_invalid_cells[tm_pos] = true
+	Log.trace(Log.Level.DEBUG, "Cell {0} is now occupied".format([tm_pos]))
 
 ## Change the current state of the build placement cursor.
 ## [br]
@@ -146,12 +160,9 @@ func change_state(new_state: CursorState, args: Array = []) -> void:
 
 ## Removes a cell from the invalid cells list so a building can be placed there again.
 func remove_invalid_cell(tm_pos: Vector2i) -> void:
-	var removed_any: bool = false
-	while tm_pos in _invalid_cells:
-		_invalid_cells.erase(tm_pos)
-		removed_any = true
-	if removed_any:
-		Log.trace(Log.Level.INFO, "Cell {0} is now free for building".format([tm_pos]))
+	if not _invalid_cells.erase(tm_pos):
+		return
+	Log.trace(Log.Level.DEBUG, "Cell {0} is now free for building".format([tm_pos]))
 
 func _build() -> void:
 	if not _is_buildable(cursor.position):
@@ -279,7 +290,7 @@ func _is_ground_building_placeable(pos: Vector2, building: IBuilding = null) -> 
 
 	var tm_pos: Vector2i = tm_ref.local_to_map(pos)
 
-	if tm_pos in _invalid_cells:
+	if _invalid_cells.has(tm_pos):
 		return false
 
 	var source_id: int = tm_ref.get_cell_source_id(0, tm_pos)
@@ -339,7 +350,7 @@ func _is_trap_buildable(pos: Vector2, building: IBuilding = null) -> bool:
 	if not _is_position_on_path(pos):
 		return false
 
-	if tm_pos in _invalid_cells:
+	if _invalid_cells.has(tm_pos):
 		return false
 
 	return true
