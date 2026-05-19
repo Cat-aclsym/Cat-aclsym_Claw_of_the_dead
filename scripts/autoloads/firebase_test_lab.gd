@@ -11,7 +11,7 @@ func _ready() -> void:
 	if not _is_test_lab():
 		return
 	_scenario = _get_scenario()
-	Log.trace(Log.Level.INFO, "Firebase Test Lab: running scenario {0}".format([_scenario]))
+	Log.trace(Log.Level.INFO, "FirebaseTestLab: running scenario {0}".format([_scenario]))
 	_running = true
 	await get_tree().process_frame
 	_run_scenario(_scenario)
@@ -21,25 +21,39 @@ func _process(delta: float) -> void:
 		return
 	_timer += delta
 	if _timer >= SCENARIO_TIMEOUT:
+		Log.trace(Log.Level.WARN, "FirebaseTestLab: scenario timeout reached")
 		_finish_scenario(_scenario, true)
 
 func _is_test_lab() -> bool:
-    if OS.get_name() != "Android":
-        return false
-    var args = OS.get_cmdline_args()
-    for arg in args:
-        if "scenario" in arg.to_lower():
-            return true
-    return false
+	if OS.get_name() != "Android":
+		return false
+	var runtime = Engine.get_singleton("AndroidRuntime")
+	if not runtime:
+		Log.trace(Log.Level.WARN, "FirebaseTestLab: AndroidRuntime singleton not available")
+		return false
+	var activity = runtime.getActivity()
+	if not activity:
+		return false
+	var intent = activity.getIntent()
+	if not intent:
+		return false
+	# getAction() returns a Java String object — must use str() for GDScript comparison
+	var action = str(intent.getAction())
+	Log.trace(Log.Level.INFO, "FirebaseTestLab: detected intent action = {0}".format([action]))
+	return action == "com.google.intent.action.TEST_LOOP"
 
 func _get_scenario() -> int:
-    var args = OS.get_cmdline_args()
-    for arg in args:
-        if arg.begins_with("--scenario="):
-            return int(arg.split("=")[1])
-        if arg.begins_with("scenario="):
-            return int(arg.split("=")[1])
-    return 1
+	var runtime = Engine.get_singleton("AndroidRuntime")
+	if not runtime:
+		return 1
+	var activity = runtime.getActivity()
+	if not activity:
+		return 1
+	var intent = activity.getIntent()
+	if not intent:
+		return 1
+	# getIntExtra returns a Java int — convert to GDScript int
+	return int(intent.getIntExtra("scenario", 1))
 
 func _run_scenario(scenario: int) -> void:
 	match scenario:
@@ -48,15 +62,16 @@ func _run_scenario(scenario: int) -> void:
 		2:
 			_run_scenario_gameplay()
 		_:
+			Log.trace(Log.Level.WARN, "FirebaseTestLab: unknown scenario {0}".format([scenario]))
 			_finish_scenario(scenario, false)
 
 func _run_scenario_home() -> void:
-	Log.trace(Log.Level.INFO, "Firebase Test Lab: scenario 1 - home screen")
+	Log.trace(Log.Level.INFO, "FirebaseTestLab: scenario 1 - home screen")
 	await get_tree().create_timer(5.0).timeout
 	_finish_scenario(1, true)
 
 func _run_scenario_gameplay() -> void:
-	Log.trace(Log.Level.INFO, "Firebase Test Lab: scenario 2 - gameplay")
+	Log.trace(Log.Level.INFO, "FirebaseTestLab: scenario 2 - gameplay")
 	get_tree().change_scene_to_file("res://scenes/gameplay/world/level/levels/lev.01.tscn")
 	await get_tree().create_timer(20.0).timeout
 	_finish_scenario(2, true)
@@ -75,8 +90,8 @@ func _write_results(scenario: int, success: bool) -> void:
 	DirAccess.make_dir_recursive_absolute(dir_path)
 	var file := FileAccess.open(RESULT_PATH, FileAccess.WRITE)
 	if file == null:
-		Log.trace(Log.Level.ERROR, "Firebase Test Lab: failed to write results")
+		Log.trace(Log.Level.ERROR, "FirebaseTestLab: failed to write results to {0}".format([RESULT_PATH]))
 		return
 	file.store_string(JSON.stringify(result))
 	file.close()
-	Log.trace(Log.Level.INFO, "Firebase Test Lab: results written")
+	Log.trace(Log.Level.INFO, "FirebaseTestLab: results written to {0}".format([RESULT_PATH]))
