@@ -34,13 +34,6 @@ jobs:
           unzip -q Godot_v4.4-stable_export_templates.tpz
           mv templates/* ~/.local/share/godot/export_templates/4.4.stable/
 
-      - name: Setup Android build template
-        run: |
-          mkdir -p android/build
-          unzip -o -q Godot_v4.4-stable_export_templates.tpz templates/android_source.zip
-          unzip -o -q templates/android_source.zip -d android/build
-          echo "4.4.stable" > android/.build_version
-
       - name: Decode keystore
         run: |
           echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > ~/Cataclysm.keystore
@@ -99,6 +92,49 @@ jobs:
           mkdir -p exports
           godot --headless --export-release "Android" exports/Cataclysm.apk || true
           godot --headless --export-release "Android" exports/Cataclysm.apk
+
+      - name: Install apktool
+        run: |
+          wget -q https://raw.githubusercontent.com/iBotPeaches/Apktool/master/scripts/linux/apktool -O /usr/local/bin/apktool
+          wget -q https://bitbucket.org/iBotPeaches/apktool/downloads/apktool_2.9.3.jar -O /usr/local/bin/apktool.jar
+          chmod +x /usr/local/bin/apktool
+
+      - name: Inject Firebase Game Loop intent filter
+        run: |
+          apktool d -f exports/Cataclysm.apk -o exports/apk_decoded
+          python3 - <<'EOF'
+          with open("exports/apk_decoded/AndroidManifest.xml", "r") as f:
+              content = f.read()
+
+          intent_filter = '''
+              <intent-filter>
+                  <action android:name="com.google.intent.action.TEST_LOOP"/>
+                  <category android:name="android.intent.category.DEFAULT"/>
+                  <data android:mimeType="application/javascript"/>
+              </intent-filter>
+              <meta-data android:name="com.google.test.loops" android:value="2"/>'''
+
+          content = content.replace(
+              '</activity>',
+              intent_filter + '\n    </activity>',
+              1
+          )
+
+          with open("exports/apk_decoded/AndroidManifest.xml", "w") as f:
+              f.write(content)
+
+          print("Done!")
+          EOF
+          apktool b exports/apk_decoded -o exports/Cataclysm_unsigned.apk
+
+      - name: Sign patched APK
+        run: |
+          /usr/local/lib/android/sdk/build-tools/34.0.0/apksigner sign \
+            --ks ~/Cataclysm.keystore \
+            --ks-pass pass:${{ secrets.KEYSTORE_PASSWORD }} \
+            --ks-key-alias Cataclysm \
+            --out exports/Cataclysm.apk \
+            exports/Cataclysm_unsigned.apk
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
