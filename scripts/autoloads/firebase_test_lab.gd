@@ -24,21 +24,22 @@ func _process(delta: float) -> void:
 		_finish_scenario(_scenario, true)
 
 func _is_test_lab() -> bool:
-	if OS.get_name() != "Android":
-		return false
-	if Engine.has_singleton("AndroidRuntime"):
-		var runtime = Engine.get_singleton("AndroidRuntime")
-		var intent_action = runtime.getActivity().getIntent().getAction()
-		return intent_action == "com.google.intent.action.TEST_LOOP"
-	return false
+    if OS.get_name() != "Android":
+        return false
+    var args = OS.get_cmdline_args()
+    for arg in args:
+        if "scenario" in arg.to_lower():
+            return true
+    return false
 
 func _get_scenario() -> int:
-	if Engine.has_singleton("AndroidRuntime"):
-		var runtime = Engine.get_singleton("AndroidRuntime")
-		var extras = runtime.getActivity().getIntent().getExtras()
-		if extras != null and extras.containsKey("scenario"):
-			return extras.getInt("scenario")
-	return 1
+    var args = OS.get_cmdline_args()
+    for arg in args:
+        if arg.begins_with("--scenario="):
+            return int(arg.split("=")[1])
+        if arg.begins_with("scenario="):
+            return int(arg.split("=")[1])
+    return 1
 
 func _run_scenario(scenario: int) -> void:
 	match scenario:
