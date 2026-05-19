@@ -1,8 +1,9 @@
-[gd_scene load_steps=5 format=3 uid="uid://cta5yotths5ck"]
+[gd_scene load_steps=6 format=3 uid="uid://cta5yotths5ck"]
 
 [ext_resource type="PackedScene" uid="uid://crdosg1fmycsi" path="res://scenes/gameplay/world/map/i_map.tscn" id="1_ja0gd"]
 [ext_resource type="Texture2D" uid="uid://bcxnwyojlu45a" path="res://assets/environment/backgrounds/Canoé.png" id="2_canoe"]
 [ext_resource type="Script" path="res://scenes/gameplay/world/map/map_placement_blocker.gd" id="3_blocker"]
+[ext_resource type="Texture2D" uid="uid://cmmi14tmwjokk" path="res://assets/environment/backgrounds/Voilier.png" id="4_sailboat"]
 
 [sub_resource type="Curve2D" id="Curve2D_pnrrg"]
 _data = {
@@ -31,6 +32,15 @@ position = Vector2(478, 284)
 centered = false
 offset = Vector2(62, 82)
 texture = ExtResource("2_canoe")
+script = ExtResource("3_blocker")
+
+[node name="Sailboat" type="Sprite2D" parent="Decorations"]
+z_index = 2
+texture_filter = 1
+position = Vector2(128, 155)
+centered = false
+offset = Vector2(64, 165)
+texture = ExtResource("4_sailboat")
 script = ExtResource("3_blocker")
 
 [node name="Controller" parent="." index="3"]
