@@ -95,9 +95,7 @@ jobs:
 
       - name: Install apktool
         run: |
-          wget -q https://raw.githubusercontent.com/iBotPeaches/Apktool/master/scripts/linux/apktool -O /usr/local/bin/apktool
-          wget -q https://bitbucket.org/iBotPeaches/apktool/downloads/apktool_2.9.3.jar -O /usr/local/bin/apktool.jar
-          chmod +x /usr/local/bin/apktool
+          sudo apt-get install -y apktool
 
       - name: Inject Firebase Game Loop intent filter
         run: |
