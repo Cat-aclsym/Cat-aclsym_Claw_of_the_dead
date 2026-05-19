@@ -8,7 +8,7 @@ extends Camera2D
 @export var pan_speed: float = 1.0
 @export var random_strength: float = 30.0
 @export var shake_fade: float = 5.0
-@export var min_zoom: float = 0.5
+@export var min_zoom: float = 1.0
 @export var max_zoom: float = 10.0
 
 var _touch_points: Dictionary = {}
@@ -70,6 +70,7 @@ func handle_drag(event: InputEventScreenDrag) -> void:
 
     if _touch_points.size() == 1:
         position = position - event.relative * pan_speed / zoom.x
+        _clamp_position_to_limits()
     elif _touch_points.size() == 2:
         _handle_pinch_zoom()
 
@@ -111,3 +112,9 @@ func _handle_pinch_zoom() -> void:
     var zoom_factor: float = _start_distance / current_distance
     zoom = _start_zoom / zoom_factor
     clamp_zoom()
+
+## Clamps position so the rendered view never drifts outside the Camera2D limits.
+func _clamp_position_to_limits() -> void:
+    var half: Vector2 = get_viewport_rect().size / zoom / 2.0
+    position.x = clamp(position.x, limit_left + half.x, limit_right - half.x)
+    position.y = clamp(position.y, limit_top + half.y, limit_bottom - half.y)
