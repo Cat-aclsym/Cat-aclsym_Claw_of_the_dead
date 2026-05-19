@@ -1,11 +1,10 @@
-## © [2024] A7 Studio. All rights reserved. Trademark.
-## @experimental
+## © [2026] A7 Studio. All rights reserved. Trademark.
 class_name LevelSelectionMenu extends Control
 
 signal level_selected
 
-var level_statuses: Dictionary = {}
-var level_frames: Array = []
+var level_statuses: Dictionary[String, LevelIndicator.Status] = {}
+var level_frames: Array[LevelFrame] = []
 var level_index: int = 0
 
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
@@ -24,7 +23,6 @@ var level_index: int = 0
 @onready var locked_frame: CenterContainer = $MarginContainer/VBoxContainer/BodyContainer/LockedFrame
 
 @onready var indicators_container: HBoxContainer = $MarginContainer/VBoxContainer/VBoxContainer/IndicatorsContainer
-
 @onready var signals: Array[Dictionary] = [
 	{SignalUtil.WHO: previous_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_previous_button_pressed},
 	{SignalUtil.WHO: next_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_next_button_pressed},
@@ -32,73 +30,94 @@ var level_index: int = 0
 ]
 
 
-# core
 func _ready() -> void:
+	assert(previous_button != null, "previous_button is required")
+	assert(next_button != null, "next_button is required")
+	assert(main_menu_button != null, "main_menu_button is required")
 	configure()
 
 
-# public
 func configure() -> void:
+	SignalUtil.connects(signals)
 	_load_levels()
 	_update()
-	SignalUtil.connects(signals)
-	
+
 	ButtonEffects.apply(previous_button)
 	ButtonEffects.apply(next_button)
 	ButtonEffects.apply(main_menu_button)
 
 
-# private
 func _update() -> void:
 	for level_frame in level_frames:
 		level_frame.visible = false
-	level_frames[level_index].visible = true
+	locked_frame.visible = false
 
-	if not level_frames[level_index] is LevelFrame:
+	if level_frames.is_empty():
 		return
 
-	if background_texture_rect.texture != level_frames[level_index].arc_texture:
+	var has_locked_frame: bool = is_instance_valid(locked_frame)
+	var is_locked_selection: bool = has_locked_frame and level_index == level_frames.size()
+	if is_locked_selection:
+		locked_frame.visible = true
+		return
+
+	if level_index < 0 or level_index >= level_frames.size():
+		return
+
+	var current_frame: LevelFrame = level_frames[level_index]
+	current_frame.visible = true
+
+	if background_texture_rect.texture != current_frame.arc_texture:
 		animation_player.play("dim_bg")
-		arc_title_label.text = 	level_frames[level_index].arc_title
+		arc_title_label.text = current_frame.arc_title
 
 func _load_levels() -> void:
+	level_frames.clear()
+	level_statuses.clear()
+
+	for child in indicators_container.get_children():
+		child.queue_free()
+
+	var dynamic_signals: Array[Dictionary] = []
 	var i := 1
 
-	for child in body_container.get_children():
+	for child: Node in body_container.get_children():
 		if not child is LevelFrame:
 			continue
 
+		var level_frame: LevelFrame = child as LevelFrame
 		var status := LevelIndicator.Status.LOCKED
-		if ProgressionManager.is_level_unlocked(child.level_id):
-			var level_data: LevelData = ProgressionManager.data.levels[child.level_id]
+		if ProgressionManager.is_level_unlocked(level_frame.level_id):
+			var level_data: LevelData = ProgressionManager.data.levels[level_frame.level_id]
 			if not level_data.challenges_completed.is_empty():
 				status = LevelIndicator.Status.COMPLETED
 			else:
 				status = LevelIndicator.Status.CURRENT
 
-		level_statuses[child.level_id] = status
+		level_statuses[level_frame.level_id] = status
 
-		level_frames.append(child)
-		signals.append({SignalUtil.WHO: child, SignalUtil.WHAT: "start_level", SignalUtil.TO: _on_frame_start_level})
+		level_frames.append(level_frame)
+		dynamic_signals.append({SignalUtil.WHO: level_frame, SignalUtil.WHAT: "start_level", SignalUtil.TO: _on_frame_start_level})
 
-		var indicator: LevelIndicator = indicator_scene.instantiate()
+		var indicator := indicator_scene.instantiate() as LevelIndicator
 		indicators_container.add_child(indicator)
 		indicator.configure(i, status)
-		signals.append({SignalUtil.WHO: indicator, SignalUtil.WHAT: "selected", SignalUtil.TO: _on_level_indicator_selected})
+		dynamic_signals.append({SignalUtil.WHO: indicator, SignalUtil.WHAT: "selected", SignalUtil.TO: _on_level_indicator_selected})
 
-		var separator := separator_scene.instantiate()
+		var separator := separator_scene.instantiate() as Control
 		indicators_container.add_child(separator)
 
 		if status == LevelIndicator.Status.CURRENT:
-			level_index = i-1
+			level_index = i - 1
 
 		i += 1
 
-	level_frames.append(locked_frame)
-	indicators_container.get_children().back().queue_free()
+	if not indicators_container.get_children().is_empty():
+		indicators_container.get_children().back().queue_free()
+
+	SignalUtil.connects(dynamic_signals)
 
 
-# signal
 func _on_frame_start_level(level: ILevel) -> void:
 	visible = false
 
@@ -109,12 +128,15 @@ func _on_frame_start_level(level: ILevel) -> void:
 	Global.ui.start_level()
 	level_selected.emit()
 
-	# free all other frames to save memory
+	## Frees inactive level previews once gameplay starts.
 	for frame in level_frames:
-		if frame != locked_frame and frame != level_frames[level_index]:
+		if frame != level_frames[level_index]:
 			if frame is LevelFrame:
 				frame.unload_level()
-			frame.queue_free()
+		frame.queue_free()
+
+	if is_instance_valid(locked_frame):
+		locked_frame.queue_free()
 
 
 func _on_previous_button_pressed() -> void:
@@ -124,19 +146,20 @@ func _on_previous_button_pressed() -> void:
 
 
 func _on_next_button_pressed() -> void:
-	var i: int = (level_index + 1) if level_index + 1 < level_frames.size() else level_index
+	var max_index: int = level_frames.size()
+	if not is_instance_valid(locked_frame):
+		max_index = max(0, level_frames.size() - 1)
 
-	if not level_frames[i] is LevelFrame:
-		level_index = i
-		_update()
+	var next_index: int = min(level_index + 1, max_index)
+	if next_index == level_index:
 		return
 
-	var id = level_frames[i].level.level_id
-	if level_statuses[id] == LevelIndicator.Status.LOCKED:
-		return
+	if next_index < level_frames.size():
+		var next_id: String = level_frames[next_index].level_id
+		if level_statuses.get(next_id, LevelIndicator.Status.LOCKED) == LevelIndicator.Status.LOCKED:
+			return
 
-	if level_index < level_frames.size() - 1:
-		level_index += 1
+	level_index = next_index
 
 	_update()
 
@@ -151,5 +174,7 @@ func _on_level_indicator_selected(indicator: LevelIndicator) -> void:
 	_update()
 
 
-func _on_dim_bg() -> void: # pas vraiment un signal mais un peu quand meme
+func _on_dim_bg() -> void:
+	if level_index < 0 or level_index >= level_frames.size():
+		return
 	background_texture_rect.texture = level_frames[level_index].arc_texture

@@ -46,7 +46,6 @@ const PROJECTILE_GAMEPLAY_KEYS: Array[String] = [
 	"chain_range",
 	"damage",
 	"damage_multiplier",
-	"dot_damage",
 	"electrify_duration",
 	"electrify_slow_amount",
 	"electrify_tick_damage",
@@ -578,9 +577,7 @@ func _apply_projectile_config(bullet_instance: IBullet) -> void:
 		match key:
 			"speed", "pierce_count", "burn_damage_base", "aoe_range", "pierce_reduction":
 				bullet_instance.set(key, int(round(float(v))))
-			"damage", "burn_duration", "aoe_duration", "aoe_tick":
-				bullet_instance.set(key, float(v))
-			"dot_damage", "damage_multiplier":
+			"damage", "burn_duration", "aoe_duration", "aoe_tick", "damage_multiplier":
 				bullet_instance.set(key, float(v))
 			"is_charging":
 				bullet_instance.set(key, bool(v))

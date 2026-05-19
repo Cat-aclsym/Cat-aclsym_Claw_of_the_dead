@@ -66,11 +66,11 @@ text = "Améliorer au niveau X"
 [node name="TabsHBoxContainer" type="HBoxContainer" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/separation = 10
+theme_override_constants/separation = 20
 alignment = 1
 
 [node name="UpgradeOption1Button" type="Button" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/TabsHBoxContainer"]
-custom_minimum_size = Vector2(180, 65)
+custom_minimum_size = Vector2(160, 50)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("3_uyu61")
 theme_override_styles/focus = SubResource("StyleBoxTexture_u7ot3")
@@ -80,7 +80,7 @@ theme_override_styles/normal = SubResource("StyleBoxTexture_u7ot3")
 text = "Option 1"
 
 [node name="UpgradeOption2Button" type="Button" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/TabsHBoxContainer"]
-custom_minimum_size = Vector2(180, 65)
+custom_minimum_size = Vector2(160, 50)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("3_uyu61")
 theme_override_styles/focus = SubResource("StyleBoxTexture_u7ot3")
@@ -105,11 +105,13 @@ theme_override_constants/separation = 16
 [node name="ButtonsHBoxContainer" type="HBoxContainer" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/separation = 20
-alignment = 1
+
+[node name="SpacerLeft" type="Control" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/ButtonsHBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
 
 [node name="ConfirmButton" type="TextureButton" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/ButtonsHBoxContainer"]
-custom_minimum_size = Vector2(200, 65)
+custom_minimum_size = Vector2(160, 50)
 layout_mode = 2
 texture_normal = ExtResource("7_wrblu")
 ignore_texture_size = true
@@ -117,15 +119,9 @@ stretch_mode = 5
 
 [node name="PriceRow" type="HBoxContainer" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/ButtonsHBoxContainer/ConfirmButton"]
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -110.0
-offset_top = -24.0
-offset_right = 110.0
-offset_bottom = 24.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 6
@@ -146,8 +142,12 @@ texture = ExtResource("9_28meq")
 expand_mode = 1
 stretch_mode = 5
 
+[node name="SpacerMiddle" type="Control" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/ButtonsHBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
 [node name="CancelButton" type="TextureButton" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/ButtonsHBoxContainer"]
-custom_minimum_size = Vector2(200, 65)
+custom_minimum_size = Vector2(160, 50)
 layout_mode = 2
 texture_normal = ExtResource("8_u7ot3")
 ignore_texture_size = true
@@ -155,13 +155,16 @@ stretch_mode = 5
 
 [node name="Label" type="Label" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/ButtonsHBoxContainer/CancelButton"]
 layout_mode = 1
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -52.5
-offset_top = 4.0
-offset_right = 52.5
-offset_bottom = 48.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 grow_horizontal = 2
+grow_vertical = 2
 theme_override_fonts/font = ExtResource("3_uyu61")
 text = "Annuler"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SpacerRight" type="Control" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/ButtonsHBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
