@@ -16,7 +16,6 @@ const SPECIAL_TILE_DEBUG_EXCLUSION_COLOR: Color = Color(1.0, 0.2, 0.2, 0.35)
 const SPECIAL_TILE_LAYER_INDEX: int = 3
 const SPECIAL_TILE_MAX_DISTANCE_TILES: float = 2.0
 const SPECIAL_TILE_MIN_DISTANCE_BETWEEN_TILES: float = 2.0
-
 ## Intro sequence timings for special tiles.
 const SPECIAL_TILE_INTRO_INITIAL_DELAY_SECONDS: float = 1.5
 
@@ -35,6 +34,10 @@ const PATH_INDICATOR_START_TYPE: int = 0
 @export var initial_path_index: int = 0
 @export_range(0.0, 100.0, 0.1) var special_tile_percentage: float = 2.0
 
+## Invisible TileMap that marks every tile where towers can be placed.
+@export var placement_tilemap: TileMap
+## Optional square-grid props overlay (for example [TileMapProps]).
+@export var props_tilemap: TileMap
 ## Reference to the TileMap node for map layout
 @export var tilemap: TileMap
 
@@ -70,6 +73,11 @@ func _ready() -> void:
 	else:
 		# If cursor is not yet initialized, wait a frame
 		call_deferred("_assign_tilemap_to_cursor")
+
+	_setup_camera_limits()
+
+	if is_instance_valid(placement_tilemap):
+		placement_tilemap.visible = false
 
 	# Generate special tiles immediately
 	_generate_special_tiles()
@@ -116,6 +124,15 @@ func get_tower_by_name(tower_name: String) -> ITower:
 			if tower.name == tower_name:
 				return tower
 	return null
+
+
+## Toggles visibility of the placement TileMap for debugging.
+## Returns true when now visible, false when hidden.
+func toggle_placement_debug_overlay() -> bool:
+	if not is_instance_valid(placement_tilemap):
+		return false
+	placement_tilemap.visible = not placement_tilemap.visible
+	return placement_tilemap.visible
 
 
 ## Activates a path so enemy spawners can use it.
@@ -234,7 +251,7 @@ func _generate_special_tiles() -> void:
 	for x in range(used_rect.position.x, used_rect.end.x):
 		for y in range(used_rect.position.y, used_rect.end.y):
 			var coords := Vector2i(x, y)
-			if _is_tile_buildable(coords):
+			if is_tile_buildable(coords):
 				buildable_tiles.append(coords)
 
 	Log.trace(Log.Level.INFO, "Found {0} buildable tiles for special tiles".format([buildable_tiles.size()]))
@@ -610,28 +627,18 @@ func _ensure_malus_tile_scene_source() -> void:
 		_malus_tile_scene_source_id = -1
 		_malus_tile_scene_tile_id = -1
 
-func _is_tile_buildable(coords: Vector2i) -> bool:
-	# 1. Check if the base tile is valid
-	if tilemap.get_cell_source_id(0, coords) != BuildPlacement.VALID_SOURCE_ID or not tilemap.get_cell_atlas_coords(0, coords) in BuildPlacement.VALID_TILES:
+## Returns true if a tower can be placed on [param coords].
+## Authoritative source is the invisible placement TileMap painted by the level designer.
+func is_tile_buildable(coords: Vector2i) -> bool:
+	if placement_tilemap == null:
+		return false
+	if placement_tilemap.get_cell_source_id(0, coords) == -1:
 		return false
 
-	# 2. Check if there are obstacles on layer 1 (Water Rays, etc.)
-	if tilemap.get_cell_atlas_coords(1, coords) != Vector2i(-1, -1):
-		return false
-
-	# 3. Check if there are props on layer 2 that might block (if layer 2 is used for blocking)
-
-	# (Optionnel, selon votre projet. BuildPlacement ne semble pas vérifier le layer 2)
-
-	# 4. Check if it's on an enemy path
-	var world_pos = tilemap.map_to_local(coords)
-
-	var placement_half_size: float = 12.5 # matching BuildPlacement.placement_half_size
-
-	for path in paths:
-		var closest_point = path.curve.get_closest_point(path.to_local(world_pos))
-		var distance = world_pos.distance_to(path.to_global(closest_point))
-		if distance < placement_half_size:
+	var world_pos: Vector2 = tilemap.map_to_local(coords)
+	for path: Path2D in paths:
+		var closest: Vector2 = path.curve.get_closest_point(path.to_local(world_pos))
+		if world_pos.distance_to(path.to_global(closest)) < 12.5:
 			return false
 
 	return true
@@ -657,3 +664,34 @@ func _is_valid_path_index(path_index: int) -> bool:
 		return false
 
 	return true
+
+
+func _setup_camera_limits() -> void:
+	if camera == null or tilemap == null:
+		return
+
+	var used_rect: Rect2i = tilemap.get_used_rect()
+	var corners: Array[Vector2i] = [
+		used_rect.position,
+		used_rect.position + Vector2i(used_rect.size.x, 0),
+		used_rect.position + Vector2i(0, used_rect.size.y),
+		used_rect.position + used_rect.size,
+	]
+
+	var min_x: float = INF
+	var min_y: float = INF
+	var max_x: float = -INF
+	var max_y: float = -INF
+
+	for corner: Vector2i in corners:
+		var world_pos: Vector2 = tilemap.to_global(tilemap.map_to_local(corner))
+		min_x = min(min_x, world_pos.x)
+		min_y = min(min_y, world_pos.y)
+		max_x = max(max_x, world_pos.x)
+		max_y = max(max_y, world_pos.y)
+
+	var padding: int = 64
+	camera.limit_left = int(min_x) - padding
+	camera.limit_top = int(min_y) - padding
+	camera.limit_right = int(max_x) + padding
+	camera.limit_bottom = int(max_y)
