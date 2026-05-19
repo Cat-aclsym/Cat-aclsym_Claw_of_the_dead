@@ -14,7 +14,7 @@ const _ICON_COIN: Texture2D = preload("res://assets/ui/huds/Coin.png")
 const _ICON_FIRE_RATE: Texture2D = preload("res://assets/ui/stats/fire-rate.png")
 const _ICON_HEALTH: Texture2D = preload("res://assets/ui/huds/Coeur.png")
 const _ICON_RANGE: Texture2D = preload("res://assets/ui/stats/range.png")
-const _ICON_SPEED: Texture2D = preload("res://assets/ui/stats/speed.png")
+const _ICON_SPEED: Texture2D = preload("res://assets/ui/stats/zombie-speed.png")
 
 
 ## Internal data structure for all entries.
@@ -149,7 +149,7 @@ func _ready() -> void:
 	name_label.add_theme_font_size_override("font_size", 48)
 	towers_button.add_theme_font_override("font", _font)
 	enemies_button.add_theme_font_override("font", _font)
-	
+
 	ButtonEffects.apply(close_button)
 	ButtonEffects.apply(enemies_button)
 	ButtonEffects.apply(next_button)
@@ -217,7 +217,7 @@ func _add_stat_row(p_key: String, p_val: String) -> void:
 	var icon: Texture2D = _get_icon_for_encyclopedia_stat(p_key)
 
 	var key_container := Control.new()
-	key_container.custom_minimum_size = Vector2(220, int(float(_current_stat_font_size) * 1.75) + 4)
+	key_container.custom_minimum_size = Vector2(220, int(float(_current_stat_font_size) * 2) + 4)
 	key_container.clip_contents = true
 	key_container.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	stats_grid.add_child(key_container)

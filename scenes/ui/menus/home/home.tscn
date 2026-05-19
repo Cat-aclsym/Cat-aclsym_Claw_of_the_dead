@@ -8,7 +8,7 @@
 [ext_resource type="Texture2D" uid="uid://nsf3nkto3p0t" path="res://assets/ui/buttons/Bouton Vert.svg" id="5_db01i"]
 [ext_resource type="Texture2D" uid="uid://cvut87og2mth" path="res://assets/ui/buttons/Bouton orange.svg" id="6_tu8js"]
 [ext_resource type="Texture2D" uid="uid://c1f4e2f8oknku" path="res://assets/ui/icons/exclamation.png" id="7_exclamation"]
-[ext_resource type="FontVariation" uid="uid://c5y1j2k3l4m5n" path="res://assets/ui/fonts/dotgothic/dotgothic_variation.tres" id="8_variation"]
+[ext_resource type="FontVariation" uid="uid://b5t3wfh501ofr" path="res://assets/ui/fonts/dotgothic/dotgothic_variation.tres" id="8_variation"]
 
 [sub_resource type="Gradient" id="Gradient_p68sa"]
 interpolation_mode = 2
