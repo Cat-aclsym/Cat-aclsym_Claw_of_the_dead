@@ -18,15 +18,6 @@ const COLOR_KO := Color(1, 0.5, 0.5, 0.5)
 const BUTTON_COLOR_ENABLED := Color(1, 1, 1, 1)
 const BUTTON_COLOR_DISABLED := Color(0.5, 0.5, 0.5, 0.6)
 
-const UP_OFFSET := Vector2i(-1, -1)
-const RIGHT_OFFSET := Vector2i(0, -1)
-const LEFT_OFFSET := Vector2i(-1, 0)
-## Base TileMap constraints for ground-placed buildings (towers); traps use path rules instead.
-const VALID_SOURCE_ID: int = 0 # Ground Grass
-const VALID_TILES: Array[Vector2i] = [
-	Vector2i(0, 0)
-]
-
 ## States for the build / upgrade cursor.
 enum CursorState {
 	IDLE,  ## Default state
@@ -52,7 +43,6 @@ static var tower_count: int = 0
 @onready var cursor: AnimatedSprite2D = $cursor
 @onready var place_button: TextureButton = $PlaceHUD/HBoxContainer/PlaceButton
 @onready var place_hud: Control = $PlaceHUD
-@onready var place_hud_content: BoxContainer = $PlaceHUD/HBoxContainer
 @onready var placement_area: Area2D = $Area2D
 
 @onready var signals: Array[Dictionary] = [
@@ -69,7 +59,6 @@ func _ready() -> void:
 	assert(cursor != null, "cursor node not found")
 	assert(place_button != null, "place_button node not found")
 	assert(place_hud != null, "place_hud node not found")
-	assert(place_hud_content != null, "place_hud_content node not found")
 	assert(placement_area != null, "placement_area node not found")
 
 	Global.cursor = self
@@ -92,19 +81,6 @@ func _unhandled_input(event: InputEvent) -> void:
 
 	if _state == CursorState.BUILD:
 		_state_build_input(event)
-
-## Registers multiple invalid cells in one pass (used at map load).
-## [param cells] Tilemap cells where buildings cannot be placed.
-## [return] Number of newly blocked cells.
-func register_invalid_cells(cells: Array[Vector2i]) -> int:
-	var added_count: int = 0
-	for tm_pos: Vector2i in cells:
-		if _invalid_cells.has(tm_pos):
-			continue
-		_invalid_cells[tm_pos] = true
-		added_count += 1
-	return added_count
-
 
 ## Adds a cell to the invalid cells list
 func add_invalid_cell(tm_pos: Vector2i) -> void:
@@ -293,15 +269,10 @@ func _is_ground_building_placeable(pos: Vector2, building: IBuilding = null) -> 
 	if _invalid_cells.has(tm_pos):
 		return false
 
-	var source_id: int = tm_ref.get_cell_source_id(0, tm_pos)
-	if source_id != VALID_SOURCE_ID:
+	var map: IMap = ILevel.current_level.map if ILevel.current_level else null
+	if not is_instance_valid(map) or map.placement_tilemap == null:
 		return false
-
-	var atlas_coords: Vector2i = tm_ref.get_cell_atlas_coords(0, tm_pos)
-	if not atlas_coords in VALID_TILES:
-		return false
-
-	if tm_ref.get_cell_atlas_coords(1, tm_pos) != Vector2i(-1, -1):
+	if map.placement_tilemap.get_cell_source_id(0, tm_pos) == -1:
 		return false
 
 	if _is_position_on_path(pos):

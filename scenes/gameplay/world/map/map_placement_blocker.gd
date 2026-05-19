@@ -10,13 +10,17 @@ extends Sprite2D
 ## When true, every tile whose center lies inside the sprite bounds is blocked.
 @export var use_sprite_bounds: bool = true
 
+## Shrinks the effective blocking rect on each side (pixels).
+## Increase to allow placement closer to concave rock edges.
+@export_range(0, 64, 1) var bounds_inset_px: int = 12
+
 
 ## Returns tilemap cells that must not accept towers under this decoration.
 ## [param tilemap] The map [TileMap] used for coordinate conversion.
 func get_blocked_cells(tilemap: TileMap) -> Array[Vector2i]:
 	var cells: Array[Vector2i] = []
 	if use_sprite_bounds and texture != null:
-		var sprite_rect := _get_drawn_world_rect()
+		var sprite_rect := _get_drawn_world_rect().grow(-bounds_inset_px)
 		var min_cell := tilemap.local_to_map(sprite_rect.position) - Vector2i(2, 2)
 		var max_cell := tilemap.local_to_map(sprite_rect.end) + Vector2i(2, 2)
 		for x: int in range(min_cell.x, max_cell.x + 1):

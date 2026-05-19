@@ -16,10 +16,6 @@ const SPECIAL_TILE_DEBUG_EXCLUSION_COLOR: Color = Color(1.0, 0.2, 0.2, 0.35)
 const SPECIAL_TILE_LAYER_INDEX: int = 3
 const SPECIAL_TILE_MAX_DISTANCE_TILES: float = 2.0
 const SPECIAL_TILE_MIN_DISTANCE_BETWEEN_TILES: float = 2.0
-const MAP_PLACEMENT_BLOCKER_SCRIPT: Script = preload(
-	"res://scenes/gameplay/world/map/map_placement_blocker.gd"
-)
-
 ## Intro sequence timings for special tiles.
 const SPECIAL_TILE_INTRO_INITIAL_DELAY_SECONDS: float = 1.5
 
@@ -38,6 +34,8 @@ const PATH_INDICATOR_START_TYPE: int = 0
 @export var initial_path_index: int = 0
 @export_range(0.0, 100.0, 0.1) var special_tile_percentage: float = 2.0
 
+## Invisible TileMap that marks every tile where towers can be placed.
+@export var placement_tilemap: TileMap
 ## Optional square-grid props overlay (for example [TileMapProps]).
 @export var props_tilemap: TileMap
 ## Reference to the TileMap node for map layout
@@ -54,7 +52,6 @@ var _bonus_tile_scene_source_id: int = -1
 var _bonus_tile_scene_tile_id: int = -1
 var _malus_tile_scene_source_id: int = -1
 var _malus_tile_scene_tile_id: int = -1
-var _placement_blocked_cells: Dictionary = {}
 
 ## Dictionary of special tiles (position -> modifier data)
 var special_tiles: Dictionary = {}
@@ -77,8 +74,10 @@ func _ready() -> void:
 		# If cursor is not yet initialized, wait a frame
 		call_deferred("_assign_tilemap_to_cursor")
 
-	_register_placement_blockers()
-	_sync_placement_blocked_cells_to_cursor()
+	_setup_camera_limits()
+
+	if is_instance_valid(placement_tilemap):
+		placement_tilemap.visible = false
 
 	# Generate special tiles immediately
 	_generate_special_tiles()
@@ -87,7 +86,6 @@ func _assign_tilemap_to_cursor() -> void:
 	var placement_system: BuildPlacement = Global.get("cursor") as BuildPlacement
 	if placement_system:
 		placement_system.tm_ref = tilemap
-		_sync_placement_blocked_cells_to_cursor()
 
 #public
 func play_special_tiles_intro_sequence() -> void:
@@ -126,6 +124,15 @@ func get_tower_by_name(tower_name: String) -> ITower:
 			if tower.name == tower_name:
 				return tower
 	return null
+
+
+## Toggles visibility of the placement TileMap for debugging.
+## Returns true when now visible, false when hidden.
+func toggle_placement_debug_overlay() -> bool:
+	if not is_instance_valid(placement_tilemap):
+		return false
+	placement_tilemap.visible = not placement_tilemap.visible
+	return placement_tilemap.visible
 
 
 ## Activates a path so enemy spawners can use it.
@@ -244,7 +251,7 @@ func _generate_special_tiles() -> void:
 	for x in range(used_rect.position.x, used_rect.end.x):
 		for y in range(used_rect.position.y, used_rect.end.y):
 			var coords := Vector2i(x, y)
-			if _is_tile_buildable(coords):
+			if is_tile_buildable(coords):
 				buildable_tiles.append(coords)
 
 	Log.trace(Log.Level.INFO, "Found {0} buildable tiles for special tiles".format([buildable_tiles.size()]))
@@ -620,94 +627,21 @@ func _ensure_malus_tile_scene_source() -> void:
 		_malus_tile_scene_source_id = -1
 		_malus_tile_scene_tile_id = -1
 
-func _is_tile_buildable(coords: Vector2i) -> bool:
-	if _placement_blocked_cells.has(coords):
+## Returns true if a tower can be placed on [param coords].
+## Authoritative source is the invisible placement TileMap painted by the level designer.
+func is_tile_buildable(coords: Vector2i) -> bool:
+	if placement_tilemap == null:
+		return false
+	if placement_tilemap.get_cell_source_id(0, coords) == -1:
 		return false
 
-	# 1. Check if the base tile is valid
-	if tilemap.get_cell_source_id(0, coords) != BuildPlacement.VALID_SOURCE_ID or not tilemap.get_cell_atlas_coords(0, coords) in BuildPlacement.VALID_TILES:
-		return false
-
-	# 2. Check if there are obstacles on layer 1 (Water Rays, etc.)
-	if tilemap.get_cell_atlas_coords(1, coords) != Vector2i(-1, -1):
-		return false
-
-	# 3. Check if there are props on layer 2 that might block (if layer 2 is used for blocking)
-
-	# (Optionnel, selon votre projet. BuildPlacement ne semble pas vérifier le layer 2)
-
-	# 4. Check if it's on an enemy path
-	var world_pos = tilemap.map_to_local(coords)
-
-	var placement_half_size: float = 12.5 # matching BuildPlacement.placement_half_size
-
-	for path in paths:
-		var closest_point = path.curve.get_closest_point(path.to_local(world_pos))
-		var distance = world_pos.distance_to(path.to_global(closest_point))
-		if distance < placement_half_size:
+	var world_pos: Vector2 = tilemap.map_to_local(coords)
+	for path: Path2D in paths:
+		var closest: Vector2 = path.curve.get_closest_point(path.to_local(world_pos))
+		if world_pos.distance_to(path.to_global(closest)) < 12.5:
 			return false
 
 	return true
-
-
-func _collect_placement_blockers(node: Node, blockers: Array[Node2D]) -> void:
-	for child: Node in node.get_children():
-		if _is_map_placement_blocker(child):
-			blockers.append(child as Node2D)
-		_collect_placement_blockers(child, blockers)
-
-
-func _find_placement_blockers() -> Array[Node2D]:
-	var blockers: Array[Node2D] = []
-	_collect_placement_blockers(self, blockers)
-	return blockers
-
-
-func _get_placement_blocker_cells(blocker: Node2D) -> Array[Vector2i]:
-	return blocker.call(&"get_blocked_cells", tilemap) as Array[Vector2i]
-
-
-func _is_map_placement_blocker(node: Node) -> bool:
-	return node.get_script() == MAP_PLACEMENT_BLOCKER_SCRIPT
-
-
-func _register_placement_blockers() -> void:
-	if tilemap == null:
-		return
-
-	_placement_blocked_cells.clear()
-	for blocker: Node2D in _find_placement_blockers():
-		for cell: Vector2i in _get_placement_blocker_cells(blocker):
-			_placement_blocked_cells[cell] = true
-
-	_register_props_blocked_cells()
-
-
-func _register_props_blocked_cells() -> void:
-	if props_tilemap == null or tilemap == null:
-		return
-
-	for props_cell: Vector2i in props_tilemap.get_used_cells(0):
-		var world_pos: Vector2 = props_tilemap.to_global(props_tilemap.map_to_local(props_cell))
-		var iso_cell: Vector2i = tilemap.local_to_map(tilemap.to_local(world_pos))
-		_placement_blocked_cells[iso_cell] = true
-
-
-func _sync_placement_blocked_cells_to_cursor() -> void:
-	var placement_system: BuildPlacement = Global.cursor as BuildPlacement
-	if placement_system == null:
-		return
-
-	var blocked_cells: Array[Vector2i] = []
-	for cell: Vector2i in _placement_blocked_cells.keys():
-		blocked_cells.append(cell)
-
-	var added_count: int = placement_system.register_invalid_cells(blocked_cells)
-	if added_count > 0:
-		Log.trace(
-			Log.Level.INFO,
-			"Registered {0} blocked placement cells from map obstacles and props".format([added_count])
-		)
 
 
 func _initialize_active_paths() -> void:
@@ -730,3 +664,34 @@ func _is_valid_path_index(path_index: int) -> bool:
 		return false
 
 	return true
+
+
+func _setup_camera_limits() -> void:
+	if camera == null or tilemap == null:
+		return
+
+	var used_rect: Rect2i = tilemap.get_used_rect()
+	var corners: Array[Vector2i] = [
+		used_rect.position,
+		used_rect.position + Vector2i(used_rect.size.x, 0),
+		used_rect.position + Vector2i(0, used_rect.size.y),
+		used_rect.position + used_rect.size,
+	]
+
+	var min_x: float = INF
+	var min_y: float = INF
+	var max_x: float = -INF
+	var max_y: float = -INF
+
+	for corner: Vector2i in corners:
+		var world_pos: Vector2 = tilemap.to_global(tilemap.map_to_local(corner))
+		min_x = min(min_x, world_pos.x)
+		min_y = min(min_y, world_pos.y)
+		max_x = max(max_x, world_pos.x)
+		max_y = max(max_y, world_pos.y)
+
+	var padding: int = 64
+	camera.limit_left = int(min_x) - padding
+	camera.limit_top = int(min_y) - padding
+	camera.limit_right = int(max_x) + padding
+	camera.limit_bottom = int(max_y)
