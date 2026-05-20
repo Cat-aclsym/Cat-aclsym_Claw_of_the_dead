@@ -2,6 +2,8 @@
 ## Level script that manages map, waves, state transitions, and enemy spawning.
 class_name ILevel extends Node2D
 
+const BACKGROUND_MUSIC_STREAM: AudioStreamMP3 = preload("res://assets/audio/music/background.mp3")
+
 signal stats_updated
 signal wave_started(wave_number: int)
 
@@ -48,11 +50,14 @@ var _time_scale_before_pause: float = 1.0
 
 @onready var clock: Clock = $Clock
 @onready var popup_spawner: PopupSpawner = $PopupSpawner
+@onready var _background_music: SoundEntity = $BackgroundMusic
 
 # core
 func _ready() -> void:
 	assert(clock != null, "clock node not found")
 	assert(popup_spawner != null, "popup_spawner node not found")
+	assert(_background_music != null, "BackgroundMusic node not found")
+	_background_music.stream = BACKGROUND_MUSIC_STREAM
 
 
 ## Custom ticker callback
@@ -66,6 +71,7 @@ func _process_tick() -> void:
 func start_level() -> void:
 	position = Vector2i.ZERO
 	ILevel.current_level = self
+	_background_music.play()
 	_init_map()
 	_load_waves()
 	ChallengeManager.start_level_challenges(level_id)
@@ -186,6 +192,7 @@ func _on_state_wave(_args = []) -> bool:
 
 func _on_level_end(victory: bool, _args = []) -> void:
 	clock.stop()
+	_background_music.stop()
 	Global.paused = true
 
 	end_time = Time.get_unix_time_from_system()
