@@ -121,7 +121,7 @@
 					"chain_bounces": 0,
 					"chain_damage_falloff": 0,
 					"chain_range": 0,
-					"damage": 1.5,
+					"damage": 5,
 					"damage_multiplier": 0,
 					"electrify_duration": 0,
 					"electrify_slow_amount": 0,
