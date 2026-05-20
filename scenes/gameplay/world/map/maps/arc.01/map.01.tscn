@@ -2,7 +2,7 @@
 
 [ext_resource type="PackedScene" uid="uid://crdosg1fmycsi" path="res://scenes/gameplay/world/map/i_map.tscn" id="1_ja0gd"]
 [ext_resource type="Texture2D" uid="uid://bcxnwyojlu45a" path="res://assets/environment/backgrounds/Canoé.png" id="2_canoe"]
-[ext_resource type="Script" path="res://scenes/gameplay/world/map/map_placement_blocker.gd" id="3_blocker"]
+[ext_resource type="Script" uid="uid://cnuf2o38j23fk" path="res://scenes/gameplay/world/map/map_placement_blocker.gd" id="3_blocker"]
 [ext_resource type="Texture2D" uid="uid://flaepau3golb" path="res://assets/environment/backgrounds/Rock.png" id="4_f2xnt"]
 [ext_resource type="Texture2D" uid="uid://cmmi14tmwjokk" path="res://assets/environment/backgrounds/Voilier.png" id="4_sailboat"]
 [ext_resource type="Texture2D" uid="uid://cn648qxrvbcqx" path="res://assets/environment/backgrounds/Rock2.png" id="5_rock"]
