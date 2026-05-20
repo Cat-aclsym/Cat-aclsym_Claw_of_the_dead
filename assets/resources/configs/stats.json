@@ -100,7 +100,7 @@
 				"cost": 100,
 				"fire_rate": 0.5,
 				"projectile_count": 1,
-				"shoot_range": 35,
+				"shoot_range": 60,
 				"spread_angle": 15
 			},
 			"level": 1,
