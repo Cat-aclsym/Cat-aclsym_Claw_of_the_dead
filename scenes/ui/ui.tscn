@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://cqfsr6yjn6hm8" path="res://scenes/ui/menus/home/home.tscn" id="3_2jvje"]
 [ext_resource type="PackedScene" uid="uid://b5630xr4v607r" path="res://scenes/ui/menus/hud/hud.tscn" id="4_2u4wi"]
 [ext_resource type="PackedScene" uid="uid://wyaikwouv3ik" path="res://scenes/utilities/console/console.tscn" id="5_g5c75"]
-[ext_resource type="PackedScene" path="res://scenes/ui/tutorial/tutorial_manager.tscn" id="6_tu1o8"]
+[ext_resource type="PackedScene" uid="uid://cb6y4oxtobso5" path="res://scenes/ui/tutorial/tutorial_manager.tscn" id="6_tu1o8"]
 
 [node name="UI" type="CanvasLayer"]
 script = ExtResource("1_550fr")
@@ -20,11 +20,9 @@ size_flags_horizontal = 4
 size_flags_vertical = 4
 
 [node name="TutorialManager" parent="." instance=ExtResource("6_tu1o8")]
-z_index = 8192
 
 [node name="IngameFadeColorRect" type="ColorRect" parent="."]
-z_index = 16384
-layout_mode = 1
+visible = false
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -32,4 +30,3 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 color = Color(0, 0, 0, 1)
-visible = false

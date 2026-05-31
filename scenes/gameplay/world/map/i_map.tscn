@@ -5,7 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://ddcvda2tcbdq8" path="res://scenes/gameplay/entities/building_placement/build_placement.tscn" id="3_ndsux"]
 [ext_resource type="PackedScene" uid="uid://b2gwi4t3c87aw" path="res://scenes/gameplay/world/map/tile_map_plains.tscn" id="4_f6jio"]
 [ext_resource type="Script" uid="uid://51dxs1xx5brc" path="res://scripts/camera/camera.gd" id="5_6tbgf"]
-[ext_resource type="PackedScene" path="res://scenes/gameplay/world/map/tile_map_props.tscn" id="6_props"]
+[ext_resource type="PackedScene" uid="uid://b5vdvpbigjlb0" path="res://scenes/gameplay/world/map/tile_map_props.tscn" id="6_props"]
 [ext_resource type="PackedScene" uid="uid://dp3kxn7f2bh1q" path="res://scenes/gameplay/world/map/tile_map_placement.tscn" id="7_place"]
 
 [node name="IMap2" type="Node2D" node_paths=PackedStringArray("placement_tilemap", "props_tilemap", "tilemap")]
