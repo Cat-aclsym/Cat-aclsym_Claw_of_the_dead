@@ -11,12 +11,12 @@
 [ext_resource type="Script" uid="uid://b5mbfrr7vwpj7" path="res://scenes/ui/menus/hud/new_wave_count.gd" id="9_o6rym"]
 [ext_resource type="Texture2D" uid="uid://c3eyakb4oxqkc" path="res://assets/ui/icons/Build_Button.png" id="10_sc2vu"]
 [ext_resource type="Texture2D" uid="uid://ccis5avg2eshj" path="res://assets/ui/icons/Trophey_Button.png" id="11_5r146"]
-[ext_resource type="Texture2D" uid="uid://c2uqlay1r2d1d" path="res://assets/ui/icons/Button Cancel.svg" id="12_5jyti"]
+[ext_resource type="Texture2D" path="res://assets/ui/icons/Red_Button.png" id="12_5jyti"]
 [ext_resource type="Texture2D" uid="uid://85fepmd06xnd" path="res://assets/ui/icons/Fast_Forward_Button.png" id="13_hn23h"]
-[ext_resource type="FontVariation" path="res://assets/ui/fonts/dotgothic/dotgothic_variation.tres" id="14_variation"]
+[ext_resource type="FontVariation" uid="uid://c5y1j2k3l4m5n" path="res://assets/ui/fonts/dotgothic/dotgothic_variation.tres" id="14_variation"]
 [ext_resource type="Shader" uid="uid://7k322cmfkfh1" path="res://assets/resources/shaders/health_bar_scaling.gdshader" id="15_shader"]
 [ext_resource type="Script" path="res://scenes/ui/menus/hud/low_health_indicator.gd" id="16_indicator"]
-[ext_resource type="Shader" uid="uid://fk70ak7kbp1y" path="res://assets/resources/shaders/low_health_vignette.gdshader" id="17_vignette"]
+[ext_resource type="Shader" uid="uid://cjvdx1cpa3hct" path="res://assets/resources/shaders/low_health_vignette.gdshader" id="17_vignette"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_vignette"]
 shader = ExtResource("17_vignette")
@@ -86,6 +86,7 @@ theme_override_constants/margin_top = 20
 theme_override_constants/margin_right = 20
 
 [node name="PauseButton" type="TextureButton" parent="PauseMarginContainer"]
+texture_filter = 1
 custom_minimum_size = Vector2(80, 65)
 layout_mode = 2
 texture_normal = ExtResource("2_meysh")
@@ -331,6 +332,7 @@ grow_vertical = 0
 theme_override_constants/margin_right = 20
 
 [node name="BuildSelectionButton" type="TextureButton" parent="BuildSelectionMarginContainer"]
+texture_filter = 1
 custom_minimum_size = Vector2(110, 90)
 layout_mode = 2
 toggle_mode = true

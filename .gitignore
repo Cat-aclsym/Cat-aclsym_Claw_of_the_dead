@@ -10,3 +10,6 @@ exports/
 .vscode/
 
 log/
+android/build/*
+!android/build/AndroidManifest.xml
+android/.build_version

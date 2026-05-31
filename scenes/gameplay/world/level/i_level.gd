@@ -2,7 +2,10 @@
 ## Level script that manages map, waves, state transitions, and enemy spawning.
 class_name ILevel extends Node2D
 
+const BACKGROUND_MUSIC_STREAM: AudioStreamMP3 = preload("res://assets/audio/music/background.mp3")
+
 signal stats_updated
+signal wave_started(wave_number: int)
 
 # Constants
 const STATE_CONFIGURING: String = "CONFIGURING"
@@ -37,7 +40,7 @@ var start_time: float
 var end_time: float
 
 # stats
-var coins: int = 50: set = _set_coins
+var coins: int = 250: set = _set_coins
 var health: int = 20: set = _set_health
 
 # Private Variables
@@ -48,11 +51,14 @@ var _wave_flow_started: bool = false
 
 @onready var clock: Clock = $Clock
 @onready var popup_spawner: PopupSpawner = $PopupSpawner
+@onready var _background_music: SoundEntity = $BackgroundMusic
 
 # core
 func _ready() -> void:
 	assert(clock != null, "clock node not found")
 	assert(popup_spawner != null, "popup_spawner node not found")
+	assert(_background_music != null, "BackgroundMusic node not found")
+	_background_music.stream = BACKGROUND_MUSIC_STREAM
 
 
 ## Custom ticker callback
@@ -67,6 +73,7 @@ func start_level() -> void:
 	position = Vector2i.ZERO
 	ILevel.current_level = self
 	Log.trace(Log.Level.INFO, "ILevel.start_level begin: level_id=%s tutorial_completed=%s" % [level_id, ProgressionManager.is_tutorial_completed()])
+	_background_music.play()
 	_init_map()
 	_load_waves()
 	ChallengeManager.start_level_challenges(level_id)
@@ -93,6 +100,7 @@ func start_wave_flow() -> void:
 	state_machine.toggle_initial_state()
 	start_time = Time.get_unix_time_from_system()
 	popup_spawner.wave(tr("Wave %s") % [current_wave + 1])
+	_emit_wave_started()
 
 	clock.subscribe(_process_tick, 5)
 	clock.start()
@@ -166,11 +174,17 @@ func _next_wave() -> void:
 		return
 	current_wave += 1
 	popup_spawner.wave(tr("Wave %s") % [current_wave + 1])
+	_emit_wave_started()
 	state_machine.toggle_state(STATE_WAVE % current_wave)
 
 
 func _next_step() -> void:
 	current_step = waves.front().pop()
+
+
+func _emit_wave_started() -> void:
+	var wave_number: int = current_wave + 1
+	wave_started.emit(wave_number)
 
 
 # states
@@ -201,6 +215,7 @@ func _on_state_wave(_args = []) -> bool:
 
 func _on_level_end(victory: bool, _args = []) -> void:
 	clock.stop()
+	_background_music.stop()
 	Global.paused = true
 
 	end_time = Time.get_unix_time_from_system()

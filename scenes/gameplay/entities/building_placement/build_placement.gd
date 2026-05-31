@@ -20,15 +20,6 @@ const COLOR_KO := Color(1, 0.5, 0.5, 0.5)
 const BUTTON_COLOR_ENABLED := Color(1, 1, 1, 1)
 const BUTTON_COLOR_DISABLED := Color(0.5, 0.5, 0.5, 0.6)
 
-const UP_OFFSET := Vector2i(-1, -1)
-const RIGHT_OFFSET := Vector2i(0, -1)
-const LEFT_OFFSET := Vector2i(-1, 0)
-## Base TileMap constraints for ground-placed buildings (towers); traps use path rules instead.
-const VALID_SOURCE_ID: int = 0 # Ground Grass
-const VALID_TILES: Array[Vector2i] = [
-	Vector2i(0, 0)
-]
-
 ## States for the build / upgrade cursor.
 enum CursorState {
 	IDLE,  ## Default state
@@ -39,7 +30,7 @@ enum CursorState {
 ## Reference to the tilemap node
 var tm_ref: TileMap = null
 
-var _invalid_cells: Array[Vector2i] = []
+var _invalid_cells: Dictionary = {}
 var _is_dragging: bool = false
 var _is_holding_click: bool = false
 var _can_reposition_build_cursor: bool = true
@@ -54,7 +45,6 @@ static var tower_count: int = 0
 @onready var cursor: AnimatedSprite2D = $cursor
 @onready var place_button: TextureButton = $PlaceHUD/HBoxContainer/PlaceButton
 @onready var place_hud: Control = $PlaceHUD
-@onready var place_hud_content: BoxContainer = $PlaceHUD/HBoxContainer
 @onready var placement_area: Area2D = $Area2D
 
 @onready var signals: Array[Dictionary] = [
@@ -71,7 +61,6 @@ func _ready() -> void:
 	assert(cursor != null, "cursor node not found")
 	assert(place_button != null, "place_button node not found")
 	assert(place_hud != null, "place_hud node not found")
-	assert(place_hud_content != null, "place_hud_content node not found")
 	assert(placement_area != null, "placement_area node not found")
 	Log.trace(Log.Level.DEBUG, "BuildPlacement ready: visible=%s state=%s level=%s" % [visible, _state, ILevel.current_level])
 
@@ -98,9 +87,10 @@ func _unhandled_input(event: InputEvent) -> void:
 
 ## Adds a cell to the invalid cells list
 func add_invalid_cell(tm_pos: Vector2i) -> void:
-	if not tm_pos in _invalid_cells:
-		_invalid_cells.append(tm_pos)
-		Log.trace(Log.Level.INFO, "Cell {0} is now occupied".format([tm_pos]))
+	if _invalid_cells.has(tm_pos):
+		return
+	_invalid_cells[tm_pos] = true
+	Log.trace(Log.Level.DEBUG, "Cell {0} is now occupied".format([tm_pos]))
 
 ## Change the current state of the build placement cursor.
 ## [br]
@@ -152,12 +142,9 @@ func change_state(new_state: CursorState, args: Array = []) -> void:
 
 ## Removes a cell from the invalid cells list so a building can be placed there again.
 func remove_invalid_cell(tm_pos: Vector2i) -> void:
-	var removed_any: bool = false
-	while tm_pos in _invalid_cells:
-		_invalid_cells.erase(tm_pos)
-		removed_any = true
-	if removed_any:
-		Log.trace(Log.Level.INFO, "Cell {0} is now free for building".format([tm_pos]))
+	if not _invalid_cells.erase(tm_pos):
+		return
+	Log.trace(Log.Level.DEBUG, "Cell {0} is now free for building".format([tm_pos]))
 
 func _build() -> void:
 	Log.trace(Log.Level.DEBUG, "BuildPlacement _build start: preview=%s state=%s level=%s" % [_preview_building, _state, ILevel.current_level])
@@ -292,18 +279,13 @@ func _is_ground_building_placeable(pos: Vector2, building: IBuilding = null) -> 
 
 	var tm_pos: Vector2i = tm_ref.local_to_map(pos)
 
-	if tm_pos in _invalid_cells:
+	if _invalid_cells.has(tm_pos):
 		return false
 
-	var source_id: int = tm_ref.get_cell_source_id(0, tm_pos)
-	if source_id != VALID_SOURCE_ID:
+	var map: IMap = ILevel.current_level.map if ILevel.current_level else null
+	if not is_instance_valid(map) or map.placement_tilemap == null:
 		return false
-
-	var atlas_coords: Vector2i = tm_ref.get_cell_atlas_coords(0, tm_pos)
-	if not atlas_coords in VALID_TILES:
-		return false
-
-	if tm_ref.get_cell_atlas_coords(1, tm_pos) != Vector2i(-1, -1):
+	if map.placement_tilemap.get_cell_source_id(0, tm_pos) == -1:
 		return false
 
 	if _is_position_on_path(pos):
@@ -352,7 +334,7 @@ func _is_trap_buildable(pos: Vector2, building: IBuilding = null) -> bool:
 	if not _is_position_on_path(pos):
 		return false
 
-	if tm_pos in _invalid_cells:
+	if _invalid_cells.has(tm_pos):
 		return false
 
 	return true

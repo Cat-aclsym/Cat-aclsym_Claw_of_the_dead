@@ -1,0 +1,130 @@
+[gd_scene load_steps=17 format=3 uid="uid://vsaqk62gl8qk"]
+
+[ext_resource type="PackedScene" uid="uid://064cnqw4xlus" path="res://scenes/gameplay/entities/tower/i_tower.tscn" id="1_tower"]
+[ext_resource type="PackedScene" uid="uid://bacjy0ad1e7bl" path="res://scenes/gameplay/entities/bullet/instant_lightning.tscn" id="2_bullet"]
+[ext_resource type="Texture2D" uid="uid://buvtoq24t424x" path="res://assets/gameplay/towers/Tesla_Tower_Blue.png" id="3_sprite"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_01"]
+atlas = ExtResource("3_sprite")
+region = Rect2(0, 0, 98, 94)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_02"]
+atlas = ExtResource("3_sprite")
+region = Rect2(98, 0, 98, 94)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_03"]
+atlas = ExtResource("3_sprite")
+region = Rect2(196, 0, 98, 94)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_04"]
+atlas = ExtResource("3_sprite")
+region = Rect2(294, 0, 98, 94)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_05"]
+atlas = ExtResource("3_sprite")
+region = Rect2(392, 0, 98, 94)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_06"]
+atlas = ExtResource("3_sprite")
+region = Rect2(490, 0, 98, 94)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_07"]
+atlas = ExtResource("3_sprite")
+region = Rect2(588, 0, 98, 94)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_08"]
+atlas = ExtResource("3_sprite")
+region = Rect2(686, 0, 98, 94)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_09"]
+atlas = ExtResource("3_sprite")
+region = Rect2(784, 0, 98, 94)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_10"]
+atlas = ExtResource("3_sprite")
+region = Rect2(882, 0, 98, 94)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_1t44q"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_01")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_02")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_03")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_04")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_05")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_06")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_07")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_08")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_09")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_10")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 10.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_jmpep"]
+radius = 314.23
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_7wfw0"]
+radius = 16.0
+height = 36.0
+
+[node name="Bat08" instance=ExtResource("1_tower")]
+position = Vector2(0, -16)
+bullet_scene = ExtResource("2_bullet")
+tower_id = "bat_08"
+
+[node name="Sprite" parent="." index="0"]
+unique_name_in_owner = true
+position = Vector2(0, -16)
+sprite_frames = SubResource("SpriteFrames_1t44q")
+animation = &"idle"
+
+[node name="CollisionShape2D" parent="Area2D" index="0"]
+position = Vector2(4.76837e-07, 16)
+rotation = 0.567232
+skew = 0.436332
+shape = SubResource("CircleShape2D_jmpep")
+
+[node name="Polygon2D" parent="." index="3"]
+visible = true
+scale = Vector2(1e-05, 1e-05)
+
+[node name="Line2D" type="Line2D" parent="Polygon2D" index="0"]
+
+[node name="TowerHoverBox" parent="." index="4"]
+visible = false
+
+[node name="CollisionShape2D" parent="TowerHoverBox" index="0"]
+position = Vector2(0, 8)
+rotation = 1.5708
+shape = SubResource("CapsuleShape2D_7wfw0")
+
+[node name="Button" parent="." index="8"]
+self_modulate = Color(1, 1, 1, 1)
+
+[connection signal="area_exited" from="Area2D" to="." method="_on_area_2d_area_exited"]
+[connection signal="body_entered" from="Area2D" to="." method="_on_area_2d_body_entered"]
+[connection signal="body_exited" from="Area2D" to="." method="_on_area_2d_body_exited"]
+[connection signal="mouse_entered" from="TowerHoverBox" to="." method="_on_tower_hover_box_mouse_entered"]
+[connection signal="mouse_exited" from="TowerHoverBox" to="." method="_on_tower_hover_box_mouse_exited"]

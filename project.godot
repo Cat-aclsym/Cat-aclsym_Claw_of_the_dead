@@ -21,10 +21,11 @@ Global="*res://scripts/autoloads/global.gd"
 SoundManager="*res://scripts/autoloads/sound_manager.gd"
 ScenesLoader="*res://scripts/autoloads/scenes_loader.gd"
 Dialogic="*res://addons/dialogic/Core/DialogicGameHandler.gd"
-StatsDB="*res://scripts/autoloads/stats_db.gd"
 ProgressionManager="*res://scripts/autoloads/progression_manager.gd"
+StatsDB="*res://scripts/autoloads/stats_db.gd"
 ChallengeManager="*res://scripts/autoloads/challenge_manager.gd"
 ArmoryManager="*res://scripts/autoloads/armory_manager.gd"
+FirebaseTestLab="*res://scripts/autoloads/firebase_test_lab.gd"
 
 [dialogic]
 
@@ -105,7 +106,7 @@ audio/channel_defaults={
 [display]
 
 window/stretch/mode="canvas_items"
-window/stretch/aspect="keep_height"
+window/stretch/aspect="expand"
 
 [editor]
 

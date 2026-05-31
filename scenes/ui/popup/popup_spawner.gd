@@ -8,11 +8,21 @@ extends Marker2D
 @export var damage_popup_node: PackedScene
 @export var popup_node: PackedScene
 
+# Constants
+const TOWER_COLORS: Dictionary = {
+	"bat_01": Color.WHITE, # Arbre à chat'rché (White)
+	"bat_02": Color("#744187"), # Tour Cataboom (Purple)
+	"bat_08": Color("#00ffff"), # Tour Tesla (Cyan)
+	"bat_09": Color("#ff8c00"), # Tour Inferno (Dark Orange)
+}
+
 # core
 func _ready() -> void:
 	assert(popup_node != null, "popup_node scene not assigned")
 
 # public
+var _active_popups: Dictionary = {} # target_node -> DamagePopup
+
 ## Spawns a damage popup at the current position.
 ## [br]
 ## [param amount] The amount of damage to display
@@ -21,11 +31,44 @@ func _ready() -> void:
 func display_damage(amount: float, color: Color = Color.WHITE, is_critical: bool = false) -> void:
 	if damage_popup_node == null:
 		return
+	
+	var final_color: Color = color
+	
+	# Check if the damage source requires popup accumulation (e.g., continuous fire)
+	var should_accumulate: bool = false
+	if get_parent() is IEnemy:
+		var source: Variant = get_parent().last_source
+		var tower: ITower = null
 		
+		if source is ITower:
+			tower = source
+		elif source is IBullet and is_instance_valid(source.tower_owner):
+			tower = source.tower_owner
+			
+		if tower != null:
+			if tower.use_accumulative_popups:
+				should_accumulate = true
+			
+			# Apply tower-specific color if defined
+			if TOWER_COLORS.has(tower.tower_id):
+				final_color = TOWER_COLORS[tower.tower_id]
+	
+	# Optimization: check if an active popup already exists for accumulation
+	if should_accumulate and _active_popups.has(self) and is_instance_valid(_active_popups[self]):
+		var popup: DamagePopup = _active_popups[self]
+		if popup.has_method("update_value"):
+			popup.update_value(amount)
+			return
+
 	var damage_popup: DamagePopup = damage_popup_node.instantiate()
 	damage_popup.amount = amount
-	damage_popup.color = color
+	damage_popup.color = final_color
 	damage_popup.is_critical = is_critical
+	
+	if should_accumulate:
+		damage_popup.target_node = self
+		damage_popup.is_accumulative = true
+		_active_popups[self] = damage_popup
 	
 	# Use global_position of the spawner
 	damage_popup.global_position = global_position
@@ -39,7 +82,7 @@ func display_damage(amount: float, color: Color = Color.WHITE, is_critical: bool
 ## [br]The popup will move upward and display the given text.
 ## [param text] The score value to display
 func score(text: String) -> void:
-	var damage_popup: Node2D = popup_node.instantiate()
+	var damage_popup: Control = popup_node.instantiate()
 	var label: Label = damage_popup.get_node("FloatingNumbers/Label")
 	damage_popup.position = global_position
 

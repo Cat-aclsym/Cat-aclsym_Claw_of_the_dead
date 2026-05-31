@@ -33,6 +33,10 @@ static func spawn_enemy(path: Path2D, enemy: IEnemy) -> void:
 	enemy.path = path
 	enemy.path_follow = pathfollow
 
+	if ILevel.current_level:
+		enemy.connect("die", ILevel.current_level._on_enemy_die)
+		ILevel.current_level._on_enemy_spawn()
+
 	pathfollow.add_child(enemy)
 
 

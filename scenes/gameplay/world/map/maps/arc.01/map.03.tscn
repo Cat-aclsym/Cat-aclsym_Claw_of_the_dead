@@ -29,5 +29,5 @@ curve = SubResource("Curve2D_1ver7")
 position = Vector2(216, 176)
 curve = SubResource("Curve2D_pnrrg")
 
-[node name="Controller" parent="." index="3"]
+[node name="Controller" parent="." index="5"]
 z_index = 4000

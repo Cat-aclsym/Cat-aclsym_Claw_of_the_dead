@@ -9,6 +9,14 @@ extends Control
 signal menu_close
 
 
+const _ICON_ATTACK: Texture2D = preload("res://assets/ui/stats/attack.png")
+const _ICON_COIN: Texture2D = preload("res://assets/ui/huds/Coin.png")
+const _ICON_FIRE_RATE: Texture2D = preload("res://assets/ui/stats/fire-rate.png")
+const _ICON_HEALTH: Texture2D = preload("res://assets/ui/huds/Coeur.png")
+const _ICON_RANGE: Texture2D = preload("res://assets/ui/stats/range.png")
+const _ICON_SPEED: Texture2D = preload("res://assets/ui/stats/zombie-speed.png")
+
+
 ## Internal data structure for all entries.
 var _all_entries: Dictionary = {
 	"ENEMIES": [],
@@ -141,7 +149,7 @@ func _ready() -> void:
 	name_label.add_theme_font_size_override("font_size", 48)
 	towers_button.add_theme_font_override("font", _font)
 	enemies_button.add_theme_font_override("font", _font)
-	
+
 	ButtonEffects.apply(close_button)
 	ButtonEffects.apply(enemies_button)
 	ButtonEffects.apply(next_button)
@@ -206,33 +214,48 @@ func _add_stat_category_header(p_text: String) -> void:
 ## [param p_key] The stat label.
 ## [param p_val] The stat value.
 func _add_stat_row(p_key: String, p_val: String) -> void:
+	var icon: Texture2D = _get_icon_for_encyclopedia_stat(p_key)
+
 	var key_container := Control.new()
-	key_container.custom_minimum_size = Vector2(220, _current_stat_font_size + 10)
+	key_container.custom_minimum_size = Vector2(220, int(float(_current_stat_font_size) * 2) + 4)
 	key_container.clip_contents = true
 	key_container.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	stats_grid.add_child(key_container)
 
+	var hbox := HBoxContainer.new()
+	hbox.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	hbox.alignment = BoxContainer.ALIGNMENT_BEGIN
+	hbox.add_theme_constant_override("separation", 6)
+	hbox.set_anchors_preset(Control.PRESET_FULL_RECT)
+	key_container.add_child(hbox)
+
+	if icon != null:
+		var icon_size: float = float(_current_stat_font_size) * 1.75
+		var icon_rect := TextureRect.new()
+		icon_rect.texture = icon
+		icon_rect.custom_minimum_size = Vector2(icon_size, icon_size)
+		icon_rect.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+		icon_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		icon_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		icon_rect.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		icon_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		hbox.add_child(icon_rect)
+
 	var label_key: Label = Label.new()
 	label_key.text = p_key
 	label_key.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	label_key.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT if p_key.length() > 15 else HORIZONTAL_ALIGNMENT_RIGHT
+	label_key.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	label_key.autowrap_mode = TextServer.AUTOWRAP_OFF
+	label_key.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	label_key.add_theme_font_override("font", _font)
 	label_key.add_theme_font_size_override("font_size", _current_stat_font_size)
 	label_key.add_theme_color_override("font_color", Color("874c2b"))
-	key_container.add_child(label_key)
-
-	label_key.size = label_key.get_combined_minimum_size()
-	if p_key.length() <= 15:
-		label_key.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-
-	if p_key.length() > 15:
-		_animate_marquee(label_key, key_container)
+	hbox.add_child(label_key)
 
 	var label_val: Label = Label.new()
 	label_val.text = p_val
 	label_val.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	label_val.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	label_val.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	label_val.autowrap_mode = TextServer.AUTOWRAP_OFF
 	label_val.add_theme_font_override("font", _font)
 	label_val.add_theme_font_size_override("font_size", _current_stat_font_size)
@@ -318,19 +341,40 @@ func _get_sprite_from_instance(p_node: Node) -> Dictionary:
 		"scale": Vector2.ONE,
 		"texture": null
 	}
-	if p_node.has_node("AnimatedSprite2D"):
-		var anim_sprite: AnimatedSprite2D = p_node.get_node("AnimatedSprite2D") as AnimatedSprite2D
+	var sprite_node: Node = null
+	var sprite_node_names: Array[String] = ["Sprite", "AnimatedSprite2D", "Sprite2D"]
+	for node_name in sprite_node_names:
+		if p_node.has_node(node_name):
+			sprite_node = p_node.get_node(node_name)
+			break
+
+	if sprite_node == null:
+		for child in p_node.get_children():
+			if child is AnimatedSprite2D:
+				sprite_node = child
+				break
+
+	if sprite_node == null:
+		for child in p_node.get_children():
+			if child is Sprite2D:
+				sprite_node = child
+				break
+
+	if sprite_node is AnimatedSprite2D:
+		var anim_sprite: AnimatedSprite2D = sprite_node as AnimatedSprite2D
 		if anim_sprite.sprite_frames:
 			var animation_names: PackedStringArray = anim_sprite.sprite_frames.get_animation_names()
 			if not animation_names.is_empty():
 				var anim: String = "idle" if anim_sprite.sprite_frames.has_animation("idle") else str(animation_names[0])
-				data["texture"] = anim_sprite.sprite_frames.get_frame_texture(anim, 0)
+				var frame_count: int = anim_sprite.sprite_frames.get_frame_count(anim)
+				if frame_count > 0:
+					data["texture"] = anim_sprite.sprite_frames.get_frame_texture(anim, 0)
 				data["frames"] = anim_sprite.sprite_frames
 				data["animation"] = StringName(anim)
 				data["fps"] = anim_sprite.sprite_frames.get_animation_speed(anim)
 				data["scale"] = anim_sprite.scale
-	elif p_node.has_node("Sprite2D"):
-		var sprite_2d: Sprite2D = p_node.get_node("Sprite2D") as Sprite2D
+	elif sprite_node is Sprite2D:
+		var sprite_2d: Sprite2D = sprite_node as Sprite2D
 		data["texture"] = sprite_2d.texture
 		data["scale"] = sprite_2d.scale
 	return data
@@ -493,8 +537,26 @@ func _update_ui_elements() -> void:
 		name_label.add_theme_font_size_override("font_size", 120)
 		name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
-		sprite_rect.texture = null
-		sprite_rect.custom_minimum_size = Vector2.ZERO
+		if entry.get("sprite") == null:
+			var hidden_scene_path: String = entry.get("scene_path", "")
+			if not hidden_scene_path.is_empty() and ResourceLoader.exists(hidden_scene_path):
+				var hidden_scene_res: PackedScene = load(hidden_scene_path) as PackedScene
+				if hidden_scene_res:
+					var hidden_obj: Node = hidden_scene_res.instantiate()
+					if hidden_obj:
+						entry["sprite"] = _get_sprite_from_instance(hidden_obj)
+						hidden_obj.queue_free()
+
+		var hidden_anim_data: Dictionary = entry.get("sprite", {})
+		if hidden_anim_data.has("texture") and hidden_anim_data["texture"] != null:
+			sprite_rect.texture = hidden_anim_data["texture"]
+			var hidden_scale: Vector2 = hidden_anim_data.get("scale", Vector2.ONE)
+			sprite_rect.custom_minimum_size = Vector2(160, 160) * hidden_scale
+			sprite_rect.modulate = Color(0.0, 0.0, 0.0, 0.85)
+		else:
+			sprite_rect.texture = null
+			sprite_rect.custom_minimum_size = Vector2.ZERO
+			sprite_rect.modulate = Color.WHITE
 
 		_add_stat_category_header("ENCYCLOPEDIA.NOT_DISCOVERED")
 
@@ -543,9 +605,11 @@ func _update_ui_elements() -> void:
 		sprite_rect.texture = _current_anim_data["texture"]
 		var base_scale: Vector2 = _current_anim_data.get("scale", Vector2.ONE)
 		sprite_rect.custom_minimum_size = Vector2(160, 160) * base_scale
+		sprite_rect.modulate = Color.WHITE
 	else:
 		sprite_rect.texture = null
 		sprite_rect.custom_minimum_size = Vector2.ZERO
+		sprite_rect.modulate = Color.WHITE
 
 	stats_scroll.scroll_vertical = 0
 
@@ -599,3 +663,22 @@ func _update_ui_elements() -> void:
 	enemies_button.disabled = (_current_category == "ENEMIES")
 
 	get_tree().process_frame.connect(_check_scroll_indicator, CONNECT_ONE_SHOT)
+
+
+## Returns the icon texture for a given encyclopedia stat key, or null if unmapped.
+func _get_icon_for_encyclopedia_stat(p_key: String) -> Texture2D:
+	match p_key:
+		"ENCYCLOPEDIA.STATS.COST", "ENCYCLOPEDIA.STATS.REWARD":
+			return _ICON_COIN
+		"ENCYCLOPEDIA.STATS.DAMAGE":
+			return _ICON_ATTACK
+		"ENCYCLOPEDIA.STATS.FIRERATE":
+			return _ICON_FIRE_RATE
+		"ENCYCLOPEDIA.STATS.HEALTH":
+			return _ICON_HEALTH
+		"ENCYCLOPEDIA.STATS.RANGE":
+			return _ICON_RANGE
+		"ENCYCLOPEDIA.STATS.SPEED":
+			return _ICON_SPEED
+		_:
+			return null

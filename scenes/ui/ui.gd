@@ -41,6 +41,12 @@ func end_level() -> void:
 	ProgressionManager.save_game()
 
 
+## Displays the "new challenger" reveal for a newly discovered enemy.
+func notify_new_enemy_reveal(enemy_id: String, texture: Texture2D, enemy_scale: Vector2 = Vector2.ONE) -> void:
+	assert(_initialized, "UI not properly initialized")
+	hud.queue_new_enemy_reveal(enemy_id, texture, enemy_scale)
+
+
 func _play_ingame_fade_in() -> void:
 	ingame_fade_color_rect.visible = true
 	ingame_fade_color_rect.color = Color(0.0, 0.0, 0.0, 1.0)
