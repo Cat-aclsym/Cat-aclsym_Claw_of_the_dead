@@ -7,7 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://cmmi14tmwjokk" path="res://assets/environment/backgrounds/Voilier.png" id="4_sailboat"]
 [ext_resource type="Texture2D" uid="uid://cn648qxrvbcqx" path="res://assets/environment/backgrounds/Rock2.png" id="5_rock"]
 [ext_resource type="Texture2D" uid="uid://bnxblksokc6tm" path="res://assets/environment/backgrounds/House.png" id="7_3a7wf"]
-[ext_resource type="PackedScene" path="res://scenes/gameplay/world/level/tutorial_placement_hint.tscn" id="8_tph"]
+[ext_resource type="PackedScene" uid="uid://bx8f5t1n6rw2e" path="res://scenes/gameplay/world/level/tutorial_placement_hint.tscn" id="8_tph"]
 
 [sub_resource type="Curve2D" id="Curve2D_pnrrg"]
 _data = {
