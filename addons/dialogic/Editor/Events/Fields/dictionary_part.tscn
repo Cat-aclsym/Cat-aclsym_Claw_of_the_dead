@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://b27yweami3mxi"]
 
-[ext_resource type="Script" uid="uid://pmnls6bkq16r" path="res://addons/dialogic/Editor/Events/Fields/dictionary_part.gd" id="2_q88pg"]
+[ext_resource type="Script" uid="uid://b41laec1d54io" path="res://addons/dialogic/Editor/Events/Fields/dictionary_part.gd" id="2_q88pg"]
 [ext_resource type="PackedScene" uid="uid://dl08ubinx6ugu" path="res://addons/dialogic/Editor/Events/Fields/field_flex_value.tscn" id="3_p082d"]
 
 [sub_resource type="Image" id="Image_teqf1"]
