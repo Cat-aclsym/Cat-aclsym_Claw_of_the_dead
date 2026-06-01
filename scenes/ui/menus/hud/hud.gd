@@ -174,7 +174,7 @@ func _on_build_selection_button_pressed() -> void:
 
 	if existing_menu == null:
 		var build_selection_menu_instance: BuildSelection = BUILD_SELECTION_MENU.instantiate() as BuildSelection
-		build_selection_menu_instance.z_index = 10000
+		build_selection_menu_instance.z_index = 4000
 		build_selection_menu_instance.process_mode = Node.PROCESS_MODE_ALWAYS
 		Global.ui.add_child(build_selection_menu_instance)
 		build_menu_opened.emit()
