@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://bx8f5t1n6rw2e"]
+
+[ext_resource type="Script" uid="uid://cxk9h2p7m3qn4" path="res://scenes/gameplay/world/level/tutorial_placement_hint.gd" id="1_tph"]
+
+[node name="TutorialPlacementHint" type="Node2D"]
+script = ExtResource("1_tph")

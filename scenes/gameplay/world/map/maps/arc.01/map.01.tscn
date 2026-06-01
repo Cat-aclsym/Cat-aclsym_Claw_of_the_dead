@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://cta5yotths5ck"]
+[gd_scene load_steps=10 format=3 uid="uid://cta5yotths5ck"]
 
 [ext_resource type="PackedScene" uid="uid://crdosg1fmycsi" path="res://scenes/gameplay/world/map/i_map.tscn" id="1_ja0gd"]
 [ext_resource type="Texture2D" uid="uid://bcxnwyojlu45a" path="res://assets/environment/backgrounds/Canoé.png" id="2_canoe"]
@@ -7,6 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://cmmi14tmwjokk" path="res://assets/environment/backgrounds/Voilier.png" id="4_sailboat"]
 [ext_resource type="Texture2D" uid="uid://cn648qxrvbcqx" path="res://assets/environment/backgrounds/Rock2.png" id="5_rock"]
 [ext_resource type="Texture2D" uid="uid://bnxblksokc6tm" path="res://assets/environment/backgrounds/House.png" id="7_3a7wf"]
+[ext_resource type="PackedScene" path="res://scenes/gameplay/world/level/tutorial_placement_hint.tscn" id="8_tph"]
 
 [sub_resource type="Curve2D" id="Curve2D_pnrrg"]
 _data = {
@@ -268,3 +269,7 @@ curve = SubResource("Curve2D_pnrrg")
 
 [node name="Controller" parent="." index="7"]
 z_index = 4000
+
+[node name="TutorialPlacementHint" parent="." index="9" instance=ExtResource("8_tph")]
+position = Vector2(256, 384)
+snap_tilemap = NodePath("../TileMapPlacement")

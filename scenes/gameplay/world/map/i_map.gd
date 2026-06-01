@@ -31,6 +31,7 @@ const PATH_INDICATOR_END_TYPE: int = 1
 const PATH_INDICATOR_START_TYPE: int = 0
 
 @export var debug_show_spawnable_special_tiles: bool = false
+@export var initial_camera_position: Vector2 = Vector2.ZERO
 @export var initial_path_index: int = 0
 @export_range(0.0, 100.0, 0.1) var special_tile_percentage: float = 2.0
 
@@ -695,3 +696,8 @@ func _setup_camera_limits() -> void:
 	camera.limit_top = int(min_y) - padding
 	camera.limit_right = int(max_x) + padding
 	camera.limit_bottom = int(max_y)
+
+	if initial_camera_position != Vector2.ZERO:
+		camera.position = initial_camera_position
+	else:
+		camera.position = Vector2((min_x + max_x) / 2.0, min_y + (max_y - min_y) * 0.25)
