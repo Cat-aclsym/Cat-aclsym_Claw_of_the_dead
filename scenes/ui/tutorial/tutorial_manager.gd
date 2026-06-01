@@ -23,12 +23,12 @@ const LEVEL_ID_TUTORIAL: String = "lev.01"
 const TIMELINE_EN_PATH: String = "res://assets/narrative/tutorial_level_01.en.dtl"
 const TIMELINE_FR_PATH: String = "res://assets/narrative/tutorial_level_01.fr.dtl"
 const UPGRADE_BONUS_COINS: int = 150
+const UPGRADE_TRIGGER_COINS: int = 50
 
 # Private variables
 var _active_objective: Objective = Objective.NONE
 var _connected_cursor: BuildPlacement = null
 var _connected_hud: HUD = null
-var _connected_towers: Array[ITower] = []
 var _is_running: bool = false
 var _last_placed_tower: ITower = null
 var _place_confirm_tower_count: int = 0
@@ -37,7 +37,8 @@ var _tracked_level: ILevel = null
 var _camera_process_was_enabled: bool = true
 var _camera_input_was_enabled: bool = true
 var _dialog_layout: Node = null
-var _dialog_mouse_filter_cache: Dictionary = {}
+var _upgrade_triggered: bool = false
+var _coins_at_placement: int = 0
 
 # Onready variables
 @onready var _overlay: TutorialOverlay = $TutorialOverlay
@@ -72,6 +73,13 @@ func _process(_delta: float) -> void:
 		_connect_cursor_signals()
 	if _connected_hud == null:
 		_connect_hud_signals()
+
+	if not _upgrade_triggered and _active_objective == Objective.NONE:
+		if is_instance_valid(_last_placed_tower) and is_instance_valid(_tracked_level):
+			if _tracked_level.coins >= _coins_at_placement + UPGRADE_TRIGGER_COINS:
+				_upgrade_triggered = true
+				_activate_objective(Objective.SELECT_TOWER)
+				return
 
 	if _active_objective == Objective.NONE:
 		return
@@ -116,11 +124,19 @@ func _activate_objective(objective: Objective) -> void:
 	if objective == Objective.PLACE_CONFIRM:
 		_place_confirm_tower_count = _count_visible_towers()
 		Log.trace(Log.Level.DEBUG, "Tutorial PLACE_CONFIRM baseline tower count=%d" % _place_confirm_tower_count)
+		var hint: TutorialPlacementHint = _get_placement_hint()
+		if is_instance_valid(hint):
+			hint.show_hint()
 	_pause_resume_waiting_for_resume = false
-	Dialogic.paused = true
-	_pause_level_for_dialogue()
-	_set_dialog_layout_input_passthrough(false)
-	_set_dialog_layout_visible(not _should_hide_dialog_layout_for_objective(objective))
+	# SELECT_TOWER: don't freeze — game and dialogue keep running while the player clicks the tower.
+	if objective == Objective.SELECT_TOWER:
+		# Level already running from start_wave_flow; resume dialogue so "click tower" text plays.
+		Dialogic.paused = false
+		_set_dialog_layout_visible(true)
+	else:
+		Dialogic.paused = true
+		_pause_level_for_dialogue()
+		_set_dialog_layout_visible(false)
 	_overlay.set_blocking_mode(not _should_use_non_blocking_overlay(objective))
 	_update_objective_target()
 
@@ -134,10 +150,16 @@ func _complete_active_objective() -> void:
 	_place_confirm_tower_count = 0
 	_pause_resume_waiting_for_resume = false
 	_overlay.hide_overlay()
+	if previous_objective == Objective.PLACE_CONFIRM:
+		var hint: TutorialPlacementHint = _get_placement_hint()
+		if is_instance_valid(hint):
+			hint.hide_hint()
+		if is_instance_valid(_tracked_level):
+			_coins_at_placement = _tracked_level.coins
+			_tracked_level.start_wave_flow()
+		# Dialogue stays frozen; _process watches for UPGRADE_TRIGGER_COINS then activates SELECT_TOWER.
+		return
 	_pause_level_for_dialogue()
-	_set_dialog_layout_input_passthrough(false)
-	if previous_objective == Objective.PLACE_CONFIRM and is_instance_valid(_tracked_level):
-		_tracked_level.start_wave_flow()
 	Dialogic.paused = false
 
 
@@ -184,32 +206,6 @@ func _connect_hud_signals() -> void:
 		_connected_hud.pause_requested.connect(_on_hud_pause_requested)
 	if not _connected_hud.build_menu_opened.is_connected(_on_hud_build_menu_opened):
 		_connected_hud.build_menu_opened.connect(_on_hud_build_menu_opened)
-
-
-func _connect_tower_signal(tower: ITower) -> void:
-	if tower == null:
-		return
-	if tower in _connected_towers:
-		Log.trace(Log.Level.DEBUG, "Tutorial tower already connected: %s" % tower)
-		return
-	Log.trace(Log.Level.DEBUG, "Tutorial tower connected: %s" % tower)
-	if not tower.upgrade_completed.is_connected(_on_tower_upgrade_completed):
-		tower.upgrade_completed.connect(_on_tower_upgrade_completed)
-	_connected_towers.append(tower)
-
-
-func _connect_visible_towers() -> void:
-	if not is_instance_valid(_tracked_level):
-		Log.trace(Log.Level.DEBUG, "Tutorial visible tower scan skipped: tracked level invalid")
-		return
-	if not is_instance_valid(_tracked_level.map):
-		Log.trace(Log.Level.DEBUG, "Tutorial visible tower scan skipped: map invalid")
-		return
-
-	Log.trace(Log.Level.DEBUG, "Tutorial scanning visible towers in map children=%d" % _tracked_level.map.get_child_count())
-	for child in _tracked_level.map.get_children():
-		if child is ITower:
-			_connect_tower_signal(child as ITower)
 
 
 func _count_visible_towers() -> int:
@@ -261,15 +257,6 @@ func _disconnect_hud_signals() -> void:
 	if _connected_hud.build_menu_opened.is_connected(_on_hud_build_menu_opened):
 		_connected_hud.build_menu_opened.disconnect(_on_hud_build_menu_opened)
 	_connected_hud = null
-
-
-func _disconnect_tower_signals() -> void:
-	for tower in _connected_towers:
-		if not is_instance_valid(tower):
-			continue
-		if tower.upgrade_completed.is_connected(_on_tower_upgrade_completed):
-			tower.upgrade_completed.disconnect(_on_tower_upgrade_completed)
-	_connected_towers.clear()
 
 
 func _find_first_build_card_button() -> Control:
@@ -347,11 +334,13 @@ func _handle_tutorial_event(event_name: String) -> void:
 		"tutorial:place_confirm":
 			_activate_objective(Objective.PLACE_CONFIRM)
 		"tutorial:select_tower":
-			_activate_objective(Objective.SELECT_TOWER)
+			if not _upgrade_triggered:
+				_upgrade_triggered = true
+				_activate_objective(Objective.SELECT_TOWER)
 		"tutorial:press_upgrade":
-			_activate_objective(Objective.PRESS_UPGRADE)
+			pass  # Driven by RadialTowerUpgradeMenu node_added
 		"tutorial:confirm_upgrade":
-			_activate_objective(Objective.CONFIRM_UPGRADE)
+			pass  # Driven by TowerUpgradeMenu node_added
 		"tutorial:pause_and_resume":
 			_activate_objective(Objective.PAUSE_AND_RESUME)
 		"tutorial:grant_upgrade_coins":
@@ -368,55 +357,44 @@ func _pause_level_for_dialogue() -> void:
 	Global.paused = false
 
 
-func _resume_level_for_interaction() -> void:
+func _get_placement_hint() -> TutorialPlacementHint:
 	if not is_instance_valid(_tracked_level):
-		return
-	_tracked_level.resume_from_pause()
-	Global.paused = false
+		return null
+	if is_instance_valid(_tracked_level.map):
+		var hint: TutorialPlacementHint = _tracked_level.map.find_child("TutorialPlacementHint", true, false) as TutorialPlacementHint
+		if is_instance_valid(hint):
+			return hint
+	return _tracked_level.find_child("TutorialPlacementHint", true, false) as TutorialPlacementHint
 
 
-func _center_camera_on_level() -> void:
+func _focus_camera_on_hint() -> void:
 	if Global.camera == null:
 		return
-	if not is_instance_valid(_tracked_level):
+	var hint: TutorialPlacementHint = _get_placement_hint()
+	if is_instance_valid(hint):
+		Global.camera.global_position = hint.global_position
 		return
-	if not is_instance_valid(_tracked_level.map):
+	# Fallback: center on map tilemap bounds center
+	if not is_instance_valid(_tracked_level) or not is_instance_valid(_tracked_level.map):
 		return
-	if _tracked_level.map.tilemap == null:
+	var tm: TileMap = _tracked_level.map.tilemap
+	if tm == null:
 		return
-
-	var used_rect: Rect2i = _tracked_level.map.tilemap.get_used_rect()
-	if used_rect.size == Vector2i.ZERO:
+	var rect: Rect2i = tm.get_used_rect()
+	if rect.size == Vector2i.ZERO:
 		return
-
-	var center_cell: Vector2i = used_rect.position + (used_rect.size / 2)
-	var center_local: Vector2 = _tracked_level.map.tilemap.map_to_local(center_cell)
-	Global.camera.global_position = _tracked_level.map.tilemap.to_global(center_local)
+	var center_cell: Vector2i = rect.position + rect.size / 2
+	Global.camera.global_position = tm.to_global(tm.map_to_local(center_cell))
 
 
 func _lock_camera_for_tutorial() -> void:
 	if Global.camera == null:
 		return
-	_center_camera_on_level()
+	_focus_camera_on_hint()
 	_camera_process_was_enabled = Global.camera.is_processing()
 	_camera_input_was_enabled = Global.camera.is_processing_input()
 	Global.camera.set_process(false)
 	Global.camera.set_process_input(false)
-
-
-func _prepare_dialog_layout_parent() -> void:
-	if Global.ui == null:
-		return
-
-	if Dialogic.Styles.has_active_layout_node():
-		_dialog_layout = Dialogic.Styles.get_layout_node()
-		if _dialog_layout != null and _dialog_layout.get_parent() != Global.ui:
-			if _dialog_layout.get_parent() != null:
-				_dialog_layout.reparent(Global.ui)
-			else:
-				Global.ui.add_child(_dialog_layout)
-	else:
-		_dialog_layout = Dialogic.Styles.load_style("", Global.ui)
 
 
 func _set_dialog_layout_visible(visible_state: bool) -> void:
@@ -425,42 +403,6 @@ func _set_dialog_layout_visible(visible_state: bool) -> void:
 	if _dialog_layout == null:
 		return
 	_dialog_layout.visible = visible_state
-
-
-func _set_dialog_layout_input_passthrough(enabled: bool) -> void:
-	if _dialog_layout == null and Dialogic.Styles.has_active_layout_node():
-		_dialog_layout = Dialogic.Styles.get_layout_node()
-	if _dialog_layout == null:
-		return
-
-	var controls: Array[Control] = []
-	if _dialog_layout is Control:
-		controls.append(_dialog_layout as Control)
-	for node in _dialog_layout.find_children("*", "Control", true, false):
-		if node is Control:
-			controls.append(node as Control)
-
-	if enabled:
-		for control in controls:
-			if not is_instance_valid(control):
-				continue
-			if not _dialog_mouse_filter_cache.has(control):
-				_dialog_mouse_filter_cache[control] = control.mouse_filter
-			control.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	else:
-		for control in _dialog_mouse_filter_cache.keys():
-			if not is_instance_valid(control):
-				continue
-			control.mouse_filter = int(_dialog_mouse_filter_cache[control])
-		_dialog_mouse_filter_cache.clear()
-
-
-func _should_hide_dialog_layout_for_objective(objective: Objective) -> bool:
-	match objective:
-		Objective.OPEN_BUILD_MENU, Objective.SELECT_BUILD_CARD:
-			return true
-		_:
-			return true
 
 
 func _should_use_non_blocking_overlay(objective: Objective) -> bool:
@@ -496,14 +438,14 @@ func _start_tutorial() -> void:
 	_place_confirm_tower_count = 0
 	_pause_resume_waiting_for_resume = false
 	_last_placed_tower = null
+	_upgrade_triggered = false
+	_coins_at_placement = 0
 
 	_connect_cursor_signals()
 	_connect_hud_signals()
-	_connect_visible_towers()
-	Log.trace(Log.Level.DEBUG, "Tutorial start: connected_cursor=%s connected_hud=%s connected_towers=%d" % [_connected_cursor, _connected_hud, _connected_towers.size()])
+	Log.trace(Log.Level.DEBUG, "Tutorial start: connected_cursor=%s connected_hud=%s" % [_connected_cursor, _connected_hud])
 	_lock_camera_for_tutorial()
 	_pause_level_for_dialogue()
-	_prepare_dialog_layout_parent()
 
 	var timeline_path: String = _get_timeline_path()
 	Log.trace(Log.Level.INFO, "Tutorial timeline path=%s" % timeline_path)
@@ -523,7 +465,13 @@ func _start_tutorial() -> void:
 
 	if _dialog_layout != null:
 		_dialog_layout.process_mode = Node.PROCESS_MODE_ALWAYS
-		if _dialog_layout is CanvasItem:
+		# CanvasLayer needs `.layer` for rendering order, not `.z_index`
+		if _dialog_layout is CanvasLayer:
+			var cl: CanvasLayer = _dialog_layout as CanvasLayer
+			cl.layer = 100
+			cl.offset = Vector2.ZERO
+			cl.follow_viewport_enabled = false
+		elif _dialog_layout is CanvasItem:
 			(_dialog_layout as CanvasItem).z_index = 9000
 		_set_dialog_layout_visible(true)
 		Log.trace(Log.Level.DEBUG, "Tutorial dialog layout visible and process always")
@@ -538,15 +486,18 @@ func _stop_tutorial(mark_completed: bool) -> void:
 	_active_objective = Objective.NONE
 	_place_confirm_tower_count = 0
 	_pause_resume_waiting_for_resume = false
+	_upgrade_triggered = false
+	_coins_at_placement = 0
 	visible = false
 	_overlay.hide_overlay()
+	var hint: TutorialPlacementHint = _get_placement_hint()
+	if is_instance_valid(hint):
+		hint.hide_hint()
 	Dialogic.paused = false
-	_set_dialog_layout_input_passthrough(false)
 	_set_dialog_layout_visible(true)
 
 	_disconnect_cursor_signals()
 	_disconnect_hud_signals()
-	_disconnect_tower_signals()
 	_unlock_camera_after_tutorial()
 
 	if get_tree().paused:
@@ -561,7 +512,7 @@ func _stop_tutorial(mark_completed: bool) -> void:
 
 
 func _update_objective_target() -> void:
-	if _active_objective == Objective.OPEN_BUILD_MENU or _active_objective == Objective.SELECT_BUILD_CARD:
+	if _active_objective == Objective.PLACE_CONFIRM or _active_objective == Objective.SELECT_TOWER:
 		_overlay.hide_overlay()
 		return
 
@@ -573,14 +524,6 @@ func _update_objective_target() -> void:
 				target = Global.hud.build_selection_button
 		Objective.SELECT_BUILD_CARD:
 			target = _find_first_build_card_button()
-		Objective.PLACE_CONFIRM:
-			if Global.cursor != null:
-				target = Global.cursor.place_button
-		Objective.SELECT_TOWER:
-			if is_instance_valid(_last_placed_tower):
-				target = _last_placed_tower.button
-			elif _connected_towers.size() > 0 and is_instance_valid(_connected_towers[0]):
-				target = _connected_towers[0].button
 		Objective.PRESS_UPGRADE:
 			target = _find_upgrade_button_from_radial()
 		Objective.CONFIRM_UPGRADE:
@@ -606,7 +549,6 @@ func _on_cursor_building_placed(building: IBuilding) -> void:
 	Log.trace(Log.Level.DEBUG, "Tutorial cursor building placed: building=%s objective=%s" % [building, _active_objective])
 	if building is ITower:
 		_last_placed_tower = building as ITower
-		_connect_tower_signal(_last_placed_tower)
 
 	if _active_objective == Objective.PLACE_CONFIRM:
 		_complete_active_objective()
@@ -624,7 +566,6 @@ func _try_complete_place_confirm_from_scene() -> void:
 	var latest_tower: ITower = _find_latest_visible_tower()
 	if is_instance_valid(latest_tower):
 		_last_placed_tower = latest_tower
-		_connect_tower_signal(latest_tower)
 
 	_complete_active_objective()
 
@@ -678,39 +619,30 @@ func _on_pause_menu_resumed() -> void:
 	_complete_active_objective()
 
 
-func _on_tower_upgrade_completed() -> void:
-	Log.trace(Log.Level.DEBUG, "Tutorial tower upgrade completed: objective=%s" % _active_objective)
-	if _active_objective == Objective.CONFIRM_UPGRADE:
-		_complete_active_objective()
-
-
 func _on_tree_node_added(node: Node) -> void:
 	if not _is_running:
 		return
-	Log.trace(Log.Level.DEBUG, "Tutorial tree node added: %s" % node)
 
 	if node is BuildPlacement:
-		Log.trace(Log.Level.DEBUG, "Tutorial detected BuildPlacement node: %s" % node)
+		Log.trace(Log.Level.DEBUG, "Tutorial: BuildPlacement added, reconnecting cursor")
 		_connect_cursor_signals_for(node as BuildPlacement)
 
-	if node is ITower:
-		_connect_tower_signal(node as ITower)
-
 	if node is RadialTowerUpgradeMenu and _active_objective == Objective.SELECT_TOWER:
-		_complete_active_objective()
+		Log.trace(Log.Level.DEBUG, "Tutorial: RadialTowerUpgradeMenu opened → PRESS_UPGRADE")
+		_active_objective = Objective.NONE
+		_overlay.hide_overlay()
+		_activate_objective(Objective.PRESS_UPGRADE)
 		return
 
 	if node is TowerUpgradeMenu and _active_objective == Objective.PRESS_UPGRADE:
+		Log.trace(Log.Level.DEBUG, "Tutorial: TowerUpgradeMenu opened → CONFIRM_UPGRADE")
 		var upgrade_menu: TowerUpgradeMenu = node as TowerUpgradeMenu
 		if not upgrade_menu.upgrade_confirmed.is_connected(_on_upgrade_menu_confirmed):
 			upgrade_menu.upgrade_confirmed.connect(_on_upgrade_menu_confirmed)
-		_complete_active_objective()
+		_active_objective = Objective.NONE
+		_overlay.hide_overlay()
+		_activate_objective(Objective.CONFIRM_UPGRADE)
 		return
-
-	if node is TowerUpgradeMenu:
-		var confirm_menu: TowerUpgradeMenu = node as TowerUpgradeMenu
-		if not confirm_menu.upgrade_confirmed.is_connected(_on_upgrade_menu_confirmed):
-			confirm_menu.upgrade_confirmed.connect(_on_upgrade_menu_confirmed)
 
 	if node is Pause:
 		var pause_menu: Pause = node as Pause

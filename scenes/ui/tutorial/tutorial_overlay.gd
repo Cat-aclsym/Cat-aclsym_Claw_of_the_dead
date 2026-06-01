@@ -42,7 +42,7 @@ func _ready() -> void:
 	visible = false
 
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	if not visible:
 		return
 
@@ -51,7 +51,7 @@ func _process(delta: float) -> void:
 		return
 
 	_update_layout()
-	_arrow.position.y = _arrow_base_position.y + sin(Time.get_ticks_msec() / 1000.0 * ARROW_BOB_SPEED) * ARROW_BOB_DISTANCE * delta * 60.0
+	_arrow.position.y = _arrow_base_position.y + sin(Time.get_ticks_msec() / 1000.0 * ARROW_BOB_SPEED) * ARROW_BOB_DISTANCE
 
 # Public
 ## Highlights the target control and blocks outside clicks.
@@ -62,9 +62,12 @@ func show_for_target(target: Control, hole_padding: float = DEFAULT_HOLE_PADDING
 		hide_overlay()
 		return
 
+	Log.trace(Log.Level.DEBUG, "TutorialOverlay show_for_target: target=%s path=%s rect=%s" % [target.name, target.get_path(), target.get_global_rect()])
 	_target_control = target
 	_hole_padding = maxf(0.0, hole_padding)
 	visible = true
+	# Force full-rect in case the parent was hidden during layout and our size is stale.
+	set_anchors_preset(Control.PRESET_FULL_RECT)
 	_apply_blocking_mode()
 	_update_layout()
 
@@ -86,7 +89,7 @@ func _get_target_rect() -> Rect2:
 		return Rect2(Vector2.ZERO, Vector2.ZERO)
 
 	var global_rect: Rect2 = _target_control.get_global_rect()
-	var local_position: Vector2 = global_rect.position - global_position
+	var local_position: Vector2 = global_rect.position - get_global_rect().position
 	var expanded_size: Vector2 = Vector2(
 		global_rect.size.x + (_hole_padding * 2.0),
 		global_rect.size.y + (_hole_padding * 2.0)
