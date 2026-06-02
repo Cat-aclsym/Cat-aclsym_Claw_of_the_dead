@@ -411,6 +411,13 @@ func _show_debug_exclusion_tiles_around(center: Vector2i) -> void:
 			if center.distance_to(coords) < SPECIAL_TILE_MIN_DISTANCE_BETWEEN_TILES:
 				_create_debug_tile_overlay(coords, SPECIAL_TILE_DEBUG_EXCLUSION_COLOR, _debug_exclusion_overlays)
 
+func _get_tutorial_hint_tile() -> Vector2i:
+	var hint: TutorialPlacementHint = find_child("TutorialPlacementHint", true, false) as TutorialPlacementHint
+	if not is_instance_valid(hint) or not is_instance_valid(tilemap):
+		return Vector2i(-99999, -99999)
+	var local_pos: Vector2 = tilemap.to_local(hint.global_position)
+	return tilemap.local_to_map(local_pos)
+
 func _get_spawnable_special_tiles(buildable_tiles: Array[Vector2i]) -> Array[Vector2i]:
 	var origin := tilemap.map_to_local(Vector2i.ZERO)
 	var neighbor := tilemap.map_to_local(Vector2i(1, 0))
@@ -419,9 +426,13 @@ func _get_spawnable_special_tiles(buildable_tiles: Array[Vector2i]) -> Array[Vec
 		tile_step_distance = 32.0
 
 	var max_distance_to_path: float = tile_step_distance * SPECIAL_TILE_MAX_DISTANCE_TILES
+	var tutorial_tile: Vector2i = _get_tutorial_hint_tile()
 
 	var spawnable_tiles: Array[Vector2i] = []
 	for coords in buildable_tiles:
+		if coords.distance_to(tutorial_tile) < 2.0:
+			continue
+
 		var world_pos := tilemap.map_to_local(coords)
 		var min_distance := INF
 
