@@ -45,6 +45,18 @@ func _process(_delta: float) -> void:
 
 
 # Public
+## Hides the arrow and clears any active target.
+func hide_overlay() -> void:
+	_target_control = null
+	_target_world_item = null
+	visible = false
+
+
+## No-op — kept for API compatibility with TutorialManager.
+func set_blocking_mode(_enabled: bool) -> void:
+	pass
+
+
 ## Points at a screen-space UI Control (in the viewport/HUD layer, not under a world Node2D).
 func show_for_target(target: Control) -> void:
 	if not is_instance_valid(target):
@@ -78,25 +90,17 @@ func show_for_world_item(item: CanvasItem, world_size: Vector2 = Vector2(64.0, 6
 	_init_arrow(_get_target_rect())
 
 
-## Hides the arrow and clears any active target.
-func hide_overlay() -> void:
-	_target_control = null
-	_target_world_item = null
-	visible = false
-
-
-## No-op — kept for API compatibility with TutorialManager.
-func set_blocking_mode(_enabled: bool) -> void:
-	pass
-
-
 # Private
-func _init_arrow(rect: Rect2) -> void:
-	_direction = _auto_direction(rect)
-	_arrow.rotation = _rotation_for_direction(_direction)
-	visible = true
-	set_anchors_preset(Control.PRESET_FULL_RECT)
-	_update_layout(rect)
+func _auto_direction(rect: Rect2) -> Direction:
+	var center: Vector2 = rect.get_center()
+	var vp: Vector2 = get_viewport_rect().size
+	var spaces: Array[float] = [center.y, vp.y - center.y, center.x, vp.x - center.x]
+	var directions: Array[Direction] = [Direction.DOWN, Direction.UP, Direction.RIGHT, Direction.LEFT]
+	var best: int = 0
+	for i: int in range(1, spaces.size()):
+		if spaces[i] > spaces[best]:
+			best = i
+	return directions[best]
 
 
 func _get_target_rect() -> Rect2:
@@ -110,16 +114,12 @@ func _get_target_rect() -> Rect2:
 	return Rect2()
 
 
-func _auto_direction(rect: Rect2) -> Direction:
-	var center: Vector2 = rect.get_center()
-	var vp: Vector2 = get_viewport_rect().size
-	var spaces: Array[float] = [center.y, vp.y - center.y, center.x, vp.x - center.x]
-	var directions: Array[Direction] = [Direction.DOWN, Direction.UP, Direction.RIGHT, Direction.LEFT]
-	var best: int = 0
-	for i: int in range(1, spaces.size()):
-		if spaces[i] > spaces[best]:
-			best = i
-	return directions[best]
+func _init_arrow(rect: Rect2) -> void:
+	_direction = _auto_direction(rect)
+	_arrow.rotation = _rotation_for_direction(_direction)
+	visible = true
+	set_anchors_preset(Control.PRESET_FULL_RECT)
+	_update_layout(rect)
 
 
 func _rotation_for_direction(dir: Direction) -> float:
