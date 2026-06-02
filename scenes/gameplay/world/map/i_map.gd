@@ -33,6 +33,8 @@ const PATH_INDICATOR_START_TYPE: int = 0
 @export var debug_show_spawnable_special_tiles: bool = false
 @export var initial_camera_position: Vector2 = Vector2.ZERO
 @export var initial_path_index: int = 0
+@export var show_end_indicators: bool = true
+@export var show_start_indicators: bool = true
 @export_range(0.0, 100.0, 0.1) var special_tile_percentage: float = 2.0
 
 ## Invisible TileMap that marks every tile where towers can be placed.
@@ -226,13 +228,13 @@ func _create_path_indicators() -> void:
 		if curve.get_point_count() < 2:
 			continue
 
-		# Start point
-		var start_pos = path.to_global(curve.get_point_position(0))
-		_instantiate_indicator(start_pos, Color(0.1, 0.9, 0.1), PATH_INDICATOR_START_TYPE)
+		if show_start_indicators:
+			var start_pos = path.to_global(curve.get_point_position(0))
+			_instantiate_indicator(start_pos, Color(0.1, 0.9, 0.1), PATH_INDICATOR_START_TYPE)
 
-		# End point
-		var end_pos = path.to_global(curve.get_point_position(curve.get_point_count() - 1))
-		_instantiate_indicator(end_pos, Color(0.9, 0.1, 0.1), PATH_INDICATOR_END_TYPE)
+		if show_end_indicators:
+			var end_pos = path.to_global(curve.get_point_position(curve.get_point_count() - 1))
+			_instantiate_indicator(end_pos, Color(0.9, 0.1, 0.1), PATH_INDICATOR_END_TYPE)
 
 func _instantiate_indicator(global_pos: Vector2, color: Color, point_type: int) -> void:
 	var indicator = PATH_INDICATOR_SCRIPT.new()
