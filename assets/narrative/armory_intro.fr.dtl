@@ -1,0 +1,8 @@
+join character1 (Neutral) center
+character1 (Neutral): Bienvenue dans l'Armurerie !
+character1 (Neutral): Ici, tu dépenses tes étoiles de défi pour débloquer de nouvelles tours et pièges.
+character1 (Neutral): Chaque carte affiche son coût en étoiles. Bleu = tu peux te le permettre — gris = un prérequis est encore verrouillé.
+character1 (Neutral): Clique sur une carte pour voir sa description, puis appuie sur Acheter pour la débloquer définitivement.
+character1 (Neutral): Tu as changé d'avis ? Le bouton Réinitialiser te rembourse tous tes achats pour essayer une autre combinaison.
+leave character1 [animation="Fade Out" wait="true"]
+[end_timeline]

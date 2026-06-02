@@ -28,8 +28,8 @@ var _selected_node_id: String = ""
 @onready var description_label: Label = %DescriptionLabel
 @onready var description_panel: PanelContainer = %DescriptionPanel
 @onready var description_title_label: Label = %DescriptionTitleLabel
+@onready var help_button: TextureButton = %HelpButton
 @onready var items_hbox: HBoxContainer = %ItemsHBox
-@onready var legacy_label: Label = %LegacyLabel
 @onready var reset_cancel_button: TextureButton = %ResetCancelButton
 @onready var reset_confirm_button: TextureButton = %ResetConfirmButton
 @onready var reset_confirm_root: Control = %ResetConfirmRoot
@@ -39,6 +39,7 @@ var _selected_node_id: String = ""
 @onready var scroll_buildings: ScrollContainer = %ScrollBuildings
 @onready var signals: Array[Dictionary] = [
 	{SignalUtil.WHO: close_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_close_pressed},
+	{SignalUtil.WHO: help_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_help_button_pressed},
 	{SignalUtil.WHO: reset_cancel_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_reset_dialog_cancel_pressed},
 	{SignalUtil.WHO: reset_confirm_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_reset_dialog_confirm_pressed},
 	{SignalUtil.WHO: reset_spent_stars_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_reset_spent_stars_pressed},
@@ -102,8 +103,8 @@ func _ready() -> void:
 	assert(description_label != null, "description_label node not found")
 	assert(description_panel != null, "description_panel node not found")
 	assert(description_title_label != null, "description_title_label node not found")
+	assert(help_button != null, "help_button node not found")
 	assert(items_hbox != null, "items_hbox node not found")
-	assert(legacy_label != null, "legacy_label node not found")
 	assert(reset_cancel_button != null, "reset_cancel_button node not found")
 	assert(reset_confirm_button != null, "reset_confirm_button node not found")
 	assert(reset_confirm_root != null, "reset_confirm_root node not found")
@@ -122,6 +123,7 @@ func _ready() -> void:
 	title_label.text = tr("ARMORY.TITLE")
 	reset_spent_stars_label.text = tr("ARMORY.RESET_SPENT_STARS")
 	_refresh()
+	_maybe_show_armory_intro()
 
 
 ## Clears the selected node, hides the description panel, and deselects all [ArmoryItem] instances.
@@ -179,12 +181,12 @@ func _extract_preview_data(scene_path: String) -> Dictionary:
 	var entity: Node = packed_scene.instantiate()
 	if entity == null:
 		return out
-	
+
 	# Match build_card.gd logic: look for "Sprite" or "Sprite2D"
 	var sprite_node: Node = entity.get_node_or_null("Sprite")
 	if sprite_node == null:
 		sprite_node = entity.get_node_or_null("Sprite2D")
-	
+
 	# Better way to find by type in Godot 4
 	if sprite_node == null:
 		var sprites = entity.find_children("*", "Sprite2D", true, false)
@@ -194,7 +196,7 @@ func _extract_preview_data(scene_path: String) -> Dictionary:
 		var anim_sprites = entity.find_children("*", "AnimatedSprite2D", true, false)
 		if not anim_sprites.is_empty():
 			sprite_node = anim_sprites[0]
-	
+
 	if sprite_node is Sprite2D:
 		var s: Sprite2D = sprite_node as Sprite2D
 		out["texture"] = s.texture
@@ -212,7 +214,7 @@ func _extract_preview_data(scene_path: String) -> Dictionary:
 					animation_name = StringName(names[0])
 			if anim_sprite.sprite_frames.has_animation(animation_name) and anim_sprite.sprite_frames.get_frame_count(animation_name) > 0:
 				out["texture"] = anim_sprite.sprite_frames.get_frame_texture(animation_name, 0)
-	
+
 	entity.queue_free()
 	return out
 
@@ -283,17 +285,13 @@ func _queue_clear_selection_if_background_click(global_pos: Vector2) -> void:
 	call_deferred("_clear_selection_if_click_missed_items", global_pos)
 
 
-## Rebuilds the item row from [method ArmoryManager.get_node_ids_ordered], updates star count, legacy notice, and reset button state.
+## Rebuilds the item row from [method ArmoryManager.get_node_ids_ordered], updates star count and reset button state.
 func _refresh() -> void:
 	while items_hbox.get_child_count() > 0:
 		var cb: Node = items_hbox.get_child(0)
 		items_hbox.remove_child(cb)
 		cb.queue_free()
 	_armory_items.clear()
-
-	legacy_label.visible = ProgressionManager.data.armory_legacy_mode
-	if legacy_label.visible:
-		legacy_label.text = tr("ARMORY.LEGACY_NOTICE")
 
 	var avail: int = ArmoryManager.get_available_stars()
 	stars_count_label.text = str(avail)
@@ -332,7 +330,7 @@ func _resolve_icon_data(node: Dictionary) -> Dictionary:
 			if StatsDB.has_trap(trap_id):
 				var trap: Dictionary = StatsDB.get_trap(trap_id)
 				return _extract_preview_data(str(trap.get("scene", "")))
-	
+
 	# Fallback: try to find a tower/trap ID in the node ID (e.g. "unlock_bat_01_branch_a" -> "bat_01")
 	var node_id: String = node.get("id", "")
 	for tid in StatsDB.get_tower_ids():
@@ -343,7 +341,7 @@ func _resolve_icon_data(node: Dictionary) -> Dictionary:
 		if trap_id in node_id:
 			var trap: Dictionary = StatsDB.get_trap(trap_id)
 			return _extract_preview_data(str(trap.get("scene", "")))
-			
+
 	return fallback
 
 
@@ -379,3 +377,22 @@ func _update_reset_button_visual() -> void:
 	var is_disabled: bool = reset_spent_stars_button.disabled
 	reset_spent_stars_button.modulate = _RESET_BUTTON_DISABLED_MODULATE if is_disabled else _RESET_BUTTON_ENABLED_MODULATE
 	reset_spent_stars_label.modulate = _RESET_BUTTON_DISABLED_MODULATE if is_disabled else _RESET_BUTTON_ENABLED_MODULATE
+
+
+func _get_armory_intro_path() -> String:
+	var locale: String = TranslationServer.get_locale().substr(0, 2)
+	var path: String = "res://assets/narrative/armory_intro.%s.dtl" % locale
+	if not FileAccess.file_exists(path):
+		path = "res://assets/narrative/armory_intro.en.dtl"
+	return path
+
+
+func _maybe_show_armory_intro() -> void:
+	if ProgressionManager.is_armory_intro_seen():
+		return
+	ProgressionManager.mark_armory_intro_seen()
+	Dialogic.start(_get_armory_intro_path())
+
+
+func _on_help_button_pressed() -> void:
+	Dialogic.start(_get_armory_intro_path())

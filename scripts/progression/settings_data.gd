@@ -10,12 +10,15 @@ var language: String = "fr"
 var music_enabled: bool = true
 ## Whether sound effects are enabled.
 var sound_enabled: bool = true
+## Whether the armory intro dialogue has been seen.
+var armory_intro_seen: bool = false
 ## Whether the first-play tutorial is completed.
 var tutorial_completed: bool = false
 
 ## Converts the object to a dictionary for serialization.
 func save() -> Dictionary:
 	return {
+		"armory_intro_seen": armory_intro_seen,
 		"language": language,
 		"music_enabled": music_enabled,
 		"sound_enabled": sound_enabled,
@@ -24,6 +27,7 @@ func save() -> Dictionary:
 
 ## Populates the object from a dictionary.
 func from_dictionary(data: Dictionary) -> void:
+	armory_intro_seen = data.get("armory_intro_seen", false)
 	language = data.get("language", "fr")
 	music_enabled = data.get("music_enabled", true)
 	sound_enabled = data.get("sound_enabled", true)

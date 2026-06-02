@@ -1,0 +1,8 @@
+join character1 (Neutral) center
+character1 (Neutral): Welcome to the Armory!
+character1 (Neutral): Here you spend challenge stars to unlock new towers and traps.
+character1 (Neutral): Each card shows its star cost. Blue means you can afford it — grey means a prerequisite is still locked.
+character1 (Neutral): Click a card to see its description, then hit Buy to unlock it permanently.
+character1 (Neutral): Changed your mind? The Reset button lets you refund all spending and try a different build.
+leave character1 [animation="Fade Out" wait="true"]
+[end_timeline]

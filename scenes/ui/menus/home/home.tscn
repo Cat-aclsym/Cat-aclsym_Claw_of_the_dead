@@ -200,6 +200,7 @@ theme = ExtResource("4_ay1j5")
 theme_override_colors/font_color = Color(0.137255, 0.215686, 0.223529, 1)
 theme_override_colors/font_outline_color = Color(0.137255, 0.215686, 0.223529, 1)
 theme_override_constants/outline_size = 6
+theme_override_fonts/font = ExtResource("8_variation")
 theme_override_font_sizes/font_size = 35
 text = "HOME.ARMORY.BUTTON"
 horizontal_alignment = 1

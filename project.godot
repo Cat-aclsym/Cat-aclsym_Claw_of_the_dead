@@ -33,6 +33,8 @@ directories/dch_directory={
 "character1": "res://assets/narrative/character1.dch"
 }
 directories/dtl_directory={
+"armory_intro.en": "res://assets/narrative/armory_intro.en.dtl",
+"armory_intro.fr": "res://assets/narrative/armory_intro.fr.dtl",
 "tutorial_level_01.en": "res://assets/narrative/tutorial_level_01.en.dtl",
 "tutorial_level_01.fr": "res://assets/narrative/tutorial_level_01.fr.dtl"
 }

@@ -68,6 +68,19 @@ func get_next_level_id(current_id: String) -> String:
 	return ""
 
 
+## Returns whether the armory intro dialogue has been seen.
+func is_armory_intro_seen() -> bool:
+	return data.parameters.armory_intro_seen
+
+
+## Marks the armory intro dialogue as seen and persists it.
+func mark_armory_intro_seen() -> void:
+	if data.parameters.armory_intro_seen:
+		return
+	data.parameters.armory_intro_seen = true
+	save_game()
+
+
 ## Checks if there are any enemies that haven't been seen in the encyclopedia.
 ## Only considers IDs currently known by StatsDB to avoid stale save data entries.
 func has_unseen_encyclopedia_enemies() -> bool:
