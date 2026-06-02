@@ -22,8 +22,7 @@ enum Objective {
 const LEVEL_ID_TUTORIAL: String = "lev.01"
 const TIMELINE_EN_PATH: String = "res://assets/narrative/tutorial_level_01.en.dtl"
 const TIMELINE_FR_PATH: String = "res://assets/narrative/tutorial_level_01.fr.dtl"
-const UPGRADE_BONUS_COINS: int = 150
-const UPGRADE_TRIGGER_COINS: int = 50
+const KILLS_TO_ACTIVATE_UPGRADE: int = 5
 
 # Private variables
 var _active_objective: Objective = Objective.NONE
@@ -38,7 +37,8 @@ var _camera_process_was_enabled: bool = true
 var _camera_input_was_enabled: bool = true
 var _dialog_layout: Node = null
 var _upgrade_triggered: bool = false
-var _coins_at_placement: int = 0
+var _kills_after_placement: int = 0
+var _radial_menu: RadialTowerUpgradeMenu = null
 
 # Onready variables
 @onready var _overlay: TutorialOverlay = $TutorialOverlay
@@ -75,11 +75,10 @@ func _process(_delta: float) -> void:
 		_connect_hud_signals()
 
 	if not _upgrade_triggered and _active_objective == Objective.NONE:
-		if is_instance_valid(_last_placed_tower) and is_instance_valid(_tracked_level):
-			if _tracked_level.coins >= _coins_at_placement + UPGRADE_TRIGGER_COINS:
-				_upgrade_triggered = true
-				_activate_objective(Objective.SELECT_TOWER)
-				return
+		if is_instance_valid(_last_placed_tower) and _kills_after_placement >= KILLS_TO_ACTIVATE_UPGRADE:
+			_upgrade_triggered = true
+			_activate_objective(Objective.SELECT_TOWER)
+			return
 
 	if _active_objective == Objective.NONE:
 		return
@@ -91,6 +90,9 @@ func _process(_delta: float) -> void:
 ## [param level] Running level instance
 func on_level_started(level: ILevel) -> void:
 	Log.trace(Log.Level.DEBUG, "TutorialManager.on_level_started level=%s valid=%s tutorial_completed=%s" % [level, is_instance_valid(level), ProgressionManager.is_tutorial_completed()])
+	if _is_running:
+		_tracked_level = null  # Prevent resume_from_pause call on the being-freed level.
+		_stop_tutorial(false)
 	_tracked_level = level
 	if not is_instance_valid(level):
 		Log.trace(Log.Level.WARN, "TutorialManager.on_level_started aborted: invalid level")
@@ -128,11 +130,17 @@ func _activate_objective(objective: Objective) -> void:
 		if is_instance_valid(hint):
 			hint.show_hint()
 	_pause_resume_waiting_for_resume = false
-	# SELECT_TOWER: don't freeze — game and dialogue keep running while the player clicks the tower.
-	if objective == Objective.SELECT_TOWER:
-		# Level already running from start_wave_flow; resume dialogue so "click tower" text plays.
+	if objective == Objective.SELECT_TOWER or objective == Objective.PRESS_UPGRADE or objective == Objective.CONFIRM_UPGRADE:
+		# Game keeps running; resume dialogue so instruction text plays, then signal re-freezes it.
+		# Do NOT pause the level: the radial/upgrade menus have tween animations that need time_scale > 0.
 		Dialogic.paused = false
 		_set_dialog_layout_visible(true)
+	elif objective == Objective.PAUSE_AND_RESUME:
+		# Resume the level so the game is actually running when the player presses Pause.
+		Dialogic.paused = true
+		if is_instance_valid(_tracked_level):
+			_tracked_level.resume_from_pause()
+		_set_dialog_layout_visible(false)
 	else:
 		Dialogic.paused = true
 		_pause_level_for_dialogue()
@@ -155,10 +163,13 @@ func _complete_active_objective() -> void:
 		if is_instance_valid(hint):
 			hint.hide_hint()
 		if is_instance_valid(_tracked_level):
-			_coins_at_placement = _tracked_level.coins
 			_tracked_level.start_wave_flow()
 		_unlock_camera_after_tutorial()
-		# Dialogue stays frozen; _process watches for UPGRADE_TRIGGER_COINS then activates SELECT_TOWER.
+		# Dialogue stays frozen; _process watches for KILLS_TO_ACTIVATE_UPGRADE then activates SELECT_TOWER.
+		return
+	if previous_objective == Objective.PAUSE_AND_RESUME:
+		# Player just resumed — don't re-pause the level, just unfreeze dialogue.
+		Dialogic.paused = false
 		return
 	_pause_level_for_dialogue()
 	Dialogic.paused = false
@@ -318,14 +329,6 @@ func _get_timeline_path() -> String:
 	return TIMELINE_FR_PATH if locale.begins_with("fr") else TIMELINE_EN_PATH
 
 
-func _grant_upgrade_bonus() -> void:
-	if not is_instance_valid(_tracked_level):
-		return
-	if _tracked_level.coins >= UPGRADE_BONUS_COINS:
-		return
-	_tracked_level.coins = UPGRADE_BONUS_COINS
-
-
 func _handle_tutorial_event(event_name: String) -> void:
 	match event_name:
 		"tutorial:open_build_menu":
@@ -337,15 +340,21 @@ func _handle_tutorial_event(event_name: String) -> void:
 		"tutorial:select_tower":
 			if not _upgrade_triggered:
 				_upgrade_triggered = true
-				_activate_objective(Objective.SELECT_TOWER)
+			# Player read the instruction — freeze until they open the action wheel.
+			Dialogic.paused = true
+			_set_dialog_layout_visible(false)
 		"tutorial:press_upgrade":
-			pass  # Driven by RadialTowerUpgradeMenu node_added
+			# Player read the instruction — re-enable radial menu input then freeze.
+			if is_instance_valid(_radial_menu):
+				_radial_menu.set_process_input(true)
+			Dialogic.paused = true
+			_set_dialog_layout_visible(false)
 		"tutorial:confirm_upgrade":
-			pass  # Driven by TowerUpgradeMenu node_added
+			# Player read the instruction — freeze until they confirm the upgrade.
+			Dialogic.paused = true
+			_set_dialog_layout_visible(false)
 		"tutorial:pause_and_resume":
 			_activate_objective(Objective.PAUSE_AND_RESUME)
-		"tutorial:grant_upgrade_coins":
-			_grant_upgrade_bonus()
 		_:
 			pass
 
@@ -408,7 +417,7 @@ func _set_dialog_layout_visible(visible_state: bool) -> void:
 
 func _should_use_non_blocking_overlay(objective: Objective) -> bool:
 	match objective:
-		Objective.OPEN_BUILD_MENU, Objective.SELECT_BUILD_CARD:
+		Objective.OPEN_BUILD_MENU, Objective.SELECT_BUILD_CARD, Objective.PRESS_UPGRADE, Objective.CONFIRM_UPGRADE:
 			return true
 		_:
 			return false
@@ -440,7 +449,8 @@ func _start_tutorial() -> void:
 	_pause_resume_waiting_for_resume = false
 	_last_placed_tower = null
 	_upgrade_triggered = false
-	_coins_at_placement = 0
+	_kills_after_placement = 0
+	_radial_menu = null
 
 	_connect_cursor_signals()
 	_connect_hud_signals()
@@ -488,7 +498,8 @@ func _stop_tutorial(mark_completed: bool) -> void:
 	_place_confirm_tower_count = 0
 	_pause_resume_waiting_for_resume = false
 	_upgrade_triggered = false
-	_coins_at_placement = 0
+	_kills_after_placement = 0
+	_radial_menu = null
 	visible = false
 	_overlay.hide_overlay()
 	var hint: TutorialPlacementHint = _get_placement_hint()
@@ -513,7 +524,7 @@ func _stop_tutorial(mark_completed: bool) -> void:
 
 
 func _update_objective_target() -> void:
-	if _active_objective == Objective.PLACE_CONFIRM or _active_objective == Objective.SELECT_TOWER:
+	if _active_objective == Objective.PLACE_CONFIRM or _active_objective == Objective.SELECT_TOWER or _active_objective == Objective.PRESS_UPGRADE:
 		_overlay.hide_overlay()
 		return
 
@@ -620,9 +631,21 @@ func _on_pause_menu_resumed() -> void:
 	_complete_active_objective()
 
 
+func _on_enemy_killed() -> void:
+	if _upgrade_triggered or _active_objective != Objective.NONE:
+		return
+	_kills_after_placement += 1
+	Log.trace(Log.Level.DEBUG, "Tutorial enemy killed: kills=%d/%d" % [_kills_after_placement, KILLS_TO_ACTIVATE_UPGRADE])
+
+
 func _on_tree_node_added(node: Node) -> void:
 	if not _is_running:
 		return
+
+	if node is IEnemy and not _upgrade_triggered and is_instance_valid(_last_placed_tower):
+		var enemy: IEnemy = node as IEnemy
+		if not enemy.die.is_connected(_on_enemy_killed):
+			enemy.die.connect(_on_enemy_killed)
 
 	if node is BuildPlacement:
 		Log.trace(Log.Level.DEBUG, "Tutorial: BuildPlacement added, reconnecting cursor")
@@ -630,6 +653,9 @@ func _on_tree_node_added(node: Node) -> void:
 
 	if node is RadialTowerUpgradeMenu and _active_objective == Objective.SELECT_TOWER:
 		Log.trace(Log.Level.DEBUG, "Tutorial: RadialTowerUpgradeMenu opened → PRESS_UPGRADE")
+		_radial_menu = node as RadialTowerUpgradeMenu
+		# Disable _input so dialogue-advance clicks don't close the radial menu.
+		_radial_menu.set_process_input(false)
 		_active_objective = Objective.NONE
 		_overlay.hide_overlay()
 		_activate_objective(Objective.PRESS_UPGRADE)

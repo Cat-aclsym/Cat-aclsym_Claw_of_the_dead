@@ -186,15 +186,15 @@ func _build() -> void:
 		else:
 			get_parent().add_child(new_trap)
 
+	add_invalid_cell(tm_pos)
+	ILevel.current_level.coins -= _preview_building.cost
+
 	if new_entity is IBuilding:
 		var placed_building: IBuilding = new_entity as IBuilding
 		Log.trace(Log.Level.INFO, "BuildPlacement building placed: %s kind=%s" % [placed_building, placed_building.get_building_kind()])
 		ChallengeManager.notify_building_placed(placed_building)
 		building_placed.emit(placed_building)
 		Log.trace(Log.Level.DEBUG, "BuildPlacement building_placed emitted")
-
-	add_invalid_cell(tm_pos)
-	ILevel.current_level.coins -= _preview_building.cost
 
 	_cancel_build()
 	_can_reposition_build_cursor = true
