@@ -12,8 +12,6 @@ character1 (Neutral): Maintenant, clique sur ta tour pour ouvrir sa roue d'actio
 [signal arg="tutorial:select_tower"]
 character1 (Neutral): Appuie sur le bouton de mise à niveau.
 [signal arg="tutorial:press_upgrade"]
-character1 (Neutral): Confirme l'amélioration dans le panneau.
-[signal arg="tutorial:confirm_upgrade"]
 character1 (Neutral): Super boulot.
 character1 (Neutral): Dernière étape \: appuie sur Pause, puis sur Reprendre pour retourner au combat.
 [signal arg="tutorial:pause_and_resume"]

@@ -91,6 +91,14 @@
 			},
 			{
 				"wait_s": 3
+			},
+			{
+				"enemy_id": "ene.03",
+				"count": 3,
+				"spawner": 0
+			},
+			{
+				"wait_s": 3
 			}
 		],
 		[
