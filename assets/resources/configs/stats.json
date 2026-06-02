@@ -14,9 +14,9 @@
 		},
 		"rat": {
 			"max_health": 25,
-			"reward": 2,
+			"reward": 5,
 			"scene": "res://scenes/gameplay/entities/enemy/enemies/ene.03.tscn",
-			"speed": 75
+			"speed": 70
 		},
 		"splitter_zombie": {
 			"extra": {
@@ -31,7 +31,7 @@
 			"max_health": 25,
 			"reward": 10,
 			"scene": "res://scenes/gameplay/entities/enemy/enemies/small_zombie.tscn",
-			"speed": 75
+			"speed": 70
 		},
     	"minesweeper": {
 			"max_health": 70,
@@ -49,10 +49,10 @@
 				"shoot_range": 100,
 				"tower_disable_duration": 3
 			},
-			"max_health": 1000,
-			"reward": 500,
+			"max_health": 700,
+			"reward": 400,
 			"scene": "res://scenes/gameplay/entities/enemy/enemies/big_daddy.tscn",
-			"speed": 35
+			"speed": 20
 		}
 	},
 	"towers": {
