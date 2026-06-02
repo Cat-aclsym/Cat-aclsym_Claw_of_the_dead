@@ -8,8 +8,6 @@ character1 (Neutral): Great. Select the Cat Tree card.
 character1 (Neutral): Nice. Move the preview to a valid tile, then confirm with the Place button.
 [signal arg="tutorial:place_confirm"]
 character1 (Neutral): Perfect placement.
-character1 (Neutral): I am giving you extra coins so we can test upgrades immediately.
-[signal arg="tutorial:grant_upgrade_coins"]
 character1 (Neutral): Now click your tower to open its action wheel.
 [signal arg="tutorial:select_tower"]
 character1 (Neutral): Press the Upgrade button.
