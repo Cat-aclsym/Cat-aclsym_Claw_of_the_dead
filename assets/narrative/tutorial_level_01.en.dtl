@@ -17,7 +17,7 @@ character1 (Neutral): Press the Upgrade button.
 character1 (Neutral): Confirm the upgrade in the panel.
 [signal arg="tutorial:confirm_upgrade"]
 character1 (Neutral): Excellent work.
-character1 (Neutral): Last step: press Pause, then Resume to return to battle.
+character1 (Neutral): Last step\: press Pause, then Resume to return to battle.
 [signal arg="tutorial:pause_and_resume"]
 character1 (Neutral): Tutorial complete! Defend the base and survive all waves.
 leave character1 [animation="Fade Out" wait="true"]

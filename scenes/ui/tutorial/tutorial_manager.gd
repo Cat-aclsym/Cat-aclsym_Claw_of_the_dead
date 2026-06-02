@@ -157,6 +157,7 @@ func _complete_active_objective() -> void:
 		if is_instance_valid(_tracked_level):
 			_coins_at_placement = _tracked_level.coins
 			_tracked_level.start_wave_flow()
+		_unlock_camera_after_tutorial()
 		# Dialogue stays frozen; _process watches for UPGRADE_TRIGGER_COINS then activates SELECT_TOWER.
 		return
 	_pause_level_for_dialogue()
