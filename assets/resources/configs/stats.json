@@ -1,16 +1,16 @@
 {
 	"enemies": {
 		"default_zombie": {
-			"max_health": 100,
+			"max_health": 50,
 			"reward": 20,
 			"scene": "res://scenes/gameplay/entities/enemy/enemies/ene.01.tscn",
-			"speed": 45
+			"speed": 35
 		},
 		"damage_zombie": {
-			"max_health": 200,
+			"max_health": 120,
 			"reward": 40,
 			"scene": "res://scenes/gameplay/entities/enemy/enemies/ene.02.tscn",
-			"speed": 25
+			"speed": 20
 		},
 		"rat": {
 			"max_health": 25,
@@ -33,7 +33,7 @@
 			"scene": "res://scenes/gameplay/entities/enemy/enemies/small_zombie.tscn",
 			"speed": 75
 		},
-    "minesweeper": {
+    	"minesweeper": {
 			"max_health": 70,
 			"reward": 12,
 			"scene": "res://scenes/gameplay/entities/enemy/enemies/minesweeper.tscn",
@@ -73,7 +73,7 @@
 				"cost": 50,
 				"fire_rate": 1.0,
 				"projectile_count": 1,
-				"shoot_range": 55,
+				"shoot_range": 75,
 				"spread_angle": 15
 			},
 			"level": 1,
@@ -311,7 +311,7 @@
 			"next": [
 				"bat_01_03"
 			],
-			"price": 75,
+			"price": 50,
 			"tower_stats": {
 				"fire_rate": 0,
 				"level": 1,
