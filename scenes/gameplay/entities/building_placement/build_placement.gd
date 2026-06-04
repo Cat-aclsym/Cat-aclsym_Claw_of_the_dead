@@ -11,6 +11,8 @@ signal trigger_state_idle
 signal trigger_state_build
 ## Emitted when entering upgrade state
 signal trigger_state_upgrade
+## Emitted when a building has been successfully placed
+signal building_placed(building: IBuilding)
 
 const COLOR_OK := Color(1, 1, 1, 0.5)
 const COLOR_KO := Color(1, 0.5, 0.5, 0.5)
@@ -60,12 +62,13 @@ func _ready() -> void:
 	assert(place_button != null, "place_button node not found")
 	assert(place_hud != null, "place_hud node not found")
 	assert(placement_area != null, "placement_area node not found")
+	Log.trace(Log.Level.DEBUG, "BuildPlacement ready: visible=%s state=%s level=%s" % [visible, _state, ILevel.current_level])
 
 	Global.cursor = self
 	visible = false
 	place_hud.visible = false
 	SignalUtil.connects(signals)
-	
+
 	ButtonEffects.apply(place_button)
 	ButtonEffects.apply(cancel_place_button)
 
@@ -94,6 +97,7 @@ func add_invalid_cell(tm_pos: Vector2i) -> void:
 ## [param new_state] The state to change to
 ## [param args] Additional arguments for the state change
 func change_state(new_state: CursorState, args: Array = []) -> void:
+	Log.trace(Log.Level.DEBUG, "BuildPlacement change_state requested: %s -> %s args=%s" % [_state, new_state, args])
 	match new_state:
 		CursorState.IDLE:
 			trigger_state_idle.emit()
@@ -114,6 +118,7 @@ func change_state(new_state: CursorState, args: Array = []) -> void:
 				return
 
 			trigger_state_build.emit()
+			Log.trace(Log.Level.DEBUG, "BuildPlacement trigger_state_build emitted")
 			_state = new_state
 			visible = true
 
@@ -129,6 +134,7 @@ func change_state(new_state: CursorState, args: Array = []) -> void:
 				Log.trace(Log.Level.WARN, "Cannot enter UPGRADE state: current state is not IDLE")
 				return
 			trigger_state_upgrade.emit()
+			Log.trace(Log.Level.DEBUG, "BuildPlacement trigger_state_upgrade emitted")
 			_state = new_state
 			visible = true
 
@@ -141,7 +147,9 @@ func remove_invalid_cell(tm_pos: Vector2i) -> void:
 	Log.trace(Log.Level.DEBUG, "Cell {0} is now free for building".format([tm_pos]))
 
 func _build() -> void:
+	Log.trace(Log.Level.DEBUG, "BuildPlacement _build start: preview=%s state=%s level=%s" % [_preview_building, _state, ILevel.current_level])
 	if not _is_buildable(cursor.position):
+		Log.trace(Log.Level.DEBUG, "BuildPlacement _build aborted: not buildable at position=%s" % cursor.position)
 		return
 
 	_can_reposition_build_cursor = false
@@ -178,16 +186,21 @@ func _build() -> void:
 		else:
 			get_parent().add_child(new_trap)
 
-	if new_entity is IBuilding:
-		ChallengeManager.notify_building_placed(new_entity as IBuilding)
-
 	add_invalid_cell(tm_pos)
 	ILevel.current_level.coins -= _preview_building.cost
+
+	if new_entity is IBuilding:
+		var placed_building: IBuilding = new_entity as IBuilding
+		Log.trace(Log.Level.INFO, "BuildPlacement building placed: %s kind=%s" % [placed_building, placed_building.get_building_kind()])
+		ChallengeManager.notify_building_placed(placed_building)
+		building_placed.emit(placed_building)
+		Log.trace(Log.Level.DEBUG, "BuildPlacement building_placed emitted")
 
 	_cancel_build()
 	_can_reposition_build_cursor = true
 
 func _cancel_build() -> void:
+	Log.trace(Log.Level.DEBUG, "BuildPlacement cancel build: preview=%s" % _preview_building)
 	cursor.visible = false
 	place_hud.visible = false
 	if _preview_building:

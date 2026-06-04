@@ -68,6 +68,19 @@ func get_next_level_id(current_id: String) -> String:
 	return ""
 
 
+## Returns whether the armory intro dialogue has been seen.
+func is_armory_intro_seen() -> bool:
+	return data.parameters.armory_intro_seen
+
+
+## Marks the armory intro dialogue as seen and persists it.
+func mark_armory_intro_seen() -> void:
+	if data.parameters.armory_intro_seen:
+		return
+	data.parameters.armory_intro_seen = true
+	save_game()
+
+
 ## Checks if there are any enemies that haven't been seen in the encyclopedia.
 ## Only considers IDs currently known by StatsDB to avoid stale save data entries.
 func has_unseen_encyclopedia_enemies() -> bool:
@@ -138,6 +151,19 @@ func is_trap_unlocked(trap_id: String) -> bool:
 	if data.traps.has(trap_id):
 		return data.traps[trap_id].unlocked
 	return false
+
+
+## Returns whether the first-play tutorial has been completed.
+func is_tutorial_completed() -> bool:
+	return data.parameters.tutorial_completed
+
+
+## Marks the first-play tutorial as completed and persists it.
+func mark_tutorial_completed() -> void:
+	if data.parameters.tutorial_completed:
+		return
+	data.parameters.tutorial_completed = true
+	save_game()
 
 
 ## Total stars earned (one per challenge completed, any level).

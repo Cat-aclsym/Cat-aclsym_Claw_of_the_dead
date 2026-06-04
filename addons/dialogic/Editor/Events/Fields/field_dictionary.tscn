@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://c74bnmhefu72w"]
 
-[ext_resource type="Script" uid="uid://dsbl0gnqmcitj" path="res://addons/dialogic/Editor/Events/Fields/field_dictionary.gd" id="1_p4kmu"]
+[ext_resource type="Script" uid="uid://cjhy1b218xsh0" path="res://addons/dialogic/Editor/Events/Fields/field_dictionary.gd" id="1_p4kmu"]
 
 [sub_resource type="Image" id="Image_mpo34"]
 data = {

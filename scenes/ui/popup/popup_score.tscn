@@ -1,6 +1,6 @@
-[gd_scene load_steps=4 format=3 uid="uid://jv7q286fh1vn"]
+[gd_scene load_steps=5 format=3 uid="uid://jv7q286fh1vn"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/huds/Coin.png" id="1_coin"]
+[ext_resource type="Texture2D" uid="uid://b6lrh02vg30l3" path="res://assets/ui/huds/Coin.png" id="1_coin"]
 
 [sub_resource type="Animation" id="Animation_bagxy"]
 length = 0.001
@@ -83,14 +83,14 @@ layout_mode = 3
 anchors_preset = 0
 
 [node name="FloatingNumbers" type="Control" parent="."]
+z_index = 4096
 layout_mode = 1
 anchors_preset = 0
-z_index = 4096
 
 [node name="PriceRow" type="HBoxContainer" parent="FloatingNumbers"]
 self_modulate = Color(1, 1, 1, 0)
 texture_filter = 1
-anchors_preset = 8
+layout_mode = 0
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
@@ -103,20 +103,19 @@ grow_horizontal = 2
 grow_vertical = 2
 scale = Vector2(1.5, 1.5)
 pivot_offset = Vector2(70, 11.5)
-alignment = 1
 theme_override_constants/separation = 4
+alignment = 1
 
 [node name="Label" type="Label" parent="FloatingNumbers/PriceRow"]
 texture_filter = 1
 layout_mode = 2
-size_flags_vertical = 4
 text = "default_value"
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="CoinIcon" type="TextureRect" parent="FloatingNumbers/PriceRow"]
-layout_mode = 2
 custom_minimum_size = Vector2(18, 18)
+layout_mode = 2
 size_flags_vertical = 4
 texture = ExtResource("1_coin")
 expand_mode = 1

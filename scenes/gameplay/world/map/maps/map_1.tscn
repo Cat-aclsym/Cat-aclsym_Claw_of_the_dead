@@ -17,6 +17,7 @@ _data = {
 point_count = 6
 
 [node name="IMap" instance=ExtResource("1_18xh2")]
+show_start_indicators = false
 
 [node name="PopupWaveSpawner" type="Marker2D" parent="." index="0"]
 position = Vector2(1258, 644)
@@ -35,5 +36,5 @@ curve = SubResource("Curve2D_1ver7")
 position = Vector2(216, 176)
 curve = SubResource("Curve2D_pnrrg")
 
-[node name="Controller" parent="." index="4"]
+[node name="Controller" parent="." index="6"]
 z_index = 4000

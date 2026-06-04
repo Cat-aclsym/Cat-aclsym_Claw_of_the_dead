@@ -1,0 +1,17 @@
+[gd_scene load_steps=3 format=3 uid="uid://cb6y4oxtobso5"]
+
+[ext_resource type="Script" uid="uid://bp1jvj2vii4cw" path="res://scenes/ui/tutorial/tutorial_manager.gd" id="1_h8wct"]
+[ext_resource type="PackedScene" uid="uid://hkwgivxpry76" path="res://scenes/ui/tutorial/tutorial_overlay.tscn" id="2_hivvy"]
+
+[node name="TutorialManager" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_h8wct")
+
+[node name="TutorialOverlay" parent="." instance=ExtResource("2_hivvy")]
+layout_mode = 1

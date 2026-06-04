@@ -1,8 +1,8 @@
-[gd_scene load_steps=23 format=3 uid="uid://bie8k71s0xemc"]
+[gd_scene load_steps=22 format=3 uid="uid://bie8k71s0xemc"]
 
 [ext_resource type="PackedScene" uid="uid://tmlcshxut7kv" path="res://scenes/gameplay/entities/enemy/i_enemy.tscn" id="1_rsmel"]
 [ext_resource type="Texture2D" uid="uid://it5nrej70nlf" path="res://assets/gameplay/enemies/Zombie_lOM_Base-Sheet.png" id="2_04mla"]
-[ext_resource type="Script" path="res://scenes/gameplay/entities/enemy/enemies/small_zombie.gd" id="3_small"]
+[ext_resource type="Script" uid="uid://bh10rxbadeqwy" path="res://scenes/gameplay/entities/enemy/enemies/small_zombie.gd" id="3_small"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_f06cf"]
 atlas = ExtResource("2_04mla")
@@ -140,6 +140,7 @@ enemy_id = "small_zombie"
 modulate = Color(1, 0.5, 0.5, 1)
 scale = Vector2(0.6, 0.6)
 sprite_frames = SubResource("SpriteFrames_onmu7")
+animation = &"walk_down"
 
 [node name="CollisionShape2D" parent="." index="2"]
 scale = Vector2(0.6, 0.6)

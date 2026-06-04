@@ -6,6 +6,10 @@ extends Control
 ##
 ## Handles resource displays, wave counters, and construction menu.
 
+signal pause_requested
+signal build_menu_opened
+signal build_menu_closed
+
 # Constants
 const CHALLENGES_MENU: PackedScene = preload("res://scenes/ui/menus/hud/challenges_menu.tscn")
 const COIN_ICON_TEXTURE: Texture2D = preload("res://assets/ui/huds/Coin.png")
@@ -142,6 +146,8 @@ func _on_challenges_button_pressed() -> void:
 
 func _on_pause_button_pressed() -> void:
 	if not Global.paused and ILevel.current_level != null:
+		pause_requested.emit()
+
 		var build_selection_menu: Node = Global.ui.get_node_or_null("BuildSelection")
 		if build_selection_menu != null:
 			build_selection_menu.queue_free()
@@ -162,11 +168,20 @@ func _on_skip_time_scale_button_pressed() -> void:
 
 
 func _on_build_selection_button_pressed() -> void:
-	if Global.ui.get_node_or_null("BuildSelection") == null:
-		var build_selection_menu_instance: BuildSelection = BUILD_SELECTION_MENU.instantiate()
+	var existing_menu: BuildSelection = Global.ui.get_node_or_null("BuildSelection") as BuildSelection
+	if existing_menu != null and existing_menu.is_queued_for_deletion():
+		existing_menu = null
+
+	if existing_menu == null:
+		var build_selection_menu_instance: BuildSelection = BUILD_SELECTION_MENU.instantiate() as BuildSelection
+		build_selection_menu_instance.z_index = 4000
+		build_selection_menu_instance.process_mode = Node.PROCESS_MODE_ALWAYS
 		Global.ui.add_child(build_selection_menu_instance)
-	else:
-		Global.ui.get_node("BuildSelection").queue_free()
+		build_menu_opened.emit()
+		return
+
+	existing_menu.queue_free()
+	build_menu_closed.emit()
 
 
 func _try_play_next_enemy_reveal() -> void:

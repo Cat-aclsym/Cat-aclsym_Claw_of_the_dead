@@ -5,6 +5,8 @@
 class_name Pause
 extends Control
 
+signal resumed
+
 # Onready Variables
 @onready var encyclopedia_button: TextureButton = %EncyclopediaButton
 @onready var encyclopedia_exclamation: TextureRect = %EncyclopediaExclamation
@@ -32,10 +34,10 @@ func _ready() -> void:
 	assert(restart_button != null, "restart_button node not found")
 	assert(play_button != null, "play_button node not found")
 	SignalUtil.connects(signals)
-	
+
 	# Force process mode to Always so tweens run even when tree is paused
 	process_mode = Node.PROCESS_MODE_ALWAYS
-	
+
 	# Fix for button animations in pause menu
 	for btn in [music_button, sound_button, encyclopedia_button, home_button, play_button, restart_button]:
 		if btn:
@@ -45,11 +47,11 @@ func _ready() -> void:
 
 	# Wait for a frame to ensure sizes are calculated for pivot centering
 	await get_tree().process_frame
-	
+
 	# Re-apply pivot after frame wait to be sure
 	for btn in [music_button, sound_button, encyclopedia_button, home_button, play_button, restart_button]:
 		if btn: btn.pivot_offset = btn.size / 2
-	
+
 	# Update notification after everything is set up
 	_update_encyclopedia_notification()
 
@@ -103,4 +105,5 @@ func _on_play_button_pressed() -> void:
 	Global.paused = false
 	if ILevel.current_level != null:
 		ILevel.current_level.resume_from_pause()
+	resumed.emit()
 	queue_free()

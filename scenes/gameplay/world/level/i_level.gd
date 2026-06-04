@@ -46,6 +46,7 @@ var health: int = 20: set = _set_health
 # Private Variables
 var _enemies_alive: int = 0
 var _time_scale_before_pause: float = 1.0
+var _wave_flow_started: bool = false
 
 
 @onready var clock: Clock = $Clock
@@ -71,6 +72,7 @@ func _process_tick() -> void:
 func start_level() -> void:
 	position = Vector2i.ZERO
 	ILevel.current_level = self
+	Log.trace(Log.Level.INFO, "ILevel.start_level begin: level_id=%s tutorial_completed=%s" % [level_id, ProgressionManager.is_tutorial_completed()])
 	_background_music.play()
 	_init_map()
 	_load_waves()
@@ -78,6 +80,23 @@ func start_level() -> void:
 	_build_state_machine()
 	await map.play_special_tiles_intro_sequence()
 	await get_tree().create_timer(POST_SPECIAL_TILE_INTRO_DELAY_SECONDS).timeout
+	if _should_defer_wave_start_for_tutorial():
+		Log.trace(Log.Level.INFO, "ILevel.start_level deferring wave start for tutorial")
+		return
+	Log.trace(Log.Level.INFO, "ILevel.start_level starting wave flow immediately")
+	start_wave_flow()
+
+
+## Starts the wave/state-machine loop if it is not already running.
+func start_wave_flow() -> void:
+	if _wave_flow_started:
+		Log.trace(Log.Level.DEBUG, "ILevel.start_wave_flow ignored: already started")
+		return
+	_wave_flow_started = true
+	Log.trace(Log.Level.INFO, "ILevel.start_wave_flow begin: level_id=%s current_wave=%d time_scale=%s" % [level_id, current_wave, Engine.time_scale])
+	Engine.time_scale = 1.0
+	Global.paused = false
+
 	state_machine.toggle_initial_state()
 	start_time = Time.get_unix_time_from_system()
 	popup_spawner.wave(tr("Wave %s") % [current_wave + 1])
@@ -141,6 +160,10 @@ func _build_state_machine() -> void:
 
 	state_machine = builder.build()
 	Log.trace(Log.Level.INFO, "State machine built. Initial state: %s" % state_machine.get_current_state().name)
+
+
+func _should_defer_wave_start_for_tutorial() -> bool:
+	return level_id == "lev.01" and not ProgressionManager.is_tutorial_completed()
 
 
 func _next_wave() -> void:
@@ -257,6 +280,11 @@ func _on_enemy_spawn() -> void:
 
 ## Sets the game to paused state, affecting both time scale and state machine.
 func pause() -> void:
+	Log.trace(Log.Level.DEBUG, "ILevel.pause requested: wave_flow_started=%s current_state=%s" % [_wave_flow_started, state_machine.get_current_state().name if state_machine else "<no state machine>"])
+	if not _wave_flow_started:
+		Global.paused = true
+		Log.trace(Log.Level.DEBUG, "ILevel.pause applied to pre-wave tutorial state")
+		return
 	if state_machine.get_current_state().name != STATE_PAUSE:
 		state_machine.toggle_state(STATE_PAUSE)
 
@@ -264,9 +292,15 @@ func pause() -> void:
 ## Resumes the game from pause state.
 ## [br]Restores time scale, then transitions back to current wave if in PAUSE state.
 func resume_from_pause() -> void:
+	Log.trace(Log.Level.DEBUG, "ILevel.resume_from_pause requested: wave_flow_started=%s current_state=%s" % [_wave_flow_started, state_machine.get_current_state().name if state_machine else "<no state machine>"])
+	if not _wave_flow_started:
+		Global.paused = false
+		Log.trace(Log.Level.DEBUG, "ILevel.resume_from_pause applied to pre-wave tutorial state")
+		return
 	if state_machine.get_current_state().name == STATE_PAUSE:
 		Engine.time_scale = _time_scale_before_pause
 		Global.paused = false
+		Log.trace(Log.Level.INFO, "ILevel.resume_from_pause restored time_scale=%s" % _time_scale_before_pause)
 		state_machine.toggle_state(STATE_WAVE % current_wave)
 
 

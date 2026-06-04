@@ -1,0 +1,20 @@
+join character1 (Neutral) center
+character1 (Neutral): Welcome to Cat'aclsym!
+character1 (Neutral): I will guide you through your very first defense.
+character1 (Neutral): First, open the build menu.
+[signal arg="tutorial:open_build_menu"]
+character1 (Neutral): Great. Select the Cat Tree card.
+[signal arg="tutorial:select_build_card"]
+character1 (Neutral): Nice. Move the preview to a valid tile, then confirm with the Place button.
+[signal arg="tutorial:place_confirm"]
+character1 (Neutral): Perfect placement.
+character1 (Neutral): Now click your tower to open its action wheel.
+[signal arg="tutorial:select_tower"]
+character1 (Neutral): Press the Upgrade button.
+[signal arg="tutorial:press_upgrade"]
+character1 (Neutral): Excellent work.
+character1 (Neutral): Last step\: press Pause, then Resume to return to battle.
+[signal arg="tutorial:pause_and_resume"]
+character1 (Neutral): Tutorial complete! Defend the base and survive all waves.
+leave character1 [animation="Fade Out" wait="true"]
+[end_timeline]

@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://c8eh0l6o5swnq" path="res://assets/ui/background/Construction Background.svg" id="2_tcv0b"]
 [ext_resource type="PackedScene" uid="uid://3noiaamd0p84" path="res://scenes/ui/menus/building_selection/building_cards/build_card_bat_01.tscn" id="3_60iow"]
 [ext_resource type="PackedScene" uid="uid://6kkbpbexa8ec" path="res://scenes/ui/menus/building_selection/building_cards/build_card_bat_02.tscn" id="5_aw86t"]
-[ext_resource type="PackedScene" uid="uid://cq705nqdp8fnw" path="res://scenes/gameplay/entities/tower/towers/bat_01.tscn" id="7_bat01"]
+[ext_resource type="PackedScene" uid="uid://cqgt6l2v21uq3" path="res://scenes/gameplay/entities/tower/towers/bat_01.tscn" id="7_bat01"]
 [ext_resource type="PackedScene" uid="uid://b2qklmpagmiaj" path="res://scenes/ui/menus/building_selection/building_cards/build_card_bat_03.tscn" id="8_bat_03_card"]
 [ext_resource type="PackedScene" uid="uid://b2qklmpag4poo" path="res://scenes/ui/menus/building_selection/building_cards/build_card_bat_04.tscn" id="11_bat_04_card"]
 [ext_resource type="PackedScene" uid="uid://b2qklmpagmiak" path="res://scenes/ui/menus/building_selection/building_cards/build_card_bat_05.tscn" id="12_bat_05_card"]

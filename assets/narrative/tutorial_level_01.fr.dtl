@@ -1,0 +1,20 @@
+join character1 (Neutral) center
+character1 (Neutral): Bienvenue dans Cat'aclsym !
+character1 (Neutral): Je vais te guider pour ta toute première défense.
+character1 (Neutral): D'abord, ouvre le menu de construction.
+[signal arg="tutorial:open_build_menu"]
+character1 (Neutral): Parfait. Sélectionne la carte Arbre à chat'rchés.
+[signal arg="tutorial:select_build_card"]
+character1 (Neutral): Bien joué. Place l'aperçu sur une tuile valide, puis confirme avec le bouton Placer.
+[signal arg="tutorial:place_confirm"]
+character1 (Neutral): Excellent placement.
+character1 (Neutral): Maintenant, clique sur ta tour pour ouvrir sa roue d'actions.
+[signal arg="tutorial:select_tower"]
+character1 (Neutral): Appuie sur le bouton de mise à niveau.
+[signal arg="tutorial:press_upgrade"]
+character1 (Neutral): Super boulot.
+character1 (Neutral): Dernière étape \: appuie sur Pause, puis sur Reprendre pour retourner au combat.
+[signal arg="tutorial:pause_and_resume"]
+character1 (Neutral): Tutoriel terminé ! Défends la base et survis à toutes les vagues.
+leave character1 [animation="Fade Out" wait="true"]
+[end_timeline]

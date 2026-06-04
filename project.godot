@@ -33,7 +33,10 @@ directories/dch_directory={
 "character1": "res://assets/narrative/character1.dch"
 }
 directories/dtl_directory={
-"example": "res://assets/narrative/example.dtl"
+"armory_intro.en": "res://assets/narrative/armory_intro.en.dtl",
+"armory_intro.fr": "res://assets/narrative/armory_intro.fr.dtl",
+"tutorial_level_01.en": "res://assets/narrative/tutorial_level_01.en.dtl",
+"tutorial_level_01.fr": "res://assets/narrative/tutorial_level_01.fr.dtl"
 }
 text/default_speed=0.05
 text/skippable=true
@@ -75,9 +78,7 @@ translation/intern/file_mode=1
 translation/intern/translation_folder="res://assets/translations"
 translation/locales=["en", "fr"]
 text/autopauses={}
-variables={
-"player_name": ""
-}
+variables={}
 layout/style_list=["res://assets/narrative/style.tres"]
 layout/default_style="res://assets/narrative/style.tres"
 glossary/default_case_sensitive=true
@@ -100,6 +101,7 @@ audio/channel_defaults={
 "volume": 0.0
 }
 }
+animations/join_default="Fade In"
 
 [display]
 

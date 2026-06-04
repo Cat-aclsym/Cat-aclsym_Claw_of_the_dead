@@ -1,14 +1,15 @@
-[gd_scene load_steps=12 format=3 uid="uid://dygxxtpara021"]
+[gd_scene load_steps=13 format=3 uid="uid://dygxxtpara021"]
 
 [ext_resource type="Script" uid="uid://6soot5tpvyhx" path="res://scenes/ui/menus/armory/armory.gd" id="1_arm"]
 [ext_resource type="Texture2D" uid="uid://0lgpu16nkbho" path="res://assets/ui/icons/Button Close.svg" id="2_close"]
-[ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="3_theme"]
 [ext_resource type="Texture2D" uid="uid://8y5uhgfsgmp8" path="res://assets/ui/icons/Star.png" id="3_star"]
+[ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="3_theme"]
 [ext_resource type="Texture2D" uid="uid://cvut87og2mth" path="res://assets/ui/buttons/Bouton orange.svg" id="5_orange_button"]
 [ext_resource type="Texture2D" uid="uid://c8b8irfugbxdj" path="res://assets/environment/backgrounds/Fond Menu 02.svg" id="6_x4aod"]
 [ext_resource type="Texture2D" uid="uid://c5jwmpccl40pb" path="res://assets/environment/backgrounds/Fond Menu 01.svg" id="7_fond01"]
 [ext_resource type="FontFile" uid="uid://ddo3rokwsadq0" path="res://assets/ui/fonts/dotgothic/DotGothic16-Regular.ttf" id="8_dgfont"]
 [ext_resource type="Texture2D" uid="uid://nsf3nkto3p0t" path="res://assets/ui/buttons/Bouton Vert.svg" id="9_vertbtn"]
+[ext_resource type="Texture2D" uid="uid://bwgb811hwxy0" path="res://assets/ui/buttons/button-blue.png" id="10_blubtn"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_desc_bg"]
 texture = ExtResource("6_x4aod")
@@ -111,6 +112,30 @@ text = "Reinitialiser"
 horizontal_alignment = 1
 vertical_alignment = 1
 
+[node name="HelpButton" type="TextureButton" parent="MainMargin/VBox/HeaderHBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(56, 56)
+layout_mode = 2
+texture_normal = ExtResource("10_blubtn")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="MainMargin/VBox/HeaderHBox/HelpButton"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.137255, 0.215686, 0.223529, 1)
+theme_override_colors/font_outline_color = Color(0.137255, 0.215686, 0.223529, 1)
+theme_override_constants/outline_size = 2
+theme_override_fonts/font = ExtResource("8_dgfont")
+theme_override_font_sizes/font_size = 32
+text = "?"
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [node name="CloseTextureButton" type="TextureButton" parent="MainMargin/VBox/HeaderHBox"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(48, 48)
@@ -118,16 +143,6 @@ layout_mode = 2
 texture_normal = ExtResource("2_close")
 ignore_texture_size = true
 stretch_mode = 5
-
-[node name="LegacyLabel" type="Label" parent="MainMargin/VBox"]
-unique_name_in_owner = true
-visible = false
-layout_mode = 2
-size_flags_horizontal = 3
-theme = ExtResource("3_theme")
-theme_override_font_sizes/font_size = 18
-text = "ARMORY.LEGACY_NOTICE"
-autowrap_mode = 3
 
 [node name="ScrollBuildings" type="ScrollContainer" parent="MainMargin/VBox"]
 unique_name_in_owner = true
