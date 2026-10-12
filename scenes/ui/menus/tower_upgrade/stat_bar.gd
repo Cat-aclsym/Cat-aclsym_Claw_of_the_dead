@@ -4,11 +4,6 @@
 class_name StatBar
 extends HBoxContainer
 
-const TICK_FULL: Texture2D = preload("res://assets/ui/icons/stat-tick-full.png")
-const TICK_EMPTY: Texture2D = preload("res://assets/ui/icons/stat-tick-empty.png")
-const TICK_COUNT: int = 15
-const TICK_SIZE: int = 28
-
 const MAX_STAT_VALUE: float = 200.0
 ## Bullet stat keys that are visual/internal only and must not be shown in the UI.
 const SKIP_BULLET_STATS: Array[String] = [
@@ -16,6 +11,10 @@ const SKIP_BULLET_STATS: Array[String] = [
 	"lightning_blue_tint_strength",
 	"lightning_width_scale",
 ]
+const TICK_COUNT: int = 15
+const TICK_EMPTY: Texture2D = preload("res://assets/ui/icons/stat-tick-empty.png")
+const TICK_FULL: Texture2D = preload("res://assets/ui/icons/stat-tick-full.png")
+const TICK_SIZE: int = 28
 
 const _ICON_AOE_RANGE: Texture2D = preload("res://assets/ui/stats/aoe-range.png")
 const _ICON_ATTACK: Texture2D = preload("res://assets/ui/stats/attack.png")
@@ -57,7 +56,7 @@ func _process(_delta: float) -> void:
 			tick.modulate.a = alpha
 
 ## Sets up the stat entry with icon, name, and tick icons representing the stat value.
-## [br] [param stat_name] The stat identifier used for icon lookup and label text.
+## [br] [param stat_name] The stat identifier used for icon lookup and label text ([code]STAT.<NAME>[/code] translation key).
 ## [br] [param current_value] The current stat value before the upgrade.
 ## [br] [param new_value] The stat value after the upgrade.
 ## [br] [param max_value] The reference ceiling for normalizing tick count.
@@ -67,12 +66,12 @@ func setup(stat_name: String, current_value: float, new_value: float, max_value:
 	if icon != null:
 		_icon.texture = icon
 
-	_stat_name_label.text = _format_stat_name(stat_name)
+	_stat_name_label.text = tr("STAT.%s" % stat_name.to_upper())
 
 	var current_ticks: int = int(round(clamp(current_value / max_value, 0.0, 1.0) * TICK_COUNT))
 	var new_ticks: int = int(round(clamp(new_value / max_value, 0.0, 1.0) * TICK_COUNT))
 
-	for i in TICK_COUNT:
+	for i: int in TICK_COUNT:
 		var is_gained: bool = new_ticks > current_ticks and i >= current_ticks and i < new_ticks
 		var is_lost: bool = new_ticks < current_ticks and i >= new_ticks and i < current_ticks
 		var is_filled: bool = i < new_ticks or is_lost
@@ -95,25 +94,6 @@ func setup(stat_name: String, current_value: float, new_value: float, max_value:
 			_blinking_ticks.append(fg)
 		else:
 			_ticks_container.add_child(_make_tick(TICK_FULL if is_filled else TICK_EMPTY))
-
-## Creates a TextureRect tick with the shared display settings.
-func _make_tick(texture: Texture2D) -> TextureRect:
-	var tick: TextureRect = TextureRect.new()
-	tick.custom_minimum_size = Vector2(TICK_SIZE, TICK_SIZE)
-	tick.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	tick.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	tick.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	tick.texture = texture
-	return tick
-
-## Formats snake_case stat name to Title Case.
-func _format_stat_name(stat_name: String) -> String:
-	var words: PackedStringArray = stat_name.split("_")
-	var formatted_words: Array[String] = []
-	for word in words:
-		if word.length() > 0:
-			formatted_words.append(word.capitalize())
-	return " ".join(formatted_words)
 
 ## Returns the icon matching [param stat_name], or null if unmapped.
 func _get_icon_for_stat(stat_name: String) -> Texture2D:
@@ -158,3 +138,13 @@ func _get_icon_for_stat(stat_name: String) -> Texture2D:
 			return _ICON_SPREAD
 		_:
 			return null
+
+## Creates a TextureRect tick with the shared display settings.
+func _make_tick(texture: Texture2D) -> TextureRect:
+	var tick: TextureRect = TextureRect.new()
+	tick.custom_minimum_size = Vector2(TICK_SIZE, TICK_SIZE)
+	tick.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	tick.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	tick.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	tick.texture = texture
+	return tick

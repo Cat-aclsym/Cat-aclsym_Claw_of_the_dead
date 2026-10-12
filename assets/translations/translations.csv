@@ -170,3 +170,28 @@ ARMORY.NODE.UNLOCK_BAT_09_BRANCH_A.NAME,Branch A (Inferno),Branche A (Tour de l'
 ARMORY.NODE.UNLOCK_BAT_09_BRANCH_A.DESC,"Unlocks the A upgrade line for the Inferno Tower: a charging mode that greatly increases damage over time.","Débloque la branche A de la Tour de l'enfer : un mode de charge qui augmente fortement les dégâts dans le temps."
 ARMORY.NODE.UNLOCK_BAT_09_BRANCH_B.NAME,Branch B (Inferno),Branche B (Tour de l'enfer)
 ARMORY.NODE.UNLOCK_BAT_09_BRANCH_B.DESC,"Unlocks the B upgrade line for the Inferno Tower: a multi-beam mode that can hit several enemies at once.","Débloque la branche B de la Tour de l'enfer : un mode multi-rayons qui peut toucher plusieurs ennemis à la fois."
+STAT.AOE_DURATION,Aoe Duration,Durée de zone
+STAT.AOE_RANGE,Aoe Range,Portée de zone
+STAT.AOE_TICK,Aoe Tick,Intervalle de zone
+STAT.BURN_DAMAGE_BASE,Burn Damage Base,Dégâts de brûlure
+STAT.BURN_DURATION,Burn Duration,Durée de brûlure
+STAT.CHAIN_BOUNCES,Chain Bounces,Rebonds de chaîne
+STAT.CHAIN_DAMAGE_FALLOFF,Chain Damage Falloff,Atténuation des chaînes
+STAT.CHAIN_RANGE,Chain Range,Portée des chaînes
+STAT.CHARGE_SPEED,Charge Speed,Vitesse de charge
+STAT.DAMAGE,Damage,Dégâts
+STAT.DAMAGE_MULTIPLIER,Damage Multiplier,Multiplicateur de dégâts
+STAT.ELECTRIFY_DURATION,Electrify Duration,Durée d'électrisation
+STAT.ELECTRIFY_SLOW_AMOUNT,Electrify Slow Amount,Ralentissement électrique
+STAT.ELECTRIFY_TICK_DAMAGE,Electrify Tick Damage,Dégâts d'électrisation
+STAT.ELECTRIFY_TICK_INTERVAL,Electrify Tick Interval,Intervalle d'électrisation
+STAT.FIRE_RATE,Fire Rate,Cadence de tir
+STAT.LEVEL,Level,Niveau
+STAT.MAX_DAMAGE_MULTIPLIER,Max Damage Multiplier,Multiplicateur de dégâts max
+STAT.PIERCE_COUNT,Pierce Count,Nombre de perforations
+STAT.PIERCE_REDUCTION,Pierce Reduction,Réduction de perforation
+STAT.PREFER_NON_ELECTRIFIED_TARGETS,Prefer Non Electrified Targets,Cibles non électrisées en priorité
+STAT.PROJECTILE_COUNT,Projectile Count,Nombre de projectiles
+STAT.SHOOT_RANGE,Shoot Range,Portée de tir
+STAT.SPEED,Speed,Vitesse
+STAT.SPREAD_ANGLE,Spread Angle,Angle de dispersion
