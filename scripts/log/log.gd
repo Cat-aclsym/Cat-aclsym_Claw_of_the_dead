@@ -1,4 +1,4 @@
-## © 2024 A7 Studio. All rights reserved. Trademark.
+## © [2026] A7 Studio. All rights reserved. Trademark.
 ##
 ## A utility class for logging messages with different severity levels.
 ## Provides functionality for logging to console, file, and debug console if available.
@@ -31,10 +31,10 @@ const PREFIXS: Dictionary = {
 	Level.FATAL: "[FATAL]"
 }
 
-## Path to the current log file.
+## Log file kept open for the whole session, [code]null[/code] when file logging is unavailable.
 ## [br]
-## The path is generated using the current timestamp when [method Log.init] is called.
-static var _log_filepath: String = ""
+## The file is generated using the current timestamp when [method Log.init] is called.
+static var _log_file: FileAccess = null
 
 ## Initializes the logging system by creating a new log file.
 ## [br]
@@ -46,12 +46,16 @@ static func init() -> void:
 	_create_log_file()
 	Log.trace(Log.Level.INFO, "Logger initialized!")
 
+## Closes the log file. Messages are still printed afterwards, but no longer written to disk.
+static func close() -> void:
+	_log_file = null
+
 ## Logs a message with the specified severity level.
 ## [br]
 ## The message format includes:
 ## - Timestamp with millisecond precision
 ## - Log level prefix ([code]PREFIXS[/code])
-## - Source file, line number, and function name
+## - Source file, line number, and function name (ERROR and FATAL only, [method @GlobalScope.get_stack] is slow)
 ## - The actual message
 ## [br][br]
 ## @param level The severity level from [enum Level]
@@ -65,21 +69,9 @@ static func trace(level: Log.Level, args: Variant) -> void:
 	if level == Level.DEBUG and not Global.debug:
 		return
 
-	var prefix_stack: String = ""
-	var stack: Array[Dictionary] = get_stack()
-
-	# Stack can be empty when the game is not running from Godot engine
-	if not stack.is_empty():
-		var execution_line := stack[1]
-		prefix_stack = "{0}::{1}@{2}".format([
-			execution_line["source"].get_file(),
-			execution_line["line"],
-			execution_line["function"],
-		])
-
 	var time: Dictionary = Time.get_time_dict_from_system()
 	var milliseconds: int = Time.get_ticks_msec() % 1000
-	var prefix_level_time := "{0} {1}:{2}:{3}.{4}".format([
+	var output: String = "{0} {1}:{2}:{3}.{4}".format([
 		PREFIXS[level],
 		time["hour"],
 		time["minute"],
@@ -87,31 +79,19 @@ static func trace(level: Log.Level, args: Variant) -> void:
 		milliseconds
 	])
 
-	var text: String = _format_args(args)
-	var output := "{1} - {0} - {2}".format([
-		prefix_stack,
-		prefix_level_time,
-		text,
-	])
+	if level >= Level.ERROR:
+		# Stack can be empty when the game is not running from Godot engine
+		var stack: Array[Dictionary] = get_stack()
+		if stack.size() > 1:
+			var execution_line: Dictionary = stack[1]
+			output += " - {0}::{1}@{2}".format([
+				execution_line["source"].get_file(),
+				execution_line["line"],
+				execution_line["function"],
+			])
 
-	_publish_message(output)
-
-## Saves a message to the log file.
-## [br]
-## If the log file cannot be opened or doesn't exist, the message is silently dropped.
-## [br][br]
-## @param message The message to append to the log file
-static func save_message(message: String) -> void:
-	if _log_filepath.is_empty():
-		return
-
-	var file := FileAccess.open(_log_filepath, FileAccess.READ_WRITE)
-	if not file:
-		return
-
-	file.seek_end()
-	file.store_string(message + "\n")
-	file.close()
+	output += " - " + _format_args(args)
+	_publish_message(output, level >= Level.WARN)
 
 ## Formats the input arguments into a single string.
 ## [br]
@@ -135,17 +115,23 @@ static func _format_args(args: Variant) -> String:
 ## [br]
 ## The message is sent to:
 ## - Terminal (using [method print])
-## - Debug console (if [member Global.console] exists)
-## - Log file (using [method save_message])
+## - Debug console (if [member Global.console] exists, display only)
+## - Log file (flushed right away when [param flush] is true)
 ## [br][br]
 ## @param message The formatted message to publish
-static func _publish_message(message: String) -> void:
+## @param flush Whether the log file is flushed to disk after writing the message
+static func _publish_message(message: String, flush: bool) -> void:
 	print(message)
 
 	if Global.console != null:
 		Global.console.push_text(message)
 
-	save_message(message)
+	if _log_file == null:
+		return
+
+	_log_file.store_line(message)
+	if flush:
+		_log_file.flush()
 
 ## Creates a new log file with the current timestamp.
 ## [br]
@@ -153,6 +139,7 @@ static func _publish_message(message: String) -> void:
 ## If the directory doesn't exist, it will be created.
 ## [br][br]
 ## The log filename format is: [code]YYYY_MM_DD-HH_mm.log[/code]
+## If a file with that name already exists, new messages are appended to it.
 static func _create_log_file() -> void:
 	var dir := DirAccess.open("res://log")
 	if not dir:
@@ -163,7 +150,7 @@ static func _create_log_file() -> void:
 			return
 
 	var current_time := Time.get_datetime_dict_from_system()
-	var file_name := "%d_%02d_%02d-%02d_%02d.log" % [
+	var file_path: String = "res://log/%d_%02d_%02d-%02d_%02d.log" % [
 		current_time["year"],
 		current_time["month"],
 		current_time["day"],
@@ -171,18 +158,16 @@ static func _create_log_file() -> void:
 		current_time["minute"]
 	]
 
-	_log_filepath = "res://log/" + file_name
-
-	var file := FileAccess.open(_log_filepath, FileAccess.WRITE)
-	if file:
-		file.store_string(">>> Log created on %d/%02d/%02d at %02d:%02d\n" % [
-			current_time["year"],
-			current_time["month"],
-			current_time["day"],
-			current_time["hour"],
-			current_time["minute"]
-		])
-		file.close()
-	else:
+	_log_file = FileAccess.open(file_path, FileAccess.READ_WRITE if FileAccess.file_exists(file_path) else FileAccess.WRITE_READ)
+	if _log_file == null:
 		Log.trace(Log.Level.ERROR, "Failed to create log file.")
-		_log_filepath = ""
+		return
+
+	_log_file.seek_end()
+	_log_file.store_line(">>> Log created on %d/%02d/%02d at %02d:%02d" % [
+		current_time["year"],
+		current_time["month"],
+		current_time["day"],
+		current_time["hour"],
+		current_time["minute"]
+	])

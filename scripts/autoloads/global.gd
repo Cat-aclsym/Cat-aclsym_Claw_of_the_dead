@@ -2,15 +2,15 @@
 ##
 ## Store global variables.
 ## <!> Please ask your referent before update this script.
-## <!> Be careful before query global variable.
-## <!> Always checks var != null
+## <!> The node references are null until their node is ready (and may hold a freed node after a scene change),
+## <!> check them with [method @GlobalScope.is_instance_valid] before use.
 extends Node
 
-var camera: Camera = null: get = _get_camera
-var console: Console = null: get = _get_console
-var cursor: BuildPlacement = null: get = _get_cursor
-var hud: HUD = null: get = _get_hud
-var ui: UI = null: get = _get_ui
+var camera: Camera = null
+var console: Console = null
+var cursor: BuildPlacement = null
+var hud: HUD = null
+var ui: UI = null
 var paused: bool = false
 
 ## Debug-only builds (console, watchers, etc.). Mirrors the Godot export feature `debug`
@@ -25,6 +25,12 @@ func _ready() -> void:
 	Log.init()
 	_initialized = true
 
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_WM_CLOSE_REQUEST or what == NOTIFICATION_PREDELETE:
+		Log.close()
+
+
 # private
 func _set_debug(new_value: bool) -> void:
 	if not _initialized:
@@ -37,25 +43,3 @@ func _set_initialized(new_value: bool) -> void:
 		_initialized = new_value
 		return
 	Log.trace(Log.Level.WARN, "Cannot change 'initialized' value after game is initialized.")
-
-# getters
-func _get_camera() -> Camera:
-	if _initialized: assert(camera != null, "Camera is null")
-	return camera
-
-func _get_cursor() -> BuildPlacement:
-	if _initialized: assert(cursor != null, "Cursor is null")
-	return cursor
-
-func _get_console() -> Console:
-	# if _initialized: assert(console != null, "Console is null")
-	# NOTE : Console can be null in some cases
-	return console
-
-func _get_ui() -> UI:
-	if _initialized: assert(ui != null, "UI is null")
-	return ui
-
-func _get_hud() -> HUD:
-	if _initialized: assert(hud != null, "HUD is null")
-	return hud

@@ -17,7 +17,7 @@ func _ready() -> void:
 	assert(hud != null, "hud node not found")
 	assert(ingame_fade_color_rect != null, "ingame_fade_color_rect node not found")
 	assert(tutorial_manager != null, "tutorial_manager node not found")
-	Global.set("ui", self)
+	Global.ui = self
 	_initialized = true
 
 # public

@@ -135,7 +135,8 @@ func _ready() -> void:
 	add_to_group("enemies")
 	_apply_stats_override()
 	if type == EnemyType.FAT or type == EnemyType.BIG_DADDY:
-		camera_effect.connect(Global.camera.handle_effect)
+		if is_instance_valid(Global.camera):
+			camera_effect.connect(Global.camera.handle_effect)
 		camera_effect.emit('shake')
 
 	health = max_health
