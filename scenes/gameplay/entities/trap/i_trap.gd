@@ -274,10 +274,8 @@ func _on_area_2d_body_entered(body: Node2D) -> void:
 		return
 
 	# Enemies that defuse traps (the minesweeper) declare for how long in their stats
-	var enemy_extra: Dictionary = StatsDB.get_enemy(enemy.enemy_id).get("extra", {})
-	var disable_duration: float = float(enemy_extra.get("trap_disable_duration", 0.0))
-	if disable_duration > 0.0:
-		disable_temporarily(disable_duration)
+	if enemy.trap_disable_duration > 0.0:
+		disable_temporarily(enemy.trap_disable_duration)
 		return
 
 	if enemy in enemies_in_area:

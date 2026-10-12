@@ -150,6 +150,8 @@ var reward: int = 0
 ## Current speed: [member base_speed] times every speed modifier.
 var speed: float = 0.0
 var state: EnemyState = EnemyState.FOLLOW_PATH
+## Seconds a trap stays disabled when this enemy walks over it (0 for the enemies that don't defuse traps), from [StatsDB].
+var trap_disable_duration: float = 0.0
 
 # Private variables
 var _damage_tween: Tween
@@ -381,6 +383,7 @@ func _apply_stats_override() -> void:
 		_recompute_speed()
 	reward = int(data.get("reward", 0))
 	escape_damage = int(data.get("escape_damage", 0))
+	trap_disable_duration = float(data.get("extra", {}).get("trap_disable_duration", 0.0))
 
 
 func _begin_stun_fade() -> void:
