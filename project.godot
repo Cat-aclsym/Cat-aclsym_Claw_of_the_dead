@@ -26,11 +26,10 @@ Global="*res://scripts/autoloads/global.gd"
 SoundManager="*res://scripts/autoloads/sound_manager.gd"
 ScenesLoader="*res://scripts/autoloads/scenes_loader.gd"
 Dialogic="*uid://ds2q0uclmolvu"
-ProgressionManager="*res://scripts/autoloads/progression_manager.gd"
 StatsDB="*res://scripts/autoloads/stats_db.gd"
-ChallengeManager="*res://scripts/autoloads/challenge_manager.gd"
+ProgressionManager="*res://scripts/autoloads/progression_manager.gd"
 ArmoryManager="*res://scripts/autoloads/armory_manager.gd"
-FirebaseTestLab="*res://scripts/autoloads/firebase_test_lab.gd"
+ChallengeManager="*res://scripts/autoloads/challenge_manager.gd"
 
 [dialogic]
 
