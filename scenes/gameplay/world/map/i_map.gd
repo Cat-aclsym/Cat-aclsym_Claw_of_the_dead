@@ -5,12 +5,32 @@
 class_name IMap
 extends Node2D
 
-var BONUS_TILE_SCENE: PackedScene = load("res://scenes/gameplay/world/map/bonus_tile.tscn") as PackedScene
-var MALUS_TILE_SCENE: PackedScene = load("res://scenes/gameplay/world/map/malus_tile.tscn") as PackedScene
-var BONUS_SPAWN_SCENE: PackedScene = load("res://scenes/gameplay/world/map/bonus_spawn.tscn") as PackedScene
-var PATH_INDICATOR_SCRIPT: Script = load("res://scenes/gameplay/world/map/path_indicator.gd") as Script
+const BONUS_KIND: String = "bonus"
+const MALUS_KIND: String = "malus"
+const BONUS_SPAWN_SCENE: PackedScene = preload("res://scenes/gameplay/world/map/bonus_spawn.tscn")
+const SPECIAL_TILE_SCENES: Dictionary[String, PackedScene] = {
+	BONUS_KIND: preload("res://scenes/gameplay/world/map/bonus_tile.tscn"),
+	MALUS_KIND: preload("res://scenes/gameplay/world/map/malus_tile.tscn"),
+}
+## Tint of each special tile modifier, by kind then by modified stat.
+const SPECIAL_TILE_MODIFIER_COLORS: Dictionary[String, Dictionary] = {
+	BONUS_KIND: {
+		"fire_rate": Color(0.2, 1.0, 0.2, 0.5),
+		"damage": Color(0.2, 0.2, 1.0, 0.5),
+		"reward_multiplier": Color(1.0, 0.8, 0.2, 0.5),
+	},
+	MALUS_KIND: {
+		"fire_rate": Color(0.62, 0.18, 0.22, 0.5),
+		"damage": Color(0.58, 0.30, 0.16, 0.5),
+		"shoot_range": Color(0.42, 0.20, 0.48, 0.5),
+	},
+}
 const BONUS_TILE_LAYER_NAME: String = "Special Bonus"
 const BONUS_TILE_LAYER_Z_INDEX: int = -16
+## Tile step used when the tilemap cannot provide one.
+const DEFAULT_TILE_STEP_DISTANCE: float = 32.0
+## Half of the 25x25 px placement box, towers cannot be placed closer than this to an enemy path.
+const PLACEMENT_HALF_SIZE: float = 12.5
 const SPECIAL_TILE_DEBUG_COLOR: Color = Color(0.2, 0.4, 1.0, 0.55)
 const SPECIAL_TILE_DEBUG_EXCLUSION_COLOR: Color = Color(1.0, 0.2, 0.2, 0.35)
 const SPECIAL_TILE_MAX_DISTANCE_TILES: float = 2.0
@@ -26,8 +46,6 @@ const SPECIAL_TILE_SPAWN_TINT_WHITE_BLEND: float = 0.5
 const SPECIAL_TILE_SPAWN_SHAKE_STRENGTH: float = 10.0
 const SPECIAL_TILE_SPAWN_STAGGER_SECONDS: float = 0.2
 const MALUS_TILE_SPAWN_INTERVAL_SECONDS: float = 0.12
-const PATH_INDICATOR_END_TYPE: int = 1
-const PATH_INDICATOR_START_TYPE: int = 0
 
 @export var debug_show_spawnable_special_tiles: bool = false
 @export var initial_camera_position: Vector2 = Vector2.ZERO
@@ -45,20 +63,23 @@ const PATH_INDICATOR_START_TYPE: int = 0
 
 ## Array of paths that enemies can follow
 var paths: Array[Path2D] = []
-var _active_paths_lookup: Dictionary = {}
+var _active_paths_lookup: Dictionary[int, bool] = {}
 
 var _debug_exclusion_overlays: Array[Node2D] = []
 var _debug_spawnable_overlays: Array[Node2D] = []
 
-var _bonus_tile_scene_source_id: int = -1
-var _bonus_tile_scene_tile_id: int = -1
-var _malus_tile_scene_source_id: int = -1
-var _malus_tile_scene_tile_id: int = -1
+## Cells covered by a [MapPlacementBlocker], computed on first use (the decorations never move).
+var _blocked_cells: Dictionary[Vector2i, bool] = {}
+var _blocked_cells_ready: bool = false
+## Distance in pixels from a cell center to the nearest path, by cell. Covers every path, active or not.
+var _path_distance_cache: Dictionary[Vector2i, float] = {}
+var _special_tile_scene_source_ids: Dictionary[String, int] = {}
+var _special_tile_scene_tile_ids: Dictionary[String, int] = {}
 ## Layer created at runtime on top of [member tilemap]'s tile set that hosts the bonus and malus scene tiles.
 var _special_tile_layer: TileMapLayer = null
 
 ## Dictionary of special tiles (position -> modifier data)
-var special_tiles: Dictionary = {}
+var special_tiles: Dictionary[Vector2i, Dictionary] = {}
 var _pending_special_tile_spawns: Array[Dictionary] = []
 
 @onready var camera: Camera2D = $Camera2D
@@ -68,15 +89,12 @@ func _ready() -> void:
 	_load_paths()
 	_create_path_indicators()
 	_ensure_special_tile_layer()
-	_ensure_bonus_tile_scene_source()
-	_ensure_malus_tile_scene_source()
+	_ensure_special_tile_scene_source(BONUS_KIND)
+	_ensure_special_tile_scene_source(MALUS_KIND)
 
-	var placement_system: BuildPlacement = Global.get("cursor") as BuildPlacement
-	if placement_system:
-		placement_system.tm_ref = tilemap
-	else:
-		# If cursor is not yet initialized, wait a frame
-		call_deferred("_assign_tilemap_to_cursor")
+	# If the cursor is not yet initialized, wait a frame
+	if not _try_assign_tilemap_to_cursor():
+		_try_assign_tilemap_to_cursor.call_deferred()
 
 	_setup_camera_limits()
 
@@ -85,11 +103,6 @@ func _ready() -> void:
 
 	# Generate special tiles immediately
 	_generate_special_tiles()
-
-func _assign_tilemap_to_cursor() -> void:
-	var placement_system: BuildPlacement = Global.get("cursor") as BuildPlacement
-	if placement_system:
-		placement_system.tm_ref = tilemap
 
 #public
 func play_special_tiles_intro_sequence() -> void:
@@ -191,23 +204,61 @@ func get_active_path_indices() -> Array[int]:
 	return active_indices
 
 
+## Returns the cells where no tower can be placed because a [MapPlacementBlocker] decoration covers them, as a set.
+func get_blocked_cells() -> Dictionary[Vector2i, bool]:
+	if not _blocked_cells_ready and tilemap:
+		_blocked_cells_ready = true
+		for blocker: Node in find_children("*", "MapPlacementBlocker", true, false):
+			_blocked_cells.merge((blocker as MapPlacementBlocker).get_blocked_cells(tilemap))
+
+	return _blocked_cells
+
+
+## Distance in pixels from the center of [param cell] to the nearest path (every path counts, active or not).
+## Cached per cell, [constant INF] when the map has no path.
+func get_path_distance(cell: Vector2i) -> float:
+	if _path_distance_cache.has(cell):
+		return _path_distance_cache[cell]
+
+	var world_pos: Vector2 = tilemap.to_global(tilemap.map_to_local(cell))
+	var min_distance: float = INF
+	for path: Path2D in paths:
+		if not path.curve:
+			continue
+
+		var closest_point: Vector2 = path.curve.get_closest_point(path.to_local(world_pos))
+		min_distance = minf(min_distance, world_pos.distance_to(path.to_global(closest_point)))
+
+	_path_distance_cache[cell] = min_distance
+	return min_distance
+
+
 ## Returns a random active path, or null if none are active.
 func get_random_active_path() -> Path2D:
-	var active_paths: Array[Path2D] = get_spawn_paths()
+	var active_paths: Array[Path2D] = get_active_paths()
 	if active_paths.is_empty():
 		return null
 
 	return active_paths[randi() % active_paths.size()]
 
 
-## Returns paths allowed for enemy spawning.
-func get_spawn_paths() -> Array[Path2D]:
-	return get_active_paths()
+## Distance in pixels between two horizontally adjacent tile centers.
+func get_tile_step_distance() -> float:
+	if not tilemap:
+		return DEFAULT_TILE_STEP_DISTANCE
+
+	var step_distance: float = tilemap.map_to_local(Vector2i.ZERO).distance_to(tilemap.map_to_local(Vector2i(1, 0)))
+	return step_distance if step_distance > 0.0 else DEFAULT_TILE_STEP_DISTANCE
 
 
 ## Returns true when the path index is currently active.
 func is_path_active(path_index: int) -> bool:
 	return _active_paths_lookup.has(path_index)
+
+
+## Whether the placement box centered on [param cell] overlaps an enemy path.
+func is_cell_on_path(cell: Vector2i) -> bool:
+	return get_path_distance(cell) < PLACEMENT_HALF_SIZE
 
 
 ## Replaces current active paths with the provided indices.
@@ -221,6 +272,19 @@ func set_active_paths_only(path_indices: Array[int]) -> void:
 	if _active_paths_lookup.is_empty():
 		Log.trace(Log.Level.WARN, "Map has no active paths after set_active_paths_only().")
 
+## Returns true if a tower can be placed on [param coords].
+## Authoritative source is the invisible placement [TileMapLayer] painted by the level designer,
+## minus the cells covered by a [MapPlacementBlocker] and the cells too close to an enemy path.
+func is_tile_buildable(coords: Vector2i) -> bool:
+	if placement_tilemap == null:
+		return false
+	if placement_tilemap.get_cell_source_id(coords) == -1:
+		return false
+	if get_blocked_cells().has(coords):
+		return false
+
+	return not is_cell_on_path(coords)
+
 # private
 
 ## Loads path nodes from the Paths node
@@ -230,6 +294,7 @@ func _load_paths() -> void:
 		return
 
 	paths.clear()
+	_path_distance_cache.clear()
 	var children: Array[Node] = $Paths.get_children()
 
 	for child in children:
@@ -240,20 +305,20 @@ func _load_paths() -> void:
 
 func _create_path_indicators() -> void:
 	for path in paths:
-		var curve = path.curve
+		var curve: Curve2D = path.curve
 		if curve.get_point_count() < 2:
 			continue
 
 		if show_start_indicators:
-			var start_pos = path.to_global(curve.get_point_position(0))
-			_instantiate_indicator(start_pos, Color(0.1, 0.9, 0.1), PATH_INDICATOR_START_TYPE)
+			var start_pos: Vector2 = path.to_global(curve.get_point_position(0))
+			_instantiate_indicator(start_pos, Color(0.1, 0.9, 0.1), PathIndicator.PointType.START)
 
 		if show_end_indicators:
-			var end_pos = path.to_global(curve.get_point_position(curve.get_point_count() - 1))
-			_instantiate_indicator(end_pos, Color(0.9, 0.1, 0.1), PATH_INDICATOR_END_TYPE)
+			var end_pos: Vector2 = path.to_global(curve.get_point_position(curve.get_point_count() - 1))
+			_instantiate_indicator(end_pos, Color(0.9, 0.1, 0.1), PathIndicator.PointType.END)
 
-func _instantiate_indicator(global_pos: Vector2, color: Color, point_type: int) -> void:
-	var indicator = PATH_INDICATOR_SCRIPT.new()
+func _instantiate_indicator(global_pos: Vector2, color: Color, point_type: PathIndicator.PointType) -> void:
+	var indicator: PathIndicator = PathIndicator.new()
 	indicator.position = to_local(global_pos)
 	indicator.base_color = color
 	indicator.type = point_type
@@ -289,8 +354,8 @@ func _generate_special_tiles() -> void:
 	if debug_show_spawnable_special_tiles:
 		_show_debug_spawnable_special_tiles(spawnable_tiles)
 	else:
-		_clear_debug_exclusion_tiles()
-		_clear_debug_spawnable_special_tiles()
+		_clear_debug_overlays(_debug_exclusion_overlays)
+		_clear_debug_overlays(_debug_spawnable_overlays)
 
 	special_tiles.clear()
 	_pending_special_tile_spawns.clear()
@@ -313,7 +378,7 @@ func _generate_special_tiles() -> void:
 
 	spawnable_tiles.shuffle()
 
-	_clear_debug_exclusion_tiles()
+	_clear_debug_overlays(_debug_exclusion_overlays)
 
 	var selected_special_tiles: Array[Vector2i] = []
 	for candidate in spawnable_tiles:
@@ -335,23 +400,14 @@ func _generate_special_tiles() -> void:
 		)
 		return
 
-	var bonus_types = [
-		{"fire_rate": 1.3, "color": Color(0.2, 1.0, 0.2, 0.5), "label": "SPEED+"},
-		{"damage": 1.3, "color": Color(0.2, 0.2, 1.0, 0.5), "label": "DMG+"},
-		{"reward_multiplier": 1.5, "color": Color(1.0, 0.8, 0.2, 0.5), "label": "GOLD+"}
-	]
-
-	var malus_types = [
-		{"fire_rate": 0.7, "color": Color(0.62, 0.18, 0.22, 0.5), "label": "SPEED-"},
-		{"damage": 0.7, "color": Color(0.58, 0.30, 0.16, 0.5), "label": "DMG-"},
-		{"shoot_range": 0.7, "color": Color(0.42, 0.20, 0.48, 0.5), "label": "RANGE-"}
-	]
+	var bonus_types: Array[Dictionary] = _build_special_tile_modifiers(BONUS_KIND)
+	var malus_types: Array[Dictionary] = _build_special_tile_modifiers(MALUS_KIND)
 
 	var selected_bonus_tiles: Array[Vector2i] = []
 	for i in range(bonus_tile_count):
-		var tile_pos = selected_special_tiles.pop_back()
+		var tile_pos: Vector2i = selected_special_tiles.pop_back()
 		selected_bonus_tiles.append(tile_pos)
-		var modifier = bonus_types[i % bonus_types.size()]
+		var modifier: Dictionary = bonus_types[i % bonus_types.size()]
 		_pending_special_tile_spawns.append({
 			"tile_pos": tile_pos,
 			"modifier": modifier,
@@ -363,8 +419,8 @@ func _generate_special_tiles() -> void:
 
 	var malus_tiles: Array[Vector2i] = _get_malus_tiles_around_bonus(selected_bonus_tiles, spawnable_tiles)
 	for i in range(malus_tiles.size()):
-		var tile_pos = malus_tiles[i]
-		var modifier = malus_types[i % malus_types.size()]
+		var tile_pos: Vector2i = malus_tiles[i]
+		var modifier: Dictionary = malus_types[i % malus_types.size()]
 		_pending_special_tile_spawns.append({
 			"tile_pos": tile_pos,
 			"modifier": modifier,
@@ -374,16 +430,31 @@ func _generate_special_tiles() -> void:
 			_show_debug_exclusion_tiles_around(tile_pos)
 		Log.trace(Log.Level.INFO, "Queued malus tile at {0}: {1}".format([tile_pos, modifier["label"]]))
 
+## Builds the tile modifiers of [param kind] from [StatsDB] in their declared order. Each modifier maps its stat to
+## a multiplier and carries its tint, its (translated) label and whether it is a malus.
+func _build_special_tile_modifiers(kind: String) -> Array[Dictionary]:
+	var colors: Dictionary = SPECIAL_TILE_MODIFIER_COLORS[kind]
+	var modifiers: Array[Dictionary] = []
+	for entry: Dictionary in StatsDB.get_tile_modifiers(kind):
+		var stat: String = entry["stat"]
+		modifiers.append({
+			stat: float(entry["multiplier"]),
+			"color": colors.get(stat, Color.WHITE),
+			"label": tr("TILE.%s.%s" % [kind.to_upper(), stat.to_upper()]),
+			"is_malus": kind == MALUS_KIND,
+		})
+	return modifiers
+
 func _get_malus_tiles_around_bonus(bonus_tiles: Array[Vector2i], spawnable_tiles: Array[Vector2i]) -> Array[Vector2i]:
-	var spawnable_lookup: Dictionary = {}
+	var spawnable_lookup: Dictionary[Vector2i, bool] = {}
 	for tile_pos in spawnable_tiles:
 		spawnable_lookup[tile_pos] = true
 
-	var bonus_lookup: Dictionary = {}
+	var bonus_lookup: Dictionary[Vector2i, bool] = {}
 	for tile_pos in bonus_tiles:
 		bonus_lookup[tile_pos] = true
 
-	var malus_lookup: Dictionary = {}
+	var malus_lookup: Dictionary[Vector2i, bool] = {}
 	for bonus_tile in bonus_tiles:
 		for dx in range(-1, 2):
 			for dy in range(-1, 2):
@@ -410,11 +481,11 @@ func _is_special_tile_spawnable(candidate: Vector2i, already_selected: Array[Vec
 			return false
 	return true
 
-func _clear_debug_exclusion_tiles() -> void:
-	for node in _debug_exclusion_overlays:
+func _clear_debug_overlays(overlays: Array[Node2D]) -> void:
+	for node in overlays:
 		if is_instance_valid(node):
 			node.queue_free()
-	_debug_exclusion_overlays.clear()
+	overlays.clear()
 
 func _show_debug_exclusion_tiles_around(center: Vector2i) -> void:
 	# Draw an exclusion disk of radius < 2 around the special tile (in tile units)
@@ -435,13 +506,7 @@ func _get_tutorial_hint_tile() -> Vector2i:
 	return tilemap.local_to_map(local_pos)
 
 func _get_spawnable_special_tiles(buildable_tiles: Array[Vector2i]) -> Array[Vector2i]:
-	var origin := tilemap.map_to_local(Vector2i.ZERO)
-	var neighbor := tilemap.map_to_local(Vector2i(1, 0))
-	var tile_step_distance: float = origin.distance_to(neighbor)
-	if tile_step_distance <= 0.0:
-		tile_step_distance = 32.0
-
-	var max_distance_to_path: float = tile_step_distance * SPECIAL_TILE_MAX_DISTANCE_TILES
+	var max_distance_to_path: float = get_tile_step_distance() * SPECIAL_TILE_MAX_DISTANCE_TILES
 	var tutorial_tile: Vector2i = _get_tutorial_hint_tile()
 
 	var spawnable_tiles: Array[Vector2i] = []
@@ -449,28 +514,10 @@ func _get_spawnable_special_tiles(buildable_tiles: Array[Vector2i]) -> Array[Vec
 		if coords.distance_to(tutorial_tile) < 2.0:
 			continue
 
-		var world_pos := tilemap.map_to_local(coords)
-		var min_distance := INF
-
-		for path in paths:
-			if not path.curve:
-				continue
-
-			var closest_point := path.curve.get_closest_point(path.to_local(world_pos))
-			var distance := world_pos.distance_to(path.to_global(closest_point))
-			if distance < min_distance:
-				min_distance = distance
-
-		if min_distance <= max_distance_to_path:
+		if get_path_distance(coords) <= max_distance_to_path:
 			spawnable_tiles.append(coords)
 
 	return spawnable_tiles
-
-func _clear_debug_spawnable_special_tiles() -> void:
-	for node in _debug_spawnable_overlays:
-		if is_instance_valid(node):
-			node.queue_free()
-	_debug_spawnable_overlays.clear()
 
 func _clear_special_tile_layer() -> void:
 	if is_instance_valid(_special_tile_layer):
@@ -497,39 +544,20 @@ func _create_debug_tile_overlay(tile_pos: Vector2i, color: Color, overlays: Arra
 	overlays.append(poly)
 
 func _show_debug_spawnable_special_tiles(spawnable_tiles: Array[Vector2i]) -> void:
-	_clear_debug_spawnable_special_tiles()
+	_clear_debug_overlays(_debug_spawnable_overlays)
 	for tile_pos in spawnable_tiles:
 		_create_debug_tile_overlay(tile_pos, SPECIAL_TILE_DEBUG_COLOR, _debug_spawnable_overlays)
 
-func _create_bonus_visual_indicator(tile_pos: Vector2i, _modifier: Dictionary) -> void:
+func _place_special_tile_cell(kind: String, tile_pos: Vector2i) -> void:
 	if not tilemap:
 		return
 
-	if _bonus_tile_scene_source_id < 0 or _bonus_tile_scene_tile_id < 0:
-		Log.trace(Log.Level.ERROR, "Bonus tile scene source is not ready")
+	var source_id: int = _special_tile_scene_source_ids.get(kind, -1)
+	if source_id < 0:
+		Log.trace(Log.Level.ERROR, "%s tile scene source is not ready" % kind.capitalize())
 		return
 
-	_special_tile_layer.set_cell(
-		tile_pos,
-		_bonus_tile_scene_source_id,
-		Vector2i.ZERO,
-		_bonus_tile_scene_tile_id
-	)
-
-func _create_malus_visual_indicator(tile_pos: Vector2i, _modifier: Dictionary) -> void:
-	if not tilemap:
-		return
-
-	if _malus_tile_scene_source_id < 0 or _malus_tile_scene_tile_id < 0:
-		Log.trace(Log.Level.ERROR, "Malus tile scene source is not ready")
-		return
-
-	_special_tile_layer.set_cell(
-		tile_pos,
-		_malus_tile_scene_source_id,
-		Vector2i.ZERO,
-		_malus_tile_scene_tile_id
-	)
+	_special_tile_layer.set_cell(tile_pos, source_id, Vector2i.ZERO, _special_tile_scene_tile_ids[kind])
 
 func _spawn_special_tile_with_intro_animation(spawn_data: Dictionary) -> void:
 	if not tilemap:
@@ -549,10 +577,7 @@ func _spawn_special_tile_with_intro_animation(spawn_data: Dictionary) -> void:
 	await get_tree().create_timer(SPECIAL_TILE_SPAWN_ANIMATION_DURATION_SECONDS * SPECIAL_TILE_SPAWN_APPLY_RATIO).timeout
 
 	special_tiles[tile_pos] = modifier
-	if is_bonus:
-		_create_bonus_visual_indicator(tile_pos, modifier)
-	else:
-		_create_malus_visual_indicator(tile_pos, modifier)
+	_place_special_tile_cell(BONUS_KIND if is_bonus else MALUS_KIND, tile_pos)
 
 	_special_tile_layer.update_internals()
 	if is_bonus:
@@ -567,9 +592,6 @@ func _spawn_special_tile_with_intro_animation(spawn_data: Dictionary) -> void:
 
 
 func _create_bonus_spawn_animation(world_pos: Vector2, modifier: Dictionary) -> Node2D:
-	if BONUS_SPAWN_SCENE == null:
-		return null
-
 	var spawn_fx := BONUS_SPAWN_SCENE.instantiate() as Node2D
 	if spawn_fx == null:
 		return null
@@ -620,56 +642,28 @@ func _ensure_special_tile_layer() -> void:
 	_special_tile_layer.z_index = BONUS_TILE_LAYER_Z_INDEX
 	add_child(_special_tile_layer)
 
-func _ensure_bonus_tile_scene_source() -> void:
+func _ensure_special_tile_scene_source(kind: String) -> void:
 	if not tilemap or not tilemap.tile_set:
 		return
-	if BONUS_TILE_SCENE == null:
-		Log.trace(Log.Level.ERROR, "Bonus tile scene is not loaded")
-		return
-	if _bonus_tile_scene_source_id >= 0:
+	if _special_tile_scene_source_ids.get(kind, -1) >= 0:
 		return
 
 	var scene_source := TileSetScenesCollectionSource.new()
-	_bonus_tile_scene_tile_id = scene_source.create_scene_tile(BONUS_TILE_SCENE)
-	_bonus_tile_scene_source_id = tilemap.tile_set.add_source(scene_source, tilemap.tile_set.get_next_source_id())
+	var tile_id: int = scene_source.create_scene_tile(SPECIAL_TILE_SCENES[kind])
+	var source_id: int = tilemap.tile_set.add_source(scene_source, tilemap.tile_set.get_next_source_id())
 
-	if _bonus_tile_scene_source_id < 0 or not (tilemap.tile_set.get_source(_bonus_tile_scene_source_id) is TileSetScenesCollectionSource):
-		Log.trace(Log.Level.ERROR, "Failed to create bonus tile scene source")
-		_bonus_tile_scene_source_id = -1
-		_bonus_tile_scene_tile_id = -1
-
-func _ensure_malus_tile_scene_source() -> void:
-	if not tilemap or not tilemap.tile_set:
-		return
-	if MALUS_TILE_SCENE == null:
-		Log.trace(Log.Level.ERROR, "Malus tile scene is not loaded")
-		return
-	if _malus_tile_scene_source_id >= 0:
+	if source_id < 0 or not (tilemap.tile_set.get_source(source_id) is TileSetScenesCollectionSource):
+		Log.trace(Log.Level.ERROR, "Failed to create %s tile scene source" % kind)
 		return
 
-	var scene_source := TileSetScenesCollectionSource.new()
-	_malus_tile_scene_tile_id = scene_source.create_scene_tile(MALUS_TILE_SCENE)
-	_malus_tile_scene_source_id = tilemap.tile_set.add_source(scene_source, tilemap.tile_set.get_next_source_id())
+	_special_tile_scene_source_ids[kind] = source_id
+	_special_tile_scene_tile_ids[kind] = tile_id
 
-	if _malus_tile_scene_source_id < 0 or not (tilemap.tile_set.get_source(_malus_tile_scene_source_id) is TileSetScenesCollectionSource):
-		Log.trace(Log.Level.ERROR, "Failed to create malus tile scene source")
-		_malus_tile_scene_source_id = -1
-		_malus_tile_scene_tile_id = -1
-
-## Returns true if a tower can be placed on [param coords].
-## Authoritative source is the invisible placement [TileMapLayer] painted by the level designer.
-func is_tile_buildable(coords: Vector2i) -> bool:
-	if placement_tilemap == null:
-		return false
-	if placement_tilemap.get_cell_source_id(coords) == -1:
+func _try_assign_tilemap_to_cursor() -> bool:
+	if not is_instance_valid(Global.cursor):
 		return false
 
-	var world_pos: Vector2 = tilemap.map_to_local(coords)
-	for path: Path2D in paths:
-		var closest: Vector2 = path.curve.get_closest_point(path.to_local(world_pos))
-		if world_pos.distance_to(path.to_global(closest)) < 12.5:
-			return false
-
+	Global.cursor.tm_ref = tilemap
 	return true
 
 

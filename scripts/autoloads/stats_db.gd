@@ -107,6 +107,14 @@ func get_trap_name(id: String) -> String:
 	return trap.get("name", "") if not trap.is_empty() else ""
 
 
+## Returns the map tile modifiers of [param kind] ("bonus" or "malus") in their declared order,
+## each as [code]{"stat": String, "multiplier": float}[/code].
+func get_tile_modifiers(kind: String) -> Array[Dictionary]:
+	var modifiers: Array[Dictionary] = []
+	modifiers.assign(_data.get("tile_modifiers", {}).get(kind, []))
+	return modifiers
+
+
 func get_tower_ids() -> Array:
 	return _data.get("towers", {}).keys()
 

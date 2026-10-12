@@ -418,34 +418,21 @@ func _apply_special_visual_effect(modifier: Dictionary) -> void:
 		_scale_tween.kill()
 		_scale_tween = null
 
+	var target: Node2D = sprite if sprite else self
+
 	# Reset visual state if no modifier or no color
 	if not modifier.has("color"):
-		if sprite:
-			sprite.modulate = Color.WHITE
-			sprite.scale = Vector2(1, 1)
-		else:
-			self.modulate = Color.WHITE
-			self.scale = Vector2(1, 1)
+		target.modulate = Color.WHITE
+		target.scale = Vector2(1, 1)
 		return
 
 	# Keep the tower visuals neutral; the bonus tile scene owns the color tint.
-	if sprite:
-		sprite.modulate = Color.WHITE
-	else:
-		self.modulate = Color.WHITE
+	target.modulate = Color.WHITE
 
 	# Add a small scale effect only to the tower sprite
+	var target_scale: float = 0.85 if modifier.get("is_malus", false) else 1.15
 	_scale_tween = create_tween()
-	if sprite:
-		if modifier["label"].ends_with("-"):
-			_scale_tween.tween_property(sprite, "scale", Vector2(0.85, 0.85), 0.3).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-		else:
-			_scale_tween.tween_property(sprite, "scale", Vector2(1.15, 1.15), 0.3).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-	else:
-		if modifier["label"].ends_with("-"):
-			_scale_tween.tween_property(self, "scale", Vector2(0.85, 0.85), 0.3).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-		else:
-			_scale_tween.tween_property(self, "scale", Vector2(1.15, 1.15), 0.3).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	_scale_tween.tween_property(target, "scale", Vector2(target_scale, target_scale), 0.3).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 
 ## Builds the tower
 func build_tower() -> void:

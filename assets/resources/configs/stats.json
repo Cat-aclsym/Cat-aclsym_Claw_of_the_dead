@@ -55,6 +55,18 @@
 			"speed": 20
 		}
 	},
+	"tile_modifiers": {
+		"bonus": [
+			{ "stat": "fire_rate", "multiplier": 1.3 },
+			{ "stat": "damage", "multiplier": 1.3 },
+			{ "stat": "reward_multiplier", "multiplier": 1.5 }
+		],
+		"malus": [
+			{ "stat": "fire_rate", "multiplier": 0.7 },
+			{ "stat": "damage", "multiplier": 0.7 },
+			{ "stat": "shoot_range", "multiplier": 0.7 }
+		]
+	},
 	"towers": {
 		"bat_01": {
 			"base": {
