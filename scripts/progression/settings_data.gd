@@ -18,7 +18,7 @@ var tutorial_completed: bool = false
 ## Populates the object from a dictionary.
 func from_dictionary(data: Dictionary) -> void:
 	flags.assign(data.get("flags", {}))
-	## Saves made before the flags only stored this one as its own key.
+	# Saves made before the flags only stored this one as its own key.
 	if data.get("armory_intro_seen", false):
 		flags["armory_intro_seen"] = true
 	language = data.get("language", "fr")

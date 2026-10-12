@@ -37,8 +37,7 @@ func start_monitoring() -> void:
 	if not is_instance_valid(ILevel.current_level):
 		return
 
-	var level_data: Dictionary = JsonUtil.load_dict("res://resources/levels/%s.json" % ILevel.current_level.level_id)
-	for wave: Array in level_data.get("waves", []):
-		for step: Dictionary in wave:
-			if step.has(WaveStep.ENEMY_ID):
-				_escaped_by_type[step[WaveStep.ENEMY_ID]] = 0
+	for wave: Wave in ILevel.current_level.waves:
+		for step: WaveStep in wave.steps:
+			if step is WaveStepSpawn:
+				_escaped_by_type[step.data()[WaveStep.ENEMY_ID]] = 0
