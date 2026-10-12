@@ -1,0 +1,6 @@
+join character1 (Worry) center
+character1 (Worry): Miaou, celui-là, je ne le connaissais pas. Et il n'a pas l'air d'avoir envie de câlins.
+character1 (Neutral): Chaque ennemi rencontré est ajouté à l'Encyclopédie, tu pourras t'y plonger plus tard.
+character1 (Neutral): Pour l'instant, garde tes pattes sur tes tours.
+leave character1 [animation="Fade Out" wait="true"]
+[end_timeline]

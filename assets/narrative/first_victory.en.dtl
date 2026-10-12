@@ -1,0 +1,6 @@
+join character1 (Amazed) center
+character1 (Amazed): We did it! The zombies went home with their tails between their legs. Well, if they had tails.
+character1 (Neutral): Check your challenges, every star you earn can be spent in the Armory.
+character1 (Neutral): Now, who wants a nap?
+leave character1 [animation="Fade Out" wait="true"]
+[end_timeline]

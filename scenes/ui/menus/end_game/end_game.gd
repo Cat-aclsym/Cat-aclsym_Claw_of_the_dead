@@ -86,11 +86,13 @@ func init(victory: bool) -> void:
 		title_label.add_theme_color_override("font_color", VICTORY_TITLE_COLOR)
 		end_game_image.texture = VICTORY_ICON
 		ProgressionManager.complete_level(ILevel.current_level.level_id)
+		Narrative.play_once(&"first_victory_seen", "first_victory")
 	else:
 		title_label.text = tr("ENDGAMEMENU.LEVEL.TITLE.LOSE")
 		title_label.add_theme_color_override("font_color", DEFEAT_TITLE_COLOR)
 		end_game_image.texture = DEFEAT_ICON
 		next_button.get_parent().visible = false
+		Narrative.play_once(&"first_defeat_seen", "first_defeat")
 
 	_display_challenges()
 

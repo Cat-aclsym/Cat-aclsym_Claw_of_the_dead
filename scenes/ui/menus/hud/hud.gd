@@ -198,7 +198,17 @@ func _try_play_next_enemy_reveal() -> void:
 	)
 	_set_reveal_paused(false)
 	_new_enemy_reveal_running = false
+	if _new_enemy_reveal_queue.is_empty():
+		_play_enemy_dialogue(reveal_data.get("enemy_id", ""))
 	_try_play_next_enemy_reveal()
+
+
+## Plays the one-time dialogue of the boss, or of the first new enemy that is not the basic zombie.
+func _play_enemy_dialogue(enemy_id: String) -> void:
+	if enemy_id == "big_daddy":
+		Narrative.play_once(&"first_boss_seen", "first_boss")
+	elif enemy_id != "default_zombie":
+		Narrative.play_once(&"first_new_enemy_seen", "first_new_enemy")
 
 
 func _set_reveal_paused(is_paused: bool) -> void:

@@ -1,0 +1,6 @@
+join character1 (Worry) center
+character1 (Worry): Meow, that one is new. And it does not look like it wants to be petted.
+character1 (Neutral): Every enemy you meet gets added to the Encyclopedia, so go read up on it later.
+character1 (Neutral): For now, keep your paws on your towers.
+leave character1 [animation="Fade Out" wait="true"]
+[end_timeline]
