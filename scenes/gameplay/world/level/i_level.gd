@@ -8,6 +8,8 @@ signal wave_started(wave_number: int)
 const BACKGROUND_MUSIC_STREAM: AudioStreamMP3 = preload("res://assets/audio/music/background.mp3")
 ## Extra delay between the last bonus spawn and the first wave.
 const POST_SPECIAL_TILE_INTRO_DELAY_SECONDS: float = 2.0
+## Maximum lateral spawn deviation of an enemy, in tile fractions.
+const SPAWN_OFFSET_MAX_TILES: float = 0.2
 const STATE_CONFIGURING: String = "CONFIGURING"
 const STATE_DEFEAT: String = "DEFEAT"
 const STATE_END: String = "END"
@@ -40,21 +42,24 @@ var waves: Array[Wave] = []
 
 # Private Variables
 var _enemies_alive: int = 0
+var _enemies_spawned: int = 0
 var _level_ended: bool = false
 var _state_before_pause: String = ""
 var _time_frozen: bool = false
 var _time_scale_before_pause: float = 1.0
 var _wave_flow_started: bool = false
 
-@onready var clock: Clock = $Clock
 @onready var popup_spawner: PopupSpawner = $PopupSpawner
 @onready var _background_music: SoundEntity = $BackgroundMusic
+## Ticks the state machine, twice per second of game time.
+@onready var _wave_tick_timer: Timer = $WaveTickTimer
 
 # core
 func _ready() -> void:
-	assert(clock != null, "clock node not found")
 	assert(popup_spawner != null, "popup_spawner node not found")
 	assert(_background_music != null, "BackgroundMusic node not found")
+	assert(_wave_tick_timer != null, "WaveTickTimer node not found")
+	SignalUtil.connects([{SignalUtil.WHO: _wave_tick_timer, SignalUtil.WHAT: "timeout", SignalUtil.TO: _process_tick}])
 	_background_music.stream = BACKGROUND_MUSIC_STREAM
 
 
@@ -73,6 +78,29 @@ func _exit_tree() -> void:
 ## Returns the number of enemies currently alive on the map.
 func get_enemies_alive() -> int:
 	return _enemies_alive
+
+
+## Puts [param enemy] on [param path] with a small lateral offset and counts it alive until it dies or escapes.
+func spawn_enemy(path: Path2D, enemy: IEnemy) -> void:
+	var path_follow: PathFollow2D = PathFollow2D.new()
+	path_follow.loop = false
+	path_follow.rotates = false
+
+	path.add_child(path_follow)
+	var spawn_offset: float = (map.get_tile_step_distance() if map else IMap.DEFAULT_TILE_STEP_DISTANCE) * SPAWN_OFFSET_MAX_TILES
+	path_follow.v_offset = randf_range(-spawn_offset, spawn_offset)
+
+	enemy.name = "ENEMY_%d" % _enemies_spawned
+	_enemies_spawned += 1
+	enemy.path = path
+	enemy.path_follow = path_follow
+
+	SignalUtil.connects([
+		{SignalUtil.WHO: enemy, SignalUtil.WHAT: "died", SignalUtil.TO: _on_enemy_removed},
+		{SignalUtil.WHO: enemy, SignalUtil.WHAT: "escaped", SignalUtil.TO: _on_enemy_removed},
+	])
+	_enemies_alive += 1
+	path_follow.add_child(enemy)
 
 
 ## Starts the level by initializing map, waves, and state machine.
@@ -105,11 +133,8 @@ func start_wave_flow() -> void:
 	if not _time_frozen:
 		Engine.time_scale = 1.0
 
-	state_machine.toggle_initial_state()
 	_announce_wave()
-
-	clock.subscribe(_process_tick, 5)
-	clock.start()
+	_wave_tick_timer.start()
 
 
 # privates
@@ -120,34 +145,32 @@ func _announce_wave() -> void:
 
 
 func _build_state_machine() -> void:
-	var builder := StateMachineBuilder.new()
-	builder.build_initial_state(STATE_CONFIGURING, _on_state_configuring)
-	builder.build_state(STATE_VICTORY, _on_state_victory)
-	builder.build_state(STATE_DEFEAT, _on_state_defeat)
-	builder.build_state(STATE_PAUSE, _on_state_pause)
-	builder.build_state(STATE_END)
+	state_machine = StateMachine.new()
+	state_machine.add_state(STATE_CONFIGURING, _on_state_configuring, true)
+	state_machine.add_state(STATE_VICTORY, _on_state_victory)
+	state_machine.add_state(STATE_DEFEAT, _on_state_defeat)
+	state_machine.add_state(STATE_PAUSE)
+	state_machine.add_state(STATE_END)
 
 	for i in waves.size():
-		builder.build_state(STATE_WAVE % i, _on_state_wave)
+		state_machine.add_state(STATE_WAVE % i, _on_state_wave)
 
 	for i in waves.size():
-		builder.build_transition(STATE_WAVE % i, STATE_CONFIGURING)
-		builder.build_transition(STATE_WAVE % i, STATE_DEFEAT)
-		builder.build_transition(STATE_WAVE % i, STATE_PAUSE)
-		builder.build_transition(STATE_PAUSE, STATE_WAVE % i)
-		builder.build_transition(STATE_WAVE % i, STATE_VICTORY if i == waves.size() - 1 else STATE_WAVE % (i + 1))
+		state_machine.allow(STATE_WAVE % i, STATE_CONFIGURING)
+		state_machine.allow(STATE_WAVE % i, STATE_DEFEAT)
+		state_machine.allow(STATE_WAVE % i, STATE_PAUSE)
+		state_machine.allow(STATE_PAUSE, STATE_WAVE % i)
+		state_machine.allow(STATE_WAVE % i, STATE_VICTORY if i == waves.size() - 1 else STATE_WAVE % (i + 1))
 
-	builder.build_transition(STATE_CONFIGURING, STATE_WAVE_0)
-	builder.build_transition(STATE_CONFIGURING, STATE_DEFEAT)
-	builder.build_transition(STATE_CONFIGURING, STATE_PAUSE)
-	builder.build_transition(STATE_PAUSE, STATE_CONFIGURING)
-	builder.build_transition(STATE_DEFEAT, STATE_PAUSE)
-	builder.build_transition(STATE_VICTORY, STATE_CONFIGURING)
-	builder.build_transition(STATE_VICTORY, STATE_END)
-	builder.build_transition(STATE_DEFEAT, STATE_END)
-
-	state_machine = builder.build()
-	Log.trace(Log.Level.INFO, "State machine built. Initial state: %s" % state_machine.get_current_state().name)
+	state_machine.allow(STATE_CONFIGURING, STATE_WAVE_0)
+	state_machine.allow(STATE_CONFIGURING, STATE_DEFEAT)
+	state_machine.allow(STATE_CONFIGURING, STATE_PAUSE)
+	state_machine.allow(STATE_PAUSE, STATE_CONFIGURING)
+	state_machine.allow(STATE_DEFEAT, STATE_PAUSE)
+	state_machine.allow(STATE_VICTORY, STATE_CONFIGURING)
+	state_machine.allow(STATE_VICTORY, STATE_END)
+	state_machine.allow(STATE_DEFEAT, STATE_END)
+	Log.trace(Log.Level.INFO, "State machine built. Initial state: %s" % state_machine.current_state_id)
 
 
 func _init_map() -> void:
@@ -186,13 +209,9 @@ func _on_enemy_removed() -> void:
 	_enemies_alive -= 1
 
 
-func _on_enemy_spawn() -> void:
-	_enemies_alive += 1
-
-
 func _on_level_end(victory: bool) -> void:
 	_level_ended = true
-	clock.stop()
+	_wave_tick_timer.stop()
 	_background_music.stop()
 	Global.request_pause(&"level_end")
 
@@ -211,7 +230,7 @@ func _on_pause_changed(is_paused: bool) -> void:
 	if _level_ended or state_machine == null:
 		return
 
-	var current_state_id: String = state_machine.get_current_state().name
+	var current_state_id: String = state_machine.current_state_id
 	var should_freeze_time: bool = is_paused and Global.is_time_frozen()
 	if should_freeze_time and not _time_frozen:
 		_time_scale_before_pause = Engine.time_scale if Engine.time_scale > 0.0 else 1.0
@@ -232,56 +251,46 @@ func _on_pause_changed(is_paused: bool) -> void:
 
 
 # states
-func _on_state_configuring(_args: Array = []) -> bool:
+func _on_state_configuring() -> void:
 	state_machine.toggle_state(STATE_WAVE_0)
-	return true
 
 
-func _on_state_defeat(_args: Array = []) -> bool:
+func _on_state_defeat() -> void:
 	Log.trace(Log.Level.INFO, "Entering DEFEAT state.")
 
 	_on_level_end(false)
-	return true
 
 
-## The pause itself is applied right away by [method _on_pause_changed], nothing is left to do on a tick.
-func _on_state_pause(_args: Array = []) -> bool:
-	return true
-
-
-func _on_state_victory(_args: Array = []) -> bool:
+func _on_state_victory() -> void:
 	Log.trace(Log.Level.INFO, "Entering VICTORY state.")
 	ChallengeManager.check_victory_conditions()
 
 	_on_level_end(true)
-	return true
 
 
-func _on_state_wave(_args: Array = []) -> bool:
+func _on_state_wave() -> void:
 	var wave: Wave = waves.front()
 
 	# if no more steps and no enemy alive -> trigger next wave
 	if (wave == null or wave.peak() == null) and _enemies_alive == 0 and current_step == null:
 		_next_wave()
-		return true
+		return
 
 	# if no current step -> tigger next step
 	if current_step == null:
 		current_step = wave.pop()
-		return true
+		return
 
 	# execute current step then check if it is over
 	current_step.exec()
 	if current_step.is_over():
 		current_step = wave.pop()
 
-	return true
 
-
-## Custom ticker callback
+## Called by the wave tick timer.
 func _process_tick() -> void:
 	assert(state_machine)
-	state_machine.handle_current_state([])
+	state_machine.tick()
 
 
 # setget

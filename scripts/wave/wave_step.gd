@@ -1,8 +1,9 @@
 ## © [2026] A7 Studio. All rights reserved. Trademark.
 
+@abstract
 class_name WaveStep
 extends RefCounted
-## Base class for a single step in a wave (spawn, wait, etc.).
+## Base class for a single step in a wave (spawn, wait, etc.), [method build] creates the concrete steps.
 
 const COUNT := "count"
 ## Spawn step data keys.
@@ -47,14 +48,11 @@ func data() -> Dictionary:
 
 
 ## Executes the step logic.
-func exec() -> void:
-	Log.trace(Log.Level.WARN, "You are trying to execute WaveStep base class.")
+@abstract func exec() -> void
 
 
 ## Returns true if the step is finished.
-func is_over() -> bool:
-	Log.trace(Log.Level.WARN, "You are trying to execute WaveStep base class.")
-	return true
+@abstract func is_over() -> bool
 
 
 # private

@@ -58,4 +58,4 @@ func test_a_pause_source_freezes_the_level_until_it_is_released(timeout: int = 2
 
 
 func _state_of(level: ILevel) -> String:
-	return level.state_machine.get_current_state().name
+	return level.state_machine.current_state_id

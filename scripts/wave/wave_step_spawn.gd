@@ -29,7 +29,7 @@ func exec() -> void:
 		return
 
 	var enemy: IEnemy = enemy_scene.instantiate()
-	EnemySpawner.spawn_enemy(spawn_path, enemy)
+	level.spawn_enemy(spawn_path, enemy)
 	_data[WaveStep.COUNT] -= 1
 
 	if not enemy.enemy_id.is_empty():

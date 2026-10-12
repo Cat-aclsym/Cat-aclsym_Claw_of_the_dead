@@ -23,7 +23,7 @@ func _dead_state() -> void:
 
 
 func _spawn_small_zombies() -> void:
-	if path == null or path_follow == null:
+	if path == null or path_follow == null or not is_instance_valid(ILevel.current_level):
 		return
 
 	var small_zombie_scene: PackedScene = StatsDB.get_enemy_scene("small_zombie")
@@ -38,8 +38,8 @@ func _spawn_small_zombies() -> void:
 		# Add a bit of randomness to the progress to avoid overlapping
 		var random_offset: float = randf_range(-10.0, 10.0)
 
-		# We use the EnemySpawner to handle the PathFollow2D creation
-		EnemySpawner.spawn_enemy(path, small_zombie)
+		# The level creates the PathFollow2D
+		ILevel.current_level.spawn_enemy(path, small_zombie)
 
 		# Adjust the progress of the newly created PathFollow2D
 		if small_zombie.path_follow:

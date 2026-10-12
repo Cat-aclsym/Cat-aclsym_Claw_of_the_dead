@@ -103,7 +103,7 @@ func _refill_enemies() -> void:
 	var alive: int = get_tree().get_node_count_in_group("enemies")
 	for i: int in maxi(_enemies - alive, 0):
 		var enemy: IEnemy = scene.instantiate()
-		EnemySpawner.spawn_enemy(path, enemy)
+		_level.spawn_enemy(path, enemy)
 		enemy.max_health = ENEMY_HEALTH
 		enemy.health = ENEMY_HEALTH
 		if _frame == 1:

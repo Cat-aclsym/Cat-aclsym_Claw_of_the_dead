@@ -1,93 +1,57 @@
 ## © [2026] A7 Studio. All rights reserved. Trademark.
-## This is the StateMachine class which extends from RefCounted
-## It's used to control the different states in our game
+##
+## Finite state machine: states that run an optional callback on each tick, and the transitions allowed between them.
+## [br]Example:
+## [codeblock]
+## var machine: StateMachine = StateMachine.new()
+## machine.add_state("IDLE", Callable(), true)
+## machine.add_state("RUN", _on_run_tick)
+## machine.allow("IDLE", "RUN")
+## machine.toggle_state("RUN") # true, an unallowed transition returns false and logs an error
+## machine.tick() # calls _on_run_tick
+## [/codeblock]
 class_name StateMachine extends RefCounted
 
-## Signals that is emitted when the state is changed, sending the new sqtate as the argiument
-signal state_changed(new_state: State)
+## Id of the current state, empty until the initial state is added.
+var current_state_id: String = ""
 
-var current_state: State # Current state of the state machine
-var name: String #name of the state machine
-var states: Dictionary[String, State] # [String => State] mapping of the state IDs to states
-var valid_transition: Array[Transition] # List of valid transitions
-
-
-func _init() -> void:
-	name = "StateMachine(%s)" % self
-	states = {}
-	valid_transition = []
-	current_state = null
+## Allowed transitions, keyed by "from>to".
+var _transitions: Dictionary[String, bool] = {}
+## Tick callback of each state, invalid when the state does nothing on a tick.
+var _ticks: Dictionary[String, Callable] = {}
 
 
-## Method to add initial state to the state machine
-## [param state_id] : ID of the state
-## [param new_state] : new state to add
-func add_initial_state(state_id: String, new_state: State) -> void:
-	add_state(state_id, new_state)
-	current_state = states.get(state_id)
+## Registers the state [param id], [param on_tick] runs on each [method tick] while it is the current state.
+## [br]The machine starts in the state added with [param initial].
+func add_state(id: String, on_tick: Callable = Callable(), initial: bool = false) -> void:
+	assert(not _ticks.has(id), "State %s is already registered" % id)
+	_ticks[id] = on_tick
+	if initial:
+		current_state_id = id
 
 
-## Public method to add new stated to the state machine
-##
-## [param state_id] : ID of the state
-## [param new_state] : new state to add
-func add_state(state_id: String, new_state: State) -> void:
-	assert(not state_id in states.keys(), "%s is already registered" % new_state)
-	Log.trace(Log.Level.INFO, "%s : New state %s" % [name, new_state])
-	states[state_id] = new_state
+## Allows the transition from the state [param from] to the state [param to].
+func allow(from: String, to: String) -> void:
+	assert(_ticks.has(from) and _ticks.has(to), "Transition %s to %s uses an unknown state" % [from, to])
+	_transitions[from + ">" + to] = true
 
 
-## Method to add a new transition ti the state machine
-## [param new _transition] : new Transition Object
-func add_transition(new_transition: Transition) -> void:
-	assert(_find_transition(new_transition.from, new_transition.to) == null, "%s is already registered" % new_transition)
-	Log.trace(Log.Level.INFO, "%s : New transition %s" % [name, new_transition])
-	valid_transition.append(new_transition)
+## Runs the tick callback of the current state.
+func tick() -> void:
+	var on_tick: Callable = _ticks[current_state_id]
+	if on_tick.is_valid():
+		on_tick.call()
 
 
-## Getter for current_state
-func get_current_state() -> State:
-	return current_state
-
-
-## This is used to interact with the current state
-func handle_current_state(args: Array) -> bool:
-	return current_state.handle(args)
-
-
-## This is used at the start of the game to set the initial state
-func toggle_initial_state() -> bool:
-	assert(current_state, "Initial state has not be initialized")
-	# Log.trace(Log.Level.DEBUG, "%s : Toggle initial state %s" % [name, current_state])
-	state_changed.emit(current_state)
-	return true
-
-
-## Method used to change the state
-## [param state_id] : ID of the chosen state
-## It will validate the transition, and if var id, execute it and emit a state_changed signal
-func toggle_state(state_id: String) -> bool:
-	if not state_id in states.keys():
-		Log.trace(Log.Level.ERROR, "%s : Unkown state id : '%s'" % [name, state_id])
+## Moves to the state [param id], returns false and logs an error when the state is unknown or the transition is not allowed.
+func toggle_state(id: String) -> bool:
+	if not _ticks.has(id):
+		Log.trace(Log.Level.ERROR, "StateMachine: unknown state id '%s'" % id)
 		return false
 
-	var transition: Transition = _find_transition(current_state, states.get(state_id))
-	if transition:
-		current_state = states.get(state_id)
-		transition.handle()
-		# Log.trace(Log.Level.DEBUG, "%s : Toggle state %s" % [name, current_state])
-		state_changed.emit(current_state)
-		return true
+	if not _transitions.has(current_state_id + ">" + id):
+		Log.trace(Log.Level.ERROR, "StateMachine: failed to toggle state %s: invalid transition from %s" % [id, current_state_id])
+		return false
 
-	Log.trace(Log.Level.ERROR, "%s : Failed to toggle state %s : invalid transition from %s to %s" % [name, state_id, current_state, states.get(state_id)])
-	return false
-
-
-## This methods finds a transition object between two states
-##
-## [param State] : State Object
-func _find_transition(from: State, to: State) -> Transition:
-	for tra: Transition in valid_transition:
-		if tra.from == from and tra.to == to:
-			return tra
-	return null
+	current_state_id = id
+	return true
