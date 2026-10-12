@@ -1,4 +1,4 @@
-## © [2024] A7 Studio. All rights reserved. Trademark.
+## © [2026] A7 Studio. All rights reserved. Trademark.
 ## Sets the game window resolution.
 ##
 ## Resizes the game window for the current session only, the project settings are not changed.

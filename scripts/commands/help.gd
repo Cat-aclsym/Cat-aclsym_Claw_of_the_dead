@@ -1,4 +1,4 @@
-## © [2024] A7 Studio. All rights reserved. Trademark.
+## © [2026] A7 Studio. All rights reserved. Trademark.
 ##
 ## Displays all available commands with their descriptions.
 ## Lists all commands in the [code]COMMANDS_DIRECTORY[/code] with their usage and descriptions.

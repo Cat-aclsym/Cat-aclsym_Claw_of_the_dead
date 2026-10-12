@@ -1,4 +1,4 @@
-## © [2024] A7 Studio. All rights reserved. Trademark.
+## © [2026] A7 Studio. All rights reserved. Trademark.
 ##
 ## Manages the game's options menu interface and functionality.
 ## Handles settings for music, sound, language, and social media links.
@@ -8,12 +8,12 @@ extends Control
 # signals
 signal menu_close
 
+## Flag textures for language toggle button
+const FLAG_EN: Texture2D = preload("res://assets/ui/icons/English_Button.png")
+const FLAG_FR: Texture2D = preload("res://assets/ui/icons/French_Button.png")
+
 # private variables
 var _actual_texture: Texture2D
-
-## Preloaded flag textures for language toggle button
-@onready var _flag_en: Texture2D = preload("res://assets/ui/icons/English_Button.png")
-@onready var _flag_fr: Texture2D = preload("res://assets/ui/icons/French_Button.png")
 
 ## Options buttons
 @onready var close_button: TextureButton = $GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/TopLineHBoxContainer/AspectRatioContainer/CloseTextureButton
@@ -49,7 +49,7 @@ func _ready() -> void:
 
 	# Set initial button states based on current settings
 	_update_button_states()
-	
+
 	ButtonEffects.apply(close_button)
 	ButtonEffects.apply(contact_button)
 	ButtonEffects.apply(discord_button)
@@ -62,6 +62,36 @@ func _ready() -> void:
 	ButtonEffects.apply(x_button)
 
 # private
+## Emits the menu close signal.
+func _on_close_texture_button_pressed() -> void:
+	menu_close.emit()
+
+## Opens the contact email link.
+func _on_contact_texture_button_pressed() -> void:
+	OS.shell_open("mailto:A7studio.contact@gmail.com")
+
+## Opens the Discord community link.
+func _on_discord_texture_button_pressed() -> void:
+	OS.shell_open("https://discord.gg/xf5zEn3NtJ")
+
+## Opens the Instagram social media link.
+func _on_instagram_texture_button_pressed() -> void:
+	OS.shell_open("https://www.instagram.com/a7studio.cataclysm/")
+
+## Toggles between English and French languages.
+## [br]Updates the button texture to reflect the current language.
+func _on_language_texture_button_pressed() -> void:
+	# Toggle to the other language and persist the choice.
+	var current_locale: String = ProgressionManager.data.parameters.language if ProgressionManager.data.parameters.language != "" else TranslationServer.get_locale()
+	var new_locale: String = "fr" if current_locale == "en" else "en"
+
+	ProgressionManager.data.parameters.language = new_locale
+	ProgressionManager.save_game()
+	ProgressionManager.apply_settings()
+
+	# Update the button to show the other available language (not the current one).
+	_update_language_button_display()
+
 ## Toggles the music state and updates the button texture.
 func _on_music_texture_button_pressed() -> void:
 	_actual_texture = music_toggle_button.get_texture_normal()
@@ -72,6 +102,10 @@ func _on_music_texture_button_pressed() -> void:
 	ProgressionManager.data.parameters.music_enabled = not current_music
 	ProgressionManager.save_game()
 	ProgressionManager.apply_settings()
+
+## Placeholder for RGPD functionality.
+func _on_rgpd_texture_button_pressed() -> void:
+	pass
 
 ## Toggles the sound state and updates the button texture.
 func _on_sound_texture_button_pressed() -> void:
@@ -84,43 +118,13 @@ func _on_sound_texture_button_pressed() -> void:
 	ProgressionManager.save_game()
 	ProgressionManager.apply_settings()
 
-## Toggles between English and French languages.
-## [br]Updates the button texture to reflect the current language.
-func _on_language_texture_button_pressed() -> void:
-	# Toggle to the other language and persist the choice.
-	var current_locale := ProgressionManager.data.parameters.language if ProgressionManager.data.parameters.language != "" else TranslationServer.get_locale()
-	var new_locale := "fr" if current_locale == "en" else "en"
-
-	ProgressionManager.data.parameters.language = new_locale
-	ProgressionManager.save_game()
-	ProgressionManager.apply_settings()
-
-	# Update the button to show the other available language (not the current one).
-	_update_language_button_display()
-
-## Opens the Instagram social media link.
-func _on_instagram_texture_button_pressed() -> void:
-	OS.shell_open("https://www.instagram.com/a7studio.cataclysm/")
-
-## Opens the X (Twitter) social media link.
-func _on_x_texture_button_pressed() -> void:
-	OS.shell_open("https://twitter.com/a7studio_off")
-
-## Opens the Discord community link.
-func _on_discord_texture_button_pressed() -> void:
-	OS.shell_open("https://discord.gg/xf5zEn3NtJ")
-
 ## Placeholder for update functionality.
 func _on_update_texture_button_pressed() -> void:
 	pass
 
-## Placeholder for RGPD functionality.
-func _on_rgpd_texture_button_pressed() -> void:
-	pass
-
-## Opens the contact email link.
-func _on_contact_texture_button_pressed() -> void:
-	OS.shell_open("mailto:A7studio.contact@gmail.com")
+## Opens the X (Twitter) social media link.
+func _on_x_texture_button_pressed() -> void:
+	OS.shell_open("https://twitter.com/a7studio_off")
 
 ## Updates the button textures to reflect the current settings.
 func _update_button_states() -> void:
@@ -143,14 +147,10 @@ func _update_button_states() -> void:
 
 ## Sets the language toggle button texture so it shows the other available language.
 func _update_language_button_display() -> void:
-	var current_locale := ProgressionManager.data.parameters.language if ProgressionManager.data.parameters.language != "" else TranslationServer.get_locale()
+	var current_locale: String = ProgressionManager.data.parameters.language if ProgressionManager.data.parameters.language != "" else TranslationServer.get_locale()
 	if current_locale == "fr":
-		language_toggle_button.texture_normal = _flag_en
-		language_toggle_button.texture_pressed = _flag_fr
+		language_toggle_button.texture_normal = FLAG_EN
+		language_toggle_button.texture_pressed = FLAG_FR
 	else:
-		language_toggle_button.texture_normal = _flag_fr
-		language_toggle_button.texture_pressed = _flag_en
-
-## Emits the menu close signal.
-func _on_close_texture_button_pressed() -> void:
-	menu_close.emit()
+		language_toggle_button.texture_normal = FLAG_FR
+		language_toggle_button.texture_pressed = FLAG_EN

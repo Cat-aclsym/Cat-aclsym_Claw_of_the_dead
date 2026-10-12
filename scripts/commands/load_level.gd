@@ -1,4 +1,4 @@
-## © [2024] A7 Studio. All rights reserved. Trademark.
+## © [2026] A7 Studio. All rights reserved. Trademark.
 ##
 ## Loads a specific level by its ID.
 ## Instantiates the level scene and starts it, replacing the current level if one exists.
@@ -28,7 +28,7 @@ func _execute(console: Console, args: Array) -> int:
 		console.push_error_("Level scene not found: %s" % level_path)
 		return ERR_UNKNOWN_BEHAVIOR
 
-	var level_scene = load(level_path)
+	var level_scene: PackedScene = load(level_path)
 	if not level_scene:
 		console.push_error_("Failed to load level scene: %s" % level_path)
 		return ERR_UNKNOWN_BEHAVIOR
@@ -50,7 +50,7 @@ func _execute(console: Console, args: Array) -> int:
 
 	# Hide home menu if visible
 	if Global.ui:
-		var home_menu = Global.ui.get_node_or_null("HomeMenu")
+		var home_menu: Control = Global.ui.get_node_or_null("HomeMenu") as Control
 		if home_menu:
 			home_menu.visible = false
 

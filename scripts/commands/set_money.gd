@@ -1,4 +1,4 @@
-## © [2024] A7 Studio. All rights reserved. Trademark.
+## © [2026] A7 Studio. All rights reserved. Trademark.
 ##
 ## Sets the player's in-game money amount.
 ## Can only be used when a level is active. Updates the [member ILevel.coins] value.

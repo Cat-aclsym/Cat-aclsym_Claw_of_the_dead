@@ -1,23 +1,66 @@
-## © [2024] A7 Studio. All rights reserved. Trademark.
+## © [2026] A7 Studio. All rights reserved. Trademark.
 ## This is the StateMachine class which extends from RefCounted
 ## It's used to control the different states in our game
 class_name StateMachine extends RefCounted
 
 ## Signals that is emitted when the state is changed, sending the new sqtate as the argiument
-signal state_changed(State)
+signal state_changed(new_state: State)
 
-var name: String #name of the state machine
-var states: Dictionary # [String => State] mapping of the state IDs to states
-var valid_transition: Array[Transition] # List of valid transitions
 var current_state: State # Current state of the state machine
+var name: String #name of the state machine
+var states: Dictionary[String, State] # [String => State] mapping of the state IDs to states
+var valid_transition: Array[Transition] # List of valid transitions
 
 
-# core
 func _init() -> void:
 	name = "StateMachine(%s)" % self
 	states = {}
 	valid_transition = []
 	current_state = null
+
+
+## Method to add initial state to the state machine
+## [param state_id] : ID of the state
+## [param new_state] : new state to add
+func add_initial_state(state_id: String, new_state: State) -> void:
+	add_state(state_id, new_state)
+	current_state = states.get(state_id)
+
+
+## Public method to add new stated to the state machine
+##
+## [param state_id] : ID of the state
+## [param new_state] : new state to add
+func add_state(state_id: String, new_state: State) -> void:
+	assert(not state_id in states.keys(), "%s is already registered" % new_state)
+	Log.trace(Log.Level.INFO, "%s : New state %s" % [name, new_state])
+	states[state_id] = new_state
+
+
+## Method to add a new transition ti the state machine
+## [param new _transition] : new Transition Object
+func add_transition(new_transition: Transition) -> void:
+	assert(_find_transition(new_transition.from, new_transition.to) == null, "%s is already registered" % new_transition)
+	Log.trace(Log.Level.INFO, "%s : New transition %s" % [name, new_transition])
+	valid_transition.append(new_transition)
+
+
+## Getter for current_state
+func get_current_state() -> State:
+	return current_state
+
+
+## This is used to interact with the current state
+func handle_current_state(args: Array) -> bool:
+	return current_state.handle(args)
+
+
+## This is used at the start of the game to set the initial state
+func toggle_initial_state() -> bool:
+	assert(current_state, "Initial state has not be initialized")
+	# Log.trace(Log.Level.DEBUG, "%s : Toggle initial state %s" % [name, current_state])
+	state_changed.emit(current_state)
+	return true
 
 
 ## Method used to change the state
@@ -39,62 +82,12 @@ func toggle_state(state_id: String) -> bool:
 	Log.trace(Log.Level.ERROR, "%s : Failed to toggle state %s : invalid transition from %s to %s" % [name, state_id, current_state, states.get(state_id)])
 	return false
 
-## This is used at the start of the game to set the initial state
-func toggle_initial_state() -> bool:
-	assert(current_state, "Initial state has not be initialized")
-	# Log.trace(Log.Level.DEBUG, "%s : Toggle initial state %s" % [name, current_state])
-	state_changed.emit(current_state)
-	return true
 
-## This is used to interact with the current state
-func handle_current_state(args: Array) -> bool:
-	return current_state.handle(args)
-
-## Getter for current_state
-func get_current_state() -> State:
-	return current_state
-
-## Public method to add new stated to the state machine
-##
-## [param state_id] : ID of the state
-## [param new_state] : new state to add
-func add_state(state_id: String, new_state: State) -> void:
-	assert(not state_id in states.keys(), "%s is already registered" % new_state)
-	Log.trace(Log.Level.INFO, "%s : New state %s" % [name, new_state])
-	states[state_id] = new_state
-
-# Public
-## Method to add initial state to the state machine
-## [param state_id] : ID of the state
-## [param new_state] : new state to add
-func add_initial_state(state_id: String, new_state: State) -> void:
-	add_state(state_id, new_state)
-	current_state = states.get(state_id)
-
-# Public
-## Method to add a new transition ti the state machine
-## [param new _transition] : new Transition Object
-func add_transition(new_transition: Transition) -> void:
-	assert(_find_transition(new_transition.from, new_transition.to) == null, "%s is already registered" % new_transition)
-	Log.trace(Log.Level.INFO, "%s : New transition %s" % [name, new_transition])
-	valid_transition.append(new_transition)
-
-
-# private
 ## This methods finds a transition object between two states
 ##
 ## [param State] : State Object
 func _find_transition(from: State, to: State) -> Transition:
-	for tra in valid_transition:
+	for tra: Transition in valid_transition:
 		if tra.from == from and tra.to == to:
 			return tra
 	return null
-
-
-# signal
-
-
-# event
-
-
-# setget

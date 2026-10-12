@@ -1,16 +1,16 @@
-## © [2024] A7 Studio. All rights reserved. Trademark.
+## © [2026] A7 Studio. All rights reserved. Trademark.
 ## Debug node to display in realtime value of a node property.
 ## @experimental
 class_name Watcher extends PanelContainer
 
 
 @export var node: Node
-@export var property: StringName
 @export var physics: bool = false
+@export var property: StringName
 
 @onready var label: Label = $Label
 
-# core
+
 func _ready() -> void:
 	assert(node, "Missing node")
 	assert(property, "Missing property")
@@ -30,10 +30,6 @@ func _physics_process(_delta: float) -> void:
 		_update()
 
 
-# public
-
-
-# private
 func _update() -> void:
 	label.text = "{property}: {value}".format({
 		"property": property,

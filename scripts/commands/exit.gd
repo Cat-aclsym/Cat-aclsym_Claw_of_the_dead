@@ -1,4 +1,4 @@
-## © [2024] A7 Studio. All rights reserved. Trademark.
+## © [2026] A7 Studio. All rights reserved. Trademark.
 ##
 ## Exits the game by closing the application window.
 ## This command immediately terminates the game process and performs cleanup.

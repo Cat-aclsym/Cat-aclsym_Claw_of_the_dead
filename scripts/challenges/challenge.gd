@@ -1,4 +1,4 @@
-## © [2024] A7 Studio. All rights reserved. Trademark.
+## © [2026] A7 Studio. All rights reserved. Trademark.
 
 class_name Challenge
 extends Node
@@ -11,12 +11,12 @@ signal completed(challenge_id: String)
 signal failed(challenge_id: String)
 
 # Public variables
-var id: String
 var description: String
-var title: String
 var difficulty: String
+var id: String
 var is_completed: bool = false
 var is_failed: bool = false
+var title: String
 
 
 # Built-in functions
@@ -28,12 +28,6 @@ func _init(p_id: String, p_title: String, p_desc: String, p_diff: String) -> voi
 
 
 # Public functions
-## Called when the level starts to reset state.
-func start_monitoring() -> void:
-	is_completed = false
-	is_failed = false
-
-
 ## Evaluates if the challenge conditions are met at the end of the level.
 func check_completion() -> bool:
 	return not is_failed
@@ -62,6 +56,21 @@ func on_damage_taken(_amount: int) -> void:
 	pass
 
 
+## Virtual hook called when an enemy dies, [param source] is the tower (or the trap) that dealt the killing damage, null for poison.
+func on_enemy_died(_enemy: IEnemy, _damage_type: IEnemy.DamageType, _source: Variant) -> void:
+	pass
+
+
+## Virtual hook called when an enemy reaches the end of its path alive.
+func on_enemy_escaped(_enemy: IEnemy) -> void:
+	pass
+
+
+## Virtual hook called when an enemy is hit, [param source] is the bullet or tower that hit it.
+func on_enemy_hit(_enemy: IEnemy, _source: Variant) -> void:
+	pass
+
+
 ## Virtual hook called when a tower is placed.
 func on_tower_placed(_tower: ITower) -> void:
 	pass
@@ -72,16 +81,7 @@ func on_trap_placed(_trap: ITrap) -> void:
 	pass
 
 
-## Virtual hook called when an enemy is hit, [param source] is the bullet or tower that hit it.
-func on_enemy_hit(_enemy: IEnemy, _source: Variant) -> void:
-	pass
-
-
-## Virtual hook called when an enemy dies, [param source] is the tower (or the trap) that dealt the killing damage, null for poison.
-func on_enemy_died(_enemy: IEnemy, _damage_type: IEnemy.DamageType, _source: Variant) -> void:
-	pass
-
-
-## Virtual hook called when an enemy reaches the end of its path alive.
-func on_enemy_escaped(_enemy: IEnemy) -> void:
-	pass
+## Called when the level starts to reset state.
+func start_monitoring() -> void:
+	is_completed = false
+	is_failed = false
