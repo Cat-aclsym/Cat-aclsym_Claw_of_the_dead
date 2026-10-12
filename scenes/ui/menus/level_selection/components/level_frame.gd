@@ -135,7 +135,7 @@ func _load_challenges() -> void:
 
 func _load_level_challenge_ids() -> Array[String]:
 	var path: String = LEVEL_JSON_PATH_PATTERN % level_id
-	var data: Dictionary = _read_json_dictionary(path)
+	var data: Dictionary = JsonUtil.load_dict(path)
 	if data.is_empty():
 		return []
 
@@ -146,20 +146,6 @@ func _load_level_challenge_ids() -> Array[String]:
 			if challenge_id is String:
 				challenge_ids.append(challenge_id)
 	return challenge_ids
-
-
-func _read_json_dictionary(path: String) -> Dictionary:
-	if not FileAccess.file_exists(path):
-		return {}
-
-	var file: FileAccess = FileAccess.open(path, FileAccess.READ)
-	if file == null:
-		return {}
-
-	var parsed: Variant = JSON.parse_string(file.get_as_text())
-	if parsed is Dictionary:
-		return parsed
-	return {}
 
 
 func _on_play_button_pressed() -> void:
@@ -175,7 +161,7 @@ func _setup_challenge_ui(node: HBoxContainer, c_id: String, is_completed: bool) 
 	indicator.texture = CONDITION_DONE if is_completed else CONDITION_TODO
 
 	var path: String = CHALLENGE_JSON_PATH_PATTERN % c_id
-	var challenge_data: Dictionary = _read_json_dictionary(path)
+	var challenge_data: Dictionary = JsonUtil.load_dict(path)
 	if challenge_data.is_empty():
 		label.text = c_id
 		return

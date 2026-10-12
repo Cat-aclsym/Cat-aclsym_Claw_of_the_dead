@@ -260,14 +260,8 @@ func _load_and_validate() -> void:
 	_ordered_node_ids.clear()
 	_upgrade_gates_by_id.clear()
 
-	if not FileAccess.file_exists(ARMORY_JSON_PATH):
-		Log.trace(Log.Level.ERROR, "Armory: missing %s" % ARMORY_JSON_PATH)
-		return
-
-	var raw: String = FileAccess.get_file_as_string(ARMORY_JSON_PATH)
-	var parsed: Variant = JSON.parse_string(raw)
-	if typeof(parsed) != TYPE_DICTIONARY:
-		Log.trace(Log.Level.ERROR, "Armory: invalid JSON root")
+	var parsed: Dictionary = JsonUtil.load_dict(ARMORY_JSON_PATH)
+	if parsed.is_empty():
 		return
 
 	for g in parsed.get("upgrade_gates", []):

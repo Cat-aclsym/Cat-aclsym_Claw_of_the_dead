@@ -115,17 +115,11 @@ func _init_map() -> void:
 
 
 func _load_waves() -> void:
-	var filepath: String = "res://resources/levels/%s.json" % level_id
-	var file := FileAccess.open(filepath, FileAccess.READ)
-	assert(file != null, "Failed to open wave file: %s" % filepath)
+	var parsed: Dictionary = JsonUtil.load_dict("res://resources/levels/%s.json" % level_id)
+	assert(parsed.has("waves"), "Failed to load waves or missing 'waves' key for level %s." % level_id)
 
-	var raw_content: String = file.get_as_text()
-	file.close()
-	var parsed = JSON.parse_string(raw_content)
-	assert(parsed != null and parsed.has("waves"), "Failed to parse waves or missing 'waves' key in JSON.")
-
-	for wave in parsed["waves"]:
-		waves.append(Wave.new(wave))
+	for wave_data: Array in parsed.get("waves", []):
+		waves.append(Wave.new(wave_data))
 
 
 func _build_state_machine() -> void:
@@ -220,7 +214,8 @@ func _on_level_end(victory: bool, _args = []) -> void:
 
 	end_time = Time.get_unix_time_from_system()
 	var end_game_menu_instance: EndGame = ScenesLoader.END_GAME_MENU.instantiate()
-	Global.ui.add_child(end_game_menu_instance)
+	if is_instance_valid(Global.ui):
+		Global.ui.add_child(end_game_menu_instance)
 	end_game_menu_instance.init(victory)
 	state_machine.toggle_state(STATE_END)
 

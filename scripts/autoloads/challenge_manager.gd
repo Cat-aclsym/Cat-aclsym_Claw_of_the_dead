@@ -29,16 +29,11 @@ func start_level_challenges(level_id: String) -> void:
 	if not FileAccess.file_exists(level_path):
 		return
 
-	var file := FileAccess.open(level_path, FileAccess.READ)
-	assert(file != null, "Failed to open level file: %s" % level_path)
-
-	var content := file.get_as_text()
-	var json: Variant = JSON.parse_string(content)
-
-	if not json or not json.has("challenges"):
+	var level_data: Dictionary = JsonUtil.load_dict(level_path)
+	if not level_data.has("challenges"):
 		return
 
-	for c_id in json["challenges"]:
+	for c_id: String in level_data["challenges"]:
 		_load_challenge(c_id)
 
 	for c in active_challenges:
@@ -115,14 +110,8 @@ func _load_challenge(c_id: String) -> void:
 	if not FileAccess.file_exists(path):
 		return
 
-	var file := FileAccess.open(path, FileAccess.READ)
-	if not file:
-		Log.trace(Log.Level.ERROR, "Failed to open challenge file: %s" % path)
-		return
-	var content := file.get_as_text()
-	var data: Variant = JSON.parse_string(content)
-	if data == null:
-		Log.trace(Log.Level.ERROR, "Failed to parse challenge JSON: %s" % path)
+	var data: Dictionary = JsonUtil.load_dict(path)
+	if data.is_empty():
 		return
 
 	var script_path: String = data.get("script", "res://scripts/challenges/challenge.gd")

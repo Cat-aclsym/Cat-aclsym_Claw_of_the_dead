@@ -12,7 +12,7 @@ var _data: Dictionary = {}
 
 # Built-in functions
 func _ready() -> void:
-	_data = _load_json(STATS_PATH)
+	_data = JsonUtil.load_dict(STATS_PATH)
 	var towers_count: int = _data.get("towers", {}).size()
 	var traps_count: int = _data.get("traps", {}).size()
 	var enemies_count: int = _data.get("enemies", {}).size()
@@ -151,18 +151,3 @@ func load_packed_scene(path: String) -> PackedScene:
 		return null
 	var res: Resource = load(path)
 	return res if res is PackedScene else null
-
-
-# Private functions
-func _load_json(path: String) -> Dictionary:
-	if not FileAccess.file_exists(path):
-		push_warning("StatsDB: fichier introuvable %s" % path)
-		return {}
-	var content: String = FileAccess.get_file_as_string(path)
-	var parsed: Variant = JSON.parse_string(content)
-	if typeof(parsed) != TYPE_DICTIONARY:
-		push_warning("StatsDB: format JSON inattendu pour %s" % path)
-		return {}
-	return parsed
-
-
