@@ -18,7 +18,7 @@ const _ICON_SPEED: Texture2D = preload("res://assets/ui/stats/zombie-speed.png")
 
 
 ## Internal data structure for all entries.
-var _all_entries: Dictionary = {
+var _all_entries: Dictionary[String, Array] = {
 	"ENEMIES": [],
 	"TOWERS": []
 }
@@ -27,7 +27,7 @@ var _anim_frame: int = 0
 ## Timer for entity animation frames.
 var _anim_timer: float = 0.0
 ## Animation data for the currently displayed entity.
-var _current_anim_data: Dictionary = {}
+var _current_anim_data: SpritePreview = null
 ## Current category being displayed ("TOWERS" or "ENEMIES").
 var _current_category: String = "ENEMIES"
 ## Font size for stat headers.
@@ -46,6 +46,8 @@ var _frame_width: int = 349
 var _frames_per_row: int = 8
 ## Flag indicating if a page turn animation is in progress.
 var _is_turning_page: bool = false
+## Time of the previous [method _process] call, in microseconds.
+var _last_process_usec: int = Time.get_ticks_usec()
 ## Active marquee tweens for cleanup when stats grid is rebuilt.
 var _marquee_tweens: Array[Tween] = []
 ## Direction of the page turn (1 forward, -1 backward).
@@ -85,8 +87,11 @@ var _page_total_frames: int = 10
 
 
 ## Updates the page turn animation and scroll indicators.
-## [param delta] The time since the last frame.
-func _process(delta: float) -> void:
+## [br]Uses the real frame time: the engine time scale is 0 while the encyclopedia is opened from the pause menu.
+func _process(_scaled_delta: float) -> void:
+	var now_usec: int = Time.get_ticks_usec()
+	var delta: float = float(now_usec - _last_process_usec) / 1000000.0
+	_last_process_usec = now_usec
 	if _is_turning_page:
 		_page_anim_timer += delta
 		var progress: float = clamp(_page_anim_timer / _page_anim_duration, 0.0, 1.0)
@@ -122,10 +127,10 @@ func _process(delta: float) -> void:
 		else:
 			scroll_indicator_top.modulate.a = lerp(scroll_indicator_top.modulate.a, 0.7, delta * 10.0)
 
-	if not _current_anim_data.is_empty() and _current_anim_data.get("frames"):
-		var frames: SpriteFrames = _current_anim_data["frames"]
-		var anim: StringName = _current_anim_data["animation"]
-		var fps: float = _current_anim_data["fps"]
+	if _current_anim_data != null and _current_anim_data.frames != null:
+		var frames: SpriteFrames = _current_anim_data.frames
+		var anim: StringName = _current_anim_data.animation
+		var fps: float = _current_anim_data.fps
 
 		if fps > 0:
 			_anim_timer += delta
@@ -163,7 +168,9 @@ func _ready() -> void:
 ## [param p_enemy_data] The raw data from StatsDB.
 func _add_enemy_entry_from_data(p_id: String, p_entry_name: String, p_enemy_data: Dictionary) -> void:
 	var scene_path: String = p_enemy_data.get("scene", "")
-	if not ResourceLoader.exists(scene_path): return
+	if not ResourceLoader.exists(scene_path):
+		Log.trace(Log.Level.WARN, "Encyclopedia: enemy '%s' skipped, scene not found: '%s'" % [p_id, scene_path])
+		return
 
 	var stats_dict: Dictionary = {
 		"ENCYCLOPEDIA.STATS.HEALTH": str(p_enemy_data.get("max_health", 0.0)),
@@ -269,7 +276,9 @@ func _add_stat_row(p_key: String, p_val: String) -> void:
 ## [param p_tower_data] The raw data from StatsDB.
 func _add_tower_entry_from_data(p_id: String, p_entry_name: String, p_tower_data: Dictionary) -> void:
 	var scene_path: String = p_tower_data.get("scene", "")
-	if not ResourceLoader.exists(scene_path): return
+	if not ResourceLoader.exists(scene_path):
+		Log.trace(Log.Level.WARN, "Encyclopedia: tower '%s' skipped, scene not found: '%s'" % [p_id, scene_path])
+		return
 
 	var base_stats: Dictionary = p_tower_data.get("base", {})
 	var bullet_stats: Dictionary = base_stats.get("bullet_stats", {})
@@ -331,81 +340,21 @@ func _check_scroll_indicator() -> void:
 		scroll_indicator_top.modulate.a = 0.0
 
 
-## Extracts sprite information from a scene instance.
-## [param p_node] The node to extract from.
-func _get_sprite_from_instance(p_node: Node) -> Dictionary:
-	var data: Dictionary = {
-		"animation": &"",
-		"fps": 5.0,
-		"frames": null,
-		"scale": Vector2.ONE,
-		"texture": null
-	}
-	var sprite_node: Node = null
-	var sprite_node_names: Array[String] = ["Sprite", "AnimatedSprite2D", "Sprite2D"]
-	for node_name in sprite_node_names:
-		if p_node.has_node(node_name):
-			sprite_node = p_node.get_node(node_name)
-			break
-
-	if sprite_node == null:
-		for child in p_node.get_children():
-			if child is AnimatedSprite2D:
-				sprite_node = child
-				break
-
-	if sprite_node == null:
-		for child in p_node.get_children():
-			if child is Sprite2D:
-				sprite_node = child
-				break
-
-	if sprite_node is AnimatedSprite2D:
-		var anim_sprite: AnimatedSprite2D = sprite_node as AnimatedSprite2D
-		if anim_sprite.sprite_frames:
-			var animation_names: PackedStringArray = anim_sprite.sprite_frames.get_animation_names()
-			if not animation_names.is_empty():
-				var anim: String = "idle" if anim_sprite.sprite_frames.has_animation("idle") else str(animation_names[0])
-				var frame_count: int = anim_sprite.sprite_frames.get_frame_count(anim)
-				if frame_count > 0:
-					data["texture"] = anim_sprite.sprite_frames.get_frame_texture(anim, 0)
-				data["frames"] = anim_sprite.sprite_frames
-				data["animation"] = StringName(anim)
-				data["fps"] = anim_sprite.sprite_frames.get_animation_speed(anim)
-				data["scale"] = anim_sprite.scale
-	elif sprite_node is Sprite2D:
-		var sprite_2d: Sprite2D = sprite_node as Sprite2D
-		data["texture"] = sprite_2d.texture
-		data["scale"] = sprite_2d.scale
-	return data
+## Returns the sprite of an entry, read from its scene on first use.
+## [param p_entry] The entry from [member _all_entries].
+func _get_entry_sprite(p_entry: Dictionary) -> SpritePreview:
+	if p_entry["sprite"] == null:
+		p_entry["sprite"] = SpritePreview.from_scene(load(p_entry["scene_path"]) as PackedScene)
+	return p_entry["sprite"]
 
 
 ## Loads all tower and enemy entries from StatsDB.
 func _initialize_entries() -> void:
-	var tower_name_mapping: Dictionary = {
-		"bat_01": "TOWER.BAT_01.NAME",
-		"bat_02": "TOWER.BAT_02.NAME"
-	}
-	var enemy_name_mapping: Dictionary = {
-		"big_daddy": "ENEMY.BIGDADDY.NAME",
-		"damage_zombie": "ENEMY.FAT.NAME",
-		"default_zombie": "ENEMY.DEFAULT.NAME",
-		"rat": "ENEMY.RAT.NAME"
-	}
+	for tower_id: String in StatsDB.get_tower_ids():
+		_add_tower_entry_from_data(tower_id, StatsDB.name_key("TOWER", tower_id), StatsDB.get_tower(tower_id))
 
-	var tower_ids: Array = StatsDB.get_tower_ids()
-	for tower_id_item in tower_ids:
-		var tower_id: String = tower_id_item as String
-		var tower_data: Dictionary = StatsDB.get_tower(tower_id)
-		var entry_name: String = tower_name_mapping.get(tower_id, tower_id.to_upper() + ".NAME")
-		_add_tower_entry_from_data(tower_id, entry_name, tower_data)
-
-	var enemy_ids: Array = StatsDB.get_enemy_ids()
-	for enemy_id_item in enemy_ids:
-		var enemy_id: String = enemy_id_item as String
-		var enemy_data: Dictionary = StatsDB.get_enemy(enemy_id)
-		var entry_name: String = enemy_name_mapping.get(enemy_id, enemy_id.to_upper() + ".NAME")
-		_add_enemy_entry_from_data(enemy_id, entry_name, enemy_data)
+	for enemy_id: String in StatsDB.get_enemy_ids():
+		_add_enemy_entry_from_data(enemy_id, StatsDB.name_key("ENEMY", enemy_id), StatsDB.get_enemy(enemy_id))
 
 
 ## Switches the current category.
@@ -528,7 +477,7 @@ func _update_ui_elements() -> void:
 		child.queue_free()
 
 	if not is_discovered:
-		_current_anim_data = {}
+		_current_anim_data = null
 		_anim_timer = 0.0
 		_anim_frame = 0
 
@@ -537,21 +486,10 @@ func _update_ui_elements() -> void:
 		name_label.add_theme_font_size_override("font_size", 120)
 		name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
-		if entry.get("sprite") == null:
-			var hidden_scene_path: String = entry.get("scene_path", "")
-			if not hidden_scene_path.is_empty() and ResourceLoader.exists(hidden_scene_path):
-				var hidden_scene_res: PackedScene = load(hidden_scene_path) as PackedScene
-				if hidden_scene_res:
-					var hidden_obj: Node = hidden_scene_res.instantiate()
-					if hidden_obj:
-						entry["sprite"] = _get_sprite_from_instance(hidden_obj)
-						hidden_obj.queue_free()
-
-		var hidden_anim_data: Dictionary = entry.get("sprite", {})
-		if hidden_anim_data.has("texture") and hidden_anim_data["texture"] != null:
-			sprite_rect.texture = hidden_anim_data["texture"]
-			var hidden_scale: Vector2 = hidden_anim_data.get("scale", Vector2.ONE)
-			sprite_rect.custom_minimum_size = Vector2(160, 160) * hidden_scale
+		var hidden_sprite: SpritePreview = _get_entry_sprite(entry)
+		if hidden_sprite.texture != null:
+			sprite_rect.texture = hidden_sprite.texture
+			sprite_rect.custom_minimum_size = Vector2(160, 160) * hidden_sprite.scale
 			sprite_rect.modulate = Color(0.0, 0.0, 0.0, 0.85)
 		else:
 			sprite_rect.texture = null
@@ -568,17 +506,7 @@ func _update_ui_elements() -> void:
 		enemies_button.disabled = (_current_category == "ENEMIES")
 		return
 
-	if entry.get("sprite") == null:
-		var scene_path: String = entry.get("scene_path", "")
-		if not scene_path.is_empty() and ResourceLoader.exists(scene_path):
-			var scene_res: PackedScene = load(scene_path) as PackedScene
-			if scene_res:
-				var obj: Node = scene_res.instantiate()
-				if obj:
-					entry["sprite"] = _get_sprite_from_instance(obj)
-					obj.queue_free()
-
-	_current_anim_data = entry.get("sprite", {})
+	_current_anim_data = _get_entry_sprite(entry)
 	_anim_timer = 0.0
 	_anim_frame = 0
 
@@ -601,10 +529,9 @@ func _update_ui_elements() -> void:
 
 	name_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 
-	if _current_anim_data.has("texture") and _current_anim_data["texture"] != null:
-		sprite_rect.texture = _current_anim_data["texture"]
-		var base_scale: Vector2 = _current_anim_data.get("scale", Vector2.ONE)
-		sprite_rect.custom_minimum_size = Vector2(160, 160) * base_scale
+	if _current_anim_data.texture != null:
+		sprite_rect.texture = _current_anim_data.texture
+		sprite_rect.custom_minimum_size = Vector2(160, 160) * _current_anim_data.scale
 		sprite_rect.modulate = Color.WHITE
 	else:
 		sprite_rect.texture = null
@@ -662,7 +589,9 @@ func _update_ui_elements() -> void:
 	towers_button.disabled = (_current_category == "TOWERS")
 	enemies_button.disabled = (_current_category == "ENEMIES")
 
-	get_tree().process_frame.connect(_check_scroll_indicator, CONNECT_ONE_SHOT)
+	await get_tree().process_frame
+	if is_inside_tree():
+		_check_scroll_indicator()
 
 
 ## Returns the icon texture for a given encyclopedia stat key, or null if unmapped.

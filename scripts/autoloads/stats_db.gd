@@ -132,6 +132,12 @@ func get_tile_modifiers(kind: String) -> Array[Dictionary]:
 	return modifiers
 
 
+## Returns the translation key of the name of an entry, e.g. [code]name_key("TOWER", "bat_01")[/code] is [code]TOWER.BAT_01.NAME[/code].
+## [br][param category] is [code]"TOWER"[/code], [code]"TRAP"[/code] or [code]"ENEMY"[/code].
+func name_key(category: String, id: String) -> String:
+	return "%s.%s.NAME" % [category, id.to_upper()]
+
+
 func get_tower_ids() -> Array:
 	return _data.get("towers", {}).keys()
 
