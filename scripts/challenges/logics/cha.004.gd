@@ -1,13 +1,14 @@
-## © [2024] A7 Studio. All rights reserved. Trademark.
+## © [2026] A7 Studio. All rights reserved. Trademark.
 
 class_name Challenge004
 extends Challenge
 ## Challenge: Pyromaniac
-## Kill 10 enemies with fire.
+## Kill 10 rats with fire.
 
 
 # Constants
 const TARGET_KILLS: int = 10
+const TARGET_ENEMY_ID: String = "rat"
 
 
 # Private variables
@@ -26,9 +27,11 @@ func check_completion() -> bool:
 	return _fire_kills >= TARGET_KILLS
 
 
-## Notifies the challenge about an enemy death.
-func on_enemy_died(_enemy: IEnemy, damage_type: IEnemy.DamageType, _source: Variant) -> void:
-	if damage_type == IEnemy.DamageType.FIRE:
-		_fire_kills += 1
-		if _fire_kills >= TARGET_KILLS:
-			complete()
+## Notifies the challenge about an enemy death, only rats killed by fire count.
+func on_enemy_died(enemy: IEnemy, damage_type: IEnemy.DamageType, _source: Variant) -> void:
+	if damage_type != IEnemy.DamageType.FIRE or enemy.enemy_id != TARGET_ENEMY_ID:
+		return
+
+	_fire_kills += 1
+	if _fire_kills >= TARGET_KILLS:
+		complete()
