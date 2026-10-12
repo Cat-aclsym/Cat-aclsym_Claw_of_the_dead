@@ -176,6 +176,10 @@ func _on_pause_button_pressed() -> void:
 
 func _on_skip_time_scale_button_pressed() -> void:
 	var is_fast: bool = skip_time_scale_button.button_pressed
+	# ILevel restores the time scale it froze on resume, so a change made while frozen would be lost
+	if Global.is_time_frozen():
+		skip_time_scale_button.set_pressed_no_signal(not is_fast)
+		return
 	var target_scale: float = SKIP_TIME_SCALE if is_fast else DEFAULT_TIME_SCALE
 	_apply_time_scale(target_scale, is_fast)
 
