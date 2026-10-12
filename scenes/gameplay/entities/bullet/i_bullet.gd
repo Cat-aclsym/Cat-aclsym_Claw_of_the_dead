@@ -70,9 +70,6 @@ func _physics_process(delta: float) -> void:
 	if Global.paused:
 		return
 
-	if trail_enabled and is_instance_valid(trail_particles):
-		trail_particles.emitting = true
-
 	position += direction * speed * delta
 
 
