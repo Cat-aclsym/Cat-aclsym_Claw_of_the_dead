@@ -79,7 +79,7 @@ Level names and descriptions are the `LEVEL.LEV_0X.NAME` / `LEVEL.LEV_0X.DESC` k
 
 ### Narrative and text
 
-- **Dialogic 2.0 Alpha 20** (`addons/dialogic`, autoload `Dialogic`). Timelines live in `assets/narrative/`, one file per locale: `<name>.en.dtl` and `<name>.fr.dtl`. `Narrative.timeline_path(name)` picks the file of the current locale, and `Narrative.play_once(flag, name)` plays a one-time dialogue whose flag is saved in the progression.
+- **Dialogic 2.0 Alpha 20** (`addons/dialogic`, autoload `Dialogic`). Timelines live in `assets/narrative/`, one file per locale: `<name>.en.dtl` and `<name>.fr.dtl`. `Narrative.timeline_path(name)` picks the file of the current locale, and `Narrative.play_once(flag, name)` plays a one-time dialogue whose flag is saved in the progression. `play_once` does nothing (and leaves the flag unset) while another timeline, such as the tutorial, is running.
 - **Localization:** English and French, all player-visible text comes from `assets/translations/translations.csv`. Entity names follow `TOWER.<ID>.NAME`, `TRAP.<ID>.NAME` and `ENEMY.<ID>.NAME` (`StatsDB.name_key`).
 
 ### UI and menus (scenes)

@@ -209,6 +209,8 @@ func _on_level_end(victory: bool, _args: Array = []) -> void:
 
 	var end_game_menu_instance: EndGame = ScenesLoader.END_GAME_MENU.instantiate()
 	if is_instance_valid(Global.ui):
+		# A tutorial still running owns Dialogic, it stops here so that it doesn't block the end screen dialogues
+		Global.ui.tutorial_manager.on_level_ended()
 		Global.ui.add_child(end_game_menu_instance)
 	end_game_menu_instance.init(victory)
 	state_machine.toggle_state(STATE_END)
@@ -311,10 +313,11 @@ func _set_health(new_value: int) -> void:
 		return
 
 	var clamped_value: int = clampi(new_value, 0, max_health)
-	if clamped_value < health:
-		ChallengeManager.notify_damage(health - clamped_value)
-
+	var damage_taken: int = maxi(health - clamped_value, 0)
 	health = clamped_value
+	# The challenges read the new health, e.g. a lethal hit
+	if damage_taken > 0:
+		ChallengeManager.notify_damage(damage_taken)
 	stats_updated.emit()
 
 	if health <= 0 and state_machine.toggle_state(STATE_DEFEAT):
