@@ -31,7 +31,11 @@ godot --headless --path . --import
 godot --headless --path . --quit-after 3000 res://tools/check_scripts.tscn
 # Loads the main scene then every level, fails on any engine error
 godot --headless --path . --quit-after 6000 res://tools/smoke_test.tscn
+# Runs the gdUnit4 suites of tests/ and writes the JUnit and HTML reports to reports/report_N/
+godot --headless --path . -s res://addons/gdUnit4/bin/GdUnitCmdTool.gd -a res://tests -c --ignoreHeadlessMode -rd res://reports
 ```
+
+Unit tests use [gdUnit4](https://github.com/godot-gdunit-labs/gdUnit4) 6.2.2 (`addons/gdUnit4`), the suites of `tests/` mirror the layout of the sources (`scripts/autoloads/global.gd` is tested by `tests/autoloads/test_global_pause.gd`). Run one suite or one folder by passing its path to `-a` (`-a res://tests/autoloads`). The exit code is `0` when every test passes, `100` on a failing test, `101` on orphan nodes, `105` on a script error in a suite. `tests/` and `addons/gdUnit4/` are excluded from the exports.
 
 Exports use the presets in `export_presets.cfg` (`Windows Desktop`, `Android` arm64 APK) and write to `exports/`. CI signs the release APK with the `KEYSTORE_BASE64` and `KEYSTORE_PASSWORD` secrets, passed to Godot through the `GODOT_ANDROID_KEYSTORE_RELEASE_*` environment variables, and falls back to the debug keystore when they are missing.
 

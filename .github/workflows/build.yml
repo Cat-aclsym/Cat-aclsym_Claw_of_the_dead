@@ -23,7 +23,7 @@ env:
 
 jobs:
   check:
-    name: Check scripts and smoke test
+    name: Check scripts, smoke test and unit tests
     runs-on: ubuntu-24.04
     timeout-minutes: 15
 
@@ -56,6 +56,19 @@ jobs:
 
       - name: Smoke test
         run: godot --headless --path . --quit-after 6000 res://tools/smoke_test.tscn
+
+      # Exit codes: 100 on a failing test, 101 on orphan nodes, 105 on a script error, see README.md
+      - name: Unit tests
+        run: godot --headless --path . -s res://addons/gdUnit4/bin/GdUnitCmdTool.gd -a res://tests -c --ignoreHeadlessMode -rd res://reports
+
+      - name: Upload test report
+        if: failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: test-report
+          path: reports/
+          retention-days: 14
+          if-no-files-found: ignore
 
   export:
     name: Export Windows and Android
