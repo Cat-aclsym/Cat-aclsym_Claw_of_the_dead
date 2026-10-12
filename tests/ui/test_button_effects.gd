@@ -1,0 +1,51 @@
+## © [2026] A7 Studio. All rights reserved. Trademark.
+##
+## [ButtonEffects] setup of a button, applied once whatever the number of calls.
+extends GdUnitTestSuite
+
+const SIGNALS: Array[String] = ["gui_input", "resized"]
+
+
+func test_apply_does_nothing_for_a_null_button() -> void:
+	ButtonEffects.apply(null)
+
+
+func test_apply_is_idempotent() -> void:
+	var button: Button = auto_free(Button.new())
+	var connections_before: Array[int] = _connection_counts(button)
+
+	ButtonEffects.apply(button)
+	var connections_after_first: Array[int] = _connection_counts(button)
+	ButtonEffects.apply(button)
+
+	assert_array(connections_after_first).is_not_equal(connections_before)
+	assert_array(_connection_counts(button)).is_equal(connections_after_first)
+
+
+func test_apply_keeps_the_button_processing_while_the_tree_is_paused() -> void:
+	var button: Button = auto_free(Button.new())
+
+	ButtonEffects.apply(button)
+
+	assert_int(button.process_mode).is_equal(Node.PROCESS_MODE_ALWAYS)
+	assert_bool(button.has_meta(ButtonEffects.APPLIED_META_KEY)).is_true()
+
+
+func test_apply_pivots_on_the_center_and_follows_the_size() -> void:
+	var button: Button = auto_free(Button.new())
+	button.size = Vector2(80.0, 40.0)
+
+	ButtonEffects.apply(button)
+
+	assert_vector(button.pivot_offset).is_equal(button.size / 2.0)
+
+	button.size = Vector2(120.0, 60.0)
+	button.resized.emit()
+
+	assert_vector(button.pivot_offset).is_equal(button.size / 2.0)
+
+
+func _connection_counts(button: Button) -> Array[int]:
+	var counts: Array[int] = []
+	counts.assign(SIGNALS.map(func(signal_name: String) -> int: return button.get_signal_connection_list(signal_name).size()))
+	return counts

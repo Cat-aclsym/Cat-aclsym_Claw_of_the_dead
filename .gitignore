@@ -13,6 +13,9 @@ Thumbs.db
 
 /log/
 
+# gdUnit4 test reports
+/reports/
+
 # Signing keys and secrets
 *.keystore
 *.jks
