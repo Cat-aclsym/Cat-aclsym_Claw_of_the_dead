@@ -1,6 +1,6 @@
 # Cat'aclsym: Claw of the Dead
 
-2D tower defense built in **Godot 4.4** (Forward Plus). You defend a cat city from a zombie horde using cat-themed **towers** and **traps**, wave-based levels, optional **per-level challenges**, and an **armory** meta-progression tree unlocked with stars.
+2D tower defense built in **Godot 4.7** (Forward Plus). You defend a cat city from a zombie horde using cat-themed **towers** and **traps**, wave-based levels, optional **per-level challenges**, and an **armory** meta-progression tree unlocked with stars.
 
 **Application name in the editor:** `Cat'aclsym`
 **Main scene:** `res://scenes/main.tscn` (bootstraps `scenes/ui/ui.tscn`)
@@ -9,19 +9,31 @@
 
 ## Requirements
 
-- [Godot 4.4](https://godotengine.org/download) (matches `config/features` in `project.godot`)
+- [Godot 4.7.2](https://godotengine.org/download) (matches `config/features` in `project.godot`)
 - This repository (clone or download)
-
-There is no separate CLI build script in the repo; open the project folder in Godot and run from the editor or export as usual.
 
 ---
 
 ## Run the game
 
-1. Open the project in Godot 4.4.
+1. Open the project in Godot 4.7.2.
 2. Press **F5** (or **Project → Run Project**).
 
 The editor is configured with run arguments `--verbose` (see `[editor]` in `project.godot`).
+
+## Checks and exports
+
+The same commands run in CI (`.github/workflows/build.yml`):
+
+```powershell
+godot --headless --path . --import
+# Compiles every project script outside addons/, the exit code is the failure count
+godot --headless --path . --quit-after 3000 res://tools/check_scripts.tscn
+# Loads the main scene then every level, fails on any engine error
+godot --headless --path . --quit-after 6000 res://tools/smoke_test.tscn
+```
+
+Exports use the presets in `export_presets.cfg` (`Windows Desktop`, `Android` arm64 APK) and write to `exports/`. CI signs the release APK with the `KEYSTORE_BASE64` and `KEYSTORE_PASSWORD` secrets, passed to Godot through the `GODOT_ANDROID_KEYSTORE_RELEASE_*` environment variables, and falls back to the debug keystore when they are missing.
 
 ---
 
@@ -29,15 +41,19 @@ The editor is configured with run arguments `--verbose` (see `[editor]` in `proj
 
 ### Core loop
 
-- **Levels** are data-driven: `resources/levels/lev.01.json` … `lev.08.json` define **waves** (enemy spawns, waits, spawner indices).
+- **Levels** are data-driven: `resources/levels/lev.01.json` … `lev.08.json` define the starting coins, the base health, the active challenges and the **waves** (enemy spawns by `stats.json` enemy id, waits, spawner indices).
 - **Towers** are placed on valid build tiles; **traps** use their own trap placement rules.
 - In-run economy and building stats come from **`assets/resources/configs/stats.json`** (loaded by the `StatsDB` autoload).
 - **Victory / progression**: completing a level unlocks the next (`ProgressionManager`). Challenges can be completed per level and persisted.
 
 ### Story arcs and levels
 
-- **Arc 1** (`resources/arcs/arc.01.json`): *Chat'lanques de Nyarseille* — levels `lev.01`–`lev.05`.
-- **Arc 2** (`resources/arcs/arc.02.json`): *La mer Nyaditerranée* — levels `lev.06`–`lev.08`.
+Arcs are laid out in `scenes/ui/menus/level_selection/level_selection_menu.tscn`, their titles are the `ARC.0X.TITLE` translation keys:
+
+- **Arc 1**: *Chat'lanques de Nyarseille*, levels `lev.01` to `lev.05`.
+- **Arc 2**: *La mer Nyaditerranée*, levels `lev.06` to `lev.08`.
+
+Level names and descriptions are the `LEVEL.LEV_0X.NAME` / `LEVEL.LEV_0X.DESC` keys.
 
 ### Challenges
 
@@ -58,13 +74,13 @@ The editor is configured with run arguments `--verbose` (see `[editor]` in `proj
 
 ### Enemies
 
-- **Waves** reference enemy **scene IDs** (file names under `scenes/gameplay/entities/enemy/enemies/`), for example `ene.01`, `ene.02`, `ene.03`, `big_daddy`, `small_zombie`, `splitter_zombie`.
-- **Balance and encyclopedia** data for enemies live in `stats.json` under its own enemy keys (for example `default_zombie`, `damage_zombie`, `rat`, plus the special types above).
+- Waves and `stats.json` share the same enemy ids: `default_zombie`, `damage_zombie`, `rat`, `small_zombie`, `splitter_zombie`, `minesweeper`, `big_daddy`. `StatsDB.get_enemy_scene(id)` returns the matching scene under `scenes/gameplay/entities/enemy/enemies/`.
+- Stats also carry each enemy's kill reward and escape damage. A `big_daddy` reaching the base ends the level in defeat.
 
 ### Narrative and text
 
-- **Dialogic** is integrated (`addons/dialogic`, autoload `Dialogic`). Example timeline: `assets/narrative/example.dtl`; sample scene: `scenes/narrative/example/dialogic_example.tscn`.
-- **Localization:** English and French (`assets/translations`, Dialogic translation files, `translation/locales` in `project.godot`). Default test locale in project settings is **French** (`locale/test`).
+- **Dialogic 2.0 Alpha 20** (`addons/dialogic`, autoload `Dialogic`). Timelines live in `assets/narrative/`, one file per locale: `<name>.en.dtl` and `<name>.fr.dtl`. `Narrative.timeline_path(name)` picks the file of the current locale, and `Narrative.play_once(flag, name)` plays a one-time dialogue whose flag is saved in the progression.
+- **Localization:** English and French, all player-visible text comes from `assets/translations/translations.csv`. Entity names follow `TOWER.<ID>.NAME`, `TRAP.<ID>.NAME` and `ENEMY.<ID>.NAME` (`StatsDB.name_key`).
 
 ### UI and menus (scenes)
 
@@ -72,14 +88,13 @@ Home, level selection, pause, options, HUD (waves, score popups, challenge UI), 
 
 ### Audio
 
-- `SoundManager` autoload; buses used in code include **music** and **sfx** (volumes follow progression settings).
+- `SoundManager` autoload with the `Music`, `SFX` and `UI` buses from `default_bus_layout.tres` (toggles follow the progression settings).
 
 ### Debug and tooling
 
 - **In-game debug console** (when enabled for the build): bound to **`** (grave / backtick)** to toggle (`toggle_console` input map), **Enter** to submit a line (`console_push`).
 - Console commands live in `scripts/commands/` (e.g. `help`, `load_level`, `set_money`, `set_time_scale`, `progression`, `unlock_armory`, …).
-- `Global.debug` defaults to **true** in `scripts/autoloads/global.gd` (release behavior can be adjusted there).
-- **Pseudolocalization** is enabled in `project.godot` for UI stress-testing.
+- `Global.debug` follows the `debug` export feature: true in the editor and debug exports, false in release exports.
 
 ### Persistence
 
@@ -89,7 +104,7 @@ Home, level selection, pause, options, HUD (waves, score popups, challenge UI), 
 ### Rendering
 
 - **2D pixel workflow:** `textures/canvas_textures/default_texture_filter=0` (nearest) in `project.godot`.
-- **Display:** stretch mode `canvas_items`, aspect `keep_height`.
+- **Display:** stretch mode `canvas_items`, aspect `expand`.
 - **Input:** `pointing/emulate_touch_from_mouse=true` for mouse-as-touch testing.
 
 ---
@@ -98,14 +113,14 @@ Home, level selection, pause, options, HUD (waves, score popups, challenge UI), 
 
 | Singleton | Role |
 |-----------|------|
-| `Global` | Camera, HUD, UI, console, cursor, pause flag |
+| `Global` | Camera, HUD, UI, console and cursor refs, pause requests by source (`request_pause` / `release_pause`) |
 | `SoundManager` | Audio |
-| `ScenesLoader` | Scene transitions |
+| `ScenesLoader` | Scene transitions (`go_home`, `start_level`) |
 | `Dialogic` | Narrative |
-| `ProgressionManager` | Save / load, settings, unlocks |
-| `StatsDB` | Tower / trap / enemy / upgrade stats from JSON |
-| `ChallengeManager` | Active challenges for the current level |
+| `StatsDB` | Tower / trap / enemy / bullet / upgrade stats from JSON |
+| `ProgressionManager` | Save / load, settings, unlocks, one-time flags |
 | `ArmoryManager` | Armory meta layer |
+| `ChallengeManager` | Active challenges for the current level |
 
 ---
 
@@ -128,9 +143,10 @@ Home, level selection, pause, options, HUD (waves, score popups, challenge UI), 
 |------|----------|
 | `addons/` | Third-party plugins (Dialogic; ignored for gameplay unless you work on plugins) |
 | `assets/` | Art, audio, themes, translation CSVs, `assets/resources/configs/stats.json` |
-| `resources/` | Level, arc, challenge, and armory JSON |
+| `resources/` | Level, challenge, and armory JSON |
 | `scenes/` | `.tscn` scenes (gameplay, UI, maps, entities) |
-| `scripts/` | GDScript (`autoloads`, commands, challenges, entities, progression, ...) |
+| `scripts/` | GDScript (`autoloads`, commands, challenges, narrative, progression, ...) |
+| `tools/` | Headless checks (`check_scripts`, `smoke_test`), excluded from exports |
 | `log/` | Runtime log output directory (when used) |
 
 ---
