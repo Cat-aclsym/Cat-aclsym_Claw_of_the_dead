@@ -3,6 +3,8 @@
 .idea
 *.tmp
 *.translation
+.DS_Store
+Thumbs.db
 
 # Exports
 /exports/
