@@ -21,25 +21,23 @@ func exec() -> void:
 		return
 
 	var enemy_scene: PackedScene = StatsDB.get_enemy_scene(enemy_id)
-	if enemy_scene == null:
+	var spawn_path: Path2D = _resolve_spawn_path(level.map, spawner_index) if enemy_scene != null else null
+	if enemy_scene == null or spawn_path == null:
+		# The cause is logged by the lookup, the step ends so that the wave doesn't wait for enemies that can't spawn
+		Log.trace(Log.Level.ERROR, "Wave step for '%s' ended without spawning its remaining %d enemies." % [enemy_id, _data[WaveStep.COUNT]])
+		_data[WaveStep.COUNT] = 0
 		return
 
 	var enemy: IEnemy = enemy_scene.instantiate()
+	EnemySpawner.spawn_enemy(spawn_path, enemy)
+	_data[WaveStep.COUNT] -= 1
+
 	if not enemy.enemy_id.is_empty():
-		var is_first_encounter: bool = not ProgressionManager.is_enemy_seen(enemy.enemy_id)
-		if is_first_encounter:
+		if not ProgressionManager.is_enemy_seen(enemy.enemy_id):
 			var reveal_texture: Texture2D = _get_enemy_preview_texture(enemy)
 			if Global.ui and reveal_texture != null:
 				Global.ui.notify_new_enemy_reveal(enemy.enemy_id, reveal_texture, _get_enemy_preview_scale(enemy))
 		ProgressionManager.mark_enemy_seen(enemy.enemy_id)
-
-	var spawn_path: Path2D = _resolve_spawn_path(level.map, spawner_index)
-	if spawn_path == null:
-		Log.trace(Log.Level.ERROR, "No valid active path available for spawning.")
-		return
-
-	EnemySpawner.spawn_enemy(spawn_path, enemy)
-	_data[WaveStep.COUNT] -= 1
 
 
 ## Returns true when every enemy from this step has spawned.
