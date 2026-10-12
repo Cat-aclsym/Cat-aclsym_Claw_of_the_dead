@@ -31,7 +31,7 @@ func append_unlocked_upgrade_ids(tower: ITower) -> void:
 		var node: Dictionary = _nodes_by_id.get(node_id, {})
 		if node.is_empty():
 			continue
-		for eff in node.get("effects", []):
+		for eff: Variant in node.get("effects", []):
 			if eff.get("type", "") != "append_tower_upgrade":
 				continue
 			if eff.get("tower_id", "") != tower.tower_id:
@@ -70,7 +70,7 @@ func are_prerequisites_met(node_id: String) -> bool:
 	var node: Dictionary = _nodes_by_id.get(node_id, {})
 	if node.is_empty():
 		return false
-	for p in node.get("prerequisites", []):
+	for p: Variant in node.get("prerequisites", []):
 		if not is_node_purchased(str(p)):
 			return false
 	return true
@@ -85,7 +85,7 @@ func can_purchase(node_id: String) -> bool:
 	var node: Dictionary = _nodes_by_id.get(node_id, {})
 	if node.is_empty():
 		return false
-	for p in node.get("prerequisites", []):
+	for p: Variant in node.get("prerequisites", []):
 		if not is_node_purchased(str(p)):
 			return false
 	return int(node.get("cost_stars", 0)) <= get_available_stars()
@@ -149,7 +149,7 @@ func get_spent_stars() -> int:
 ## Total stars earned from completed challenges across all levels.
 func get_total_earned_stars() -> int:
 	var total: int = 0
-	for level_id in ProgressionManager.data.levels.keys():
+	for level_id: String in ProgressionManager.data.levels.keys():
 		var ld: LevelData = ProgressionManager.data.levels[level_id]
 		total += ld.challenges_completed.size()
 	return total
@@ -161,7 +161,7 @@ func get_unmet_prerequisite_node_ids(node_id: String) -> Array[String]:
 	var node: Dictionary = _nodes_by_id.get(node_id, {})
 	if node.is_empty():
 		return out
-	for p in node.get("prerequisites", []):
+	for p: Variant in node.get("prerequisites", []):
 		var pid: String = str(p)
 		if not is_node_purchased(pid):
 			out.append(pid)
@@ -201,7 +201,7 @@ func _aggregate_tower_buffs() -> Dictionary:
 			continue
 		if str(node.get("category", "")) != "core_buff":
 			continue
-		for eff in node.get("effects", []):
+		for eff: Variant in node.get("effects", []):
 			if eff.get("type", "") != "tower_buff":
 				continue
 			if eff.has("fire_rate_mult"):
@@ -218,7 +218,7 @@ func _aggregate_tower_buffs() -> Dictionary:
 
 
 func _apply_unlock_effects(node: Dictionary) -> void:
-	for eff in node.get("effects", []):
+	for eff: Variant in node.get("effects", []):
 		match eff.get("type", ""):
 			"unlock_tower":
 				var tid: String = eff.get("tower_id", "")
@@ -234,7 +234,7 @@ func _apply_unlock_effects(node: Dictionary) -> void:
 
 func _has_any_prereq_cycle() -> bool:
 	var state: Dictionary = {}
-	for id in _nodes_by_id.keys():
+	for id: String in _nodes_by_id.keys():
 		if state.get(id, 0) != 0:
 			continue
 		if _prereq_visit(str(id), state):
@@ -264,7 +264,7 @@ func _load_and_validate() -> void:
 	if parsed.is_empty():
 		return
 
-	for g in parsed.get("upgrade_gates", []):
+	for g: Variant in parsed.get("upgrade_gates", []):
 		if typeof(g) != TYPE_DICTIONARY:
 			continue
 		var upg_id: String = g.get("upgrade_id", "")
@@ -273,7 +273,7 @@ func _load_and_validate() -> void:
 			_upgrade_gates_by_id[upg_id] = req
 
 	var nodes: Array = parsed.get("nodes", [])
-	for item in nodes:
+	for item: Variant in nodes:
 		if typeof(item) != TYPE_DICTIONARY:
 			continue
 		var nid: String = item.get("id", "")
@@ -298,7 +298,7 @@ func _prereq_visit(node_id: String, state: Dictionary) -> bool:
 		return false
 	state[node_id] = 1
 	var node: Dictionary = _nodes_by_id.get(node_id, {})
-	for p in node.get("prerequisites", []):
+	for p: Variant in node.get("prerequisites", []):
 		var pid: String = str(p)
 		if not _nodes_by_id.has(pid):
 			Log.trace(Log.Level.WARN, "Armory: missing prerequisite node '%s' for '%s'" % [pid, node_id])
@@ -310,7 +310,7 @@ func _prereq_visit(node_id: String, state: Dictionary) -> bool:
 
 
 func _validate_node_effects(node: Dictionary) -> void:
-	for eff in node.get("effects", []):
+	for eff: Variant in node.get("effects", []):
 		if typeof(eff) != TYPE_DICTIONARY:
 			continue
 		match eff.get("type", ""):

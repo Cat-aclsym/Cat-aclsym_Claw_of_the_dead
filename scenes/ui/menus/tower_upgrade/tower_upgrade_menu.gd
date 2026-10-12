@@ -6,21 +6,25 @@ extends Control
 
 signal upgrade_confirmed
 
+# Constants
+const MAX_STAT_VALUE: float = StatBar.MAX_STAT_VALUE
+const STAT_BAR_SCENE: PackedScene = preload("res://scenes/ui/menus/tower_upgrade/stat_bar.tscn")
+
+var selected_upgrade_id: String = ""
 ## Reference to the tower being upgraded
 var tower: ITower
-var selected_upgrade_id: String = ""
-var _upgrade_ids: Array[String] = []
 var _current_upgrade_index: int = 0
+var _upgrade_ids: Array[String] = []
 
 @onready var _cancel_button: Button = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/ButtonsHBoxContainer/CancelButton
 @onready var _confirm_button: Button = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/ButtonsHBoxContainer/ConfirmButton
+@onready var _option1_button: Button = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/TabsHBoxContainer/UpgradeOption1Button
+@onready var _option2_button: Button = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/TabsHBoxContainer/UpgradeOption2Button
 @onready var _panel: Control = $UpgradeDescriptionTextureRect
 @onready var _stats_container: VBoxContainer = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/StatsScrollContainer/VBoxContainer
 @onready var _stats_scroll: ScrollContainer = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/StatsScrollContainer
-@onready var _upgrade_title_label: Label = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/UpgradeTitleLabel
 @onready var _tabs_container: HBoxContainer = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/TabsHBoxContainer
-@onready var _option1_button: Button = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/TabsHBoxContainer/UpgradeOption1Button
-@onready var _option2_button: Button = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/TabsHBoxContainer/UpgradeOption2Button
+@onready var _upgrade_title_label: Label = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/UpgradeTitleLabel
 
 @onready var signals: Array[Dictionary] = [
 	{SignalUtil.WHO: _cancel_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_cancel_button_pressed},
@@ -28,12 +32,6 @@ var _current_upgrade_index: int = 0
 	{SignalUtil.WHO: _option1_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_option1_button_pressed},
 	{SignalUtil.WHO: _option2_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_option2_button_pressed}
 ]
-
-# Preloaded resources
-const STAT_BAR_SCENE: PackedScene = preload("res://scenes/ui/menus/tower_upgrade/stat_bar.tscn")
-
-# Constants
-const MAX_STAT_VALUE: float = StatBar.MAX_STAT_VALUE
 
 # Core methods
 func _ready() -> void:
@@ -103,7 +101,7 @@ func _refresh_upgrade_view() -> void:
 
 	# Create dynamic stat displays for tower stats
 	var tower_stats: Dictionary = upgrade.get("tower_stats", {})
-	for stat_name in tower_stats.keys():
+	for stat_name: String in tower_stats.keys():
 		var stat_change: float = float(tower_stats[stat_name])
 
 		# Skip level stat
@@ -123,7 +121,7 @@ func _refresh_upgrade_view() -> void:
 
 	# Create dynamic stat displays for bullet stats
 	var bullet_stats: Dictionary = upgrade.get("bullet_stats", {})
-	for stat_name in bullet_stats.keys():
+	for stat_name: String in bullet_stats.keys():
 		if stat_name in StatBar.SKIP_BULLET_STATS:
 			continue
 		var stat_change: float = float(bullet_stats[stat_name])

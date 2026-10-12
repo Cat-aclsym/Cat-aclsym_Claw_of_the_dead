@@ -105,7 +105,7 @@ static func _format_args(args: Variant) -> String:
 	if not args is Array:
 		args = [args]
 
-	for arg in args:
+	for arg: Variant in args:
 		output += arg if arg is String else str(arg)
 		output += " "
 

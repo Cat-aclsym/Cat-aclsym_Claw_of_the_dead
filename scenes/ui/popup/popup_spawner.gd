@@ -4,10 +4,6 @@
 class_name PopupSpawner
 extends Marker2D
 
-# Exported Variables
-@export var damage_popup_node: PackedScene
-@export var popup_node: PackedScene
-
 # Constants
 const TOWER_COLORS: Dictionary = {
 	"bat_01": Color.WHITE, # Arbre à chat'rché (White)
@@ -16,12 +12,17 @@ const TOWER_COLORS: Dictionary = {
 	"bat_09": Color("#ff8c00"), # Tour Inferno (Dark Orange)
 }
 
+# Exported Variables
+@export var damage_popup_node: PackedScene
+@export var popup_node: PackedScene
+
+var _active_popups: Dictionary = {} # target_node -> DamagePopup
+
 # core
 func _ready() -> void:
 	assert(popup_node != null, "popup_node scene not assigned")
 
 # public
-var _active_popups: Dictionary = {} # target_node -> DamagePopup
 
 ## Spawns a damage popup at the current position.
 ## [br]

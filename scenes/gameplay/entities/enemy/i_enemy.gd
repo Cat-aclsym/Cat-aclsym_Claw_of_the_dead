@@ -151,17 +151,6 @@ var is_stunned: bool = false
 ## Store the last source of damage
 var last_source: Variant = null
 
-## Must be placed first as it is used in other onready variables
-@onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
-
-@onready var anim_player: AnimationPlayer = $AnimationPlayer
-@onready var collision_shape: CollisionShape2D = $CollisionShape2D
-@onready var health_bar: EnemyHealthBar = $HealthBar
-@onready var old_modulate: Color = sprite.modulate
-@onready var poison_particle: GPUParticles2D = $GPUParticles2D
-@onready var popup_score_spawner: PopupSpawner = $PopupScoreSpawner
-@onready var stats_db: StatsDB = get_node("/root/StatsDB")
-
 # Private variables
 var _damage_tween: Tween
 var _electrified: bool = false
@@ -175,9 +164,20 @@ var _killer_tower: ITower = null
 var _poisons: Array[PoisonEffect] = []
 ## Multiplier of each active speed effect, keyed by effect.
 var _speed_modifiers: Dictionary[StringName, float] = {}
+var _stun_stars: Array[Sprite2D] = []
 ## Stacked visual effects, each [method push_visual] must be paired with a [method pop_visual].
 var _visual_counts: Dictionary[StringName, int] = {}
-var _stun_stars: Array[Sprite2D] = []
+
+## Must be placed first as it is used in other onready variables
+@onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
+
+@onready var anim_player: AnimationPlayer = $AnimationPlayer
+@onready var collision_shape: CollisionShape2D = $CollisionShape2D
+@onready var health_bar: EnemyHealthBar = $HealthBar
+@onready var old_modulate: Color = sprite.modulate
+@onready var poison_particle: GPUParticles2D = $GPUParticles2D
+@onready var popup_score_spawner: PopupSpawner = $PopupScoreSpawner
+@onready var stats_db: StatsDB = get_node("/root/StatsDB")
 
 
 # Built-in functions

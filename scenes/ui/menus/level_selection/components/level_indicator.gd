@@ -4,7 +4,7 @@
 ## @experimental
 class_name LevelIndicator extends TextureButton
 
-signal selected(LevelIndicator)
+signal selected(indicator: LevelIndicator)
 
 enum Status {
 	CURRENT,
@@ -13,10 +13,9 @@ enum Status {
 	ERROR
 }
 
-var status := LevelIndicator.Status.CURRENT
-var level := 0
-
-var textures: Dictionary = {
+var level: int = 0
+var status: LevelIndicator.Status = LevelIndicator.Status.CURRENT
+var textures: Dictionary[LevelIndicator.Status, Texture2D] = {
 	LevelIndicator.Status.CURRENT: preload("res://assets/ui/level_selection/bt_level/Level_number.png"),
 	LevelIndicator.Status.COMPLETED: preload("res://assets/ui/level_selection/bt_level/Level_number2.png"),
 	LevelIndicator.Status.LOCKED: null
@@ -28,10 +27,7 @@ var textures: Dictionary = {
 	{SignalUtil.WHO: self, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_pressed}
 ]
 
-# core
 
-
-# public
 func configure(in_level: int, in_status: LevelIndicator.Status) -> void:
 	level = in_level
 	status = in_status
@@ -46,15 +42,6 @@ func update() -> void:
 	if not disabled:
 		texture_normal = textures[status]
 
-# private
 
-
-# signal
 func _on_pressed() -> void:
 	selected.emit(self)
-
-# event
-
-
-# setget
-

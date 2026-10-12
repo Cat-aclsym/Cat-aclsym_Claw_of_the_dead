@@ -72,49 +72,74 @@ const RADIAL_UPGRADE_MENU: PackedScene = preload("res://scenes/ui/menus/tower_up
 # Exported variables
 ## The bullet scene to be instantiated by the tower
 @export var bullet_scene: PackedScene = null
-
-## The bullet stats to be applied to the bullet (overridden at runtime from StatsDB)
-var bullet_stats: Dictionary = {}
-
-## The number of projectiles to fire simultaneously (overridden at runtime)
-var projectile_count: int = 0
-## The angle spread between multiple projectiles (in degrees) (overridden at runtime)
-var spread_angle: float = 0.0
-
-## The fire rate of the tower (overridden at runtime)
-var fire_rate: float = 0.0
-## The level of the tower (overridden at runtime)
-var level: int = 0
-## The sell price of the tower (computed)
-var sell_price: int = 0
-## The shooting range of the tower (overridden at runtime)
-var shoot_range: float = 0.0
-
-## Multiplier for gold rewards when this tower kills an enemy
-var reward_multiplier: float = 1.0
-## Prioritize enemies that are not electrified
-var prefer_non_electrified_targets: bool = false
-
-## If true, enemies hit by this tower will use a shorter, more subtle damage flash effect.
-## Recommended for continuous or high-fire-rate towers.
-@export var use_short_damage_flash: bool = false
+@export var tower_id: String = ""
 
 ## If true, damage popups from this tower will accumulate into a single number that updates.
 ## Recommended for continuous beams or extremely high-fire-rate towers.
 @export var use_accumulative_popups: bool = false
 
-## Multipliers applied by the map tile the tower stands on (stat_name -> multiplier)
-var _special_modifiers: Dictionary[String, float] = {}
-
-## Ids of the upgrades applied to this tower, in order. Stats are recomputed from them whenever something changes.
-var _applied_upgrade_ids: Array[String] = []
+## If true, enemies hit by this tower will use a shorter, more subtle damage flash effect.
+## Recommended for continuous or high-fire-rate towers.
+@export var use_short_damage_flash: bool = false
 
 ## Data-driven upgrade IDs available for this tower
 var available_upgrade_ids: Array[String] = []
+## The bullet stats to be applied to the bullet (overridden at runtime from StatsDB)
+var bullet_stats: Dictionary = {}
+## The color of the range polygon
+var color: String = "#FFFFFF"
+## The enemy array to store enemies in the range of the tower
+var enemy_array: Array[IEnemy]
+## The fire rate of the tower (overridden at runtime)
+var fire_rate: float = 0.0
+## The level of the tower (overridden at runtime)
+var level: int = 0
+## The pending upgrade to be applied
+var pending_upgrade_id: String = ""
+## Prioritize enemies that are not electrified
+var prefer_non_electrified_targets: bool = false
+## The number of projectiles to fire simultaneously (overridden at runtime)
+var projectile_count: int = 0
+## Multiplier for gold rewards when this tower kills an enemy
+var reward_multiplier: float = 1.0
+## Is the tower is selected
+var selected: bool = false
+## The sell price of the tower (computed)
+var sell_price: int = 0
+## The shooting range of the tower (overridden at runtime)
+var shoot_range: float = 0.0
+## The angle spread between multiple projectiles (in degrees) (overridden at runtime)
+var spread_angle: float = 0.0
+## The state of the tower
+var state: TowerState = TowerState.ACTIVE
+## The target of the tower
+var target: IEnemy
+## Active time the tower has been locked on the current target
+var target_lock_time: float = 0.0
+## The type of target the tower will shoot at
+var target_type: TargetType
+
+## Ids of the upgrades applied to this tower, in order. Stats are recomputed from them whenever something changes.
+var _applied_upgrade_ids: Array[String] = []
+## Enemies in range, rebuilt by every target search
+var _candidates: Array[IEnemy] = []
+## Looping tween that pulses the range polygon while the range is shown
+var _color_tween: Tween = null
+## Flag to ignore hover interactions when menu is open
+var _menu_open: bool = false
+## Enemies of [member _candidates] that are not electrified, rebuilt by every target search
+var _non_electrified_candidates: Array[IEnemy] = []
+var _pulse_tween: Tween = null
+var _range_tween: Tween = null
+var _scale_tween: Tween = null
+## Multipliers applied by the map tile the tower stands on (stat_name -> multiplier)
+var _special_modifiers: Dictionary[String, float] = {}
 
 # Onready variables
 ## The area 2D node for the tower to detect enemies in range
 @onready var area_2d: Area2D = $Area2D
+## The button node for the tower to interact with
+@onready var button: Button = $Button
 ## The collision shape 2D node for the tower
 @onready var collision_shape_2d: CollisionShape2D = $Area2D/CollisionShape2D
 ## The timer for the fire rate of the tower to shoot bullets
@@ -127,42 +152,10 @@ var available_upgrade_ids: Array[String] = []
 @onready var polygon_2d: Polygon2D = $Polygon2D
 ## The sprite node for the tower to display the tower model
 @onready var sprite: AnimatedSprite2D = %Sprite
-## The button node for the tower to interact with
-@onready var button: Button = $Button
 
 @onready var signals: Array[Dictionary] = [
 	{SignalUtil.WHO: button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_tower_pressed}
 ]
-
-# Variables
-## The color of the range polygon
-var color: String = "#FFFFFF"
-## The enemy array to store enemies in the range of the tower
-var enemy_array: Array[IEnemy]
-## Is the tower is selected
-var selected: bool = false
-## The state of the tower
-var state: TowerState = TowerState.ACTIVE
-## Flag to ignore hover interactions when menu is open
-var _menu_open: bool = false
-## The target of the tower
-var target: IEnemy
-## Active time the tower has been locked on the current target
-var target_lock_time: float = 0.0
-## The type of target the tower will shoot at
-var target_type: TargetType
-## The pending upgrade to be applied
-var pending_upgrade_id: String = ""
-var _pulse_tween: Tween = null
-var _scale_tween: Tween = null
-var _range_tween: Tween = null
-## Looping tween that pulses the range polygon while the range is shown
-var _color_tween: Tween = null
-## Enemies in range, rebuilt by every target search
-var _candidates: Array[IEnemy] = []
-## Enemies of [member _candidates] that are not electrified, rebuilt by every target search
-var _non_electrified_candidates: Array[IEnemy] = []
-@export var tower_id: String = ""
 
 # Core methods
 func _ready() -> void:
@@ -368,31 +361,6 @@ func apply_special_modifier(modifiers: Dictionary) -> void:
 	Log.trace(Log.Level.INFO, "Tower {0} stats updated with modifiers: {1}".format([name, _special_modifiers]))
 	_apply_special_visual_effect(modifiers)
 
-## Applies a visual effect to the tower based on the modifier
-func _apply_special_visual_effect(modifier: Dictionary) -> void:
-	if _pulse_tween:
-		_pulse_tween.kill()
-		_pulse_tween = null
-	if _scale_tween:
-		_scale_tween.kill()
-		_scale_tween = null
-
-	var target: Node2D = sprite if sprite else self
-
-	# Reset visual state if no modifier or no color
-	if not modifier.has("color"):
-		target.modulate = Color.WHITE
-		target.scale = Vector2(1, 1)
-		return
-
-	# Keep the tower visuals neutral; the bonus tile scene owns the color tint.
-	target.modulate = Color.WHITE
-
-	# Add a small scale effect only to the tower sprite
-	var target_scale: float = 0.85 if modifier.get("is_malus", false) else 1.15
-	_scale_tween = create_tween()
-	_scale_tween.tween_property(target, "scale", Vector2(target_scale, target_scale), 0.3).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-
 ## Sells the tower
 func sell_tower() -> void:
 	ILevel.current_level.coins += sell_price
@@ -432,11 +400,6 @@ func enable_tower() -> void:
 	if is_instance_valid(fire_rate_timer) and fire_rate_timer.is_stopped():
 		fire_rate_timer.start()
 
-# Private methods
-func _end_timed_disable(original_modulate: Color) -> void:
-	sprite.modulate = original_modulate
-	enable_tower()
-
 ## Animates the range display
 func show_range(p_show: bool, smooth: bool = true) -> void:
 	selected = p_show
@@ -470,7 +433,7 @@ func show_range(p_show: bool, smooth: bool = true) -> void:
 			_range_tween.tween_property(polygon_2d, "scale", Vector2(0, 0), 0.2).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 			_range_tween.tween_property(outline, "scale", Vector2(0, 0), 0.2).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 			_range_tween.set_parallel(false)
-			_range_tween.tween_callback(func():
+			_range_tween.tween_callback(func() -> void:
 				polygon_2d.visible = false
 				outline.visible = false
 			)
@@ -479,6 +442,36 @@ func show_range(p_show: bool, smooth: bool = true) -> void:
 			outline.scale = Vector2(0, 0)
 			polygon_2d.visible = false
 			outline.visible = false
+
+# Private methods
+## Applies a visual effect to the tower based on the modifier
+func _apply_special_visual_effect(modifier: Dictionary) -> void:
+	if _pulse_tween:
+		_pulse_tween.kill()
+		_pulse_tween = null
+	if _scale_tween:
+		_scale_tween.kill()
+		_scale_tween = null
+
+	var target: Node2D = sprite if sprite else self
+
+	# Reset visual state if no modifier or no color
+	if not modifier.has("color"):
+		target.modulate = Color.WHITE
+		target.scale = Vector2(1, 1)
+		return
+
+	# Keep the tower visuals neutral; the bonus tile scene owns the color tint.
+	target.modulate = Color.WHITE
+
+	# Add a small scale effect only to the tower sprite
+	var target_scale: float = 0.85 if modifier.get("is_malus", false) else 1.15
+	_scale_tween = create_tween()
+	_scale_tween.tween_property(target, "scale", Vector2(target_scale, target_scale), 0.3).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+
+func _end_timed_disable(original_modulate: Color) -> void:
+	sprite.modulate = original_modulate
+	enable_tower()
 
 ## Rebuilds every stat from scratch: database base stats, armory buffs, each applied upgrade in order, then the tile modifiers.
 func _recompute_stats() -> void:
@@ -537,7 +530,7 @@ func _apply_tower_stat_changes(tower_stats: Dictionary) -> void:
 			_apply_bullet_stat_changes({stat: tower_stats[stat]})
 
 func _apply_bullet_stat_changes(bullet_stats_delta: Dictionary) -> void:
-	for stat in bullet_stats_delta.keys():
+	for stat: String in bullet_stats_delta.keys():
 		var delta: Variant = bullet_stats_delta[stat]
 		if bullet_stats.has(stat):
 			var current_value: Variant = bullet_stats[stat]

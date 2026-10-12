@@ -6,34 +6,24 @@
 class_name TutorialPlacementHint
 extends Node2D
 
-const PULSE_SPEED: float = 3.0
-const PULSE_MIN_ALPHA: float = 0.4
-const PULSE_MAX_ALPHA: float = 1.0
 const BORDER_WIDTH: float = 3.0
-const FILL_ALPHA_RATIO: float = 0.25
 const COLOR: Color = Color(0.25, 1.0, 0.45)
+const FILL_ALPHA_RATIO: float = 0.25
+const PULSE_MAX_ALPHA: float = 1.0
+const PULSE_MIN_ALPHA: float = 0.4
+const PULSE_SPEED: float = 3.0
 
 @export var snap_tilemap: TileMapLayer = null
 
-var _time: float = 0.0
-var _half_w: float = 32.0
 var _half_h: float = 16.0
+var _half_w: float = 32.0
+var _time: float = 0.0
 
 func _ready() -> void:
 	z_as_relative = false
 	z_index = 10
 	visible = false
 	_snap_to_tile()
-
-func _snap_to_tile() -> void:
-	if not is_instance_valid(snap_tilemap):
-		return
-	var tile_size: Vector2i = snap_tilemap.tile_set.tile_size
-	_half_w = tile_size.x / 2.0
-	_half_h = tile_size.y / 2.0
-	var local_in_tm: Vector2 = snap_tilemap.to_local(global_position)
-	var cell: Vector2i = snap_tilemap.local_to_map(local_in_tm)
-	global_position = snap_tilemap.to_global(snap_tilemap.map_to_local(cell))
 
 func _process(delta: float) -> void:
 	if not visible:
@@ -56,8 +46,18 @@ func _draw() -> void:
 		BORDER_WIDTH
 	)
 
+func hide_hint() -> void:
+	visible = false
+
 func show_hint() -> void:
 	visible = true
 
-func hide_hint() -> void:
-	visible = false
+func _snap_to_tile() -> void:
+	if not is_instance_valid(snap_tilemap):
+		return
+	var tile_size: Vector2i = snap_tilemap.tile_set.tile_size
+	_half_w = tile_size.x / 2.0
+	_half_h = tile_size.y / 2.0
+	var local_in_tm: Vector2 = snap_tilemap.to_local(global_position)
+	var cell: Vector2i = snap_tilemap.local_to_map(local_in_tm)
+	global_position = snap_tilemap.to_global(snap_tilemap.map_to_local(cell))

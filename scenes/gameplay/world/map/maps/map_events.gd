@@ -27,14 +27,6 @@ func _ready() -> void:
 	_connect_to_level()
 
 
-func _connect_to_level() -> void:
-	if is_instance_valid(ILevel.current_level):
-		_level = ILevel.current_level
-		if not _level.wave_started.is_connected(on_wave_start):
-			SignalUtil.connects([{SignalUtil.WHO: _level, SignalUtil.WHAT: "wave_started", SignalUtil.TO: on_wave_start}])
-		Log.trace(Log.Level.DEBUG, "MapEvents connected to current level.")
-
-
 ## Apply configured path events when a wave starts.
 func on_wave_start(wave_number: int) -> void:
 	if not wave_path_events.has(wave_number):
@@ -58,6 +50,14 @@ func on_wave_start(wave_number: int) -> void:
 
 	event_triggered.emit("wave_%d_paths" % wave_number)
 	Log.trace(Log.Level.INFO, "Applied path events for wave %d." % wave_number)
+
+
+func _connect_to_level() -> void:
+	if is_instance_valid(ILevel.current_level):
+		_level = ILevel.current_level
+		if not _level.wave_started.is_connected(on_wave_start):
+			SignalUtil.connects([{SignalUtil.WHO: _level, SignalUtil.WHAT: "wave_started", SignalUtil.TO: on_wave_start}])
+		Log.trace(Log.Level.DEBUG, "MapEvents connected to current level.")
 
 
 func _initialize_paths_for_wave_events() -> void:

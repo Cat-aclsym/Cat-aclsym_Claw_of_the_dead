@@ -86,7 +86,7 @@ func set_flag(flag: StringName) -> void:
 ## Only considers IDs currently known by StatsDB to avoid stale save data entries.
 func has_unseen_encyclopedia_enemies() -> bool:
 	var known_ids: Array = StatsDB.get_enemy_ids()
-	for id in data.enemies:
+	for id: String in data.enemies:
 		if id not in known_ids: continue
 		if data.enemies[id].seen and not data.enemies[id].encyclopedia_seen:
 			return true
@@ -97,7 +97,7 @@ func has_unseen_encyclopedia_enemies() -> bool:
 ## Only considers IDs currently known by StatsDB to avoid stale save data entries.
 func has_unseen_encyclopedia_towers() -> bool:
 	var known_ids: Array = StatsDB.get_tower_ids()
-	for id in data.towers:
+	for id: String in data.towers:
 		if id not in known_ids: continue
 		if data.towers[id].unlocked and not data.towers[id].encyclopedia_seen:
 			return true
@@ -170,7 +170,7 @@ func mark_tutorial_completed() -> void:
 ## Total stars earned (one per challenge completed, any level).
 func get_total_earned_stars() -> int:
 	var total: int = 0
-	for level_id in data.levels.keys():
+	for level_id: String in data.levels.keys():
 		var ld: LevelData = data.levels[level_id]
 		total += ld.challenges_completed.size()
 	return total
@@ -307,7 +307,7 @@ func save_game() -> void:
 		return
 
 	# Save Enemies
-	for id in data.enemies:
+	for id: String in data.enemies:
 		var enemy_obj: EnemyData = data.enemies[id]
 		var enemy_data: Dictionary = enemy_obj.save()
 		enemy_data["type"] = "enemy"
@@ -315,7 +315,7 @@ func save_game() -> void:
 		file.store_var(enemy_data)
 
 	# Save Levels
-	for id in data.levels:
+	for id: String in data.levels:
 		var level_obj: LevelData = data.levels[id]
 		var level_data: Dictionary = level_obj.save()
 		level_data["type"] = "level"
@@ -328,7 +328,7 @@ func save_game() -> void:
 	file.store_var(params_data)
 
 	# Save Towers
-	for id in data.towers:
+	for id: String in data.towers:
 		var tower_obj: TowerData = data.towers[id]
 		var tower_data: Dictionary = tower_obj.save()
 		tower_data["type"] = "tower"
@@ -336,7 +336,7 @@ func save_game() -> void:
 		file.store_var(tower_data)
 
 	# Save Traps
-	for id in data.traps:
+	for id: String in data.traps:
 		var trap_obj: Object = data.traps[id]
 		var trap_data: Dictionary = trap_obj.save()
 		trap_data["type"] = "trap"
@@ -408,21 +408,21 @@ func _init_default_data() -> void:
 
 
 func _apply_starter_only_building_unlocks() -> void:
-	for tid in StatsDB.get_tower_ids():
+	for tid: String in StatsDB.get_tower_ids():
 		if not data.towers.has(tid):
 			data.towers[tid] = TowerData.new()
 		data.towers[tid].unlocked = tid in ARMORY_STARTER_TOWER_IDS
 
-	for trap_key in StatsDB.get_trap_ids():
+	for trap_key: String in StatsDB.get_trap_ids():
 		if not data.traps.has(trap_key):
 			data.traps[trap_key] = _TRAP_DATA_SCRIPT.new()
 		data.traps[trap_key].unlocked = trap_key in ARMORY_STARTER_TRAP_IDS
 
 
 func _unlock_all_buildings_for_legacy_migration() -> void:
-	for tid in StatsDB.get_tower_ids():
+	for tid: String in StatsDB.get_tower_ids():
 		unlock_tower_no_save(tid)
-	for trap_key in StatsDB.get_trap_ids():
+	for trap_key: String in StatsDB.get_trap_ids():
 		unlock_trap_no_save(trap_key)
 	save_game()
 	Log.trace(Log.Level.INFO, "Armory: legacy save migrated — all buildings unlocked, armory_legacy_mode on")

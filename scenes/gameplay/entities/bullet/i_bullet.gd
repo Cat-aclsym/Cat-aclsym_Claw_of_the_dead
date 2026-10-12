@@ -15,27 +15,27 @@ extends Area2D
 # public
 ## Normalized vector indicating bullet's movement direction
 var direction: Vector2
+## Initial damage value to calculate percentage reduction
+var initial_damage: float
 ## Final destination point for the bullet
 var target: Vector2
 ## The tower that fired this bullet
 var tower_owner: ITower = null
 
 # private
-## Collision shape used to stop the projectile immediately on impact.
-@onready var collision_shape_2d: CollisionShape2D = get_node_or_null("CollisionShape2D")
-## Sprite used for the visible projectile.
-@onready var sprite_2d: Sprite2D = get_node_or_null("Sprite2D")
-## One-shot smoke burst played when the bullet hits.
-@onready var smoke_burst_particles: GPUParticles2D = get_node_or_null("SmokeBurstParticles")
-## Trail particle node configured directly in the scene.
-@onready var trail_particles: GPUParticles2D = get_node_or_null("TrailParticles")
-
-## Initial damage value to calculate percentage reduction
-var initial_damage: float
 ## Guards against duplicate impact callbacks while overlap/animation is still active.
 var _has_impacted: bool = false
 ## Store the enemy that the bullet has touched to prevent multiple hits
 var _touched_enemy: IEnemy
+
+## Collision shape used to stop the projectile immediately on impact.
+@onready var collision_shape_2d: CollisionShape2D = get_node_or_null("CollisionShape2D")
+## One-shot smoke burst played when the bullet hits.
+@onready var smoke_burst_particles: GPUParticles2D = get_node_or_null("SmokeBurstParticles")
+## Sprite used for the visible projectile.
+@onready var sprite_2d: Sprite2D = get_node_or_null("Sprite2D")
+## Trail particle node configured directly in the scene.
+@onready var trail_particles: GPUParticles2D = get_node_or_null("TrailParticles")
 
 # signal
 ## Signal connections to be established in _ready

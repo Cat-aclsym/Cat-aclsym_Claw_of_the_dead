@@ -470,7 +470,7 @@ func _get_malus_tiles_around_bonus(bonus_tiles: Array[Vector2i], spawnable_tiles
 				malus_lookup[candidate] = true
 
 	var malus_tiles: Array[Vector2i] = []
-	for tile_pos in malus_lookup.keys():
+	for tile_pos: Vector2i in malus_lookup.keys():
 		malus_tiles.append(tile_pos)
 
 	return malus_tiles

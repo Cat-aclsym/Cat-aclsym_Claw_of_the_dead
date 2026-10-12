@@ -4,6 +4,10 @@
 class_name TowerInfo
 extends Control
 
+# Constants
+const MAX_STAT_VALUE: float = StatBar.MAX_STAT_VALUE
+const STAT_BAR_SCENE: PackedScene = preload("res://scenes/ui/menus/tower_upgrade/stat_bar.tscn")
+
 ## Reference to the tower being upgraded
 var tower: ITower
 
@@ -11,12 +15,6 @@ var tower: ITower
 @onready var _stats_container: VBoxContainer = $InfoPanel/InfoVBoxContainer/StatsScrollContainer/StatsVBoxContainer
 @onready var _stats_scroll: ScrollContainer = $InfoPanel/InfoVBoxContainer/StatsScrollContainer
 @onready var _tower_title_label: Label = $InfoPanel/InfoVBoxContainer/TowerTitleLabel
-
-# Preloaded resources
-const STAT_BAR_SCENE: PackedScene = preload("res://scenes/ui/menus/tower_upgrade/stat_bar.tscn")
-
-# Constants
-const MAX_STAT_VALUE: float = StatBar.MAX_STAT_VALUE
 
 # Core methods
 func _ready() -> void:
@@ -44,7 +42,7 @@ func setup(p_tower: ITower) -> void:
 	tower = p_tower
 
 	# Get tower name based on scene name
-	var tower_name = _get_tower_name()
+	var tower_name: String = _get_tower_name()
 
 	# Set title and description
 	_tower_title_label.text = tower_name
@@ -74,7 +72,7 @@ func _get_tower_name() -> String:
 ## Displays a tower stat if it's not zero
 func _display_tower_stat(stat_name: String) -> void:
 	if stat_name in tower:
-		var value = tower.get(stat_name)
+		var value: Variant = tower.get(stat_name)
 		var float_value: float = float(value) if value != null else 0.0
 
 		# Exception: don't show projectile_count if it's 1 (single arrow)

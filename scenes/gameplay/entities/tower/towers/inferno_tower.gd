@@ -9,34 +9,23 @@ extends ITower
 var _active_beams: Dictionary[IBullet, IEnemy] = {}
 
 
-func _on_target_lost() -> void:
+func disable_tower() -> void:
+	super.disable_tower()
 	_cleanup_beams()
 
 
-func _handle_custom_fire() -> bool:
-	if projectile_count > 1:
-		_fire_inferno_multi_target()
-		fire_rate_timer.start()
-		return true
-	return false
-
-
-func _on_projectile_instantiated(bullet: IBullet, target_enemy: IEnemy) -> void:
-	# For continuous beams, check if we already have an active beam for this target
-	# Note: This is only called when projectile_count == 1 (standard fire loop)
-	# because _handle_custom_fire returns true for projectile_count > 1.
-	if _find_beam(target_enemy) != null:
-		# The beam already exists, the new one is not in the tree yet so it is freed right away
-		bullet.free()
-	else:
-		_active_beams[bullet] = target_enemy
-
-
-func _on_upgrade_applied() -> void:
-	# Update existing beams immediately with new stats
+func _cleanup_beams() -> void:
 	for beam: Variant in _active_beams.keys():
 		if is_instance_valid(beam):
-			_apply_projectile_config(beam)
+			beam.queue_free()
+	_active_beams.clear()
+
+
+func _find_beam(enemy: IEnemy) -> IBullet:
+	for beam: Variant in _active_beams.keys():
+		if is_instance_valid(beam) and _active_beams[beam] == enemy:
+			return beam
+	return null
 
 
 ## Specific logic for multi-target Inferno Tower
@@ -83,20 +72,31 @@ func _fire_inferno_multi_target() -> void:
 		_active_beams[bullet_instance] = t
 
 
-func _find_beam(enemy: IEnemy) -> IBullet:
-	for beam: Variant in _active_beams.keys():
-		if is_instance_valid(beam) and _active_beams[beam] == enemy:
-			return beam
-	return null
+func _handle_custom_fire() -> bool:
+	if projectile_count > 1:
+		_fire_inferno_multi_target()
+		fire_rate_timer.start()
+		return true
+	return false
 
 
-func _cleanup_beams() -> void:
+func _on_projectile_instantiated(bullet: IBullet, target_enemy: IEnemy) -> void:
+	# For continuous beams, check if we already have an active beam for this target
+	# Note: This is only called when projectile_count == 1 (standard fire loop)
+	# because _handle_custom_fire returns true for projectile_count > 1.
+	if _find_beam(target_enemy) != null:
+		# The beam already exists, the new one is not in the tree yet so it is freed right away
+		bullet.free()
+	else:
+		_active_beams[bullet] = target_enemy
+
+
+func _on_target_lost() -> void:
+	_cleanup_beams()
+
+
+func _on_upgrade_applied() -> void:
+	# Update existing beams immediately with new stats
 	for beam: Variant in _active_beams.keys():
 		if is_instance_valid(beam):
-			beam.queue_free()
-	_active_beams.clear()
-
-
-func disable_tower() -> void:
-	super.disable_tower()
-	_cleanup_beams()
+			_apply_projectile_config(beam)

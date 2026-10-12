@@ -41,14 +41,6 @@ var current_target: StaticBody2D = null
 var shoot_range: float = 0.0
 var tower_disable_duration: float = 0.0
 
-# Onready variables
-## The area 2D node for the enemy to detect towers in range
-@onready var range_area: Area2D = $RangeArea
-## The collision shape 2D node for the range detection
-@onready var range_collision_shape: CollisionShape2D = $RangeArea/CollisionShape2D
-## The timer spawning the visual stream projectiles while attacking
-@onready var stream_timer: Timer = $StreamTimer
-
 # Private variables
 var _attack_cooldown_timer: Timer
 var _attack_duration_timer: Timer
@@ -57,6 +49,14 @@ var _current_attack_cycle_state: AttackCycleState = AttackCycleState.NONE
 var _hit_fired: bool = false
 var _post_attack_timer: Timer
 var _pre_attack_timer: Timer
+
+# Onready variables
+## The area 2D node for the enemy to detect towers in range
+@onready var range_area: Area2D = $RangeArea
+## The collision shape 2D node for the range detection
+@onready var range_collision_shape: CollisionShape2D = $RangeArea/CollisionShape2D
+## The timer spawning the visual stream projectiles while attacking
+@onready var stream_timer: Timer = $StreamTimer
 
 # Built-in functions
 func _ready() -> void:

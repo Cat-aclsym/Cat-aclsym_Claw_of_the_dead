@@ -10,25 +10,25 @@ const COMMANDS_DIRECTORY: String = "res://scripts/commands"
 const CONSOLE_COLOR_ERROR: String = "#fb4934"
 
 
-## Directory where command scripts are located
-@export_dir var commands_directory: String = "res://scripts/commands"
-## Color for error messages
-@export var color_error: Color = Color("#fb4934")
 ## Color for debug messages
 @export var color_debug: Color = Color("#689d6a")
+## Color for error messages
+@export var color_error: Color = Color("#fb4934")
+## Directory where command scripts are located
+@export_dir var commands_directory: String = "res://scripts/commands"
 
-@onready var output: RichTextLabel = %Output
-@onready var input: TextEdit = %Input
-@onready var suggestions_label: RichTextLabel = %Suggestions
-
+var _command_history: Array[String] = []
 var _commands: Dictionary[String, ICommand] = {}
 var _current_suggestions: Array[String] = []
-var _suggestion_index: int = -1
-var _command_history: Array[String] = []
 var _history_index: int = -1
 var _history_stash: String = ""
 var _is_navigating_history: bool = false
 var _is_output_manual_scroll: bool = false
+var _suggestion_index: int = -1
+
+@onready var input: TextEdit = %Input
+@onready var output: RichTextLabel = %Output
+@onready var suggestions_label: RichTextLabel = %Suggestions
 
 # Built-in functions
 func _ready() -> void:
@@ -345,12 +345,12 @@ func _update_suggestions() -> void:
 							if cmd_name.to_lower().begins_with(current_input.to_lower()):
 								_current_suggestions.append(cmd_name)
 					ICommand.Types.ARG_ENEMY:
-						for enemy_id in StatsDB.get_enemy_ids():
+						for enemy_id: String in StatsDB.get_enemy_ids():
 							if enemy_id.to_lower().begins_with(current_input.to_lower()):
 								_current_suggestions.append(enemy_id)
 					ICommand.Types.ARG_ENUM:
 						var enum_values: Array = current_arg_def.get("enum_values", [])
-						for value in enum_values:
+						for value: String in enum_values:
 							if value.to_lower().begins_with(current_input.to_lower()):
 								_current_suggestions.append(value)
 					ICommand.Types.ARG_INGAME_TOWER:
@@ -368,7 +368,7 @@ func _update_suggestions() -> void:
 									if level_id.to_lower().begins_with(current_input.to_lower()):
 										_current_suggestions.append(level_id)
 					ICommand.Types.ARG_TOWER:
-						for tower_id in StatsDB.get_tower_ids():
+						for tower_id: String in StatsDB.get_tower_ids():
 							if tower_id.to_lower().begins_with(current_input.to_lower()):
 								_current_suggestions.append(tower_id)
 					_:

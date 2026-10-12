@@ -328,7 +328,7 @@ func _check_scroll_indicator() -> void:
 
 	stats_grid.get_parent().queue_sort()
 	var v_bar := stats_scroll.get_v_scroll_bar()
-	var can_scroll = v_bar.max_value > stats_scroll.size.y
+	var can_scroll: bool = v_bar.max_value > stats_scroll.size.y
 	scroll_indicator.visible = can_scroll
 	scroll_indicator_top.visible = can_scroll
 
@@ -557,7 +557,7 @@ func _update_ui_elements() -> void:
 	]
 	var economy_keys: Array[String] = ["ENCYCLOPEDIA.STATS.COST", "ENCYCLOPEDIA.STATS.REWARD"]
 
-	for k in stats:
+	for k: String in stats:
 		if k in combat_keys: combat_stats[k] = stats[k]
 		elif k in economy_keys: economy_stats[k] = stats[k]
 
@@ -576,11 +576,11 @@ func _update_ui_elements() -> void:
 
 	if not combat_stats.is_empty():
 		_add_stat_category_header("ENCYCLOPEDIA.CATEGORY.COMBAT")
-		for k in combat_stats: _add_stat_row(k, combat_stats[k])
+		for k: String in combat_stats: _add_stat_row(k, combat_stats[k])
 
 	if not economy_stats.is_empty():
 		_add_stat_category_header("ENCYCLOPEDIA.CATEGORY.ECONOMY")
-		for k in economy_stats: _add_stat_row(k, economy_stats[k])
+		for k: String in economy_stats: _add_stat_row(k, economy_stats[k])
 
 	prev_button.modulate.a = 1.0 if _current_index > 0 else 0.0
 	prev_button.disabled = _current_index == 0

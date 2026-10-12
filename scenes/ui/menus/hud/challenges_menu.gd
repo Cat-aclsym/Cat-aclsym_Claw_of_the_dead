@@ -10,6 +10,9 @@ const CHALLENGE_CARD: PackedScene = preload("res://scenes/ui/menus/hud/challenge
 const PANEL_WIDTH: float = 430.0
 const SLIDE_DURATION: float = 0.22
 
+var _is_closing: bool = false
+var _tween: Tween
+
 @onready var challenges_container: VBoxContainer = %ChallengesContainer
 @onready var close_button: TextureButton = %CloseButton
 @onready var dimmer: ColorRect = %Dimmer
@@ -21,9 +24,6 @@ const SLIDE_DURATION: float = 0.22
 	{SignalUtil.WHO: close_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_close_pressed},
 	{SignalUtil.WHO: dimmer, SignalUtil.WHAT: "gui_input", SignalUtil.TO: _on_dimmer_input},
 ]
-
-var _is_closing: bool = false
-var _tween: Tween
 
 
 func _ready() -> void:

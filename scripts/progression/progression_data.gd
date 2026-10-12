@@ -33,21 +33,21 @@ func save() -> Dictionary:
 	var res: Dictionary = {}
 
 	res["enemies"] = {}
-	for id in enemies:
+	for id: String in enemies:
 		res["enemies"][id] = enemies[id].save()
 
 	res["levels"] = {}
-	for id in levels:
+	for id: String in levels:
 		res["levels"][id] = levels[id].save()
 
 	res["parameters"] = parameters.save()
 
 	res["towers"] = {}
-	for id in towers:
+	for id: String in towers:
 		res["towers"][id] = towers[id].save()
 
 	res["traps"] = {}
-	for trap_id in traps:
+	for trap_id: String in traps:
 		res["traps"][trap_id] = traps[trap_id].save()
 
 	res["armory_purchased"] = armory_purchased.duplicate()

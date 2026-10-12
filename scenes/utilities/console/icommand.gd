@@ -4,11 +4,6 @@
 ## Provides the foundation for creating custom console commands with argument validation and execution handling.
 class_name ICommand extends RefCounted
 
-const OK: int = 0
-const ERR_INVALID_ARGS_TYPES: int = -1
-const ERR_INVALID_ARGS_COUNT: int = -2
-const ERR_UNKNOWN_BEHAVIOR: int = -3
-
 ## Enumerates the supported argument types for console commands.
 enum Types {
 	ARG_BOOL,
@@ -24,6 +19,11 @@ enum Types {
 	ARG_TOWER,
 	ARG_UNKNOWN,
 }
+
+const ERR_INVALID_ARGS_COUNT: int = -2
+const ERR_INVALID_ARGS_TYPES: int = -1
+const ERR_UNKNOWN_BEHAVIOR: int = -3
+const OK: int = 0
 
 
 # Public functions

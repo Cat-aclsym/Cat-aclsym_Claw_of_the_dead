@@ -30,23 +30,6 @@ const TEXT_SLIDE_DISTANCE: float = 300.0
 const TITLE_ANIM_DURATION: float = 0.5
 const TEXT_OUTRO_DURATION: float = 0.42
 
-# Onready variables
-# Core fullscreen overlay layers and transition bars.
-@onready var background_rect: ColorRect = $Background
-@onready var aura_rect: ColorRect = %AuraRect
-@onready var bottom_bar: ColorRect = $BottomBar
-@onready var flash_rect: ColorRect = $FlashRect
-@onready var middle_band: ColorRect = $MiddleBand
-
-# Silhouette reveal panel elements.
-@onready var silhouette_container: Control = %SilhouetteContainer
-@onready var silhouette_rect: TextureRect = %SilhouetteRect
-
-# Reveal texts shown before/after sprite discovery.
-@onready var subtitle_label: Label = %SubtitleLabel
-@onready var top_bar: ColorRect = $TopBar
-@onready var title_label: Label = %TitleLabel
-
 # Private variables
 # Input gates used to pause animation flow until player confirmation.
 var _is_waiting_for_reveal_click: bool = false
@@ -63,6 +46,23 @@ var _cached_subtitle_final_pos: Vector2 = Vector2.ZERO
 
 # Shared material instance reused across reveals.
 var _silhouette_material: ShaderMaterial = null
+
+# Onready variables
+# Core fullscreen overlay layers and transition bars.
+@onready var background_rect: ColorRect = $Background
+@onready var aura_rect: ColorRect = %AuraRect
+@onready var bottom_bar: ColorRect = $BottomBar
+@onready var flash_rect: ColorRect = $FlashRect
+@onready var middle_band: ColorRect = $MiddleBand
+
+# Silhouette reveal panel elements.
+@onready var silhouette_container: Control = %SilhouetteContainer
+@onready var silhouette_rect: TextureRect = %SilhouetteRect
+
+# Reveal texts shown before/after sprite discovery.
+@onready var subtitle_label: Label = %SubtitleLabel
+@onready var top_bar: ColorRect = $TopBar
+@onready var title_label: Label = %TitleLabel
 
 # Built-in functions
 func _ready() -> void:

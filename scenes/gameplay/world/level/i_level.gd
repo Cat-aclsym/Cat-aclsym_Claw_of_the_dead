@@ -2,46 +2,42 @@
 ## Level script that manages map, waves, state transitions, and enemy spawning.
 class_name ILevel extends Node2D
 
-const BACKGROUND_MUSIC_STREAM: AudioStreamMP3 = preload("res://assets/audio/music/background.mp3")
-
 signal stats_updated
 signal wave_started(wave_number: int)
 
-# Constants
-const STATE_CONFIGURING: String = "CONFIGURING"
-const STATE_VICTORY: String = "VICTORY"
-const STATE_DEFEAT: String = "DEFEAT"
-const STATE_ERROR: String = "ERROR"
-const STATE_PAUSE: String = "PAUSE"
-const STATE_WAVE: String = "WAVE_%d"
-const STATE_WAVE_0: String = "WAVE_0"
-const STATE_END: String = "END"
-
+const BACKGROUND_MUSIC_STREAM: AudioStreamMP3 = preload("res://assets/audio/music/background.mp3")
 ## Extra delay between the last bonus spawn and the first wave.
 const POST_SPECIAL_TILE_INTRO_DELAY_SECONDS: float = 2.0
+const STATE_CONFIGURING: String = "CONFIGURING"
+const STATE_DEFEAT: String = "DEFEAT"
+const STATE_END: String = "END"
+const STATE_ERROR: String = "ERROR"
+const STATE_PAUSE: String = "PAUSE"
+const STATE_VICTORY: String = "VICTORY"
+const STATE_WAVE: String = "WAVE_%d"
+const STATE_WAVE_0: String = "WAVE_0"
 
 # Exported Variables
+@export var arc_id: String = "arc.XX"
+@export var level_description: String
 @export var level_id: String = "lev.XX"
 @export var level_name: String
-@export var level_description: String
-@export var arc_id: String = "arc.XX"
 @export var map_scene: PackedScene
 
 # Public Variables
 static var current_level: ILevel = null
 
-var state_machine: StateMachine
-var map: IMap = null
-var waves: Array[Wave] = []
+# stats, the placeholders below are replaced by the level JSON values in _load_level_data
+var coins: int = 0: set = _set_coins
 var current_step: WaveStep = null
 var current_wave: int = 0
 ## Seconds of game time since the wave flow started. Frozen while paused and once the level has ended.
 var elapsed_time: float = 0.0
-
-# stats, the placeholders below are replaced by the level JSON values in _load_level_data
-var coins: int = 0: set = _set_coins
-var max_health: int = 1
 var health: int = 1: set = _set_health
+var map: IMap = null
+var max_health: int = 1
+var state_machine: StateMachine
+var waves: Array[Wave] = []
 
 # Private Variables
 var _enemies_alive: int = 0
@@ -51,10 +47,9 @@ var _time_frozen: bool = false
 var _time_scale_before_pause: float = 1.0
 var _wave_flow_started: bool = false
 
-
+@onready var _background_music: SoundEntity = $BackgroundMusic
 @onready var clock: Clock = $Clock
 @onready var popup_spawner: PopupSpawner = $PopupSpawner
-@onready var _background_music: SoundEntity = $BackgroundMusic
 
 # core
 func _ready() -> void:
@@ -75,13 +70,12 @@ func _process(delta: float) -> void:
 		elapsed_time += delta
 
 
-## Custom ticker callback
-func _process_tick() -> void:
-	assert(state_machine)
-	state_machine.handle_current_state([])
-
-
 # public
+## Returns the number of enemies currently alive on the map.
+func get_enemies_alive() -> int:
+	return _enemies_alive
+
+
 ## Starts the level by initializing map, waves, and state machine.
 func start_level() -> void:
 	position = Vector2i.ZERO
@@ -121,26 +115,6 @@ func start_wave_flow() -> void:
 
 
 # privates
-func _init_map() -> void:
-	assert(map_scene != null, "Map scene is null. Cannot instantiate map.")
-	map = map_scene.instantiate()
-	add_child(map)
-	Log.trace(Log.Level.INFO, "Map instance created and added to the level.")
-
-
-## Reads the waves, the starting coins and the max health from the level JSON.
-func _load_level_data() -> void:
-	var parsed: Dictionary = JsonUtil.load_dict("res://resources/levels/%s.json" % level_id)
-	assert(parsed.has("waves") and parsed.has("start_coins") and parsed.has("max_health"), "Missing 'waves', 'start_coins' or 'max_health' key for level %s." % level_id)
-
-	coins = int(parsed.get("start_coins", coins))
-	max_health = int(parsed.get("max_health", max_health))
-	health = max_health
-
-	for wave_data: Array in parsed.get("waves", []):
-		waves.append(Wave.new(wave_data))
-
-
 func _build_state_machine() -> void:
 	var builder := StateMachineBuilder.new()
 	builder.build_initial_state(STATE_CONFIGURING, _on_state_configuring)
@@ -177,8 +151,33 @@ func _build_state_machine() -> void:
 	Log.trace(Log.Level.INFO, "State machine built. Initial state: %s" % state_machine.get_current_state().name)
 
 
-func _should_defer_wave_start_for_tutorial() -> bool:
-	return level_id == "lev.01" and not ProgressionManager.is_tutorial_completed()
+func _emit_wave_started() -> void:
+	var wave_number: int = current_wave + 1
+	wave_started.emit(wave_number)
+
+
+func _init_map() -> void:
+	assert(map_scene != null, "Map scene is null. Cannot instantiate map.")
+	map = map_scene.instantiate()
+	add_child(map)
+	Log.trace(Log.Level.INFO, "Map instance created and added to the level.")
+
+
+## Reads the waves, the starting coins and the max health from the level JSON.
+func _load_level_data() -> void:
+	var parsed: Dictionary = JsonUtil.load_dict("res://resources/levels/%s.json" % level_id)
+	assert(parsed.has("waves") and parsed.has("start_coins") and parsed.has("max_health"), "Missing 'waves', 'start_coins' or 'max_health' key for level %s." % level_id)
+
+	coins = int(parsed.get("start_coins", coins))
+	max_health = int(parsed.get("max_health", max_health))
+	health = max_health
+
+	for wave_data: Array in parsed.get("waves", []):
+		waves.append(Wave.new(wave_data))
+
+
+func _next_step() -> void:
+	current_step = waves.front().pop()
 
 
 func _next_wave() -> void:
@@ -193,13 +192,26 @@ func _next_wave() -> void:
 	state_machine.toggle_state(STATE_WAVE % current_wave)
 
 
-func _next_step() -> void:
-	current_step = waves.front().pop()
+## Called when an enemy dies or escapes, both take it out of the map.
+func _on_enemy_removed() -> void:
+	_enemies_alive -= 1
 
 
-func _emit_wave_started() -> void:
-	var wave_number: int = current_wave + 1
-	wave_started.emit(wave_number)
+func _on_enemy_spawn() -> void:
+	_enemies_alive += 1
+
+
+func _on_level_end(victory: bool, _args: Array = []) -> void:
+	_level_ended = true
+	clock.stop()
+	_background_music.stop()
+	Global.request_pause(&"level_end")
+
+	var end_game_menu_instance: EndGame = ScenesLoader.END_GAME_MENU.instantiate()
+	if is_instance_valid(Global.ui):
+		Global.ui.add_child(end_game_menu_instance)
+	end_game_menu_instance.init(victory)
+	state_machine.toggle_state(STATE_END)
 
 
 ## Freezes the level (time scale and PAUSE state) when the game gets paused, and restores it on resume.
@@ -229,12 +241,37 @@ func _on_pause_changed(is_paused: bool) -> void:
 
 
 # states
-func _on_state_configuring(_args = []) -> bool:
+func _on_state_configuring(_args: Array = []) -> bool:
 	state_machine.toggle_state(STATE_WAVE_0)
 	return true
 
 
-func _on_state_wave(_args = []) -> bool:
+func _on_state_defeat(_args: Array = []) -> bool:
+	Log.trace(Log.Level.INFO, "Entering DEFEAT state.")
+
+	_on_level_end(false)
+	return true
+
+
+func _on_state_error(_args: Array = []) -> bool:
+	Log.trace(Log.Level.ERROR, "Entering ERROR state.")
+	return false
+
+
+## The pause itself is applied right away by [method _on_pause_changed], nothing is left to do on a tick.
+func _on_state_pause(_args: Array = []) -> bool:
+	return true
+
+
+func _on_state_victory(_args: Array = []) -> bool:
+	Log.trace(Log.Level.INFO, "Entering VICTORY state.")
+	ChallengeManager.check_victory_conditions()
+
+	_on_level_end(true)
+	return true
+
+
+func _on_state_wave(_args: Array = []) -> bool:
 	var wave: Wave = waves.front()
 
 	# if no more steps and no enemy alive -> trigger next wave
@@ -254,45 +291,20 @@ func _on_state_wave(_args = []) -> bool:
 
 	return true
 
-func _on_level_end(victory: bool, _args = []) -> void:
-	_level_ended = true
-	clock.stop()
-	_background_music.stop()
-	Global.request_pause(&"level_end")
 
-	var end_game_menu_instance: EndGame = ScenesLoader.END_GAME_MENU.instantiate()
-	if is_instance_valid(Global.ui):
-		Global.ui.add_child(end_game_menu_instance)
-	end_game_menu_instance.init(victory)
-	state_machine.toggle_state(STATE_END)
-
-
-func _on_state_victory(_args = []) -> bool:
-	Log.trace(Log.Level.INFO, "Entering VICTORY state.")
-	ChallengeManager.check_victory_conditions()
-
-	_on_level_end(true)
-	return true
-
-
-func _on_state_defeat(_args = []) -> bool:
-	Log.trace(Log.Level.INFO, "Entering DEFEAT state.")
-
-	_on_level_end(false)
-	return true
-
-
-## The pause itself is applied right away by [method _on_pause_changed], nothing is left to do on a tick.
-func _on_state_pause(_args = []) -> bool:
-	return true
-
-
-func _on_state_error(_args = []) -> bool:
-	Log.trace(Log.Level.ERROR, "Entering ERROR state.")
-	return false
+## Custom ticker callback
+func _process_tick() -> void:
+	assert(state_machine)
+	state_machine.handle_current_state([])
 
 
 # setget
+## Update player's coin count and emits stats_updated signal
+func _set_coins(new_value: int) -> void:
+	coins = new_value
+	stats_updated.emit()
+
+
 ## Clamps the health to [0, max_health], notifies the damage actually taken and triggers the defeat at 0.
 func _set_health(new_value: int) -> void:
 	if health <= 0:
@@ -309,21 +321,5 @@ func _set_health(new_value: int) -> void:
 		Log.trace(Log.Level.INFO, "Player defeated.")
 
 
-## Called when an enemy dies or escapes, both take it out of the map.
-func _on_enemy_removed() -> void:
-	_enemies_alive -= 1
-
-
-func _on_enemy_spawn() -> void:
-	_enemies_alive += 1
-
-
-## Returns the number of enemies currently alive on the map.
-func get_enemies_alive() -> int:
-	return _enemies_alive
-
-
-## Update player's coin count and emits stats_updated signal
-func _set_coins(new_value: int) -> void:
-	coins = new_value
-	stats_updated.emit()
+func _should_defer_wave_start_for_tutorial() -> bool:
+	return level_id == "lev.01" and not ProgressionManager.is_tutorial_completed()

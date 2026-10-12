@@ -123,7 +123,7 @@ func _ready() -> void:
 ## Clears the selected node, hides the description panel, and deselects all [ArmoryItem] instances.
 func _clear_selection() -> void:
 	_selected_node_id = ""
-	for item_ref in _armory_items.values():
+	for item_ref: ArmoryItem in _armory_items.values():
 		var item: ArmoryItem = item_ref as ArmoryItem
 		if item != null:
 			item.set_selected(false)
@@ -138,7 +138,7 @@ func _clear_selection_if_click_missed_items(global_pos: Vector2) -> void:
 		return
 	if not is_visible_in_tree():
 		return
-	for item_ref in _armory_items.values():
+	for item_ref: ArmoryItem in _armory_items.values():
 		var item: ArmoryItem = item_ref as ArmoryItem
 		if item != null and item.get_global_rect().has_point(global_pos):
 			return
@@ -289,7 +289,7 @@ func _resolve_icon_data(node: Dictionary) -> SpritePreview:
 ## Highlights one card, shows title and either prerequisite hint or full description depending on purchase/prereq state.
 func _select_node(node_id: String) -> void:
 	_selected_node_id = node_id
-	for key in _armory_items.keys():
+	for key: String in _armory_items.keys():
 		var item: ArmoryItem = _armory_items.get(key) as ArmoryItem
 		if item != null:
 			item.set_selected(key == node_id)

@@ -11,17 +11,18 @@ const DIFFICULTY_COLORS: Dictionary = {
 }
 const ICON_DONE: Texture2D = preload("res://assets/ui/icons/Star.png")
 const ICON_TODO: Texture2D = preload("res://assets/ui/icons/Star_Empty.png")
+const TEXT_DEFAULT: Color = Color.WHITE
+const TEXT_FAILED: Color = Color(1.0, 0.35, 0.35, 1.0)
 const TINT_DEFAULT: Color = Color.WHITE
 const TINT_FAILED: Color = Color(1.0, 0.35, 0.35, 1.0)
-const TEXT_FAILED: Color = Color(1.0, 0.35, 0.35, 1.0)
-const TEXT_DEFAULT: Color = Color.WHITE
+
+var _challenge_id: String = ""
+var _difficulty: String = ""
 
 @onready var desc_label: Label = %DescLabel
 @onready var diff_label: Label = %DiffLabel
 @onready var status_icon: TextureRect = %StatusIcon
 @onready var title_label: Label = %TitleLabel
-var _challenge_id: String = ""
-var _difficulty: String = ""
 
 
 func setup(c: Challenge, is_done: bool) -> void:

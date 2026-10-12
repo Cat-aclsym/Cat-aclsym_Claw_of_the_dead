@@ -115,7 +115,7 @@ func _load_level_challenge_ids() -> Array[String]:
 	var challenge_ids: Array[String] = []
 	var raw_challenges: Variant = data.get(LEVEL_DATA_CHALLENGES_KEY, [])
 	if raw_challenges is Array:
-		for challenge_id in raw_challenges:
+		for challenge_id: Variant in raw_challenges:
 			if challenge_id is String:
 				challenge_ids.append(challenge_id)
 	return challenge_ids

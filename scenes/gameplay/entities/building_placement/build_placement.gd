@@ -5,24 +5,23 @@
 class_name BuildPlacement
 extends Node2D
 
-## Emitted when entering idle state
-signal trigger_state_idle
-## Emitted when entering build state
-signal trigger_state_build
 ## Emitted when a building has been successfully placed
 signal building_placed(building: IBuilding)
-
-const COLOR_OK := Color(1, 1, 1, 0.5)
-const COLOR_KO := Color(1, 0.5, 0.5, 0.5)
-
-const BUTTON_COLOR_ENABLED := Color(1, 1, 1, 1)
-const BUTTON_COLOR_DISABLED := Color(0.5, 0.5, 0.5, 0.6)
+## Emitted when entering build state
+signal trigger_state_build
+## Emitted when entering idle state
+signal trigger_state_idle
 
 ## States for the build cursor.
 enum CursorState {
 	IDLE,  ## Default state
 	BUILD  ## Placing a new [IBuilding] preview
 }
+
+const BUTTON_COLOR_DISABLED := Color(0.5, 0.5, 0.5, 0.6)
+const BUTTON_COLOR_ENABLED := Color(1, 1, 1, 1)
+const COLOR_KO := Color(1, 0.5, 0.5, 0.5)
+const COLOR_OK := Color(1, 1, 1, 0.5)
 
 ## Reference to the tilemap node
 var tm_ref: TileMapLayer = null
