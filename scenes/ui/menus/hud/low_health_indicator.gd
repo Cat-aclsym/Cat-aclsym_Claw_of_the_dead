@@ -11,8 +11,8 @@ const CRITICAL_HEALTH_THRESHOLD: float = 0.25
 const FADE_DURATION: float = 0.5
 
 # Variables
-@onready var _is_active: bool = false
 var _intensity_tween: Tween
+var _is_active: bool = false
 
 # Built-in functions
 func _ready() -> void:
@@ -52,4 +52,4 @@ func _toggle_effect(active: bool) -> void:
 	else:
 		_intensity_tween.tween_property(material, "shader_parameter/intensity", 0.0, FADE_DURATION)\
 			.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
-		_intensity_tween.finished.connect(hide)
+		SignalUtil.connects([{SignalUtil.WHO: _intensity_tween, SignalUtil.WHAT: "finished", SignalUtil.TO: hide}])

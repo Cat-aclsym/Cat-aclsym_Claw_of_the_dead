@@ -44,8 +44,10 @@ func _ready() -> void:
 	assert(_close_button != null, "CloseButton node not found")
 	assert(_mode_button != null, "ModeToggleButton node not found")
 	assert(_stats_container != null, "StatsContainer node not found")
-	_close_button.pressed.connect(_on_close_pressed)
-	_mode_button.pressed.connect(_on_mode_toggle)
+	SignalUtil.connects([
+		{SignalUtil.WHO: _close_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_close_pressed},
+		{SignalUtil.WHO: _mode_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_mode_toggle},
+	])
 	_populate()
 
 func _populate() -> void:

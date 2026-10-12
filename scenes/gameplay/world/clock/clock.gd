@@ -1,4 +1,4 @@
-## © [2024] A7 Studio. All rights reserved. Trademark.
+## © [2026] A7 Studio. All rights reserved. Trademark.
 ## A tick-based clock system for managing scheduled callbacks in a Godot scene.
 ##
 ## NOTES:
@@ -17,8 +17,8 @@ class_name Clock extends Node
 
 var tick_rate: float = 0.1
 
-var _subscribers: Array[_sub] = []
 var _last_id: int = 0
+var _subscribers: Array[_sub] = []
 
 @onready var timer: Timer = $Timer
 
@@ -50,16 +50,14 @@ class _sub:
 		_callback.call()
 
 
-# core
 func _ready() -> void:
 	_configure()
 
 
-# public
 func start() -> void:
 	Log.trace(Log.Level.INFO, "Starting clock");
 	if not timer.timeout.is_connected(_on_timer_timeout):
-		timer.timeout.connect(_on_timer_timeout)
+		SignalUtil.connects([{SignalUtil.WHO: timer, SignalUtil.WHAT: "timeout", SignalUtil.TO: _on_timer_timeout}])
 	timer.start()
 
 
@@ -73,37 +71,29 @@ func stop() -> void:
 func subscribe(callback: Callable, tick_count: int = 1) -> int:
 	Log.trace(Log.Level.DEBUG, "Subscribing to %s every %d tick(s) -> SUB(%d)" %[callback, tick_count, _last_id+1]);
 	_last_id += 1
-	var sub := _sub.new(_last_id, callback, tick_count)
+	var sub: _sub = _sub.new(_last_id, callback, tick_count)
 	_subscribers.append(sub)
 	return _last_id
 
 
 func unsubscribe(id: int) -> bool:
-	for i in range(_subscribers.size()):
+	for i: int in range(_subscribers.size()):
 		if _subscribers[i].uid() == id:
 			_subscribers.remove_at(i)
 			return true
 	return false
 
 
-# private
 func _configure() -> void:
 	stop()
 	timer.wait_time = tick_rate
 	_subscribers = []
 
 
-func _tick() -> void:
-	for s in _subscribers:
-		s.next()
-
-
-# signal
 func _on_timer_timeout() -> void:
 	_tick()
 
 
-# event
-
-
-# setget
+func _tick() -> void:
+	for s: _sub in _subscribers:
+		s.next()

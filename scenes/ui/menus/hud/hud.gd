@@ -6,11 +6,12 @@ extends Control
 ##
 ## Handles resource displays, wave counters, and construction menu.
 
-signal pause_requested
-signal build_menu_opened
 signal build_menu_closed
+signal build_menu_opened
+signal pause_requested
 
 # Constants
+const BUILD_SELECTION_MENU: PackedScene = preload("res://scenes/ui/menus/building_selection/build_selection.tscn")
 const CHALLENGES_MENU: PackedScene = preload("res://scenes/ui/menus/hud/challenges_menu.tscn")
 const COIN_ICON_TEXTURE: Texture2D = preload("res://assets/ui/huds/Coin.png")
 const DEFAULT_TIME_SCALE: float = 1.0
@@ -20,20 +21,27 @@ const PAUSE_MENU: PackedScene = preload("res://scenes/ui/menus/pause/pause.tscn"
 const POPUP_SCORE_SCENE: PackedScene = preload("res://scenes/ui/popup/popup_score.tscn")
 const SKIP_COLOR_INACTIVE: Color = Color(1.0, 1.0, 1.0, 1.0)
 const SKIP_TIME_SCALE: float = 3.0
-const BUILD_SELECTION_MENU: PackedScene = preload("res://scenes/ui/menus/building_selection/build_selection.tscn")
 
 # Variables
+var _ghost_tween: Tween
+var _is_ready: bool = false
+var _last_coins: int = 0
+var _last_health: int = 0
+var _new_enemy_challenger: NewEnemyChallenger = null
+var _new_enemy_reveal_queue: Array[Dictionary] = []
+var _new_enemy_reveal_running: bool = false
+
+@onready var build_selection_button: TextureButton = $BuildSelectionMarginContainer/BuildSelectionButton
 @onready var challenges_button: TextureButton = $ChallengesMarginContainer/ChallengesButton
 @onready var coins_rich_text_label: Label = %HUDVBoxContainer/CoinsWavesMarginContainer/CoinsWavesHBoxContainer/CoinsTextureRect/MarginContainer/CoinsLabel
 @onready var health_ghost_progress_bar: TextureProgressBar = %HealthGhostProgressBar
 @onready var health_rich_text_label: Label = %HUDVBoxContainer/HeartTextureRect/HealthMarginContainer/MarginContainer/HealthTextureProgressBar/HealthLabel
 @onready var health_texture_progress_bar: TextureProgressBar = %HUDVBoxContainer/HeartTextureRect/HealthMarginContainer/MarginContainer/HealthTextureProgressBar
+@onready var low_health_indicator: LowHealthIndicator = $LowHealthIndicator
 @onready var pause_button: TextureButton = $PauseMarginContainer/PauseButton
 @onready var skip_animation_player: AnimationPlayer = $SkipMarginContainer/SkipAnimationPlayer
 @onready var skip_time_scale_button: TextureButton = $SkipMarginContainer/SkipButton
-@onready var build_selection_button: TextureButton = $BuildSelectionMarginContainer/BuildSelectionButton
 @onready var waves_rich_text_label: Label = %HUDVBoxContainer/CoinsWavesMarginContainer/CoinsWavesHBoxContainer/WavesTextureRect/MarginContainer/WavesLabel
-@onready var low_health_indicator: LowHealthIndicator = $LowHealthIndicator
 
 @onready var default_coins_text: String = coins_rich_text_label.text
 @onready var default_health_text: String = health_rich_text_label.text
@@ -45,14 +53,6 @@ const BUILD_SELECTION_MENU: PackedScene = preload("res://scenes/ui/menus/buildin
 	{SignalUtil.WHO: skip_time_scale_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_skip_time_scale_button_pressed},
 	{SignalUtil.WHO: build_selection_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_build_selection_button_pressed}
 ]
-
-var _is_ready: bool = false
-var _last_coins: int = 0
-var _last_health: int = 0
-var _new_enemy_challenger: NewEnemyChallenger = null
-var _new_enemy_reveal_queue: Array[Dictionary] = []
-var _new_enemy_reveal_running: bool = false
-var _ghost_tween: Tween
 
 # Built-in functions
 func _ready() -> void:
@@ -289,7 +289,7 @@ func _spawn_coin_explosion(start_pos: Vector2) -> void:
 		coin_tween.tween_property(coin, "global_position", target_pos, 0.5).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 		coin_tween.tween_property(coin, "modulate:a", 0.0, 0.5).set_delay(0.2)
 		coin_tween.tween_property(coin, "scale", Vector2.ZERO, 0.5).set_ease(Tween.EASE_IN)
-		coin_tween.finished.connect(coin.queue_free)
+		SignalUtil.connects([{SignalUtil.WHO: coin_tween, SignalUtil.WHAT: "finished", SignalUtil.TO: coin.queue_free}])
 
 
 func _trigger_health_damage_effects() -> void:

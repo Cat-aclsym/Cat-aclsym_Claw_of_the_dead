@@ -7,6 +7,8 @@ extends Control
 
 signal resumed
 
+const ENCYCLOPEDIA_MENU: PackedScene = preload("res://scenes/ui/menus/hud/encyclopedia.tscn")
+
 # Onready Variables
 @onready var encyclopedia_button: TextureButton = %EncyclopediaButton
 @onready var encyclopedia_exclamation: TextureRect = %EncyclopediaExclamation
@@ -17,8 +19,6 @@ signal resumed
 @onready var restart_button: TextureButton = $Panel/MarginContainer/PanelContainer/CenterContainer/VBoxContainer/ButtonLayer/RestartButton
 @onready var sound_button: TextureButton = $Panel/MarginContainer/PanelContainer/CenterContainer/VBoxContainer/TopLeftIcon/SoundButton
 
-@onready var _encyclopedia_menu: PackedScene = preload("res://scenes/ui/menus/hud/encyclopedia.tscn")
-
 @onready var signals: Array[Dictionary] = [
 	{SignalUtil.WHO: encyclopedia_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_encyclopedia_button_pressed},
 	{SignalUtil.WHO: home_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_home_button_pressed},
@@ -26,7 +26,7 @@ signal resumed
 	{SignalUtil.WHO: play_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_play_button_pressed}
 ]
 
-	# core
+# core
 func _ready() -> void:
 	assert(encyclopedia_button != null, "encyclopedia_button node not found")
 	assert(encyclopedia_exclamation != null, "encyclopedia_exclamation node not found")
@@ -39,7 +39,7 @@ func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 
 	# Fix for button animations in pause menu
-	for btn in [music_button, sound_button, encyclopedia_button, home_button, play_button, restart_button]:
+	for btn: TextureButton in [music_button, sound_button, encyclopedia_button, home_button, play_button, restart_button]:
 		if btn:
 			btn.process_mode = Node.PROCESS_MODE_ALWAYS
 			btn.mouse_filter = Control.MOUSE_FILTER_STOP
@@ -49,28 +49,36 @@ func _ready() -> void:
 	await get_tree().process_frame
 
 	# Re-apply pivot after frame wait to be sure
-	for btn in [music_button, sound_button, encyclopedia_button, home_button, play_button, restart_button]:
+	for btn: TextureButton in [music_button, sound_button, encyclopedia_button, home_button, play_button, restart_button]:
 		if btn: btn.pivot_offset = btn.size / 2
 
 	# Update notification after everything is set up
 	_update_encyclopedia_notification()
 
 # private
+## Closes the encyclopedia and shows the pause menu content again.
+func _on_encyclopedia_closed(encyclopedia_instance: Encyclopedia) -> void:
+	encyclopedia_instance.queue_free()
+	margin_container.visible = true
+	_update_encyclopedia_notification()
+
 ## Handles the encyclopedia button press event.
 ## [br]Shows the encyclopedia menu and hides the current menu content.
 func _on_encyclopedia_button_pressed() -> void:
 	margin_container.visible = false
-	var encyclopedia_instance: Encyclopedia = _encyclopedia_menu.instantiate() as Encyclopedia
+	var encyclopedia_instance: Encyclopedia = ENCYCLOPEDIA_MENU.instantiate() as Encyclopedia
 	add_child(encyclopedia_instance)
-	encyclopedia_instance.menu_close.connect(func():
-		encyclopedia_instance.queue_free()
-		margin_container.visible = true
-		_update_encyclopedia_notification()
-	)
+	SignalUtil.connects([{SignalUtil.WHO: encyclopedia_instance, SignalUtil.WHAT: "menu_close", SignalUtil.TO: _on_encyclopedia_closed.bind(encyclopedia_instance)}])
 
 ## Returns to the main menu and cleans up the current level.
 func _on_home_button_pressed() -> void:
 	ScenesLoader.go_home()
+
+## Resumes the game by unpausing and closing the menu.
+func _on_play_button_pressed() -> void:
+	Global.release_pause(&"pause_menu")
+	resumed.emit()
+	queue_free()
 
 ## Restarts the current level with fresh state.
 ## [br]Creates a new instance of the current level and initializes it.
@@ -81,11 +89,3 @@ func _on_restart_button_pressed() -> void:
 ## Updates the encyclopedia notification icon visibility.
 func _update_encyclopedia_notification() -> void:
 	encyclopedia_exclamation.visible = ProgressionManager.has_unseen_encyclopedia_enemies() or ProgressionManager.has_unseen_encyclopedia_towers()
-
-
-# signals
-## Resumes the game by unpausing and closing the menu.
-func _on_play_button_pressed() -> void:
-	Global.release_pause(&"pause_menu")
-	resumed.emit()
-	queue_free()

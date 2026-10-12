@@ -58,7 +58,7 @@ func _on_debug_stats_button_pressed() -> void:
 	gui_margin_container.visible = false
 	_debug_stats_menu_instance = _DEBUG_STATS_MENU.instantiate()
 	add_child(_debug_stats_menu_instance)
-	_debug_stats_menu_instance.menu_close.connect(_on_menu_close.bind(_debug_stats_menu_instance))
+	SignalUtil.connects([{SignalUtil.WHO: _debug_stats_menu_instance, SignalUtil.WHAT: "menu_close", SignalUtil.TO: _on_menu_close.bind(_debug_stats_menu_instance)}])
 
 
 ## Handles the armory button press event.
@@ -66,7 +66,7 @@ func _on_armory_button_pressed() -> void:
 	gui_margin_container.visible = false
 	_armory_menu_instance = _ARMORY_MENU.instantiate()
 	add_child(_armory_menu_instance)
-	_armory_menu_instance.menu_close.connect(_on_menu_close.bind(_armory_menu_instance))
+	SignalUtil.connects([{SignalUtil.WHO: _armory_menu_instance, SignalUtil.WHAT: "menu_close", SignalUtil.TO: _on_menu_close.bind(_armory_menu_instance)}])
 
 
 ## Handles the encyclopedia button press event.
@@ -75,7 +75,7 @@ func _on_encyclopedia_button_pressed() -> void:
 	gui_margin_container.visible = false
 	_encyclopedia_menu_instance = _ENCYCLOPEDIA_MENU.instantiate() as Encyclopedia
 	add_child(_encyclopedia_menu_instance)
-	_encyclopedia_menu_instance.menu_close.connect(_on_menu_close.bind(_encyclopedia_menu_instance))
+	SignalUtil.connects([{SignalUtil.WHO: _encyclopedia_menu_instance, SignalUtil.WHAT: "menu_close", SignalUtil.TO: _on_menu_close.bind(_encyclopedia_menu_instance)}])
 
 
 ## Handles level selection events.
@@ -100,7 +100,7 @@ func _on_parameter_button_pressed() -> void:
 	gui_margin_container.visible = false
 	_option_menu_instance = _OPTION_MENU.instantiate() as Options
 	add_child(_option_menu_instance)
-	_option_menu_instance.menu_close.connect(_on_menu_close.bind(_option_menu_instance))
+	SignalUtil.connects([{SignalUtil.WHO: _option_menu_instance, SignalUtil.WHAT: "menu_close", SignalUtil.TO: _on_menu_close.bind(_option_menu_instance)}])
 
 
 ## Handles the play button press event.
