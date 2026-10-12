@@ -1,6 +1,7 @@
 ## © [2026] A7 Studio. All rights reserved. Trademark.
 ##
 ## Base class for entities placed via [BuildPlacement] (towers, traps).
+@abstract
 class_name IBuilding
 extends Node2D
 
@@ -24,10 +25,8 @@ func cancel_build_preview() -> void:
 func enter_build_preview() -> void:
 	pass
 
-## Must be overridden by [ITower] and [ITrap].
-func get_building_kind() -> BuildingKind:
-	push_error("IBuilding.get_building_kind() must be overridden")
-	return IBuilding.BuildingKind.TOWER
+## Implemented by [ITower] and [ITrap].
+@abstract func get_building_kind() -> BuildingKind
 
 ## Vertical offset between cursor tile anchor and this node's position during preview.
 func get_placement_vertical_offset() -> float:

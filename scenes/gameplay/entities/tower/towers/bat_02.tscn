@@ -122,9 +122,3 @@ scale = Vector2(1e-05, 1e-05)
 position = Vector2(0, 8)
 rotation = 1.5708
 shape = SubResource("CapsuleShape2D_7wfw0")
-
-[connection signal="area_exited" from="Area2D" to="." method="_on_area_2d_area_exited"]
-[connection signal="body_entered" from="Area2D" to="." method="_on_area_2d_body_entered"]
-[connection signal="body_exited" from="Area2D" to="." method="_on_area_2d_body_exited"]
-[connection signal="mouse_entered" from="TowerHoverBox" to="." method="_on_tower_hover_box_mouse_entered"]
-[connection signal="mouse_exited" from="TowerHoverBox" to="." method="_on_tower_hover_box_mouse_exited"]

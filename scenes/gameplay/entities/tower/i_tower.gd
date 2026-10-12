@@ -131,6 +131,8 @@ var _special_modifiers: Dictionary[String, float] = {}
 @onready var collision_shape_2d: CollisionShape2D = $Area2D/CollisionShape2D
 ## The timer for the fire rate of the tower to shoot bullets
 @onready var fire_rate_timer: Timer = $FireRateTimer
+## The area 2D node that detects the mouse hovering the tower
+@onready var hover_area: Area2D = $TowerHoverBox
 ## The collision shape 2D node for the tower hover box
 @onready var hover_box: CollisionShape2D = $TowerHoverBox/CollisionShape2D
 ## The line 2D node for the outline of the range polygon
@@ -139,7 +141,12 @@ var _special_modifiers: Dictionary[String, float] = {}
 @onready var polygon_2d: Polygon2D = $Polygon2D
 
 @onready var signals: Array[Dictionary] = [
-	{SignalUtil.WHO: button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_tower_pressed}
+	{SignalUtil.WHO: area_2d, SignalUtil.WHAT: "area_exited", SignalUtil.TO: _on_area_2d_area_exited},
+	{SignalUtil.WHO: area_2d, SignalUtil.WHAT: "body_entered", SignalUtil.TO: _on_area_2d_body_entered},
+	{SignalUtil.WHO: area_2d, SignalUtil.WHAT: "body_exited", SignalUtil.TO: _on_area_2d_body_exited},
+	{SignalUtil.WHO: button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_tower_pressed},
+	{SignalUtil.WHO: hover_area, SignalUtil.WHAT: "mouse_entered", SignalUtil.TO: _on_hover_changed.bind(true)},
+	{SignalUtil.WHO: hover_area, SignalUtil.WHAT: "mouse_exited", SignalUtil.TO: _on_hover_changed.bind(false)},
 ]
 ## The sprite node for the tower to display the tower model
 @onready var sprite: AnimatedSprite2D = %Sprite
@@ -700,19 +707,11 @@ func _on_timer_timeout() -> void:
 		$Timer.stop()
 		$ProgressBar.visible = false
 
-func _on_tower_hover_box_mouse_entered() -> void:
-	if Global.paused:
+## Shows the range while the mouse hovers the tower, unless the game is paused or a menu is open.
+func _on_hover_changed(hovered: bool) -> void:
+	if Global.paused or _menu_open:
 		return
-	if _menu_open:
-		return
-	show_range(true)
-
-func _on_tower_hover_box_mouse_exited() -> void:
-	if Global.paused:
-		return
-	if _menu_open:
-		return
-	show_range(false)
+	show_range(hovered)
 
 func _on_tower_pressed() -> void:
 	Log.trace(Log.Level.DEBUG, "Tower Pressed")

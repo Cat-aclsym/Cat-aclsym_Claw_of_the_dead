@@ -66,8 +66,10 @@ func _ready() -> void:
 	# Configure Range Area
 	assert(range_area and range_collision_shape and range_collision_shape.shape is CircleShape2D)
 	range_collision_shape.shape.radius = shoot_range
-	# body_entered is already connected in big_daddy.tscn via scene connection
-	SignalUtil.connects([{SignalUtil.WHO: range_area, SignalUtil.WHAT: "body_exited", SignalUtil.TO: _on_range_area_body_exited}])
+	SignalUtil.connects([
+		{SignalUtil.WHO: range_area, SignalUtil.WHAT: "body_entered", SignalUtil.TO: _on_range_area_body_entered},
+		{SignalUtil.WHO: range_area, SignalUtil.WHAT: "body_exited", SignalUtil.TO: _on_range_area_body_exited},
+	])
 
 	# Configure the stream timer (DO NOT START IT HERE. It's controlled by attack cycle)
 	assert(stream_timer)
