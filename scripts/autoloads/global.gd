@@ -10,10 +10,10 @@ extends Node
 signal pause_changed(paused: bool)
 
 ## Pause sources that play their own animations: they keep the engine time scale running.
-## [br]Dialogic stops revealing text at a time scale of 0, so [code]&"dialogue"[/code] needs it too.
-const TIME_RUNNING_SOURCES: Array[StringName] = [&"dialogue", &"level_end", &"new_enemy"]
+## [br]Dialogic stops revealing text at a time scale of 0, so [code]&"dialogue"[/code] and [code]&"tutorial"[/code] need it too.
+const TIME_RUNNING_SOURCES: Array[StringName] = [&"dialogue", &"level_end", &"new_enemy", &"tutorial"]
 ## Pause sources that also pause the scene tree, the others only freeze the gameplay.
-const TREE_PAUSING_SOURCES: Array[StringName] = [&"dialogue", &"new_enemy", &"pause_menu"]
+const TREE_PAUSING_SOURCES: Array[StringName] = [&"dialogue", &"new_enemy", &"pause_menu", &"tutorial"]
 
 var camera: Camera = null
 var console: Console = null

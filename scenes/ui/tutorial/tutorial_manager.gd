@@ -20,6 +20,8 @@ enum Objective {
 # Constants
 const KILLS_TO_ACTIVATE_UPGRADE: int = 5
 const LEVEL_ID_TUTORIAL: String = "lev.01"
+## Pause source freezing the gameplay while a tutorial line plays without player input.
+const PAUSE_SOURCE: StringName = &"tutorial"
 const TIMELINE_BASE: String = "tutorial_level_01"
 
 # Private variables
@@ -29,6 +31,7 @@ var _camera_process_was_enabled: bool = true
 var _connected_cursor: BuildPlacement = null
 var _connected_hud: HUD = null
 var _dialog_layout: Node = null
+var _dialogic_process_mode_before: Node.ProcessMode = Node.PROCESS_MODE_INHERIT
 var _is_running: bool = false
 var _kills_after_placement: int = 0
 var _last_placed_tower: ITower = null
@@ -106,6 +109,8 @@ func _activate_objective(objective: Objective) -> void:
 	Log.trace(Log.Level.DEBUG, "Tutorial activate: %s -> %s" % [_active_objective, objective])
 	_active_objective = objective
 	_pause_resume_waiting_for_resume = false
+	# Every objective waits for a player input, so the gameplay freeze of the previous dialogue ends
+	Global.release_pause(PAUSE_SOURCE)
 
 	if objective == Objective.PLACE_CONFIRM:
 		_place_confirm_tower_count = _count_visible_towers()
@@ -156,6 +161,9 @@ func _complete_active_objective() -> void:
 		Dialogic.paused = false
 		return
 
+	# The lines following the upgrade play over a frozen game, the pause step hands the input back
+	if previous == Objective.CONFIRM_UPGRADE:
+		Global.request_pause(PAUSE_SOURCE)
 	Dialogic.paused = false
 
 
@@ -350,12 +358,18 @@ func _set_dialog_layout_visible(visible_state: bool) -> void:
 
 
 func _start_tutorial() -> void:
+	# The timeline of a previous run needs a frame to end, its end would otherwise complete this run
+	while Dialogic.current_timeline != null:
+		await get_tree().process_frame
 	if not is_instance_valid(_tracked_level) or ProgressionManager.is_tutorial_completed():
 		return
 	if _tracked_level.level_id != LEVEL_ID_TUTORIAL:
 		return
 
 	Log.trace(Log.Level.INFO, "Tutorial start: level_id=%s" % _tracked_level.level_id)
+	_dialogic_process_mode_before = Dialogic.process_mode
+	# Dialogic only advances under the paused tree of the PAUSE_SOURCE freeze when it keeps processing
+	Dialogic.process_mode = Node.PROCESS_MODE_ALWAYS
 	_is_running = true
 	visible = true
 	_active_objective = Objective.NONE
@@ -402,6 +416,7 @@ func _stop_tutorial(mark_completed: bool) -> void:
 	if mark_completed:
 		ProgressionManager.mark_tutorial_completed()
 
+	var was_running: bool = _is_running
 	_is_running = false
 	_active_objective = Objective.NONE
 	_kills_after_placement = 0
@@ -422,9 +437,15 @@ func _stop_tutorial(mark_completed: bool) -> void:
 	_disconnect_cursor_signals()
 	_disconnect_hud_signals()
 	_unlock_camera_after_tutorial()
+	Global.release_pause(PAUSE_SOURCE)
 
 	_tracked_level = null
 	_dialog_layout = null
+	if was_running:
+		Dialogic.process_mode = _dialogic_process_mode_before
+		# A tutorial left before its end (level left or lost) must not keep its timeline running over the next dialogues
+		if Dialogic.current_timeline != null:
+			Dialogic.end_timeline(true)
 
 
 func _try_complete_place_confirm_from_scene() -> void:
