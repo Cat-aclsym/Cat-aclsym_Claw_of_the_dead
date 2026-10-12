@@ -22,76 +22,17 @@ func _ready() -> void:
 
 
 # Public functions
-func get_tower(id: String) -> Dictionary:
-	return _data.get("towers", {}).get(id, {})
-
-
-func get_tower_level(id: String) -> int:
-	var tower: Dictionary = get_tower(id)
-	return tower.get("level", 1) if not tower.is_empty() else 1
-
-
-func get_upgrade(id: String) -> Dictionary:
-	return _data.get("upgrades", {}).get(id, {})
-
-
-func get_upgrade_price(id: String) -> int:
-	var upgrade: Dictionary = get_upgrade(id)
-	return int(upgrade.get("price", 0)) if not upgrade.is_empty() else 0
-
-
-func get_upgrade_tower_stats(id: String) -> Dictionary:
-	var upgrade: Dictionary = get_upgrade(id)
-	if upgrade.is_empty():
-		return {}
-	return upgrade.get("tower_stats", {})
-
-
-func get_upgrade_bullet_stats(id: String) -> Dictionary:
-	var upgrade: Dictionary = get_upgrade(id)
-	if upgrade.is_empty():
-		return {}
-	return upgrade.get("bullet_stats", {})
-
-
-func get_upgrade_next_ids(id: String) -> Array[String]:
-	var upgrade: Dictionary = get_upgrade(id)
-	if upgrade.is_empty():
-		return []
-	var raw_next: Variant = upgrade.get("next", [])
-	var next_ids: Array[String] = []
-	if raw_next is Array:
-		for next_id in raw_next:
-			next_ids.append(str(next_id))
-	return next_ids
-
-
-func get_upgrade_bullet_scene_path(id: String) -> String:
-	var upgrade: Dictionary = get_upgrade(id)
-	if upgrade.is_empty():
-		return ""
-	if upgrade.has("bullet_scene_path"):
-		return str(upgrade.get("bullet_scene_path", ""))
-	# Backward compatibility for old key.
-	if upgrade.has("bullet"):
-		return str(upgrade.get("bullet", ""))
-	return ""
-
-
-func get_upgrade_bullet_scene(id: String) -> PackedScene:
-	var path: String = get_upgrade_bullet_scene_path(id)
-	return load_packed_scene(path)
-
-
-func get_upgrade_changes(id: String) -> Dictionary:
-	var upgrade: Dictionary = get_upgrade(id)
-	if upgrade.is_empty():
-		return {}
-	return upgrade.get("changes", {})
+## Returns the gameplay constants of the bullet [param id] (a key of the [code]bullets[/code] section).
+func get_bullet(id: String) -> Dictionary:
+	return _data.get("bullets", {}).get(id, {})
 
 
 func get_enemy(id: String) -> Dictionary:
 	return _data.get("enemies", {}).get(id, {})
+
+
+func get_enemy_ids() -> Array:
+	return _data.get("enemies", {}).keys()
 
 
 ## Returns the scene of the enemy [param id] (a key of the [code]enemies[/code] section), loaded on first use.
@@ -110,10 +51,6 @@ func get_enemy_scene(id: String) -> PackedScene:
 	return scene
 
 
-func get_trap(id: String) -> Dictionary:
-	return _data.get("traps", {}).get(id, {})
-
-
 ## Returns the map tile modifiers of [param kind] ("bonus" or "malus") in their declared order,
 ## each as [code]{"stat": String, "multiplier": float}[/code].
 func get_tile_modifiers(kind: String) -> Array[Dictionary]:
@@ -122,22 +59,60 @@ func get_tile_modifiers(kind: String) -> Array[Dictionary]:
 	return modifiers
 
 
-## Returns the translation key of the name of an entry, e.g. [code]name_key("TOWER", "bat_01")[/code] is [code]TOWER.BAT_01.NAME[/code].
-## [br][param category] is [code]"TOWER"[/code], [code]"TRAP"[/code] or [code]"ENEMY"[/code].
-func name_key(category: String, id: String) -> String:
-	return "%s.%s.NAME" % [category, id.to_upper()]
+func get_tower(id: String) -> Dictionary:
+	return _data.get("towers", {}).get(id, {})
 
 
 func get_tower_ids() -> Array:
 	return _data.get("towers", {}).keys()
 
 
-func get_enemy_ids() -> Array:
-	return _data.get("enemies", {}).keys()
+func get_tower_level(id: String) -> int:
+	var tower: Dictionary = get_tower(id)
+	return tower.get("level", 1) if not tower.is_empty() else 1
+
+
+func get_trap(id: String) -> Dictionary:
+	return _data.get("traps", {}).get(id, {})
 
 
 func get_trap_ids() -> Array:
 	return _data.get("traps", {}).keys()
+
+
+func get_upgrade(id: String) -> Dictionary:
+	return _data.get("upgrades", {}).get(id, {})
+
+
+func get_upgrade_bullet_scene(id: String) -> PackedScene:
+	var path: String = get_upgrade_bullet_scene_path(id)
+	return load_packed_scene(path)
+
+
+func get_upgrade_bullet_scene_path(id: String) -> String:
+	var upgrade: Dictionary = get_upgrade(id)
+	if upgrade.is_empty():
+		return ""
+	if upgrade.has("bullet_scene_path"):
+		return str(upgrade.get("bullet_scene_path", ""))
+	# Backward compatibility for old key.
+	if upgrade.has("bullet"):
+		return str(upgrade.get("bullet", ""))
+	return ""
+
+
+func get_upgrade_bullet_stats(id: String) -> Dictionary:
+	var upgrade: Dictionary = get_upgrade(id)
+	if upgrade.is_empty():
+		return {}
+	return upgrade.get("bullet_stats", {})
+
+
+func get_upgrade_changes(id: String) -> Dictionary:
+	var upgrade: Dictionary = get_upgrade(id)
+	if upgrade.is_empty():
+		return {}
+	return upgrade.get("changes", {})
 
 
 func get_upgrade_ids_for_tower(id: String) -> Array[String]:
@@ -146,25 +121,49 @@ func get_upgrade_ids_for_tower(id: String) -> Array[String]:
 	var raw_upgrade_ids: Variant = get_tower(id).get("upgrades", [])
 	var upgrade_ids: Array[String] = []
 	if raw_upgrade_ids is Array:
-		for upgrade_id in raw_upgrade_ids:
+		for upgrade_id: Variant in raw_upgrade_ids:
 			upgrade_ids.append(str(upgrade_id))
 	return upgrade_ids
 
 
-func has_tower(id: String) -> bool:
-	return _data.get("towers", {}).has(id)
+func get_upgrade_next_ids(id: String) -> Array[String]:
+	var upgrade: Dictionary = get_upgrade(id)
+	if upgrade.is_empty():
+		return []
+	var raw_next: Variant = upgrade.get("next", [])
+	var next_ids: Array[String] = []
+	if raw_next is Array:
+		for next_id: Variant in raw_next:
+			next_ids.append(str(next_id))
+	return next_ids
 
 
-func has_upgrade(id: String) -> bool:
-	return _data.get("upgrades", {}).has(id)
+func get_upgrade_price(id: String) -> int:
+	var upgrade: Dictionary = get_upgrade(id)
+	return int(upgrade.get("price", 0)) if not upgrade.is_empty() else 0
+
+
+func get_upgrade_tower_stats(id: String) -> Dictionary:
+	var upgrade: Dictionary = get_upgrade(id)
+	if upgrade.is_empty():
+		return {}
+	return upgrade.get("tower_stats", {})
 
 
 func has_enemy(id: String) -> bool:
 	return _data.get("enemies", {}).has(id)
 
 
+func has_tower(id: String) -> bool:
+	return _data.get("towers", {}).has(id)
+
+
 func has_trap(id: String) -> bool:
 	return _data.get("traps", {}).has(id)
+
+
+func has_upgrade(id: String) -> bool:
+	return _data.get("upgrades", {}).has(id)
 
 
 func load_packed_scene(path: String) -> PackedScene:
@@ -172,3 +171,9 @@ func load_packed_scene(path: String) -> PackedScene:
 		return null
 	var res: Resource = load(path)
 	return res if res is PackedScene else null
+
+
+## Returns the translation key of the name of an entry, e.g. [code]name_key("TOWER", "bat_01")[/code] is [code]TOWER.BAT_01.NAME[/code].
+## [br][param category] is [code]"TOWER"[/code], [code]"TRAP"[/code] or [code]"ENEMY"[/code].
+func name_key(category: String, id: String) -> String:
+	return "%s.%s.NAME" % [category, id.to_upper()]

@@ -1,4 +1,14 @@
 {
+	"bullets": {
+		"aoe_arrow": {
+			"aoe_damage_multiplier": 0.75
+		},
+		"fire_arrow": {
+			"base_burn_damage": 5,
+			"burn_damage_multiplier": 0.5,
+			"burn_tick_time": 1.0
+		}
+	},
 	"enemies": {
 		"default_zombie": {
 			"escape_damage": 5,
