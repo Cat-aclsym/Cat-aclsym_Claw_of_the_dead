@@ -73,23 +73,28 @@ func _ready() -> void:
 	# Configure the stream timer (DO NOT START IT HERE. It's controlled by attack cycle)
 	assert(stream_timer)
 	stream_timer.wait_time = STREAM_INTERVAL
-	SignalUtil.connects([{SignalUtil.WHO: stream_timer, SignalUtil.WHAT: "timeout", SignalUtil.TO: _shoot}])
+	SignalUtil.connects([
+		{SignalUtil.WHO: stream_timer, SignalUtil.WHAT: "timeout", SignalUtil.TO: _shoot},
+		{SignalUtil.WHO: Global, SignalUtil.WHAT: "pause_changed", SignalUtil.TO: _on_pause_changed},
+	])
 
 	# Create and configure Attack Cycle Timers
 	_pre_attack_timer = _add_cycle_timer("PreAttackTimer", _on_pre_attack_timer_timeout)
 	_attack_duration_timer = _add_cycle_timer("AttackDurationTimer", _on_attack_duration_timer_timeout)
 	_post_attack_timer = _add_cycle_timer("PostAttackTimer", _on_post_attack_timer_timeout)
 	_attack_cooldown_timer = _add_cycle_timer("AttackCooldownTimer", _on_attack_cooldown_timer_timeout)
+	_on_pause_changed(Global.paused)
 
 	# Initial check for targets already in range
 	_find_new_target()
 
 
 func _physics_process(delta: float) -> void:
-	if is_already_dead or Global.paused:
-		if stream_timer and not stream_timer.is_stopped():
-			stream_timer.stop()
+	if is_already_dead:
 		_stop_all_attack_timers_and_reset_state()
+		return
+	# The attack cycle keeps its state, its timers are paused by _on_pause_changed
+	if Global.paused:
 		return
 
 	# Attack Cycle Logic
@@ -235,6 +240,12 @@ func _on_attack_duration_timer_timeout() -> void:
 	_post_attack_timer.start(post_attack_delay)
 	if stream_timer:
 		stream_timer.stop()
+
+
+## Pauses the attack cycle timers with the game and resumes them where they stopped.
+func _on_pause_changed(is_paused: bool) -> void:
+	for timer: Timer in [_pre_attack_timer, _attack_duration_timer, _post_attack_timer, _attack_cooldown_timer, stream_timer]:
+		timer.paused = is_paused
 
 
 func _on_post_attack_timer_timeout() -> void:
