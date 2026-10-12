@@ -26,11 +26,10 @@ func apply_settings() -> void:
 	# Set language
 	TranslationServer.set_locale(data.parameters.language)
 
-	# Set audio volumes
-	var music_vol: float = 0.0 if data.parameters.music_enabled else -80.0
-	var sound_vol: float = 0.0 if data.parameters.sound_enabled else -80.0
-	SoundManager.change_volume("music", music_vol)
-	SoundManager.change_volume("sfx", sound_vol)
+	# Mute state lives on the audio buses, so it also covers sounds created after this call
+	SoundManager.set_group_enabled("music", data.parameters.music_enabled)
+	SoundManager.set_group_enabled("sfx", data.parameters.sound_enabled)
+	SoundManager.set_group_enabled("gui", data.parameters.sound_enabled)
 
 
 ## Marks a challenge as completed for a level.
