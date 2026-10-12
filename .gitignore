@@ -5,11 +5,11 @@
 *.translation
 
 # Exports
-exports/
+/exports/
 
 .vscode/
 
-log/
+/log/
 
 # Signing keys and secrets
 *.keystore
