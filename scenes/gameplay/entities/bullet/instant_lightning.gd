@@ -140,12 +140,12 @@ func _find_next_chain_target(source_enemy: IEnemy, candidates: Array[IEnemy]) ->
 	return nearest_enemy
 
 
-## Enemies on the path of [param first_enemy], fetched once per shot.
+## Living enemies on the path of [param first_enemy], fetched once per shot.
 func _get_chain_candidates(first_enemy: IEnemy) -> Array[IEnemy]:
 	var candidates: Array[IEnemy] = []
 	for candidate_node: Node in get_tree().get_nodes_in_group("enemies"):
 		var candidate: IEnemy = candidate_node as IEnemy
-		if candidate != null and candidate != first_enemy and candidate.path == first_enemy.path:
+		if candidate != null and candidate != first_enemy and not candidate.is_already_dead and candidate.path == first_enemy.path:
 			candidates.append(candidate)
 	return candidates
 
@@ -156,7 +156,7 @@ func _get_chain_position(index: int) -> Vector2:
 
 
 func _hit_chained_enemy(index: int, bounce_damage: float) -> void:
-	if is_instance_valid(_chain[index]):
+	if is_instance_valid(_chain[index]) and not Global.paused:
 		_hit_enemy(_chain[index], bounce_damage)
 
 
