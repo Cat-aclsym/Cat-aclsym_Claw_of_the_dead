@@ -133,12 +133,6 @@ func _update_visuals() -> void:
 		buy_rgb = COLOR_BUY_BLOCKED_MODULATE
 		price_label.visible = true
 		stars_icon_texture_rect.visible = true
-	elif not is_affordable:
-		buy_button.texture_normal = BUY_BUTTON_BLUE
-		frame_texture_rect.texture = FRAME_BLUE
-		buy_label.text = tr("ARMORY.BUY")
-		price_label.visible = true
-		stars_icon_texture_rect.visible = true
 	else:
 		buy_button.texture_normal = BUY_BUTTON_BLUE
 		frame_texture_rect.texture = FRAME_BLUE

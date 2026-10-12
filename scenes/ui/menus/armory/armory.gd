@@ -17,7 +17,7 @@ const _FALLBACK_ICON: Texture2D = preload("res://assets/ui/icons/Star.png")
 const _RESET_BUTTON_DISABLED_MODULATE: Color = Color(0.55, 0.55, 0.55, 1.0)
 const _RESET_BUTTON_ENABLED_MODULATE: Color = Color(1.0, 1.0, 1.0, 1.0)
 
-var _armory_items: Dictionary = {}
+var _armory_items: Dictionary[String, ArmoryItem] = {}
 var _armory_scroll_dragging: bool = false
 var _armory_scroll_last_global_x: float = 0.0
 var _armory_scroll_press_global: Vector2 = Vector2.ZERO
@@ -36,15 +36,16 @@ var _selected_node_id: String = ""
 @onready var reset_message_label: Label = %ResetMessageLabel
 @onready var reset_spent_stars_button: Button = %ResetSpentStarsButton
 @onready var scroll_buildings: ScrollContainer = %ScrollBuildings
+@onready var stars_count_label: Label = %StarsCountLabel
+@onready var title_label: Label = %TitleLabel
 @onready var signals: Array[Dictionary] = [
 	{SignalUtil.WHO: close_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_close_pressed},
 	{SignalUtil.WHO: help_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_help_button_pressed},
 	{SignalUtil.WHO: reset_cancel_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_reset_dialog_cancel_pressed},
 	{SignalUtil.WHO: reset_confirm_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_reset_dialog_confirm_pressed},
 	{SignalUtil.WHO: reset_spent_stars_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_reset_spent_stars_pressed},
+	{SignalUtil.WHO: ArmoryManager, SignalUtil.WHAT: "armory_updated", SignalUtil.TO: _on_armory_updated},
 ]
-@onready var stars_count_label: Label = %StarsCountLabel
-@onready var title_label: Label = %TitleLabel
 
 
 ## Routes pointer drag on [member scroll_buildings] to horizontal scroll; defers clearing selection so item clicks win.
@@ -112,14 +113,7 @@ func _ready() -> void:
 	assert(scroll_buildings != null, "scroll_buildings node not found")
 	assert(stars_count_label != null, "stars_count_label node not found")
 	assert(title_label != null, "title_label node not found")
-	reset_message_label.text = tr("ARMORY.RESET_STARS_CONFIRM")
-	reset_confirm_button.text = tr("ARMORY.RESET_CONFIRM_OK")
-	reset_cancel_button.text = tr("ARMORY.RESET_CANCEL")
 	SignalUtil.connects(signals)
-	if not ArmoryManager.armory_updated.is_connected(_on_armory_updated):
-		ArmoryManager.armory_updated.connect(_on_armory_updated)
-	title_label.text = tr("ARMORY.TITLE")
-	reset_spent_stars_button.text = tr("ARMORY.RESET_SPENT_STARS")
 	_refresh()
 	_maybe_show_armory_intro()
 
@@ -160,61 +154,14 @@ func _create_armory_item(node_id: String) -> ArmoryItem:
 	var cost: int = int(node.get("cost_stars", 0))
 	item.node_id = node_id
 	item.cost_stars = cost
-	var icon_data: Dictionary = _resolve_icon_data(node)
-	item.icon_texture = icon_data.get("texture")
-	item.icon_modulate = icon_data.get("modulate", Color.WHITE)
-	if not item.buy_requested.is_connected(_on_buy_requested):
-		item.buy_requested.connect(_on_buy_requested)
-	if not item.selected.is_connected(_on_item_selected):
-		item.selected.connect(_on_item_selected)
+	var preview: SpritePreview = _resolve_icon_data(node)
+	item.icon_texture = preview.texture if preview.texture != null else _FALLBACK_ICON
+	item.icon_modulate = preview.modulate
+	SignalUtil.connects([
+		{SignalUtil.WHO: item, SignalUtil.WHAT: "buy_requested", SignalUtil.TO: _on_buy_requested},
+		{SignalUtil.WHO: item, SignalUtil.WHAT: "selected", SignalUtil.TO: _on_item_selected},
+	])
 	return item
-
-
-## Loads a tower/trap scene and returns preview data: [code]texture[/code] and [code]modulate[/code].
-func _extract_preview_data(scene_path: String) -> Dictionary:
-	var out: Dictionary = {"texture": _FALLBACK_ICON, "modulate": Color.WHITE}
-	var packed_scene: PackedScene = StatsDB.load_packed_scene(scene_path)
-	if packed_scene == null:
-		return out
-	var entity: Node = packed_scene.instantiate()
-	if entity == null:
-		return out
-
-	# Match build_card.gd logic: look for "Sprite" or "Sprite2D"
-	var sprite_node: Node = entity.get_node_or_null("Sprite")
-	if sprite_node == null:
-		sprite_node = entity.get_node_or_null("Sprite2D")
-
-	# Better way to find by type in Godot 4
-	if sprite_node == null:
-		var sprites = entity.find_children("*", "Sprite2D", true, false)
-		if not sprites.is_empty():
-			sprite_node = sprites[0]
-	if sprite_node == null:
-		var anim_sprites = entity.find_children("*", "AnimatedSprite2D", true, false)
-		if not anim_sprites.is_empty():
-			sprite_node = anim_sprites[0]
-
-	if sprite_node is Sprite2D:
-		var s: Sprite2D = sprite_node as Sprite2D
-		out["texture"] = s.texture
-		# Traps use modulate; favour self_modulate when non-white
-		out["modulate"] = s.self_modulate if s.self_modulate != Color.WHITE else s.modulate
-	elif sprite_node is AnimatedSprite2D:
-		var anim_sprite: AnimatedSprite2D = sprite_node as AnimatedSprite2D
-		# Towers use self_modulate on AnimatedSprite2D
-		out["modulate"] = anim_sprite.self_modulate if anim_sprite.self_modulate != Color.WHITE else anim_sprite.modulate
-		if anim_sprite.sprite_frames:
-			var animation_name: StringName = &"idle"
-			if not anim_sprite.sprite_frames.has_animation(animation_name):
-				var names: PackedStringArray = anim_sprite.sprite_frames.get_animation_names()
-				if not names.is_empty():
-					animation_name = StringName(names[0])
-			if anim_sprite.sprite_frames.has_animation(animation_name) and anim_sprite.sprite_frames.get_frame_count(animation_name) > 0:
-				out["texture"] = anim_sprite.sprite_frames.get_frame_texture(animation_name, 0)
-
-	entity.queue_free()
-	return out
 
 
 ## Translation for [code]ARMORY.NODE.{ID}.DESC[/code], or empty if the key is missing.
@@ -312,35 +259,28 @@ func _refresh() -> void:
 
 ## Picks a card icon from the first [code]unlock_tower[/code] or [code]unlock_trap[/code] effect by previewing the linked scene.
 ## [br]Fallback: tries to find a tower or trap ID within the node ID string.
-func _resolve_icon_data(node: Dictionary) -> Dictionary:
-	var fallback: Dictionary = {"texture": _FALLBACK_ICON, "modulate": Color.WHITE}
-	for effect in node.get("effects", []):
-		if typeof(effect) != TYPE_DICTIONARY:
-			continue
+func _resolve_icon_data(node: Dictionary) -> SpritePreview:
+	for effect: Dictionary in node.get("effects", []):
 		var effect_type: String = str(effect.get("type", ""))
 		if effect_type == "unlock_tower":
 			var tower_id: String = str(effect.get("tower_id", ""))
 			if StatsDB.has_tower(tower_id):
-				var tower: Dictionary = StatsDB.get_tower(tower_id)
-				return _extract_preview_data(str(tower.get("scene", "")))
+				return SpritePreview.from_scene(StatsDB.load_packed_scene(str(StatsDB.get_tower(tower_id).get("scene", ""))))
 		elif effect_type == "unlock_trap":
 			var trap_id: String = str(effect.get("trap_id", ""))
 			if StatsDB.has_trap(trap_id):
-				var trap: Dictionary = StatsDB.get_trap(trap_id)
-				return _extract_preview_data(str(trap.get("scene", "")))
+				return SpritePreview.from_scene(StatsDB.load_packed_scene(str(StatsDB.get_trap(trap_id).get("scene", ""))))
 
 	# Fallback: try to find a tower/trap ID in the node ID (e.g. "unlock_bat_01_branch_a" -> "bat_01")
 	var node_id: String = node.get("id", "")
-	for tid in StatsDB.get_tower_ids():
-		if tid in node_id:
-			var tower: Dictionary = StatsDB.get_tower(tid)
-			return _extract_preview_data(str(tower.get("scene", "")))
-	for trap_id in StatsDB.get_trap_ids():
+	for tower_id: String in StatsDB.get_tower_ids():
+		if tower_id in node_id:
+			return SpritePreview.from_scene(StatsDB.load_packed_scene(str(StatsDB.get_tower(tower_id).get("scene", ""))))
+	for trap_id: String in StatsDB.get_trap_ids():
 		if trap_id in node_id:
-			var trap: Dictionary = StatsDB.get_trap(trap_id)
-			return _extract_preview_data(str(trap.get("scene", "")))
+			return SpritePreview.from_scene(StatsDB.load_packed_scene(str(StatsDB.get_trap(trap_id).get("scene", ""))))
 
-	return fallback
+	return SpritePreview.new()
 
 
 ## Highlights one card, shows title and either prerequisite hint or full description depending on purchase/prereq state.

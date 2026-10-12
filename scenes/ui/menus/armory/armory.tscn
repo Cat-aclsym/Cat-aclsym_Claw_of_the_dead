@@ -92,7 +92,7 @@ custom_minimum_size = Vector2(220, 56)
 layout_mode = 2
 theme_type_variation = &"StyledButtonOrange"
 theme_override_font_sizes/font_size = 24
-text = "Reinitialiser"
+text = "ARMORY.RESET_SPENT_STARS"
 
 [node name="HelpButton" parent="MainMargin/VBox/HeaderHBox" instance=ExtResource("11_styled_btn")]
 unique_name_in_owner = true
@@ -253,11 +253,11 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(200, 65)
 layout_mode = 2
 theme_type_variation = &"StyledButtonGreen"
-text = "Confirmer"
+text = "ARMORY.RESET_CONFIRM_OK"
 
 [node name="ResetCancelButton" parent="ResetConfirmRoot/ResetPanel/ResetMargin/ResetVBox/ResetButtonsHBox" instance=ExtResource("11_styled_btn")]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(200, 65)
 layout_mode = 2
 theme_type_variation = &"StyledButtonOrange"
-text = "Annuler"
+text = "ARMORY.RESET_CANCEL"
