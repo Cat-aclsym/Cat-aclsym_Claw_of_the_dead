@@ -13,9 +13,9 @@ signal pause_requested
 # Constants
 const BUILD_SELECTION_MENU: PackedScene = preload("res://scenes/ui/menus/building_selection/build_selection.tscn")
 const CHALLENGES_MENU: PackedScene = preload("res://scenes/ui/menus/hud/challenges_menu.tscn")
-const COIN_ICON_TEXTURE: Texture2D = preload("res://assets/ui/huds/Coin.png")
+const COIN_ICON_TEXTURE: Texture2D = preload("res://assets/ui/huds/coin.png")
 const DEFAULT_TIME_SCALE: float = 1.0
-const DOTGOTHIC_FONT: Font = preload("res://assets/ui/fonts/dotgothic/DotGothic16-Regular.ttf")
+const DOTGOTHIC_FONT: Font = preload("res://assets/ui/fonts/dotgothic/dotgothic16_regular.ttf")
 const NEW_ENEMY_CHALLENGER_SCENE: PackedScene = preload("res://scenes/ui/menus/hud/new_enemy_challenger.tscn")
 const PAUSE_MENU: PackedScene = preload("res://scenes/ui/menus/pause/pause.tscn")
 const POPUP_SCORE_SCENE: PackedScene = preload("res://scenes/ui/popup/popup_score.tscn")

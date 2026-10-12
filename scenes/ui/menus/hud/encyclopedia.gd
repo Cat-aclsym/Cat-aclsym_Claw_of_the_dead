@@ -10,11 +10,11 @@ signal menu_close
 
 
 const _ICON_ATTACK: Texture2D = preload("res://assets/ui/stats/attack.png")
-const _ICON_COIN: Texture2D = preload("res://assets/ui/huds/Coin.png")
-const _ICON_FIRE_RATE: Texture2D = preload("res://assets/ui/stats/fire-rate.png")
-const _ICON_HEALTH: Texture2D = preload("res://assets/ui/huds/Coeur.png")
+const _ICON_COIN: Texture2D = preload("res://assets/ui/huds/coin.png")
+const _ICON_FIRE_RATE: Texture2D = preload("res://assets/ui/stats/fire_rate.png")
+const _ICON_HEALTH: Texture2D = preload("res://assets/ui/huds/coeur.png")
 const _ICON_RANGE: Texture2D = preload("res://assets/ui/stats/range.png")
-const _ICON_SPEED: Texture2D = preload("res://assets/ui/stats/zombie-speed.png")
+const _ICON_SPEED: Texture2D = preload("res://assets/ui/stats/zombie_speed.png")
 
 
 ## Internal data structure for all entries.
@@ -37,7 +37,7 @@ var _current_index: int = 0
 ## Font size for stat values.
 var _current_stat_font_size: int = 32
 ## Base font used for text.
-var _font: Font = preload("res://assets/ui/fonts/dotgothic/DotGothic16-Regular.ttf")
+var _font: Font = preload("res://assets/ui/fonts/dotgothic/dotgothic16_regular.ttf")
 ## Height of a background animation frame.
 var _frame_height: int = 208
 ## Width of a background animation frame.

@@ -1,9 +1,9 @@
 [gd_resource type="Theme" load_steps=16 format=3 uid="uid://dr31fy67cgji3"]
 
-[ext_resource type="FontFile" uid="uid://ddo3rokwsadq0" path="res://assets/ui/fonts/dotgothic/DotGothic16-Regular.ttf" id="1_dotgothic"]
-[ext_resource type="Texture2D" uid="uid://bwgb811hwxy0" path="res://assets/ui/buttons/button-blue.png" id="2_btn_blue"]
-[ext_resource type="Texture2D" uid="uid://cpb0sxhq4ybw2" path="res://assets/ui/buttons/button-green.png" id="3_btn_green"]
-[ext_resource type="Texture2D" uid="uid://krmj35i3andu" path="res://assets/ui/buttons/button-orange.png" id="4_btn_orange"]
+[ext_resource type="FontFile" uid="uid://ddo3rokwsadq0" path="res://assets/ui/fonts/dotgothic/dotgothic16_regular.ttf" id="1_dotgothic"]
+[ext_resource type="Texture2D" uid="uid://bwgb811hwxy0" path="res://assets/ui/buttons/button_blue.png" id="2_btn_blue"]
+[ext_resource type="Texture2D" uid="uid://cpb0sxhq4ybw2" path="res://assets/ui/buttons/button_green.png" id="3_btn_green"]
+[ext_resource type="Texture2D" uid="uid://krmj35i3andu" path="res://assets/ui/buttons/button_orange.png" id="4_btn_orange"]
 [ext_resource type="FontVariation" uid="uid://b5t3wfh501ofr" path="res://assets/ui/fonts/dotgothic/dotgothic_variation.tres" id="5_variation"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_panel"]

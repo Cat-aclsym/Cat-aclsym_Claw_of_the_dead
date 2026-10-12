@@ -2,7 +2,7 @@
 
 [ext_resource type="PackedScene" uid="uid://064cnqw4xlus" path="res://scenes/gameplay/entities/tower/i_tower.tscn" id="1_tower"]
 [ext_resource type="PackedScene" uid="uid://bacjy0ad1e7bl" path="res://scenes/gameplay/entities/bullet/instant_lightning.tscn" id="2_bullet"]
-[ext_resource type="Texture2D" uid="uid://buvtoq24t424x" path="res://assets/gameplay/towers/Tesla_Tower_Blue.png" id="3_sprite"]
+[ext_resource type="Texture2D" uid="uid://buvtoq24t424x" path="res://assets/gameplay/towers/tesla_tower_blue.png" id="3_sprite"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_01"]
 atlas = ExtResource("3_sprite")

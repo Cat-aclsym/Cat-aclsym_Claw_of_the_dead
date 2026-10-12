@@ -8,15 +8,15 @@ extends Control
 ## Handles navigation back to menus or next level.
 
 # Constants
-const CONDITION_DONE: Texture2D = preload("res://assets/ui/icons/Star.png")
-const CONDITION_TODO: Texture2D = preload("res://assets/ui/icons/Star_Empty.png")
-const DEFEAT_ICON: Texture2D = preload("res://assets/ui/icons/Defeat.svg")
+const CONDITION_DONE: Texture2D = preload("res://assets/ui/icons/star.png")
+const CONDITION_TODO: Texture2D = preload("res://assets/ui/icons/star_empty.png")
+const DEFEAT_ICON: Texture2D = preload("res://assets/ui/icons/defeat.svg")
 const DEFEAT_TITLE_COLOR: Color = Color(0.85, 0.2, 0.2, 1.0)
-const DOTGOTHIC_FONT: Font = preload("res://assets/ui/fonts/dotgothic/DotGothic16-Regular.ttf")
+const DOTGOTHIC_FONT: Font = preload("res://assets/ui/fonts/dotgothic/dotgothic16_regular.ttf")
 const NORMAL_CHALLENGE_COLOR: Color = Color.WHITE
 const TINT_DEFAULT: Color = Color.WHITE
 const TINT_FAILED: Color = Color(1.0, 0.35, 0.35, 1.0)
-const VICTORY_ICON: Texture2D = preload("res://assets/ui/icons/Victory Gold.svg")
+const VICTORY_ICON: Texture2D = preload("res://assets/ui/icons/victory_gold.svg")
 const VICTORY_TITLE_COLOR: Color = Color(0.364706, 0.847059, 0.364706, 1)
 
 

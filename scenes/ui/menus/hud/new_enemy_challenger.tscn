@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://bw630xrotcjl2" path="res://scenes/ui/menus/hud/new_enemy_challenger.gd" id="1_1vwxm"]
 [ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="2_nrwp8"]
 [ext_resource type="Shader" uid="uid://coojofonbtmn5" path="res://assets/resources/shaders/radial_aura.gdshader" id="3_m5r4k"]
-[ext_resource type="Texture2D" uid="uid://it5nrej70nlf" path="res://assets/gameplay/enemies/Zombie_lOM_Base-Sheet.png" id="4_zombie_sheet"]
+[ext_resource type="Texture2D" uid="uid://it5nrej70nlf" path="res://assets/gameplay/enemies/zombie_lom_base_sheet.png" id="4_zombie_sheet"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_halo_aura"]
 shader = ExtResource("3_m5r4k")

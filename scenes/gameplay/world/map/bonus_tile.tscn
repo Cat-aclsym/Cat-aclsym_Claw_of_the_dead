@@ -1,9 +1,9 @@
 [gd_scene load_steps=18 format=3 uid="uid://cwfbv84nlapse"]
 
 [ext_resource type="Script" uid="uid://d06pd8s8pbgp3" path="res://scenes/gameplay/world/map/bonus_tile.gd" id="1_bonus_tile_script"]
-[ext_resource type="Texture2D" uid="uid://bfvtlhbglxal1" path="res://assets/environment/tile_effects/bonus-ground.png" id="3_bonus_ground_texture"]
-[ext_resource type="Texture2D" uid="uid://dsgl7b0w4t7x2" path="res://assets/environment/tile_effects/bonus-back.png" id="3_s2plb"]
-[ext_resource type="Texture2D" uid="uid://cewtcxw2cx0m4" path="res://assets/environment/tile_effects/bonus-front.png" id="4_jmrdr"]
+[ext_resource type="Texture2D" uid="uid://bfvtlhbglxal1" path="res://assets/environment/tile_effects/bonus_ground.png" id="3_bonus_ground_texture"]
+[ext_resource type="Texture2D" uid="uid://dsgl7b0w4t7x2" path="res://assets/environment/tile_effects/bonus_back.png" id="3_s2plb"]
+[ext_resource type="Texture2D" uid="uid://cewtcxw2cx0m4" path="res://assets/environment/tile_effects/bonus_front.png" id="4_jmrdr"]
 
 [sub_resource type="Curve" id="Curve_s2plb"]
 _data = [Vector2(0, 0.8), 0.0, -1.2, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]

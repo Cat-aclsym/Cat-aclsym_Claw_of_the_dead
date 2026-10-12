@@ -3,7 +3,7 @@
 [ext_resource type="PackedScene" uid="uid://064cnqw4xlus" path="res://scenes/gameplay/entities/tower/i_tower.tscn" id="1_tower"]
 [ext_resource type="Script" uid="uid://csphw0j57q6ln" path="res://scenes/gameplay/entities/tower/towers/inferno_tower.gd" id="2_script"]
 [ext_resource type="PackedScene" uid="uid://c8y7x3n8u5r4e" path="res://scenes/gameplay/entities/bullet/inferno_beam.tscn" id="3_bullet"]
-[ext_resource type="Texture2D" uid="uid://dlsa1m6s2rklo" path="res://assets/gameplay/towers/tower_1_LVL_1.png" id="4_sprite"]
+[ext_resource type="Texture2D" uid="uid://dlsa1m6s2rklo" path="res://assets/gameplay/towers/tower_1_lvl_1.png" id="4_sprite"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_auv34"]
 atlas = ExtResource("4_sprite")

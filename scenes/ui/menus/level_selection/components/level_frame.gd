@@ -7,8 +7,8 @@ extends Control
 signal start_level(level_id: String)
 
 ## Constants
-const CONDITION_DONE: Texture2D = preload("res://assets/ui/icons/Star.png")
-const CONDITION_TODO: Texture2D = preload("res://assets/ui/icons/Star_Empty.png")
+const CONDITION_DONE: Texture2D = preload("res://assets/ui/icons/star.png")
+const CONDITION_TODO: Texture2D = preload("res://assets/ui/icons/star_empty.png")
 const CHALLENGE_DESCRIPTION_KEY: String = "description"
 const CHALLENGE_NAME_KEY: String = "name"
 const DEFAULT_ARC_ID: String = "arc.01"

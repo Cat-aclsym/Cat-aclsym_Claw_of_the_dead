@@ -2,10 +2,10 @@
 
 [ext_resource type="Script" uid="uid://yn0xr1v34u6y" path="res://scenes/ui/menus/armory/armory_item.gd" id="1_armory_item_script"]
 [ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="2_theme"]
-[ext_resource type="Texture2D" uid="uid://cdesir3miwmug" path="res://assets/ui/building_cards/Green Frame.svg" id="3_green_frame"]
-[ext_resource type="Texture2D" uid="uid://yayv0hygrr3u" path="res://assets/ui/building_cards/Blue Backgrond.svg" id="5_blue_background"]
-[ext_resource type="Texture2D" uid="uid://deifsvtkdkqo1" path="res://assets/ui/buttons/Bouton Bleu.svg" id="6_blue_button"]
-[ext_resource type="Texture2D" uid="uid://8y5uhgfsgmp8" path="res://assets/ui/icons/Star.png" id="7_star"]
+[ext_resource type="Texture2D" uid="uid://cdesir3miwmug" path="res://assets/ui/building_cards/green_frame.svg" id="3_green_frame"]
+[ext_resource type="Texture2D" uid="uid://yayv0hygrr3u" path="res://assets/ui/building_cards/blue_background.svg" id="5_blue_background"]
+[ext_resource type="Texture2D" uid="uid://deifsvtkdkqo1" path="res://assets/ui/buttons/bouton_bleu.svg" id="6_blue_button"]
+[ext_resource type="Texture2D" uid="uid://8y5uhgfsgmp8" path="res://assets/ui/icons/star.png" id="7_star"]
 
 [node name="ArmoryItem" type="VBoxContainer"]
 custom_minimum_size = Vector2(180, 200)

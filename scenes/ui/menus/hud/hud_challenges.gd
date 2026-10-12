@@ -5,8 +5,8 @@ extends HBoxContainer
 ## HUD component displaying current level challenge status icons.
 
 # Constants
-const ICON_DONE: Texture2D = preload("res://assets/ui/icons/Star.png")
-const ICON_TODO: Texture2D = preload("res://assets/ui/icons/Star_Empty.png")
+const ICON_DONE: Texture2D = preload("res://assets/ui/icons/star.png")
+const ICON_TODO: Texture2D = preload("res://assets/ui/icons/star_empty.png")
 const TINT_DEFAULT: Color = Color.WHITE
 const TINT_FAILED: Color = Color(1.0, 0.35, 0.35, 1.0)
 

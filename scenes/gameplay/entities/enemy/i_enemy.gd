@@ -98,7 +98,7 @@ const VISUAL_TINTS: Dictionary[StringName, Color] = {
 }
 
 ## Stun star texture cached for performance.
-const STUN_STAR_TEX := preload("res://assets/gameplay/enemies/Stunned_Star.png")
+const STUN_STAR_TEX := preload("res://assets/gameplay/enemies/stunned_star.png")
 
 
 ## One poison stack: it deals [member damage] every [member interval] seconds for [member ticks_left] ticks.

@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://jv7q286fh1vn"]
 
-[ext_resource type="Texture2D" uid="uid://b6lrh02vg30l3" path="res://assets/ui/huds/Coin.png" id="1_coin"]
+[ext_resource type="Texture2D" uid="uid://b6lrh02vg30l3" path="res://assets/ui/huds/coin.png" id="1_coin"]
 
 [sub_resource type="Animation" id="Animation_bagxy"]
 length = 0.001

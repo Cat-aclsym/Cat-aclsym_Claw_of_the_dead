@@ -9,8 +9,8 @@ extends Control
 signal menu_close
 
 ## Flag textures for language toggle button
-const FLAG_EN: Texture2D = preload("res://assets/ui/icons/English_Button.png")
-const FLAG_FR: Texture2D = preload("res://assets/ui/icons/French_Button.png")
+const FLAG_EN: Texture2D = preload("res://assets/ui/icons/english_button.png")
+const FLAG_FR: Texture2D = preload("res://assets/ui/icons/french_button.png")
 
 # private variables
 var _actual_texture: Texture2D

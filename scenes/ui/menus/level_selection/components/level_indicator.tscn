@@ -1,9 +1,9 @@
 [gd_scene load_steps=5 format=3 uid="uid://b0nyq2do4mc83"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/level_selection/bt_level/Level_number.png" id="1_aq3t4"]
-[ext_resource type="Texture2D" path="res://assets/ui/level_selection/bt_level/Level_number3.png" id="2_yn7g2"]
+[ext_resource type="Texture2D" path="res://assets/ui/level_selection/bt_level/level_number.png" id="1_aq3t4"]
+[ext_resource type="Texture2D" path="res://assets/ui/level_selection/bt_level/level_number3.png" id="2_yn7g2"]
 [ext_resource type="Script" uid="uid://bp2ns6xuy1suf" path="res://scenes/ui/menus/level_selection/components/level_indicator.gd" id="3_07itj"]
-[ext_resource type="FontFile" uid="uid://ddo3rokwsadq0" path="res://assets/ui/fonts/dotgothic/DotGothic16-Regular.ttf" id="4_b47p3"]
+[ext_resource type="FontFile" uid="uid://ddo3rokwsadq0" path="res://assets/ui/fonts/dotgothic/dotgothic16_regular.ttf" id="4_b47p3"]
 
 [node name="LevelIndicator" type="TextureButton"]
 z_index = 2

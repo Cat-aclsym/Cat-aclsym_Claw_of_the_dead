@@ -9,8 +9,8 @@ const DIFFICULTY_COLORS: Dictionary = {
 	"Impossible": Color(0.75, 0.25, 0.85),
 	"Medium": Color(0.9, 0.7, 0.2),
 }
-const ICON_DONE: Texture2D = preload("res://assets/ui/icons/Star.png")
-const ICON_TODO: Texture2D = preload("res://assets/ui/icons/Star_Empty.png")
+const ICON_DONE: Texture2D = preload("res://assets/ui/icons/star.png")
+const ICON_TODO: Texture2D = preload("res://assets/ui/icons/star_empty.png")
 const TEXT_DEFAULT: Color = Color.WHITE
 const TEXT_FAILED: Color = Color(1.0, 0.35, 0.35, 1.0)
 const TINT_DEFAULT: Color = Color.WHITE

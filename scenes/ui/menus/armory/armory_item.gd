@@ -21,11 +21,11 @@ const CARD_DIM_UNAFFORDABLE: float = 0.82
 const CARD_MODULATE_AFFORDABLE: Color = Color.WHITE
 const CARD_MODULATE_UNAFFORDABLE: Color = Color(CARD_DIM_UNAFFORDABLE, CARD_DIM_UNAFFORDABLE, CARD_DIM_UNAFFORDABLE, 1.0)
 const PRICE_LABEL_MODULATE_VS_DIM: Color = Color(1.0 / CARD_DIM_UNAFFORDABLE, 1.0 / CARD_DIM_UNAFFORDABLE, 1.0 / CARD_DIM_UNAFFORDABLE, 1.0)
-const BUY_BUTTON_BLUE: Texture2D = preload("res://assets/ui/buttons/Bouton Bleu.svg")
-const BUY_BUTTON_GREEN: Texture2D = preload("res://assets/ui/buttons/Bouton Vert.svg")
-const FRAME_BLUE: Texture2D = preload("res://assets/ui/building_cards/Blue Frame.svg")
-const FRAME_GREEN: Texture2D = preload("res://assets/ui/building_cards/Green Frame.svg")
-const FRAME_GREY: Texture2D = preload("res://assets/ui/building_cards/Grey Frame.svg")
+const BUY_BUTTON_BLUE: Texture2D = preload("res://assets/ui/buttons/bouton_bleu.svg")
+const BUY_BUTTON_GREEN: Texture2D = preload("res://assets/ui/buttons/bouton_vert.svg")
+const FRAME_BLUE: Texture2D = preload("res://assets/ui/building_cards/blue_frame.svg")
+const FRAME_GREEN: Texture2D = preload("res://assets/ui/building_cards/green_frame.svg")
+const FRAME_GREY: Texture2D = preload("res://assets/ui/building_cards/grey_frame.svg")
 
 @export var cost_stars: int = 0
 @export var icon_texture: Texture2D = null
