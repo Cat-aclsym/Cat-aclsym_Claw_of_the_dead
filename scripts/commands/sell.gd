@@ -20,7 +20,7 @@ func _execute(console: Console, args: Array) -> int:
 		return ERR_UNKNOWN_BEHAVIOR
 
 	var tower_name: String = args[0]
-	var level = ILevel.current_level
+	var level: ILevel = ILevel.current_level
 	var tower: ITower = level.map.get_tower_by_name(tower_name)
 
 	if not tower:

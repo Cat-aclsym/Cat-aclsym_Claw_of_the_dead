@@ -8,7 +8,6 @@ class_name Console extends Control
 
 const COMMANDS_DIRECTORY: String = "res://scripts/commands"
 const CONSOLE_COLOR_ERROR: String = "#fb4934"
-const CONSOLE_COLOR_DEBUG: String = "#689d6a"
 
 
 ## Directory where command scripts are located
@@ -22,7 +21,7 @@ const CONSOLE_COLOR_DEBUG: String = "#689d6a"
 @onready var input: TextEdit = %Input
 @onready var suggestions_label: RichTextLabel = %Suggestions
 
-var _available_commands: Array[String] = []
+var _commands: Dictionary[String, ICommand] = {}
 var _current_suggestions: Array[String] = []
 var _suggestion_index: int = -1
 var _command_history: Array[String] = []
@@ -47,7 +46,6 @@ func _ready() -> void:
 	output.scroll_following = false
 	output.selection_enabled = true
 	output.mouse_filter = Control.MOUSE_FILTER_STOP
-	_load_available_commands()
 	suggestions_label.hide()
 	suggestions_label.autowrap_mode = TextServer.AUTOWRAP_OFF
 
@@ -80,14 +78,18 @@ func _input(event: InputEvent) -> void:
 
 
 # Public functions
-## Pushes text to the console output.
-func push_text(text: String, save: bool = true) -> void:
+## Returns every command script found in [member commands_directory], instantiated once on first use and keyed by command name.
+func get_commands() -> Dictionary[String, ICommand]:
+	if _commands.is_empty():
+		_load_commands()
+	return _commands
+
+
+## Pushes text to the console output. Only displays it: [Log] alone writes the log file.
+func push_text(text: String) -> void:
 	output.append_text("%s\n" % text)
 	if not _is_output_manual_scroll:
 		output.scroll_to_line(output.get_line_count())
-
-	if Global.debug and save:
-		Log.save_message(text)
 
 
 ## Pushes colored text to the console output.
@@ -98,11 +100,7 @@ func push_color(text: String, color_val: Variant) -> void:
 	else:
 		color_str = str(color_val)
 
-	var colored_text: String = "[color=%s]%s[/color]" % [color_str, text]
-
-	push_text(colored_text, false)
-	if Global.debug:
-		Log.save_message(text)
+	push_text("[color=%s]%s[/color]" % [color_str, text])
 
 func push_error_(text: String) -> void:
 	push_color(text, CONSOLE_COLOR_ERROR)
@@ -129,15 +127,21 @@ func push_command(command: String, add_to_history: bool = true) -> void:
 
 
 # Private functions
-## Loads starting command scripts from the commands directory.
-func _load_available_commands() -> void:
+## Instantiates every command script of the commands directory into [member _commands], sorted by name.
+func _load_commands() -> void:
 	var cmd_dir := DirAccess.open(commands_directory)
 	assert(cmd_dir != null, "Failed to open commands directory: " + commands_directory)
 
-	for path in cmd_dir.get_files():
-		if path.ends_with(".gd"):
-			_available_commands.append(path.trim_suffix(".gd"))
-	_available_commands.sort()
+	var paths: PackedStringArray = cmd_dir.get_files()
+	paths.sort()
+	for path: String in paths:
+		if not path.ends_with(".gd"):
+			continue
+		var script: GDScript = load("%s/%s" % [commands_directory, path])
+		if script == null:
+			Log.trace(Log.Level.ERROR, "Console: failed to load command script %s" % path)
+			continue
+		_commands[path.trim_suffix(".gd")] = script.new()
 
 
 ## Listens for global console inputs (toggle, push, cancel).
@@ -285,15 +289,8 @@ func _complete_suggestion() -> void:
 	input.set_caret_column(input.text.length())
 
 	# Stay open if command has arguments
-	var cmd_path := "%s/%s.gd" % [commands_directory, completed_command]
-	var has_args := false
-	if FileAccess.file_exists(cmd_path):
-		var cmd_script = load(cmd_path)
-		if cmd_script:
-			var cmd_instance: ICommand = cmd_script.new()
-			has_args = not cmd_instance.get_args().is_empty()
-
-	if has_args:
+	var completed_cmd: ICommand = get_commands().get(completed_command)
+	if completed_cmd != null and not completed_cmd.get_args().is_empty():
 		# Recalculate suggestions for the new command text
 		_update_suggestions()
 	else:
@@ -344,7 +341,7 @@ func _update_suggestions() -> void:
 									if challenge_id.to_lower().begins_with(current_input.to_lower()):
 										_current_suggestions.append(challenge_id)
 					ICommand.Types.ARG_COMMAND:
-						for cmd_name in _available_commands:
+						for cmd_name: String in get_commands():
 							if cmd_name.to_lower().begins_with(current_input.to_lower()):
 								_current_suggestions.append(cmd_name)
 					ICommand.Types.ARG_ENEMY:
@@ -357,15 +354,11 @@ func _update_suggestions() -> void:
 							if value.to_lower().begins_with(current_input.to_lower()):
 								_current_suggestions.append(value)
 					ICommand.Types.ARG_INGAME_TOWER:
-						var ilevel_script = load("res://scenes/gameplay/world/level/i_level.gd")
-						var itower_script = load("res://scenes/gameplay/entities/tower/i_tower.gd")
-						if ilevel_script and itower_script:
-							var current_lvl = ilevel_script.current_level
-							if current_lvl and current_lvl.map:
-								for child in current_lvl.map.get_children():
-									if child.get_script() == itower_script:
-										if child.name.to_lower().begins_with(current_input.to_lower()):
-											_current_suggestions.append(child.name)
+						var current_lvl: ILevel = ILevel.current_level
+						if current_lvl and current_lvl.map:
+							for child: Node in current_lvl.map.get_children():
+								if child is ITower and child.name.to_lower().begins_with(current_input.to_lower()):
+									_current_suggestions.append(String(child.name))
 					ICommand.Types.ARG_LEVEL:
 						var level_dir := DirAccess.open("res://resources/levels/")
 						if level_dir:
@@ -381,9 +374,9 @@ func _update_suggestions() -> void:
 					_:
 						pass
 	else:
-		for cmd in _available_commands:
-			if cmd.to_lower().begins_with(command_prefix.to_lower()):
-				_current_suggestions.append(cmd)
+		for cmd_name: String in get_commands():
+			if cmd_name.to_lower().begins_with(command_prefix.to_lower()):
+				_current_suggestions.append(cmd_name)
 
 	_current_suggestions.sort()
 
@@ -453,40 +446,9 @@ func _show_suggestions() -> void:
 	suggestions_label.text = suggestions_text
 	suggestions_label.show()
 
-## Builds a rich text signature for the given command.
+## Builds a rich text signature line for the given command, the argument at [param current_arg_index] (command name = 0) is highlighted.
 func _build_signature(cmd: ICommand, command_name: String, current_arg_index: int, current_args: Array) -> String:
-	var cmd_args := cmd.get_args_dynamic(current_args)
-	var signature := "  " + command_name
-
-	for j in range(cmd_args.size()):
-		var arg_def: Dictionary = cmd_args[j]
-		var arg_name: String = arg_def.get("name", "arg")
-		var arg_type: int = arg_def.get("type", ICommand.Types.ARG_UNKNOWN)
-		var type_str: String = _get_type_string(cmd, arg_def, arg_type)
-		var is_current_arg := (j + 1 == current_arg_index)
-
-		var arg_text := ""
-		if arg_def.get("optional", false):
-			arg_text = " [%s: %s]" % [arg_name, type_str]
-		else:
-			arg_text = " <%s: %s>" % [arg_name, type_str]
-
-		if is_current_arg:
-			signature += "[b][u]" + arg_text + "[/u][/b]"
-		else:
-			signature += arg_text
-
-	signature += "  — " + cmd.description()
-	return signature
-
-## Gets a readable string for an argument type.
-func _get_type_string(cmd: ICommand, arg_def: Dictionary, arg_type: int) -> String:
-	var type_str: String = cmd.type_to_string(arg_type)
-	if arg_type == ICommand.Types.ARG_ENUM:
-		var enum_values: Array = arg_def.get("enum_values", [])
-		if not enum_values.is_empty():
-			type_str = "|".join(enum_values)
-	return type_str
+	return "  %s %s  — %s" % [command_name, cmd.get_signature(current_args, current_arg_index - 1), cmd.description()]
 
 ## Clears and hides suggestions.
 func _clear_suggestions() -> void:
@@ -516,19 +478,12 @@ func _process_command(command: String) -> void:
 
 	push_error_("%d" % err)
 
-## Finds a command script in the commands directory.
+## Finds a command in the registry, logs an error in the console unless [param silent].
 func _find_command(command_token: String, silent: bool = false) -> ICommand:
-	var cmd_dir := DirAccess.open(commands_directory)
-	assert(cmd_dir != null, "Failed to open commands directory")
-
-	var cmd_paths: PackedStringArray = cmd_dir.get_files()
-	for path in cmd_paths:
-		if path == command_token + ".gd":
-			return load("%s/%s" % [commands_directory, path]).new()
-
-	if not silent:
+	var cmd: ICommand = get_commands().get(command_token)
+	if cmd == null and not silent:
 		push_error_("No command named '%s'" % command_token)
-	return null
+	return cmd
 
 ## Navigates up/down in the suggestions list.
 func _navigate_suggestions(direction: int) -> void:

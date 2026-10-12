@@ -1,15 +1,10 @@
 ## © [2026] A7 Studio. All rights reserved. Trademark.
 ##
-## Displays all available commands with their descriptions.
-## Lists all commands in the [code]COMMANDS_DIRECTORY[/code] with their usage and descriptions.
+## Prints the orphan nodes (nodes outside any scene tree that are not freed) to the output.
 extends ICommand
 
 
 # public
-func command_token() -> String:
-	return "orphans"
-
-
 func description() -> String:
 	return "Call `print_orphan_nodes` method."
 

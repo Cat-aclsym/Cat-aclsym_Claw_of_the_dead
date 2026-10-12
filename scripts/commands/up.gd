@@ -25,7 +25,7 @@ func _execute(console: Console, args: Array) -> int:
 	var tower_name: String = args[0]
 	var upgrade_path: int = int(args[1]) if args.size() > 1 else 1
 
-	var level = ILevel.current_level
+	var level: ILevel = ILevel.current_level
 	var tower: ITower = level.map.get_tower_by_name(tower_name)
 	if not tower:
 		console.push_error_("Tower '%s' not found." % tower_name)

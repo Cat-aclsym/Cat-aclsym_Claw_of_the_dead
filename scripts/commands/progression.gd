@@ -53,7 +53,7 @@ func get_args_dynamic(current_args: Array) -> Array[Dictionary]:
 func _execute(console: Console, args: Array) -> int:
 	if args.is_empty():
 		console.push_error_("Missing subcommand. Usage: progression [armory|challenge|reset|show|unlock]")
-		return OK
+		return ERR_INVALID_PARAMETER
 
 	var subcommand: String = args[0]
 
@@ -61,7 +61,7 @@ func _execute(console: Console, args: Array) -> int:
 		"armory":
 			if args.size() < 2:
 				console.push_error_("Usage: progression armory stars|grant <node_id>|clear")
-				return OK
+				return ERR_INVALID_PARAMETER
 			var a: String = args[1]
 			match a:
 				"stars":
@@ -72,21 +72,23 @@ func _execute(console: Console, args: Array) -> int:
 				"grant":
 					if args.size() < 3:
 						console.push_error_("Usage: progression armory grant <node_id>")
-						return OK
+						return ERR_INVALID_PARAMETER
 					var nid: String = args[2]
 					if ArmoryManager.debug_grant_node(nid):
 						console.push_text("Granted armory node: %s" % nid)
 					else:
 						console.push_error_("Unknown armory node: %s" % nid)
+						return ERR_INVALID_PARAMETER
 				"clear":
 					ArmoryManager.debug_clear_purchases()
 					console.push_text("Armory purchases cleared.")
 				_:
 					console.push_error_("Unknown armory action. Use stars, grant, or clear.")
+					return ERR_INVALID_PARAMETER
 		"challenge":
 			if args.size() < 3:
 				console.push_error_("Usage: progression challenge <level_id> <challenge_id>")
-				return OK
+				return ERR_INVALID_PARAMETER
 			var level_id: String = args[1]
 			var challenge_id: String = args[2]
 			ProgressionManager.complete_challenge(level_id, challenge_id)
@@ -101,7 +103,7 @@ func _execute(console: Console, args: Array) -> int:
 		"unlock":
 			if args.size() < 3:
 				console.push_error_("Usage: progression unlock <level|enemy|tower|trap> <id>")
-				return OK
+				return ERR_INVALID_PARAMETER
 
 			var ut: String = args[1]
 			var uid: String = args[2]
@@ -121,7 +123,9 @@ func _execute(console: Console, args: Array) -> int:
 					console.push_text("Unlocked trap: " + uid)
 				_:
 					console.push_error_("Unknown type: " + ut + ". Expected: level, enemy, tower, trap")
+					return ERR_INVALID_PARAMETER
 		_:
 			console.push_error_("Unknown subcommand: " + subcommand)
+			return ERR_INVALID_PARAMETER
 
 	return OK

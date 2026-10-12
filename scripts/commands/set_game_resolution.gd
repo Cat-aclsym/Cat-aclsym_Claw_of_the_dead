@@ -1,7 +1,7 @@
 ## © [2024] A7 Studio. All rights reserved. Trademark.
 ## Sets the game window resolution.
 ##
-## Updates both the window size and project settings with the new resolution.
+## Resizes the game window for the current session only, the project settings are not changed.
 extends ICommand
 
 
@@ -23,8 +23,6 @@ func _execute(console: Console, args: Array) -> int:
 	var height: int = int(args[1])
 	assert(width > 0 and height > 0, "Resolution dimensions must be positive")
 
-	console.get_viewport().get_window().size = Vector2i(width, height)
-	ProjectSettings.set_setting("display/window/size/width", width)
-	ProjectSettings.set_setting("display/window/size/height", height)
+	console.get_window().size = Vector2i(width, height)
 
 	return OK

@@ -48,10 +48,24 @@ func get_args_dynamic(_current_args: Array) -> Array[Dictionary]:
 	return get_args()
 
 
-## Returns true if the command accepts a variable number of arguments.
-## If true, argument count validation is skipped.
-func is_variable_args() -> bool:
-	return false
+## Returns the argument signature of the command, e.g. [code]<tower_name: ingame_tower> [path: int][/code].
+## [br]Required arguments use [code]<>[/code], optional ones [code][][/code]. Enum arguments list their values.
+## [br][param current_args] selects the argument set for commands with subcommands, the argument at [param highlight_index] is wrapped in BBCode bold underline (-1 for none).
+func get_signature(current_args: Array = [], highlight_index: int = -1) -> String:
+	var tokens: PackedStringArray = []
+	var defined_args: Array[Dictionary] = get_args_dynamic(current_args)
+	for i: int in defined_args.size():
+		var arg_def: Dictionary = defined_args[i]
+		var arg_type: ICommand.Types = arg_def.get("type", Types.ARG_UNKNOWN)
+		var type_str: String = type_to_string(arg_type)
+		var enum_values: Array = arg_def.get("enum_values", [])
+		if arg_type == Types.ARG_ENUM and not enum_values.is_empty():
+			type_str = "|".join(enum_values)
+
+		var token: String = "%s: %s" % [arg_def.get("name", "arg"), type_str]
+		token = "[%s]" % token if arg_def.get("optional", false) else "<%s>" % token
+		tokens.append("[b][u]%s[/u][/b]" % token if i == highlight_index else token)
+	return " ".join(tokens)
 
 
 ## Executes the command with the given arguments.

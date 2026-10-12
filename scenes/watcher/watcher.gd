@@ -12,14 +12,12 @@ class_name Watcher extends PanelContainer
 
 # core
 func _ready() -> void:
-	if not Global.debug:
-		# Since we (obviously) we gonna forget to 
-		#  remove all watchers when we'll build release
-		#  i set this just in case
-		queue_free()
-
 	assert(node, "Missing node")
 	assert(property, "Missing property")
+
+	# Watchers are debug-only, release builds free them
+	if not Global.debug:
+		queue_free()
 
 
 func _process(_delta: float) -> void:
