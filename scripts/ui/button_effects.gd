@@ -9,6 +9,7 @@ extends RefCounted
 const APPLIED_META_KEY: StringName = &"button_effects"
 const CLICK_SCALE: Vector2 = Vector2(0.95, 0.95)
 const NORMAL_SCALE: Vector2 = Vector2(1.0, 1.0)
+const PIVOT_RATIO: Vector2 = Vector2(0.5, 0.5)
 const TWEEN_DURATION: float = 0.1
 const TWEEN_META_KEY: StringName = &"active_button_tween"
 
@@ -23,13 +24,10 @@ static func apply(button: Control) -> void:
 	# Force the button to ALWAYS process, even when the tree is paused
 	button.process_mode = Node.PROCESS_MODE_ALWAYS
 
-	# Ensure pivot is centered for scaling effects
-	button.pivot_offset = button.size / 2
+	# The pivot stays centered for the scaling effects whatever the size
+	button.pivot_offset_ratio = PIVOT_RATIO
 
-	SignalUtil.connects([
-		{SignalUtil.WHO: button, SignalUtil.WHAT: "gui_input", SignalUtil.TO: _on_gui_input.bind(button)},
-		{SignalUtil.WHO: button, SignalUtil.WHAT: "resized", SignalUtil.TO: _on_resized.bind(button)},
-	])
+	SignalUtil.connects([{SignalUtil.WHO: button, SignalUtil.WHAT: "gui_input", SignalUtil.TO: _on_gui_input.bind(button)}])
 
 # Private Static Methods
 static func _on_gui_input(event: InputEvent, button: Control) -> void:
@@ -46,9 +44,6 @@ static func _on_gui_input(event: InputEvent, button: Control) -> void:
 			_tween_scale(button, CLICK_SCALE)
 		else:
 			_tween_scale(button, NORMAL_SCALE)
-
-static func _on_resized(button: Control) -> void:
-	button.pivot_offset = button.size / 2
 
 static func _tween_scale(button: Control, target_scale: Vector2) -> void:
 	# Kill previous tween if it exists to avoid stacking

@@ -238,7 +238,6 @@ func _spawn_coin_explosion(start_pos: Vector2) -> void:
 func _trigger_coin_effects(amount: int) -> void:
 	# Bounce effect on the coins label
 	var tween: Tween = create_tween()
-	coins_rich_text_label.pivot_offset = coins_rich_text_label.size / 2
 	tween.tween_property(coins_rich_text_label, "scale", Vector2(1.2, 1.2), 0.1).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	tween.tween_property(coins_rich_text_label, "scale", Vector2(1.0, 1.0), 0.1).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 

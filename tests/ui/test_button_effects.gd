@@ -3,7 +3,7 @@
 ## [ButtonEffects] setup of a button, applied once whatever the number of calls.
 extends GdUnitTestSuite
 
-const SIGNALS: Array[String] = ["gui_input", "resized"]
+const SIGNALS: Array[String] = ["gui_input"]
 
 
 func test_apply_does_nothing_for_a_null_button() -> void:
@@ -37,12 +37,11 @@ func test_apply_pivots_on_the_center_and_follows_the_size() -> void:
 
 	ButtonEffects.apply(button)
 
-	assert_vector(button.pivot_offset).is_equal(button.size / 2.0)
+	assert_vector(button.get_combined_pivot_offset()).is_equal(button.size / 2.0)
 
 	button.size = Vector2(120.0, 60.0)
-	button.resized.emit()
 
-	assert_vector(button.pivot_offset).is_equal(button.size / 2.0)
+	assert_vector(button.get_combined_pivot_offset()).is_equal(button.size / 2.0)
 
 
 func _connection_counts(button: Button) -> Array[int]:

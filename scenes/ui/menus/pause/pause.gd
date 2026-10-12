@@ -53,13 +53,6 @@ func _ready() -> void:
 			btn.mouse_filter = Control.MOUSE_FILTER_STOP
 			ButtonEffects.apply(btn)
 
-	# Wait for a frame to ensure sizes are calculated for pivot centering
-	await get_tree().process_frame
-
-	# Re-apply pivot after frame wait to be sure
-	for btn: TextureButton in [music_button, sound_button, encyclopedia_button, home_button, play_button, restart_button]:
-		if btn: btn.pivot_offset = btn.size / 2
-
 	# Update notification after everything is set up
 	_update_encyclopedia_notification()
 

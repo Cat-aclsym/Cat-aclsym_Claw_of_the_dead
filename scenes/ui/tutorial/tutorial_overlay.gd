@@ -31,7 +31,6 @@ func _ready() -> void:
 	if _arrow.texture != null:
 		# Store natural texture size; scale property is applied on top.
 		_arrow.size = Vector2(_arrow.texture.get_width(), _arrow.texture.get_height())
-		_arrow.pivot_offset = _arrow.size * 0.5
 	visible = false
 
 

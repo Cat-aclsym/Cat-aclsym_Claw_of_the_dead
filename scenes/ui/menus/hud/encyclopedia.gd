@@ -203,7 +203,6 @@ func _add_enemy_entry_from_data(p_id: String, p_entry_name: String, p_enemy_data
 func _add_stat_category_header(p_text: String) -> void:
 	var header: Label = Label.new()
 	header.text = p_text
-	header.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	header.theme_type_variation = "HeaderSmall"
 	header.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	header.autowrap_mode = TextServer.AUTOWRAP_OFF
@@ -212,9 +211,7 @@ func _add_stat_category_header(p_text: String) -> void:
 	header.add_theme_color_override("font_color", Color("5d2e2b"))
 	stats_grid.add_child(header)
 
-	var spacer := Control.new()
-	spacer.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	stats_grid.add_child(spacer)
+	stats_grid.add_child(Control.new())
 
 
 ## Adds a stat row (key and value) to the grid.
@@ -226,11 +223,9 @@ func _add_stat_row(p_key: String, p_val: String) -> void:
 	var key_container := Control.new()
 	key_container.custom_minimum_size = Vector2(220, int(float(_current_stat_font_size) * 2) + 4)
 	key_container.clip_contents = true
-	key_container.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	stats_grid.add_child(key_container)
 
 	var hbox := HBoxContainer.new()
-	hbox.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	hbox.alignment = BoxContainer.ALIGNMENT_BEGIN
 	hbox.add_theme_constant_override("separation", 6)
 	hbox.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -245,12 +240,10 @@ func _add_stat_row(p_key: String, p_val: String) -> void:
 		icon_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		icon_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 		icon_rect.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-		icon_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		hbox.add_child(icon_rect)
 
 	var label_key: Label = Label.new()
 	label_key.text = p_key
-	label_key.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	label_key.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	label_key.autowrap_mode = TextServer.AUTOWRAP_OFF
 	label_key.size_flags_vertical = Control.SIZE_SHRINK_CENTER
@@ -261,7 +254,6 @@ func _add_stat_row(p_key: String, p_val: String) -> void:
 
 	var label_val: Label = Label.new()
 	label_val.text = p_val
-	label_val.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	label_val.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	label_val.autowrap_mode = TextServer.AUTOWRAP_OFF
 	label_val.add_theme_font_override("font", _font)

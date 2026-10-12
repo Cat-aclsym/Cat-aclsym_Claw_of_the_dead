@@ -131,6 +131,7 @@ mouse_filter = 2
 [node name="TextureRect" type="TextureRect" parent="CenterContainer"]
 custom_minimum_size = Vector2(370, 117)
 layout_mode = 2
+pivot_offset_ratio = Vector2(0.5, 0.5)
 texture = ExtResource("2_26l8s")
 expand_mode = 3
 stretch_mode = 5
