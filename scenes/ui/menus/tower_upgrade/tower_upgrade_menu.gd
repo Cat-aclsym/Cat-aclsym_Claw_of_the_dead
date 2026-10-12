@@ -40,9 +40,7 @@ func _ready() -> void:
 	SignalUtil.connects(signals)
 	_option1_button.focus_mode = Control.FOCUS_NONE
 	_option2_button.focus_mode = Control.FOCUS_NONE
-	Global.paused = true
-	if ILevel.current_level != null:
-		ILevel.current_level.pause()
+	Global.request_pause(&"upgrade_menu")
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed:
@@ -59,9 +57,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _exit_tree() -> void:
-	Global.paused = false
-	if ILevel.current_level != null:
-		ILevel.current_level.resume_from_pause()
+	Global.release_pause(&"upgrade_menu")
 
 ## Initializes the upgrade description with tower and one or more upgrade options
 func setup(p_tower: ITower, p_upgrade_ids: Array[String]) -> void:
@@ -86,8 +82,8 @@ func _refresh_upgrade_view() -> void:
 		return
 
 	# Set title and confirm price
-	var upgrade_price: int = int(upgrade.get("price", 0))
-	_confirm_button.text = tr("TOWER.UPGRADE.PRICE") % upgrade.price
+	var upgrade_price: int = StatsDB.get_upgrade_price(selected_upgrade_id)
+	_confirm_button.text = tr("TOWER.UPGRADE.PRICE") % upgrade_price
 	_upgrade_title_label.text = _get_upgrade_title(upgrade)
 	_set_active_tab_button(_current_upgrade_index)
 
@@ -165,14 +161,13 @@ func _create_stat_display(stat_name: String, stat_change: float, is_tower_stat: 
 
 ## Gets the current value of a stat
 func _get_current_stat_value(stat_name: String, is_tower_stat: bool) -> float:
-	if is_tower_stat:
-		# Tower stats
-		if stat_name in tower:
-			var value = tower.get(stat_name)
-			return float(value) if value != null else 0.0
-	else:
+	if tower == null:
+		return 0.0
+	if not is_tower_stat:
 		return tower.get_display_bullet_stats().get(stat_name, 0.0)
-
+	if stat_name in tower:
+		var value: Variant = tower.get(stat_name)
+		return float(value) if value != null else 0.0
 	return 0.0
 
 # Signal handlers

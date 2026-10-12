@@ -52,8 +52,6 @@ var _last_health: int = 0
 var _new_enemy_challenger: NewEnemyChallenger = null
 var _new_enemy_reveal_queue: Array[Dictionary] = []
 var _new_enemy_reveal_running: bool = false
-var _new_enemy_previous_paused: bool = false
-var _new_enemy_previous_global_paused: bool = false
 var _ghost_tween: Tween
 
 # Built-in functions
@@ -154,10 +152,7 @@ func _on_pause_button_pressed() -> void:
 			build_selection_menu.queue_free()
 			build_selection_button.button_pressed = false
 
-		# Use Godot's built-in pause system
-		get_tree().paused = true
-		Global.paused = true
-		ILevel.current_level.pause()
+		Global.request_pause(&"pause_menu")
 		var pause_menu_instance: Pause = PAUSE_MENU.instantiate()
 		Global.ui.add_child(pause_menu_instance)
 
@@ -208,13 +203,9 @@ func _try_play_next_enemy_reveal() -> void:
 
 func _set_reveal_paused(is_paused: bool) -> void:
 	if is_paused:
-		_new_enemy_previous_paused = get_tree().paused
-		_new_enemy_previous_global_paused = Global.paused
-		get_tree().paused = true
-		Global.paused = true
-		return
-	get_tree().paused = _new_enemy_previous_paused
-	Global.paused = _new_enemy_previous_global_paused
+		Global.request_pause(&"new_enemy")
+	else:
+		Global.release_pause(&"new_enemy")
 
 
 func _trigger_coin_effects(amount: int) -> void:

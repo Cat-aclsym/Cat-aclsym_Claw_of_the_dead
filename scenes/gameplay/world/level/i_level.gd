@@ -46,6 +46,8 @@ var health: int = 1: set = _set_health
 # Private Variables
 var _enemies_alive: int = 0
 var _level_ended: bool = false
+var _state_before_pause: String = ""
+var _time_frozen: bool = false
 var _time_scale_before_pause: float = 1.0
 var _wave_flow_started: bool = false
 
@@ -60,6 +62,12 @@ func _ready() -> void:
 	assert(popup_spawner != null, "popup_spawner node not found")
 	assert(_background_music != null, "BackgroundMusic node not found")
 	_background_music.stream = BACKGROUND_MUSIC_STREAM
+
+
+func _exit_tree() -> void:
+	if _time_frozen:
+		Engine.time_scale = _time_scale_before_pause
+		_time_frozen = false
 
 
 func _process(delta: float) -> void:
@@ -84,6 +92,7 @@ func start_level() -> void:
 	_load_level_data()
 	ChallengeManager.start_level_challenges(level_id)
 	_build_state_machine()
+	SignalUtil.connects([{SignalUtil.WHO: Global, SignalUtil.WHAT: "pause_changed", SignalUtil.TO: _on_pause_changed}])
 	await map.play_special_tiles_intro_sequence()
 	await get_tree().create_timer(POST_SPECIAL_TILE_INTRO_DELAY_SECONDS).timeout
 	if _should_defer_wave_start_for_tutorial():
@@ -100,8 +109,8 @@ func start_wave_flow() -> void:
 		return
 	_wave_flow_started = true
 	Log.trace(Log.Level.INFO, "ILevel.start_wave_flow begin: level_id=%s current_wave=%d time_scale=%s" % [level_id, current_wave, Engine.time_scale])
-	Engine.time_scale = 1.0
-	Global.paused = false
+	if not _time_frozen:
+		Engine.time_scale = 1.0
 
 	state_machine.toggle_initial_state()
 	popup_spawner.wave(tr("LEVEL.WAVE") % (current_wave + 1))
@@ -155,6 +164,8 @@ func _build_state_machine() -> void:
 	builder.build_transition(STATE_CONFIGURING, STATE_WAVE_0)
 	builder.build_transition(STATE_CONFIGURING, STATE_DEFEAT)
 	builder.build_transition(STATE_CONFIGURING, STATE_ERROR)
+	builder.build_transition(STATE_CONFIGURING, STATE_PAUSE)
+	builder.build_transition(STATE_PAUSE, STATE_CONFIGURING)
 	builder.build_transition(STATE_DEFEAT, STATE_PAUSE)
 	builder.build_transition(STATE_DEFEAT, STATE_ERROR)
 	builder.build_transition(STATE_VICTORY, STATE_CONFIGURING)
@@ -191,6 +202,32 @@ func _emit_wave_started() -> void:
 	wave_started.emit(wave_number)
 
 
+## Freezes the level (time scale and PAUSE state) when the game gets paused, and restores it on resume.
+## [br]Applied right away, the state machine tick is not involved.
+func _on_pause_changed(is_paused: bool) -> void:
+	if _level_ended or state_machine == null:
+		return
+
+	var current_state_id: String = state_machine.get_current_state().name
+	var should_freeze_time: bool = is_paused and Global.is_time_frozen()
+	if should_freeze_time and not _time_frozen:
+		_time_scale_before_pause = Engine.time_scale if Engine.time_scale > 0.0 else 1.0
+		Engine.time_scale = 0.0
+		_time_frozen = true
+	elif not should_freeze_time and _time_frozen:
+		Engine.time_scale = _time_scale_before_pause
+		_time_frozen = false
+
+	if is_paused:
+		if current_state_id == STATE_CONFIGURING or current_state_id.begins_with("WAVE_"):
+			_state_before_pause = current_state_id
+			state_machine.toggle_state(STATE_PAUSE)
+		return
+
+	if current_state_id == STATE_PAUSE and not _state_before_pause.is_empty():
+		state_machine.toggle_state(_state_before_pause)
+
+
 # states
 func _on_state_configuring(_args = []) -> bool:
 	state_machine.toggle_state(STATE_WAVE_0)
@@ -221,7 +258,7 @@ func _on_level_end(victory: bool, _args = []) -> void:
 	_level_ended = true
 	clock.stop()
 	_background_music.stop()
-	Global.paused = true
+	Global.request_pause(&"level_end")
 
 	var end_game_menu_instance: EndGame = ScenesLoader.END_GAME_MENU.instantiate()
 	if is_instance_valid(Global.ui):
@@ -245,12 +282,8 @@ func _on_state_defeat(_args = []) -> bool:
 	return true
 
 
+## The pause itself is applied right away by [method _on_pause_changed], nothing is left to do on a tick.
 func _on_state_pause(_args = []) -> bool:
-	Log.trace(Log.Level.INFO, "Entering PAUSE state.")
-	_time_scale_before_pause = Engine.time_scale if Engine.time_scale > 0 else 1.0
-	Engine.time_scale = 0
-	Global.paused = true
-	Log.trace(Log.Level.INFO, "Game paused")
 	return true
 
 
@@ -288,32 +321,6 @@ func _on_enemy_spawn() -> void:
 ## Returns the number of enemies currently alive on the map.
 func get_enemies_alive() -> int:
 	return _enemies_alive
-
-
-## Sets the game to paused state, affecting both time scale and state machine.
-func pause() -> void:
-	Log.trace(Log.Level.DEBUG, "ILevel.pause requested: wave_flow_started=%s current_state=%s" % [_wave_flow_started, state_machine.get_current_state().name if state_machine else "<no state machine>"])
-	if not _wave_flow_started:
-		Global.paused = true
-		Log.trace(Log.Level.DEBUG, "ILevel.pause applied to pre-wave tutorial state")
-		return
-	if state_machine.get_current_state().name != STATE_PAUSE:
-		state_machine.toggle_state(STATE_PAUSE)
-
-
-## Resumes the game from pause state.
-## [br]Restores time scale, then transitions back to current wave if in PAUSE state.
-func resume_from_pause() -> void:
-	Log.trace(Log.Level.DEBUG, "ILevel.resume_from_pause requested: wave_flow_started=%s current_state=%s" % [_wave_flow_started, state_machine.get_current_state().name if state_machine else "<no state machine>"])
-	if not _wave_flow_started:
-		Global.paused = false
-		Log.trace(Log.Level.DEBUG, "ILevel.resume_from_pause applied to pre-wave tutorial state")
-		return
-	if state_machine.get_current_state().name == STATE_PAUSE:
-		Engine.time_scale = _time_scale_before_pause
-		Global.paused = false
-		Log.trace(Log.Level.INFO, "ILevel.resume_from_pause restored time_scale=%s" % _time_scale_before_pause)
-		state_machine.toggle_state(STATE_WAVE % current_wave)
 
 
 ## Update player's coin count and emits stats_updated signal

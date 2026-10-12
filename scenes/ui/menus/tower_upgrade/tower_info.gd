@@ -21,9 +21,7 @@ const MAX_STAT_VALUE: float = StatBar.MAX_STAT_VALUE
 
 # Core methods
 func _ready() -> void:
-	Global.paused = true
-	if ILevel.current_level != null:
-		ILevel.current_level.pause()
+	Global.request_pause(&"tower_info")
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed:
@@ -40,9 +38,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _exit_tree() -> void:
-	Global.paused = false
-	if ILevel.current_level != null:
-		ILevel.current_level.resume_from_pause()
+	Global.release_pause(&"tower_info")
 
 ## Initializes the info display with tower data
 func setup(p_tower: ITower) -> void:

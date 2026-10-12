@@ -10,10 +10,13 @@ extends Control
 # Constants
 const CONDITION_DONE: Texture2D = preload("res://assets/ui/icons/Star.png")
 const CONDITION_TODO: Texture2D = preload("res://assets/ui/icons/Star_Empty.png")
+const DEFEAT_ICON: Texture2D = preload("res://assets/ui/icons/Defeat.svg")
 const DEFEAT_TITLE_COLOR: Color = Color(0.85, 0.2, 0.2, 1.0)
+const DOTGOTHIC_FONT: Font = preload("res://assets/ui/fonts/dotgothic/DotGothic16-Regular.ttf")
 const NORMAL_CHALLENGE_COLOR: Color = Color.WHITE
 const TINT_DEFAULT: Color = Color.WHITE
 const TINT_FAILED: Color = Color(1.0, 0.35, 0.35, 1.0)
+const VICTORY_ICON: Texture2D = preload("res://assets/ui/icons/Victory Gold.svg")
 const VICTORY_TITLE_COLOR: Color = Color(0.364706, 0.847059, 0.364706, 1)
 
 
@@ -81,12 +84,12 @@ func init(victory: bool) -> void:
 	if victory:
 		title_label.text = tr("ENDGAMEMENU.LEVEL.TITLE.WIN")
 		title_label.add_theme_color_override("font_color", VICTORY_TITLE_COLOR)
-		end_game_image.texture = ResourceLoader.load("res://assets/ui/icons/Victory Gold.svg")
+		end_game_image.texture = VICTORY_ICON
 		ProgressionManager.complete_level(ILevel.current_level.level_id)
 	else:
-		title_label.text = tr("ENDGAMEMENU.LEVEL.TITLE.LOOSE")
+		title_label.text = tr("ENDGAMEMENU.LEVEL.TITLE.LOSE")
 		title_label.add_theme_color_override("font_color", DEFEAT_TITLE_COLOR)
-		end_game_image.texture = ResourceLoader.load("res://assets/ui/icons/Defeat.svg")
+		end_game_image.texture = DEFEAT_ICON
 		next_button.get_parent().visible = false
 
 	_display_challenges()
@@ -118,7 +121,7 @@ func _display_challenges() -> void:
 
 		var label := Label.new()
 		label.text = tr(challenge.title) + ": " + tr(challenge.description)
-		label.add_theme_font_override("font", load("res://assets/ui/fonts/dotgothic/DotGothic16-Regular.ttf"))
+		label.add_theme_font_override("font", DOTGOTHIC_FONT)
 		label.add_theme_font_size_override("font_size", 20)
 		label.add_theme_color_override("font_color", NORMAL_CHALLENGE_COLOR)
 
@@ -127,47 +130,20 @@ func _display_challenges() -> void:
 		challenges_vbox.add_child(hbox)
 
 func _on_home_texture_button_pressed() -> void:
-	get_tree().change_scene_to_file("res://scenes/main.tscn")
-	ILevel.current_level.queue_free()
-	Global.paused = false
+	ScenesLoader.go_home()
 
 
 func _on_next_texture_button_pressed() -> void:
-	var current_level := ILevel.current_level
-	var next_level_id := ProgressionManager.get_next_level_id(current_level.level_id)
-	var next_level_path := "res://scenes/gameplay/world/level/levels/%s.tscn" % next_level_id
-
-	if not ResourceLoader.exists(next_level_path):
-		Log.trace(Log.Level.ERROR, "Next level scene not found: " + next_level_path)
-		_on_home_texture_button_pressed()
+	var next_level_id: String = ProgressionManager.get_next_level_id(ILevel.current_level.level_id)
+	if not ResourceLoader.exists(ScenesLoader.LEVEL_SCENE_PATH % next_level_id):
+		Log.trace(Log.Level.ERROR, "Next level scene not found: " + next_level_id)
+		ScenesLoader.go_home()
 		return
 
-	var level_scene: PackedScene = load(next_level_path)
-
-	current_level.queue_free()
-	await current_level.tree_exited
-
-	var new_level: ILevel = level_scene.instantiate()
-	ILevel.current_level = new_level
-	get_tree().get_root().add_child(new_level)
-	new_level.start_level()
-	Global.ui.start_level()
-
-	Global.paused = false
+	await ScenesLoader.start_level(next_level_id)
 	queue_free()
 
 
 func _on_restart_texture_button_pressed() -> void:
-	var current_level := ILevel.current_level
-	var level_scene: PackedScene = load(current_level.get_scene_file_path())
-
-	current_level.queue_free()
-	await current_level.tree_exited
-
-	var new_level: ILevel = level_scene.instantiate()
-	get_tree().get_root().add_child(new_level)
-	new_level.start_level()
-	Global.ui.start_level()
-
-	Global.paused = false
+	await ScenesLoader.start_level(ILevel.current_level.level_id)
 	queue_free()

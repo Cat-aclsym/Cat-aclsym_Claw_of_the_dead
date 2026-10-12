@@ -128,8 +128,7 @@ func _run_level(path: String) -> bool:
 	level.queue_free()
 	await level.tree_exited
 	ILevel.current_level = null
-	Global.paused = false
-	get_tree().paused = false
+	Global.clear_pauses()
 	return await _wait_frames(2)
 
 

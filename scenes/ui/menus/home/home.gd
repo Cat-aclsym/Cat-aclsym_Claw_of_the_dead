@@ -5,15 +5,17 @@
 class_name Home
 extends Control
 
+const _ARMORY_MENU: PackedScene = preload("res://scenes/ui/menus/armory/armory.tscn")
 const _DEBUG_STATS_MENU: PackedScene = preload("res://scenes/ui/debug/stats_icons_debug.tscn")
+const _ENCYCLOPEDIA_MENU: PackedScene = preload("res://scenes/ui/menus/hud/encyclopedia.tscn")
+const _LEVELS_MENU: PackedScene = preload("res://scenes/ui/menus/level_selection/level_selection_menu.tscn")
+const _OPTION_MENU: PackedScene = preload("res://scenes/ui/menus/options/options.tscn")
 
 var _armory_menu_instance: Node = null
 var _debug_stats_menu_instance: Node = null
 var _encyclopedia_menu_instance: Encyclopedia
 var _levels_menu_instance: LevelSelectionMenu
 var _option_menu_instance: Options
-
-const _LEVEL_SCENE_PATH_TEMPLATE: String = "res://scenes/gameplay/world/level/levels/%s.tscn"
 
 @onready var armory_button: Button = %ArmoryButton
 @onready var debug_stats_button: Button = %DebugStatsButton
@@ -25,11 +27,6 @@ const _LEVEL_SCENE_PATH_TEMPLATE: String = "res://scenes/gameplay/world/level/le
 
 @onready var _default_armory_text: String = armory_button.text
 @onready var _default_encyclopedia_text: String = encyclopedia_button.text
-
-@onready var _armory_menu: PackedScene = preload("res://scenes/ui/menus/armory/armory.tscn")
-@onready var _encyclopedia_menu: PackedScene = preload("res://scenes/ui/menus/hud/encyclopedia.tscn")
-@onready var _levels_menu: PackedScene = preload("res://scenes/ui/menus/level_selection/level_selection_menu.tscn")
-@onready var _option_menu: PackedScene = preload("res://scenes/ui/menus/options/options.tscn")
 
 @onready var signals: Array[Dictionary] = [
 	{SignalUtil.WHO: debug_stats_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_debug_stats_button_pressed},
@@ -48,9 +45,6 @@ func _ready() -> void:
 	assert(gui_margin_container != null, "gui_margin_container node not found")
 	assert(play_button != null, "play_button node not found")
 	assert(settings_button != null, "settings_button node not found")
-	assert(_armory_menu != null, "armory_menu scene not found")
-	assert(_levels_menu != null, "levels_menu scene not found")
-	assert(_option_menu != null, "option_menu scene not found")
 	SignalUtil.connects(signals)
 	_update_first_play_home_lock_state()
 	_update_encyclopedia_notification()
@@ -70,7 +64,7 @@ func _on_debug_stats_button_pressed() -> void:
 ## Handles the armory button press event.
 func _on_armory_button_pressed() -> void:
 	gui_margin_container.visible = false
-	_armory_menu_instance = _armory_menu.instantiate()
+	_armory_menu_instance = _ARMORY_MENU.instantiate()
 	add_child(_armory_menu_instance)
 	_armory_menu_instance.menu_close.connect(_on_menu_close.bind(_armory_menu_instance))
 
@@ -79,7 +73,7 @@ func _on_armory_button_pressed() -> void:
 ## [br]Shows the encyclopedia menu and sets up its callback.
 func _on_encyclopedia_button_pressed() -> void:
 	gui_margin_container.visible = false
-	_encyclopedia_menu_instance = _encyclopedia_menu.instantiate() as Encyclopedia
+	_encyclopedia_menu_instance = _ENCYCLOPEDIA_MENU.instantiate() as Encyclopedia
 	add_child(_encyclopedia_menu_instance)
 	_encyclopedia_menu_instance.menu_close.connect(_on_menu_close.bind(_encyclopedia_menu_instance))
 
@@ -104,7 +98,7 @@ func _on_menu_close(menu: Control) -> void:
 ## [br]Shows the options menu and sets up its callback.
 func _on_parameter_button_pressed() -> void:
 	gui_margin_container.visible = false
-	_option_menu_instance = _option_menu.instantiate() as Options
+	_option_menu_instance = _OPTION_MENU.instantiate() as Options
 	add_child(_option_menu_instance)
 	_option_menu_instance.menu_close.connect(_on_menu_close.bind(_option_menu_instance))
 
@@ -113,39 +107,19 @@ func _on_parameter_button_pressed() -> void:
 ## [br]Shows the level selection menu and sets up its callbacks.
 func _on_play_button_pressed() -> void:
 	if not ProgressionManager.is_tutorial_completed():
-		_start_level_direct("lev.01")
+		if await ScenesLoader.start_level("lev.01") != null:
+			gui_margin_container.visible = false
+			visible = false
 		return
 
 	gui_margin_container.visible = false
 
-	_levels_menu_instance = _levels_menu.instantiate() as LevelSelectionMenu
+	_levels_menu_instance = _LEVELS_MENU.instantiate() as LevelSelectionMenu
 	add_child(_levels_menu_instance)
 
 	SignalUtil.connects([
 		{SignalUtil.WHO: _levels_menu_instance, SignalUtil.WHAT: "level_selected", SignalUtil.TO: _on_level_selected},
 	])
-
-
-## Starts a level directly from its id without going through level selection.
-## [param level_id] Target level id (e.g. "lev.01")
-func _start_level_direct(level_id: String) -> void:
-	var level_scene_path: String = _LEVEL_SCENE_PATH_TEMPLATE % level_id
-	var level_scene: PackedScene = load(level_scene_path)
-	if level_scene == null:
-		Log.trace(Log.Level.ERROR, "Failed to load level scene: %s" % level_scene_path)
-		return
-
-	var level_instance: ILevel = level_scene.instantiate() as ILevel
-	if level_instance == null:
-		Log.trace(Log.Level.ERROR, "Failed to instantiate ILevel from scene: %s" % level_scene_path)
-		return
-
-	gui_margin_container.visible = false
-	visible = false
-
-	get_tree().get_root().add_child(level_instance)
-	level_instance.start_level()
-	Global.ui.start_level()
 
 
 ## Updates the encyclopedia notification icon visibility.

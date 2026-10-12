@@ -124,14 +124,10 @@ func _activate_objective(objective: Objective) -> void:
 			Dialogic.paused = true
 			_set_dialog_layout_visible(false)
 		Objective.PAUSE_AND_RESUME:
-			# Level must be running so the player can actually press Pause.
 			Dialogic.paused = true
-			if is_instance_valid(_tracked_level):
-				_tracked_level.resume_from_pause()
 			_set_dialog_layout_visible(false)
 		_:
 			Dialogic.paused = true
-			_pause_level_for_dialogue()
 			_set_dialog_layout_visible(false)
 
 	_update_objective_target()
@@ -161,7 +157,6 @@ func _complete_active_objective() -> void:
 		Dialogic.paused = false
 		return
 
-	_pause_level_for_dialogue()
 	Dialogic.paused = false
 
 
@@ -334,13 +329,7 @@ func _lock_camera_for_tutorial() -> void:
 	_camera_input_was_enabled = Global.camera.is_processing_input()
 	Global.camera.set_process(false)
 	Global.camera.set_process_input(false)
-
-
-func _pause_level_for_dialogue() -> void:
-	if not is_instance_valid(_tracked_level):
-		return
-	_tracked_level.pause()
-	Global.paused = false
+	Global.camera.set_process_unhandled_input(false)
 
 
 func _resolve_control_target() -> Control:
@@ -387,7 +376,6 @@ func _start_tutorial() -> void:
 	_connect_cursor_signals()
 	_connect_hud_signals()
 	_lock_camera_for_tutorial()
-	_pause_level_for_dialogue()
 
 	var timeline_resource: Resource = load(_get_timeline_path())
 	if timeline_resource == null:
@@ -439,12 +427,6 @@ func _stop_tutorial(mark_completed: bool) -> void:
 	_disconnect_hud_signals()
 	_unlock_camera_after_tutorial()
 
-	if get_tree().paused:
-		get_tree().paused = false
-	Global.paused = false
-
-	if is_instance_valid(_tracked_level):
-		_tracked_level.resume_from_pause()
 	_tracked_level = null
 	_dialog_layout = null
 
@@ -466,6 +448,7 @@ func _unlock_camera_after_tutorial() -> void:
 		return
 	Global.camera.set_process(_camera_process_was_enabled)
 	Global.camera.set_process_input(_camera_input_was_enabled)
+	Global.camera.set_process_unhandled_input(_camera_input_was_enabled)
 
 
 func _update_objective_target() -> void:
