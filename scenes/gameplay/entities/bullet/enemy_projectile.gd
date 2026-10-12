@@ -22,7 +22,7 @@ var _lifetime: float = 0.0
 # Built-in functions
 func _ready() -> void:
 	# Connect the collision signal
-	body_entered.connect(_on_body_entered)
+	SignalUtil.connects([{SignalUtil.WHO: self, SignalUtil.WHAT: "body_entered", SignalUtil.TO: _on_body_entered}])
 	# Destroy the projectile after a short lifetime if it misses, the tween dies with the projectile
 	var lifetime_tween: Tween = create_tween()
 	lifetime_tween.tween_interval(_lifetime if _lifetime > 0.0 else DESTROY_TIMEOUT)
@@ -54,41 +54,6 @@ func init(_direction: Vector2, _disable_duration: float = 3.0, p_visual_only: bo
 
 
 # Private functions
-func _disable_tower(tower: ITower) -> void:
-	## Disables a tower for the specified duration.
-	## [param tower] The tower to disable
-	if tower.state == ITower.TowerState.DISABLED:
-		return
-
-	# Mark tower as disabled and stop its timers/processing
-	tower.disable_tower()
-
-	# Store the original modulate color
-	var sprite: AnimatedSprite2D = tower.sprite
-	if not is_instance_valid(sprite):
-		return
-
-	var original_modulate: Color = sprite.modulate
-
-	# Visually indicate the tower is disabled by reducing opacity
-	sprite.modulate = Color(original_modulate.r, original_modulate.g, original_modulate.b, 0.5)
-
-	# Re-enable the tower when the timer expires
-	var restore_timer := get_tree().create_timer(disable_duration)
-	restore_timer.timeout.connect(func():
-		if not is_instance_valid(tower):
-			return
-
-		if is_instance_valid(sprite):
-			# Reset visual appearance
-			sprite.modulate = original_modulate
-
-		# Restore functionality if still disabled
-		if tower.state == ITower.TowerState.DISABLED:
-			tower.enable_tower()
-	)
-
-
 func _on_body_entered(body: Node2D) -> void:
 	if is_visual_only:
 		return
@@ -102,7 +67,7 @@ func _on_body_entered(body: Node2D) -> void:
 		var tower: Node = body.get_parent()
 		if is_instance_valid(tower) and tower is ITower:
 			# Disable the tower
-			_disable_tower(tower)
+			(tower as ITower).disable_tower_for(disable_duration)
 
 		# Destroy the projectile after hitting a tower
 		queue_free()
@@ -148,9 +113,5 @@ func _spawn_impact_particles(pos: Vector2) -> void:
 	# Start emitting
 	particles.emitting = true
 
-	# Automatically remove particles after they're done
-	var cleanup_timer := get_tree().create_timer(particles.lifetime * 1.2)  # Give a bit extra time
-	cleanup_timer.timeout.connect(func():
-		if is_instance_valid(particles):
-			particles.queue_free()
-	)
+	# Automatically remove particles after they're done, with a bit of extra time
+	VfxUtil.free_after(particles, particles.lifetime * 1.2)

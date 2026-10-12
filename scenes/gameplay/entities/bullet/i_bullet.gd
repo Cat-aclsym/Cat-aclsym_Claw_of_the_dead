@@ -92,7 +92,7 @@ func _detach_trail_for_cleanup() -> void:
 
 	trail_particles.emitting = false
 	trail_particles.reparent(_get_scene_root())
-	_queue_free_after(trail_particles, trail_particles.lifetime + 0.1)
+	VfxUtil.free_after(trail_particles, maxf(trail_particles.lifetime + 0.1, 0.05))
 
 
 func _play_smoke_burst(hit_position: Vector2) -> void:
@@ -106,23 +106,11 @@ func _play_smoke_burst(hit_position: Vector2) -> void:
 	smoke_burst_particles.emitting = true
 	smoke_burst_particles.restart()
 
-	var cleanup_timer: SceneTreeTimer = get_tree().create_timer(smoke_burst_particles.lifetime + 0.1)
-	cleanup_timer.timeout.connect(func():
-		if is_instance_valid(smoke_burst_particles):
-			smoke_burst_particles.queue_free()
-	)
+	VfxUtil.free_after(smoke_burst_particles, smoke_burst_particles.lifetime + 0.1)
 
 
 func _get_scene_root() -> Node:
 	return get_tree().current_scene if is_instance_valid(get_tree().current_scene) else get_tree().root
-
-
-func _queue_free_after(node: Node, delay: float) -> void:
-	var cleanup_timer: SceneTreeTimer = get_tree().create_timer(maxf(delay, 0.05))
-	cleanup_timer.timeout.connect(func():
-		if is_instance_valid(node):
-			node.queue_free()
-	)
 
 
 func _disable_trail() -> void:

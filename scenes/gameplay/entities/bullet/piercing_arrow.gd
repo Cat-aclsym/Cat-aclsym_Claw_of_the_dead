@@ -1,8 +1,12 @@
-## © [2024] A7 Studio. All rights reserved. Trademark.
+## © [2026] A7 Studio. All rights reserved. Trademark.
 ##
 ## Piercing arrow bullet that can pass through multiple enemies.
 class_name PiercingArrow
 extends IBullet
+
+# constants
+const SPARK_TEXTURE_SIZE: int = 6
+const SPARK_Z_INDEX: int = 500 # Lower than blood effect but above enemies
 
 # exports
 @export var pierce_count: int = 3  ## Number of enemies the bullet can pierce
@@ -21,6 +25,12 @@ var pierced_enemies: Array[IEnemy] = []  # Enemies already pierced
 var piercing: int  # Current number of enemies that can be pierced
 var initial_piercing: int  # Initial number of enemies that can be pierced
 
+# private
+## Spark materials shared by every effect, one per speed, size and color combination of the scene exports.
+static var _spark_materials: Dictionary[String, ParticleProcessMaterial] = {}
+## Spark texture shared by every effect.
+static var _spark_texture: Texture2D = null
+
 # core
 func _ready() -> void:
 	super._ready()
@@ -30,54 +40,47 @@ func _ready() -> void:
 	initial_piercing = pierce_count
 
 
-func _physics_process(delta: float) -> void:
-	if Global.paused:
-		return
-
-	position += direction * speed * delta
-
-
 # private
-func _create_spark_particle_texture() -> Texture2D:
-	# Create a spark texture (small 4-pointed star)
-	var image_size := 6
-	var image := Image.create(image_size, image_size, false, Image.FORMAT_RGBA8)
+## Small 4-pointed star, built once and shared by every effect.
+static func _get_spark_texture() -> Texture2D:
+	if _spark_texture == null:
+		var image: Image = Image.create(SPARK_TEXTURE_SIZE, SPARK_TEXTURE_SIZE, false, Image.FORMAT_RGBA8)
 
-	# Fill with transparency
-	image.fill(Color(0, 0, 0, 0))
+		# Fill with transparency
+		image.fill(Color(0, 0, 0, 0))
 
-	# Center of the image
-	var center := Vector2(image_size / 2., image_size / 2.)
+		# Center of the image
+		var center: Vector2 = Vector2(SPARK_TEXTURE_SIZE / 2., SPARK_TEXTURE_SIZE / 2.)
 
-	# Draw a small 4-pointed star
-	var points := PackedVector2Array([
-		Vector2(0, center.y),           # Left
-		Vector2(image_size - 1, center.y), # Right
-		Vector2(center.x, 0),           # Top
-		Vector2(center.x, image_size - 1)   # Bottom
-	])
+		# Draw a small 4-pointed star
+		var points: PackedVector2Array = PackedVector2Array([
+			Vector2(0, center.y),           # Left
+			Vector2(SPARK_TEXTURE_SIZE - 1, center.y), # Right
+			Vector2(center.x, 0),           # Top
+			Vector2(center.x, SPARK_TEXTURE_SIZE - 1)   # Bottom
+		])
 
-	# Draw the star lines
-	for point in points:
-		_draw_spark_line(image, center, point, Color(1, 1, 1, 1))
+		# Draw the star lines
+		for point in points:
+			_draw_spark_line(image, center, point, Color(1, 1, 1, 1))
 
-	# Add a brighter central point
-	image.set_pixel(center.x as int, center.y as int, Color(1, 1, 1, 1))
+		# Add a brighter central point
+		image.set_pixel(int(center.x), int(center.y), Color(1, 1, 1, 1))
 
-	var texture := ImageTexture.create_from_image(image)
-	return texture
+		_spark_texture = ImageTexture.create_from_image(image)
+	return _spark_texture
 
 
-func _draw_spark_line(image: Image, from: Vector2, to: Vector2, color: Color) -> void:
+static func _draw_spark_line(image: Image, from: Vector2, to: Vector2, color: Color) -> void:
 	# Simple line algorithm for sparks
-	var dx: int = abs(to.x - from.x)
-	var dy: int = -abs(to.y - from.y)
+	var dx: int = roundi(absf(to.x - from.x))
+	var dy: int = -roundi(absf(to.y - from.y))
 	var sx: int = 1 if from.x < to.x else -1
 	var sy: int = 1 if from.y < to.y else -1
 	var err: int = dx + dy
 
-	var x: int = from.x as int
-	var y: int = from.y as int
+	var x: int = int(from.x)
+	var y: int = int(from.y)
 
 	while true:
 		if x >= 0 and y >= 0 and x < image.get_width() and y < image.get_height():
@@ -100,23 +103,13 @@ func _draw_spark_line(image: Image, from: Vector2, to: Vector2, color: Color) ->
 			y += sy
 
 
-func _create_spark_effect(hit_position: Vector2) -> void:
-	# Create a spark effect for pierced enemies
-	if Global.console:
-		Global.console.push_debug("Creating spark effect at position: " + str(hit_position))
+## Light-gravity material that fades the sparks out, shared by every effect with the same exports.
+func _get_spark_material() -> ParticleProcessMaterial:
+	var key: String = "%s|%s|%s" % [spark_particles_speed, spark_particles_size, spark_particles_color]
+	if _spark_materials.has(key):
+		return _spark_materials[key]
 
-	var scene_root := get_tree().get_root()
-
-	# Create the spark particle system
-	var spark_particles := GPUParticles2D.new()
-	scene_root.add_child(spark_particles)
-	spark_particles.global_position = hit_position
-	spark_particles.z_index = 500 # Lower than blood effect but above enemies
-
-	# Create the particle material
-	var particle_material := ParticleProcessMaterial.new()
-
-	# Configure for a spark effect
+	var particle_material: ParticleProcessMaterial = ParticleProcessMaterial.new()
 	particle_material.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_POINT
 	particle_material.direction = Vector3(0, 0, 1)
 	particle_material.spread = 120.0 # Narrower than blood effect
@@ -129,39 +122,31 @@ func _create_spark_effect(hit_position: Vector2) -> void:
 	particle_material.damping_min = 30.0
 	particle_material.damping_max = 60.0
 
-	# Create a gradient for spark fading
-	var gradient := Gradient.new()
-	gradient.add_point(0.0, spark_particles_color)
-
-	var mid_color := spark_particles_color
+	var mid_color: Color = spark_particles_color
 	mid_color.a *= 0.6
-	gradient.add_point(0.4, mid_color)
-
-	var fade_color := spark_particles_color
+	var fade_color: Color = spark_particles_color
 	fade_color.a = 0.0
-	gradient.add_point(1.0, fade_color)
+	particle_material.color_ramp = VfxUtil.make_ramp({0.0: spark_particles_color, 0.4: mid_color, 1.0: fade_color})
 
-	var color_ramp := GradientTexture1D.new()
-	color_ramp.gradient = gradient
-	particle_material.color_ramp = color_ramp
+	_spark_materials[key] = particle_material
+	return particle_material
 
-	# Configure particles
-	spark_particles.process_material = particle_material
-	spark_particles.amount = spark_particles_count
-	spark_particles.lifetime = spark_particles_lifetime
-	spark_particles.explosiveness = 0.9 # Fast emission
-	spark_particles.randomness = 0.4
-	spark_particles.one_shot = true
-	spark_particles.texture = _create_spark_particle_texture()
 
-	# Start emission
-	spark_particles.emitting = true
+func _create_spark_effect(hit_position: Vector2) -> void:
+	# Create a spark effect for pierced enemies
+	if Global.console:
+		Global.console.push_debug("Creating spark effect at position: " + str(hit_position))
 
-	# Remove after lifetime
-	var cleanup_timer := get_tree().create_timer(spark_particles_lifetime + 0.2)
-	cleanup_timer.timeout.connect(func():
-		if is_instance_valid(spark_particles):
-			spark_particles.queue_free()
+	VfxUtil.burst(
+		get_tree().root,
+		hit_position,
+		_get_spark_material(),
+		_get_spark_texture(),
+		spark_particles_count,
+		spark_particles_lifetime,
+		0.9, # Fast emission
+		0.4,
+		SPARK_Z_INDEX
 	)
 
 
@@ -181,10 +166,10 @@ func _on_body_entered(body: Node2D) -> void:
 	# Handle piercing
 	piercing -= 1
 
-	# Calculate damage reduction
+	# Calculate damage reduction, it never goes below zero
 	var enemies_pierced := initial_piercing - piercing
-	var remaining_damage_percent: float = 100 - (pierce_reduction * enemies_pierced)
-	damage = roundi(initial_damage * (remaining_damage_percent / 100))
+	var remaining_damage_percent: float = maxf(0.0, 100.0 - pierce_reduction * enemies_pierced)
+	damage = roundi(initial_damage * (remaining_damage_percent / 100.0))
 
 	# Create appropriate effect depending on whether it's the last enemy or not
 	if piercing <= 0:

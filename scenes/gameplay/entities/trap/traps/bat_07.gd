@@ -4,6 +4,13 @@
 class_name Bat07
 extends ITrap
 
+const STUN_PARTICLES_AMOUNT: int = 15
+const STUN_CENTER_PARTICLES_AMOUNT: int = 30
+const STUN_PARTICLES_LIFETIME: float = 0.5
+const STUN_Z_INDEX: int = 801
+
+## Stun materials shared by every trap, keyed by "is the center of the stun area".
+static var _stun_materials: Dictionary[bool, ParticleProcessMaterial] = {}
 
 ## Duration of the stun effect in seconds.
 @export var stun_duration: float = 4.0
@@ -32,15 +39,20 @@ func _apply_trap_stats_extension(base: Dictionary) -> void:
 		charge_time = float(base["charge_time"])
 
 
+## Yellow spark burst, bigger at the center of the stun area, it frees itself.
 func _create_stun_visual_effect(pos: Vector2, is_center: bool = true) -> void:
-	var particles: GPUParticles2D = GPUParticles2D.new()
-	get_tree().root.add_child(particles)
-	particles.global_position = pos
-	particles.z_index = 801
-	
+	var amount: int = STUN_CENTER_PARTICLES_AMOUNT if is_center else STUN_PARTICLES_AMOUNT
+	VfxUtil.burst(get_tree().root, pos, _get_stun_material(is_center), null, amount, STUN_PARTICLES_LIFETIME, 1.0, 0.0, STUN_Z_INDEX)
+
+
+## Spark material shared by every stun burst, one for the center and one for the surrounding tiles.
+func _get_stun_material(is_center: bool) -> ParticleProcessMaterial:
+	if _stun_materials.has(is_center):
+		return _stun_materials[is_center]
+
 	var material: ParticleProcessMaterial = ParticleProcessMaterial.new()
 	material.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_SPHERE
-	material.emission_sphere_radius = 5.0 if not is_center else 10.0
+	material.emission_sphere_radius = 10.0 if is_center else 5.0
 	material.direction = Vector3(0, -1, 0)
 	material.spread = 180.0
 	material.gravity = Vector3(0, 0, 0)
@@ -48,23 +60,10 @@ func _create_stun_visual_effect(pos: Vector2, is_center: bool = true) -> void:
 	material.initial_velocity_max = 60.0
 	material.scale_min = 2.0
 	material.scale_max = 4.0
-	
-	var gradient: Gradient = Gradient.new()
-	gradient.add_point(0.0, Color(1.0, 1.0, 0.0, 1.0))
-	gradient.add_point(1.0, Color(1.0, 1.0, 0.0, 0.0))
-	
-	var ramp: GradientTexture1D = GradientTexture1D.new()
-	ramp.gradient = gradient
-	material.color_ramp = ramp
-	
-	particles.process_material = material
-	particles.amount = 15 if not is_center else 30
-	particles.lifetime = 0.5
-	particles.one_shot = true
-	particles.explosiveness = 1.0
-	particles.emitting = true
-	
-	get_tree().create_timer(1.0).timeout.connect(func() -> void: if is_instance_valid(particles): particles.queue_free())
+	material.color_ramp = VfxUtil.make_ramp({0.0: Color(1.0, 1.0, 0.0, 1.0), 1.0: Color(1.0, 1.0, 0.0, 0.0)})
+
+	_stun_materials[is_center] = material
+	return material
 
 
 func _start_activation_sequence() -> void:
@@ -93,27 +92,33 @@ func _start_activation_sequence() -> void:
 	
 	# Le cercle grandit pendant 2 secondes
 	tween.tween_property(circle, "scale", Vector2.ONE, charge_time)
-	
+
 	# Une fois rempli, on déclenche l'effet
-	tween.finished.connect(func() -> void:
-		# 3. Déclenchement de l'effet
-		circle.color.a = 0.6 # Augmenter l'opacité lors de l'activation (full visuel)
-		_trigger_stun()
-		
-		# 4. On garde le cercle et le piège pendant la durée du stun
-		# Puis on fait disparaître le tout avec un fade out
-		var cleanup_timer := get_tree().create_timer(stun_duration)
-		cleanup_timer.timeout.connect(func() -> void:
-			var fade_tween: Tween = create_tween()
-			fade_tween.set_parallel(true)
-			fade_tween.tween_property(circle, "modulate:a", 0.0, 0.8) # Fade out plus long
-			fade_tween.tween_property(self, "modulate:a", 0.0, 0.8)
-			fade_tween.finished.connect(func() -> void:
-				is_activating = false
-				queue_free()
-			)
-		)
-	)
+	tween.tween_callback(_on_charge_complete.bind(circle))
+
+
+## Triggers the stun once the circle is full, then keeps the trap for the stun duration before it fades away.
+func _on_charge_complete(circle: Polygon2D) -> void:
+	circle.color.a = 0.6 # Augmenter l'opacité lors de l'activation (full visuel)
+	_trigger_stun()
+
+	# On garde le cercle et le piège pendant la durée du stun, puis on fait disparaître le tout avec un fade out
+	var cleanup_tween: Tween = create_tween()
+	cleanup_tween.tween_interval(stun_duration)
+	cleanup_tween.tween_callback(_fade_out.bind(circle))
+
+
+func _fade_out(circle: Polygon2D) -> void:
+	var fade_tween: Tween = create_tween()
+	fade_tween.set_parallel(true)
+	fade_tween.tween_property(circle, "modulate:a", 0.0, 0.8) # Fade out plus long
+	fade_tween.tween_property(self, "modulate:a", 0.0, 0.8)
+	fade_tween.chain().tween_callback(_finish_sequence)
+
+
+func _finish_sequence() -> void:
+	is_activating = false
+	queue_free()
 
 
 func _trigger_stun() -> void:

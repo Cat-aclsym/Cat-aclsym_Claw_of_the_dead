@@ -16,8 +16,6 @@ enum TrapState {
 	ACTIVE, ## The trap is placed and active
 }
 
-const MINESWEEPER_DISABLE_DURATION_SECONDS: float = 5.0
-
 ## The type of trap behavior
 @export var trap_type: TrapType = TrapType.PASSIVE
 
@@ -291,8 +289,11 @@ func _on_area_2d_body_entered(body: Node2D) -> void:
 	if enemy == null:
 		return
 
-	if enemy.enemy_id == "minesweeper":
-		disable_temporarily(MINESWEEPER_DISABLE_DURATION_SECONDS)
+	# Enemies that defuse traps (the minesweeper) declare for how long in their stats
+	var enemy_extra: Dictionary = StatsDB.get_enemy(enemy.enemy_id).get("extra", {})
+	var disable_duration: float = float(enemy_extra.get("trap_disable_duration", 0.0))
+	if disable_duration > 0.0:
+		disable_temporarily(disable_duration)
 		return
 
 	if enemy in enemies_in_area:

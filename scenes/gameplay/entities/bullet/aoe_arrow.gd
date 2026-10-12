@@ -1,4 +1,4 @@
-## © [2024] A7 Studio. All rights reserved. Trademark.
+## © [2026] A7 Studio. All rights reserved. Trademark.
 ##
 ## AOE arrow bullet that deals area damage on impact.
 class_name AOEArrow
@@ -7,6 +7,8 @@ extends IBullet
 # constants
 const AOE_DAMAGE_MULTIPLIER: float = 0.75  # AOE damage is 75% of direct hit damage
 const DEFAULT_AOE_RANGE: int = 100  # Reference size to calculate proportions
+const DEBRIS_TEXTURE_SIZE: int = 6
+const DEBRIS_Z_INDEX: int = 800 # Above enemies but below blood effects
 
 # exports
 @export var aoe_range: int = 100  ## Range of the area of effect
@@ -27,6 +29,11 @@ var aoe_enemies: Array[IEnemy] = []
 var effect_circle: Polygon2D
 
 # private
+## Debris materials shared by every impact, one per speed, size and color combination of the scene exports.
+static var _debris_materials: Dictionary[String, ParticleProcessMaterial] = {}
+## Debris texture shared by every impact.
+static var _debris_texture: Texture2D = null
+
 var _area_size_ratio: float = 1.0  # Ratio calculated relative to standard size
 var _is_exploding: bool = false
 
@@ -64,12 +71,6 @@ func _ready() -> void:
 
 	SignalUtil.connects(aoe_signals)
 
-
-func _physics_process(delta: float) -> void:
-	if Global.paused or _is_exploding:
-		return
-
-	position += direction * speed * delta
 
 # public
 ## Virtual method called when impact occurs - override in child classes
@@ -126,87 +127,67 @@ func _adjust_effect_circle_size() -> void:
 		effect_circle.scale = Vector2(visual_scale, visual_scale)
 
 
-func _create_debris_particle_texture() -> Texture2D:
-	# Create a debris texture (small irregular square)
-	var image_size := 6
-	var image := Image.create(image_size, image_size, false, Image.FORMAT_RGBA8)
+## Small irregular square, built once and shared by every impact.
+static func _get_debris_texture() -> Texture2D:
+	if _debris_texture == null:
+		var image: Image = Image.create(DEBRIS_TEXTURE_SIZE, DEBRIS_TEXTURE_SIZE, false, Image.FORMAT_RGBA8)
 
-	# Fill with transparency
-	image.fill(Color(0, 0, 0, 0))
+		# Fill with transparency
+		image.fill(Color(0, 0, 0, 0))
 
-	# Draw a small square with some missing pixels for irregular appearance
-	for x in range(1, image_size - 1):
-		for y in range(1, image_size - 1):
-			# Add randomness for debris appearance
-			if randf() > 0.3:  # 70% chance to have a pixel
-				image.set_pixel(x, y, Color(1, 1, 1, 1))
+		# Draw a small square with some missing pixels for irregular appearance
+		for x in range(1, DEBRIS_TEXTURE_SIZE - 1):
+			for y in range(1, DEBRIS_TEXTURE_SIZE - 1):
+				if randf() > 0.3:  # 70% chance to have a pixel
+					image.set_pixel(x, y, Color(1, 1, 1, 1))
 
-	var texture := ImageTexture.create_from_image(image)
-	return texture
+		_debris_texture = ImageTexture.create_from_image(image)
+	return _debris_texture
 
 
-func _create_explosion_effect(explosion_position: Vector2) -> void:
-	# Create explosion effect with debris
-	if Global.console:
-		Global.console.push_debug("Creating explosion effect at position: " + str(explosion_position))
+## Upward-oriented explosion material that fades the debris out, shared by every impact with the same exports.
+func _get_debris_material() -> ParticleProcessMaterial:
+	var key: String = "%s|%s|%s" % [debris_particles_speed, debris_particles_size, debris_particles_color]
+	if _debris_materials.has(key):
+		return _debris_materials[key]
 
-	var scene_root := get_tree().get_root()
-
-	# Create the debris particle system
-	var debris_particles := GPUParticles2D.new()
-	scene_root.add_child(debris_particles)
-	debris_particles.global_position = explosion_position
-	debris_particles.z_index = 800 # Above enemies but below blood effects
-
-	# Create the particle material
-	var particle_material := ParticleProcessMaterial.new()
-
-	# Configure for an upward-oriented explosion effect
+	var particle_material: ParticleProcessMaterial = ParticleProcessMaterial.new()
 	particle_material.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_POINT
 	particle_material.direction = Vector3(0, -1, 0) # Main direction upward
 	particle_material.spread = 120.0 # Reduce spread to concentrate upward
 	particle_material.gravity = Vector3(0, 150.0, 0) # Gravity so debris falls back down
-	particle_material.initial_velocity_min = debris_particles_speed * 0.8 # Increase minimum speed
-	particle_material.initial_velocity_max = debris_particles_speed * 1.3 # Increase maximum speed
+	particle_material.initial_velocity_min = debris_particles_speed * 0.8
+	particle_material.initial_velocity_max = debris_particles_speed * 1.3
 	particle_material.scale_min = debris_particles_size * 0.5
 	particle_material.scale_max = debris_particles_size
 	particle_material.color = debris_particles_color
-	particle_material.damping_min = 15.0 # Reduce damping for more range
+	particle_material.damping_min = 15.0
 	particle_material.damping_max = 30.0
 
-	# Create a gradient for debris fading
-	var gradient := Gradient.new()
-	gradient.add_point(0.0, debris_particles_color)
-
-	var mid_color := debris_particles_color
+	var mid_color: Color = debris_particles_color
 	mid_color.a *= 0.8
-	gradient.add_point(0.3, mid_color)
-
-	var fade_color := debris_particles_color
+	var fade_color: Color = debris_particles_color
 	fade_color.a = 0.0
-	gradient.add_point(1.0, fade_color)
+	particle_material.color_ramp = VfxUtil.make_ramp({0.0: debris_particles_color, 0.3: mid_color, 1.0: fade_color})
 
-	var color_ramp := GradientTexture1D.new()
-	color_ramp.gradient = gradient
-	particle_material.color_ramp = color_ramp
+	_debris_materials[key] = particle_material
+	return particle_material
 
-	# Configure particles
-	debris_particles.process_material = particle_material
-	debris_particles.amount = int(debris_particles_count * _area_size_ratio) # Adjust according to size
-	debris_particles.lifetime = debris_particles_lifetime
-	debris_particles.explosiveness = 1.0 # Instant explosion
-	debris_particles.randomness = 0.5
-	debris_particles.one_shot = true
-	debris_particles.texture = _create_debris_particle_texture()
 
-	# Start emission
-	debris_particles.emitting = true
+func _create_explosion_effect(explosion_position: Vector2) -> void:
+	if Global.console:
+		Global.console.push_debug("Creating explosion effect at position: " + str(explosion_position))
 
-	# Remove after lifetime
-	var cleanup_timer := get_tree().create_timer(debris_particles_lifetime + 0.3)
-	cleanup_timer.timeout.connect(func():
-		if is_instance_valid(debris_particles):
-			debris_particles.queue_free()
+	VfxUtil.burst(
+		get_tree().root,
+		explosion_position,
+		_get_debris_material(),
+		_get_debris_texture(),
+		int(debris_particles_count * _area_size_ratio), # Adjust according to size
+		debris_particles_lifetime,
+		1.0, # Instant explosion
+		0.5,
+		DEBRIS_Z_INDEX
 	)
 
 
@@ -221,7 +202,6 @@ func _start_shockwave_animation() -> void:
 	# Apply rotation and skew similar to fire arrow
 	effect_circle.rotation = deg_to_rad(32.5)
 	rotation = deg_to_rad(0)
-	# effect_circle.skew = deg_to_rad(0)
 
 	# Start with a very small scale
 	effect_circle.scale = Vector2(0.05, 0.05) * _area_size_ratio
