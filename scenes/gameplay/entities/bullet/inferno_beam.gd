@@ -81,11 +81,8 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
-	# The level end pauses the gameplay without pausing the tree, the beam must not hit after it
-	if Global.paused:
-		return
-
-	if not is_instance_valid(enemy_target) or not is_instance_valid(tower_owner):
+	# The level end pauses the gameplay without pausing the tree: the beam must not hit after it and fades away instead of freezing on screen
+	if Global.paused or not is_instance_valid(enemy_target) or not is_instance_valid(tower_owner):
 		_start_fade_out()
 		return
 
