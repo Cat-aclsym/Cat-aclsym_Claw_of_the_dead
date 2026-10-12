@@ -84,7 +84,8 @@ func _process(delta: float) -> void:
 		_update_z_index()
 		return
 
-	if is_temporarily_disabled or trap_type != TrapType.LIMITED:
+	# Only LIMITED traps and the build preview (handled above) have a frame callback, see _ready
+	if is_temporarily_disabled:
 		return
 
 	if not is_usable:
@@ -213,7 +214,8 @@ func _get_post_trigger_lifetime() -> float:
 	return effect_duration
 
 func _handle_trap_activation(enemy: IEnemy) -> void:
-	# The level end pauses the gameplay without pausing the tree: a trap re-enabled after it must not trigger
+	# The level end pauses the gameplay without pausing the tree: a trap re-enabled after it must not trigger.
+	# An enemy that entered the area meanwhile is not activated when the pause ends: the level end is the only such pause and it only ends when the level is left.
 	if is_temporarily_disabled or Global.paused:
 		return
 
