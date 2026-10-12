@@ -1,4 +1,4 @@
-class_name Wave extends Object
+class_name Wave extends RefCounted
 
 var steps: Array[WaveStep] = []
 

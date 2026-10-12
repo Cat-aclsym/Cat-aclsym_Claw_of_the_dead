@@ -1,7 +1,7 @@
 ## © [2026] A7 Studio. All rights reserved. Trademark.
 
 class_name WaveStep
-extends Object
+extends RefCounted
 ## Base class for a single step in a wave (spawn, wait, etc.).
 
 ## Order.SPAWN data indexes.

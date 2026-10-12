@@ -1,6 +1,6 @@
 ## © [2024] A7 Studio. All rights reserved. Trademark.
 ## The Transition class represents a transition between two states in a StateMachine
-class_name Transition extends Object
+class_name Transition extends RefCounted
 
 var from: State # The state that this transition will progress from
 var to: State # The state that this transition will advance to

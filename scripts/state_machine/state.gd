@@ -1,7 +1,7 @@
 ## © [2024] A7 Studio. All rights reserved. Trademark.
 ## The State class represents a single state in the state machine
 ## Each state has a name and a callback function that can be executed when the state is entered
-class_name State extends Object
+class_name State extends RefCounted
 
 var name: String
 var callback: Callable
