@@ -55,3 +55,33 @@ func fail() -> void:
 		return
 	is_failed = true
 	failed.emit(id)
+
+
+## Virtual hook called when the base takes damage.
+func on_damage_taken(_amount: int) -> void:
+	pass
+
+
+## Virtual hook called when a tower is placed.
+func on_tower_placed(_tower: ITower) -> void:
+	pass
+
+
+## Virtual hook called when a trap is placed.
+func on_trap_placed(_trap: ITrap) -> void:
+	pass
+
+
+## Virtual hook called when an enemy is hit, [param source] is the bullet or tower that hit it.
+func on_enemy_hit(_enemy: IEnemy, _source: Variant) -> void:
+	pass
+
+
+## Virtual hook called when an enemy dies, [param source] is the bullet or tower that killed it.
+func on_enemy_died(_enemy: IEnemy, _damage_type: IEnemy.DamageType, _source: Variant) -> void:
+	pass
+
+
+## Virtual hook called when an enemy reaches the end of its path alive.
+func on_enemy_escaped(_enemy: IEnemy) -> void:
+	pass

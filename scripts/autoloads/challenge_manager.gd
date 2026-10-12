@@ -14,6 +14,9 @@ signal challenge_status_updated(challenge_id: String, is_completed: bool, is_fai
 var active_challenges: Array[Challenge] = []
 var active_level_id: String = ""
 
+## Last status sent for each challenge id, bit 0 is completed and bit 1 is failed.
+var _last_statuses: Dictionary[String, int] = {}
+
 
 # Public functions
 ## Initializes challenges for a specific level.
@@ -23,6 +26,7 @@ func start_level_challenges(level_id: String) -> void:
 		if is_instance_valid(c):
 			c.queue_free()
 	active_challenges.clear()
+	_last_statuses.clear()
 
 	# Load level config to find challenges
 	var level_path := "res://resources/levels/%s.json" % level_id
@@ -53,17 +57,15 @@ func check_victory_conditions() -> void:
 ## Notifies challenges about damage taken.
 func notify_damage(amount: int, _source: Variant = null) -> void:
 	for c in active_challenges:
-		if c.has_method("on_damage_taken"):
-			c.on_damage_taken(amount)
-	emit_runtime_status()
+		c.on_damage_taken(amount)
+	_emit_changed_status()
 
 
 ## Notifies challenges that an [ITower] was placed (not traps).
 func notify_tower_placed(tower: ITower) -> void:
 	for c in active_challenges:
-		if c.has_method("on_tower_placed"):
-			c.on_tower_placed(tower)
-	emit_runtime_status()
+		c.on_tower_placed(tower)
+	_emit_changed_status()
 
 
 ## Dispatches placement to [method notify_tower_placed] or [method notify_trap_placed] by [method IBuilding.get_building_kind].
@@ -78,25 +80,22 @@ func notify_building_placed(building: IBuilding) -> void:
 ## Notifies challenges about a trap placement.
 func notify_trap_placed(trap: ITrap) -> void:
 	for c in active_challenges:
-		if c.has_method("on_trap_placed"):
-			c.on_trap_placed(trap)
-	emit_runtime_status()
+		c.on_trap_placed(trap)
+	_emit_changed_status()
 
 
 ## Notifies challenges about an enemy being hit.
 func notify_enemy_hit(enemy: IEnemy, source: Variant) -> void:
 	for c in active_challenges:
-		if c.has_method("on_enemy_hit"):
-			c.on_enemy_hit(enemy, source)
-	emit_runtime_status()
+		c.on_enemy_hit(enemy, source)
+	_emit_changed_status()
 
 
 ## Notifies challenges about an enemy death.
 func notify_enemy_died(enemy: IEnemy, damage_type: IEnemy.DamageType, source: Variant = null) -> void:
 	for c in active_challenges:
-		if c.has_method("on_enemy_died"):
-			c.on_enemy_died(enemy, damage_type, source)
-	emit_runtime_status()
+		c.on_enemy_died(enemy, damage_type, source)
+	_emit_changed_status()
 
 
 ## Returns currently active challenges.
@@ -104,10 +103,18 @@ func get_active_challenges() -> Array[Challenge]:
 	return active_challenges
 
 
+## Emits the status of every active challenge, for listeners that need the current state (new HUD, level start).
+func emit_runtime_status() -> void:
+	for c in active_challenges:
+		_last_statuses[c.id] = _status_bits(c)
+		challenge_status_updated.emit(c.id, c.is_completed, c.is_failed)
+
+
 # Private functions
 func _load_challenge(c_id: String) -> void:
 	var path := "res://resources/challenges/%s.json" % c_id
 	if not FileAccess.file_exists(path):
+		Log.trace(Log.Level.WARN, "Challenge file missing for %s: %s" % [c_id, path])
 		return
 
 	var data: Dictionary = JsonUtil.load_dict(path)
@@ -125,17 +132,28 @@ func _load_challenge(c_id: String) -> void:
 		data.get("description"),
 		data.get("difficulty")
 	)
-	challenge_instance.completed.connect(_on_challenge_state_changed)
-	challenge_instance.failed.connect(_on_challenge_state_changed)
+	SignalUtil.connects([
+		{SignalUtil.WHO: challenge_instance, SignalUtil.WHAT: "completed", SignalUtil.TO: _on_challenge_state_changed},
+		{SignalUtil.WHO: challenge_instance, SignalUtil.WHAT: "failed", SignalUtil.TO: _on_challenge_state_changed},
+	])
 
 	add_child(challenge_instance)
 	active_challenges.append(challenge_instance)
 
 
-func emit_runtime_status() -> void:
+## Emits the status of the challenges whose completed or failed state changed since their last emission.
+func _emit_changed_status() -> void:
 	for c in active_challenges:
+		var bits: int = _status_bits(c)
+		if _last_statuses.get(c.id, -1) == bits:
+			continue
+		_last_statuses[c.id] = bits
 		challenge_status_updated.emit(c.id, c.is_completed, c.is_failed)
 
 
+func _status_bits(challenge: Challenge) -> int:
+	return int(challenge.is_completed) | (int(challenge.is_failed) << 1)
+
+
 func _on_challenge_state_changed(_challenge_id: String) -> void:
-	emit_runtime_status()
+	_emit_changed_status()
