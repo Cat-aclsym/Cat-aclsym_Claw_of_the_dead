@@ -11,7 +11,6 @@ const POST_SPECIAL_TILE_INTRO_DELAY_SECONDS: float = 2.0
 const STATE_CONFIGURING: String = "CONFIGURING"
 const STATE_DEFEAT: String = "DEFEAT"
 const STATE_END: String = "END"
-const STATE_ERROR: String = "ERROR"
 const STATE_PAUSE: String = "PAUSE"
 const STATE_VICTORY: String = "VICTORY"
 const STATE_WAVE: String = "WAVE_%d"
@@ -107,20 +106,24 @@ func start_wave_flow() -> void:
 		Engine.time_scale = 1.0
 
 	state_machine.toggle_initial_state()
-	popup_spawner.wave(tr("LEVEL.WAVE") % (current_wave + 1))
-	_emit_wave_started()
+	_announce_wave()
 
 	clock.subscribe(_process_tick, 5)
 	clock.start()
 
 
 # privates
+## Shows the banner of the current wave and tells the listeners that it starts.
+func _announce_wave() -> void:
+	popup_spawner.wave(tr("LEVEL.WAVE") % (current_wave + 1))
+	wave_started.emit(current_wave + 1)
+
+
 func _build_state_machine() -> void:
 	var builder := StateMachineBuilder.new()
 	builder.build_initial_state(STATE_CONFIGURING, _on_state_configuring)
 	builder.build_state(STATE_VICTORY, _on_state_victory)
 	builder.build_state(STATE_DEFEAT, _on_state_defeat)
-	builder.build_state(STATE_ERROR, _on_state_error)
 	builder.build_state(STATE_PAUSE, _on_state_pause)
 	builder.build_state(STATE_END)
 
@@ -131,29 +134,20 @@ func _build_state_machine() -> void:
 		builder.build_transition(STATE_WAVE % i, STATE_CONFIGURING)
 		builder.build_transition(STATE_WAVE % i, STATE_DEFEAT)
 		builder.build_transition(STATE_WAVE % i, STATE_PAUSE)
-		builder.build_transition(STATE_WAVE % i, STATE_ERROR)
 		builder.build_transition(STATE_PAUSE, STATE_WAVE % i)
 		builder.build_transition(STATE_WAVE % i, STATE_VICTORY if i == waves.size() - 1 else STATE_WAVE % (i + 1))
 
 	builder.build_transition(STATE_CONFIGURING, STATE_WAVE_0)
 	builder.build_transition(STATE_CONFIGURING, STATE_DEFEAT)
-	builder.build_transition(STATE_CONFIGURING, STATE_ERROR)
 	builder.build_transition(STATE_CONFIGURING, STATE_PAUSE)
 	builder.build_transition(STATE_PAUSE, STATE_CONFIGURING)
 	builder.build_transition(STATE_DEFEAT, STATE_PAUSE)
-	builder.build_transition(STATE_DEFEAT, STATE_ERROR)
 	builder.build_transition(STATE_VICTORY, STATE_CONFIGURING)
-	builder.build_transition(STATE_VICTORY, STATE_ERROR)
 	builder.build_transition(STATE_VICTORY, STATE_END)
 	builder.build_transition(STATE_DEFEAT, STATE_END)
 
 	state_machine = builder.build()
 	Log.trace(Log.Level.INFO, "State machine built. Initial state: %s" % state_machine.get_current_state().name)
-
-
-func _emit_wave_started() -> void:
-	var wave_number: int = current_wave + 1
-	wave_started.emit(wave_number)
 
 
 func _init_map() -> void:
@@ -176,10 +170,6 @@ func _load_level_data() -> void:
 		waves.append(Wave.new(wave_data))
 
 
-func _next_step() -> void:
-	current_step = waves.front().pop()
-
-
 func _next_wave() -> void:
 	waves.pop_front()
 
@@ -187,8 +177,7 @@ func _next_wave() -> void:
 		state_machine.toggle_state(STATE_VICTORY)
 		return
 	current_wave += 1
-	popup_spawner.wave(tr("LEVEL.WAVE") % (current_wave + 1))
-	_emit_wave_started()
+	_announce_wave()
 	state_machine.toggle_state(STATE_WAVE % current_wave)
 
 
@@ -201,7 +190,7 @@ func _on_enemy_spawn() -> void:
 	_enemies_alive += 1
 
 
-func _on_level_end(victory: bool, _args: Array = []) -> void:
+func _on_level_end(victory: bool) -> void:
 	_level_ended = true
 	clock.stop()
 	_background_music.stop()
@@ -255,11 +244,6 @@ func _on_state_defeat(_args: Array = []) -> bool:
 	return true
 
 
-func _on_state_error(_args: Array = []) -> bool:
-	Log.trace(Log.Level.ERROR, "Entering ERROR state.")
-	return false
-
-
 ## The pause itself is applied right away by [method _on_pause_changed], nothing is left to do on a tick.
 func _on_state_pause(_args: Array = []) -> bool:
 	return true
@@ -283,13 +267,13 @@ func _on_state_wave(_args: Array = []) -> bool:
 
 	# if no current step -> tigger next step
 	if current_step == null:
-		_next_step()
+		current_step = wave.pop()
 		return true
 
 	# execute current step then check if it is over
 	current_step.exec()
 	if current_step.is_over():
-		_next_step()
+		current_step = wave.pop()
 
 	return true
 

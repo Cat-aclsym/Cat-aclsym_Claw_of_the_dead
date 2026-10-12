@@ -80,7 +80,7 @@ func _execute(console: Console, args: Array) -> int:
 						console.push_error_("Unknown armory node: %s" % nid)
 						return ERR_INVALID_PARAMETER
 				"clear":
-					ArmoryManager.debug_clear_purchases()
+					ArmoryManager.reset_armory_spending()
 					console.push_text("Armory purchases cleared.")
 				_:
 					console.push_error_("Unknown armory action. Use stars, grant, or clear.")

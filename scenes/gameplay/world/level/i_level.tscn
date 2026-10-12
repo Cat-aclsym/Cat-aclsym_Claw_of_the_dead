@@ -6,7 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://chxjyy0li4wc4" path="res://scenes/gameplay/world/clock/clock.tscn" id="4_11eeu"]
 [ext_resource type="Script" uid="uid://cv6ja2yls3b8o" path="res://scenes/utilities/sound_entity/sound_entity.gd" id="5_music"]
 
-[node name="ILevel" type="Node2D" groups=["bullet_container"]]
+[node name="ILevel" type="Node2D"]
 script = ExtResource("1_hgrcn")
 
 [node name="Clock" parent="." instance=ExtResource("4_11eeu")]

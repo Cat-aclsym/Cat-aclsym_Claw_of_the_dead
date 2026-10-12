@@ -5,9 +5,6 @@
 class_name IEnemy
 extends CharacterBody2D
 
-## Emitted to trigger camera effects
-## [param effect] The name of the effect to trigger
-signal camera_effect(effect: String)
 ## Emitted when the enemy dies, after the reward and the challenge notification
 signal died
 ## Emitted when the enemy reaches the end of its path alive
@@ -51,12 +48,12 @@ const ANIM_FADE_OUT := "fade_out"
 const ANIM_WALK_DOWN := "walk_down"
 const ANIM_WALK_UP := "walk_up"
 
-## Damage configuration for different damage types
-const DAMAGES: Dictionary = {
-	DamageType.DEFAULT: {"color": Color(1.0, 1.0, 1.0, 1)}, # White for better visibility
-	DamageType.POISON: {"color": Color("#744187")}, # Custom purple for poison
-	DamageType.FIRE: {"color": Color(1.0, 0.6, 0.2, 1)},   # Brighter orange/fire
-	DamageType.STUN: {"color": Color(1.0, 1.0, 0.0, 1)},   # Yellow for stun
+## Flash and popup color of each damage type
+const DAMAGE_COLORS: Dictionary[DamageType, Color] = {
+	DamageType.DEFAULT: Color(1.0, 1.0, 1.0, 1), # White for better visibility
+	DamageType.POISON: Color("#744187"), # Custom purple for poison
+	DamageType.FIRE: Color(1.0, 0.6, 0.2, 1), # Brighter orange/fire
+	DamageType.STUN: Color(1.0, 1.0, 0.0, 1), # Yellow for stun
 }
 
 ## Multiplied with [member old_modulate] while being hit by Inferno Tower; red/orange feel.
@@ -179,7 +176,6 @@ var _visual_counts: Dictionary[StringName, int] = {}
 @onready var old_modulate: Color = sprite.modulate
 @onready var poison_particle: GPUParticles2D = $GPUParticles2D
 @onready var popup_score_spawner: PopupSpawner = $PopupScoreSpawner
-@onready var stats_db: StatsDB = get_node("/root/StatsDB")
 
 
 # Built-in functions
@@ -189,10 +185,8 @@ func _ready() -> void:
 	_apply_stats_override()
 	poison_particle.emitting = false
 	poison_particle.visible = false
-	if type == EnemyType.BIG_DADDY:
-		if is_instance_valid(Global.camera):
-			SignalUtil.connects([{SignalUtil.WHO: self, SignalUtil.WHAT: "camera_effect", SignalUtil.TO: Global.camera.handle_effect}])
-		camera_effect.emit('shake')
+	if type == EnemyType.BIG_DADDY and is_instance_valid(Global.camera):
+		Global.camera.handle_effect("shake")
 
 	health = max_health
 
@@ -223,8 +217,6 @@ func _physics_process(delta: float) -> void:
 			_dead_state()
 		EnemyState.PATH_FINISHED:
 			_path_finished_state()
-		_:
-			Log.trace(Log.Level.WARN, "{0} unknown EnemyState : {1}".format([name, state]))
 
 	if is_stunned:
 		_update_stun_stars()
@@ -325,7 +317,7 @@ func stun(duration: float) -> void:
 	sprite.pause() # Freeze the walking animation
 	_create_stun_stars()
 	_apply_idle_modulate() # Apply yellow tint immediately
-	_damage_effect(DAMAGES[DamageType.STUN]["color"])
+	_damage_effect(DAMAGE_COLORS[DamageType.STUN])
 
 	var stun_tween: Tween = create_tween()
 	stun_tween.tween_interval(duration)
@@ -344,10 +336,11 @@ func take_damage(damage: float, damage_type: DamageType, source: Variant = null)
 	last_damage_type = damage_type
 	last_source = source
 	_killer_tower = _resolve_source_tower(source)
-	_damage_effect(DAMAGES[damage_type]["color"])
+	var damage_color: Color = DAMAGE_COLORS[damage_type]
+	_damage_effect(damage_color)
 
 	if popup_score_spawner:
-		popup_score_spawner.display_damage(damage, DAMAGES[damage_type]["color"])
+		popup_score_spawner.display_damage(damage, damage_color)
 
 	if source:
 		ChallengeManager.notify_enemy_hit(self, source)
@@ -369,13 +362,12 @@ func _apply_idle_modulate() -> void:
 
 
 func _apply_stats_override() -> void:
-	if enemy_id.is_empty() or stats_db == null:
+	if enemy_id.is_empty():
 		return
-	if not stats_db.has_enemy(enemy_id):
+	if not StatsDB.has_enemy(enemy_id):
 		Log.trace(Log.Level.ERROR, "StatsDB missing enemy id: %s" % enemy_id)
 		return
-	var data: Dictionary = stats_db.get_enemy(enemy_id)
-	Log.trace(Log.Level.DEBUG, "Applying enemy stats from StatsDB for %s" % enemy_id)
+	var data: Dictionary = StatsDB.get_enemy(enemy_id)
 	if data.has("max_health"):
 		max_health = float(data["max_health"])
 	if data.has("speed"):
@@ -701,9 +693,6 @@ func _walk() -> void:
 		EnemyDirection.DOWN_LEFT:
 			target_animation = ANIM_WALK_DOWN
 			should_flip = false
-		_:
-			Log.trace(Log.Level.WARN, "{0}::_walk() direction does not match EnemyDirection enum".format([name]))
-			return
 
 	# Only change animation if it's different from current one to prevent stuttering
 	if current_animation != target_animation:

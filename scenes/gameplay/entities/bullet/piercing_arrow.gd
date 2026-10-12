@@ -42,10 +42,6 @@ func _ready() -> void:
 
 # private
 func _create_spark_effect(hit_position: Vector2) -> void:
-	# Create a spark effect for pierced enemies
-	if Global.console:
-		Global.console.push_debug("Creating spark effect at position: " + str(hit_position))
-
 	VfxUtil.burst(
 		get_tree().root,
 		hit_position,

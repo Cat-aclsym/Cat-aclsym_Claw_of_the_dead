@@ -64,8 +64,7 @@ func _fire_inferno_multi_target() -> void:
 
 		var bullet_instance: IBullet = bullet_scene.instantiate()
 		bullet_instance.tower_owner = self
-		if "enemy_target" in bullet_instance:
-			bullet_instance.set("enemy_target", t)
+		bullet_instance.enemy_target = t
 
 		_apply_projectile_config(bullet_instance)
 		add_child(bullet_instance)
@@ -77,18 +76,16 @@ func _handle_custom_fire() -> bool:
 		_fire_inferno_multi_target()
 		fire_rate_timer.start()
 		return true
+	# A beam already burns the target, the standard fire loop would instantiate a whole beam scene to free it right away
+	if _find_beam(target) != null:
+		fire_rate_timer.start()
+		return true
 	return false
 
 
+## Only called by the standard fire loop (projectile_count of 1) for a target without beam yet.
 func _on_projectile_instantiated(bullet: IBullet, target_enemy: IEnemy) -> void:
-	# For continuous beams, check if we already have an active beam for this target
-	# Note: This is only called when projectile_count == 1 (standard fire loop)
-	# because _handle_custom_fire returns true for projectile_count > 1.
-	if _find_beam(target_enemy) != null:
-		# The beam already exists, the new one is not in the tree yet so it is freed right away
-		bullet.free()
-	else:
-		_active_beams[bullet] = target_enemy
+	_active_beams[bullet] = target_enemy
 
 
 func _on_target_lost() -> void:

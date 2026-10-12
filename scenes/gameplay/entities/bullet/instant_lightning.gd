@@ -40,9 +40,6 @@ const CHAIN_REVEAL_STEP_DELAY: float = 0.012
 ## Visual width multiplier for the initial lightning arc.
 @export var lightning_width_scale: float = 1.0
 
-## Enemy resolved by the tower at fire time.
-var enemy_target: IEnemy = null
-
 ## Enemies hit by the chain, in bounce order (the first one is [member enemy_target]).
 var _chain: Array[IEnemy] = []
 ## Position of each chained enemy when the chain was built, used when an enemy is gone before its arc.
@@ -168,8 +165,6 @@ func _hit_enemy(enemy: IEnemy, damage_override: float = -1.0) -> void:
 	enemy.take_damage(final_damage, IEnemy.DamageType.DEFAULT, self)
 
 	if electrify_duration <= 0.0 or electrify_tick_damage <= 0.0:
-		return
-	if not enemy.has_method("apply_electrify_effect"):
 		return
 
 	enemy.apply_electrify_effect(

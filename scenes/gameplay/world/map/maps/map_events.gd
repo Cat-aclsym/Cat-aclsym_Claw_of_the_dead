@@ -4,10 +4,6 @@
 class_name MapEvents
 extends Node
 
-signal event_triggered(event_name: String)
-signal path_locked(path_index: int)
-signal path_unlocked(path_index: int)
-
 @export var map: IMap = null
 
 ## Wave-based path event configuration.
@@ -42,13 +38,10 @@ func on_wave_start(wave_number: int) -> void:
 
 	for path_index: int in to_deactivate:
 		map.deactivate_path(path_index)
-		path_locked.emit(path_index)
 
 	for path_index: int in to_activate:
 		map.activate_path(path_index)
-		path_unlocked.emit(path_index)
 
-	event_triggered.emit("wave_%d_paths" % wave_number)
 	Log.trace(Log.Level.INFO, "Applied path events for wave %d." % wave_number)
 
 

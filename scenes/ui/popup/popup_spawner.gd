@@ -16,7 +16,8 @@ const TOWER_COLORS: Dictionary = {
 @export var damage_popup_node: PackedScene
 @export var popup_node: PackedScene
 
-var _active_popups: Dictionary = {} # target_node -> DamagePopup
+## Popup that accumulates the damage of this spawner while the damage source asks for it.
+var _accumulating_popup: DamagePopup = null
 
 # core
 func _ready() -> void:
@@ -55,11 +56,9 @@ func display_damage(amount: float, color: Color = Color.WHITE, is_critical: bool
 				final_color = TOWER_COLORS[tower.tower_id]
 	
 	# Optimization: check if an active popup already exists for accumulation
-	if should_accumulate and _active_popups.has(self) and is_instance_valid(_active_popups[self]):
-		var popup: DamagePopup = _active_popups[self]
-		if popup.has_method("update_value"):
-			popup.update_value(amount)
-			return
+	if should_accumulate and is_instance_valid(_accumulating_popup):
+		_accumulating_popup.update_value(amount)
+		return
 
 	var damage_popup: DamagePopup = damage_popup_node.instantiate()
 	damage_popup.amount = amount
@@ -69,15 +68,13 @@ func display_damage(amount: float, color: Color = Color.WHITE, is_critical: bool
 	if should_accumulate:
 		damage_popup.target_node = self
 		damage_popup.is_accumulative = true
-		_active_popups[self] = damage_popup
+		_accumulating_popup = damage_popup
 	
 	# Use global_position of the spawner
 	damage_popup.global_position = global_position
 	
 	# Add to the root scene to avoid being affected by enemy movement/rotation
 	get_tree().current_scene.add_child(damage_popup)
-	
-	Log.trace(Log.Level.DEBUG, "Spawning damage popup: %s at %s" % [amount, global_position])
 
 ## Spawns a score popup at the current position.
 ## [br]The popup will move upward and display the given text.

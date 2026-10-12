@@ -121,8 +121,6 @@ func _start_activation_sequence() -> void:
 
 
 func _trigger_stun() -> void:
-	Log.trace(Log.Level.INFO, "StunTrap triggering at %s" % global_position)
-
 	# 1. Effets visuels sur la zone
 	_create_stun_visual_effect(global_position, true)
 

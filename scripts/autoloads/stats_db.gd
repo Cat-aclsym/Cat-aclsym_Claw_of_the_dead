@@ -1,6 +1,6 @@
 ## © [2026] A7 Studio. All rights reserved. Trademark.
 ##
-## Charge et expose les stats centralisées (tours, pièges, upgrades, ennemis) depuis un JSON.
+## Loads and exposes the centralized stats (towers, traps, upgrades, enemies) from a JSON file.
 extends Node
 
 # Constants
@@ -68,8 +68,7 @@ func get_tower_ids() -> Array:
 
 
 func get_tower_level(id: String) -> int:
-	var tower: Dictionary = get_tower(id)
-	return tower.get("level", 1) if not tower.is_empty() else 1
+	return int(get_tower(id).get("level", 1))
 
 
 func get_trap(id: String) -> Dictionary:
@@ -85,69 +84,35 @@ func get_upgrade(id: String) -> Dictionary:
 
 
 func get_upgrade_bullet_scene(id: String) -> PackedScene:
-	var path: String = get_upgrade_bullet_scene_path(id)
-	return load_packed_scene(path)
-
-
-func get_upgrade_bullet_scene_path(id: String) -> String:
-	var upgrade: Dictionary = get_upgrade(id)
-	if upgrade.is_empty():
-		return ""
-	if upgrade.has("bullet_scene_path"):
-		return str(upgrade.get("bullet_scene_path", ""))
-	# Backward compatibility for old key.
-	if upgrade.has("bullet"):
-		return str(upgrade.get("bullet", ""))
-	return ""
+	return load_packed_scene(str(get_upgrade(id).get("bullet_scene_path", "")))
 
 
 func get_upgrade_bullet_stats(id: String) -> Dictionary:
-	var upgrade: Dictionary = get_upgrade(id)
-	if upgrade.is_empty():
-		return {}
-	return upgrade.get("bullet_stats", {})
+	return get_upgrade(id).get("bullet_stats", {})
 
 
 func get_upgrade_changes(id: String) -> Dictionary:
-	var upgrade: Dictionary = get_upgrade(id)
-	if upgrade.is_empty():
-		return {}
-	return upgrade.get("changes", {})
+	return get_upgrade(id).get("changes", {})
 
 
 func get_upgrade_ids_for_tower(id: String) -> Array[String]:
-	if not has_tower(id):
-		return []
-	var raw_upgrade_ids: Variant = get_tower(id).get("upgrades", [])
 	var upgrade_ids: Array[String] = []
-	if raw_upgrade_ids is Array:
-		for upgrade_id: Variant in raw_upgrade_ids:
-			upgrade_ids.append(str(upgrade_id))
+	upgrade_ids.assign(get_tower(id).get("upgrades", []))
 	return upgrade_ids
 
 
 func get_upgrade_next_ids(id: String) -> Array[String]:
-	var upgrade: Dictionary = get_upgrade(id)
-	if upgrade.is_empty():
-		return []
-	var raw_next: Variant = upgrade.get("next", [])
 	var next_ids: Array[String] = []
-	if raw_next is Array:
-		for next_id: Variant in raw_next:
-			next_ids.append(str(next_id))
+	next_ids.assign(get_upgrade(id).get("next", []))
 	return next_ids
 
 
 func get_upgrade_price(id: String) -> int:
-	var upgrade: Dictionary = get_upgrade(id)
-	return int(upgrade.get("price", 0)) if not upgrade.is_empty() else 0
+	return int(get_upgrade(id).get("price", 0))
 
 
 func get_upgrade_tower_stats(id: String) -> Dictionary:
-	var upgrade: Dictionary = get_upgrade(id)
-	if upgrade.is_empty():
-		return {}
-	return upgrade.get("tower_stats", {})
+	return get_upgrade(id).get("tower_stats", {})
 
 
 func has_enemy(id: String) -> bool:

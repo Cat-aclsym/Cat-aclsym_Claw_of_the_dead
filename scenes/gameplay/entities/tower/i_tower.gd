@@ -4,11 +4,6 @@
 class_name ITower
 extends IBuilding
 
-## Signal emitted when the tower finishes upgrading
-signal upgrade_completed
-## Signal emitted when the tower starts upgrading
-signal upgrade_started
-
 ## Enum for the type of target the tower will shoot at
 enum TargetType {
 	FIRST,    ## Shoots at the first enemy that enters the range
@@ -24,14 +19,6 @@ enum TowerState {
 	UPGRADING, ## The tower is being upgraded
 	ACTIVE,    ## The tower is placed and active
 	DISABLED,  ## The tower is disabled by an enemy
-}
-
-## Enum for the type of the tower
-enum TowerType {
-	TOWER_1, ## The first tower
-	TOWER_AOE, ## The tower with area of effect damage
-	DEBUG_MULTISHOT, ## The debug multishot tower
-	DEBUG_PIERCING, ## The debug piercing tower
 }
 
 ## Extra pixels past the range where an enemy still counts as a target, and where a locked target is lost (hysteresis, no flicker).
@@ -68,6 +55,8 @@ const PROJECTILE_GAMEPLAY_KEYS: Array[String] = [
 ]
 
 const RADIAL_UPGRADE_MENU: PackedScene = preload("res://scenes/ui/menus/tower_upgrade/radial_menu_tower_upgrade.tscn")
+## Color of the range polygon.
+const RANGE_COLOR: Color = Color.WHITE
 
 # Exported variables
 ## The bullet scene to be instantiated by the tower
@@ -86,8 +75,6 @@ const RADIAL_UPGRADE_MENU: PackedScene = preload("res://scenes/ui/menus/tower_up
 var available_upgrade_ids: Array[String] = []
 ## The bullet stats to be applied to the bullet (overridden at runtime from StatsDB)
 var bullet_stats: Dictionary = {}
-## The color of the range polygon
-var color: String = "#FFFFFF"
 ## The enemy array to store enemies in the range of the tower
 var enemy_array: Array[IEnemy]
 ## The fire rate of the tower (overridden at runtime)
@@ -166,7 +153,7 @@ func _ready() -> void:
 	_apply_base_stats_override()
 	_resolve_initial_upgrade_ids()
 	ArmoryManager.append_unlocked_upgrade_ids(self)
-	available_upgrade_ids = _filter_upgrade_ids(available_upgrade_ids)
+	available_upgrade_ids = ArmoryManager.filter_upgrade_ids(available_upgrade_ids)
 	sell_price = int(ceil(cost / 2.0))
 	hover_box.z_index = 3
 	update_dependent_properties()
@@ -212,7 +199,6 @@ func apply_special_modifier(modifiers: Dictionary) -> void:
 				_special_modifiers[stat] = float(modifiers[stat])
 
 	_recompute_stats()
-	Log.trace(Log.Level.INFO, "Tower {0} stats updated with modifiers: {1}".format([name, _special_modifiers]))
 	_apply_special_visual_effect(modifiers)
 
 ## Applies [code]stats.json[/code] [code]towers[/code] entry when [member tower_id] is set. Uses the [StatsDB] autoload so it works on orphan instances (e.g. build menu preview).
@@ -225,7 +211,6 @@ func apply_stats_from_db() -> void:
 	var data: Dictionary = StatsDB.get_tower(tower_id)
 	var base: Dictionary = data.get("base", {})
 	level = StatsDB.get_tower_level(tower_id)
-	Log.trace(Log.Level.DEBUG, "Applying tower stats from StatsDB for %s" % tower_id)
 	if base.has("cost"):
 		cost = int(base["cost"])
 	if base.has("fire_rate"):
@@ -251,11 +236,10 @@ func apply_upgrade() -> void:
 	_recompute_stats()
 	_on_upgrade_applied()
 
-	available_upgrade_ids = _filter_upgrade_ids(StatsDB.get_upgrade_next_ids(upgrade_id))
+	available_upgrade_ids = ArmoryManager.filter_upgrade_ids(StatsDB.get_upgrade_next_ids(upgrade_id))
 	sell_price += ceili(StatsDB.get_upgrade_price(upgrade_id) / 2.0)
 	pending_upgrade_id = ""
 	state = TowerState.ACTIVE
-	upgrade_completed.emit()
 
 func cancel_build_preview() -> void:
 	show_range(false, true)
@@ -326,12 +310,10 @@ func fire() -> void:
 		bullet_instance.direction = rotated_direction
 		bullet_instance.rotation = rotated_direction.angle()
 		bullet_instance.target = enemy_position
-		if "enemy_target" in bullet_instance:
-			bullet_instance.set("enemy_target", target)
+		bullet_instance.enemy_target = target
 
 		# Set tower owner to allow reward multiplier logic
-		if "tower_owner" in bullet_instance:
-			bullet_instance.tower_owner = self
+		bullet_instance.tower_owner = self
 
 		_on_projectile_instantiated(bullet_instance, target)
 
@@ -376,7 +358,6 @@ func show_range(p_show: bool, smooth: bool = true) -> void:
 		_range_tween.kill()
 
 	if p_show:
-		selected = true
 		polygon_2d.visible = true
 		outline.visible = true
 		if smooth:
@@ -388,7 +369,6 @@ func show_range(p_show: bool, smooth: bool = true) -> void:
 			outline.scale = Vector2(1, 1)
 		_color_variation()
 	else:
-		selected = false
 		_stop_color_variation()
 		if smooth:
 			_range_tween = create_tween().set_parallel(true)
@@ -427,7 +407,6 @@ func start_upgrade(upgrade_id: String) -> void:
 	$ProgressBar.value = 0
 	$ProgressBar.visible = true
 	$Timer.start()
-	upgrade_started.emit()
 
 ## Updates properties that depend on tower stats
 func update_dependent_properties() -> void:
@@ -512,7 +491,6 @@ func _apply_tower_stat_changes(tower_stats: Dictionary) -> void:
 		if stat == "level":
 			continue
 		if stat in self:
-			Log.trace(Log.Level.DEBUG, "Modifying stat: {0} by {1}".format([stat, tower_stats[stat]]))
 			var current_value: Variant = self.get(stat)
 			var delta_value: Variant = tower_stats[stat]
 			if typeof(current_value) == TYPE_BOOL:
@@ -572,8 +550,8 @@ func _color_variation() -> void:
 		return
 	_stop_color_variation()
 
-	var visible_color: Color = Color(color, 0.3)
-	var transparent_color: Color = Color(color, 0)
+	var visible_color: Color = Color(RANGE_COLOR, 0.3)
+	var transparent_color: Color = Color(RANGE_COLOR, 0.0)
 	_color_tween = create_tween().set_loops()
 	_color_tween.tween_property(polygon_2d, "color", transparent_color, 0.4).from(visible_color)
 	_color_tween.tween_property(polygon_2d, "color", visible_color, 0.4).from(transparent_color)
@@ -596,7 +574,7 @@ func _create_range_polygon(radius: float, precision: int) -> void:
 	polygon_2d.rotation = collision_shape_2d.rotation
 	polygon_2d.skew = collision_shape_2d.skew
 	polygon_2d.position = collision_shape_2d.position
-	polygon_2d.color = Color(color, 0.3)
+	polygon_2d.color = Color(RANGE_COLOR, 0.3)
 
 	## Set the z-index of the range polygon to 1, making it appear below other nodes
 	sprite.z_index = 1
@@ -613,9 +591,6 @@ func _end_timed_disable(original_modulate: Color) -> void:
 	sprite.modulate = original_modulate
 	enable_tower()
 
-
-func _filter_upgrade_ids(ids: Array[String]) -> Array[String]:
-	return ArmoryManager.filter_upgrade_ids(ids)
 
 ## Returns the enemy of [param candidates] with the most health, or the least when [param strongest] is false.
 func _find_by_health(candidates: Array[IEnemy], strongest: bool) -> IEnemy:
@@ -747,8 +722,7 @@ func _on_tower_pressed() -> void:
 	if state != TowerState.ACTIVE:
 		return
 
-	if self.find_child("TowerUpgrade", true, false) != null:
-		Log.trace(Log.Level.DEBUG, "Tower upgrade menu already exists")
+	if _menu_open:
 		return
 
 	var tower_upgrade_menu_instance: RadialTowerUpgradeMenu = RADIAL_UPGRADE_MENU.instantiate()

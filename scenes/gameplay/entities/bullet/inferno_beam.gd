@@ -23,8 +23,6 @@ const SEGMENTS_COUNT: int = 16
 ## Damage doubling speed (1.0 doubles the damage every second)
 var charge_speed: float = 1.0
 
-## Current target resolved by the tower
-var enemy_target: IEnemy = null
 ## Gameplay values set by [method ITower._apply_projectile_config] from the tower bullet stats.
 ## If true, damage doubles over time while the tower stays locked on the target
 var is_charging: bool = false

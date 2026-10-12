@@ -80,20 +80,9 @@ func are_prerequisites_met(node_id: String) -> bool:
 func can_purchase(node_id: String) -> bool:
 	if node_id.is_empty() or _legacy_mode():
 		return false
-	if is_node_purchased(node_id):
+	if is_node_purchased(node_id) or not are_prerequisites_met(node_id):
 		return false
-	var node: Dictionary = _nodes_by_id.get(node_id, {})
-	if node.is_empty():
-		return false
-	for p: Variant in node.get("prerequisites", []):
-		if not is_node_purchased(str(p)):
-			return false
-	return int(node.get("cost_stars", 0)) <= get_available_stars()
-
-
-## Debug / console: same as [method reset_armory_spending].
-func debug_clear_purchases() -> void:
-	reset_armory_spending()
+	return int(_nodes_by_id[node_id].get("cost_stars", 0)) <= get_available_stars()
 
 
 ## Debug: grants a node without star cost (applies unlock effects).
@@ -243,8 +232,6 @@ func _has_any_prereq_cycle() -> bool:
 
 
 func _is_upgrade_id_allowed(upgrade_id: String) -> bool:
-	if upgrade_id.is_empty():
-		return false
 	if not _upgrade_gates_by_id.has(upgrade_id):
 		return true
 	var req: String = str(_upgrade_gates_by_id[upgrade_id])

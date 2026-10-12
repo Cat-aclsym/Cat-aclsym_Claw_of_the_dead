@@ -15,6 +15,8 @@ extends Area2D
 # public
 ## Normalized vector indicating bullet's movement direction
 var direction: Vector2
+## Enemy the tower locked when it fired, used by the beam and lightning bullets that follow or hit it directly
+var enemy_target: IEnemy = null
 ## Initial damage value to calculate percentage reduction
 var initial_damage: float
 ## Final destination point for the bullet

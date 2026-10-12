@@ -3,7 +3,7 @@
 ## A utility class for handling signal connections in a structured way.
 ## Provides a centralized approach to connect signals using a dictionary format.
 class_name SignalUtil
-extends Node
+extends RefCounted
 
 ## Dictionary key for the callback method to be called when the signal is emitted.
 const TO: String = "to"
@@ -28,15 +28,15 @@ const WHO: String = "who"
 static func connects(signals: Array[Dictionary]) -> void:
 	for signal_info in signals:
 		assert(
-			WHO in signal_info.keys(),
+			signal_info.has(WHO),
 			"Signal dictionary must contain a '{0}' key".format([WHO])
 		)
 		assert(
-			WHAT in signal_info.keys(),
+			signal_info.has(WHAT),
 			"Signal dictionary must contain a '{0}' key".format([WHAT])
 		)
 		assert(
-			TO in signal_info.keys(),
+			signal_info.has(TO),
 			"Signal dictionary must contain a '{0}' key".format([TO])
 		)
 
@@ -46,12 +46,3 @@ static func connects(signals: Array[Dictionary]) -> void:
 			continue
 
 		emitter.connect(signal_info[WHAT], signal_info[TO])
-
-		# Log.trace(
-		# 	Log.Level.DEBUG,
-		# 	"Connecting signal {node}.{signal} to {callback}".format({
-		# 		"node": signal_info[WHO],
-		# 		"signal": signal_info[WHAT],
-		# 		"callback": signal_info[TO]
-		# 	})
-		# )

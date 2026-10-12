@@ -22,7 +22,6 @@ const SCALE_FACTOR: float = 0.25
 
 var _fade_timer: Timer
 var _fade_tween: Tween
-var _has_taken_damage: bool = false
 
 ## Background and border styles never change, so every health bar shares them. The fill color changes per enemy, so its style is per bar.
 static var _style_background: StyleBoxFlat = _make_style(COLOR_BACKGROUND)
@@ -54,11 +53,7 @@ func update_health(current_health: float, max_health: float) -> void:
 	if style:
 		style.bg_color = new_color
 
-	if not _has_taken_damage:
-		_has_taken_damage = true
-		_show_bar()
-	else:
-		_reset_fade_timer()
+	_reset_fade_timer()
 
 ## Fades the bar in over [param duration] and restarts the delay before it fades out, reusing a single tween.
 func _fade_in(duration: float) -> void:
@@ -95,7 +90,6 @@ func _on_fade_timer_timeout() -> void:
 
 func _reset_fade_timer() -> void:
 	if _fade_timer:
-		_fade_timer.stop()
 		_fade_timer.start()
 		_fade_in(0.1)
 
@@ -115,6 +109,3 @@ func _setup_fade_timer() -> void:
 	_fade_timer.one_shot = true
 	SignalUtil.connects([{SignalUtil.WHO: _fade_timer, SignalUtil.WHAT: "timeout", SignalUtil.TO: _on_fade_timer_timeout}])
 	add_child(_fade_timer)
-
-func _show_bar() -> void:
-	_reset_fade_timer()

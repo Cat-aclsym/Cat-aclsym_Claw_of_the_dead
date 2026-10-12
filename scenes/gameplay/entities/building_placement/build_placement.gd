@@ -9,8 +9,6 @@ extends Node2D
 signal building_placed(building: IBuilding)
 ## Emitted when entering build state
 signal trigger_state_build
-## Emitted when entering idle state
-signal trigger_state_idle
 
 ## States for the build cursor.
 enum CursorState {
@@ -58,7 +56,6 @@ func _ready() -> void:
 	assert(place_button != null, "place_button node not found")
 	assert(place_hud != null, "place_hud node not found")
 	assert(placement_area != null, "placement_area node not found")
-	Log.trace(Log.Level.DEBUG, "BuildPlacement ready: visible=%s state=%s level=%s" % [visible, _state, ILevel.current_level])
 
 	Global.cursor = self
 	visible = false
@@ -93,10 +90,8 @@ func add_invalid_cell(tm_pos: Vector2i) -> void:
 ## [param new_state] The state to change to
 ## [param args] Additional arguments for the state change
 func change_state(new_state: CursorState, args: Array = []) -> void:
-	Log.trace(Log.Level.DEBUG, "BuildPlacement change_state requested: %s -> %s args=%s" % [_state, new_state, args])
 	match new_state:
 		CursorState.IDLE:
-			trigger_state_idle.emit()
 			_state = new_state
 			visible = false
 
@@ -114,7 +109,6 @@ func change_state(new_state: CursorState, args: Array = []) -> void:
 				return
 
 			trigger_state_build.emit()
-			Log.trace(Log.Level.DEBUG, "BuildPlacement trigger_state_build emitted")
 			_state = new_state
 			visible = true
 
@@ -136,9 +130,7 @@ func remove_invalid_cell(tm_pos: Vector2i) -> void:
 	Log.trace(Log.Level.DEBUG, "Cell {0} is now free for building".format([tm_pos]))
 
 func _build() -> void:
-	Log.trace(Log.Level.DEBUG, "BuildPlacement _build start: preview=%s state=%s level=%s" % [_preview_building, _state, ILevel.current_level])
 	if not _is_buildable(cursor.position):
-		Log.trace(Log.Level.DEBUG, "BuildPlacement _build aborted: not buildable at position=%s" % cursor.position)
 		return
 
 	_can_reposition_build_cursor = false
@@ -155,8 +147,7 @@ func _build() -> void:
 		new_tower.show_range(false, false) # Hide range instantly on the placed tower
 		tower_count += 1
 		new_tower.name = "t%d" % tower_count
-		if "tile_pos" in new_tower:
-			new_tower.tile_pos = tm_pos
+		new_tower.tile_pos = tm_pos
 
 		if current_level and current_level.map:
 			var map: IMap = current_level.map
@@ -184,13 +175,11 @@ func _build() -> void:
 		Log.trace(Log.Level.INFO, "BuildPlacement building placed: %s kind=%s" % [placed_building, placed_building.get_building_kind()])
 		ChallengeManager.notify_building_placed(placed_building)
 		building_placed.emit(placed_building)
-		Log.trace(Log.Level.DEBUG, "BuildPlacement building_placed emitted")
 
 	_cancel_build()
 	_can_reposition_build_cursor = true
 
 func _cancel_build() -> void:
-	Log.trace(Log.Level.DEBUG, "BuildPlacement cancel build: preview=%s" % _preview_building)
 	cursor.visible = false
 	place_hud.visible = false
 	if _preview_building:
@@ -349,7 +338,7 @@ func _set_placed_tower_ui_enabled(enabled: bool) -> void:
 		return
 
 	var level: ILevel = ILevel.current_level
-	if not "map" in level or not level.map:
+	if not level.map:
 		return
 
 	var towers: Array[Node] = get_tree().get_nodes_in_group("towers")
@@ -400,9 +389,9 @@ func _state_build(template: Node2D = null, keep_current_cursor_position: bool = 
 			var map: IMap = current_level.map
 			if map.special_tiles.has(tm_pos):
 				var modifier: Dictionary = map.special_tiles[tm_pos]
-				if "apply_special_modifier" in _preview_building:
+				if _preview_building is ITower:
 					_preview_building.apply_special_modifier(modifier)
-			elif "apply_special_modifier" in _preview_building:
+			elif _preview_building is ITower:
 				_preview_building.apply_special_modifier({})
 
 	var is_buildable := _is_buildable(cursor.position)

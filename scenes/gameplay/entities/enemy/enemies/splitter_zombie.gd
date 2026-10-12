@@ -18,9 +18,9 @@ func _ready() -> void:
 
 func _apply_stats_override() -> void:
 	super._apply_stats_override()
-	if enemy_id.is_empty() or stats_db == null:
+	if enemy_id.is_empty():
 		return
-	var data: Dictionary = stats_db.get_enemy(enemy_id)
+	var data: Dictionary = StatsDB.get_enemy(enemy_id)
 	var extra: Dictionary = data.get("extra", {})
 	if extra.has("spawn_count"):
 		spawn_count = int(extra["spawn_count"])

@@ -21,8 +21,7 @@ extends ITrap
 ## Note: This trap applies the effect once upon entry.
 ## [param enemy] The enemy to poison.
 func apply_effect(enemy: IEnemy) -> void:
-	if is_instance_valid(enemy):
-		enemy.add_poison_effect(poison_damage, poison_ticks, poison_interval)
+	enemy.add_poison_effect(poison_damage, poison_ticks, poison_interval)
 
 
 # private

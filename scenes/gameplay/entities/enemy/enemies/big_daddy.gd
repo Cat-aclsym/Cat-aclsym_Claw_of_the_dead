@@ -25,7 +25,6 @@ const STREAM_INTERVAL: float = 0.02
 ## The projectile scene to be instantiated by the enemy
 @export var projectile_scene: PackedScene = null
 
-@export_subgroup("Attack Cycle Configuration")
 var attack_cooldown: float = 0.0
 var attack_duration: float = 0.0
 var post_attack_delay: float = 0.0
@@ -65,7 +64,6 @@ func _ready() -> void:
 
 	# Configure Range Area
 	assert(range_area and range_collision_shape and range_collision_shape.shape is CircleShape2D)
-	Log.trace(Log.Level.INFO, "BigDaddy: Setting range to %s" % shoot_range)
 	range_collision_shape.shape.radius = shoot_range
 	# body_entered is already connected in big_daddy.tscn via scene connection
 	SignalUtil.connects([{SignalUtil.WHO: range_area, SignalUtil.WHAT: "body_exited", SignalUtil.TO: _on_range_area_body_exited}])
@@ -130,13 +128,10 @@ func _add_cycle_timer(timer_name: String, on_timeout: Callable) -> Timer:
 
 
 func _apply_extra_stats_override() -> void:
-	if enemy_id.is_empty() or stats_db == null:
+	if enemy_id.is_empty() or not StatsDB.has_enemy(enemy_id):
 		return
-	if not stats_db.has_enemy(enemy_id):
-		return
-	var data: Dictionary = stats_db.get_enemy(enemy_id)
+	var data: Dictionary = StatsDB.get_enemy(enemy_id)
 	var extra: Dictionary = data.get("extra", {})
-	Log.trace(Log.Level.INFO, "Applying big_daddy extra stats from StatsDB: %s" % extra)
 	if extra.has("shoot_range"):
 		shoot_range = float(extra["shoot_range"])
 	if extra.has("tower_disable_duration"):
@@ -191,7 +186,6 @@ func _find_new_target() -> void:
 			continue
 
 		if tower_script_node.state != ITower.TowerState.ACTIVE:
-			Log.trace(Log.Level.DEBUG, "BigDaddy: Tower '%s' (parent of '%s') is not ACTIVE (state: %s), skipping." % [tower_script_node.name, detected_body.name, tower_script_node.state])
 			continue
 
 		# Target is active, proceed with distance check
@@ -201,17 +195,8 @@ func _find_new_target() -> void:
 			closest_tower_body = detected_body
 
 	current_target = closest_tower_body # current_target is the body (e.g. "TowerBody")
-
 	if old_target_body != current_target:
-		if current_target:
-			var parent_tower_name: String = "UNKNOWN_PARENT"
-			var parent_tower_state: String = "UNKNOWN_STATE"
-			if current_target.get_parent() is ITower:
-				parent_tower_name = current_target.get_parent().name
-				parent_tower_state = ITower.TowerState.keys()[current_target.get_parent().state] # Get state name
-			Log.trace(Log.Level.DEBUG, "BigDaddy: New target body acquired: %s (parent ITower: %s, state: %s)" % [current_target.name, parent_tower_name, parent_tower_state])
-		elif old_target_body:
-			Log.trace(Log.Level.DEBUG, "BigDaddy: Target body lost or no valid (active) tower bodies in range.")
+		Log.trace(Log.Level.DEBUG, "BigDaddy: Target changed to %s." % [current_target.name if current_target else "none"])
 
 
 func _interrupt_attack_cycle() -> void:
@@ -315,15 +300,14 @@ func _shoot() -> void:
 	var travel_time: float = global_position.distance_to(current_target.global_position) / projectile.speed
 	projectile.init(direction_to_target, tower_disable_duration, is_visual_only, travel_time)
 
-	var bullet_container: Node = get_tree().get_first_node_in_group("bullet_container")
-	if bullet_container:
-		bullet_container.add_child(projectile)
+	if is_instance_valid(ILevel.current_level):
+		ILevel.current_level.add_child(projectile)
 		projectile.z_index = 100
 	elif get_parent():
 		get_parent().add_child(projectile)
-		Log.trace(Log.Level.WARN, "BigDaddy: 'bullet_container' group not found. Adding projectile to get_parent().")
+		Log.trace(Log.Level.WARN, "BigDaddy: no current level. Adding projectile to get_parent().")
 	else:
-		Log.trace(Log.Level.ERROR, "BigDaddy: Cannot add projectile, no parent and no bullet_container.")
+		Log.trace(Log.Level.ERROR, "BigDaddy: Cannot add projectile, no parent and no current level.")
 		projectile.queue_free()
 		return
 

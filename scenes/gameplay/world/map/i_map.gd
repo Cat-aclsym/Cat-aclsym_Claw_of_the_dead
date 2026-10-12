@@ -123,21 +123,12 @@ func deactivate_path(path_index: int) -> bool:
 	return true
 
 
-## Returns currently active path indices.
-func get_active_path_indices() -> Array[int]:
-	var active_indices: Array[int] = []
-	for index in range(paths.size()):
-		if _active_paths_lookup.has(index):
-			active_indices.append(index)
-
-	return active_indices
-
-
 ## Returns all currently active spawn paths.
 func get_active_paths() -> Array[Path2D]:
 	var active_paths: Array[Path2D] = []
-	for index in get_active_path_indices():
-		active_paths.append(paths[index])
+	for index: int in paths.size():
+		if _active_paths_lookup.has(index):
+			active_paths.append(paths[index])
 
 	return active_paths
 

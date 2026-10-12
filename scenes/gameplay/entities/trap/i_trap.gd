@@ -146,7 +146,6 @@ func apply_stats_from_db() -> void:
 		return
 	var data: Dictionary = StatsDB.get_trap(trap_id)
 	var base: Dictionary = data.get("base", {})
-	Log.trace(Log.Level.INFO, "Applying trap stats from StatsDB for %s: %s" % [trap_id, base])
 	if base.has("cost"):
 		cost = int(base["cost"])
 	if base.has("trap_type"):

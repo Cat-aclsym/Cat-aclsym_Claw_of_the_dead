@@ -52,8 +52,6 @@ func _create_explosion_effect(explosion_position: Vector2) -> void:
 
 
 func _explode() -> void:
-	Log.trace(Log.Level.INFO, "BombTrap exploding at %s" % global_position)
-
 	# 1. Effet d'explosion circulaire
 	_create_explosion_effect(global_position)
 
