@@ -9,6 +9,8 @@ const STATS_PATH: String = "res://assets/resources/configs/stats.json"
 # Private variables
 var _data: Dictionary = {}
 var _enemy_scenes: Dictionary[String, PackedScene] = {}
+## Script variables of each script given to [method apply_fields], see [method _get_script_fields].
+var _script_fields: Dictionary[Script, Dictionary] = {}
 
 
 # Built-in functions
@@ -22,15 +24,26 @@ func _ready() -> void:
 
 
 # Public functions
-## Writes each entry of [param values] to the property of [param target] with the same name, converted to the type of that property.
-## [br]An entry without a matching property is skipped with a warning.
+## Writes each entry of [param values] to the script variable of [param target] with the same name, converted to the type of that variable.
+## [br]Only the typed variables of the script of [param target] and of its base scripts are written: built-in properties (position, scale...),
+## untyped variables, numeric variables given a non-numeric text and the [code]speed[/code] of an [IEnemy] (derived from [code]base_speed[/code]) are refused.
+## Each refused entry is logged as an error and skipped.
 ## [br]Example: [code]StatsDB.apply_fields(trap, StatsDB.get_trap("bat_04")["base"])[/code] sets [code]trap.slow_amount[/code] from the [code]slow_amount[/code] key.
 func apply_fields(target: Object, values: Dictionary) -> void:
+	var fields: Dictionary = _get_script_fields(target)
 	for key: String in values:
-		if key not in target:
-			Log.trace(Log.Level.WARN, "StatsDB: %s has no property '%s'." % [target, key])
-			continue
-		target.set(key, type_convert(values[key], typeof(target.get(key))))
+		var value: Variant = values[key]
+		var field_type: int = fields.get(key, TYPE_MAX)
+		if target is IEnemy and key == "speed":
+			Log.trace(Log.Level.ERROR, "StatsDB: the speed of %s is derived from its base speed, use the top-level 'speed' stat." % target)
+		elif field_type == TYPE_MAX:
+			Log.trace(Log.Level.ERROR, "StatsDB: %s has no script variable '%s'." % [target, key])
+		elif field_type == TYPE_NIL:
+			Log.trace(Log.Level.ERROR, "StatsDB: the variable '%s' of %s has no type to convert to." % [key, target])
+		elif field_type in [TYPE_INT, TYPE_FLOAT] and value is String and not (value as String).is_valid_float():
+			Log.trace(Log.Level.ERROR, "StatsDB: '%s' of %s is a number, '%s' is not." % [key, target, value])
+		else:
+			target.set(key, type_convert(value, field_type))
 
 
 ## Returns the gameplay constants of the bullet [param id] (a key of the [code]bullets[/code] section).
@@ -153,3 +166,19 @@ func load_packed_scene(path: String) -> PackedScene:
 ## [br][param category] is [code]"TOWER"[/code], [code]"TRAP"[/code] or [code]"ENEMY"[/code].
 func name_key(category: String, id: String) -> String:
 	return "%s.%s.NAME" % [category, id.to_upper()]
+
+
+# Private functions
+## Returns the script variables of [param target] (its script and its base scripts) by name, each with its [enum Variant.Type] ([code]TYPE_NIL[/code] when untyped).
+## [br]Computed once per script.
+func _get_script_fields(target: Object) -> Dictionary:
+	var script: Script = target.get_script()
+	if script == null:
+		return {}
+	if not _script_fields.has(script):
+		var fields: Dictionary[String, int] = {}
+		for property: Dictionary in script.get_script_property_list():
+			if int(property["usage"]) & PROPERTY_USAGE_SCRIPT_VARIABLE:
+				fields[property["name"]] = property["type"]
+		_script_fields[script] = fields
+	return _script_fields[script]

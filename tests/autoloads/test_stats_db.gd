@@ -8,9 +8,25 @@ var _expected: Dictionary = {}
 
 ## Object with one property of each type [method StatsDB.apply_fields] converts to.
 class FieldsTarget extends RefCounted:
+	enum Mode {OFF, ON, BOOST}
+
 	var count: int = 0
+	var enabled: bool = false
 	var label: String = ""
+	var mode: Mode = Mode.OFF
 	var ratio: float = 0.0
+	@warning_ignore("untyped_declaration")
+	var untyped = null
+
+
+## Node with a script variable next to its built-in properties.
+class NodeTarget extends Node2D:
+	var count: int = 0
+
+
+## Object whose variables come from a base script.
+class DerivedTarget extends FieldsTarget:
+	var extra: int = 0
 
 
 func before() -> void:
@@ -35,6 +51,76 @@ func test_apply_fields_skips_a_key_without_property() -> void:
 
 	assert_int(target.count).is_equal(2)
 	assert_bool("unknown" in target).is_false()
+
+
+func test_apply_fields_converts_bool_and_enum_values() -> void:
+	var target: FieldsTarget = FieldsTarget.new()
+
+	StatsDB.apply_fields(target, {"enabled": 1, "mode": 2.0})
+
+	assert_bool(target.enabled).is_true()
+	assert_int(target.mode).is_equal(FieldsTarget.Mode.BOOST)
+	assert_int(typeof(target.mode)).is_equal(TYPE_INT)
+
+
+func test_apply_fields_refuses_an_enum_given_as_text() -> void:
+	var target: FieldsTarget = FieldsTarget.new()
+	target.mode = FieldsTarget.Mode.ON
+
+	StatsDB.apply_fields(target, {"mode": "BOOST", "count": "abc"})
+
+	assert_int(target.mode).is_equal(FieldsTarget.Mode.ON)
+	assert_int(target.count).is_equal(0)
+
+
+func test_apply_fields_refuses_a_builtin_property() -> void:
+	var node: NodeTarget = auto_free(NodeTarget.new())
+
+	StatsDB.apply_fields(node, {"position": Vector2(5, 5), "scale": Vector2(3, 3), "visible": false, "z_index": 9, "name": "renamed", "count": 4})
+
+	assert_vector(node.position).is_equal(Vector2.ZERO)
+	assert_vector(node.scale).is_equal(Vector2.ONE)
+	assert_bool(node.visible).is_true()
+	assert_int(node.z_index).is_equal(0)
+	assert_str(node.name).is_not_equal("renamed")
+	assert_int(node.count).is_equal(4)
+
+
+func test_apply_fields_refuses_an_untyped_variable() -> void:
+	var target: FieldsTarget = FieldsTarget.new()
+
+	StatsDB.apply_fields(target, {"untyped": 7})
+
+	assert_object(target.untyped).is_null()
+
+
+func test_apply_fields_refuses_an_object_without_script() -> void:
+	var node: Node2D = auto_free(Node2D.new())
+
+	StatsDB.apply_fields(node, {"visible": false})
+
+	assert_bool(node.visible).is_true()
+
+
+func test_apply_fields_writes_the_variables_of_the_base_script() -> void:
+	var target: DerivedTarget = DerivedTarget.new()
+
+	StatsDB.apply_fields(target, {"count": 3, "extra": 5.0})
+
+	assert_int(target.count).is_equal(3)
+	assert_int(target.extra).is_equal(5)
+
+
+func test_apply_fields_refuses_the_speed_of_an_enemy() -> void:
+	var enemy: IEnemy = await TestEnemies.spawn(self, StatsDB.get_enemy_ids()[0])
+	auto_free(enemy.path)
+	var speed_before: float = enemy.speed
+	var base_speed_before: float = enemy.base_speed
+
+	StatsDB.apply_fields(enemy, {"speed": speed_before + 100.0})
+
+	assert_float(enemy.speed).is_equal(speed_before)
+	assert_float(enemy.base_speed).is_equal(base_speed_before)
 
 
 func test_get_bullet_returns_the_json_data() -> void:
