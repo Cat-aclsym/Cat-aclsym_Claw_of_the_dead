@@ -43,7 +43,7 @@ var _choice_blocker := Timer.new()
 #region STATE
 ####################################################################################################
 
-func clear_game_state(_clear_flag:=DialogicGameHandler.ClearFlags.FULL_CLEAR) -> void:
+func _clear_state(_clear_flag:=DialogicGameHandler.ClearFlags.FULL_CLEAR) -> void:
 	hide_all_choices()
 
 
@@ -60,7 +60,7 @@ func _ready() -> void:
 	default_false_behaviour = ProjectSettings.get_setting('dialogic/choices/def_false_behaviour', default_false_behaviour)
 
 
-func post_install() -> void:
+func _post_install() -> void:
 	dialogic.Inputs.dialogic_action.connect(_on_dialogic_action)
 
 #endregion
@@ -252,7 +252,7 @@ func _on_choice_selected(choice_info := {}) -> void:
 		return
 
 	if dialogic.has_subsystem('History'):
-		var all_choices: Array = last_question_info['choices'].map(func(x): return x["text"])
+		var all_choices: Array = last_question_info['choices']
 		if dialogic.has_subsystem('VAR'):
 			dialogic.History.store_simple_history_entry(dialogic.VAR.parse_variables(choice_info.text), "Choice", {'all_choices': all_choices})
 		else:
