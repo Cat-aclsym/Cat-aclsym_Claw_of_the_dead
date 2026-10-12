@@ -1,152 +1,157 @@
-name: Build Cat'aclysm Android APK
+name: Build
 
 on:
   push:
     branches:
       - main
       - develop
-      - feature/workflow
+  pull_request:
+    branches:
+      - main
+      - develop
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  GODOT_VERSION: 4.7.2
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  check:
+    name: Check scripts and smoke test
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
 
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v6
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Setup Godot
+        uses: chickensoft-games/setup-godot@ac93246ea68518a384c1c280a496e5989341f2f6 # v2.4.3
+        with:
+          version: ${{ env.GODOT_VERSION }}
+          use-dotnet: false
+
+      - name: Restore import cache
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: |
+            .godot/imported
+            .godot/uid_cache.bin
+            .godot/global_script_class_cache.cfg
+          key: godot-import-${{ runner.os }}-${{ env.GODOT_VERSION }}-${{ hashFiles('**/*.import', 'project.godot') }}
+          restore-keys: |
+            godot-import-${{ runner.os }}-${{ env.GODOT_VERSION }}-
+
+      - name: Import project
+        run: godot --headless --path . --import
+
+      - name: Check scripts compile
+        run: godot --headless --path . --quit-after 3000 res://tools/check_scripts.tscn
+
+      - name: Smoke test
+        run: godot --headless --path . --quit-after 6000 res://tools/smoke_test.tscn
+
+  export:
+    name: Export Windows and Android
+    needs: check
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Setup Java
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
         with:
           distribution: temurin
           java-version: 17
 
-      - name: Setup Godot
-        uses: chickensoft-games/setup-godot@v2
+      - name: Setup Godot with export templates
+        uses: chickensoft-games/setup-godot@ac93246ea68518a384c1c280a496e5989341f2f6 # v2.4.3
         with:
-          version: 4.4.0
+          version: ${{ env.GODOT_VERSION }}
           use-dotnet: false
+          include-templates: true
 
-      - name: Setup Android export template
-        run: |
-          mkdir -p ~/.local/share/godot/export_templates/4.4.stable
-          wget -q https://github.com/godotengine/godot/releases/download/4.4-stable/Godot_v4.4-stable_export_templates.tpz
-          unzip -q Godot_v4.4-stable_export_templates.tpz
-          mv templates/* ~/.local/share/godot/export_templates/4.4.stable/
-
-      - name: Decode keystore
-        run: |
-          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > ~/Cataclysm.keystore
-
-      - name: Verify keystore
-        run: |
-          keytool -list -keystore ~/Cataclysm.keystore -storepass "${{ secrets.KEYSTORE_PASSWORD }}" -v 2>&1 | head -20 || true
-
-      - name: Configure keystore in export presets
-        env:
-          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-        run: |
-          cat > /tmp/patch_presets.py << 'PYEOF'
-          import os
-          import sys
-
-          password = os.environ["KEYSTORE_PASSWORD"]
-          with open("export_presets.cfg", "r") as f:
-              content = f.read()
-
-          injection = (
-              'package/signed=true\n'
-              'keystore/release="/home/runner/Cataclysm.keystore"\n'
-              f'keystore/release_password="{password}"\n'
-              'keystore/release_user="Cataclysm"\n'
-              'keystore/debug="/home/runner/Cataclysm.keystore"\n'
-              f'keystore/debug_password="{password}"\n'
-              'keystore/debug_user="Cataclysm"'
-          )
-
-          if 'package/signed=true' not in content:
-              print("ERROR: package/signed=true not found in export_presets.cfg")
-              sys.exit(1)
-
-          content = content.replace('package/signed=true', injection)
-
-          with open("export_presets.cfg", "w") as f:
-              f.write(content)
-
-          print("Done!")
-          PYEOF
-          python3 /tmp/patch_presets.py
-          grep -n "keystore" export_presets.cfg || true
+      - name: Restore import cache
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: |
+            .godot/imported
+            .godot/uid_cache.bin
+            .godot/global_script_class_cache.cfg
+          key: godot-import-${{ runner.os }}-${{ env.GODOT_VERSION }}-${{ hashFiles('**/*.import', 'project.godot') }}
+          restore-keys: |
+            godot-import-${{ runner.os }}-${{ env.GODOT_VERSION }}-
 
       - name: Import project
+        run: godot --headless --path . --import
+
+      - name: Export Windows
         run: |
-          godot --headless --import || true
+          mkdir -p exports/windows
+          godot --headless --path . --export-release "Windows Desktop" exports/windows/Cataclysm.exe
 
-      - name: Force Godot resource import
+      - name: Decode Android keystore
+        id: keystore
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
         run: |
-          mkdir -p .godot/editor .godot/imported
-          godot --headless --editor --quit || true
+          if [ -z "$KEYSTORE_BASE64" ]; then
+            echo "signed=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::KEYSTORE_BASE64 is not set, the Android APK is exported with the debug keystore."
+          else
+            printf '%s' "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/Cataclysm.keystore"
+            chmod 600 "$RUNNER_TEMP/Cataclysm.keystore"
+            echo "signed=true" >> "$GITHUB_OUTPUT"
+          fi
 
-      - name: Build APK
+      - name: Export Android (release, signed)
+        if: steps.keystore.outputs.signed == 'true'
+        env:
+          GODOT_ANDROID_KEYSTORE_RELEASE_PATH: ${{ runner.temp }}/Cataclysm.keystore
+          GODOT_ANDROID_KEYSTORE_RELEASE_USER: Cataclysm
+          GODOT_ANDROID_KEYSTORE_RELEASE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
         run: |
-          mkdir -p exports
-          godot --headless --export-release "Android" exports/Cataclysm.apk || true
-          godot --headless --export-release "Android" exports/Cataclysm.apk
+          mkdir -p exports/android
+          godot --headless --path . --export-release "Android" exports/android/Cataclysm.apk
 
-      - name: Install apktool
+      - name: Export Android (debug keystore, no secrets)
+        if: steps.keystore.outputs.signed != 'true'
         run: |
-          wget -q https://github.com/iBotPeaches/Apktool/releases/download/v2.9.3/apktool_2.9.3.jar -O /usr/local/bin/apktool.jar
-          echo '#!/bin/bash' > /usr/local/bin/apktool
-          echo 'java -jar /usr/local/bin/apktool.jar "$@"' >> /usr/local/bin/apktool
-          chmod +x /usr/local/bin/apktool
+          mkdir -p exports/android
+          godot --headless --path . --export-debug "Android" exports/android/Cataclysm.apk
 
-      - name: Inject Firebase Game Loop intent filter
+      - name: Verify Android signature and 16 KB alignment
         run: |
-          apktool d -f exports/Cataclysm.apk -o exports/apk_decoded
-          python3 - <<'EOF'
-          with open("exports/apk_decoded/AndroidManifest.xml", "r") as f:
-              content = f.read()
+          build_tools="$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -n 1)"
+          "$build_tools/apksigner" verify exports/android/Cataclysm.apk
+          "$build_tools/zipalign" -c -P 16 4 exports/android/Cataclysm.apk
 
-          intent_filter = '''
-              <intent-filter>
-                  <action android:name="com.google.intent.action.TEST_LOOP"/>
-                  <category android:name="android.intent.category.DEFAULT"/>
-                  <data android:mimeType="application/javascript"/>
-              </intent-filter>
-              <meta-data android:name="com.google.test.loops" android:value="2"/>'''
-
-          content = content.replace(
-              '</activity>',
-              intent_filter + '\n    </activity>',
-              1
-          )
-
-          with open("exports/apk_decoded/AndroidManifest.xml", "w") as f:
-              f.write(content)
-
-          # Supprimer la référence themed_icon de public.xml
-          with open("exports/apk_decoded/res/values/public.xml", "r") as f:
-              pub = f.read()
-          pub = "\n".join([l for l in pub.splitlines() if "themed_icon" not in l])
-          with open("exports/apk_decoded/res/values/public.xml", "w") as f:
-              f.write(pub)
-
-          print("Done!")
-          EOF
-          rm -rf exports/apk_decoded/res/values-anydpi-v26/
-          apktool b exports/apk_decoded -o exports/Cataclysm_unsigned.apk
-
-      - name: Sign patched APK
-        run: |
-          /usr/local/lib/android/sdk/build-tools/34.0.0/apksigner sign \
-            --ks ~/Cataclysm.keystore \
-            --ks-pass pass:${{ secrets.KEYSTORE_PASSWORD }} \
-            --ks-key-alias Cataclysm \
-            --out exports/Cataclysm.apk \
-            exports/Cataclysm_unsigned.apk
-
-      - name: Upload APK artifact
-        uses: actions/upload-artifact@v4
+      - name: Upload Windows artifact
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: Cataclysm-apk
-          path: exports/Cataclysm.apk
+          name: Cataclysm-windows
+          path: exports/windows/Cataclysm.exe
+          retention-days: 14
+          if-no-files-found: error
+
+      - name: Upload Android artifact
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: Cataclysm-android
+          path: exports/android/Cataclysm.apk
+          retention-days: 14
+          if-no-files-found: error
