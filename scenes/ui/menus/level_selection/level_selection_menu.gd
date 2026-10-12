@@ -66,10 +66,10 @@ func _update() -> void:
 
 	var current_frame: LevelFrame = level_frames[level_index]
 	current_frame.visible = true
+	arc_title_label.text = tr(current_frame.arc_title)
 
 	if background_texture_rect.texture != current_frame.arc_texture:
 		animation_player.play("dim_bg")
-		arc_title_label.text = current_frame.arc_title
 
 func _load_levels() -> void:
 	level_frames.clear()
@@ -118,21 +118,16 @@ func _load_levels() -> void:
 	SignalUtil.connects(dynamic_signals)
 
 
-func _on_frame_start_level(level: ILevel) -> void:
+func _on_frame_start_level(level_id: String) -> void:
 	visible = false
 
-	add_child(level)
-	level.reparent(get_tree().get_root())
-	level.start_level()
+	if await ScenesLoader.start_level(level_id) == null:
+		visible = true
+		return
 
-	Global.ui.start_level()
 	level_selected.emit()
 
-	## Frees inactive level previews once gameplay starts.
 	for frame in level_frames:
-		if frame != level_frames[level_index]:
-			if frame is LevelFrame:
-				frame.unload_level()
 		frame.queue_free()
 
 	if is_instance_valid(locked_frame):

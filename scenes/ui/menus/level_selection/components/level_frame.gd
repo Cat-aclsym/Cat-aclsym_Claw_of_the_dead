@@ -4,7 +4,7 @@ class_name LevelFrame
 extends Control
 ## Manages the level detail preview in the level selection menu.
 
-signal start_level(level: ILevel)
+signal start_level(level_id: String)
 
 ## Constants
 const CONDITION_DONE: Texture2D = preload("res://assets/ui/icons/Star.png")
@@ -22,8 +22,6 @@ const CHALLENGE_JSON_PATH_PATTERN: String = "res://resources/challenges/%s.json"
 @export var level_id: String = "lev.XX"
 
 var arc_texture: Texture2D
-var _level: ILevel = null
-var level: ILevel = null : get = _get_level
 
 @onready var challenges_container: VBoxContainer = $LevelPanelContainer/LevelMarginContainer/LevelVBoxContainer/FooterHBoxContainer/ChallengesContainer
 @onready var description_label: Label = $LevelPanelContainer/LevelMarginContainer/LevelVBoxContainer/TopVBoxContainer/DescriptionLabel
@@ -38,10 +36,6 @@ var level: ILevel = null : get = _get_level
 func _ready() -> void:
 	assert(play_button != null, "play_button is required")
 	configure()
-
-
-func _exit_tree() -> void:
-	unload_level()
 
 
 ## Public functions
@@ -62,14 +56,6 @@ func configure() -> void:
 
 
 ## Private functions
-func _get_level() -> ILevel:
-	if _level != null:
-		return _level
-	var level_scene: PackedScene = load(LEVEL_SCENE_PATH_PATTERN % level_id)
-	_level = level_scene.instantiate() as ILevel
-	return _level
-
-
 func _load_level_scene_state() -> SceneState:
 	var level_scene_path: String = LEVEL_SCENE_PATH_PATTERN % level_id
 	var level_scene := load(level_scene_path) as PackedScene
@@ -97,19 +83,6 @@ func _get_scene_string_property(scene_state: SceneState, property_name: StringNa
 		return fallback
 
 	return fallback
-
-
-func unload_level() -> void:
-	if not is_instance_valid(_level):
-		_level = null
-		return
-
-	if _level.is_inside_tree():
-		return
-
-	var level_to_free: ILevel = _level
-	_level = null
-	level_to_free.queue_free()
 
 
 func _load_challenges() -> void:
@@ -150,7 +123,7 @@ func _load_level_challenge_ids() -> Array[String]:
 
 func _on_play_button_pressed() -> void:
 	Log.trace(Log.Level.DEBUG, "Playing level [%s]" % level_name_label.text)
-	start_level.emit(level)
+	start_level.emit(level_id)
 
 
 func _setup_challenge_ui(node: HBoxContainer, c_id: String, is_completed: bool) -> void:

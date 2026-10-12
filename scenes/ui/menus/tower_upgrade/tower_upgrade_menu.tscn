@@ -60,7 +60,7 @@ size_flags_horizontal = 4
 size_flags_vertical = 1
 size_flags_stretch_ratio = 0.2
 theme_override_fonts/font = ExtResource("3_uyu61")
-text = "Améliorer au niveau X"
+text = ""
 
 [node name="TabsHBoxContainer" type="HBoxContainer" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer"]
 layout_mode = 2
@@ -71,12 +71,12 @@ alignment = 1
 [node name="UpgradeOption1Button" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/TabsHBoxContainer" instance=ExtResource("5_styled_btn")]
 custom_minimum_size = Vector2(160, 40)
 layout_mode = 2
-text = "Option 1"
+text = "TOWER.UPGRADE.OPTION_1"
 
 [node name="UpgradeOption2Button" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/TabsHBoxContainer" instance=ExtResource("5_styled_btn")]
 custom_minimum_size = Vector2(160, 40)
 layout_mode = 2
-text = "Option 2"
+text = "TOWER.UPGRADE.OPTION_2"
 
 [node name="StatsScrollContainer" type="ScrollContainer" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer"]
 custom_minimum_size = Vector2(0, 250)
@@ -115,7 +115,7 @@ size_flags_horizontal = 3
 custom_minimum_size = Vector2(160, 50)
 layout_mode = 2
 theme_type_variation = &"StyledButtonOrange"
-text = "Annuler"
+text = "TOWER.UPGRADE.CANCEL"
 
 [node name="SpacerRight" type="Control" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/ButtonsHBoxContainer"]
 layout_mode = 2

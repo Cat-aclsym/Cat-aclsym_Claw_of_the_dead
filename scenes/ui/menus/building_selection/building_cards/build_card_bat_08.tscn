@@ -56,7 +56,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("4_theme")
 theme_override_font_sizes/font_size = 15
-text = "Tour Tesla"
+text = "TOWER.BAT_08.NAME"
 horizontal_alignment = 1
 vertical_alignment = 1
 

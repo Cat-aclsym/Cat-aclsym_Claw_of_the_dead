@@ -56,7 +56,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("3_xl830")
 theme_override_font_sizes/font_size = 15
-text = "Tour AOE"
+text = "TOWER.BAT_02.NAME"
 horizontal_alignment = 1
 vertical_alignment = 1
 

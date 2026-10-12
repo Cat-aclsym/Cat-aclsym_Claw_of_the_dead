@@ -54,7 +54,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_fonts/font = ExtResource("2_indkb")
 theme_override_font_sizes/font_size = 40
-text = "LevelTitle"
+text = ""
 
 [node name="CatIconTextureRect" type="TextureRect" parent="LevelPanelContainer/LevelMarginContainer/LevelVBoxContainer/TopVBoxContainer/HeaderHBoxContainer"]
 custom_minimum_size = Vector2(80, 70)
@@ -67,7 +67,7 @@ custom_minimum_size = Vector2(300, 20)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2_indkb")
 theme_override_font_sizes/font_size = 24
-text = "Description, blabla bla"
+text = ""
 horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 2
@@ -99,7 +99,7 @@ size_flags_horizontal = 3
 theme_override_constants/line_spacing = -8
 theme_override_fonts/font = ExtResource("2_indkb")
 theme_override_font_sizes/font_size = 16
-text = "challenge 1"
+text = ""
 vertical_alignment = 1
 autowrap_mode = 3
 
@@ -121,7 +121,7 @@ size_flags_horizontal = 3
 theme_override_constants/line_spacing = -8
 theme_override_fonts/font = ExtResource("2_indkb")
 theme_override_font_sizes/font_size = 16
-text = "challenge 2"
+text = ""
 vertical_alignment = 1
 autowrap_mode = 3
 
@@ -143,7 +143,7 @@ size_flags_horizontal = 3
 theme_override_constants/line_spacing = -8
 theme_override_fonts/font = ExtResource("2_indkb")
 theme_override_font_sizes/font_size = 16
-text = "challenge 3"
+text = ""
 vertical_alignment = 1
 autowrap_mode = 3
 

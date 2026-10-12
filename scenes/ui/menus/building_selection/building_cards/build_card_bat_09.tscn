@@ -54,7 +54,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("3_r2ha7")
 theme_override_font_sizes/font_size = 15
-text = "Inferno Tower"
+text = "TOWER.BAT_09.NAME"
 horizontal_alignment = 1
 vertical_alignment = 1
 

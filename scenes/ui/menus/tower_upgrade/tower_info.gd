@@ -10,7 +10,6 @@ var tower: ITower
 @onready var _panel: Control = $InfoPanel
 @onready var _stats_container: VBoxContainer = $InfoPanel/InfoVBoxContainer/StatsScrollContainer/StatsVBoxContainer
 @onready var _stats_scroll: ScrollContainer = $InfoPanel/InfoVBoxContainer/StatsScrollContainer
-@onready var _stats_db: Node = get_node("/root/StatsDB")
 @onready var _tower_title_label: Label = $InfoPanel/InfoVBoxContainer/TowerTitleLabel
 
 # Preloaded resources
@@ -69,23 +68,8 @@ func setup(p_tower: ITower) -> void:
 
 ## Gets the tower name based on the tower's scene name and level
 func _get_tower_name() -> String:
-	var tower_id: String = tower.tower_id if tower != null else ""
-	var base_name: String = ""
-	if _stats_db != null and not tower_id.is_empty():
-		base_name = _stats_db.get_tower_name(tower_id)
-	if base_name.is_empty():
-		base_name = _get_fallback_tower_name()
 	var level_display: String = tr("TOWER.LEVEL.DISPLAY")
-	return level_display % [tr(base_name), tower.level]
-
-func _get_fallback_tower_name() -> String:
-	var tower_scene_path: String = tower.scene_file_path if tower != null else ""
-	var scene_name: String = tower_scene_path.get_file().trim_suffix(".tscn").to_lower()
-	var tower_translation_keys: Dictionary = {
-		"bat_01": "TOWER.BAT_01.NAME",
-		"bat_02": "TOWER.BAT_02.NAME",
-	}
-	return tower_translation_keys.get(scene_name, scene_name)
+	return level_display % [tr(StatsDB.name_key("TOWER", tower.tower_id)), tower.level]
 
 ## Displays a tower stat if it's not zero
 func _display_tower_stat(stat_name: String) -> void:

@@ -113,10 +113,7 @@ func apply_silhouette(texture: Texture2D, _enemy_scale: Vector2 = Vector2.ONE) -
 # Private functions
 func _apply_texts(enemy_id: String) -> void:
 	title_label.text = tr("INGAMEHUD.NEW_ENEMY.TITLE")
-	var translated_enemy_name: String = tr("ENEMY.%s.NAME" % enemy_id.to_upper())
-	if translated_enemy_name == "ENEMY.%s.NAME" % enemy_id.to_upper():
-		translated_enemy_name = enemy_id.replace("_", " ").capitalize()
-	subtitle_label.text = translated_enemy_name
+	subtitle_label.text = tr(StatsDB.name_key("ENEMY", enemy_id))
 
 
 func _play_animation() -> void:

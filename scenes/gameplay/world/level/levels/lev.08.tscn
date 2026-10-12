@@ -5,6 +5,7 @@
 
 [node name="Level08" instance=ExtResource("1_fnsgf")]
 level_id = "lev.08"
-level_name = "8. Fin arc deux"
+level_name = "LEVEL.LEV_08.NAME"
+level_description = "LEVEL.LEV_08.DESC"
 arc_id = "arc.02"
 map_scene = ExtResource("2_7saxg")

@@ -158,7 +158,7 @@ theme = ExtResource("4_theme")
 theme_type_variation = &"HeaderMedium"
 theme_override_fonts/font = ExtResource("5_font")
 theme_override_font_sizes/font_size = 48
-text = "ITEM NAME"
+text = ""
 horizontal_alignment = 1
 
 [node name="SpriteRect" type="TextureRect" parent="GuiMarginContainer/MenuLayout/ContentLayout/LeftPageVBox"]

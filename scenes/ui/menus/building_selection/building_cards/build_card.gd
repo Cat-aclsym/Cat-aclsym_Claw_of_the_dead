@@ -127,17 +127,17 @@ func _on_button_texture_pressed() -> void:
 
 ## Sets [member title_label] from [StatsDB] when the entity has a [code]tower_id[/code] / [code]trap_id[/code].
 func _sync_title_from_stats_db() -> void:
-	var display_name: String = ""
+	var name_key: String = ""
 	if _entity is ITower:
 		var tw: ITower = _entity as ITower
 		if not tw.tower_id.is_empty() and StatsDB.has_tower(tw.tower_id):
-			display_name = StatsDB.get_tower_name(tw.tower_id)
+			name_key = StatsDB.name_key("TOWER", tw.tower_id)
 	elif _entity is ITrap:
 		var trap: ITrap = _entity as ITrap
 		if not trap.trap_id.is_empty() and StatsDB.has_trap(trap.trap_id):
-			display_name = StatsDB.get_trap_name(trap.trap_id)
-	if not display_name.is_empty():
-		title_label.text = display_name
+			name_key = StatsDB.name_key("TRAP", trap.trap_id)
+	if not name_key.is_empty():
+		title_label.text = tr(name_key)
 
 
 func _is_entity_unlocked() -> bool:

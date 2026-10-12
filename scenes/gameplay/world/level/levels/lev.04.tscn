@@ -5,6 +5,7 @@
 
 [node name="Level04" instance=ExtResource("1_kbju7")]
 level_id = "lev.04"
-level_name = "4. Dynamic Paths Test"
+level_name = "LEVEL.LEV_04.NAME"
+level_description = "LEVEL.LEV_04.DESC"
 arc_id = "arc.01"
 map_scene = ExtResource("2_rpwmf")

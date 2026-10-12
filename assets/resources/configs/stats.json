@@ -98,7 +98,6 @@
 				"spread_angle": 15
 			},
 			"level": 1,
-			"name": "Arbre à chat'rché",
 			"scene": "res://scenes/gameplay/entities/tower/towers/bat_01.tscn",
 			"upgrades": [
 				"bat_01_02"
@@ -125,7 +124,6 @@
 				"spread_angle": 15
 			},
 			"level": 1,
-			"name": "Tour Cataboom",
 			"scene": "res://scenes/gameplay/entities/tower/towers/bat_02.tscn",
 			"upgrades": [
 				"bat_02_02"
@@ -161,7 +159,6 @@
 				"spread_angle": 0
 			},
 			"level": 1,
-			"name": "Tour Tesla",
 			"scene": "res://scenes/gameplay/entities/tower/towers/bat_08.tscn",
 			"upgrades": [
 				"bat_08_02"
@@ -180,7 +177,6 @@
 				"spread_angle": 0
 			},
 			"level": 1,
-			"name": "Tour Inferno",
 			"scene": "res://scenes/gameplay/entities/tower/towers/bat_09.tscn",
 			"upgrades": [
 				"bat_09_02"
@@ -196,7 +192,6 @@
 				"max_durability": 1,
 				"trap_type": 1
 			},
-			"name": "Piège à lames",
 			"scene": "res://scenes/gameplay/entities/trap/traps/bat_03.tscn"
 		},
 		"bat_04": {
@@ -205,7 +200,6 @@
 				"slow_amount": 0.3,
 				"trap_type": 0
 			},
-			"name": "Piège ralentissant",
 			"scene": "res://scenes/gameplay/entities/trap/traps/bat_04.tscn"
 		},
 		"bat_05": {
@@ -218,7 +212,6 @@
 				"max_durability": 1,
 				"trap_type": 1
 			},
-			"name": "Bombe",
 			"scene": "res://scenes/gameplay/entities/trap/traps/bat_05.tscn"
 		},
 		"bat_06": {
@@ -229,7 +222,6 @@
 				"poison_interval": 1.0,
 				"trap_type": 0
 			},
-			"name": "Piège empoisonné",
 			"scene": "res://scenes/gameplay/entities/trap/traps/bat_06.tscn"
 		},
 		"bat_07": {
@@ -241,7 +233,6 @@
 				"max_durability": 1,
 				"trap_type": 1
 			},
-			"name": "Piège étourdissant",
 			"scene": "res://scenes/gameplay/entities/trap/traps/bat_07.tscn"
 		}
 	},

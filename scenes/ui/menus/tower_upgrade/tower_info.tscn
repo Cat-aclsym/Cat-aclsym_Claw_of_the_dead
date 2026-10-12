@@ -55,7 +55,7 @@ layout_mode = 2
 size_flags_horizontal = 4
 size_flags_stretch_ratio = 0.3
 theme_override_fonts/font = ExtResource("3_mxka5")
-text = "TOWER.NAME"
+text = ""
 
 [node name="StatsScrollContainer" type="ScrollContainer" parent="InfoPanel/InfoVBoxContainer"]
 custom_minimum_size = Vector2(0, 450)
