@@ -40,6 +40,9 @@
 		},
     	"minesweeper": {
 			"escape_damage": 5,
+			"extra": {
+				"trap_disable_duration": 5
+			},
 			"max_health": 70,
 			"reward": 12,
 			"scene": "res://scenes/gameplay/entities/enemy/enemies/minesweeper.tscn",
@@ -287,7 +290,6 @@
 				"bullet_stat": true,
 				"tower_stat": true
 			},
-			"inferno_mode": 0,
 			"next": [],
 			"price": 150,
 			"tower_stats": {
@@ -303,7 +305,6 @@
 				"bullet_stat": true,
 				"tower_stat": true
 			},
-			"inferno_mode": 1,
 			"next": [],
 			"price": 150,
 			"tower_stats": {
@@ -326,7 +327,6 @@
 			"changes": {
 				"bullet_model": false,
 				"bullet_stat": true,
-				"tower_model": false,
 				"tower_stat": true
 			},
 			"next": [
@@ -356,7 +356,6 @@
 			"changes": {
 				"bullet_model": false,
 				"bullet_stat": true,
-				"tower_model": false,
 				"tower_stat": true
 			},
 			"next": [
@@ -381,7 +380,6 @@
 				"burn_duration": 0,
 				"damage": 27,
 				"damage_multiplier": 0,
-				"dot_damage": 0,
 				"pierce_count": 1,
 				"pierce_reduction": 10,
 				"speed": -200
@@ -389,7 +387,6 @@
 			"changes": {
 				"bullet_model": true,
 				"bullet_stat": true,
-				"tower_model": false,
 				"tower_stat": true
 			},
 			"next": [
@@ -412,7 +409,6 @@
 				"burn_duration": 0,
 				"damage": 25,
 				"damage_multiplier": 0,
-				"dot_damage": 0,
 				"pierce_count": 2,
 				"pierce_reduction": 0,
 				"speed": 0
@@ -420,7 +416,6 @@
 			"changes": {
 				"bullet_model": false,
 				"bullet_stat": true,
-				"tower_model": false,
 				"tower_stat": true
 			},
 			"next": [],
@@ -447,8 +442,7 @@
 			},
 			"changes": {
 				"bullet_model": false,
-				"bullet_stat": false,
-				"tower_model": false,
+				"bullet_stat": true,
 				"tower_stat": true
 			},
 			"next": [
@@ -478,7 +472,6 @@
 			"changes": {
 				"bullet_model": false,
 				"bullet_stat": false,
-				"tower_model": false,
 				"tower_stat": true
 			},
 			"next": [],
@@ -505,8 +498,7 @@
 			},
 			"changes": {
 				"bullet_model": false,
-				"bullet_stat": false,
-				"tower_model": false,
+				"bullet_stat": true,
 				"tower_stat": true
 			},
 			"next": [
@@ -535,8 +527,7 @@
 			},
 			"changes": {
 				"bullet_model": false,
-				"bullet_stat": false,
-				"tower_model": false,
+				"bullet_stat": true,
 				"tower_stat": true
 			},
 			"next": [
@@ -568,7 +559,6 @@
 			"changes": {
 				"bullet_model": true,
 				"bullet_stat": true,
-				"tower_model": false,
 				"tower_stat": true
 			},
 			"next": [
@@ -597,8 +587,7 @@
 			},
 			"changes": {
 				"bullet_model": false,
-				"bullet_stat": false,
-				"tower_model": false,
+				"bullet_stat": true,
 				"tower_stat": true
 			},
 			"next": [],
@@ -626,7 +615,6 @@
 			"changes": {
 				"bullet_model": false,
 				"bullet_stat": true,
-				"tower_model": false,
 				"tower_stat": true
 			},
 			"next": [
@@ -656,7 +644,6 @@
 			"changes": {
 				"bullet_model": false,
 				"bullet_stat": true,
-				"tower_model": false,
 				"tower_stat": true
 			},
 			"next": [],
@@ -693,7 +680,6 @@
 			"changes": {
 				"bullet_model": false,
 				"bullet_stat": true,
-				"tower_model": false,
 				"tower_stat": true
 			},
 			"next": [
@@ -733,7 +719,6 @@
 			"changes": {
 				"bullet_model": false,
 				"bullet_stat": true,
-				"tower_model": false,
 				"tower_stat": true
 			},
 			"next": [
@@ -774,7 +759,6 @@
 			"changes": {
 				"bullet_model": false,
 				"bullet_stat": true,
-				"tower_model": false,
 				"tower_stat": true
 			},
 			"next": [
@@ -814,7 +798,6 @@
 			"changes": {
 				"bullet_model": false,
 				"bullet_stat": true,
-				"tower_model": false,
 				"tower_stat": true
 			},
 			"next": [],
@@ -852,7 +835,6 @@
 			"changes": {
 				"bullet_model": false,
 				"bullet_stat": true,
-				"tower_model": false,
 				"tower_stat": true
 			},
 			"next": [
@@ -892,7 +874,6 @@
 			"changes": {
 				"bullet_model": false,
 				"bullet_stat": true,
-				"tower_model": false,
 				"tower_stat": true
 			},
 			"next": [],

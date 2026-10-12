@@ -34,6 +34,13 @@ enum TowerType {
 	DEBUG_PIERCING, ## The debug piercing tower
 }
 
+## Extra pixels past the range where an enemy still counts as a target, and where a locked target is lost (hysteresis, no flicker).
+const ACQUIRE_RANGE_MARGIN: float = 5.0
+const LOSE_RANGE_MARGIN: float = 10.0
+
+## Stats a map tile modifier multiplies on the tower.
+const MODIFIER_STATS: Array[String] = ["damage", "fire_rate", "reward_multiplier", "shoot_range"]
+
 ## Gameplay keys applied from [member bullet_stats] onto each projectile at fire time (scenes keep VFX only).
 const PROJECTILE_GAMEPLAY_KEYS: Array[String] = [
 	"aoe_duration",
@@ -44,18 +51,23 @@ const PROJECTILE_GAMEPLAY_KEYS: Array[String] = [
 	"chain_bounces",
 	"chain_damage_falloff",
 	"chain_range",
+	"charge_speed",
 	"damage",
 	"damage_multiplier",
 	"electrify_duration",
 	"electrify_slow_amount",
 	"electrify_tick_damage",
 	"electrify_tick_interval",
+	"is_charging",
 	"lightning_blue_tint_strength",
 	"lightning_width_scale",
+	"max_damage_multiplier",
 	"pierce_count",
 	"pierce_reduction",
 	"speed",
 ]
+
+const RADIAL_UPGRADE_MENU: PackedScene = preload("res://scenes/ui/menus/tower_upgrade/radial_menu_tower_upgrade.tscn")
 
 # Exported variables
 ## The bullet scene to be instantiated by the tower
@@ -91,8 +103,11 @@ var prefer_non_electrified_targets: bool = false
 ## Recommended for continuous beams or extremely high-fire-rate towers.
 @export var use_accumulative_popups: bool = false
 
-## Dictionary of modifiers applied to this tower (stat_name -> multiplier)
-var _special_modifiers: Dictionary = {}
+## Multipliers applied by the map tile the tower stands on (stat_name -> multiplier)
+var _special_modifiers: Dictionary[String, float] = {}
+
+## Ids of the upgrades applied to this tower, in order. Stats are recomputed from them whenever something changes.
+var _applied_upgrade_ids: Array[String] = []
 
 ## Data-driven upgrade IDs available for this tower
 var available_upgrade_ids: Array[String] = []
@@ -128,8 +143,6 @@ var enemy_array: Array[IEnemy]
 var selected: bool = false
 ## The state of the tower
 var state: TowerState = TowerState.ACTIVE
-## Flag to cancel ongoing animations
-var _cancel_animations: bool = false
 ## Flag to ignore hover interactions when menu is open
 var _menu_open: bool = false
 ## The target of the tower
@@ -143,12 +156,20 @@ var pending_upgrade_id: String = ""
 var _pulse_tween: Tween = null
 var _scale_tween: Tween = null
 var _range_tween: Tween = null
+## Looping tween that pulses the range polygon while the range is shown
+var _color_tween: Tween = null
+## Enemies in range, rebuilt by every target search
+var _candidates: Array[IEnemy] = []
+## Enemies of [member _candidates] that are not electrified, rebuilt by every target search
+var _non_electrified_candidates: Array[IEnemy] = []
 @export var tower_id: String = ""
 
 # Core methods
 func _ready() -> void:
 	target_type = TargetType.FIRST
 	assert(sprite != null)
+	if bullet_scene == null:
+		Log.trace(Log.Level.ERROR, "Tower %s has no bullet scene" % name)
 	_apply_base_stats_override()
 	_resolve_initial_upgrade_ids()
 	ArmoryManager.append_unlocked_upgrade_ids(self)
@@ -176,8 +197,8 @@ func _process(delta: float) -> void:
 		return
 
 	if is_instance_valid(target):
-		# Verify if target is still valid (alive and in range with a 10px margin to avoid flickering)
-		if target.is_already_dead or global_position.distance_to(target.global_position) > shoot_range + 10.0:
+		# Verify if target is still valid (alive and in range, with a margin to avoid flickering)
+		if not _is_valid_candidate(target, LOSE_RANGE_MARGIN):
 			target = null
 			target_lock_time = 0.0
 			_on_target_lost()
@@ -215,7 +236,7 @@ func apply_stats_from_db() -> void:
 	var data: Dictionary = StatsDB.get_tower(tower_id)
 	var base: Dictionary = data.get("base", {})
 	level = StatsDB.get_tower_level(tower_id)
-	Log.trace(Log.Level.INFO, "Applying tower stats from StatsDB for %s: %s" % [tower_id, base])
+	Log.trace(Log.Level.DEBUG, "Applying tower stats from StatsDB for %s" % tower_id)
 	if base.has("cost"):
 		cost = int(base["cost"])
 	if base.has("fire_rate"):
@@ -233,11 +254,7 @@ func apply_stats_from_db() -> void:
 
 ## Fires a bullet at the current target if conditions are met
 func fire() -> void:
-	if state != TowerState.ACTIVE or not len(enemy_array):
-		return
-
-	if bullet_scene == null:
-		Log.trace(Log.Level.ERROR, "Missing bullet scene")
+	if state != TowerState.ACTIVE or bullet_scene == null or enemy_array.is_empty():
 		return
 
 	_choose_target()
@@ -285,8 +302,11 @@ func fire() -> void:
 	fire_rate_timer.start()
 
 
-## Starts the upgrade process with the given upgrade id
+## Starts the upgrade process with the given upgrade id, an upgrade already running blocks any other one
 func start_upgrade(upgrade_id: String) -> void:
+	if state != TowerState.ACTIVE:
+		Log.trace(Log.Level.WARN, "Cannot start upgrade: tower is not active")
+		return
 	if upgrade_id.is_empty() or not StatsDB.has_upgrade(upgrade_id):
 		Log.trace(Log.Level.ERROR, "Invalid upgrade id: %s" % upgrade_id)
 		return
@@ -303,68 +323,23 @@ func start_upgrade(upgrade_id: String) -> void:
 	$ProgressBar.value = 0
 	$ProgressBar.visible = true
 	$Timer.start()
-	emit_signal("upgrade_started")
+	upgrade_started.emit()
 
 ## Applies the pending upgrade to the tower
 func apply_upgrade() -> void:
 	if pending_upgrade_id.is_empty() or not StatsDB.has_upgrade(pending_upgrade_id):
 		Log.trace(Log.Level.ERROR, "No pending upgrade id to apply")
 		return
-	var changes: Dictionary = StatsDB.get_upgrade_changes(pending_upgrade_id)
-	var tower_stats: Dictionary = StatsDB.get_upgrade_tower_stats(pending_upgrade_id)
-	var bullet_stats_delta: Dictionary = StatsDB.get_upgrade_bullet_stats(pending_upgrade_id)
-	var upgrade_data: Dictionary = StatsDB.get_upgrade(pending_upgrade_id)
-
-	if changes.get("tower_stat", false):
-		_apply_tower_stat_changes(tower_stats)
-
-	if changes.get("bullet_stat", false):
-		_apply_bullet_stat_changes(bullet_stats_delta)
-
-	# Ensure the is_charging flag is correctly synchronized if present in the upgrade
-	if upgrade_data.has("bullet_stats") and upgrade_data["bullet_stats"].has("is_charging"):
-		bullet_stats["is_charging"] = bool(upgrade_data["bullet_stats"]["is_charging"])
-
+	var upgrade_id: String = pending_upgrade_id
+	_applied_upgrade_ids.append(upgrade_id)
+	_recompute_stats()
 	_on_upgrade_applied()
 
-	if changes.get("tower_model", false):
-		var tower_model_path: String = str(upgrade_data.get("tower_model_path", ""))
-		var tower_model_res: Resource = load(tower_model_path) if not tower_model_path.is_empty() else null
-		if tower_model_res is Texture2D:
-			if sprite.sprite_frames != null and sprite.sprite_frames.has_animation("idle"):
-				var idle_anim: SpriteFrames = sprite.sprite_frames
-				var anim_name: StringName = &"idle"
-				# Determine frame index: 0 to add if empty, or last frame index to update
-				var frame_idx: int = 0
-				if idle_anim.get_frame_count(anim_name) > 0:
-					frame_idx = idle_anim.get_frame_count(anim_name) - 1
-
-				idle_anim.set_frame_texture(anim_name, frame_idx, tower_model_res)
-
-				if not sprite.is_playing() or sprite.animation != anim_name:
-					sprite.play(anim_name)
-			else:
-				var reason: String = "'idle' animation missing"
-				if sprite.sprite_frames == null:
-					reason = "no sprite_frames assigned"
-				elif not sprite.sprite_frames.has_animation("idle"):
-					reason = "'idle' animation missing"
-				Log.trace(Log.Level.WARN, "Cannot apply tower_model texture: %s in AnimatedSprite2D." % reason)
-		elif not tower_model_path.is_empty():
-			Log.trace(Log.Level.ERROR, "tower_model_path is not a Texture2D as expected. Type: %s" % typeof(tower_model_res))
-
-	if changes.get("bullet_model", false):
-		var bullet_override: PackedScene = StatsDB.get_upgrade_bullet_scene(pending_upgrade_id)
-		if bullet_override != null:
-			bullet_scene = bullet_override
-
-	available_upgrade_ids = _filter_upgrade_ids(StatsDB.get_upgrade_next_ids(pending_upgrade_id))
-	sell_price += ceil(float(StatsDB.get_upgrade_price(pending_upgrade_id)) / 2.0)
-	update_dependent_properties()
-	level += int(tower_stats.get("level", 1))
+	available_upgrade_ids = _filter_upgrade_ids(StatsDB.get_upgrade_next_ids(upgrade_id))
+	sell_price += ceili(StatsDB.get_upgrade_price(upgrade_id) / 2.0)
 	pending_upgrade_id = ""
 	state = TowerState.ACTIVE
-	emit_signal("upgrade_completed")
+	upgrade_completed.emit()
 
 ## Updates properties that depend on tower stats
 func update_dependent_properties() -> void:
@@ -380,32 +355,18 @@ func update_dependent_properties() -> void:
 
 	_update_z_index()
 
-## Applies special modifiers from a map tile
+## Applies special modifiers from a map tile, the applied upgrades are kept
 func apply_special_modifier(modifiers: Dictionary) -> void:
 	if modifiers.is_empty():
 		_special_modifiers.clear()
 	else:
-		for stat: String in modifiers.keys():
-			_special_modifiers[stat] = modifiers[stat]
+		for stat: String in MODIFIER_STATS:
+			if modifiers.has(stat):
+				_special_modifiers[stat] = float(modifiers[stat])
 
-	# Apply base stats first to avoid stacking multipliers incorrectly
-	_apply_base_stats_override()
-
-	# Apply modifiers to basic tower stats
-	if _special_modifiers.has("fire_rate"):
-		fire_rate *= _special_modifiers["fire_rate"]
-	if _special_modifiers.has("shoot_range"):
-		shoot_range *= _special_modifiers["shoot_range"]
-	if _special_modifiers.has("reward_multiplier"):
-		reward_multiplier *= _special_modifiers["reward_multiplier"]
-
-	# Apply modifiers to bullet stats
-	if _special_modifiers.has("damage") and bullet_stats.has("damage"):
-		bullet_stats["damage"] = float(bullet_stats["damage"]) * float(_special_modifiers["damage"])
-
+	_recompute_stats()
 	Log.trace(Log.Level.INFO, "Tower {0} stats updated with modifiers: {1}".format([name, _special_modifiers]))
 	_apply_special_visual_effect(modifiers)
-	update_dependent_properties()
 
 ## Applies a visual effect to the tower based on the modifier
 func _apply_special_visual_effect(modifier: Dictionary) -> void:
@@ -432,10 +393,6 @@ func _apply_special_visual_effect(modifier: Dictionary) -> void:
 	_scale_tween = create_tween()
 	_scale_tween.tween_property(target, "scale", Vector2(target_scale, target_scale), 0.3).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 
-## Builds the tower
-func build_tower() -> void:
-	pass
-
 ## Sells the tower
 func sell_tower() -> void:
 	ILevel.current_level.coins += sell_price
@@ -452,6 +409,21 @@ func disable_tower() -> void:
 	if is_instance_valid(fire_rate_timer):
 		fire_rate_timer.stop()
 
+## Disables the tower for [param duration] seconds and dims its sprite meanwhile. The timer dies with the tower.
+func disable_tower_for(duration: float) -> void:
+	if state == TowerState.DISABLED:
+		return
+	disable_tower()
+
+	if not is_instance_valid(sprite):
+		return
+	var original_modulate: Color = sprite.modulate
+	sprite.modulate = Color(original_modulate.r, original_modulate.g, original_modulate.b, 0.5)
+
+	var restore_tween: Tween = create_tween()
+	restore_tween.tween_interval(duration)
+	restore_tween.tween_callback(_end_timed_disable.bind(original_modulate))
+
 ## Enables the tower functionality back
 func enable_tower() -> void:
 	if state != TowerState.DISABLED:
@@ -461,6 +433,10 @@ func enable_tower() -> void:
 		fire_rate_timer.start()
 
 # Private methods
+func _end_timed_disable(original_modulate: Color) -> void:
+	sprite.modulate = original_modulate
+	enable_tower()
+
 ## Animates the range display
 func show_range(p_show: bool, smooth: bool = true) -> void:
 	selected = p_show
@@ -488,6 +464,7 @@ func show_range(p_show: bool, smooth: bool = true) -> void:
 		_color_variation()
 	else:
 		selected = false
+		_stop_color_variation()
 		if smooth:
 			_range_tween = create_tween().set_parallel(true)
 			_range_tween.tween_property(polygon_2d, "scale", Vector2(0, 0), 0.2).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
@@ -502,6 +479,42 @@ func show_range(p_show: bool, smooth: bool = true) -> void:
 			outline.scale = Vector2(0, 0)
 			polygon_2d.visible = false
 			outline.visible = false
+
+## Rebuilds every stat from scratch: database base stats, armory buffs, each applied upgrade in order, then the tile modifiers.
+func _recompute_stats() -> void:
+	bullet_stats.clear()
+	reward_multiplier = 1.0
+	prefer_non_electrified_targets = false
+	_apply_base_stats_override()
+
+	for upgrade_id: String in _applied_upgrade_ids:
+		_apply_upgrade_stats(upgrade_id)
+
+	fire_rate *= _special_modifiers.get("fire_rate", 1.0)
+	shoot_range *= _special_modifiers.get("shoot_range", 1.0)
+	reward_multiplier *= _special_modifiers.get("reward_multiplier", 1.0)
+	if bullet_stats.has("damage"):
+		bullet_stats["damage"] = float(bullet_stats["damage"]) * _special_modifiers.get("damage", 1.0)
+
+	update_dependent_properties()
+
+## Applies the tower and bullet changes of one upgrade, plus its bullet scene override.
+func _apply_upgrade_stats(upgrade_id: String) -> void:
+	var changes: Dictionary = StatsDB.get_upgrade_changes(upgrade_id)
+	var tower_stats: Dictionary = StatsDB.get_upgrade_tower_stats(upgrade_id)
+
+	if changes.get("tower_stat", false):
+		_apply_tower_stat_changes(tower_stats)
+
+	if changes.get("bullet_stat", false):
+		_apply_bullet_stat_changes(StatsDB.get_upgrade_bullet_stats(upgrade_id))
+
+	if changes.get("bullet_model", false):
+		var bullet_override: PackedScene = StatsDB.get_upgrade_bullet_scene(upgrade_id)
+		if bullet_override != null:
+			bullet_scene = bullet_override
+
+	level += int(tower_stats.get("level", 1))
 
 func _apply_tower_stat_changes(tower_stats: Dictionary) -> void:
 	for stat: String in tower_stats.keys():
@@ -549,7 +562,7 @@ func _apply_projectile_config(bullet_instance: IBullet) -> void:
 		match key:
 			"speed", "pierce_count", "burn_damage_base", "aoe_range", "pierce_reduction":
 				bullet_instance.set(key, int(round(float(v))))
-			"damage", "burn_duration", "aoe_duration", "aoe_tick", "damage_multiplier":
+			"damage", "burn_duration", "aoe_duration", "aoe_tick", "damage_multiplier", "charge_speed", "max_damage_multiplier":
 				bullet_instance.set(key, float(v))
 			"is_charging":
 				bullet_instance.set(key, bool(v))
@@ -570,28 +583,27 @@ func _resolve_initial_upgrade_ids() -> void:
 	if available_upgrade_ids.is_empty() and not tower_id.is_empty():
 		available_upgrade_ids = StatsDB.get_upgrade_ids_for_tower(tower_id)
 
+## True if [param enemy] is alive and within the range extended by [param margin] pixels. [param enemy] must not be freed.
+func _is_valid_candidate(enemy: IEnemy, margin: float) -> bool:
+	return not enemy.is_already_dead and global_position.distance_to(enemy.global_position) <= shoot_range + margin
+
 func _choose_target() -> void:
 	var old_target: IEnemy = target
 
-	# Filter enemies to keep only those actually in range (with a small margin)
-	var valid_candidates: Array[IEnemy] = []
+	# Keep only the enemies actually in range (with a small margin), the buffers are reused between searches
+	_candidates.clear()
+	_non_electrified_candidates.clear()
 	for e in enemy_array:
-		if is_instance_valid(e) and not e.is_already_dead and global_position.distance_to(e.global_position) <= shoot_range + 5.0:
-			valid_candidates.append(e)
+		if is_instance_valid(e) and _is_valid_candidate(e, ACQUIRE_RANGE_MARGIN):
+			_candidates.append(e)
+			if prefer_non_electrified_targets and not e.is_electrified():
+				_non_electrified_candidates.append(e)
 
-	if prefer_non_electrified_targets:
-		var non_electrified_enemies: Array[IEnemy] = valid_candidates.filter(
-			func(enemy: IEnemy) -> bool:
-				return enemy.has_method("is_electrified") and not enemy.is_electrified()
-		)
-		if not non_electrified_enemies.is_empty():
-			_choose_target_from_list(non_electrified_enemies)
-			if target != old_target:
-				target_lock_time = 0.0
-				_on_target_lost()
-			return
+	if _non_electrified_candidates.is_empty():
+		target = _pick_target(_candidates)
+	else:
+		target = _pick_target(_non_electrified_candidates)
 
-	_choose_target_from_list(valid_candidates)
 	if target != old_target:
 		target_lock_time = 0.0
 		_on_target_lost()
@@ -603,8 +615,8 @@ func _on_target_lost() -> void:
 
 
 ## Virtual method called every frame when a target is locked.
-func _on_target_locked(_delta: float) -> void:
-	target_lock_time += _delta
+func _on_target_locked(delta: float) -> void:
+	target_lock_time += delta
 
 
 ## Virtual method to handle custom firing logic. Returns true if the fire event was handled.
@@ -622,24 +634,30 @@ func _on_upgrade_applied() -> void:
 	pass
 
 
-func _choose_target_from_list(candidates: Array[IEnemy]) -> void:
+## Returns the enemy of [param candidates] picked by [member target_type], null when there is none.
+func _pick_target(candidates: Array[IEnemy]) -> IEnemy:
 	if candidates.is_empty():
-		target = null
-		return
+		return null
 
 	match target_type:
-		TargetType.FIRST:
-			target = candidates[0]
 		TargetType.LAST:
-			target = candidates[-1]
+			return candidates[-1]
 		TargetType.STRONGEST:
-			_get_strongest_target_from_list(candidates)
+			return _find_by_health(candidates, true)
 		TargetType.WEAKEST:
-			_get_weakest_target_from_list(candidates)
+			return _find_by_health(candidates, false)
 		TargetType.RANDOM:
-			_get_random_target_from_list(candidates)
+			return candidates.pick_random()
 		_:
-			target = candidates[0]
+			return candidates[0]
+
+## Returns the enemy of [param candidates] with the most health, or the least when [param strongest] is false.
+func _find_by_health(candidates: Array[IEnemy], strongest: bool) -> IEnemy:
+	var best: IEnemy = candidates[0]
+	for enemy in candidates:
+		if enemy.health > best.health if strongest else enemy.health < best.health:
+			best = enemy
+	return best
 
 ## Function to create the range polygon for the tower when the tower is selected.
 ## [param radius] - The radius of the range polygon.
@@ -672,89 +690,22 @@ func _create_range_polygon(radius: float, precision: int) -> void:
 	outline.width = 3
 	outline.default_color = Color(1, 1, 1, 1)
 
-## Function to get the strongest enemy in the enemy array.
-func _get_strongest_target():
-	_get_strongest_target_from_list(enemy_array)
-
-func _get_strongest_target_from_list(candidates: Array[IEnemy]) -> void:
-	## Set the initial strongest enemy to the first enemy in the enemy array
-	var strongest: IEnemy = candidates[0]
-	## Set the initial health of the strongest enemy to the health of the first enemy in the enemy array
-	var strongest_health: float = candidates[0].health
-	## Loop through the enemy array to find the enemy with the most health
-	for enemies in candidates:
-		if enemies.health > strongest_health:
-			strongest = enemies
-			strongest_health = enemies.health
-	## Set the target to the strongest enemy
-	target = strongest
-
-## Function to get the weakest enemy in the enemy array.
-func _get_weakest_target():
-	_get_weakest_target_from_list(enemy_array)
-
-func _get_weakest_target_from_list(candidates: Array[IEnemy]) -> void:
-	## Set the initial weakest enemy to the first enemy in the enemy array
-	var weakest: IEnemy = candidates[0]
-	## Set the initial health of the weakest enemy to the health of the first enemy in the enemy array
-	var weakest_health: float = candidates[0].health
-	## Loop through the enemy array to find the enemy with the least health
-	for enemies in candidates:
-		if enemies.health < weakest_health:
-			weakest = enemies
-			weakest_health = enemies.health
-	## Set the target to the weakest enemy
-	target = weakest
-
-## Function to get the first enemy in the enemy array.
-func _get_first_target():
-	_get_first_target_from_list(enemy_array)
-
-func _get_first_target_from_list(candidates: Array[IEnemy]) -> void:
-	## Set the target to the first enemy in the enemy array
-	target = candidates[0]
-
-## Function to get the last enemy in the enemy array.
-func _get_last_target():
-	_get_last_target_from_list(enemy_array)
-
-func _get_last_target_from_list(candidates: Array[IEnemy]) -> void:
-	## Set the target to the last enemy in the enemy array
-	target = candidates[-1]
-
-## Function to get a random enemy in the enemy array.
-func _get_random_target():
-	_get_random_target_from_list(enemy_array)
-
-func _get_random_target_from_list(candidates: Array[IEnemy]) -> void:
-	## Create a RandomNumberGenerator and set the seed to the current time
-	var rng := RandomNumberGenerator.new()
-	rng.randomize()
-	## Generate a random number between 0 and the length of the enemy array
-	var num: int = rng.randi_range(0, len(candidates)-1)
-	target = candidates[num]
-
-## Function to interpolate between two values.
+## Pulses the range polygon between visible and transparent while the range is shown.
 func _color_variation() -> void:
-	## Check if the tower is selected
-	if not selected or _cancel_animations or polygon_2d == null:
+	if not selected or polygon_2d == null:
 		return
-	## Set the initial lerp state to 1
-	var lerp_state: float = 1
-	## Loop to interpolate the color of the range polygon
-	while lerp_state > 0 and not _cancel_animations:
-		polygon_2d.color = lerp(Color(color, 0.3), Color(color, 0), 1-lerp_state)
-		await get_tree().create_timer(0.02).timeout
-		lerp_state -= 0.05
-	## Loop to interpolate the color of the range polygon
-	while lerp_state < 1 and not _cancel_animations:
-		polygon_2d.color = lerp(Color(color, 0), Color(color, 0.3), lerp_state)
-		await get_tree().create_timer(0.02).timeout
-		lerp_state += 0.05
+	_stop_color_variation()
 
-	if not _cancel_animations:
-		## Call the function to interpolate the color of the range polygon
-		_color_variation()
+	var visible_color: Color = Color(color, 0.3)
+	var transparent_color: Color = Color(color, 0)
+	_color_tween = create_tween().set_loops()
+	_color_tween.tween_property(polygon_2d, "color", transparent_color, 0.4).from(visible_color)
+	_color_tween.tween_property(polygon_2d, "color", visible_color, 0.4).from(transparent_color)
+
+func _stop_color_variation() -> void:
+	if _color_tween:
+		_color_tween.kill()
+		_color_tween = null
 
 ## Function to check the z position of the tower and adapt the z index of the tower.
 func _update_z_index() -> void:
@@ -791,9 +742,9 @@ func _on_tower_hover_box_mouse_exited() -> void:
 func _on_timer_timeout() -> void:
 	$ProgressBar.value += 1
 	if $ProgressBar.value >= $ProgressBar.max_value:
-			apply_upgrade()
-			$Timer.stop()
-			$ProgressBar.visible = false
+		apply_upgrade()
+		$Timer.stop()
+		$ProgressBar.visible = false
 
 func _on_tower_pressed() -> void:
 	Log.trace(Log.Level.DEBUG, "Tower Pressed")
@@ -807,12 +758,7 @@ func _on_tower_pressed() -> void:
 		Log.trace(Log.Level.DEBUG, "Tower upgrade menu already exists")
 		return
 
-	var tower_upgrade_menu: PackedScene = load("res://scenes/ui/menus/tower_upgrade/radial_menu_tower_upgrade.tscn")
-	if tower_upgrade_menu == null:
-		Log.trace(Log.Level.ERROR, "Failed to load tower upgrade menu scene")
-		return
-
-	var tower_upgrade_menu_instance: RadialTowerUpgradeMenu = tower_upgrade_menu.instantiate()
+	var tower_upgrade_menu_instance: RadialTowerUpgradeMenu = RADIAL_UPGRADE_MENU.instantiate()
 	tower_upgrade_menu_instance.position = position
 	tower_upgrade_menu_instance.name = "TowerUpgrade"
 	self.add_child(tower_upgrade_menu_instance)
