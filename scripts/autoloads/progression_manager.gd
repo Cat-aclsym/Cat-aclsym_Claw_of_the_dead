@@ -13,6 +13,8 @@ const _TRAP_DATA_SCRIPT: GDScript = preload("res://scripts/progression/trap_data
 
 # Public variables
 var data: ProgressionData = ProgressionData.new()
+## When false, [method save_game] never touches [constant SAVE_PATH] (used by headless tools such as the smoke test).
+var persistence_enabled: bool = true
 
 # Built-in functions
 func _ready() -> void:
@@ -296,6 +298,9 @@ func reset_armory_spending() -> void:
 
 ## Saves the current progression to disk.
 func save_game() -> void:
+	if not persistence_enabled:
+		return
+
 	var file := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
 	if not file:
 		Log.trace(Log.Level.ERROR, "Failed to save game to %s" % SAVE_PATH)
