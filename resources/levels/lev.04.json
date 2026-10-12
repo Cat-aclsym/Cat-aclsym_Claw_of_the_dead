@@ -1,17 +1,18 @@
 {
-  "status": "done",
+  "start_coins": 250,
+  "max_health": 20,
   "description": "Dynamic paths test level - tests multi-path spawning with wave-based path activation",
   "waves": [
 	[
 	  { "wait_s": 2 },
 	  {
-		"enemy_id": "ene.01",
+		"enemy_id": "default_zombie",
 		"count": 3,
 		"spawner": 0
 	  },
 	  { "wait_s": 1 },
 	  {
-		"enemy_id": "ene.01",
+		"enemy_id": "default_zombie",
 		"count": 2,
 		"spawner": 0
 	  },
@@ -20,13 +21,13 @@
 	[
 	  { "wait_s": 1 },
 	  {
-		"enemy_id": "ene.01",
+		"enemy_id": "default_zombie",
 		"count": 4,
 		"spawner": 0
 	  },
 	  { "wait_s": 1 },
 	  {
-		"enemy_id": "ene.02",
+		"enemy_id": "damage_zombie",
 		"count": 2,
 		"spawner": 0
 	  },
@@ -35,18 +36,18 @@
 	[
 	  { "wait_s": 1 },
 	  {
-		"enemy_id": "ene.01",
+		"enemy_id": "default_zombie",
 		"count": 3,
 		"spawner": 0
 	  },
 	  {
-		"enemy_id": "ene.01",
+		"enemy_id": "default_zombie",
 		"count": 3,
 		"spawner": 1
 	  },
 	  { "wait_s": 1 },
 	  {
-		"enemy_id": "ene.02",
+		"enemy_id": "damage_zombie",
 		"count": 2,
 		"spawner": -1
 	  },
@@ -55,18 +56,18 @@
 	[
 	  { "wait_s": 1 },
 	  {
-		"enemy_id": "ene.01",
+		"enemy_id": "default_zombie",
 		"count": 4,
 		"spawner": -1
 	  },
 	  { "wait_s": 1 },
 	  {
-		"enemy_id": "ene.02",
+		"enemy_id": "damage_zombie",
 		"count": 3,
 		"spawner": 0
 	  },
 	  {
-		"enemy_id": "ene.02",
+		"enemy_id": "damage_zombie",
 		"count": 3,
 		"spawner": 1
 	  },
@@ -75,23 +76,23 @@
 	[
 	  { "wait_s": 1 },
 	  {
-		"enemy_id": "ene.01",
+		"enemy_id": "default_zombie",
 		"count": 3,
 		"spawner": 0
 	  },
 	  {
-		"enemy_id": "ene.01",
+		"enemy_id": "default_zombie",
 		"count": 3,
 		"spawner": 1
 	  },
 	  {
-		"enemy_id": "ene.01",
+		"enemy_id": "default_zombie",
 		"count": 3,
 		"spawner": 2
 	  },
 	  { "wait_s": 1 },
 	  {
-		"enemy_id": "ene.03",
+		"enemy_id": "rat",
 		"count": 2,
 		"spawner": -1
 	  },
@@ -100,19 +101,19 @@
 	[
 	  { "wait_s": 1 },
 	  {
-		"enemy_id": "ene.01",
+		"enemy_id": "default_zombie",
 		"count": 5,
 		"spawner": -1
 	  },
 	  { "wait_s": 1 },
 	  {
-		"enemy_id": "ene.02",
+		"enemy_id": "damage_zombie",
 		"count": 4,
 		"spawner": -1
 	  },
 	  { "wait_s": 1 },
 	  {
-		"enemy_id": "ene.03",
+		"enemy_id": "rat",
 		"count": 3,
 		"spawner": -1
 	  },
@@ -121,28 +122,28 @@
 	[
 	  { "wait_s": 1 },
 	  {
-		"enemy_id": "ene.01",
+		"enemy_id": "default_zombie",
 		"count": 4,
 		"spawner": 1
 	  },
 	  {
-		"enemy_id": "ene.01",
+		"enemy_id": "default_zombie",
 		"count": 4,
 		"spawner": 2
 	  },
 	  {
-		"enemy_id": "ene.01",
+		"enemy_id": "default_zombie",
 		"count": 4,
 		"spawner": 3
 	  },
 	  { "wait_s": 2 },
 	  {
-		"enemy_id": "ene.02",
+		"enemy_id": "damage_zombie",
 		"count": 3,
 		"spawner": -1
 	  },
 	  {
-		"enemy_id": "ene.03",
+		"enemy_id": "rat",
 		"count": 2,
 		"spawner": -1
 	  },
@@ -151,19 +152,19 @@
 	[
 	  { "wait_s": 1 },
 	  {
-		"enemy_id": "ene.01",
+		"enemy_id": "default_zombie",
 		"count": 6,
 		"spawner": -1
 	  },
 	  { "wait_s": 1 },
 	  {
-		"enemy_id": "ene.02",
+		"enemy_id": "damage_zombie",
 		"count": 5,
 		"spawner": -1
 	  },
 	  { "wait_s": 2 },
 	  {
-		"enemy_id": "ene.03",
+		"enemy_id": "rat",
 		"count": 4,
 		"spawner": -1
 	  },
@@ -172,33 +173,33 @@
 	[
 	  { "wait_s": 1 },
 	  {
-		"enemy_id": "ene.01",
+		"enemy_id": "default_zombie",
 		"count": 4,
 		"spawner": 0
 	  },
 	  {
-		"enemy_id": "ene.01",
+		"enemy_id": "default_zombie",
 		"count": 4,
 		"spawner": 1
 	  },
 	  {
-		"enemy_id": "ene.01",
+		"enemy_id": "default_zombie",
 		"count": 4,
 		"spawner": 2
 	  },
 	  {
-		"enemy_id": "ene.01",
+		"enemy_id": "default_zombie",
 		"count": 4,
 		"spawner": 4
 	  },
 	  { "wait_s": 2 },
 	  {
-		"enemy_id": "ene.02",
+		"enemy_id": "damage_zombie",
 		"count": 5,
 		"spawner": -1
 	  },
 	  {
-		"enemy_id": "ene.03",
+		"enemy_id": "rat",
 		"count": 3,
 		"spawner": -1
 	  },
@@ -207,19 +208,19 @@
 	[
 	  { "wait_s": 1 },
 	  {
-		"enemy_id": "ene.01",
+		"enemy_id": "default_zombie",
 		"count": 8,
 		"spawner": -1
 	  },
 	  { "wait_s": 2 },
 	  {
-		"enemy_id": "ene.02",
+		"enemy_id": "damage_zombie",
 		"count": 6,
 		"spawner": -1
 	  },
 	  { "wait_s": 2 },
 	  {
-		"enemy_id": "ene.03",
+		"enemy_id": "rat",
 		"count": 5,
 		"spawner": -1
 	  },

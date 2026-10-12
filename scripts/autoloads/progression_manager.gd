@@ -242,7 +242,8 @@ func load_game() -> void:
 
 	apply_settings()
 	Log.trace(Log.Level.DEBUG, "Game loaded from %s (absolute: %s)" % [SAVE_PATH, file.get_path_absolute()])
-	Log.trace(Log.Level.DEBUG, "Data: %s" % data.save())
+	if Global.debug:
+		Log.trace(Log.Level.DEBUG, "Data: %s" % data.save())
 
 
 ## Marks an enemy as seen in the encyclopedia.

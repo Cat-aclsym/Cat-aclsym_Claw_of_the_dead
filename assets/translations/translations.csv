@@ -4,6 +4,7 @@ SOCIALS.TEXT.LABEL,Socials,Réseaux sociaux
 MISC.TEXT.LABEL,Misc.,Divers
 PAUSE.TITLE,Pause,Pause
 LEVEL.MENU.TITLE,Choose level:,Choisissez un niveau :
+LEVEL.WAVE,Wave %d,Vague %d
 FIRST.LEVEL.NAME,First level,Premier niveau
 SECOND.LEVEL.NAME,Second level,Deuxième niveau
 THIRD.LEVEL.NAME,Third level,Troisième niveau

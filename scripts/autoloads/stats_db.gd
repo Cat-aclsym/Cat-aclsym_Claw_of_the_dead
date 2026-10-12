@@ -8,6 +8,7 @@ const STATS_PATH: String = "res://assets/resources/configs/stats.json"
 
 # Private variables
 var _data: Dictionary = {}
+var _enemy_scenes: Dictionary[String, PackedScene] = {}
 
 
 # Built-in functions
@@ -96,6 +97,22 @@ func get_upgrade_changes(id: String) -> Dictionary:
 
 func get_enemy(id: String) -> Dictionary:
 	return _data.get("enemies", {}).get(id, {})
+
+
+## Returns the scene of the enemy [param id] (a key of the [code]enemies[/code] section), loaded on first use.
+## [br]Logs an error and returns [code]null[/code] when the id is unknown or its scene cannot be loaded.
+func get_enemy_scene(id: String) -> PackedScene:
+	if _enemy_scenes.has(id):
+		return _enemy_scenes[id]
+
+	var scene_path: String = get_enemy(id).get("scene", "")
+	var scene: PackedScene = load_packed_scene(scene_path)
+	if scene == null:
+		Log.trace(Log.Level.ERROR, "No enemy scene for enemy id '%s' (scene path: '%s')" % [id, scene_path])
+		return null
+
+	_enemy_scenes[id] = scene
+	return scene
 
 
 func get_trap(id: String) -> Dictionary:

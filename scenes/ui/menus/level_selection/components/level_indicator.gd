@@ -46,16 +46,6 @@ func update() -> void:
 	if not disabled:
 		texture_normal = textures[status]
 
-static func string_to_status(s: String) -> LevelIndicator.Status:
-	match s:
-		"current":
-			return LevelIndicator.Status.CURRENT
-		"done":
-			return LevelIndicator.Status.COMPLETED
-		"locked":
-			return LevelIndicator.Status.LOCKED
-	return LevelIndicator.Status.ERROR
-
 # private
 
 

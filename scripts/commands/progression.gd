@@ -110,6 +110,9 @@ func _execute(console: Console, args: Array) -> int:
 
 			match ut:
 				"enemy":
+					if not StatsDB.has_enemy(uid):
+						console.push_error_("Unknown enemy id: " + uid)
+						return ERR_INVALID_PARAMETER
 					ProgressionManager.mark_enemy_seen(uid)
 					console.push_text("Marked enemy as seen: " + uid)
 				"level":

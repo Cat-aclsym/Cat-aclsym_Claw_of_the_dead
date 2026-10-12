@@ -1,10 +1,10 @@
 {
   "challenges": [
 	"cha.000",
-	"cha.005",
-	"cha.006"
+	"cha.005"
   ],
-  "status": "done",
+  "start_coins": 250,
+  "max_health": 20,
   "waves": [
 	[
 	  {
@@ -16,14 +16,14 @@
 		"wait_s": 0.5
 	  },
 	  {
-		"enemy_id": "ene.02",
+		"enemy_id": "damage_zombie",
 		"count": 1,
 		"spawner": 0
 	  }
 	],
 	[
 	  {
-		"enemy_id": "ene.03",
+		"enemy_id": "rat",
 		"count": 10,
 		"spawner": 0
 	  },
@@ -31,7 +31,7 @@
 		"wait_s": 1.5
 	  },
 	  {
-		"enemy_id": "ene.01",
+		"enemy_id": "default_zombie",
 		"count": 4,
 		"spawner": 0
 	  }
@@ -41,12 +41,12 @@
 		"wait_s": 3
 	  },
 	  {
-		"enemy_id": "ene.03",
+		"enemy_id": "rat",
 		"count": 1,
 		"spawner": 0
 	  },
 	  {
-		"enemy_id": "ene.02",
+		"enemy_id": "damage_zombie",
 		"count": 6,
 		"spawner": 0
 	  }

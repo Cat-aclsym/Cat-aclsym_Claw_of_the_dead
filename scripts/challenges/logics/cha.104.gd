@@ -11,7 +11,7 @@ const TARGET_PASS: int = 5
 
 
 # Private variables
-var _initial_health: int = 20
+var _initial_health: int = 0
 
 
 # Public functions
@@ -19,7 +19,7 @@ var _initial_health: int = 20
 func start_monitoring() -> void:
 	super.start_monitoring()
 	if ILevel.current_level:
-		_initial_health = ILevel.current_level.health
+		_initial_health = ILevel.current_level.max_health
 
 
 ## Evaluates if the challenge conditions are met at the end of the level.

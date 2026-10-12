@@ -3,9 +3,6 @@
 class_name SplitterZombie
 extends IEnemy
 
-## The scene of the small zombie to spawn upon death
-const SMALL_ZOMBIE_SCENE = preload("res://scenes/gameplay/entities/enemy/enemies/small_zombie.tscn")
-
 ## Visual tint for the splitter zombie
 const SPLITTER_TINT: Color = Color(1.0, 0.3, 0.3, 1.0)
 
@@ -29,10 +26,14 @@ func _spawn_small_zombies() -> void:
 	if path == null or path_follow == null:
 		return
 		
+	var small_zombie_scene: PackedScene = StatsDB.get_enemy_scene("small_zombie")
+	if small_zombie_scene == null:
+		return
+
 	var current_progress = path_follow.get_progress()
-	
+
 	for i in range(spawn_count):
-		var small_zombie: IEnemy = SMALL_ZOMBIE_SCENE.instantiate()
+		var small_zombie: IEnemy = small_zombie_scene.instantiate()
 		
 		# Add a bit of randomness to the progress to avoid overlapping
 		var random_offset = randf_range(-10.0, 10.0)

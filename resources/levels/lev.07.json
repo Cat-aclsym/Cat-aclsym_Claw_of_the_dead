@@ -4,11 +4,12 @@
     "cha.201",
     "cha.202"
   ],
-  "status": "locked",
+  "start_coins": 250,
+  "max_health": 20,
   "waves": [
     [
       {
-        "enemy_id": "ene.01",
+        "enemy_id": "default_zombie",
         "count": 2,
         "spawner": 0
       },
@@ -16,14 +17,14 @@
         "wait_s": 5
       },
       {
-        "enemy_id": "ene.01",
+        "enemy_id": "default_zombie",
         "count": 1,
         "spawner": 0
       }
     ],
     [
       {
-        "enemy_id": "ene.01",
+        "enemy_id": "default_zombie",
         "count": 2,
         "spawner": 0
       },
@@ -31,7 +32,7 @@
         "wait_s": 3
       },
       {
-        "enemy_id": "ene.01",
+        "enemy_id": "default_zombie",
         "count": 1,
         "spawner": 0
       }

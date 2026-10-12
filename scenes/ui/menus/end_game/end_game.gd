@@ -67,7 +67,7 @@ func init(victory: bool) -> void:
 	if build_menu_button:
 		build_menu_button.set_pressed_no_signal(false)
 
-	elapsed_time_seconds = floor(ILevel.current_level.end_time - ILevel.current_level.start_time)
+	elapsed_time_seconds = floori(ILevel.current_level.elapsed_time)
 	elapsed_time_minutes = floor(elapsed_time_seconds / 60.)
 
 	if elapsed_time_seconds > 60:
@@ -76,7 +76,7 @@ func init(victory: bool) -> void:
 	else:
 		elapsed_time_text = str(elapsed_time_seconds) + "s"
 	time_label.text = tr(default_time_text) % str(elapsed_time_text)
-	life_label.text = tr(default_health_text) % (str(ILevel.current_level.health) + "/20")
+	life_label.text = tr(default_health_text) % (str(ILevel.current_level.health) + "/" + str(ILevel.current_level.max_health))
 
 	if victory:
 		title_label.text = tr("ENDGAMEMENU.LEVEL.TITLE.WIN")

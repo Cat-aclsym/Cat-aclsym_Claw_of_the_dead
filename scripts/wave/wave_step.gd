@@ -4,37 +4,25 @@ class_name WaveStep
 extends RefCounted
 ## Base class for a single step in a wave (spawn, wait, etc.).
 
-## Order.SPAWN data indexes.
+## Spawn step data keys.
 const ENEMY_ID := "enemy_id"
 const COUNT := "count"
 const SPAWNER := "spawner"
 
-## Order.WAIT data indexes.
+## Wait step data keys.
 const WAIT_S := "wait_s"
 
-## Types of wave steps.
-enum Order {
-	UNDEFINED = 0,
-	COMMAND,
-	SPAWN,
-	WAIT,
-	DIALOG
-}
-
-var _order := WaveStep.Order.UNDEFINED
 var _data: Dictionary = {}
 
 
 # core
-func _init(in_order: WaveStep.Order, in_data: Dictionary) -> void:
-	assert(in_order != WaveStep.Order.UNDEFINED)
-	_order = in_order
+func _init(in_data: Dictionary) -> void:
 	_data = in_data
 
 
 func _to_string() -> String:
-	return "WaveStep({order}): {data}".format({
-		"order": _order,
+	return "{type}: {data}".format({
+		"type": get_script().get_global_name(),
 		"data": _data
 	})
 
@@ -67,11 +55,6 @@ func exec() -> void:
 func is_over() -> bool:
 	Log.trace(Log.Level.WARN, "You are trying to execute WaveStep base class.")
 	return true
-
-
-## Returns the step order/type.
-func order() -> WaveStep.Order:
-	return _order
 
 
 # private

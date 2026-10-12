@@ -16,5 +16,4 @@ func check_completion() -> bool:
 	if not ILevel.current_level:
 		return false
 
-	var elapsed: float = floor(ILevel.current_level.end_time - ILevel.current_level.start_time)
-	return elapsed < TARGET_TIME_LIMIT_SECONDS
+	return floori(ILevel.current_level.elapsed_time) < TARGET_TIME_LIMIT_SECONDS

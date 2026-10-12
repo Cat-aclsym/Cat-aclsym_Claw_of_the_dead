@@ -28,7 +28,6 @@ const BUILD_SELECTION_MENU: PackedScene = preload("res://scenes/ui/menus/buildin
 @onready var health_ghost_progress_bar: TextureProgressBar = %HealthGhostProgressBar
 @onready var health_rich_text_label: Label = %HUDVBoxContainer/HeartTextureRect/HealthMarginContainer/MarginContainer/HealthTextureProgressBar/HealthLabel
 @onready var health_texture_progress_bar: TextureProgressBar = %HUDVBoxContainer/HeartTextureRect/HealthMarginContainer/MarginContainer/HealthTextureProgressBar
-@onready var new_wave_count_label: Label = $NewWaveCountLabel
 @onready var pause_button: TextureButton = $PauseMarginContainer/PauseButton
 @onready var skip_animation_player: AnimationPlayer = $SkipMarginContainer/SkipAnimationPlayer
 @onready var skip_time_scale_button: TextureButton = $SkipMarginContainer/SkipButton
@@ -100,6 +99,8 @@ func load_ui() -> void:
 	visible = true
 	_last_coins = ILevel.current_level.coins
 	_last_health = ILevel.current_level.health
+	health_ghost_progress_bar.max_value = ILevel.current_level.max_health
+	health_texture_progress_bar.max_value = ILevel.current_level.max_health
 	SignalUtil.connects([{SignalUtil.WHO: ILevel.current_level, SignalUtil.WHAT: "stats_updated", SignalUtil.TO: _update}])
 	_update()
 
@@ -352,12 +353,11 @@ func _update() -> void:
 	_last_health = current_health
 
 	coins_rich_text_label.text = tr(default_coins_text) % current_coins
-	health_rich_text_label.text = tr(default_health_text) % (str(ILevel.current_level.health) + "/20")
+	health_rich_text_label.text = tr(default_health_text) % (str(ILevel.current_level.health) + "/" + str(ILevel.current_level.max_health))
 	health_texture_progress_bar.value = ILevel.current_level.health
 
 	# Dynamic scaling via shader
-	var max_health: float = 20.0 # À ajuster si la vie max change dynamiquement
-	var health_ratio: float = float(ILevel.current_level.health) / max_health
+	var health_ratio: float = float(ILevel.current_level.health) / ILevel.current_level.max_health
 	if health_texture_progress_bar.material is ShaderMaterial:
 		health_texture_progress_bar.material.set_shader_parameter("health_percentage", health_ratio)
 

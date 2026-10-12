@@ -4,5 +4,3 @@
 extends Node
 
 const END_GAME_MENU: PackedScene = preload("res://scenes/ui/menus/end_game/end_game.tscn")
-
-var enemies_scene: Dictionary = {}

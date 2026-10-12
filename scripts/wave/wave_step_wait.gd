@@ -2,22 +2,19 @@
 
 class_name WaveStepWait
 extends WaveStep
-## A wave step that waits for a certain amount of time.
+## A wave step that waits for a certain amount of game time, so pausing the level freezes it.
 
-
-# core
-func _init(in_data: Dictionary) -> void:
-	super._init(WaveStep.Order.WAIT, in_data)
+## Level game time at the first [method exec], negative until then.
+var _start: float = -1.0
 
 
 # public
 ## Records the start time of the wait if it hasn't been set yet.
 func exec() -> void:
-	if not _data.has("start"):
-		_data["start"] = Time.get_unix_time_from_system()
+	if _start < 0.0:
+		_start = ILevel.current_level.elapsed_time
 
 
 ## Returns true if the wait time has elapsed.
 func is_over() -> bool:
-	var elapsed: float = Time.get_unix_time_from_system() - _data["start"]
-	return elapsed >= _data[WaveStep.WAIT_S]
+	return ILevel.current_level.elapsed_time - _start >= _data[WaveStep.WAIT_S]
