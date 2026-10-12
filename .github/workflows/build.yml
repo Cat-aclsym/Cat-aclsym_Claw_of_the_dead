@@ -42,10 +42,8 @@ jobs:
       - name: Restore import cache
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
-          path: |
-            .godot/imported
-            .godot/uid_cache.bin
-            .godot/global_script_class_cache.cfg
+          # uid_cache.bin is left out: a cache restored from a fallback key would map uids to renamed paths.
+          path: .godot/imported
           key: godot-import-${{ runner.os }}-${{ env.GODOT_VERSION }}-${{ hashFiles('**/*.import', 'project.godot') }}
           restore-keys: |
             godot-import-${{ runner.os }}-${{ env.GODOT_VERSION }}-
@@ -88,10 +86,7 @@ jobs:
       - name: Restore import cache
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
-          path: |
-            .godot/imported
-            .godot/uid_cache.bin
-            .godot/global_script_class_cache.cfg
+          path: .godot/imported
           key: godot-import-${{ runner.os }}-${{ env.GODOT_VERSION }}-${{ hashFiles('**/*.import', 'project.godot') }}
           restore-keys: |
             godot-import-${{ runner.os }}-${{ env.GODOT_VERSION }}-
