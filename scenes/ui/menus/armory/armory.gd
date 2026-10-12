@@ -28,14 +28,13 @@ var _selected_node_id: String = ""
 @onready var description_label: Label = %DescriptionLabel
 @onready var description_panel: PanelContainer = %DescriptionPanel
 @onready var description_title_label: Label = %DescriptionTitleLabel
-@onready var help_button: TextureButton = %HelpButton
+@onready var help_button: Button = %HelpButton
 @onready var items_hbox: HBoxContainer = %ItemsHBox
-@onready var reset_cancel_button: TextureButton = %ResetCancelButton
-@onready var reset_confirm_button: TextureButton = %ResetConfirmButton
+@onready var reset_cancel_button: Button = %ResetCancelButton
+@onready var reset_confirm_button: Button = %ResetConfirmButton
 @onready var reset_confirm_root: Control = %ResetConfirmRoot
 @onready var reset_message_label: Label = %ResetMessageLabel
-@onready var reset_spent_stars_button: BaseButton = %ResetSpentStarsButton
-@onready var reset_spent_stars_label: Label = get_node("MainMargin/VBox/HeaderHBox/ResetSpentStarsButton/ResetSpentStarsLabel") as Label
+@onready var reset_spent_stars_button: Button = %ResetSpentStarsButton
 @onready var scroll_buildings: ScrollContainer = %ScrollBuildings
 @onready var signals: Array[Dictionary] = [
 	{SignalUtil.WHO: close_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_close_pressed},
@@ -110,18 +109,17 @@ func _ready() -> void:
 	assert(reset_confirm_root != null, "reset_confirm_root node not found")
 	assert(reset_message_label != null, "reset_message_label node not found")
 	assert(reset_spent_stars_button != null, "reset_spent_stars_button node not found")
-	assert(reset_spent_stars_label != null, "reset_spent_stars_label node not found")
 	assert(scroll_buildings != null, "scroll_buildings node not found")
 	assert(stars_count_label != null, "stars_count_label node not found")
 	assert(title_label != null, "title_label node not found")
 	reset_message_label.text = tr("ARMORY.RESET_STARS_CONFIRM")
-	(reset_confirm_button.get_node(^"Label") as Label).text = tr("ARMORY.RESET_CONFIRM_OK")
-	(reset_cancel_button.get_node(^"Label") as Label).text = tr("ARMORY.RESET_CANCEL")
+	reset_confirm_button.text = tr("ARMORY.RESET_CONFIRM_OK")
+	reset_cancel_button.text = tr("ARMORY.RESET_CANCEL")
 	SignalUtil.connects(signals)
 	if not ArmoryManager.armory_updated.is_connected(_on_armory_updated):
 		ArmoryManager.armory_updated.connect(_on_armory_updated)
 	title_label.text = tr("ARMORY.TITLE")
-	reset_spent_stars_label.text = tr("ARMORY.RESET_SPENT_STARS")
+	reset_spent_stars_button.text = tr("ARMORY.RESET_SPENT_STARS")
 	_refresh()
 	_maybe_show_armory_intro()
 
@@ -376,7 +374,6 @@ func _sync_armory_item_state(item: ArmoryItem, node_id: String) -> void:
 func _update_reset_button_visual() -> void:
 	var is_disabled: bool = reset_spent_stars_button.disabled
 	reset_spent_stars_button.modulate = _RESET_BUTTON_DISABLED_MODULATE if is_disabled else _RESET_BUTTON_ENABLED_MODULATE
-	reset_spent_stars_label.modulate = _RESET_BUTTON_DISABLED_MODULATE if is_disabled else _RESET_BUTTON_ENABLED_MODULATE
 
 
 func _get_armory_intro_path() -> String:

@@ -97,5 +97,5 @@ func _refresh_construction_cards() -> void:
 
 
 func _update_tab_visuals() -> void:
-	tower_tab_button.disabled = (_current_tab == Tab.TOWERS)
-	trap_tab_button.disabled = (_current_tab == Tab.TRAPS)
+	tower_tab_button.modulate = Color.WHITE if _current_tab == Tab.TOWERS else Color(0.5, 0.5, 0.5, 1.0)
+	trap_tab_button.modulate = Color.WHITE if _current_tab == Tab.TRAPS else Color(0.5, 0.5, 0.5, 1.0)

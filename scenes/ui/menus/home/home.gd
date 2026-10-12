@@ -15,18 +15,16 @@ var _option_menu_instance: Options
 
 const _LEVEL_SCENE_PATH_TEMPLATE: String = "res://scenes/gameplay/world/level/levels/%s.tscn"
 
-@onready var armory_button: TextureButton = %ArmoryButton
-@onready var armory_label: Label = $GuiMarginContainer/GuiHBoxContainer/HomeScreenVBoxContainer/ArmoryButton/ArmoryLabel
+@onready var armory_button: Button = %ArmoryButton
 @onready var debug_stats_button: Button = %DebugStatsButton
-@onready var encyclopedia_button: TextureButton = %EncyclopediaButton
+@onready var encyclopedia_button: Button = %EncyclopediaButton
 @onready var encyclopedia_exclamation: TextureRect = %EncyclopediaExclamation
-@onready var encyclopedia_label: Label = $GuiMarginContainer/GuiHBoxContainer/HomeScreenVBoxContainer/EncyclopediaButton/EncyclopediaLabel
 @onready var gui_margin_container: MarginContainer = $GuiMarginContainer
-@onready var play_button: TextureButton = %PlayButton
-@onready var settings_button: TextureButton = %SettingsButton
+@onready var play_button: Button = %PlayButton
+@onready var settings_button: Button = %SettingsButton
 
-@onready var _default_armory_text: String = armory_label.text
-@onready var _default_encyclopedia_text: String = encyclopedia_label.text
+@onready var _default_armory_text: String = armory_button.text
+@onready var _default_encyclopedia_text: String = encyclopedia_button.text
 
 @onready var _armory_menu: PackedScene = preload("res://scenes/ui/menus/armory/armory.tscn")
 @onready var _encyclopedia_menu: PackedScene = preload("res://scenes/ui/menus/hud/encyclopedia.tscn")
@@ -44,11 +42,9 @@ const _LEVEL_SCENE_PATH_TEMPLATE: String = "res://scenes/gameplay/world/level/le
 # core
 func _ready() -> void:
 	assert(armory_button != null, "armory_button node not found")
-	assert(armory_label != null, "armory_label node not found")
 	assert(debug_stats_button != null, "debug_stats_button node not found")
 	assert(encyclopedia_button != null, "encyclopedia_button node not found")
 	assert(encyclopedia_exclamation != null, "encyclopedia_exclamation node not found")
-	assert(encyclopedia_label != null, "encyclopedia_label node not found")
 	assert(gui_margin_container != null, "gui_margin_container node not found")
 	assert(play_button != null, "play_button node not found")
 	assert(settings_button != null, "settings_button node not found")
@@ -59,10 +55,6 @@ func _ready() -> void:
 	_update_first_play_home_lock_state()
 	_update_encyclopedia_notification()
 
-	ButtonEffects.apply(armory_button)
-	ButtonEffects.apply(encyclopedia_button)
-	ButtonEffects.apply(play_button)
-	ButtonEffects.apply(settings_button)
 	if Global.debug:
 		debug_stats_button.visible = true
 
@@ -164,13 +156,13 @@ func _update_encyclopedia_notification() -> void:
 	encyclopedia_exclamation.visible = ProgressionManager.has_unseen_encyclopedia_enemies() or ProgressionManager.has_unseen_encyclopedia_towers()
 
 
-func _set_button_locked(button: TextureButton, label: Label, is_locked: bool, unlocked_text: String) -> void:
+func _set_button_locked(button: Button, is_locked: bool, unlocked_text: String) -> void:
 	button.disabled = is_locked
 	button.modulate = Color(0.45, 0.45, 0.45, 1.0) if is_locked else Color.WHITE
-	label.text = "?" if is_locked else unlocked_text
+	button.text = "?" if is_locked else unlocked_text
 
 
 func _update_first_play_home_lock_state() -> void:
 	var is_locked: bool = not ProgressionManager.is_tutorial_completed()
-	_set_button_locked(armory_button, armory_label, is_locked, _default_armory_text)
-	_set_button_locked(encyclopedia_button, encyclopedia_label, is_locked, _default_encyclopedia_text)
+	_set_button_locked(armory_button, is_locked, _default_armory_text)
+	_set_button_locked(encyclopedia_button, is_locked, _default_encyclopedia_text)

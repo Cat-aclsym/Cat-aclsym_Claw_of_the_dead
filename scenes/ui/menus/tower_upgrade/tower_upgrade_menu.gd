@@ -12,9 +12,8 @@ var selected_upgrade_id: String = ""
 var _upgrade_ids: Array[String] = []
 var _current_upgrade_index: int = 0
 
-@onready var _cancel_button: TextureButton = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/ButtonsHBoxContainer/CancelButton
-@onready var _confirm_button: TextureButton = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/ButtonsHBoxContainer/ConfirmButton
-@onready var _confirm_label: Label = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/ButtonsHBoxContainer/ConfirmButton/PriceRow/Label
+@onready var _cancel_button: Button = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/ButtonsHBoxContainer/CancelButton
+@onready var _confirm_button: Button = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/ButtonsHBoxContainer/ConfirmButton
 @onready var _panel: Control = $UpgradeDescriptionTextureRect
 @onready var _stats_container: VBoxContainer = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/StatsScrollContainer/VBoxContainer
 @onready var _stats_scroll: ScrollContainer = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/StatsScrollContainer
@@ -31,23 +30,14 @@ var _current_upgrade_index: int = 0
 ]
 
 # Preloaded resources
-const OPTION_ACTIVE_TEXTURE: Texture2D = preload("res://assets/ui/buttons/Bouton Vert.svg")
-const OPTION_INACTIVE_TEXTURE: Texture2D = preload("res://assets/ui/buttons/Bouton Bleu.svg")
 const STAT_BAR_SCENE: PackedScene = preload("res://scenes/ui/menus/tower_upgrade/stat_bar.tscn")
 
 # Constants
 const MAX_STAT_VALUE: float = StatBar.MAX_STAT_VALUE
-## Same color for all interaction states (no desktop-only hover/pressed tint; mobile-friendly).
-const OPTION_TAB_FONT_COLOR: Color = Color.WHITE
-var _option_active_style: StyleBoxTexture
-var _option_inactive_style: StyleBoxTexture
 
 # Core methods
 func _ready() -> void:
 	SignalUtil.connects(signals)
-	_setup_option_button_styles()
-	_flatten_option_tab_font_colors(_option1_button)
-	_flatten_option_tab_font_colors(_option2_button)
 	_option1_button.focus_mode = Control.FOCUS_NONE
 	_option2_button.focus_mode = Control.FOCUS_NONE
 	Global.paused = true
@@ -97,7 +87,7 @@ func _refresh_upgrade_view() -> void:
 
 	# Set title and confirm price
 	var upgrade_price: int = int(upgrade.get("price", 0))
-	_confirm_label.text = tr("TOWER.UPGRADE.PRICE") % upgrade.price
+	_confirm_button.text = tr("TOWER.UPGRADE.PRICE") % upgrade.price
 	_upgrade_title_label.text = _get_upgrade_title(upgrade)
 	_set_active_tab_button(_current_upgrade_index)
 
@@ -235,36 +225,5 @@ func _update_scroll_mode(displayed_stats: int) -> void:
 		_stats_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 
 
-func _setup_option_button_styles() -> void:
-	_option_active_style = StyleBoxTexture.new()
-	_option_active_style.texture = OPTION_ACTIVE_TEXTURE
-	_option_active_style.texture_margin_left = 8.0
-	_option_active_style.texture_margin_top = 8.0
-	_option_active_style.texture_margin_right = 8.0
-	_option_active_style.texture_margin_bottom = 8.0
-
-	_option_inactive_style = StyleBoxTexture.new()
-	_option_inactive_style.texture = OPTION_INACTIVE_TEXTURE
-	_option_inactive_style.texture_margin_left = 8.0
-	_option_inactive_style.texture_margin_top = 8.0
-	_option_inactive_style.texture_margin_right = 8.0
-	_option_inactive_style.texture_margin_bottom = 8.0
-
-
 func _apply_option_button_style(button: Button, is_active: bool) -> void:
-	var style: StyleBoxTexture = _option_active_style if is_active else _option_inactive_style
-	button.add_theme_stylebox_override("normal", style)
-	button.add_theme_stylebox_override("hover", style)
-	button.add_theme_stylebox_override("pressed", style)
-	button.add_theme_stylebox_override("focus", style)
-	button.add_theme_stylebox_override("disabled", style)
-
-
-func _flatten_option_tab_font_colors(button: Button) -> void:
-	var c: Color = OPTION_TAB_FONT_COLOR
-	button.add_theme_color_override("font_color", c)
-	button.add_theme_color_override("font_hover_color", c)
-	button.add_theme_color_override("font_pressed_color", c)
-	button.add_theme_color_override("font_hover_pressed_color", c)
-	button.add_theme_color_override("font_focus_color", c)
-	button.add_theme_color_override("font_disabled_color", c)
+	button.theme_type_variation = &"StyledButtonGreen" if is_active else &"StyledButton"
