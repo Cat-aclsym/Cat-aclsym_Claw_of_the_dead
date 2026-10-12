@@ -275,10 +275,10 @@ func _focus_camera_on_hint() -> void:
 		return
 	if not is_instance_valid(_tracked_level) or not is_instance_valid(_tracked_level.map):
 		return
-	var tm: TileMap = _tracked_level.map.tilemap
+	var tm: TileMapLayer = _tracked_level.map.tilemap
 	if tm == null:
 		return
-	var rect: Rect2i = tm.get_used_rect()
+	var rect: Rect2i = IMap.get_combined_used_rect(tm)
 	if rect.size == Vector2i.ZERO:
 		return
 	Global.camera.global_position = tm.to_global(tm.map_to_local(rect.position + rect.size / 2))

@@ -42,11 +42,11 @@ tile_layout = 4
 tile_size = Vector2i(64, 32)
 sources/0 = SubResource("TileSetAtlasSource_x21wf")
 
-[node name="TileMapDebug" type="TileMap"]
+[node name="TileMapDebug" type="TileMapLayer"]
 y_sort_enabled = true
 tile_set = SubResource("TileSet_qhica")
-format = 2
-layer_0/y_sort_enabled = true
-layer_1/name = "Layer1"
-layer_1/y_sort_enabled = true
-layer_1/z_index = 1
+
+[node name="Layer1" type="TileMapLayer" parent="."]
+z_index = 1
+y_sort_enabled = true
+tile_set = SubResource("TileSet_qhica")

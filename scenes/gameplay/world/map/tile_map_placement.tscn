@@ -13,8 +13,6 @@ tile_layout = 5
 tile_size = Vector2i(64, 32)
 sources/0 = SubResource("TileSetAtlasSource_place")
 
-[node name="TileMapPlacement" type="TileMap"]
+[node name="TileMapPlacement" type="TileMapLayer"]
+y_sort_enabled = true
 tile_set = SubResource("TileSet_place")
-format = 2
-layer_0/name = "Placement"
-layer_0/y_sort_enabled = true

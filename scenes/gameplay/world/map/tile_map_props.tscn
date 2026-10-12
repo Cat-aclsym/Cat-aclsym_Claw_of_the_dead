@@ -36,10 +36,7 @@ texture_region_size = Vector2i(32, 32)
 tile_size = Vector2i(32, 32)
 sources/0 = SubResource("TileSetAtlasSource_props")
 
-[node name="TileMapProps" type="TileMap"]
+[node name="TileMapProps" type="TileMapLayer"]
+z_index = 1
 y_sort_enabled = true
 tile_set = SubResource("TileSet_props")
-format = 2
-layer_0/name = "Props"
-layer_0/y_sort_enabled = true
-layer_0/z_index = 1

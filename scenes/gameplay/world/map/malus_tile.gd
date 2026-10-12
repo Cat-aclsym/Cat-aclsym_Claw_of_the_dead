@@ -76,10 +76,10 @@ func _resolve_tint_from_map() -> void:
 	if modifier.has("color"):
 		_tint = modifier["color"]
 
-func _find_parent_tilemap() -> TileMap:
+func _find_parent_tilemap() -> TileMapLayer:
 	var current: Node = self
 	while current != null:
-		if current is TileMap:
-			return current as TileMap
+		if current is TileMapLayer:
+			return current as TileMapLayer
 		current = current.get_parent()
 	return null

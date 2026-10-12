@@ -16,8 +16,8 @@ extends Sprite2D
 
 
 ## Returns tilemap cells that must not accept towers under this decoration.
-## [param tilemap] The map [TileMap] used for coordinate conversion.
-func get_blocked_cells(tilemap: TileMap) -> Array[Vector2i]:
+## [param tilemap] The map [TileMapLayer] used for coordinate conversion.
+func get_blocked_cells(tilemap: TileMapLayer) -> Array[Vector2i]:
 	var cells: Array[Vector2i] = []
 	if use_sprite_bounds and texture != null:
 		var sprite_rect := _get_drawn_world_rect().grow(-bounds_inset_px)

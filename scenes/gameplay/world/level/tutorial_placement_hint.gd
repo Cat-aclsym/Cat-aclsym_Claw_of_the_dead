@@ -13,7 +13,7 @@ const BORDER_WIDTH: float = 3.0
 const FILL_ALPHA_RATIO: float = 0.25
 const COLOR: Color = Color(0.25, 1.0, 0.45)
 
-@export var snap_tilemap: TileMap = null
+@export var snap_tilemap: TileMapLayer = null
 
 var _time: float = 0.0
 var _half_w: float = 32.0

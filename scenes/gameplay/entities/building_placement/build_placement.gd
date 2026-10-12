@@ -28,7 +28,7 @@ enum CursorState {
 }
 
 ## Reference to the tilemap node
-var tm_ref: TileMap = null
+var tm_ref: TileMapLayer = null
 
 var _invalid_cells: Dictionary = {}
 var _is_dragging: bool = false
@@ -219,7 +219,7 @@ func _cancel_build() -> void:
 func _find_nearest_valid_build_cell(origin_cell: Vector2i, template: IBuilding) -> Vector2i:
 	if not tm_ref:
 		return origin_cell
-	var bounds: Rect2i = Rect2i(tm_ref.get_used_rect()).grow(8)
+	var bounds: Rect2i = IMap.get_combined_used_rect(tm_ref).grow(8)
 	var visited: Dictionary = {}
 	var queue: Array[Vector2i] = [origin_cell]
 	visited[origin_cell] = true
@@ -250,7 +250,7 @@ func _get_initial_build_position() -> Vector2:
 		return world_position
 
 	if tm_ref:
-		var map_rect: Rect2i = tm_ref.get_used_rect()
+		var map_rect: Rect2i = IMap.get_combined_used_rect(tm_ref)
 		var map_center: Vector2i = map_rect.position + (map_rect.size / 2)
 		return tm_ref.map_to_local(map_center)
 
@@ -285,7 +285,7 @@ func _is_ground_building_placeable(pos: Vector2, building: IBuilding = null) -> 
 	var map: IMap = ILevel.current_level.map if ILevel.current_level else null
 	if not is_instance_valid(map) or map.placement_tilemap == null:
 		return false
-	if map.placement_tilemap.get_cell_source_id(0, tm_pos) == -1:
+	if map.placement_tilemap.get_cell_source_id(tm_pos) == -1:
 		return false
 
 	if _is_position_on_path(pos):

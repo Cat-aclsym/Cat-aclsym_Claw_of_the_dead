@@ -13,7 +13,6 @@ const BONUS_TILE_LAYER_NAME: String = "Special Bonus"
 const BONUS_TILE_LAYER_Z_INDEX: int = -16
 const SPECIAL_TILE_DEBUG_COLOR: Color = Color(0.2, 0.4, 1.0, 0.55)
 const SPECIAL_TILE_DEBUG_EXCLUSION_COLOR: Color = Color(1.0, 0.2, 0.2, 0.35)
-const SPECIAL_TILE_LAYER_INDEX: int = 3
 const SPECIAL_TILE_MAX_DISTANCE_TILES: float = 2.0
 const SPECIAL_TILE_MIN_DISTANCE_BETWEEN_TILES: float = 2.0
 ## Intro sequence timings for special tiles.
@@ -37,12 +36,12 @@ const PATH_INDICATOR_START_TYPE: int = 0
 @export var show_start_indicators: bool = true
 @export_range(0.0, 100.0, 0.1) var special_tile_percentage: float = 2.0
 
-## Invisible TileMap that marks every tile where towers can be placed.
-@export var placement_tilemap: TileMap
+## Invisible [TileMapLayer] that marks every tile where towers can be placed.
+@export var placement_tilemap: TileMapLayer
 ## Optional square-grid props overlay (for example [TileMapProps]).
-@export var props_tilemap: TileMap
-## Reference to the TileMap node for map layout
-@export var tilemap: TileMap
+@export var props_tilemap: TileMapLayer
+## Root [TileMapLayer] of the map layout, its child [TileMapLayer] nodes are the extra layers.
+@export var tilemap: TileMapLayer
 
 ## Array of paths that enemies can follow
 var paths: Array[Path2D] = []
@@ -55,6 +54,8 @@ var _bonus_tile_scene_source_id: int = -1
 var _bonus_tile_scene_tile_id: int = -1
 var _malus_tile_scene_source_id: int = -1
 var _malus_tile_scene_tile_id: int = -1
+## Layer created at runtime on top of [member tilemap]'s tile set that hosts the bonus and malus scene tiles.
+var _special_tile_layer: TileMapLayer = null
 
 ## Dictionary of special tiles (position -> modifier data)
 var special_tiles: Dictionary = {}
@@ -120,6 +121,21 @@ func play_special_tiles_intro_sequence() -> void:
 
 	_pending_special_tile_spawns.clear()
 
+## Used rect of [param root] merged with its child [TileMapLayer] nodes (the extent of the former multi-layer TileMap).
+static func get_combined_used_rect(root: TileMapLayer) -> Rect2i:
+	var rect: Rect2i = Rect2i()
+	var layers: Array[Node] = root.get_children()
+	layers.push_front(root)
+	for node: Node in layers:
+		var layer: TileMapLayer = node as TileMapLayer
+		if layer == null:
+			continue
+		var layer_rect: Rect2i = layer.get_used_rect()
+		if not layer_rect.has_area():
+			continue
+		rect = layer_rect if not rect.has_area() else rect.merge(layer_rect)
+	return rect
+
 func get_tower_by_name(tower_name: String) -> ITower:
 	for child in get_children():
 		if child is ITower:
@@ -129,7 +145,7 @@ func get_tower_by_name(tower_name: String) -> ITower:
 	return null
 
 
-## Toggles visibility of the placement TileMap for debugging.
+## Toggles visibility of the placement [TileMapLayer] for debugging.
 ## Returns true when now visible, false when hidden.
 func toggle_placement_debug_overlay() -> bool:
 	if not is_instance_valid(placement_tilemap):
@@ -249,7 +265,7 @@ func _generate_special_tiles() -> void:
 		return
 
 	var buildable_tiles: Array[Vector2i] = []
-	var used_rect := tilemap.get_used_rect()
+	var used_rect: Rect2i = get_combined_used_rect(tilemap)
 
 	for x in range(used_rect.position.x, used_rect.end.x):
 		for y in range(used_rect.position.y, used_rect.end.y):
@@ -457,11 +473,8 @@ func _clear_debug_spawnable_special_tiles() -> void:
 	_debug_spawnable_overlays.clear()
 
 func _clear_special_tile_layer() -> void:
-	if not tilemap:
-		return
-
-	if tilemap.get_layers_count() > SPECIAL_TILE_LAYER_INDEX:
-		tilemap.clear_layer(SPECIAL_TILE_LAYER_INDEX)
+	if is_instance_valid(_special_tile_layer):
+		_special_tile_layer.clear()
 
 func _create_debug_tile_overlay(tile_pos: Vector2i, color: Color, overlays: Array[Node2D]) -> void:
 	var world_pos := tilemap.map_to_local(tile_pos)
@@ -496,8 +509,7 @@ func _create_bonus_visual_indicator(tile_pos: Vector2i, _modifier: Dictionary) -
 		Log.trace(Log.Level.ERROR, "Bonus tile scene source is not ready")
 		return
 
-	tilemap.set_cell(
-		SPECIAL_TILE_LAYER_INDEX,
+	_special_tile_layer.set_cell(
 		tile_pos,
 		_bonus_tile_scene_source_id,
 		Vector2i.ZERO,
@@ -512,8 +524,7 @@ func _create_malus_visual_indicator(tile_pos: Vector2i, _modifier: Dictionary) -
 		Log.trace(Log.Level.ERROR, "Malus tile scene source is not ready")
 		return
 
-	tilemap.set_cell(
-		SPECIAL_TILE_LAYER_INDEX,
+	_special_tile_layer.set_cell(
 		tile_pos,
 		_malus_tile_scene_source_id,
 		Vector2i.ZERO,
@@ -543,7 +554,7 @@ func _spawn_special_tile_with_intro_animation(spawn_data: Dictionary) -> void:
 	else:
 		_create_malus_visual_indicator(tile_pos, modifier)
 
-	tilemap.update_internals()
+	_special_tile_layer.update_internals()
 	if is_bonus:
 		_trigger_special_tile_spawn_shake()
 
@@ -597,13 +608,17 @@ func _ensure_special_tile_layer() -> void:
 	if not tilemap:
 		return
 
-	while tilemap.get_layers_count() <= SPECIAL_TILE_LAYER_INDEX:
-		tilemap.add_layer(-1)
+	if is_instance_valid(_special_tile_layer):
+		return
 
-	tilemap.set_layer_name(SPECIAL_TILE_LAYER_INDEX, BONUS_TILE_LAYER_NAME)
-	tilemap.set_layer_y_sort_enabled(SPECIAL_TILE_LAYER_INDEX, false)
-	tilemap.set_layer_z_index(SPECIAL_TILE_LAYER_INDEX, BONUS_TILE_LAYER_Z_INDEX)
-	tilemap.set_layer_modulate(SPECIAL_TILE_LAYER_INDEX, Color.WHITE)
+	# Sibling of the map layers, so special tiles find their IMap through get_parent().
+	_special_tile_layer = TileMapLayer.new()
+	_special_tile_layer.name = BONUS_TILE_LAYER_NAME
+	_special_tile_layer.tile_set = tilemap.tile_set
+	_special_tile_layer.transform = tilemap.transform
+	_special_tile_layer.y_sort_enabled = false
+	_special_tile_layer.z_index = BONUS_TILE_LAYER_Z_INDEX
+	add_child(_special_tile_layer)
 
 func _ensure_bonus_tile_scene_source() -> void:
 	if not tilemap or not tilemap.tile_set:
@@ -642,11 +657,11 @@ func _ensure_malus_tile_scene_source() -> void:
 		_malus_tile_scene_tile_id = -1
 
 ## Returns true if a tower can be placed on [param coords].
-## Authoritative source is the invisible placement TileMap painted by the level designer.
+## Authoritative source is the invisible placement [TileMapLayer] painted by the level designer.
 func is_tile_buildable(coords: Vector2i) -> bool:
 	if placement_tilemap == null:
 		return false
-	if placement_tilemap.get_cell_source_id(0, coords) == -1:
+	if placement_tilemap.get_cell_source_id(coords) == -1:
 		return false
 
 	var world_pos: Vector2 = tilemap.map_to_local(coords)
@@ -684,7 +699,7 @@ func _setup_camera_limits() -> void:
 	if camera == null or tilemap == null:
 		return
 
-	var used_rect: Rect2i = tilemap.get_used_rect()
+	var used_rect: Rect2i = get_combined_used_rect(tilemap)
 	var corners: Array[Vector2i] = [
 		used_rect.position,
 		used_rect.position + Vector2i(used_rect.size.x, 0),

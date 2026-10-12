@@ -228,13 +228,14 @@ sources/4 = SubResource("TileSetAtlasSource_t72eq")
 sources/5 = SubResource("TileSetAtlasSource_te4gr")
 sources/6 = SubResource("TileSetAtlasSource_7dg4r")
 
-[node name="TileMapPlains" type="TileMap"]
+[node name="TileMapPlains" type="TileMapLayer"]
 y_sort_enabled = true
 tile_set = SubResource("TileSet_vageo")
-format = 2
-layer_0/name = "Terrain"
-layer_0/y_sort_enabled = true
-layer_1/name = "Water Rays"
-layer_2/name = "Props"
-layer_2/y_sort_enabled = true
-layer_2/z_index = 1
+
+[node name="WaterRays" type="TileMapLayer" parent="."]
+tile_set = SubResource("TileSet_vageo")
+
+[node name="Props" type="TileMapLayer" parent="."]
+z_index = 1
+y_sort_enabled = true
+tile_set = SubResource("TileSet_vageo")
