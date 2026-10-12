@@ -648,6 +648,15 @@ func _ensure_special_tile_scene_source(kind: String) -> void:
 	if _special_tile_scene_source_ids.get(kind, -1) >= 0:
 		return
 
+	# The tile set is a resource shared by every instance of the map, reuse the source of a previous load.
+	for index: int in tilemap.tile_set.get_source_count():
+		var existing_id: int = tilemap.tile_set.get_source_id(index)
+		var existing: TileSetScenesCollectionSource = tilemap.tile_set.get_source(existing_id) as TileSetScenesCollectionSource
+		if existing != null and existing.get_scene_tiles_count() == 1 and existing.get_scene_tile_scene(existing.get_scene_tile_id(0)) == SPECIAL_TILE_SCENES[kind]:
+			_special_tile_scene_source_ids[kind] = existing_id
+			_special_tile_scene_tile_ids[kind] = existing.get_scene_tile_id(0)
+			return
+
 	var scene_source := TileSetScenesCollectionSource.new()
 	var tile_id: int = scene_source.create_scene_tile(SPECIAL_TILE_SCENES[kind])
 	var source_id: int = tilemap.tile_set.add_source(scene_source, tilemap.tile_set.get_next_source_id())

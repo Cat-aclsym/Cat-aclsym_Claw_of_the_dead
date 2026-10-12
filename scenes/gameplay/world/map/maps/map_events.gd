@@ -35,14 +35,6 @@ func _connect_to_level() -> void:
 		Log.trace(Log.Level.DEBUG, "MapEvents connected to current level.")
 
 
-## Configure events for a specific wave.
-func set_wave_event(wave_number: int, activate: Array[int] = [], deactivate: Array[int] = []) -> void:
-	wave_path_events[wave_number] = {
-		"activate": activate,
-		"deactivate": deactivate
-	}
-
-
 ## Apply configured path events when a wave starts.
 func on_wave_start(wave_number: int) -> void:
 	if not wave_path_events.has(wave_number):
@@ -66,41 +58,6 @@ func on_wave_start(wave_number: int) -> void:
 
 	event_triggered.emit("wave_%d_paths" % wave_number)
 	Log.trace(Log.Level.INFO, "Applied path events for wave %d." % wave_number)
-
-
-## Unlock a path by spending coins.
-func unlock_path_with_money(path_index: int, cost: int) -> bool:
-	if not _ensure_level_reference() or not is_instance_valid(map):
-		return false
-
-	if _level.coins >= cost:
-		_level.coins -= cost
-		map.activate_path(path_index)
-		path_unlocked.emit(path_index)
-		event_triggered.emit("path_%d_purchased" % path_index)
-		return true
-	return false
-
-
-## Deactivate all paths except the initial one.
-func reset_to_main_path() -> void:
-	if not is_instance_valid(map):
-		return
-
-	map.set_active_paths_only([map.initial_path_index])
-	event_triggered.emit("paths_reset")
-
-
-func _ensure_level_reference() -> bool:
-	if is_instance_valid(_level):
-		return true
-
-	if is_instance_valid(ILevel.current_level):
-		_level = ILevel.current_level
-		return true
-
-	Log.trace(Log.Level.WARN, "No active level reference found.")
-	return false
 
 
 func _initialize_paths_for_wave_events() -> void:
