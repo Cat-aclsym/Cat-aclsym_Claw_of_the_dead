@@ -20,7 +20,3 @@ func apply_effect(enemy: IEnemy) -> void:
 
 func remove_effect(enemy: IEnemy) -> void:
 	enemy.remove_speed_modifier(SPEED_KEY)
-
-func _apply_trap_stats_extension(_base: Dictionary) -> void:
-	if _base.has("damage"):
-		damage = int(_base["damage"])

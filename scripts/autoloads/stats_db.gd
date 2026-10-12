@@ -22,6 +22,17 @@ func _ready() -> void:
 
 
 # Public functions
+## Writes each entry of [param values] to the property of [param target] with the same name, converted to the type of that property.
+## [br]An entry without a matching property is skipped with a warning.
+## [br]Example: [code]StatsDB.apply_fields(trap, StatsDB.get_trap("bat_04")["base"])[/code] sets [code]trap.slow_amount[/code] from the [code]slow_amount[/code] key.
+func apply_fields(target: Object, values: Dictionary) -> void:
+	for key: String in values:
+		if key not in target:
+			Log.trace(Log.Level.WARN, "StatsDB: %s has no property '%s'." % [target, key])
+			continue
+		target.set(key, type_convert(values[key], typeof(target.get(key))))
+
+
 ## Returns the gameplay constants of the bullet [param id] (a key of the [code]bullets[/code] section).
 func get_bullet(id: String) -> Dictionary:
 	return _data.get("bullets", {}).get(id, {})

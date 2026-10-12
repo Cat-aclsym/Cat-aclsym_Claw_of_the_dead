@@ -36,15 +36,6 @@ func apply_effect(_enemy: IEnemy) -> void:
 		_start_explosion_sequence()
 
 
-func _apply_trap_stats_extension(base: Dictionary) -> void:
-	if base.has("damage"):
-		damage = int(base["damage"])
-	if base.has("explosion_range"):
-		explosion_range = float(base["explosion_range"])
-	if base.has("explosion_delay"):
-		explosion_delay = float(base["explosion_delay"])
-
-
 ## Fire and smoke bursts that fill the blast circle, they free themselves.
 func _create_explosion_effect(explosion_position: Vector2) -> void:
 	VfxUtil.burst(get_tree().root, explosion_position, _get_fire_material(), null, FIRE_PARTICLES_AMOUNT, FIRE_LIFETIME, 1.0, 0.0, FIRE_Z_INDEX)
@@ -52,28 +43,21 @@ func _create_explosion_effect(explosion_position: Vector2) -> void:
 
 
 func _explode() -> void:
-	# 1. Effet d'explosion circulaire
 	_create_explosion_effect(global_position)
 
-	# 2. Infliger les dégâts aux ennemis dans le cercle
-	var enemies: Array[Node] = get_tree().get_nodes_in_group("enemies")
-	for node: Node in enemies:
-		if node is IEnemy:
-			var enemy: IEnemy = node as IEnemy
-			var distance: float = global_position.distance_to(enemy.global_position)
-			if distance <= explosion_range:
-				enemy.take_damage(damage, IEnemy.DamageType.DEFAULT, self)
+	for enemy: IEnemy in _enemies_within(explosion_range):
+		enemy.take_damage(damage, IEnemy.DamageType.DEFAULT, self)
 
 	# Visual/Audio effects
 	if Global.camera:
 		Global.camera.handle_effect("shake", 15.0)
 
-	# Masquer le sprite
 	$Sprite2D.visible = false
 	current_durability = 0
 	is_usable = false
 	# ITrap frees the trap once [method _get_post_trigger_lifetime] is over
 	is_activating = false
+	_refresh_opacity()
 
 
 ## Fire material, emitted over most of the blast circle. Shared by every explosion of the same range.
@@ -134,6 +118,9 @@ func _get_smoke_material() -> ParticleProcessMaterial:
 func _on_explosion_delay_over(blink_tween: Tween, circle: Polygon2D) -> void:
 	blink_tween.kill()
 	circle.queue_free()
+	# The level end pauses the gameplay without pausing the tree: a bomb still ticking then must not explode
+	if Global.paused:
+		return
 	_explode()
 
 
@@ -141,27 +128,17 @@ func _start_explosion_sequence() -> void:
 	is_usable = false
 	is_activating = true
 
-	# 1. Créer le cercle d'alerte (isométrique)
-	var circle: Polygon2D = Polygon2D.new()
-	add_child(circle)
-	circle.z_index = -1
-	circle.color = Color(1.0, 0.2, 0.1, 0.3) # Rouge/Orange transparent
+	# Transparent red/orange alert circle
+	var circle: Polygon2D = _spawn_range_circle(explosion_range, Color(1.0, 0.2, 0.1, 0.3))
 
-	var points: PackedVector2Array = []
-	var segments: int = 32
-	for i: int in range(segments + 1):
-		var angle: float = i * PI * 2 / segments
-		points.append(Vector2(cos(angle) * explosion_range, sin(angle) * (explosion_range / 2.0)))
-	circle.polygon = points
-
-	# 2. Animation de clignotement
+	# Blink until the explosion
 	var blink_tween: Tween = create_tween()
 	var loops: int = int(explosion_delay / 0.3) # 0.3s per loop (0.15 + 0.15)
 	blink_tween.set_loops(loops)
 	blink_tween.tween_property(circle, "modulate:a", 0.8, 0.15)
 	blink_tween.tween_property(circle, "modulate:a", 0.3, 0.15)
 
-	# 3. Attendre le délai
+	# Wait for the delay
 	var delay_tween: Tween = create_tween()
 	delay_tween.tween_interval(explosion_delay)
 	delay_tween.tween_callback(_on_explosion_delay_over.bind(blink_tween, circle))

@@ -44,6 +44,8 @@ var towers_in_range: Array[StaticBody2D] = []
 var _attack_cooldown_timer: Timer
 var _attack_duration_timer: Timer
 var _current_attack_cycle_state: AttackCycleState = AttackCycleState.NONE
+## Every timer of the attack cycle, built in [method _ready].
+var _cycle_timers: Array[Timer] = []
 ## Whether the gameplay projectile of the current attack window was already fired
 var _hit_fired: bool = false
 var _post_attack_timer: Timer
@@ -59,8 +61,7 @@ var _pre_attack_timer: Timer
 
 # Built-in functions
 func _ready() -> void:
-	_apply_extra_stats_override()
-	super._ready() # Call the parent class's _ready function
+	super._ready() # Applies the stats, the extra ones (shoot_range, delays) are needed below
 
 	# Configure Range Area
 	assert(range_area and range_collision_shape and range_collision_shape.shape is CircleShape2D)
@@ -81,6 +82,7 @@ func _ready() -> void:
 	_attack_duration_timer = _add_cycle_timer("AttackDurationTimer", _on_attack_duration_timer_timeout)
 	_post_attack_timer = _add_cycle_timer("PostAttackTimer", _on_post_attack_timer_timeout)
 	_attack_cooldown_timer = _add_cycle_timer("AttackCooldownTimer", _on_attack_cooldown_timer_timeout)
+	_cycle_timers = [_pre_attack_timer, _attack_duration_timer, _post_attack_timer, _attack_cooldown_timer, stream_timer]
 	_on_pause_changed(Global.paused)
 
 	# Initial check for targets already in range
@@ -89,7 +91,8 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	if is_already_dead:
-		_stop_all_attack_timers_and_reset_state()
+		if _current_attack_cycle_state != AttackCycleState.NONE:
+			_stop_all_attack_timers_and_reset_state()
 		return
 	# The attack cycle keeps its state, its timers are paused by _on_pause_changed
 	if Global.paused:
@@ -125,25 +128,6 @@ func _add_cycle_timer(timer_name: String, on_timeout: Callable) -> Timer:
 	SignalUtil.connects([{SignalUtil.WHO: timer, SignalUtil.WHAT: "timeout", SignalUtil.TO: on_timeout}])
 	add_child(timer)
 	return timer
-
-
-func _apply_extra_stats_override() -> void:
-	if enemy_id.is_empty() or not StatsDB.has_enemy(enemy_id):
-		return
-	var data: Dictionary = StatsDB.get_enemy(enemy_id)
-	var extra: Dictionary = data.get("extra", {})
-	if extra.has("shoot_range"):
-		shoot_range = float(extra["shoot_range"])
-	if extra.has("tower_disable_duration"):
-		tower_disable_duration = float(extra["tower_disable_duration"])
-	if extra.has("pre_attack_delay"):
-		pre_attack_delay = float(extra["pre_attack_delay"])
-	if extra.has("attack_duration"):
-		attack_duration = float(extra["attack_duration"])
-	if extra.has("post_attack_delay"):
-		post_attack_delay = float(extra["post_attack_delay"])
-	if extra.has("attack_cooldown"):
-		attack_cooldown = float(extra["attack_cooldown"])
 
 
 ## Checks that the current target is an active tower, otherwise interrupts the attack and looks for another target.
@@ -201,13 +185,11 @@ func _find_new_target() -> void:
 
 func _interrupt_attack_cycle() -> void:
 	Log.trace(Log.Level.DEBUG, "BigDaddy: Interrupting attack cycle.")
-	if _pre_attack_timer: _pre_attack_timer.stop()
-	if _attack_duration_timer: _attack_duration_timer.stop()
-	if _post_attack_timer: _post_attack_timer.stop()
-	if stream_timer: stream_timer.stop()
+	for timer: Timer in _cycle_timers:
+		timer.stop()
 
 	_current_attack_cycle_state = AttackCycleState.COOLDOWN
-	if _attack_cooldown_timer: _attack_cooldown_timer.start(attack_cooldown)
+	_attack_cooldown_timer.start(attack_cooldown)
 
 
 func _on_attack_cooldown_timer_timeout() -> void:
@@ -223,13 +205,12 @@ func _on_attack_duration_timer_timeout() -> void:
 	Log.trace(Log.Level.DEBUG, "BigDaddy: Attack duration finished. Starting POST_ATTACK.")
 	_current_attack_cycle_state = AttackCycleState.POST_ATTACK
 	_post_attack_timer.start(post_attack_delay)
-	if stream_timer:
-		stream_timer.stop()
+	stream_timer.stop()
 
 
 ## Pauses the attack cycle timers with the game and resumes them where they stopped.
 func _on_pause_changed(is_paused: bool) -> void:
-	for timer: Timer in [_pre_attack_timer, _attack_duration_timer, _post_attack_timer, _attack_cooldown_timer, stream_timer]:
+	for timer: Timer in _cycle_timers:
 		timer.paused = is_paused
 
 
@@ -316,9 +297,6 @@ func _shoot() -> void:
 
 
 func _stop_all_attack_timers_and_reset_state() -> void:
-	if _pre_attack_timer: _pre_attack_timer.stop()
-	if _attack_duration_timer: _attack_duration_timer.stop()
-	if _post_attack_timer: _post_attack_timer.stop()
-	if _attack_cooldown_timer: _attack_cooldown_timer.stop()
-	if stream_timer: stream_timer.stop()
+	for timer: Timer in _cycle_timers:
+		timer.stop()
 	_current_attack_cycle_state = AttackCycleState.NONE

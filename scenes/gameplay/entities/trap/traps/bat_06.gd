@@ -22,14 +22,3 @@ extends ITrap
 ## [param enemy] The enemy to poison.
 func apply_effect(enemy: IEnemy) -> void:
 	enemy.add_poison_effect(poison_damage, poison_ticks, poison_interval)
-
-
-# private
-## Reads extra stats from StatsDB.
-func _apply_trap_stats_extension(base: Dictionary) -> void:
-	if base.has("poison_damage"):
-		poison_damage = float(base["poison_damage"])
-	if base.has("poison_ticks"):
-		poison_ticks = int(base["poison_ticks"])
-	if base.has("poison_interval"):
-		poison_interval = float(base["poison_interval"])

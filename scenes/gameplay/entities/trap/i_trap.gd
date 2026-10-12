@@ -45,13 +45,13 @@ var is_temporarily_disabled: bool = false
 ## Whether the trap can still trigger (LIMITED type)
 var is_usable: bool = true
 
-## Remaining effect duration for dead enemies (LIMITED type)
-var remaining_effects: Array[float] = []
-
 ## The state of the trap
 var state: TrapState = TrapState.ACTIVE
 
 var _is_registered_in_placement_system: bool = false
+
+## Longest effect duration left on the enemies that died or escaped while affected (LIMITED type), the trap stays until it is over.
+var _linger_remaining: float = 0.0
 
 ## Seconds left before a spent LIMITED trap may be freed, started by the last trigger.
 var _post_trigger_remaining: float = 0.0
@@ -61,10 +61,8 @@ var _post_trigger_remaining: float = 0.0
 
 ## Signal connections to be established in _ready
 @onready var signals: Array[Dictionary] = [
-	{SignalUtil.WHO: area_2d, SignalUtil.WHAT: "body_entered", SignalUtil.TO: _on_area_2d_body_entered},
-	{SignalUtil.WHO: area_2d, SignalUtil.WHAT: "body_exited", SignalUtil.TO: _on_area_2d_body_exited},
-	{SignalUtil.WHO: area_2d, SignalUtil.WHAT: "area_entered", SignalUtil.TO: _on_area_2d_body_entered},
-	{SignalUtil.WHO: area_2d, SignalUtil.WHAT: "area_exited", SignalUtil.TO: _on_area_2d_body_exited}
+	{SignalUtil.WHO: area_2d, SignalUtil.WHAT: "area_entered", SignalUtil.TO: _on_area_2d_area_entered},
+	{SignalUtil.WHO: area_2d, SignalUtil.WHAT: "area_exited", SignalUtil.TO: _on_area_2d_area_exited}
 ]
 
 func _ready() -> void:
@@ -73,7 +71,8 @@ func _ready() -> void:
 	_update_z_index()
 	SignalUtil.connects(signals)
 	current_durability = max_durability
-	active_affected_enemies = {}
+	# Only the traps that count something down and the preview that follows the cursor need a frame callback
+	set_process(trap_type == TrapType.LIMITED or state == TrapState.BUILDING)
 	if state == TrapState.ACTIVE:
 		_is_registered_in_placement_system = _register_with_cursor()
 
@@ -85,45 +84,34 @@ func _process(delta: float) -> void:
 		_update_z_index()
 		return
 
-	if is_temporarily_disabled:
+	if is_temporarily_disabled or trap_type != TrapType.LIMITED:
 		return
 
-	if trap_type == TrapType.LIMITED:
-		if not is_usable:
-			_post_trigger_remaining -= delta
+	if not is_usable:
+		_post_trigger_remaining -= delta
 
-		# For traps with a charge-up or special activation sequence (like Bat07),
-		# we don't want the generic opacity/cleanup logic to interfere.
-		if is_activating:
-			return
+	# For traps with a charge-up or special activation sequence (like Bat07),
+	# we don't want the generic cleanup logic to interfere.
+	if is_activating:
+		return
 
-		var opacity := (0.8 * (float(current_durability) / float(max_durability))) + 0.2
-		modulate.a = opacity
+	var to_remove: Array[IEnemy] = []
+	for enemy: IEnemy in active_affected_enemies:
+		active_affected_enemies[enemy] -= delta
+		if active_affected_enemies[enemy] <= 0:
+			if enemy in enemies_in_area and is_usable:
+				active_affected_enemies[enemy] = effect_duration
+			else:
+				remove_effect(enemy)
+				to_remove.append(enemy)
 
-		var to_remove: Array[IEnemy] = []
-		for enemy: IEnemy in active_affected_enemies:
-			active_affected_enemies[enemy] -= delta
-			if active_affected_enemies[enemy] <= 0:
-				if enemy in enemies_in_area and is_usable:
-					active_affected_enemies[enemy] = effect_duration
-				else:
-					remove_effect(enemy)
-					to_remove.append(enemy)
+	_linger_remaining = maxf(0.0, _linger_remaining - delta)
 
-		var remaining_to_remove: Array[int] = []
-		for i in range(remaining_effects.size()):
-			remaining_effects[i] -= delta
-			if remaining_effects[i] <= 0:
-				remaining_to_remove.append(i)
+	for enemy in to_remove:
+		active_affected_enemies.erase(enemy)
 
-		for i in range(remaining_to_remove.size() - 1, -1, -1):
-			remaining_effects.remove_at(remaining_to_remove[i])
-
-		for enemy in to_remove:
-			active_affected_enemies.erase(enemy)
-
-		if not is_usable and _post_trigger_remaining <= 0.0 and active_affected_enemies.is_empty() and remaining_effects.is_empty():
-			queue_free()
+	if not is_usable and _post_trigger_remaining <= 0.0 and active_affected_enemies.is_empty() and _linger_remaining <= 0.0:
+		queue_free()
 
 func _exit_tree() -> void:
 	if not _is_registered_in_placement_system:
@@ -137,24 +125,15 @@ func _exit_tree() -> void:
 func apply_effect(_enemy: IEnemy) -> void:
 	pass
 
-## Applies [code]stats.json[/code] [code]traps[/code] entry when [member trap_id] is set. Uses the [StatsDB] autoload so it works on orphan instances (e.g. build menu preview).
+## Applies the [code]base[/code] keys of the [code]stats.json[/code] [code]traps[/code] entry when [member trap_id] is set, each key writes the property of the same name.
+## [br]Uses the [StatsDB] autoload so it works on orphan instances (e.g. build menu preview).
 func apply_stats_from_db() -> void:
 	if trap_id.is_empty():
 		return
 	if not StatsDB.has_trap(trap_id):
 		Log.trace(Log.Level.WARN, "StatsDB missing trap id: %s" % trap_id)
 		return
-	var data: Dictionary = StatsDB.get_trap(trap_id)
-	var base: Dictionary = data.get("base", {})
-	if base.has("cost"):
-		cost = int(base["cost"])
-	if base.has("trap_type"):
-		trap_type = int(base["trap_type"]) as TrapType
-	if base.has("effect_duration"):
-		effect_duration = float(base["effect_duration"])
-	if base.has("max_durability"):
-		max_durability = int(base["max_durability"])
-	_apply_trap_stats_extension(base)
+	StatsDB.apply_fields(self, StatsDB.get_trap(trap_id).get("base", {}))
 
 func cancel_build_preview() -> void:
 	pass
@@ -176,6 +155,7 @@ func disable_temporarily(duration: float) -> void:
 
 func enter_build_preview() -> void:
 	state = TrapState.BUILDING
+	set_process(true)
 
 func get_building_kind() -> IBuilding.BuildingKind:
 	return IBuilding.BuildingKind.TRAP
@@ -197,10 +177,6 @@ func remove_effect(_enemy: IEnemy) -> void:
 	pass
 
 ## Private API
-## Subclasses read extra [code]base[/code] keys (e.g. [code]damage[/code], [code]slow_amount[/code]).
-func _apply_trap_stats_extension(_base: Dictionary) -> void:
-	pass
-
 func _clear_active_effects() -> void:
 	for enemy_item in enemies_in_area:
 		if is_instance_valid(enemy_item):
@@ -212,20 +188,24 @@ func _end_temporary_disable() -> void:
 		return
 	is_temporarily_disabled = false
 	modulate.a = 1.0
+	_refresh_opacity()
 	_reapply_effects_to_present_enemies()
 
-func _get_enemy_from_overlap(overlap: Node2D) -> IEnemy:
-	# We want traps to trigger based on the zombie "feet" zone only.
-	# This avoids head/body overlaps triggering the effect on slopes.
-	if overlap is IEnemy:
+## Returns the enemies standing within [param radius] pixels of the trap.
+func _enemies_within(radius: float) -> Array[IEnemy]:
+	var enemies: Array[IEnemy] = []
+	for node: Node in get_tree().get_nodes_in_group("enemies"):
+		var enemy: IEnemy = node as IEnemy
+		if enemy != null and global_position.distance_to(enemy.global_position) <= radius:
+			enemies.append(enemy)
+	return enemies
+
+## Returns the enemy whose feet area is [param area], null for any other area.
+## [br]Traps trigger on the zombie "feet" zone only, the head and body overlaps of slopes would trigger them too early.
+func _get_enemy_from_area(area: Area2D) -> IEnemy:
+	if area.name != "FeetArea":
 		return null
-
-	if overlap is Area2D and overlap.name == "FeetArea":
-		var parent: Node = overlap.get_parent()
-		if parent is IEnemy:
-			return parent as IEnemy
-
-	return null
+	return area.get_parent() as IEnemy
 
 ## Seconds a LIMITED trap stays alive after its last trigger, so the effect it started can finish.
 ## [br]Subclasses with a delayed or long effect override it, the default is [member effect_duration].
@@ -233,7 +213,8 @@ func _get_post_trigger_lifetime() -> float:
 	return effect_duration
 
 func _handle_trap_activation(enemy: IEnemy) -> void:
-	if is_temporarily_disabled:
+	# The level end pauses the gameplay without pausing the tree: a trap re-enabled after it must not trigger
+	if is_temporarily_disabled or Global.paused:
 		return
 
 	match trap_type:
@@ -253,6 +234,7 @@ func _handle_trap_activation(enemy: IEnemy) -> void:
 					apply_effect(enemy)
 					active_affected_enemies[enemy] = effect_duration
 					current_durability -= 1
+					_refresh_opacity()
 					if current_durability <= 0:
 						is_usable = false
 					if not is_usable:
@@ -264,11 +246,11 @@ func _notify_challenge_if_boss(enemy: IEnemy) -> void:
 	ChallengeManager.notify_enemy_hit(enemy, self)
 
 ## Signal handlers
-func _on_area_2d_body_entered(body: Node2D) -> void:
+func _on_area_2d_area_entered(area: Area2D) -> void:
 	if state != TrapState.ACTIVE:
 		return
 
-	var enemy := _get_enemy_from_overlap(body)
+	var enemy: IEnemy = _get_enemy_from_area(area)
 	if enemy == null:
 		return
 
@@ -283,11 +265,11 @@ func _on_area_2d_body_entered(body: Node2D) -> void:
 	enemies_in_area.append(enemy)
 	_handle_trap_activation(enemy)
 
-func _on_area_2d_body_exited(body: Node2D) -> void:
+func _on_area_2d_area_exited(area: Area2D) -> void:
 	if state != TrapState.ACTIVE:
 		return
 
-	var enemy := _get_enemy_from_overlap(body)
+	var enemy: IEnemy = _get_enemy_from_area(area)
 	if enemy == null:
 		return
 
@@ -302,7 +284,7 @@ func _on_area_2d_body_exited(body: Node2D) -> void:
 ## An enemy that dies or escapes while a LIMITED effect is on it leaves the effect to run out without it.
 func _on_enemy_removed(enemy: IEnemy) -> void:
 	if trap_type == TrapType.LIMITED and enemy in active_affected_enemies:
-		remaining_effects.append(active_affected_enemies[enemy])
+		_linger_remaining = maxf(_linger_remaining, active_affected_enemies[enemy])
 		active_affected_enemies.erase(enemy)
 
 func _reapply_effects_to_present_enemies() -> void:
@@ -310,6 +292,26 @@ func _reapply_effects_to_present_enemies() -> void:
 		if not is_instance_valid(enemy_item):
 			continue
 		_handle_trap_activation(enemy_item)
+
+## Fades a LIMITED trap with its durability. A trap that runs its own sequence (see [member is_activating]) keeps the opacity it fades itself.
+func _refresh_opacity() -> void:
+	if trap_type == TrapType.LIMITED and not is_activating:
+		modulate.a = 0.8 * float(current_durability) / float(max_durability) + 0.2
+
+## Adds an isometric circle of [param radius] pixels under the trap, it shows the area of the trap effect.
+func _spawn_range_circle(radius: float, color: Color) -> Polygon2D:
+	var circle: Polygon2D = Polygon2D.new()
+	add_child(circle)
+	circle.z_index = -1
+	circle.color = color
+
+	var points: PackedVector2Array = []
+	var segments: int = 32
+	for i: int in range(segments + 1):
+		var angle: float = i * PI * 2 / segments
+		points.append(Vector2(cos(angle) * radius, sin(angle) * (radius / 2.0)))
+	circle.polygon = points
+	return circle
 
 func _update_z_index() -> void:
 	# Traps lie on the ground, so they sort below the enemies standing at the same height.

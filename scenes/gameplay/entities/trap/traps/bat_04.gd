@@ -21,7 +21,3 @@ func remove_effect(enemy: IEnemy) -> void:
 		if other != self and not other.is_temporarily_disabled and enemy in other.enemies_in_area:
 			return
 	enemy.remove_speed_modifier(SPEED_KEY)
-
-func _apply_trap_stats_extension(_base: Dictionary) -> void:
-	if _base.has("slow_amount"):
-		slow_amount = float(_base["slow_amount"])

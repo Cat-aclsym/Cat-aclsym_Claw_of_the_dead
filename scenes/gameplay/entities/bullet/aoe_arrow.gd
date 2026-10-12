@@ -69,7 +69,6 @@ func _ready() -> void:
 	# Initialize effect circle if it exists
 	if effect_circle:
 		effect_circle.visible = false
-		effect_circle.scale = Vector2.ZERO
 		_adjust_effect_circle_size()
 
 	SignalUtil.connects(aoe_signals)
@@ -85,11 +84,10 @@ func _adjust_effect_circle_size() -> void:
 
 ## Apply AOE damage to nearby enemies (factorized)
 func _apply_aoe_damage(direct_hit_enemy: IEnemy) -> void:
-	if len(aoe_enemies) > 0:
-		for nearby_enemy: IEnemy in aoe_enemies:
-			if nearby_enemy != direct_hit_enemy and is_instance_valid(nearby_enemy):
-				var aoe_damage: int = roundi(damage * _aoe_damage_multiplier)
-				nearby_enemy.take_damage(aoe_damage, IEnemy.DamageType.DEFAULT, self)
+	var aoe_damage: int = roundi(damage * _aoe_damage_multiplier)
+	for nearby_enemy: IEnemy in aoe_enemies:
+		if nearby_enemy != direct_hit_enemy and is_instance_valid(nearby_enemy):
+			nearby_enemy.take_damage(aoe_damage, IEnemy.DamageType.DEFAULT, self)
 
 
 func _create_explosion_effect(explosion_position: Vector2) -> void:

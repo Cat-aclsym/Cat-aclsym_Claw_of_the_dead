@@ -29,15 +29,6 @@ func apply_effect(_enemy: IEnemy) -> void:
 		_start_activation_sequence()
 
 
-func _apply_trap_stats_extension(base: Dictionary) -> void:
-	if base.has("stun_duration"):
-		stun_duration = float(base["stun_duration"])
-	if base.has("stun_range"):
-		stun_range = float(base["stun_range"])
-	if base.has("charge_time"):
-		charge_time = float(base["charge_time"])
-
-
 ## Yellow spark burst, bigger at the center of the stun area, it frees itself.
 func _create_stun_visual_effect(pos: Vector2, is_center: bool = true) -> void:
 	var amount: int = STUN_CENTER_PARTICLES_AMOUNT if is_center else STUN_PARTICLES_AMOUNT
@@ -80,10 +71,13 @@ func _get_stun_material(is_center: bool) -> ParticleProcessMaterial:
 
 ## Triggers the stun once the circle is full, then keeps the trap for the stun duration before it fades away.
 func _on_charge_complete(circle: Polygon2D) -> void:
-	circle.color.a = 0.6 # Augmenter l'opacité lors de l'activation (full visuel)
+	# The level end pauses the gameplay without pausing the tree: the stun must not trigger after it
+	if Global.paused:
+		return
+	circle.color.a = 0.6 # Raise the opacity on activation (full visual)
 	_trigger_stun()
 
-	# On garde le cercle et le piège pendant la durée du stun, puis on fait disparaître le tout avec un fade out
+	# The circle and the trap stay for the stun duration, then fade out together
 	var cleanup_tween: Tween = create_tween()
 	cleanup_tween.tween_interval(stun_duration)
 	cleanup_tween.tween_callback(_fade_out.bind(circle))
@@ -93,35 +87,21 @@ func _start_activation_sequence() -> void:
 	is_usable = false # Prevent multiple triggers
 	is_activating = true # Tell ITrap to wait
 
-	# 1. Créer le cercle de chargement
-	var circle: Polygon2D = Polygon2D.new()
-	add_child(circle)
-	circle.z_index = -1
-	circle.color = Color(1.0, 1.0, 0.0, 0.2) # Jaune très faible opacité
-
-	# Création des points du cercle (isométrique)
-	var points: PackedVector2Array = []
-	var segments: int = 32
-	for i: int in range(segments + 1):
-		var angle: float = i * PI * 2 / segments
-		points.append(Vector2(cos(angle) * stun_range, sin(angle) * (stun_range / 2.0)))
-	circle.polygon = points
-
-	# 2. Animation de remplissage (échelle de 0 à 1)
+	# Faint yellow charge circle, it grows from nothing to the stun range
+	var circle: Polygon2D = _spawn_range_circle(stun_range, Color(1.0, 1.0, 0.0, 0.2))
 	circle.scale = Vector2.ZERO
 	var tween: Tween = create_tween()
 	tween.set_ease(Tween.EASE_IN_OUT)
 	tween.set_trans(Tween.TRANS_QUAD)
 
-	# Le cercle grandit pendant toute la charge
+	# The circle grows during the whole charge
 	tween.tween_property(circle, "scale", Vector2.ONE, charge_time)
 
-	# Une fois rempli, on déclenche l'effet
+	# Once it is full, the stun triggers
 	tween.tween_callback(_on_charge_complete.bind(circle))
 
 
 func _trigger_stun() -> void:
-	# 1. Effets visuels sur la zone
 	_create_stun_visual_effect(global_position, true)
 
 	var adjacent_offsets: Array[Vector2] = [
@@ -134,19 +114,8 @@ func _trigger_stun() -> void:
 	for offset: Vector2 in adjacent_offsets:
 		_create_stun_visual_effect(global_position + offset, false)
 
-	# 2. Stun les ennemis présents
-	var enemies: Array[Node] = get_tree().get_nodes_in_group("enemies")
-	for node: Node in enemies:
-		if node is IEnemy:
-			var enemy: IEnemy = node as IEnemy
-			var distance: float = global_position.distance_to(enemy.global_position)
-			if distance <= stun_range:
-				enemy.stun(stun_duration)
+	for enemy: IEnemy in _enemies_within(stun_range):
+		enemy.stun(stun_duration)
 
-	# 3. On ne cache plus le sprite ici, on attend la fin du stun (géré dans _start_activation_sequence)
 	current_durability = 0
-	# Sequence finished, but we keep is_activating = true until the final cleanup
-	# to prevent ITrap from deleting the node too early.
-
-	# Si personne n'a été touché, on pourrait accélérer la disparition,
-	# mais pour la lisibilité visuelle, on garde le comportement uniforme.
+	# The stun is over but is_activating stays true until the final cleanup, ITrap would delete the trap too early otherwise.

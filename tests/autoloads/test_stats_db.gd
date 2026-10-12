@@ -6,8 +6,35 @@ extends GdUnitTestSuite
 var _expected: Dictionary = {}
 
 
+## Object with one property of each type [method StatsDB.apply_fields] converts to.
+class FieldsTarget extends RefCounted:
+	var count: int = 0
+	var label: String = ""
+	var ratio: float = 0.0
+
+
 func before() -> void:
 	_expected = JsonUtil.load_dict(StatsDB.STATS_PATH)
+
+
+func test_apply_fields_converts_each_value_to_the_type_of_its_property() -> void:
+	var target: FieldsTarget = FieldsTarget.new()
+
+	StatsDB.apply_fields(target, {"count": 6.0, "label": "bat", "ratio": 100})
+
+	assert_int(target.count).is_equal(6)
+	assert_str(target.label).is_equal("bat")
+	assert_float(target.ratio).is_equal(100.0)
+	assert_int(typeof(target.ratio)).is_equal(TYPE_FLOAT)
+
+
+func test_apply_fields_skips_a_key_without_property() -> void:
+	var target: FieldsTarget = FieldsTarget.new()
+
+	StatsDB.apply_fields(target, {"unknown": 1, "count": 2})
+
+	assert_int(target.count).is_equal(2)
+	assert_bool("unknown" in target).is_false()
 
 
 func test_get_bullet_returns_the_json_data() -> void:

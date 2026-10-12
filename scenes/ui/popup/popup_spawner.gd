@@ -28,33 +28,19 @@ func _ready() -> void:
 ## Spawns a damage popup at the current position.
 ## [br]
 ## [param amount] The amount of damage to display
-## [param color] The color of the damage text
+## [param color] The color of the damage text, overridden by the color of [param tower]
+## [param tower] The tower that dealt the damage, if any: it picks the color and tells whether the damage accumulates in one popup (e.g., continuous fire)
 ## [param is_critical] Whether the damage is a critical hit
-func display_damage(amount: float, color: Color = Color.WHITE, is_critical: bool = false) -> void:
+func display_damage(amount: float, color: Color = Color.WHITE, tower: ITower = null, is_critical: bool = false) -> void:
 	if damage_popup_node == null:
 		return
-	
+
 	var final_color: Color = color
-	
-	# Check if the damage source requires popup accumulation (e.g., continuous fire)
 	var should_accumulate: bool = false
-	if get_parent() is IEnemy:
-		var source: Variant = get_parent().last_source
-		var tower: ITower = null
-		
-		if source is ITower:
-			tower = source
-		elif source is IBullet and is_instance_valid(source.tower_owner):
-			tower = source.tower_owner
-			
-		if tower != null:
-			if tower.use_accumulative_popups:
-				should_accumulate = true
-			
-			# Apply tower-specific color if defined
-			if TOWER_COLORS.has(tower.tower_id):
-				final_color = TOWER_COLORS[tower.tower_id]
-	
+	if is_instance_valid(tower):
+		should_accumulate = tower.use_accumulative_popups
+		final_color = TOWER_COLORS.get(tower.tower_id, color)
+
 	# Optimization: check if an active popup already exists for accumulation
 	if should_accumulate and is_instance_valid(_accumulating_popup):
 		_accumulating_popup.update_value(amount)

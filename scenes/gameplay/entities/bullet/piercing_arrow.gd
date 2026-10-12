@@ -21,24 +21,13 @@ const SPARK_Z_INDEX: int = 500 # Lower than blood effect but above enemies
 @export var spark_particles_speed: float = 80.0 ## Speed of sparks
 
 # public
-var initial_piercing: int  # Initial number of enemies that can be pierced
 var pierced_enemies: Array[IEnemy] = []  # Enemies already pierced
-var piercing: int  # Current number of enemies that can be pierced
 
 # private
 ## Spark materials shared by every effect, one per speed, size and color combination of the scene exports.
 static var _spark_materials: Dictionary[String, ParticleProcessMaterial] = {}
 ## Spark texture shared by every effect.
 static var _spark_texture: Texture2D = null
-
-# core
-func _ready() -> void:
-	super._ready()
-
-	# Initialize piercing variables
-	piercing = pierce_count
-	initial_piercing = pierce_count
-
 
 # private
 func _create_spark_effect(hit_position: Vector2) -> void:
@@ -159,16 +148,12 @@ func _on_body_entered(body: Node2D) -> void:
 	# Apply damage
 	enemy.take_damage(damage, IEnemy.DamageType.DEFAULT, self)
 
-	# Handle piercing
-	piercing -= 1
-
 	# Calculate damage reduction, it never goes below zero
-	var enemies_pierced := initial_piercing - piercing
-	var remaining_damage_percent: float = maxf(0.0, 100.0 - pierce_reduction * enemies_pierced)
+	var remaining_damage_percent: float = maxf(0.0, 100.0 - pierce_reduction * pierced_enemies.size())
 	damage = roundi(initial_damage * (remaining_damage_percent / 100.0))
 
 	# Create appropriate effect depending on whether it's the last enemy or not
-	if piercing <= 0:
+	if pierced_enemies.size() >= pierce_count:
 		# Destroy the arrow
 		queue_free()
 	else:

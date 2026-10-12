@@ -340,7 +340,7 @@ func take_damage(damage: float, damage_type: DamageType, source: Variant = null)
 	_damage_effect(damage_color)
 
 	if popup_score_spawner:
-		popup_score_spawner.display_damage(damage, damage_color)
+		popup_score_spawner.display_damage(damage, damage_color, _killer_tower)
 
 	if source:
 		ChallengeManager.notify_enemy_hit(self, source)
@@ -375,7 +375,8 @@ func _apply_stats_override() -> void:
 		_recompute_speed()
 	reward = int(data.get("reward", 0))
 	escape_damage = int(data.get("escape_damage", 0))
-	trap_disable_duration = float(data.get("extra", {}).get("trap_disable_duration", 0.0))
+	# The extra keys write the properties of the same name, declared by the enemy scripts that need them
+	StatsDB.apply_fields(self, data.get("extra", {}))
 
 
 func _begin_stun_fade() -> void:

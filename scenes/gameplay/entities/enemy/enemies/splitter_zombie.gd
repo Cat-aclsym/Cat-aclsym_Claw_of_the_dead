@@ -16,16 +16,6 @@ func _ready() -> void:
 	sprite.modulate = SPLITTER_TINT
 
 
-func _apply_stats_override() -> void:
-	super._apply_stats_override()
-	if enemy_id.is_empty():
-		return
-	var data: Dictionary = StatsDB.get_enemy(enemy_id)
-	var extra: Dictionary = data.get("extra", {})
-	if extra.has("spawn_count"):
-		spawn_count = int(extra["spawn_count"])
-
-
 ## Overriding _dead_state to implement splitting logic
 func _dead_state() -> void:
 	_spawn_small_zombies()
