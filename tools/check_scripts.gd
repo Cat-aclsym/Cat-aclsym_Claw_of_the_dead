@@ -12,7 +12,7 @@ func _ready() -> void:
 	var paths: PackedStringArray = _collect("res://")
 	for path: String in paths:
 		var script: GDScript = load(path) as GDScript
-		if script == null or not script.can_instantiate():
+		if script == null or (not script.can_instantiate() and not script.is_abstract()):
 			failures.append(path)
 	for path: String in failures:
 		printerr("FAILED: %s" % path)
