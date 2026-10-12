@@ -65,14 +65,14 @@ theme_override_constants/separation = 10
 custom_minimum_size = Vector2(120, 35)
 layout_mode = 2
 size_flags_vertical = 4
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 16
 text = "BUILD.TAB.TOWERS"
 
 [node name="TrapTabButton" parent="MarginContainer/VBoxContainer/TabsHBox" instance=ExtResource("18_styled_btn")]
 custom_minimum_size = Vector2(120, 35)
 layout_mode = 2
 size_flags_vertical = 4
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 16
 text = "BUILD.TAB.TRAPS"
 
 [node name="BackgroundTextureRect" type="TextureRect" parent="MarginContainer/VBoxContainer"]

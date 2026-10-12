@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://cqfsr6yjn6hm8"]
+[gd_scene load_steps=9 format=3 uid="uid://cqfsr6yjn6hm8"]
 
 [ext_resource type="Script" uid="uid://cibbgvfpeyya0" path="res://scenes/ui/menus/home/home.gd" id="1_dvove"]
 [ext_resource type="PackedScene" uid="uid://cj6rnvaq8x3mk" path="res://scenes/ui/styled_button.tscn" id="5_styled_btn"]
@@ -6,7 +6,6 @@
 [ext_resource type="Texture2D" uid="uid://c2pj8fxbv5usu" path="res://assets/ui/icons/LogoTypoBlancTransp.png" id="4_aa1tm"]
 [ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="4_ay1j5"]
 [ext_resource type="Texture2D" uid="uid://c1f4e2f8oknku" path="res://assets/ui/icons/exclamation.png" id="7_exclamation"]
-[ext_resource type="FontVariation" uid="uid://b5t3wfh501ofr" path="res://assets/ui/fonts/dotgothic/dotgothic_variation.tres" id="8_variation"]
 
 [sub_resource type="Gradient" id="Gradient_p68sa"]
 interpolation_mode = 2
@@ -96,7 +95,7 @@ texture_filter = 1
 layout_mode = 2
 size_flags_horizontal = 3
 texture = ExtResource("4_aa1tm")
-expand_mode = 3
+expand_mode = 1
 stretch_mode = 5
 
 [node name="HomeScreenVBoxContainer" type="VBoxContainer" parent="GuiMarginContainer/GuiHBoxContainer"]
@@ -111,14 +110,8 @@ texture_filter = 1
 custom_minimum_size = Vector2(500, 160)
 layout_mode = 2
 size_flags_horizontal = 4
-theme_type_variation = &"StyledButton"
-theme_override_colors/font_hover_color = Color(0.137255, 0.215686, 0.223529, 1)
-theme_override_colors/font_outline_color = Color(0.137255, 0.215686, 0.223529, 1)
-theme_override_colors/font_color = Color(0.137255, 0.215686, 0.223529, 1)
-theme_override_colors/font_focus_color = Color(0.137255, 0.215686, 0.223529, 1)
-theme_override_colors/font_pressed_color = Color(0.137255, 0.215686, 0.223529, 1)
+theme_type_variation = &"HomeButton"
 theme_override_constants/outline_size = 9
-theme_override_fonts/font = ExtResource("8_variation")
 theme_override_font_sizes/font_size = 65
 text = "HOME.PLAY.BUTTON"
 
@@ -128,15 +121,7 @@ texture_filter = 1
 custom_minimum_size = Vector2(350, 110)
 layout_mode = 2
 size_flags_horizontal = 4
-theme_type_variation = &"StyledButtonOrange"
-theme_override_colors/font_hover_color = Color(0.137255, 0.215686, 0.223529, 1)
-theme_override_colors/font_outline_color = Color(0.137255, 0.215686, 0.223529, 1)
-theme_override_colors/font_color = Color(0.137255, 0.215686, 0.223529, 1)
-theme_override_colors/font_focus_color = Color(0.137255, 0.215686, 0.223529, 1)
-theme_override_colors/font_pressed_color = Color(0.137255, 0.215686, 0.223529, 1)
-theme_override_constants/outline_size = 6
-theme_override_fonts/font = ExtResource("8_variation")
-theme_override_font_sizes/font_size = 35
+theme_type_variation = &"HomeButtonOrange"
 text = "HOME.ENCYCLOPEDIA.BUTTON"
 
 [node name="EncyclopediaExclamation" type="TextureRect" parent="GuiMarginContainer/GuiHBoxContainer/HomeScreenVBoxContainer/EncyclopediaButton"]
@@ -161,15 +146,7 @@ texture_filter = 1
 custom_minimum_size = Vector2(350, 110)
 layout_mode = 2
 size_flags_horizontal = 4
-theme_type_variation = &"StyledButton"
-theme_override_colors/font_hover_color = Color(0.137255, 0.215686, 0.223529, 1)
-theme_override_colors/font_outline_color = Color(0.137255, 0.215686, 0.223529, 1)
-theme_override_colors/font_color = Color(0.137255, 0.215686, 0.223529, 1)
-theme_override_colors/font_focus_color = Color(0.137255, 0.215686, 0.223529, 1)
-theme_override_colors/font_pressed_color = Color(0.137255, 0.215686, 0.223529, 1)
-theme_override_constants/outline_size = 6
-theme_override_fonts/font = ExtResource("8_variation")
-theme_override_font_sizes/font_size = 35
+theme_type_variation = &"HomeButton"
 text = "HOME.ARMORY.BUTTON"
 
 [node name="SettingsButton" parent="GuiMarginContainer/GuiHBoxContainer/HomeScreenVBoxContainer" instance=ExtResource("5_styled_btn")]
@@ -178,15 +155,7 @@ texture_filter = 1
 custom_minimum_size = Vector2(350, 110)
 layout_mode = 2
 size_flags_horizontal = 4
-theme_type_variation = &"StyledButtonGreen"
-theme_override_colors/font_hover_color = Color(0.137255, 0.215686, 0.223529, 1)
-theme_override_colors/font_outline_color = Color(0.137255, 0.215686, 0.223529, 1)
-theme_override_colors/font_color = Color(0.137255, 0.215686, 0.223529, 1)
-theme_override_colors/font_focus_color = Color(0.137255, 0.215686, 0.223529, 1)
-theme_override_colors/font_pressed_color = Color(0.137255, 0.215686, 0.223529, 1)
-theme_override_constants/outline_size = 6
-theme_override_fonts/font = ExtResource("8_variation")
-theme_override_font_sizes/font_size = 35
+theme_type_variation = &"HomeButtonGreen"
 text = "HOME.SETTINGS.BUTTON"
 
 [node name="DebugStatsButton" type="Button" parent="."]

@@ -1,9 +1,10 @@
-[gd_resource type="Theme" load_steps=15 format=3 uid="uid://dr31fy67cgji3"]
+[gd_resource type="Theme" load_steps=16 format=3 uid="uid://dr31fy67cgji3"]
 
 [ext_resource type="FontFile" uid="uid://ddo3rokwsadq0" path="res://assets/ui/fonts/dotgothic/DotGothic16-Regular.ttf" id="1_dotgothic"]
 [ext_resource type="Texture2D" uid="uid://bwgb811hwxy0" path="res://assets/ui/buttons/button-blue.png" id="2_btn_blue"]
 [ext_resource type="Texture2D" uid="uid://cpb0sxhq4ybw2" path="res://assets/ui/buttons/button-green.png" id="3_btn_green"]
 [ext_resource type="Texture2D" uid="uid://krmj35i3andu" path="res://assets/ui/buttons/button-orange.png" id="4_btn_orange"]
+[ext_resource type="FontVariation" uid="uid://b5t3wfh501ofr" path="res://assets/ui/fonts/dotgothic/dotgothic_variation.tres" id="5_variation"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_panel"]
 texture_margin_left = 40.0
@@ -151,6 +152,33 @@ Label/fonts/font = ExtResource("1_dotgothic")
 LineEdit/fonts/font = ExtResource("1_dotgothic")
 PanelContainer/styles/panel = SubResource("StyleBoxTexture_panel")
 RichTextLabel/fonts/font = ExtResource("1_dotgothic")
+HomeButton/base_type = &"StyledButton"
+HomeButton/colors/font_color = Color(0.137255, 0.215686, 0.223529, 1)
+HomeButton/colors/font_focus_color = Color(0.137255, 0.215686, 0.223529, 1)
+HomeButton/colors/font_hover_color = Color(0.137255, 0.215686, 0.223529, 1)
+HomeButton/colors/font_outline_color = Color(0.137255, 0.215686, 0.223529, 1)
+HomeButton/colors/font_pressed_color = Color(0.137255, 0.215686, 0.223529, 1)
+HomeButton/constants/outline_size = 6
+HomeButton/font_sizes/font_size = 35
+HomeButton/fonts/font = ExtResource("5_variation")
+HomeButtonGreen/base_type = &"StyledButtonGreen"
+HomeButtonGreen/colors/font_color = Color(0.137255, 0.215686, 0.223529, 1)
+HomeButtonGreen/colors/font_focus_color = Color(0.137255, 0.215686, 0.223529, 1)
+HomeButtonGreen/colors/font_hover_color = Color(0.137255, 0.215686, 0.223529, 1)
+HomeButtonGreen/colors/font_outline_color = Color(0.137255, 0.215686, 0.223529, 1)
+HomeButtonGreen/colors/font_pressed_color = Color(0.137255, 0.215686, 0.223529, 1)
+HomeButtonGreen/constants/outline_size = 6
+HomeButtonGreen/font_sizes/font_size = 35
+HomeButtonGreen/fonts/font = ExtResource("5_variation")
+HomeButtonOrange/base_type = &"StyledButtonOrange"
+HomeButtonOrange/colors/font_color = Color(0.137255, 0.215686, 0.223529, 1)
+HomeButtonOrange/colors/font_focus_color = Color(0.137255, 0.215686, 0.223529, 1)
+HomeButtonOrange/colors/font_hover_color = Color(0.137255, 0.215686, 0.223529, 1)
+HomeButtonOrange/colors/font_outline_color = Color(0.137255, 0.215686, 0.223529, 1)
+HomeButtonOrange/colors/font_pressed_color = Color(0.137255, 0.215686, 0.223529, 1)
+HomeButtonOrange/constants/outline_size = 6
+HomeButtonOrange/font_sizes/font_size = 35
+HomeButtonOrange/fonts/font = ExtResource("5_variation")
 StyledButton/base_type = &"Button"
 StyledButton/colors/font_color = Color(1, 1, 1, 1)
 StyledButton/colors/font_disabled_color = Color(0.6, 0.6, 0.6, 1)
