@@ -19,8 +19,7 @@ enum Objective {
 
 # Constants
 const LEVEL_ID_TUTORIAL: String = "lev.01"
-const TIMELINE_EN_PATH: String = "res://assets/narrative/tutorial_level_01.en.dtl"
-const TIMELINE_FR_PATH: String = "res://assets/narrative/tutorial_level_01.fr.dtl"
+const TIMELINE_BASE: String = "tutorial_level_01"
 const KILLS_TO_ACTIVATE_UPGRADE: int = 5
 
 # Private variables
@@ -295,10 +294,6 @@ func _get_radial_menu() -> RadialTowerUpgradeMenu:
 	return get_tree().get_root().find_child("TowerUpgrade", true, false) as RadialTowerUpgradeMenu
 
 
-func _get_timeline_path() -> String:
-	return TIMELINE_FR_PATH if TranslationServer.get_locale().to_lower().begins_with("fr") else TIMELINE_EN_PATH
-
-
 func _handle_tutorial_event(event_name: String) -> void:
 	match event_name:
 		"tutorial:open_build_menu":
@@ -377,9 +372,10 @@ func _start_tutorial() -> void:
 	_connect_hud_signals()
 	_lock_camera_for_tutorial()
 
-	var timeline_resource: Resource = load(_get_timeline_path())
+	var timeline_path: String = Narrative.timeline_path(TIMELINE_BASE)
+	var timeline_resource: Resource = load(timeline_path)
 	if timeline_resource == null:
-		Log.trace(Log.Level.ERROR, "Tutorial timeline not found: %s" % _get_timeline_path())
+		Log.trace(Log.Level.ERROR, "Tutorial timeline not found: %s" % timeline_path)
 		_stop_tutorial(false)
 		return
 

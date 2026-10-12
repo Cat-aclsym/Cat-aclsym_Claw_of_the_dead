@@ -13,6 +13,8 @@ signal menu_close
 
 const _ARMORY_ITEM_SCENE: PackedScene = preload("res://scenes/ui/menus/armory/armory_item.tscn")
 const _ARMORY_SCROLL_DRAG_THRESHOLD_PX: float = 12.0
+## [member ArmoryManager.get_armory_node] category of the nodes that unlock a tower or a trap.
+const _BUILDING_CATEGORY: String = "periphery_building"
 const _FALLBACK_ICON: Texture2D = preload("res://assets/ui/icons/Star.png")
 const _RESET_BUTTON_DISABLED_MODULATE: Color = Color(0.55, 0.55, 0.55, 1.0)
 const _RESET_BUTTON_ENABLED_MODULATE: Color = Color(1.0, 1.0, 1.0, 1.0)
@@ -115,7 +117,7 @@ func _ready() -> void:
 	assert(title_label != null, "title_label node not found")
 	SignalUtil.connects(signals)
 	_refresh()
-	_maybe_show_armory_intro()
+	Narrative.play_once(&"armory_intro_seen", "armory_intro")
 
 
 ## Clears the selected node, hides the description panel, and deselects all [ArmoryItem] instances.
@@ -197,7 +199,8 @@ func _on_armory_updated() -> void:
 
 
 func _on_buy_requested(node_id: String) -> void:
-	ArmoryManager.purchase_node(node_id)
+	if ArmoryManager.purchase_node(node_id) and ArmoryManager.get_armory_node(node_id).get("category", "") == _BUILDING_CATEGORY:
+		Narrative.play_once(&"armory_first_unlock_seen", "armory_first_unlock")
 
 
 func _on_close_pressed() -> void:
@@ -316,20 +319,5 @@ func _update_reset_button_visual() -> void:
 	reset_spent_stars_button.modulate = _RESET_BUTTON_DISABLED_MODULATE if is_disabled else _RESET_BUTTON_ENABLED_MODULATE
 
 
-func _get_armory_intro_path() -> String:
-	var locale: String = TranslationServer.get_locale().substr(0, 2)
-	var path: String = "res://assets/narrative/armory_intro.%s.dtl" % locale
-	if not FileAccess.file_exists(path):
-		path = "res://assets/narrative/armory_intro.en.dtl"
-	return path
-
-
-func _maybe_show_armory_intro() -> void:
-	if ProgressionManager.is_armory_intro_seen():
-		return
-	ProgressionManager.mark_armory_intro_seen()
-	Dialogic.start(_get_armory_intro_path())
-
-
 func _on_help_button_pressed() -> void:
-	Dialogic.start(_get_armory_intro_path())
+	Dialogic.start(Narrative.timeline_path("armory_intro"))

@@ -69,16 +69,16 @@ func get_next_level_id(current_id: String) -> String:
 	return ""
 
 
-## Returns whether the armory intro dialogue has been seen.
-func is_armory_intro_seen() -> bool:
-	return data.parameters.armory_intro_seen
+## Returns whether the one-time event [param flag] (e.g. [code]&"armory_intro_seen"[/code]) already happened.
+func is_flag_set(flag: StringName) -> bool:
+	return data.parameters.flags.get(String(flag), false)
 
 
-## Marks the armory intro dialogue as seen and persists it.
-func mark_armory_intro_seen() -> void:
-	if data.parameters.armory_intro_seen:
+## Marks the one-time event [param flag] as done and persists it.
+func set_flag(flag: StringName) -> void:
+	if is_flag_set(flag):
 		return
-	data.parameters.armory_intro_seen = true
+	data.parameters.flags[String(flag)] = true
 	save_game()
 
 
