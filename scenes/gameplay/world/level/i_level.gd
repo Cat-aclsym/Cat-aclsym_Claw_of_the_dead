@@ -273,6 +273,11 @@ func _on_enemy_spawn() -> void:
 	_enemies_alive += 1
 
 
+## Returns the number of enemies currently alive on the map.
+func get_enemies_alive() -> int:
+	return _enemies_alive
+
+
 ## Sets the game to paused state, affecting both time scale and state machine.
 func pause() -> void:
 	Log.trace(Log.Level.DEBUG, "ILevel.pause requested: wave_flow_started=%s current_state=%s" % [_wave_flow_started, state_machine.get_current_state().name if state_machine else "<no state machine>"])

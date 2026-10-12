@@ -82,7 +82,7 @@ func _get_enemy_preview_texture(enemy: IEnemy) -> Texture2D:
 
 	return null
 func _resolve_spawn_path(map: IMap, spawner_index: int) -> Path2D:
-	var spawn_paths: Array[Path2D] = map.get_spawn_paths()
+	var spawn_paths: Array[Path2D] = map.get_active_paths()
 	if spawn_paths.is_empty():
 		Log.trace(Log.Level.ERROR, "Cannot spawn enemy: map has no active paths.")
 		return null
