@@ -18,9 +18,9 @@ enum Objective {
 }
 
 # Constants
+const KILLS_TO_ACTIVATE_UPGRADE: int = 5
 const LEVEL_ID_TUTORIAL: String = "lev.01"
 const TIMELINE_BASE: String = "tutorial_level_01"
-const KILLS_TO_ACTIVATE_UPGRADE: int = 5
 
 # Private variables
 var _active_objective: Objective = Objective.NONE
@@ -79,6 +79,12 @@ func _process(_delta: float) -> void:
 
 
 # Public
+## Called when the current level ends.
+func on_level_ended() -> void:
+	if _is_running:
+		_stop_tutorial(false)
+
+
 ## Called when a level starts from the main UI flow.
 func on_level_started(level: ILevel) -> void:
 	Log.trace(Log.Level.DEBUG, "TutorialManager.on_level_started level=%s tutorial_completed=%s" % [level, ProgressionManager.is_tutorial_completed()])
@@ -93,12 +99,6 @@ func on_level_started(level: ILevel) -> void:
 		_stop_tutorial(false)
 		return
 	call_deferred("_start_tutorial")
-
-
-## Called when the current level ends.
-func on_level_ended() -> void:
-	if _is_running:
-		_stop_tutorial(false)
 
 
 # Private

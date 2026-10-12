@@ -11,12 +11,6 @@ var _placed_types: Array[String] = []
 
 
 # Public functions
-## Called when the level starts to reset state.
-func start_monitoring() -> void:
-	super.start_monitoring()
-	_placed_types.clear()
-
-
 ## Notifies the challenge about a tower placement.
 func on_tower_placed(tower: ITower) -> void:
 	var t_id: String = tower.scene_file_path
@@ -24,3 +18,9 @@ func on_tower_placed(tower: ITower) -> void:
 		fail()
 	else:
 		_placed_types.append(t_id)
+
+
+## Called when the level starts to reset state.
+func start_monitoring() -> void:
+	super.start_monitoring()
+	_placed_types.clear()

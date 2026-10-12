@@ -5,21 +5,22 @@
 class_name IEnemy
 extends CharacterBody2D
 
+## Emitted to trigger camera effects
+## [param effect] The name of the effect to trigger
+signal camera_effect(effect: String)
 ## Emitted when the enemy dies, after the reward and the challenge notification
 signal died
 ## Emitted when the enemy reaches the end of its path alive
 signal escaped
-## Emitted to trigger camera effects
-## [param effect] The name of the effect to trigger
-signal camera_effect(effect: String)
 
 
 # Enums
-## Possible states for the enemy
-enum EnemyState {
-	DEAD,  ## Enemy is dead
-	FOLLOW_PATH,  ## Enemy is following a path
-	PATH_FINISHED,  ## Enemy reached the end of its path
+## Types of damage that can be applied
+enum DamageType {
+	DEFAULT,
+	POISON,
+	FIRE,
+	STUN,
 }
 
 ## Movement directions for the enemy
@@ -30,6 +31,13 @@ enum EnemyDirection {
 	UP_RIGHT,
 }
 
+## Possible states for the enemy
+enum EnemyState {
+	DEAD,  ## Enemy is dead
+	FOLLOW_PATH,  ## Enemy is following a path
+	PATH_FINISHED,  ## Enemy reached the end of its path
+}
+
 ## Types of enemies available, the values are stored in scenes and must stay stable
 enum EnemyType {
 	BIG_DADDY = 0,
@@ -37,19 +45,11 @@ enum EnemyType {
 	RAT = 3,
 }
 
-## Types of damage that can be applied
-enum DamageType {
-	DEFAULT,
-	POISON,
-	FIRE,
-	STUN,
-}
-
 
 # Constants
 const ANIM_FADE_OUT := "fade_out"
-const ANIM_WALK_UP := "walk_up"
 const ANIM_WALK_DOWN := "walk_down"
+const ANIM_WALK_UP := "walk_up"
 
 ## Damage configuration for different damage types
 const DAMAGES: Dictionary = {
@@ -58,6 +58,12 @@ const DAMAGES: Dictionary = {
 	DamageType.FIRE: {"color": Color(1.0, 0.6, 0.2, 1)},   # Brighter orange/fire
 	DamageType.STUN: {"color": Color(1.0, 1.0, 0.0, 1)},   # Yellow for stun
 }
+
+## Multiplied with [member old_modulate] while being hit by Inferno Tower; red/orange feel.
+const INFERNO_VISUAL_TINT: Color = Color(1.0, 0.7, 0.7, 1.0)
+
+## Distance probed ahead on the path to anticipate direction changes.
+const LOOK_AHEAD_DISTANCE: float = 15.0
 
 ## Walk direction for each 45 degree sector of the movement angle, starting at 0 (right) and turning clockwise on screen.
 const OCTANT_DIRECTIONS: Array[EnemyDirection] = [
@@ -71,34 +77,28 @@ const OCTANT_DIRECTIONS: Array[EnemyDirection] = [
 	EnemyDirection.UP_RIGHT,
 ]
 
-## Speed modifier key of the electrify effect.
-const SPEED_KEY_ELECTRIFY: StringName = &"electrify"
-
-## Visual refcount key of the Inferno Tower beam.
-const VISUAL_KEY_INFERNO: StringName = &"inferno"
-
-## Distance probed ahead on the path to anticipate direction changes.
-const LOOK_AHEAD_DISTANCE: float = 15.0
+## Multiplied with [member old_modulate] while poisoned; purple feel.
+const POISON_VISUAL_TINT: Color = Color(0.85, 0.75, 0.9, 1.0)
 
 ## Multiplied with [member old_modulate] while slowed; matches slow-trap cyan/teal feel (slightly darker, bluish).
 const SLOW_VISUAL_TINT: Color = Color(0.58, 0.78, 0.86, 1.0)
 
-## Multiplied with [member old_modulate] while poisoned; purple feel.
-const POISON_VISUAL_TINT: Color = Color(0.85, 0.75, 0.9, 1.0)
+## Speed modifier key of the electrify effect.
+const SPEED_KEY_ELECTRIFY: StringName = &"electrify"
+
+## Stun star texture cached for performance.
+const STUN_STAR_TEX := preload("res://assets/gameplay/enemies/stunned_star.png")
 
 ## Multiplied with [member old_modulate] while stunned; yellow feel.
 const STUN_VISUAL_TINT: Color = Color(1.0, 1.0, 0.6, 1.0)
 
-## Multiplied with [member old_modulate] while being hit by Inferno Tower; red/orange feel.
-const INFERNO_VISUAL_TINT: Color = Color(1.0, 0.7, 0.7, 1.0)
+## Visual refcount key of the Inferno Tower beam.
+const VISUAL_KEY_INFERNO: StringName = &"inferno"
 
 ## Tint applied for each key pushed with [method push_visual].
 const VISUAL_TINTS: Dictionary[StringName, Color] = {
 	VISUAL_KEY_INFERNO: INFERNO_VISUAL_TINT,
 }
-
-## Stun star texture cached for performance.
-const STUN_STAR_TEX := preload("res://assets/gameplay/enemies/stunned_star.png")
 
 
 ## One poison stack: it deals [member damage] every [member interval] seconds for [member ticks_left] ticks.
@@ -125,31 +125,31 @@ class PoisonEffect extends RefCounted:
 @export var type: EnemyType = EnemyType.DEFAULT
 
 # Public variables
+## Speed without any modifier, from [StatsDB].
+var base_speed: float = 0.0
+
 var current_animation: String = ""
 var direction: EnemyDirection = EnemyDirection.UP_RIGHT
+## Health removed from the level when this enemy escapes, from [StatsDB].
+var escape_damage: int = 0
 var health: float
 var is_already_dead: bool = false
+
+## Whether the enemy is currently stunned
+var is_stunned: bool = false
 var last_damage_type: DamageType = DamageType.DEFAULT
+
+## Store the last source of damage
+var last_source: Variant = null
 var max_health: float = 0.0
 var path: Path2D = null
 var path_follow: PathFollow2D = null
 var previous_position: Vector2 = Vector2.ZERO
-var state: EnemyState = EnemyState.FOLLOW_PATH
-
-## Speed without any modifier, from [StatsDB].
-var base_speed: float = 0.0
-## Health removed from the level when this enemy escapes, from [StatsDB].
-var escape_damage: int = 0
 ## Coins given when this enemy dies, from [StatsDB].
 var reward: int = 0
 ## Current speed: [member base_speed] times every speed modifier.
 var speed: float = 0.0
-
-## Whether the enemy is currently stunned
-var is_stunned: bool = false
-
-## Store the last source of damage
-var last_source: Variant = null
+var state: EnemyState = EnemyState.FOLLOW_PATH
 
 # Private variables
 var _damage_tween: Tween
@@ -229,34 +229,35 @@ func _physics_process(delta: float) -> void:
 
 
 # Public functions
-## Apply damage to the enemy
+## Add a poison effect to the enemy
 ## [br]
-## [param damage] Amount of damage to apply
-## [param damage_type] Type of damage being applied
-## [param source] What dealt the damage: a bullet, a tower or a trap
-func take_damage(damage: float, damage_type: DamageType, source: Variant = null) -> void:
-	if is_already_dead:
+## [param damage] Damage per tick
+## [param total_execution] Number of times to apply damage
+## [param interval] Time between damage ticks
+func add_poison_effect(damage: float, total_execution: int, interval: float) -> void:
+	_poisons.append(PoisonEffect.new(damage, total_execution, maxf(interval, 0.05)))
+	_refresh_poison_visual()
+
+
+## Applies an electrified debuff: temporary slow + periodic electric damage.
+func apply_electrify_effect(duration: float, slow_amount: float, tick_damage: float, tick_interval: float, source: Variant = null) -> void:
+	if duration <= 0.0:
 		return
 
-	last_damage_type = damage_type
-	last_source = source
-	_killer_tower = _resolve_source_tower(source)
-	_damage_effect(DAMAGES[damage_type]["color"])
+	var normalized_slow: float = clampf(slow_amount, 0.0, 0.95)
+	var normalized_interval: float = maxf(0.05, tick_interval)
+	var multiplier: float = 1.0 - normalized_slow
 
-	if popup_score_spawner:
-		popup_score_spawner.display_damage(damage, DAMAGES[damage_type]["color"])
+	_electrified = true
+	# Keep the strongest slow when the effect is refreshed.
+	if multiplier < _speed_modifiers.get(SPEED_KEY_ELECTRIFY, INF):
+		set_speed_modifier(SPEED_KEY_ELECTRIFY, multiplier)
 
-	if source:
-		ChallengeManager.notify_enemy_hit(self, source)
-
-	if health - damage <= 0:
-		health = 0.0
-		state = EnemyState.DEAD
-	else:
-		health -= damage
-
-	if health_bar:
-		health_bar.update_health(health, max_health)
+	_electrify_remaining = maxf(_electrify_remaining, duration)
+	_electrify_tick_damage = maxf(_electrify_tick_damage, tick_damage)
+	_electrify_tick_interval = normalized_interval
+	_electrify_tick_remaining = minf(_electrify_tick_remaining if _electrify_tick_remaining > 0.0 else normalized_interval, normalized_interval)
+	_electrify_source = source
 
 
 ## Update enemy position along its path
@@ -276,16 +277,6 @@ func follow_path(delta: float) -> void:
 	# Always update direction, regardless of path position
 	_update_direction()
 	_walk()
-
-
-## Add a poison effect to the enemy
-## [br]
-## [param damage] Damage per tick
-## [param total_execution] Number of times to apply damage
-## [param interval] Time between damage ticks
-func add_poison_effect(damage: float, total_execution: int, interval: float) -> void:
-	_poisons.append(PoisonEffect.new(damage, total_execution, maxf(interval, 0.05)))
-	_refresh_poison_visual()
 
 
 ## Returns true while enemy is under electrified effect.
@@ -322,27 +313,6 @@ func set_speed_modifier(key: StringName, multiplier: float) -> void:
 	_on_speed_modifiers_changed()
 
 
-## Applies an electrified debuff: temporary slow + periodic electric damage.
-func apply_electrify_effect(duration: float, slow_amount: float, tick_damage: float, tick_interval: float, source: Variant = null) -> void:
-	if duration <= 0.0:
-		return
-
-	var normalized_slow: float = clampf(slow_amount, 0.0, 0.95)
-	var normalized_interval: float = maxf(0.05, tick_interval)
-	var multiplier: float = 1.0 - normalized_slow
-
-	_electrified = true
-	# Keep the strongest slow when the effect is refreshed.
-	if multiplier < _speed_modifiers.get(SPEED_KEY_ELECTRIFY, INF):
-		set_speed_modifier(SPEED_KEY_ELECTRIFY, multiplier)
-
-	_electrify_remaining = maxf(_electrify_remaining, duration)
-	_electrify_tick_damage = maxf(_electrify_tick_damage, tick_damage)
-	_electrify_tick_interval = normalized_interval
-	_electrify_tick_remaining = minf(_electrify_tick_remaining if _electrify_tick_remaining > 0.0 else normalized_interval, normalized_interval)
-	_electrify_source = source
-
-
 ## Applies a stun effect to the enemy.
 ## [param duration] How long the stun lasts in seconds.
 func stun(duration: float) -> void:
@@ -358,6 +328,36 @@ func stun(duration: float) -> void:
 	var stun_tween: Tween = create_tween()
 	stun_tween.tween_interval(duration)
 	stun_tween.tween_callback(_begin_stun_fade)
+
+
+## Apply damage to the enemy
+## [br]
+## [param damage] Amount of damage to apply
+## [param damage_type] Type of damage being applied
+## [param source] What dealt the damage: a bullet, a tower or a trap
+func take_damage(damage: float, damage_type: DamageType, source: Variant = null) -> void:
+	if is_already_dead:
+		return
+
+	last_damage_type = damage_type
+	last_source = source
+	_killer_tower = _resolve_source_tower(source)
+	_damage_effect(DAMAGES[damage_type]["color"])
+
+	if popup_score_spawner:
+		popup_score_spawner.display_damage(damage, DAMAGES[damage_type]["color"])
+
+	if source:
+		ChallengeManager.notify_enemy_hit(self, source)
+
+	if health - damage <= 0:
+		health = 0.0
+		state = EnemyState.DEAD
+	else:
+		health -= damage
+
+	if health_bar:
+		health_bar.update_health(health, max_health)
 
 
 # Private functions

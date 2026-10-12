@@ -5,39 +5,37 @@ extends IBullet
 ## Beam-type projectile for the Inferno Tower.
 ## Handles instant damage and enhanced beam visual effect.
 
-## Gradient colors (yellow -> orange -> red)
-const COLOR_YELLOW: Color = Color(1.0, 0.9, 0.3, 1.0)
-const COLOR_ORANGE: Color = Color(1.0, 0.5, 0.1, 1.0)
-const COLOR_RED: Color = Color(0.9, 0.1, 0.1, 1.0)
-
 ## Base widths
 const BEAM_WIDTH_BASE: float = 1.5
 const BEAM_WIDTH_MAX: float = 4.0
+const COLOR_ORANGE: Color = Color(1.0, 0.5, 0.1, 1.0)
+const COLOR_RED: Color = Color(0.9, 0.1, 0.1, 1.0)
+
+## Gradient colors (yellow -> orange -> red)
+const COLOR_YELLOW: Color = Color(1.0, 0.9, 0.3, 1.0)
 const FADE_DURATION: float = 0.5
+const NOISE_AMPLITUDE: float = 1.8
 
 ## Wave effect parameters
 const NOISE_SPEED: float = 10.0
-const NOISE_AMPLITUDE: float = 1.8
 const SEGMENTS_COUNT: int = 16
 
-## Gameplay values set by [method ITower._apply_projectile_config] from the tower bullet stats.
-## If true, damage doubles over time while the tower stays locked on the target
-var is_charging: bool = false
 ## Damage doubling speed (1.0 doubles the damage every second)
 var charge_speed: float = 1.0
-## Maximum damage multiplier
-var max_damage_multiplier: float = 1.0
 
 ## Current target resolved by the tower
 var enemy_target: IEnemy = null
+## Gameplay values set by [method ITower._apply_projectile_config] from the tower bullet stats.
+## If true, damage doubles over time while the tower stays locked on the target
+var is_charging: bool = false
+## Maximum damage multiplier
+var max_damage_multiplier: float = 1.0
+static var _core_gradient: Gradient = null
+var _damage_accumulator: float = 0.0
 
 ## Gradients shared by every beam, built on first use.
 static var _glow_gradient: Gradient = null
-static var _core_gradient: Gradient = null
 static var _inner_gradient: Gradient = null
-
-var _time: float = 0.0
-var _damage_accumulator: float = 0.0
 var _is_visual_applied: bool = false
 var _last_multiplier: float = 1.0
 ## Multiplier the particle amounts were last computed for, so they are only written when it changes.
@@ -45,12 +43,14 @@ var _particles_multiplier: float = 0.0
 ## Beam points, written in place every frame.
 var _points: PackedVector2Array = PackedVector2Array()
 
+var _time: float = 0.0
+
+@onready var fire_particles: CPUParticles2D = $FireParticles
+@onready var impact_sparks: CPUParticles2D = $ImpactSparks
 @onready var line_core: Line2D = $LineCore
 @onready var line_glow: Line2D = $LineGlow
 @onready var line_inner: Line2D = $LineInner
-@onready var fire_particles: CPUParticles2D = $FireParticles
 @onready var spark_particles: CPUParticles2D = $SparkParticles
-@onready var impact_sparks: CPUParticles2D = $ImpactSparks
 
 func _ready() -> void:
 	assert(is_instance_valid(line_core), "InfernoBeam requires LineCore child")
@@ -82,11 +82,6 @@ func _ready() -> void:
 	_apply_visual_effect(true)
 
 
-func _exit_tree() -> void:
-	# Safety: remove effect if beam is removed abruptly
-	_apply_visual_effect(false)
-
-
 func _process(delta: float) -> void:
 	if not is_instance_valid(enemy_target) or not is_instance_valid(tower_owner):
 		_start_fade_out()
@@ -106,6 +101,23 @@ func _process(delta: float) -> void:
 		_damage_accumulator = 0.0
 
 	_update_beam_visuals(current_multiplier)
+
+
+func _exit_tree() -> void:
+	# Safety: remove effect if beam is removed abruptly
+	_apply_visual_effect(false)
+
+
+func _apply_visual_effect(apply: bool) -> void:
+	if not is_instance_valid(enemy_target):
+		return
+
+	if apply:
+		enemy_target.push_visual(IEnemy.VISUAL_KEY_INFERNO)
+		_is_visual_applied = true
+	elif _is_visual_applied:
+		enemy_target.pop_visual(IEnemy.VISUAL_KEY_INFERNO)
+		_is_visual_applied = false
 
 
 ## Builds the gradients shared by every beam once.
@@ -129,17 +141,30 @@ static func _build_gradients() -> void:
 	_inner_gradient.add_point(0.5, Color.WHITE)
 	_inner_gradient.set_color(1, Color(1.0, 1.0, 0.8, 1.0))
 
+func _start_fade_out() -> void:
+	set_process(false)
 
-func _apply_visual_effect(apply: bool) -> void:
-	if not is_instance_valid(enemy_target):
-		return
+	# Remove visual effect from the enemy
+	_apply_visual_effect(false)
 
-	if apply:
-		enemy_target.push_visual(IEnemy.VISUAL_KEY_INFERNO)
-		_is_visual_applied = true
-	elif _is_visual_applied:
-		enemy_target.pop_visual(IEnemy.VISUAL_KEY_INFERNO)
-		_is_visual_applied = false
+	fire_particles.emitting = false
+	spark_particles.emitting = false
+	impact_sparks.emitting = false
+
+	var fade: Tween = create_tween()
+	fade.tween_property(self, "modulate:a", 0.0, FADE_DURATION)
+	SignalUtil.connects([{SignalUtil.WHO: fade, SignalUtil.WHAT: "finished", SignalUtil.TO: queue_free}])
+
+
+func _trigger_scale_flash() -> void:
+	var flash_tween: Tween = create_tween()
+	# Use modulate for flash as default_color is managed by the gradient
+	flash_tween.tween_property(line_core, "modulate", Color(2.0, 2.0, 2.0, 1.0), 0.05)
+	flash_tween.tween_property(line_core, "modulate", Color.WHITE, 0.15)
+
+	var original_glow: float = line_glow.width
+	flash_tween.parallel().tween_property(line_glow, "width", original_glow * 3.0, 0.05)
+	flash_tween.tween_property(line_glow, "width", original_glow, 0.15)
 
 
 func _update_beam_visuals(multiplier: float) -> void:
@@ -204,28 +229,3 @@ func _update_particle_intensity(multiplier: float) -> void:
 	fire_particles.scale_amount_max = lerp(2.0, 4.0, intensity)
 	spark_particles.amount = int(lerp(20, 60, intensity))
 	impact_sparks.amount = int(lerp(15, 40, intensity))
-
-
-func _trigger_scale_flash() -> void:
-	var flash_tween: Tween = create_tween()
-	# Use modulate for flash as default_color is managed by the gradient
-	flash_tween.tween_property(line_core, "modulate", Color(2.0, 2.0, 2.0, 1.0), 0.05)
-	flash_tween.tween_property(line_core, "modulate", Color.WHITE, 0.15)
-
-	var original_glow: float = line_glow.width
-	flash_tween.parallel().tween_property(line_glow, "width", original_glow * 3.0, 0.05)
-	flash_tween.tween_property(line_glow, "width", original_glow, 0.15)
-
-func _start_fade_out() -> void:
-	set_process(false)
-
-	# Remove visual effect from the enemy
-	_apply_visual_effect(false)
-
-	fire_particles.emitting = false
-	spark_particles.emitting = false
-	impact_sparks.emitting = false
-
-	var fade: Tween = create_tween()
-	fade.tween_property(self, "modulate:a", 0.0, FADE_DURATION)
-	SignalUtil.connects([{SignalUtil.WHO: fade, SignalUtil.WHAT: "finished", SignalUtil.TO: queue_free}])

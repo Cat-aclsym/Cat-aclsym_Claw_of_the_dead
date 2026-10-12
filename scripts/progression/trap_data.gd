@@ -7,13 +7,13 @@ extends RefCounted
 ## Whether the trap is unlocked and available in the construction menu.
 var unlocked: bool = false
 
+## Populates the object from a dictionary.
+## [param d] Serialized trap progression fields.
+func from_dictionary(d: Dictionary) -> void:
+	unlocked = d.get("unlocked", false)
+
 ## Converts the object to a dictionary for serialization.
 func save() -> Dictionary:
 	return {
 		"unlocked": unlocked
 	}
-
-## Populates the object from a dictionary.
-## [param d] Serialized trap progression fields.
-func from_dictionary(d: Dictionary) -> void:
-	unlocked = d.get("unlocked", false)

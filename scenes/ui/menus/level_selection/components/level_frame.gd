@@ -6,16 +6,16 @@ extends Control
 
 signal start_level(level_id: String)
 
+const CHALLENGE_DESCRIPTION_KEY: String = "description"
+const CHALLENGE_JSON_PATH_PATTERN: String = "res://resources/challenges/%s.json"
+const CHALLENGE_NAME_KEY: String = "name"
 ## Constants
 const CONDITION_DONE: Texture2D = preload("res://assets/ui/icons/star.png")
 const CONDITION_TODO: Texture2D = preload("res://assets/ui/icons/star_empty.png")
-const CHALLENGE_DESCRIPTION_KEY: String = "description"
-const CHALLENGE_NAME_KEY: String = "name"
 const DEFAULT_ARC_ID: String = "arc.01"
 const LEVEL_DATA_CHALLENGES_KEY: String = "challenges"
-const LEVEL_SCENE_PATH_PATTERN: String = "res://scenes/gameplay/world/level/levels/%s.tscn"
 const LEVEL_JSON_PATH_PATTERN: String = "res://resources/levels/%s.json"
-const CHALLENGE_JSON_PATH_PATTERN: String = "res://resources/challenges/%s.json"
+const LEVEL_SCENE_PATH_PATTERN: String = "res://scenes/gameplay/world/level/levels/%s.tscn"
 
 ## Variables
 @export var arc_title: String
@@ -53,17 +53,6 @@ func configure() -> void:
 
 	SignalUtil.connects(signals)
 	ButtonEffects.apply(play_button)
-
-
-## Private functions
-func _load_level_scene_state() -> SceneState:
-	var level_scene_path: String = LEVEL_SCENE_PATH_PATTERN % level_id
-	var level_scene := load(level_scene_path) as PackedScene
-	if level_scene == null:
-		return null
-
-	var scene_state: SceneState = level_scene.get_state()
-	return scene_state
 
 
 func _get_scene_string_property(scene_state: SceneState, property_name: StringName, fallback: String) -> String:
@@ -119,6 +108,17 @@ func _load_level_challenge_ids() -> Array[String]:
 			if challenge_id is String:
 				challenge_ids.append(challenge_id)
 	return challenge_ids
+
+
+## Private functions
+func _load_level_scene_state() -> SceneState:
+	var level_scene_path: String = LEVEL_SCENE_PATH_PATTERN % level_id
+	var level_scene := load(level_scene_path) as PackedScene
+	if level_scene == null:
+		return null
+
+	var scene_state: SceneState = level_scene.get_state()
+	return scene_state
 
 
 func _on_play_button_pressed() -> void:

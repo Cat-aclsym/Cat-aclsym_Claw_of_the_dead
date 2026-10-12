@@ -20,11 +20,6 @@ var _upgrade_ids: Array[String] = []
 @onready var _confirm_button: Button = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/ButtonsHBoxContainer/ConfirmButton
 @onready var _option1_button: Button = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/TabsHBoxContainer/UpgradeOption1Button
 @onready var _option2_button: Button = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/TabsHBoxContainer/UpgradeOption2Button
-@onready var _panel: Control = $UpgradeDescriptionTextureRect
-@onready var _stats_container: VBoxContainer = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/StatsScrollContainer/VBoxContainer
-@onready var _stats_scroll: ScrollContainer = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/StatsScrollContainer
-@onready var _tabs_container: HBoxContainer = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/TabsHBoxContainer
-@onready var _upgrade_title_label: Label = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/UpgradeTitleLabel
 
 @onready var signals: Array[Dictionary] = [
 	{SignalUtil.WHO: _cancel_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_cancel_button_pressed},
@@ -32,6 +27,11 @@ var _upgrade_ids: Array[String] = []
 	{SignalUtil.WHO: _option1_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_option1_button_pressed},
 	{SignalUtil.WHO: _option2_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_option2_button_pressed}
 ]
+@onready var _panel: Control = $UpgradeDescriptionTextureRect
+@onready var _stats_container: VBoxContainer = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/StatsScrollContainer/VBoxContainer
+@onready var _stats_scroll: ScrollContainer = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/StatsScrollContainer
+@onready var _tabs_container: HBoxContainer = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/TabsHBoxContainer
+@onready var _upgrade_title_label: Label = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/UpgradeTitleLabel
 
 # Core methods
 func _ready() -> void:
@@ -65,6 +65,43 @@ func setup(p_tower: ITower, p_upgrade_ids: Array[String]) -> void:
 	_update_tabs_visibility()
 	_refresh_upgrade_view()
 
+
+## Creates a stat display for a given stat
+func _create_stat_display(stat_name: String, stat_change: float, is_tower_stat: bool) -> void:
+	# Get current and new values
+	var current_value: float = _get_current_stat_value(stat_name, is_tower_stat)
+	var new_value: float = current_value + stat_change
+
+	# Instantiate the stat bar scene
+	var stat_bar: StatBar = STAT_BAR_SCENE.instantiate()
+	_stats_container.add_child(stat_bar)
+
+	# Setup the stat bar with data
+	stat_bar.setup(stat_name, current_value, new_value, MAX_STAT_VALUE, true)
+
+## Gets the current value of a stat
+func _get_current_stat_value(stat_name: String, is_tower_stat: bool) -> float:
+	if tower == null:
+		return 0.0
+	if not is_tower_stat:
+		return tower.get_display_bullet_stats().get(stat_name, 0.0)
+	if stat_name in tower:
+		var value: Variant = tower.get(stat_name)
+		return float(value) if value != null else 0.0
+	return 0.0
+
+## Gets the upgrade title based on the current tower level and upgrade data
+func _get_upgrade_title(upgrade: Dictionary) -> String:
+	var delta_level: int = 1
+	var tower_stats: Dictionary = upgrade.get("tower_stats", {})
+	if tower_stats.has("level"):
+		delta_level = int(tower_stats["level"])
+
+	var next_level: int = delta_level
+	if tower != null:
+		next_level = tower.level + delta_level
+
+	return tr("TOWER.UPGRADE.TITLE") % next_level
 
 func _refresh_upgrade_view() -> void:
 	if _upgrade_ids.is_empty():
@@ -131,44 +168,11 @@ func _refresh_upgrade_view() -> void:
 
 	_update_scroll_mode(displayed_stats)
 
-## Gets the upgrade title based on the current tower level and upgrade data
-func _get_upgrade_title(upgrade: Dictionary) -> String:
-	var delta_level: int = 1
-	var tower_stats: Dictionary = upgrade.get("tower_stats", {})
-	if tower_stats.has("level"):
-		delta_level = int(tower_stats["level"])
-
-	var next_level: int = delta_level
-	if tower != null:
-		next_level = tower.level + delta_level
-
-	return tr("TOWER.UPGRADE.TITLE") % next_level
-
-## Creates a stat display for a given stat
-func _create_stat_display(stat_name: String, stat_change: float, is_tower_stat: bool) -> void:
-	# Get current and new values
-	var current_value: float = _get_current_stat_value(stat_name, is_tower_stat)
-	var new_value: float = current_value + stat_change
-
-	# Instantiate the stat bar scene
-	var stat_bar: StatBar = STAT_BAR_SCENE.instantiate()
-	_stats_container.add_child(stat_bar)
-
-	# Setup the stat bar with data
-	stat_bar.setup(stat_name, current_value, new_value, MAX_STAT_VALUE, true)
-
-## Gets the current value of a stat
-func _get_current_stat_value(stat_name: String, is_tower_stat: bool) -> float:
-	if tower == null:
-		return 0.0
-	if not is_tower_stat:
-		return tower.get_display_bullet_stats().get(stat_name, 0.0)
-	if stat_name in tower:
-		var value: Variant = tower.get(stat_name)
-		return float(value) if value != null else 0.0
-	return 0.0
-
 # Signal handlers
+func _apply_option_button_style(button: Button, is_active: bool) -> void:
+	button.theme_type_variation = &"StyledButtonGreen" if is_active else &"StyledButton"
+
+
 func _on_cancel_button_pressed() -> void:
 	queue_free()
 
@@ -177,24 +181,6 @@ func _on_confirm_button_pressed() -> void:
 		upgrade_confirmed.emit()
 		tower.start_upgrade(selected_upgrade_id)
 	queue_free()
-
-
-func _update_tabs_visibility() -> void:
-	var count: int = _upgrade_ids.size()
-	if _tabs_container == null:
-		return
-	_tabs_container.visible = count > 1
-	_option1_button.visible = count >= 1
-	_option2_button.visible = count >= 2
-
-
-func _set_active_tab_button(index: int) -> void:
-	if _tabs_container == null:
-		return
-	_option1_button.button_pressed = index == 0
-	_option2_button.button_pressed = index == 1
-	_apply_option_button_style(_option1_button, index == 0)
-	_apply_option_button_style(_option2_button, index == 1)
 
 
 func _on_option1_button_pressed() -> void:
@@ -209,6 +195,15 @@ func _on_option2_button_pressed() -> void:
 	_refresh_upgrade_view()
 
 
+func _set_active_tab_button(index: int) -> void:
+	if _tabs_container == null:
+		return
+	_option1_button.button_pressed = index == 0
+	_option2_button.button_pressed = index == 1
+	_apply_option_button_style(_option1_button, index == 0)
+	_apply_option_button_style(_option2_button, index == 1)
+
+
 func _update_scroll_mode(displayed_stats: int) -> void:
 	if _stats_scroll == null:
 		return
@@ -218,5 +213,10 @@ func _update_scroll_mode(displayed_stats: int) -> void:
 		_stats_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 
 
-func _apply_option_button_style(button: Button, is_active: bool) -> void:
-	button.theme_type_variation = &"StyledButtonGreen" if is_active else &"StyledButton"
+func _update_tabs_visibility() -> void:
+	var count: int = _upgrade_ids.size()
+	if _tabs_container == null:
+		return
+	_tabs_container.visible = count > 1
+	_option1_button.visible = count >= 1
+	_option2_button.visible = count >= 2

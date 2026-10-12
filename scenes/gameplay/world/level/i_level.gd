@@ -47,9 +47,9 @@ var _time_frozen: bool = false
 var _time_scale_before_pause: float = 1.0
 var _wave_flow_started: bool = false
 
-@onready var _background_music: SoundEntity = $BackgroundMusic
 @onready var clock: Clock = $Clock
 @onready var popup_spawner: PopupSpawner = $PopupSpawner
+@onready var _background_music: SoundEntity = $BackgroundMusic
 
 # core
 func _ready() -> void:
@@ -59,15 +59,15 @@ func _ready() -> void:
 	_background_music.stream = BACKGROUND_MUSIC_STREAM
 
 
+func _process(delta: float) -> void:
+	if _wave_flow_started and not _level_ended and not Global.paused:
+		elapsed_time += delta
+
+
 func _exit_tree() -> void:
 	if _time_frozen:
 		Engine.time_scale = _time_scale_before_pause
 		_time_frozen = false
-
-
-func _process(delta: float) -> void:
-	if _wave_flow_started and not _level_ended and not Global.paused:
-		elapsed_time += delta
 
 
 # public

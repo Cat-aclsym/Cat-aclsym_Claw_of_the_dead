@@ -9,6 +9,8 @@ signal menu_close
 
 enum DisplayMode { LIST, GRID }
 
+const _GRID_COLUMNS: int = 8
+
 ## All stat icons with their display label and the stat key(s) they represent.
 const _STATS: Array[Dictionary] = [
 	{"label": "Damage", "keys": "damage", "icon": "res://assets/ui/stats/attack.png"},
@@ -32,8 +34,6 @@ const _STATS: Array[Dictionary] = [
 	{"label": "Electricity Slow", "keys": "electrify_slow_amount", "icon": "res://assets/ui/stats/electricity_slow.png"},
 ]
 
-const _GRID_COLUMNS: int = 8
-
 var _mode: DisplayMode = DisplayMode.LIST
 
 @onready var _close_button: Button = %CloseButton
@@ -50,6 +50,14 @@ func _ready() -> void:
 	])
 	_populate()
 
+func _on_close_pressed() -> void:
+	menu_close.emit()
+
+func _on_mode_toggle() -> void:
+	_mode = DisplayMode.GRID if _mode == DisplayMode.LIST else DisplayMode.LIST
+	_mode_button.text = "Switch to List" if _mode == DisplayMode.GRID else "Switch to Grid"
+	_populate()
+
 func _populate() -> void:
 	for child in _stats_container.get_children():
 		child.queue_free()
@@ -57,39 +65,6 @@ func _populate() -> void:
 		_populate_list()
 	else:
 		_populate_grid()
-
-func _populate_list() -> void:
-	for entry: Dictionary in _STATS:
-		var texture: Texture2D = load(entry["icon"]) as Texture2D
-
-		var row := HBoxContainer.new()
-		row.add_theme_constant_override("separation", 16)
-
-		var icon := TextureRect.new()
-		icon.custom_minimum_size = Vector2(64.0, 64.0)
-		icon.texture = texture
-		icon.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-		icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-		icon.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-		row.add_child(icon)
-
-		var text_col := VBoxContainer.new()
-		text_col.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-
-		var name_label := Label.new()
-		name_label.text = entry["label"]
-		name_label.add_theme_font_size_override("font_size", 16)
-		text_col.add_child(name_label)
-
-		var keys_label := Label.new()
-		keys_label.text = entry["keys"]
-		keys_label.add_theme_font_size_override("font_size", 12)
-		keys_label.add_theme_color_override("font_color", Color(0.7, 0.7, 0.7, 1.0))
-		text_col.add_child(keys_label)
-
-		row.add_child(text_col)
-		_stats_container.add_child(row)
 
 func _populate_grid() -> void:
 	var grid := GridContainer.new()
@@ -125,10 +100,35 @@ func _populate_grid() -> void:
 
 		grid.add_child(cell)
 
-func _on_mode_toggle() -> void:
-	_mode = DisplayMode.GRID if _mode == DisplayMode.LIST else DisplayMode.LIST
-	_mode_button.text = "Switch to List" if _mode == DisplayMode.GRID else "Switch to Grid"
-	_populate()
+func _populate_list() -> void:
+	for entry: Dictionary in _STATS:
+		var texture: Texture2D = load(entry["icon"]) as Texture2D
 
-func _on_close_pressed() -> void:
-	menu_close.emit()
+		var row := HBoxContainer.new()
+		row.add_theme_constant_override("separation", 16)
+
+		var icon := TextureRect.new()
+		icon.custom_minimum_size = Vector2(64.0, 64.0)
+		icon.texture = texture
+		icon.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+		icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		icon.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		row.add_child(icon)
+
+		var text_col := VBoxContainer.new()
+		text_col.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+
+		var name_label := Label.new()
+		name_label.text = entry["label"]
+		name_label.add_theme_font_size_override("font_size", 16)
+		text_col.add_child(name_label)
+
+		var keys_label := Label.new()
+		keys_label.text = entry["keys"]
+		keys_label.add_theme_font_size_override("font_size", 12)
+		keys_label.add_theme_color_override("font_color", Color(0.7, 0.7, 0.7, 1.0))
+		text_col.add_child(keys_label)
+
+		row.add_child(text_col)
+		_stats_container.add_child(row)

@@ -17,7 +17,6 @@ const ENCYCLOPEDIA_MENU: PackedScene = preload("res://scenes/ui/menus/hud/encycl
 @onready var music_button: TextureButton = $Panel/MarginContainer/PanelContainer/CenterContainer/VBoxContainer/TopLeftIcon/MusicButton
 @onready var play_button: TextureButton = $Panel/MarginContainer/PanelContainer/CenterContainer/VBoxContainer/ButtonLayer/PlayButton
 @onready var restart_button: TextureButton = $Panel/MarginContainer/PanelContainer/CenterContainer/VBoxContainer/ButtonLayer/RestartButton
-@onready var sound_button: TextureButton = $Panel/MarginContainer/PanelContainer/CenterContainer/VBoxContainer/TopLeftIcon/SoundButton
 
 @onready var signals: Array[Dictionary] = [
 	{SignalUtil.WHO: encyclopedia_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_encyclopedia_button_pressed},
@@ -25,6 +24,7 @@ const ENCYCLOPEDIA_MENU: PackedScene = preload("res://scenes/ui/menus/hud/encycl
 	{SignalUtil.WHO: restart_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_restart_button_pressed},
 	{SignalUtil.WHO: play_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_play_button_pressed}
 ]
+@onready var sound_button: TextureButton = $Panel/MarginContainer/PanelContainer/CenterContainer/VBoxContainer/TopLeftIcon/SoundButton
 
 # core
 func _ready() -> void:
@@ -56,12 +56,6 @@ func _ready() -> void:
 	_update_encyclopedia_notification()
 
 # private
-## Closes the encyclopedia and shows the pause menu content again.
-func _on_encyclopedia_closed(encyclopedia_instance: Encyclopedia) -> void:
-	encyclopedia_instance.queue_free()
-	margin_container.visible = true
-	_update_encyclopedia_notification()
-
 ## Handles the encyclopedia button press event.
 ## [br]Shows the encyclopedia menu and hides the current menu content.
 func _on_encyclopedia_button_pressed() -> void:
@@ -69,6 +63,12 @@ func _on_encyclopedia_button_pressed() -> void:
 	var encyclopedia_instance: Encyclopedia = ENCYCLOPEDIA_MENU.instantiate() as Encyclopedia
 	add_child(encyclopedia_instance)
 	SignalUtil.connects([{SignalUtil.WHO: encyclopedia_instance, SignalUtil.WHAT: "menu_close", SignalUtil.TO: _on_encyclopedia_closed.bind(encyclopedia_instance)}])
+
+## Closes the encyclopedia and shows the pause menu content again.
+func _on_encyclopedia_closed(encyclopedia_instance: Encyclopedia) -> void:
+	encyclopedia_instance.queue_free()
+	margin_container.visible = true
+	_update_encyclopedia_notification()
 
 ## Returns to the main menu and cleans up the current level.
 func _on_home_button_pressed() -> void:

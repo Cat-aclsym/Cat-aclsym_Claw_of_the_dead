@@ -14,16 +14,16 @@ const SPARK_Z_INDEX: int = 500 # Lower than blood effect but above enemies
 
 @export_group("Pierce Effects")
 @export var spark_effect_enabled: bool = true ## Enable spark effect for pierced enemies
+@export var spark_particles_color: Color = Color(1.0, 1.0, 0.7, 0.9) ## Color of sparks (yellow-white)
 @export var spark_particles_count: int = 8 ## Number of spark particles
 @export var spark_particles_lifetime: float = 0.3 ## Lifetime of sparks
-@export var spark_particles_speed: float = 80.0 ## Speed of sparks
 @export var spark_particles_size: float = 1.5 ## Size of sparks
-@export var spark_particles_color: Color = Color(1.0, 1.0, 0.7, 0.9) ## Color of sparks (yellow-white)
+@export var spark_particles_speed: float = 80.0 ## Speed of sparks
 
 # public
+var initial_piercing: int  # Initial number of enemies that can be pierced
 var pierced_enemies: Array[IEnemy] = []  # Enemies already pierced
 var piercing: int  # Current number of enemies that can be pierced
-var initial_piercing: int  # Initial number of enemies that can be pierced
 
 # private
 ## Spark materials shared by every effect, one per speed, size and color combination of the scene exports.
@@ -41,34 +41,22 @@ func _ready() -> void:
 
 
 # private
-## Small 4-pointed star, built once and shared by every effect.
-static func _get_spark_texture() -> Texture2D:
-	if _spark_texture == null:
-		var image: Image = Image.create(SPARK_TEXTURE_SIZE, SPARK_TEXTURE_SIZE, false, Image.FORMAT_RGBA8)
+func _create_spark_effect(hit_position: Vector2) -> void:
+	# Create a spark effect for pierced enemies
+	if Global.console:
+		Global.console.push_debug("Creating spark effect at position: " + str(hit_position))
 
-		# Fill with transparency
-		image.fill(Color(0, 0, 0, 0))
-
-		# Center of the image
-		var center: Vector2 = Vector2(SPARK_TEXTURE_SIZE / 2., SPARK_TEXTURE_SIZE / 2.)
-
-		# Draw a small 4-pointed star
-		var points: PackedVector2Array = PackedVector2Array([
-			Vector2(0, center.y),           # Left
-			Vector2(SPARK_TEXTURE_SIZE - 1, center.y), # Right
-			Vector2(center.x, 0),           # Top
-			Vector2(center.x, SPARK_TEXTURE_SIZE - 1)   # Bottom
-		])
-
-		# Draw the star lines
-		for point in points:
-			_draw_spark_line(image, center, point, Color(1, 1, 1, 1))
-
-		# Add a brighter central point
-		image.set_pixel(int(center.x), int(center.y), Color(1, 1, 1, 1))
-
-		_spark_texture = ImageTexture.create_from_image(image)
-	return _spark_texture
+	VfxUtil.burst(
+		get_tree().root,
+		hit_position,
+		_get_spark_material(),
+		_get_spark_texture(),
+		spark_particles_count,
+		spark_particles_lifetime,
+		0.9, # Fast emission
+		0.4,
+		SPARK_Z_INDEX
+	)
 
 
 static func _draw_spark_line(image: Image, from: Vector2, to: Vector2, color: Color) -> void:
@@ -132,22 +120,34 @@ func _get_spark_material() -> ParticleProcessMaterial:
 	return particle_material
 
 
-func _create_spark_effect(hit_position: Vector2) -> void:
-	# Create a spark effect for pierced enemies
-	if Global.console:
-		Global.console.push_debug("Creating spark effect at position: " + str(hit_position))
+## Small 4-pointed star, built once and shared by every effect.
+static func _get_spark_texture() -> Texture2D:
+	if _spark_texture == null:
+		var image: Image = Image.create(SPARK_TEXTURE_SIZE, SPARK_TEXTURE_SIZE, false, Image.FORMAT_RGBA8)
 
-	VfxUtil.burst(
-		get_tree().root,
-		hit_position,
-		_get_spark_material(),
-		_get_spark_texture(),
-		spark_particles_count,
-		spark_particles_lifetime,
-		0.9, # Fast emission
-		0.4,
-		SPARK_Z_INDEX
-	)
+		# Fill with transparency
+		image.fill(Color(0, 0, 0, 0))
+
+		# Center of the image
+		var center: Vector2 = Vector2(SPARK_TEXTURE_SIZE / 2., SPARK_TEXTURE_SIZE / 2.)
+
+		# Draw a small 4-pointed star
+		var points: PackedVector2Array = PackedVector2Array([
+			Vector2(0, center.y),           # Left
+			Vector2(SPARK_TEXTURE_SIZE - 1, center.y), # Right
+			Vector2(center.x, 0),           # Top
+			Vector2(center.x, SPARK_TEXTURE_SIZE - 1)   # Bottom
+		])
+
+		# Draw the star lines
+		for point in points:
+			_draw_spark_line(image, center, point, Color(1, 1, 1, 1))
+
+		# Add a brighter central point
+		image.set_pixel(int(center.x), int(center.y), Color(1, 1, 1, 1))
+
+		_spark_texture = ImageTexture.create_from_image(image)
+	return _spark_texture
 
 
 func _on_body_entered(body: Node2D) -> void:

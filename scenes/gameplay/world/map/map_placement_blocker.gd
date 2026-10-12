@@ -7,13 +7,13 @@ extends Sprite2D
 ## Extra tile offsets from this sprite's anchor cell (map space).
 @export var blocked_tile_offsets: Array[Vector2i] = []
 
-## When true, every tile whose center lies inside the sprite bounds is blocked.
-## The bounds are the texture size around the node origin, the node scale is ignored.
-@export var use_sprite_bounds: bool = true
-
 ## Shrinks the effective blocking rect on each side (pixels).
 ## Increase to allow placement closer to concave rock edges.
 @export_range(0, 64, 1) var bounds_inset_px: int = 12
+
+## When true, every tile whose center lies inside the sprite bounds is blocked.
+## The bounds are the texture size around the node origin, the node scale is ignored.
+@export var use_sprite_bounds: bool = true
 
 
 ## Returns the cells (as a set) of [param tilemap] that must not accept towers under this decoration.

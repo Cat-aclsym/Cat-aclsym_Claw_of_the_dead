@@ -7,8 +7,8 @@ extends Challenge
 
 
 # Constants
-const TARGET_KILLS: int = 10
 const TARGET_ENEMY_ID: String = "rat"
+const TARGET_KILLS: int = 10
 
 
 # Private variables
@@ -16,12 +16,6 @@ var _fire_kills: int = 0
 
 
 # Public functions
-## Called when the level starts to reset state.
-func start_monitoring() -> void:
-	super.start_monitoring()
-	_fire_kills = 0
-
-
 ## Evaluates if the challenge conditions are met at the end of the level.
 func check_completion() -> bool:
 	return _fire_kills >= TARGET_KILLS
@@ -35,3 +29,9 @@ func on_enemy_died(enemy: IEnemy, damage_type: IEnemy.DamageType, _source: Varia
 	_fire_kills += 1
 	if _fire_kills >= TARGET_KILLS:
 		complete()
+
+
+## Called when the level starts to reset state.
+func start_monitoring() -> void:
+	super.start_monitoring()
+	_fire_kills = 0

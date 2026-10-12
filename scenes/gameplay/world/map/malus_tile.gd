@@ -8,10 +8,10 @@ extends SpecialTile
 const MALUS_GROUND_ALPHA: float = 0.85
 const MALUS_GROUND_LAYER_Z_OFFSET: int = 1
 const MALUS_GROUND_TINT_WHITE_BLEND: float = 0.28
+const MALUS_INTRO_FADE_IN_SECONDS: float = 0.4
 const MALUS_PARTICLE_ALPHA: float = 0.75
 const MALUS_PARTICLE_LAYER_Z_OFFSET: int = 12
 const MALUS_PARTICLE_TINT_WHITE_BLEND: float = 0.5
-const MALUS_INTRO_FADE_IN_SECONDS: float = 0.4
 
 var _intro_started: bool = false
 

@@ -14,16 +14,6 @@ var _current_tab: Tab = Tab.TOWERS
 @onready var tower_tab_button: Button = $MarginContainer/VBoxContainer/TabsHBox/TowerTabButton
 @onready var trap_tab_button: Button = $MarginContainer/VBoxContainer/TabsHBox/TrapTabButton
 
-func _exit_tree() -> void:
-	if ILevel.current_level and ILevel.current_level.stats_updated.is_connected(_on_level_stats_updated):
-		ILevel.current_level.stats_updated.disconnect(_on_level_stats_updated)
-
-
-func _process(_delta: float) -> void:
-	if is_queued_for_deletion():
-		toggle_build_menu()
-
-
 func _ready() -> void:
 	assert(construction_menu != null, "construction_menu node not found")
 	assert(construction_anim_player != null, "construction_anim_player node not found")
@@ -42,6 +32,16 @@ func _ready() -> void:
 
 	_update_tab_visuals()
 	_refresh_construction_cards()
+
+
+func _process(_delta: float) -> void:
+	if is_queued_for_deletion():
+		toggle_build_menu()
+
+
+func _exit_tree() -> void:
+	if ILevel.current_level and ILevel.current_level.stats_updated.is_connected(_on_level_stats_updated):
+		ILevel.current_level.stats_updated.disconnect(_on_level_stats_updated)
 
 
 # Public functions

@@ -24,9 +24,6 @@ var upgrade_price: int
 @onready var sell_label: Label = $Buttons/SellTextureButton/PriceRow/ValueLabel
 @onready var sell_price_row: HBoxContainer = $Buttons/SellTextureButton/PriceRow
 @onready var upgrade_button: TextureButton = $Buttons/UpgradeTextureButton
-@onready var upgrade_coin_icon: TextureRect = $Buttons/UpgradeTextureButton/PriceRow/CoinIcon
-@onready var upgrade_label: Label = $Buttons/UpgradeTextureButton/PriceRow/ValueLabel
-@onready var upgrade_price_row: HBoxContainer = $Buttons/UpgradeTextureButton/PriceRow
 
 @onready var signals: Array[Dictionary] = [
 	{SignalUtil.WHO: close_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_close_button_pressed},
@@ -34,6 +31,9 @@ var upgrade_price: int
 	{SignalUtil.WHO: upgrade_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_upgrade_button_pressed},
 	{SignalUtil.WHO: sell_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_sell_button_pressed}
 ]
+@onready var upgrade_coin_icon: TextureRect = $Buttons/UpgradeTextureButton/PriceRow/CoinIcon
+@onready var upgrade_label: Label = $Buttons/UpgradeTextureButton/PriceRow/ValueLabel
+@onready var upgrade_price_row: HBoxContainer = $Buttons/UpgradeTextureButton/PriceRow
 
 
 # Called when the node enters the scene tree for the first time.

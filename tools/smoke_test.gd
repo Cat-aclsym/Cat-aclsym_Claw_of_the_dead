@@ -5,19 +5,19 @@
 extends Node
 
 
-const LEVELS_DIR: String = "res://scenes/gameplay/world/level/levels"
-const MAIN_SCENE_PATH: String = "res://scenes/main.tscn"
-## Process frames the main scene idles before the levels start.
-const MAIN_SCENE_FRAMES: int = 120
+## Process frames after which the run aborts, kept below the `--quit-after` of the CI call (which would exit with 0).
+const FRAME_BUDGET: int = 5500
+const FRAME_RATE: int = 60
+## Logged for every shader under `--headless` (dummy renderer), not a project error.
+const HEADLESS_ONLY_ERROR: String = "not supported in Dummy renderer"
 ## Process frames each level runs (the frame rate is capped, so this is a fixed real duration).
 const LEVEL_FRAMES: int = 240
 const LEVEL_TIME_SCALE: float = 8.0
-const FRAME_RATE: int = 60
-## Process frames after which the run aborts, kept below the `--quit-after` of the CI call (which would exit with 0).
-const FRAME_BUDGET: int = 5500
+const LEVELS_DIR: String = "res://scenes/gameplay/world/level/levels"
+## Process frames the main scene idles before the levels start.
+const MAIN_SCENE_FRAMES: int = 120
+const MAIN_SCENE_PATH: String = "res://scenes/main.tscn"
 const MAX_REPORTED_ERRORS: int = 20
-## Logged for every shader under `--headless` (dummy renderer), not a project error.
-const HEADLESS_ONLY_ERROR: String = "not supported in Dummy renderer"
 
 
 ## Counts every error the engine logs (push_error, failed loads, script errors, shader errors). Warnings are ignored.
@@ -53,13 +53,6 @@ func _init() -> void:
 	OS.add_logger(_counter)
 
 
-## Watchdog: a script error inside the coroutine below aborts it silently, which would idle until `--quit-after` (exit 0).
-func _process(_delta: float) -> void:
-	if Engine.get_process_frames() > FRAME_BUDGET:
-		push_error("Smoke test: frame budget of %d exceeded." % FRAME_BUDGET)
-		_finish(0)
-
-
 func _ready() -> void:
 	ProgressionManager.persistence_enabled = false
 	ProgressionManager.data.parameters.tutorial_completed = true
@@ -86,6 +79,13 @@ func _ready() -> void:
 	_finish(level_paths.size())
 
 
+## Watchdog: a script error inside the coroutine below aborts it silently, which would idle until `--quit-after` (exit 0).
+func _process(_delta: float) -> void:
+	if Engine.get_process_frames() > FRAME_BUDGET:
+		push_error("Smoke test: frame budget of %d exceeded." % FRAME_BUDGET)
+		_finish(0)
+
+
 func _exit_tree() -> void:
 	OS.remove_logger(_counter)
 
@@ -97,6 +97,16 @@ func _collect_level_paths() -> PackedStringArray:
 			paths.append(LEVELS_DIR.path_join(file))
 	paths.sort()
 	return paths
+
+
+func _finish(level_count: int) -> void:
+	if _finished:
+		return
+	_finished = true
+	for message: String in _counter.messages:
+		printerr("ERROR: %s" % message)
+	print("Smoke test: %d levels, %d errors." % [level_count, _counter.count])
+	get_tree().quit(mini(_counter.count, 255))
 
 
 ## Returns false when the frame budget ran out (the run is already finished in that case).
@@ -139,13 +149,3 @@ func _wait_frames(frames: int) -> bool:
 		if _finished:
 			return false
 	return true
-
-
-func _finish(level_count: int) -> void:
-	if _finished:
-		return
-	_finished = true
-	for message: String in _counter.messages:
-		printerr("ERROR: %s" % message)
-	print("Smoke test: %d levels, %d errors." % [level_count, _counter.count])
-	get_tree().quit(mini(_counter.count, 255))

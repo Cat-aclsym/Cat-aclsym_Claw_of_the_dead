@@ -4,9 +4,9 @@ class_name WaveStep
 extends RefCounted
 ## Base class for a single step in a wave (spawn, wait, etc.).
 
+const COUNT := "count"
 ## Spawn step data keys.
 const ENEMY_ID := "enemy_id"
-const COUNT := "count"
 const SPAWNER := "spawner"
 
 ## Wait step data keys.

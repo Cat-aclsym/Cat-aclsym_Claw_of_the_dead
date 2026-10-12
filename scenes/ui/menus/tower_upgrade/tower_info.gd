@@ -64,10 +64,23 @@ func setup(p_tower: ITower) -> void:
 
 	_update_scroll_mode(_stats_container.get_child_count())
 
-## Gets the tower name based on the tower's scene name and level
-func _get_tower_name() -> String:
-	var level_display: String = tr("TOWER.LEVEL.DISPLAY")
-	return level_display % [tr(StatsDB.name_key("TOWER", tower.tower_id)), tower.level]
+## Creates a stat display for a given stat
+func _create_stat_display(stat_name: String, current_value: float) -> void:
+	# Instantiate the stat bar scene
+	var stat_bar: StatBar = STAT_BAR_SCENE.instantiate()
+	_stats_container.add_child(stat_bar)
+
+	# Setup the stat bar with data (current value displayed, no "new" value for info display)
+	stat_bar.setup(stat_name, 0.0, current_value, MAX_STAT_VALUE)
+
+## Displays a bullet stat if it's not zero
+func _display_bullet_stat(stat_name: String) -> void:
+	var value: float = 0.0
+
+	value = tower.get_display_bullet_stats().get(stat_name, 0.0)
+
+	if value != 0.0:
+		_create_stat_display(stat_name, value)
 
 ## Displays a tower stat if it's not zero
 func _display_tower_stat(stat_name: String) -> void:
@@ -82,23 +95,10 @@ func _display_tower_stat(stat_name: String) -> void:
 		if float_value != 0.0:
 			_create_stat_display(stat_name, float_value)
 
-## Displays a bullet stat if it's not zero
-func _display_bullet_stat(stat_name: String) -> void:
-	var value: float = 0.0
-
-	value = tower.get_display_bullet_stats().get(stat_name, 0.0)
-
-	if value != 0.0:
-		_create_stat_display(stat_name, value)
-
-## Creates a stat display for a given stat
-func _create_stat_display(stat_name: String, current_value: float) -> void:
-	# Instantiate the stat bar scene
-	var stat_bar: StatBar = STAT_BAR_SCENE.instantiate()
-	_stats_container.add_child(stat_bar)
-
-	# Setup the stat bar with data (current value displayed, no "new" value for info display)
-	stat_bar.setup(stat_name, 0.0, current_value, MAX_STAT_VALUE)
+## Gets the tower name based on the tower's scene name and level
+func _get_tower_name() -> String:
+	var level_display: String = tr("TOWER.LEVEL.DISPLAY")
+	return level_display % [tr(StatsDB.name_key("TOWER", tower.tower_id)), tower.level]
 
 
 func _update_scroll_mode(displayed_stats: int) -> void:

@@ -28,14 +28,14 @@ var aoe_enemies: Array[IEnemy] = []
 var effect_circle: Polygon2D
 
 # private
+## Share of the direct hit damage dealt to the other enemies in the area, from [code]bullets.aoe_arrow[/code] in stats.json.
+var _aoe_damage_multiplier: float = 0.0
+var _area_size_ratio: float = 1.0  # Ratio calculated relative to standard size
+
 ## Debris materials shared by every impact, one per speed, size and color combination of the scene exports.
 static var _debris_materials: Dictionary[String, ParticleProcessMaterial] = {}
 ## Debris texture shared by every impact.
 static var _debris_texture: Texture2D = null
-
-## Share of the direct hit damage dealt to the other enemies in the area, from [code]bullets.aoe_arrow[/code] in stats.json.
-var _aoe_damage_multiplier: float = 0.0
-var _area_size_ratio: float = 1.0  # Ratio calculated relative to standard size
 var _is_exploding: bool = false
 
 @onready var aoe_detection_area: Area2D = $AOEArea

@@ -5,6 +5,12 @@ extends RefCounted
 ## Root data class for the entire game progression and settings.
 
 # Public variables
+## When true (migrated old saves), all buildings stay buildable regardless of armory unlocks.
+var armory_legacy_mode: bool = false
+
+## Armurerie: IDs of purchased meta nodes (see [code]resources/armory/armory.json[/code]).
+var armory_purchased: Array[String] = []
+
 ## Dictionary mapping enemy IDs (String) to EnemyData objects.
 var enemies: Dictionary = {}
 
@@ -19,12 +25,6 @@ var towers: Dictionary = {}
 
 ## Dictionary mapping trap IDs (String) to TrapData objects.
 var traps: Dictionary = {}
-
-## Armurerie: IDs of purchased meta nodes (see [code]resources/armory/armory.json[/code]).
-var armory_purchased: Array[String] = []
-
-## When true (migrated old saves), all buildings stay buildable regardless of armory unlocks.
-var armory_legacy_mode: bool = false
 
 
 # Public functions

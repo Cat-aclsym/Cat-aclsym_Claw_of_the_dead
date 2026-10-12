@@ -3,26 +3,26 @@ class_name LevelSelectionMenu extends Control
 
 signal level_selected
 
-var level_statuses: Dictionary[String, LevelIndicator.Status] = {}
 var level_frames: Array[LevelFrame] = []
 var level_index: int = 0
+var level_statuses: Dictionary[String, LevelIndicator.Status] = {}
 
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
-
-@onready var separator_scene: PackedScene = preload("res://scenes/ui/menus/level_selection/components/separator.tscn")
-@onready var indicator_scene: PackedScene = preload("res://scenes/ui/menus/level_selection/components/level_indicator.tscn")
+@onready var arc_title_label: Label = $MarginContainer/VBoxContainer/CenterContainer/ArcTitleLabel
 
 @onready var background_texture_rect: TextureRect = $BackgroundTextureRect
 
-@onready var main_menu_button: TextureButton = $MarginContainer/MainMenuButton
-@onready var arc_title_label: Label = $MarginContainer/VBoxContainer/CenterContainer/ArcTitleLabel
-
 @onready var body_container: HBoxContainer = $MarginContainer/VBoxContainer/BodyContainer
-@onready var previous_button: TextureButton = $MarginContainer/VBoxContainer/BodyContainer/PreviousButton
-@onready var next_button: TextureButton = $MarginContainer/VBoxContainer/BodyContainer/NextButton
-@onready var locked_frame: CenterContainer = $MarginContainer/VBoxContainer/BodyContainer/LockedFrame
+@onready var indicator_scene: PackedScene = preload("res://scenes/ui/menus/level_selection/components/level_indicator.tscn")
 
 @onready var indicators_container: HBoxContainer = $MarginContainer/VBoxContainer/VBoxContainer/IndicatorsContainer
+@onready var locked_frame: CenterContainer = $MarginContainer/VBoxContainer/BodyContainer/LockedFrame
+
+@onready var main_menu_button: TextureButton = $MarginContainer/MainMenuButton
+@onready var next_button: TextureButton = $MarginContainer/VBoxContainer/BodyContainer/NextButton
+@onready var previous_button: TextureButton = $MarginContainer/VBoxContainer/BodyContainer/PreviousButton
+
+@onready var separator_scene: PackedScene = preload("res://scenes/ui/menus/level_selection/components/separator.tscn")
 @onready var signals: Array[Dictionary] = [
 	{SignalUtil.WHO: previous_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_previous_button_pressed},
 	{SignalUtil.WHO: next_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_next_button_pressed},
@@ -46,30 +46,6 @@ func configure() -> void:
 	ButtonEffects.apply(next_button)
 	ButtonEffects.apply(main_menu_button)
 
-
-func _update() -> void:
-	for level_frame in level_frames:
-		level_frame.visible = false
-	locked_frame.visible = false
-
-	if level_frames.is_empty():
-		return
-
-	var has_locked_frame: bool = is_instance_valid(locked_frame)
-	var is_locked_selection: bool = has_locked_frame and level_index == level_frames.size()
-	if is_locked_selection:
-		locked_frame.visible = true
-		return
-
-	if level_index < 0 or level_index >= level_frames.size():
-		return
-
-	var current_frame: LevelFrame = level_frames[level_index]
-	current_frame.visible = true
-	arc_title_label.text = tr(current_frame.arc_title)
-
-	if background_texture_rect.texture != current_frame.arc_texture:
-		animation_player.play("dim_bg")
 
 func _load_levels() -> void:
 	level_frames.clear()
@@ -118,6 +94,12 @@ func _load_levels() -> void:
 	SignalUtil.connects(dynamic_signals)
 
 
+func _on_dim_bg() -> void:
+	if level_index < 0 or level_index >= level_frames.size():
+		return
+	background_texture_rect.texture = level_frames[level_index].arc_texture
+
+
 func _on_frame_start_level(level_id: String) -> void:
 	visible = false
 
@@ -134,10 +116,14 @@ func _on_frame_start_level(level_id: String) -> void:
 		locked_frame.queue_free()
 
 
-func _on_previous_button_pressed() -> void:
-	if level_index > 0:
-		level_index -= 1
+func _on_level_indicator_selected(indicator: LevelIndicator) -> void:
+	level_index = indicator.level - 1
 	_update()
+
+
+func _on_main_menu_button_button_pressed() -> void:
+	get_parent().gui_margin_container.visible = true
+	queue_free()
 
 
 func _on_next_button_pressed() -> void:
@@ -159,17 +145,31 @@ func _on_next_button_pressed() -> void:
 	_update()
 
 
-func _on_main_menu_button_button_pressed() -> void:
-	get_parent().gui_margin_container.visible = true
-	queue_free()
-
-
-func _on_level_indicator_selected(indicator: LevelIndicator) -> void:
-	level_index = indicator.level - 1
+func _on_previous_button_pressed() -> void:
+	if level_index > 0:
+		level_index -= 1
 	_update()
 
+func _update() -> void:
+	for level_frame in level_frames:
+		level_frame.visible = false
+	locked_frame.visible = false
 
-func _on_dim_bg() -> void:
+	if level_frames.is_empty():
+		return
+
+	var has_locked_frame: bool = is_instance_valid(locked_frame)
+	var is_locked_selection: bool = has_locked_frame and level_index == level_frames.size()
+	if is_locked_selection:
+		locked_frame.visible = true
+		return
+
 	if level_index < 0 or level_index >= level_frames.size():
 		return
-	background_texture_rect.texture = level_frames[level_index].arc_texture
+
+	var current_frame: LevelFrame = level_frames[level_index]
+	current_frame.visible = true
+	arc_title_label.text = tr(current_frame.arc_title)
+
+	if background_texture_rect.texture != current_frame.arc_texture:
+		animation_player.play("dim_bg")

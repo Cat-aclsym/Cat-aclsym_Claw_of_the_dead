@@ -5,16 +5,9 @@ class_name Narrative
 extends RefCounted
 
 const DEFAULT_LOCALE: String = "en"
-const TIMELINE_PATH_FORMAT: String = "res://assets/narrative/%s.%s.dtl"
 ## Pause source held while a one-time dialogue is on screen.
 const PAUSE_SOURCE: StringName = &"dialogue"
-
-
-## Returns the timeline of [param base] in the current locale, or in English when that locale has none.
-## [br]Example: [code]timeline_path("armory_intro")[/code] is [code]res://assets/narrative/armory_intro.fr.dtl[/code] in French.
-static func timeline_path(base: String) -> String:
-	var path: String = TIMELINE_PATH_FORMAT % [base, TranslationServer.get_locale().substr(0, 2)]
-	return path if ResourceLoader.exists(path) else TIMELINE_PATH_FORMAT % [base, DEFAULT_LOCALE]
+const TIMELINE_PATH_FORMAT: String = "res://assets/narrative/%s.%s.dtl"
 
 
 ## Plays the timeline [param base] once per save: returns false when [param flag] is already set, otherwise sets it,
@@ -31,6 +24,13 @@ static func play_once(flag: StringName, base: String) -> bool:
 		layout.process_mode = Node.PROCESS_MODE_ALWAYS
 	_release_pause_when_ended()
 	return true
+
+
+## Returns the timeline of [param base] in the current locale, or in English when that locale has none.
+## [br]Example: [code]timeline_path("armory_intro")[/code] is [code]res://assets/narrative/armory_intro.fr.dtl[/code] in French.
+static func timeline_path(base: String) -> String:
+	var path: String = TIMELINE_PATH_FORMAT % [base, TranslationServer.get_locale().substr(0, 2)]
+	return path if ResourceLoader.exists(path) else TIMELINE_PATH_FORMAT % [base, DEFAULT_LOCALE]
 
 
 static func _release_pause_when_ended() -> void:

@@ -12,12 +12,6 @@ var _kills_by_tower: Dictionary[int, int] = {}
 
 
 # Public functions
-## Called when the level starts to reset state.
-func start_monitoring() -> void:
-	super.start_monitoring()
-	_kills_by_tower.clear()
-
-
 ## Evaluates if the challenge conditions are met at the end of the level.
 func check_completion() -> bool:
 	if is_failed:
@@ -42,3 +36,9 @@ func on_enemy_died(_enemy: IEnemy, _damage_type: IEnemy.DamageType, source: Vari
 ## Notifies the challenge about a tower placement.
 func on_tower_placed(tower: ITower) -> void:
 	_kills_by_tower[tower.get_instance_id()] = 0
+
+
+## Called when the level starts to reset state.
+func start_monitoring() -> void:
+	super.start_monitoring()
+	_kills_by_tower.clear()

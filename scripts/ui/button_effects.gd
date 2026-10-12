@@ -6,10 +6,10 @@ class_name ButtonEffects
 extends RefCounted
 
 # Constants
+const APPLIED_META_KEY: StringName = &"button_effects"
 const CLICK_SCALE: Vector2 = Vector2(0.95, 0.95)
 const NORMAL_SCALE: Vector2 = Vector2(1.0, 1.0)
 const TWEEN_DURATION: float = 0.1
-const APPLIED_META_KEY: StringName = &"button_effects"
 const TWEEN_META_KEY: StringName = &"active_button_tween"
 
 # Static Methods

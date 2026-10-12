@@ -5,12 +5,12 @@
 class_name SignalUtil
 extends Node
 
-## Dictionary key for the signal emitter node.
-const WHO: String = "who"
-## Dictionary key for the signal name to connect.
-const WHAT: String = "what"
 ## Dictionary key for the callback method to be called when the signal is emitted.
 const TO: String = "to"
+## Dictionary key for the signal name to connect.
+const WHAT: String = "what"
+## Dictionary key for the signal emitter node.
+const WHO: String = "who"
 
 ## Connects multiple signals using a dictionary-based configuration.
 ## [br][br]

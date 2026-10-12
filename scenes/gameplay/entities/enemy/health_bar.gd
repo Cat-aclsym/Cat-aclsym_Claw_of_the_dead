@@ -20,17 +20,17 @@ const FADE_DURATION: float = 1.0
 const MAX_WIDTH: float = 128.0
 const SCALE_FACTOR: float = 0.25
 
-## Background and border styles never change, so every health bar shares them. The fill color changes per enemy, so its style is per bar.
-static var _style_background: StyleBoxFlat = _make_style(COLOR_BACKGROUND)
-static var _style_border: StyleBoxFlat = _make_border_style()
-
 var _fade_timer: Timer
 var _fade_tween: Tween
 var _has_taken_damage: bool = false
 
+## Background and border styles never change, so every health bar shares them. The fill color changes per enemy, so its style is per bar.
+static var _style_background: StyleBoxFlat = _make_style(COLOR_BACKGROUND)
+static var _style_border: StyleBoxFlat = _make_border_style()
+
 @onready var background: Panel = $Background
-@onready var fill: Panel = $Fill
 @onready var border: Panel = $Border
+@onready var fill: Panel = $Fill
 
 func _ready() -> void:
 	modulate.a = 0.0
@@ -60,6 +60,13 @@ func update_health(current_health: float, max_health: float) -> void:
 	else:
 		_reset_fade_timer()
 
+## Fades the bar in over [param duration] and restarts the delay before it fades out, reusing a single tween.
+func _fade_in(duration: float) -> void:
+	if _fade_tween:
+		_fade_tween.kill()
+	_fade_tween = create_tween()
+	_fade_tween.tween_property(self, "modulate:a", 1.0, duration)
+
 func _get_health_color(percentage: float) -> Color:
 	if percentage > 0.5:
 		return COLOR_FULL.lerp(COLOR_MID, (1.0 - percentage) * 2.0)
@@ -80,6 +87,18 @@ static func _make_style(color: Color) -> StyleBoxFlat:
 	style.set_corner_radius_all(CORNER_RADIUS)
 	return style
 
+func _on_fade_timer_timeout() -> void:
+	if _fade_tween:
+		_fade_tween.kill()
+	_fade_tween = create_tween()
+	_fade_tween.tween_property(self, "modulate:a", FADE_ALPHA, FADE_DURATION)
+
+func _reset_fade_timer() -> void:
+	if _fade_timer:
+		_fade_timer.stop()
+		_fade_timer.start()
+		_fade_in(0.1)
+
 func _setup_corner_radius() -> void:
 	background.add_theme_stylebox_override("panel", _style_background)
 	background.size = Vector2(MAX_WIDTH, BAR_HEIGHT)
@@ -97,24 +116,5 @@ func _setup_fade_timer() -> void:
 	SignalUtil.connects([{SignalUtil.WHO: _fade_timer, SignalUtil.WHAT: "timeout", SignalUtil.TO: _on_fade_timer_timeout}])
 	add_child(_fade_timer)
 
-## Fades the bar in over [param duration] and restarts the delay before it fades out, reusing a single tween.
-func _fade_in(duration: float) -> void:
-	if _fade_tween:
-		_fade_tween.kill()
-	_fade_tween = create_tween()
-	_fade_tween.tween_property(self, "modulate:a", 1.0, duration)
-
 func _show_bar() -> void:
 	_reset_fade_timer()
-
-func _reset_fade_timer() -> void:
-	if _fade_timer:
-		_fade_timer.stop()
-		_fade_timer.start()
-		_fade_in(0.1)
-
-func _on_fade_timer_timeout() -> void:
-	if _fade_tween:
-		_fade_tween.kill()
-	_fade_tween = create_tween()
-	_fade_tween.tween_property(self, "modulate:a", FADE_ALPHA, FADE_DURATION)

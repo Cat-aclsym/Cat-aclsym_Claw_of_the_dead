@@ -26,16 +26,16 @@ const COLOR_OK := Color(1, 1, 1, 0.5)
 ## Reference to the tilemap node
 var tm_ref: TileMapLayer = null
 
+## The number of towers created
+static var tower_count: int = 0
+var _can_reposition_build_cursor: bool = true
+
 var _invalid_cells: Dictionary = {}
 var _is_dragging: bool = false
 var _is_holding_click: bool = false
-var _can_reposition_build_cursor: bool = true
 var _last_tm_pos: Vector2i = Vector2i(-1, -1)
-var _state: CursorState = CursorState.IDLE
 var _preview_building: IBuilding = null
-
-## The number of towers created
-static var tower_count: int = 0
+var _state: CursorState = CursorState.IDLE
 
 @onready var cancel_place_button: TextureButton = $PlaceHUD/HBoxContainer/CancelPlaceButton
 @onready var cursor: AnimatedSprite2D = $cursor
@@ -255,6 +255,11 @@ func _is_buildable(pos: Vector2) -> bool:
 		return _is_trap_buildable(pos)
 	return _is_ground_building_placeable(pos)
 
+## Whether the placement box at [param cell] overlaps an enemy path (see [constant IMap.PLACEMENT_HALF_SIZE]).
+func _is_cell_on_path(cell: Vector2i) -> bool:
+	var level: ILevel = ILevel.current_level
+	return level != null and is_instance_valid(level.map) and level.map.is_cell_on_path(cell)
+
 func _is_ground_building_placeable(pos: Vector2, building: IBuilding = null) -> bool:
 	var b: IBuilding = building if building != null else _preview_building
 	if b == null:
@@ -282,11 +287,6 @@ func _is_ground_building_placeable(pos: Vector2, building: IBuilding = null) -> 
 		return false
 
 	return true
-
-## Whether the placement box at [param cell] overlaps an enemy path (see [constant IMap.PLACEMENT_HALF_SIZE]).
-func _is_cell_on_path(cell: Vector2i) -> bool:
-	var level: ILevel = ILevel.current_level
-	return level != null and is_instance_valid(level.map) and level.map.is_cell_on_path(cell)
 
 ## Whether [param template] can be built at tile [param cell] (tilemap-local center).
 func _is_template_buildable_at_map_cell(cell: Vector2i, template: IBuilding) -> bool:

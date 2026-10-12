@@ -37,10 +37,18 @@ func setup(c: Challenge, is_done: bool) -> void:
 	])
 
 
-func _on_challenge_status_updated(challenge_id: String, is_completed: bool, is_failed: bool) -> void:
-	if challenge_id != _challenge_id:
+func _apply_failed_visual(is_failed: bool) -> void:
+	if is_failed:
+		title_label.add_theme_color_override("font_color", TEXT_FAILED)
+		desc_label.add_theme_color_override("font_color", TEXT_FAILED)
+		diff_label.add_theme_color_override("font_color", TEXT_FAILED)
+		diff_label.text = tr("CHALLENGE.STATUS.FAILED")
 		return
-	_apply_status_visual(is_completed, is_failed)
+
+	title_label.add_theme_color_override("font_color", TEXT_DEFAULT)
+	desc_label.add_theme_color_override("font_color", TEXT_DEFAULT)
+	diff_label.add_theme_color_override("font_color", DIFFICULTY_COLORS.get(_difficulty, Color.WHITE))
+	diff_label.text = tr("CHALLENGE.DIFFICULTY.%s" % _difficulty.to_upper())
 
 
 func _apply_status_visual(is_completed: bool, is_failed: bool) -> void:
@@ -54,15 +62,7 @@ func _apply_status_visual(is_completed: bool, is_failed: bool) -> void:
 	_apply_failed_visual(false)
 
 
-func _apply_failed_visual(is_failed: bool) -> void:
-	if is_failed:
-		title_label.add_theme_color_override("font_color", TEXT_FAILED)
-		desc_label.add_theme_color_override("font_color", TEXT_FAILED)
-		diff_label.add_theme_color_override("font_color", TEXT_FAILED)
-		diff_label.text = tr("CHALLENGE.STATUS.FAILED")
+func _on_challenge_status_updated(challenge_id: String, is_completed: bool, is_failed: bool) -> void:
+	if challenge_id != _challenge_id:
 		return
-
-	title_label.add_theme_color_override("font_color", TEXT_DEFAULT)
-	desc_label.add_theme_color_override("font_color", TEXT_DEFAULT)
-	diff_label.add_theme_color_override("font_color", DIFFICULTY_COLORS.get(_difficulty, Color.WHITE))
-	diff_label.text = tr("CHALLENGE.DIFFICULTY.%s" % _difficulty.to_upper())
+	_apply_status_visual(is_completed, is_failed)

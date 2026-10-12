@@ -69,17 +69,13 @@ func get_next_level_id(current_id: String) -> String:
 	return ""
 
 
-## Returns whether the one-time event [param flag] (e.g. [code]&"armory_intro_seen"[/code]) already happened.
-func is_flag_set(flag: StringName) -> bool:
-	return data.parameters.flags.get(String(flag), false)
-
-
-## Marks the one-time event [param flag] as done and persists it.
-func set_flag(flag: StringName) -> void:
-	if is_flag_set(flag):
-		return
-	data.parameters.flags[String(flag)] = true
-	save_game()
+## Total stars earned (one per challenge completed, any level).
+func get_total_earned_stars() -> int:
+	var total: int = 0
+	for level_id: String in data.levels.keys():
+		var ld: LevelData = data.levels[level_id]
+		total += ld.challenges_completed.size()
+	return total
 
 
 ## Checks if there are any enemies that haven't been seen in the encyclopedia.
@@ -116,6 +112,11 @@ func is_enemy_seen(enemy_id: String) -> bool:
 	if data.enemies.has(enemy_id):
 		return data.enemies[enemy_id].seen
 	return false
+
+
+## Returns whether the one-time event [param flag] (e.g. [code]&"armory_intro_seen"[/code]) already happened.
+func is_flag_set(flag: StringName) -> bool:
+	return data.parameters.flags.get(String(flag), false)
 
 
 ## Checks if a level is unlocked.
@@ -157,23 +158,6 @@ func is_trap_unlocked(trap_id: String) -> bool:
 ## Returns whether the first-play tutorial has been completed.
 func is_tutorial_completed() -> bool:
 	return data.parameters.tutorial_completed
-
-
-## Marks the first-play tutorial as completed and persists it.
-func mark_tutorial_completed() -> void:
-	if data.parameters.tutorial_completed:
-		return
-	data.parameters.tutorial_completed = true
-	save_game()
-
-
-## Total stars earned (one per challenge completed, any level).
-func get_total_earned_stars() -> int:
-	var total: int = 0
-	for level_id: String in data.levels.keys():
-		var ld: LevelData = data.levels[level_id]
-		total += ld.challenges_completed.size()
-	return total
 
 
 ## Loads the progression from disk.
@@ -279,12 +263,12 @@ func mark_tower_encyclopedia_seen(tower_id: String) -> void:
 		save_game()
 
 
-## Resets progression to default state.
-func reset_progression() -> void:
-	_init_default_data()
-	apply_settings()
+## Marks the first-play tutorial as completed and persists it.
+func mark_tutorial_completed() -> void:
+	if data.parameters.tutorial_completed:
+		return
+	data.parameters.tutorial_completed = true
 	save_game()
-	Log.trace(Log.Level.DEBUG, "Progression reset to default.")
 
 
 ## Clears armory node purchases so stars become available again. Non-starter buildings are locked unless [member ProgressionData.armory_legacy_mode].
@@ -294,6 +278,14 @@ func reset_armory_spending() -> void:
 		_apply_starter_only_building_unlocks()
 	save_game()
 	Log.trace(Log.Level.INFO, "Armory purchases reset; building locks synced to starters (unless legacy save).")
+
+
+## Resets progression to default state.
+func reset_progression() -> void:
+	_init_default_data()
+	apply_settings()
+	save_game()
+	Log.trace(Log.Level.DEBUG, "Progression reset to default.")
 
 
 ## Saves the current progression to disk.
@@ -354,6 +346,14 @@ func save_game() -> void:
 	Log.trace(Log.Level.DEBUG, "Game saved to %s (absolute: %s)" % [SAVE_PATH, file.get_path_absolute()])
 
 
+## Marks the one-time event [param flag] as done and persists it.
+func set_flag(flag: StringName) -> void:
+	if is_flag_set(flag):
+		return
+	data.parameters.flags[String(flag)] = true
+	save_game()
+
+
 ## Unlocks a level by ID.
 func unlock_level(level_id: String) -> void:
 	if not data.levels.has(level_id):
@@ -392,6 +392,18 @@ func unlock_trap_no_save(trap_id: String) -> void:
 
 
 # Private functions
+func _apply_starter_only_building_unlocks() -> void:
+	for tid: String in StatsDB.get_tower_ids():
+		if not data.towers.has(tid):
+			data.towers[tid] = TowerData.new()
+		data.towers[tid].unlocked = tid in ARMORY_STARTER_TOWER_IDS
+
+	for trap_key: String in StatsDB.get_trap_ids():
+		if not data.traps.has(trap_key):
+			data.traps[trap_key] = _TRAP_DATA_SCRIPT.new()
+		data.traps[trap_key].unlocked = trap_key in ARMORY_STARTER_TRAP_IDS
+
+
 func _init_default_data() -> void:
 	data = ProgressionData.new()
 
@@ -405,18 +417,6 @@ func _init_default_data() -> void:
 	data.armory_legacy_mode = false
 
 	_apply_starter_only_building_unlocks()
-
-
-func _apply_starter_only_building_unlocks() -> void:
-	for tid: String in StatsDB.get_tower_ids():
-		if not data.towers.has(tid):
-			data.towers[tid] = TowerData.new()
-		data.towers[tid].unlocked = tid in ARMORY_STARTER_TOWER_IDS
-
-	for trap_key: String in StatsDB.get_trap_ids():
-		if not data.traps.has(trap_key):
-			data.traps[trap_key] = _TRAP_DATA_SCRIPT.new()
-		data.traps[trap_key].unlocked = trap_key in ARMORY_STARTER_TRAP_IDS
 
 
 func _unlock_all_buildings_for_legacy_migration() -> void:

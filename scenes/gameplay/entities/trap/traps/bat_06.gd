@@ -8,11 +8,11 @@ extends ITrap
 ## Damage per poison tick
 @export var poison_damage: float = 5.0
 
-## Number of damage ticks
-@export var poison_ticks: int = 5
-
 ## Interval between ticks in seconds
 @export var poison_interval: float = 1.0
+
+## Number of damage ticks
+@export var poison_ticks: int = 5
 
 
 # public

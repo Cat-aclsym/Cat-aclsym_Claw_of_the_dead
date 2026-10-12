@@ -30,19 +30,19 @@ var _is_victory: bool = true
 @onready var end_game_image: TextureRect = $GUIMarginContainer/BackgroundTextureRect/ContentMarginContainer/VBoxContainerMain/ResultIconTextureRect
 @onready var home_button: TextureButton = $GUIMarginContainer/BackgroundTextureRect/ContentMarginContainer/VBoxContainerMain/ButtonsHBoxContainer/HomeButtonAspectRatioContainer/HomeTextureButton
 @onready var life_label: Label = $GUIMarginContainer/BackgroundTextureRect/ContentMarginContainer/VBoxContainerMain/StatsHBoxContainer/LifeAspectRatioContainer/LifeHBoxContainer/LifeStatisticLabel
-@onready var next_button: TextureButton = $GUIMarginContainer/BackgroundTextureRect/ContentMarginContainer/VBoxContainerMain/ButtonsHBoxContainer/NextButtonAspectRatioContainer/NextTextureButton
-@onready var restart_button: TextureButton = $GUIMarginContainer/BackgroundTextureRect/ContentMarginContainer/VBoxContainerMain/ButtonsHBoxContainer/RestartButtonAspectRatioContainer/RestartTextureButton
-@onready var time_label: Label = $GUIMarginContainer/BackgroundTextureRect/ContentMarginContainer/VBoxContainerMain/StatsHBoxContainer/TimeAspectRatioContainer/TimeHBoxContainer/TimeStatisticLabel
-@onready var title_label: Label = $GUIMarginContainer/BackgroundTextureRect/ContentMarginContainer/VBoxContainerMain/TitleLabel
 
 @onready var default_health_text: String = life_label.text
-@onready var default_time_text: String = time_label.text
+@onready var next_button: TextureButton = $GUIMarginContainer/BackgroundTextureRect/ContentMarginContainer/VBoxContainerMain/ButtonsHBoxContainer/NextButtonAspectRatioContainer/NextTextureButton
+@onready var restart_button: TextureButton = $GUIMarginContainer/BackgroundTextureRect/ContentMarginContainer/VBoxContainerMain/ButtonsHBoxContainer/RestartButtonAspectRatioContainer/RestartTextureButton
 
 @onready var signals: Array[Dictionary] = [
 	{SignalUtil.WHO: home_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_home_texture_button_pressed},
 	{SignalUtil.WHO: restart_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_restart_texture_button_pressed},
 	{SignalUtil.WHO: next_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_next_texture_button_pressed}
 ]
+@onready var time_label: Label = $GUIMarginContainer/BackgroundTextureRect/ContentMarginContainer/VBoxContainerMain/StatsHBoxContainer/TimeAspectRatioContainer/TimeHBoxContainer/TimeStatisticLabel
+@onready var default_time_text: String = time_label.text
+@onready var title_label: Label = $GUIMarginContainer/BackgroundTextureRect/ContentMarginContainer/VBoxContainerMain/TitleLabel
 
 
 # Built-in functions

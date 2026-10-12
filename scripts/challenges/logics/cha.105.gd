@@ -15,12 +15,6 @@ var _hit_types: Array[String] = []
 
 
 # Public functions
-## Called when the level starts to reset state.
-func start_monitoring() -> void:
-	super.start_monitoring()
-	_hit_types.clear()
-
-
 ## Evaluates if the challenge conditions are met at the end of the level.
 func check_completion() -> bool:
 	return _hit_types.size() >= REQUIRED_TYPES.size()
@@ -40,3 +34,9 @@ func on_enemy_hit(enemy: IEnemy, source: Variant) -> void:
 	_hit_types.append(type)
 	if _hit_types.size() >= REQUIRED_TYPES.size():
 		complete()
+
+
+## Called when the level starts to reset state.
+func start_monitoring() -> void:
+	super.start_monitoring()
+	_hit_types.clear()

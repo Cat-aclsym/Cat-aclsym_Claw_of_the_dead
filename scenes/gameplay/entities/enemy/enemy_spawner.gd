@@ -41,12 +41,6 @@ static func spawn_enemy(path: Path2D, enemy: IEnemy) -> void:
 	pathfollow.add_child(enemy)
 
 
-static func _get_spawn_offset_distance(path: Path2D) -> float:
-	var map: IMap = _get_map(path)
-	var tile_step_distance: float = map.get_tile_step_distance() if map else IMap.DEFAULT_TILE_STEP_DISTANCE
-	return tile_step_distance * SPAWN_OFFSET_MAX_TILES
-
-
 static func _get_map(path: Path2D) -> IMap:
 	var current: Node = path.get_parent()
 	while current:
@@ -55,3 +49,9 @@ static func _get_map(path: Path2D) -> IMap:
 		current = current.get_parent()
 
 	return null
+
+
+static func _get_spawn_offset_distance(path: Path2D) -> float:
+	var map: IMap = _get_map(path)
+	var tile_step_distance: float = map.get_tile_step_distance() if map else IMap.DEFAULT_TILE_STEP_DISTANCE
+	return tile_step_distance * SPAWN_OFFSET_MAX_TILES

@@ -32,6 +32,29 @@ func description() -> String:
 	return ""
 
 
+## Executes the command with the given arguments.
+##
+## Returns [constant OK] on success or an error code on failure.
+func execute(console: Console, args: Array) -> int:
+	var defined_args := get_args_dynamic(args)
+
+	if not defined_args.is_empty():
+		var required_count := 0
+		for arg in defined_args:
+			if not arg.get("optional", false):
+				required_count += 1
+
+		if args.size() < required_count or args.size() > defined_args.size():
+			return ERR_INVALID_ARGS_COUNT
+
+		for i in range(args.size()):
+			var arg_def := defined_args[i]
+			if not _validate_type_with_def(args[i], arg_def):
+				return ERR_INVALID_ARGS_TYPES
+
+	return _execute(console, args)
+
+
 ## Returns an array of argument definitions.
 ## Each definition is a Dictionary with:
 ## - "name": String (Argument name)
@@ -66,29 +89,6 @@ func get_signature(current_args: Array = [], highlight_index: int = -1) -> Strin
 		token = "[%s]" % token if arg_def.get("optional", false) else "<%s>" % token
 		tokens.append("[b][u]%s[/u][/b]" % token if i == highlight_index else token)
 	return " ".join(tokens)
-
-
-## Executes the command with the given arguments.
-##
-## Returns [constant OK] on success or an error code on failure.
-func execute(console: Console, args: Array) -> int:
-	var defined_args := get_args_dynamic(args)
-
-	if not defined_args.is_empty():
-		var required_count := 0
-		for arg in defined_args:
-			if not arg.get("optional", false):
-				required_count += 1
-
-		if args.size() < required_count or args.size() > defined_args.size():
-			return ERR_INVALID_ARGS_COUNT
-
-		for i in range(args.size()):
-			var arg_def := defined_args[i]
-			if not _validate_type_with_def(args[i], arg_def):
-				return ERR_INVALID_ARGS_TYPES
-
-	return _execute(console, args)
 
 
 ## Converts an argument type to its string representation.

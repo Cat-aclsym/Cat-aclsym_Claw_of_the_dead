@@ -38,8 +38,6 @@ var _selected_node_id: String = ""
 @onready var reset_message_label: Label = %ResetMessageLabel
 @onready var reset_spent_stars_button: Button = %ResetSpentStarsButton
 @onready var scroll_buildings: ScrollContainer = %ScrollBuildings
-@onready var stars_count_label: Label = %StarsCountLabel
-@onready var title_label: Label = %TitleLabel
 @onready var signals: Array[Dictionary] = [
 	{SignalUtil.WHO: close_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_close_pressed},
 	{SignalUtil.WHO: help_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_help_button_pressed},
@@ -48,6 +46,29 @@ var _selected_node_id: String = ""
 	{SignalUtil.WHO: reset_spent_stars_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_reset_spent_stars_pressed},
 	{SignalUtil.WHO: ArmoryManager, SignalUtil.WHAT: "armory_updated", SignalUtil.TO: _on_armory_updated},
 ]
+@onready var stars_count_label: Label = %StarsCountLabel
+@onready var title_label: Label = %TitleLabel
+
+
+## Wires UI strings, [ArmoryManager.armory_updated], and initial population via [method _refresh].
+func _ready() -> void:
+	assert(close_button != null, "close_button node not found")
+	assert(description_label != null, "description_label node not found")
+	assert(description_panel != null, "description_panel node not found")
+	assert(description_title_label != null, "description_title_label node not found")
+	assert(help_button != null, "help_button node not found")
+	assert(items_hbox != null, "items_hbox node not found")
+	assert(reset_cancel_button != null, "reset_cancel_button node not found")
+	assert(reset_confirm_button != null, "reset_confirm_button node not found")
+	assert(reset_confirm_root != null, "reset_confirm_root node not found")
+	assert(reset_message_label != null, "reset_message_label node not found")
+	assert(reset_spent_stars_button != null, "reset_spent_stars_button node not found")
+	assert(scroll_buildings != null, "scroll_buildings node not found")
+	assert(stars_count_label != null, "stars_count_label node not found")
+	assert(title_label != null, "title_label node not found")
+	SignalUtil.connects(signals)
+	_refresh()
+	Narrative.play_once(&"armory_intro_seen", "armory_intro")
 
 
 ## Routes pointer drag on [member scroll_buildings] to horizontal scroll; defers clearing selection so item clicks win.
@@ -97,27 +118,6 @@ func _input(event: InputEvent) -> void:
 			return
 		scroll_buildings.scroll_horizontal -= int(round(sd.relative.x))
 		get_viewport().set_input_as_handled()
-
-
-## Wires UI strings, [ArmoryManager.armory_updated], and initial population via [method _refresh].
-func _ready() -> void:
-	assert(close_button != null, "close_button node not found")
-	assert(description_label != null, "description_label node not found")
-	assert(description_panel != null, "description_panel node not found")
-	assert(description_title_label != null, "description_title_label node not found")
-	assert(help_button != null, "help_button node not found")
-	assert(items_hbox != null, "items_hbox node not found")
-	assert(reset_cancel_button != null, "reset_cancel_button node not found")
-	assert(reset_confirm_button != null, "reset_confirm_button node not found")
-	assert(reset_confirm_root != null, "reset_confirm_root node not found")
-	assert(reset_message_label != null, "reset_message_label node not found")
-	assert(reset_spent_stars_button != null, "reset_spent_stars_button node not found")
-	assert(scroll_buildings != null, "scroll_buildings node not found")
-	assert(stars_count_label != null, "stars_count_label node not found")
-	assert(title_label != null, "title_label node not found")
-	SignalUtil.connects(signals)
-	_refresh()
-	Narrative.play_once(&"armory_intro_seen", "armory_intro")
 
 
 ## Clears the selected node, hides the description panel, and deselects all [ArmoryItem] instances.
@@ -205,6 +205,10 @@ func _on_buy_requested(node_id: String) -> void:
 
 func _on_close_pressed() -> void:
 	menu_close.emit()
+
+
+func _on_help_button_pressed() -> void:
+	Dialogic.start(Narrative.timeline_path("armory_intro"))
 
 
 func _on_item_selected(node_id: String) -> void:
@@ -317,7 +321,3 @@ func _sync_armory_item_state(item: ArmoryItem, node_id: String) -> void:
 func _update_reset_button_visual() -> void:
 	var is_disabled: bool = reset_spent_stars_button.disabled
 	reset_spent_stars_button.modulate = _RESET_BUTTON_DISABLED_MODULATE if is_disabled else _RESET_BUTTON_ENABLED_MODULATE
-
-
-func _on_help_button_pressed() -> void:
-	Dialogic.start(Narrative.timeline_path("armory_intro"))

@@ -26,20 +26,20 @@ const STREAM_INTERVAL: float = 0.02
 @export var projectile_scene: PackedScene = null
 
 @export_subgroup("Attack Cycle Configuration")
-## Runtime stats loaded from StatsDB (JSON); defaults kept neutral here
-var pre_attack_delay: float = 0.0
+var attack_cooldown: float = 0.0
 var attack_duration: float = 0.0
 var post_attack_delay: float = 0.0
-var attack_cooldown: float = 0.0
+## Runtime stats loaded from StatsDB (JSON); defaults kept neutral here
+var pre_attack_delay: float = 0.0
 
 # Public variables
-## Array to store towers currently within range
-var towers_in_range: Array[StaticBody2D] = []
 ## The current target tower
 var current_target: StaticBody2D = null
 ## Runtime stats loaded from StatsDB (JSON); defaults kept neutral here
 var shoot_range: float = 0.0
 var tower_disable_duration: float = 0.0
+## Array to store towers currently within range
+var towers_in_range: Array[StaticBody2D] = []
 
 # Private variables
 var _attack_cooldown_timer: Timer
@@ -144,6 +144,31 @@ func _apply_extra_stats_override() -> void:
 		post_attack_delay = float(extra["post_attack_delay"])
 	if extra.has("attack_cooldown"):
 		attack_cooldown = float(extra["attack_cooldown"])
+
+
+## Checks that the current target is an active tower, otherwise interrupts the attack and looks for another target.
+func _can_hit_current_target() -> bool:
+	# current_target is a body (e.g. "TowerBody"). Get its parent ITower for state check.
+	var tower_script_node: ITower = current_target.get_parent() as ITower
+
+	if not tower_script_node:
+		Log.trace(Log.Level.ERROR, "BigDaddy: current_target '%s' (body) does not have an ITower parent. Critical issue. Interrupting attack." % current_target.name)
+		_interrupt_attack_cycle() # Stop current attack cycle
+		# Remove the invalid body from the list before forgetting it, otherwise it stays there
+		towers_in_range.erase(current_target)
+		current_target = null
+		_find_new_target() # Try to recover by finding a new target
+		return false
+
+	if tower_script_node.state != ITower.TowerState.ACTIVE:
+		var current_state_name: String = ITower.TowerState.keys()[tower_script_node.state]
+		Log.trace(Log.Level.DEBUG, "BigDaddy: Tower '%s' (parent of '%s') is no longer ACTIVE (state: %s). Aborting shot." % [tower_script_node.name, current_target.name, current_state_name])
+		_interrupt_attack_cycle()
+		current_target = null # Clear this non-active target
+		# No need to remove from towers_in_range here, _find_new_target will filter it out next time.
+		_find_new_target() # Find a new one.
+		return false
+	return true
 
 
 func _find_new_target() -> void:
@@ -293,31 +318,6 @@ func _shoot() -> void:
 
 	projectile.global_position = global_position
 	_hit_fired = true
-
-
-## Checks that the current target is an active tower, otherwise interrupts the attack and looks for another target.
-func _can_hit_current_target() -> bool:
-	# current_target is a body (e.g. "TowerBody"). Get its parent ITower for state check.
-	var tower_script_node: ITower = current_target.get_parent() as ITower
-
-	if not tower_script_node:
-		Log.trace(Log.Level.ERROR, "BigDaddy: current_target '%s' (body) does not have an ITower parent. Critical issue. Interrupting attack." % current_target.name)
-		_interrupt_attack_cycle() # Stop current attack cycle
-		# Remove the invalid body from the list before forgetting it, otherwise it stays there
-		towers_in_range.erase(current_target)
-		current_target = null
-		_find_new_target() # Try to recover by finding a new target
-		return false
-
-	if tower_script_node.state != ITower.TowerState.ACTIVE:
-		var current_state_name: String = ITower.TowerState.keys()[tower_script_node.state]
-		Log.trace(Log.Level.DEBUG, "BigDaddy: Tower '%s' (parent of '%s') is no longer ACTIVE (state: %s). Aborting shot." % [tower_script_node.name, current_target.name, current_state_name])
-		_interrupt_attack_cycle()
-		current_target = null # Clear this non-active target
-		# No need to remove from towers_in_range here, _find_new_target will filter it out next time.
-		_find_new_target() # Find a new one.
-		return false
-	return true
 
 
 func _stop_all_attack_timers_and_reset_state() -> void:

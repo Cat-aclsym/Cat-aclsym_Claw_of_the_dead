@@ -36,6 +36,10 @@ const PREFIXS: Dictionary = {
 ## The file is generated using the current timestamp when [method Log.init] is called.
 static var _log_file: FileAccess = null
 
+## Closes the log file. Messages are still printed afterwards, but no longer written to disk.
+static func close() -> void:
+	_log_file = null
+
 ## Initializes the logging system by creating a new log file.
 ## [br]
 ## This method should be called once when the game starts. It creates a new log file
@@ -45,10 +49,6 @@ static var _log_file: FileAccess = null
 static func init() -> void:
 	_create_log_file()
 	Log.trace(Log.Level.INFO, "Logger initialized!")
-
-## Closes the log file. Messages are still printed afterwards, but no longer written to disk.
-static func close() -> void:
-	_log_file = null
 
 ## Logs a message with the specified severity level.
 ## [br]
@@ -93,6 +93,45 @@ static func trace(level: Log.Level, args: Variant) -> void:
 	output += " - " + _format_args(args)
 	_publish_message(output, level >= Level.WARN)
 
+## Creates a new log file with the current timestamp.
+## [br]
+## The file is created in the [code]res://log[/code] directory.
+## If the directory doesn't exist, it will be created.
+## [br][br]
+## The log filename format is: [code]YYYY_MM_DD-HH_mm.log[/code]
+## If a file with that name already exists, new messages are appended to it.
+static func _create_log_file() -> void:
+	var dir := DirAccess.open("res://log")
+	if not dir:
+		dir = DirAccess.open("res://")
+		var err := dir.make_dir("res://log")
+		if err != OK:
+			Log.trace(Log.Level.ERROR, "Failed to create log directory: %s" % err)
+			return
+
+	var current_time := Time.get_datetime_dict_from_system()
+	var file_path: String = "res://log/%d_%02d_%02d-%02d_%02d.log" % [
+		current_time["year"],
+		current_time["month"],
+		current_time["day"],
+		current_time["hour"],
+		current_time["minute"]
+	]
+
+	_log_file = FileAccess.open(file_path, FileAccess.READ_WRITE if FileAccess.file_exists(file_path) else FileAccess.WRITE_READ)
+	if _log_file == null:
+		Log.trace(Log.Level.ERROR, "Failed to create log file.")
+		return
+
+	_log_file.seek_end()
+	_log_file.store_line(">>> Log created on %d/%02d/%02d at %02d:%02d" % [
+		current_time["year"],
+		current_time["month"],
+		current_time["day"],
+		current_time["hour"],
+		current_time["minute"]
+	])
+
 ## Formats the input arguments into a single string.
 ## [br]
 ## If [param args] is not an array, it is converted to a single-element array.
@@ -132,42 +171,3 @@ static func _publish_message(message: String, flush: bool) -> void:
 	_log_file.store_line(message)
 	if flush:
 		_log_file.flush()
-
-## Creates a new log file with the current timestamp.
-## [br]
-## The file is created in the [code]res://log[/code] directory.
-## If the directory doesn't exist, it will be created.
-## [br][br]
-## The log filename format is: [code]YYYY_MM_DD-HH_mm.log[/code]
-## If a file with that name already exists, new messages are appended to it.
-static func _create_log_file() -> void:
-	var dir := DirAccess.open("res://log")
-	if not dir:
-		dir = DirAccess.open("res://")
-		var err := dir.make_dir("res://log")
-		if err != OK:
-			Log.trace(Log.Level.ERROR, "Failed to create log directory: %s" % err)
-			return
-
-	var current_time := Time.get_datetime_dict_from_system()
-	var file_path: String = "res://log/%d_%02d_%02d-%02d_%02d.log" % [
-		current_time["year"],
-		current_time["month"],
-		current_time["day"],
-		current_time["hour"],
-		current_time["minute"]
-	]
-
-	_log_file = FileAccess.open(file_path, FileAccess.READ_WRITE if FileAccess.file_exists(file_path) else FileAccess.WRITE_READ)
-	if _log_file == null:
-		Log.trace(Log.Level.ERROR, "Failed to create log file.")
-		return
-
-	_log_file.seek_end()
-	_log_file.store_line(">>> Log created on %d/%02d/%02d at %02d:%02d" % [
-		current_time["year"],
-		current_time["month"],
-		current_time["day"],
-		current_time["hour"],
-		current_time["minute"]
-	])

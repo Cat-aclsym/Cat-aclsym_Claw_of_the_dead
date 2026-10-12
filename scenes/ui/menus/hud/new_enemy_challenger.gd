@@ -8,49 +8,49 @@ signal reveal_finished
 
 # Constants
 # Core transition timings for bars/background/fade out.
-const BAR_ANIM_DURATION: float = 0.42
 const BACKGROUND_TARGET_ALPHA: float = 0.4
+const BAR_ANIM_DURATION: float = 0.42
 const FLASH_DURATION: float = 0.1
 const FLAT_ALPHA_TINT_SHADER: Shader = preload("res://assets/resources/shaders/flat_alpha_tint.gdshader")
 
 # Discovery boost timing/pace once the silhouette is revealed.
+const PRE_REVEAL_DELAY: float = 1.1
 const REVEAL_ACCEL_DURATION: float = 1.35
 const REVEAL_DECEL_DURATION: float = 1.8
 const REVEAL_BOOST_DURATION: float = REVEAL_ACCEL_DURATION + REVEAL_DECEL_DURATION
-const PRE_REVEAL_DELAY: float = 1.1
 const REVEAL_WOW_ROTATION_SPEED: float = 2.2
 
 # Screen/layout offsets and text movement values.
-const SLIDE_DISTANCE_MULTIPLIER: float = 1.2
-const OUTRO_DURATION: float = 0.3
 const AURA_POST_DISCOVER_SCALE: float = 1.0
 const AURA_PRE_DISCOVER_SCALE: float = 1.0
+const OUTRO_DURATION: float = 0.3
 const PANEL_START_OFFSET_Y: float = 110.0
+const SLIDE_DISTANCE_MULTIPLIER: float = 1.2
+const TEXT_OUTRO_DURATION: float = 0.42
 const TEXT_SLIDE_DISTANCE: float = 300.0
 const TITLE_ANIM_DURATION: float = 0.5
-const TEXT_OUTRO_DURATION: float = 0.42
 
 # Private variables
 # Input gates used to pause animation flow until player confirmation.
-var _is_waiting_for_reveal_click: bool = false
 var _is_waiting_for_continue: bool = false
+var _is_waiting_for_reveal_click: bool = false
 
 # Cached base layout to always restore canonical positions after outro.
-var _layout_cached: bool = false
 var _base_bottom_bar_position: Vector2 = Vector2.ZERO
 var _base_silhouette_position: Vector2 = Vector2.ZERO
 var _base_subtitle_position: Vector2 = Vector2.ZERO
 var _base_title_position: Vector2 = Vector2.ZERO
 var _base_top_bar_position: Vector2 = Vector2.ZERO
 var _cached_subtitle_final_pos: Vector2 = Vector2.ZERO
+var _layout_cached: bool = false
 
 # Shared material instance reused across reveals.
 var _silhouette_material: ShaderMaterial = null
 
 # Onready variables
 # Core fullscreen overlay layers and transition bars.
-@onready var background_rect: ColorRect = $Background
 @onready var aura_rect: ColorRect = %AuraRect
+@onready var background_rect: ColorRect = $Background
 @onready var bottom_bar: ColorRect = $BottomBar
 @onready var flash_rect: ColorRect = $FlashRect
 @onready var middle_band: ColorRect = $MiddleBand
@@ -61,8 +61,8 @@ var _silhouette_material: ShaderMaterial = null
 
 # Reveal texts shown before/after sprite discovery.
 @onready var subtitle_label: Label = %SubtitleLabel
-@onready var top_bar: ColorRect = $TopBar
 @onready var title_label: Label = %TitleLabel
+@onready var top_bar: ColorRect = $TopBar
 
 # Built-in functions
 func _ready() -> void:
@@ -91,6 +91,14 @@ func _input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 
 
+## Applies a silhouette texture to the reveal panel.
+func apply_silhouette(texture: Texture2D, _enemy_scale: Vector2 = Vector2.ONE) -> void:
+	silhouette_rect.texture = texture
+	silhouette_rect.modulate = Color.WHITE
+	silhouette_rect.material = _get_silhouette_material()
+	_silhouette_material.set_shader_parameter("tint_color", Color(0.0, 0.0, 0.0, 1.0))
+
+
 ## Plays the reveal animation for an enemy silhouette.
 func play_reveal(enemy_id: String, texture: Texture2D, enemy_scale: Vector2 = Vector2.ONE) -> void:
 	if texture == null:
@@ -102,18 +110,30 @@ func play_reveal(enemy_id: String, texture: Texture2D, enemy_scale: Vector2 = Ve
 	reveal_finished.emit()
 
 
-## Applies a silhouette texture to the reveal panel.
-func apply_silhouette(texture: Texture2D, _enemy_scale: Vector2 = Vector2.ONE) -> void:
-	silhouette_rect.texture = texture
-	silhouette_rect.modulate = Color.WHITE
-	silhouette_rect.material = _get_silhouette_material()
-	_silhouette_material.set_shader_parameter("tint_color", Color(0.0, 0.0, 0.0, 1.0))
-
-
 # Private functions
 func _apply_texts(enemy_id: String) -> void:
 	title_label.text = tr("INGAMEHUD.NEW_ENEMY.TITLE")
 	subtitle_label.text = tr(StatsDB.name_key("ENEMY", enemy_id))
+
+
+func _cache_layout_if_needed() -> void:
+	if _layout_cached:
+		return
+	_base_top_bar_position = top_bar.position
+	_base_bottom_bar_position = bottom_bar.position
+	_base_title_position = title_label.position
+	_base_subtitle_position = subtitle_label.position
+	_base_silhouette_position = silhouette_container.position
+	_layout_cached = true
+
+
+func _get_silhouette_material() -> ShaderMaterial:
+	if _silhouette_material != null:
+		return _silhouette_material
+	_silhouette_material = ShaderMaterial.new()
+	_silhouette_material.shader = FLAT_ALPHA_TINT_SHADER
+	_silhouette_material.set_shader_parameter("tint_color", Color(0.0, 0.0, 0.0, 1.0))
+	return _silhouette_material
 
 
 func _play_animation() -> void:
@@ -217,59 +237,6 @@ func _play_animation() -> void:
 	_restore_base_layout()
 
 
-func _wait_for_continue_input() -> void:
-	while _is_waiting_for_continue:
-		await get_tree().process_frame
-
-
-func _wait_for_reveal_click() -> void:
-	while _is_waiting_for_reveal_click:
-		await get_tree().process_frame
-
-
-func _reveal_enemy_sprite() -> void:
-	await _play_discovery_boost()
-	silhouette_rect.material = null
-	var aura_scale_tween: Tween = create_tween()
-	aura_scale_tween.tween_property(aura_rect, "scale", Vector2.ONE * AURA_POST_DISCOVER_SCALE, 0.24).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
-	var subtitle_in_tween: Tween = create_tween().set_parallel(true)
-	subtitle_in_tween.tween_property(subtitle_label, "position", _cached_subtitle_final_pos, 0.25).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
-	subtitle_in_tween.tween_property(subtitle_label, "modulate:a", 1.0, 0.25).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
-	await subtitle_in_tween.finished
-
-
-func _get_silhouette_material() -> ShaderMaterial:
-	if _silhouette_material != null:
-		return _silhouette_material
-	_silhouette_material = ShaderMaterial.new()
-	_silhouette_material.shader = FLAT_ALPHA_TINT_SHADER
-	_silhouette_material.set_shader_parameter("tint_color", Color(0.0, 0.0, 0.0, 1.0))
-	return _silhouette_material
-
-
-func _cache_layout_if_needed() -> void:
-	if _layout_cached:
-		return
-	_base_top_bar_position = top_bar.position
-	_base_bottom_bar_position = bottom_bar.position
-	_base_title_position = title_label.position
-	_base_subtitle_position = subtitle_label.position
-	_base_silhouette_position = silhouette_container.position
-	_layout_cached = true
-
-
-func _restore_base_layout() -> void:
-	top_bar.position = _base_top_bar_position
-	bottom_bar.position = _base_bottom_bar_position
-	title_label.position = _base_title_position
-	title_label.modulate.a = 1.0
-	subtitle_label.position = _base_subtitle_position
-	subtitle_label.modulate.a = 1.0
-	silhouette_container.position = _base_silhouette_position
-	silhouette_rect.modulate.a = 1.0
-	aura_rect.modulate.a = 1.0
-
-
 func _play_discovery_boost() -> void:
 	if not (aura_rect.material is ShaderMaterial):
 		return
@@ -300,3 +267,36 @@ func _play_discovery_boost() -> void:
 	shader_mat.set_shader_parameter("aura_color", target_color)
 	shader_mat.set_shader_parameter("intensity", 1.18)
 	silhouette_mat.set_shader_parameter("tint_color", Color(1.0, 1.0, 1.0, 1.0))
+
+
+func _restore_base_layout() -> void:
+	top_bar.position = _base_top_bar_position
+	bottom_bar.position = _base_bottom_bar_position
+	title_label.position = _base_title_position
+	title_label.modulate.a = 1.0
+	subtitle_label.position = _base_subtitle_position
+	subtitle_label.modulate.a = 1.0
+	silhouette_container.position = _base_silhouette_position
+	silhouette_rect.modulate.a = 1.0
+	aura_rect.modulate.a = 1.0
+
+
+func _reveal_enemy_sprite() -> void:
+	await _play_discovery_boost()
+	silhouette_rect.material = null
+	var aura_scale_tween: Tween = create_tween()
+	aura_scale_tween.tween_property(aura_rect, "scale", Vector2.ONE * AURA_POST_DISCOVER_SCALE, 0.24).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	var subtitle_in_tween: Tween = create_tween().set_parallel(true)
+	subtitle_in_tween.tween_property(subtitle_label, "position", _cached_subtitle_final_pos, 0.25).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	subtitle_in_tween.tween_property(subtitle_label, "modulate:a", 1.0, 0.25).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	await subtitle_in_tween.finished
+
+
+func _wait_for_continue_input() -> void:
+	while _is_waiting_for_continue:
+		await get_tree().process_frame
+
+
+func _wait_for_reveal_click() -> void:
+	while _is_waiting_for_reveal_click:
+		await get_tree().process_frame

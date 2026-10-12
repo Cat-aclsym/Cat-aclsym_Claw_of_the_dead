@@ -74,6 +74,15 @@ func _physics_process(delta: float) -> void:
 	position += direction * speed * delta
 
 
+func _detach_trail_for_cleanup() -> void:
+	if not trail_enabled or not is_instance_valid(trail_particles):
+		return
+
+	trail_particles.emitting = false
+	trail_particles.reparent(_get_scene_root())
+	VfxUtil.free_after(trail_particles, maxf(trail_particles.lifetime + 0.1, 0.05))
+
+
 func _disable_projectile() -> void:
 	set_deferred("monitoring", false)
 	set_deferred("monitorable", false)
@@ -86,39 +95,16 @@ func _disable_projectile() -> void:
 	speed = 0
 
 
-func _detach_trail_for_cleanup() -> void:
-	if not trail_enabled or not is_instance_valid(trail_particles):
-		return
-
-	trail_particles.emitting = false
-	trail_particles.reparent(_get_scene_root())
-	VfxUtil.free_after(trail_particles, maxf(trail_particles.lifetime + 0.1, 0.05))
-
-
-func _play_smoke_burst(hit_position: Vector2) -> void:
-	if not is_instance_valid(smoke_burst_particles):
-		return
-
-	smoke_burst_particles.reparent(_get_scene_root())
-	smoke_burst_particles.global_position = hit_position
-	smoke_burst_particles.local_coords = false
-	smoke_burst_particles.visible = true
-	smoke_burst_particles.emitting = true
-	smoke_burst_particles.restart()
-
-	VfxUtil.free_after(smoke_burst_particles, smoke_burst_particles.lifetime + 0.1)
-
-
-func _get_scene_root() -> Node:
-	return get_tree().current_scene if is_instance_valid(get_tree().current_scene) else get_tree().root
-
-
 func _disable_trail() -> void:
 	if not is_instance_valid(trail_particles):
 		return
 
 	trail_particles.emitting = false
 	trail_particles.visible = false
+
+
+func _get_scene_root() -> Node:
+	return get_tree().current_scene if is_instance_valid(get_tree().current_scene) else get_tree().root
 
 
 func _on_body_entered(body: Node2D) -> void:
@@ -144,3 +130,17 @@ func _on_body_entered(body: Node2D) -> void:
 
 	# Free the bullet
 	queue_free()
+
+
+func _play_smoke_burst(hit_position: Vector2) -> void:
+	if not is_instance_valid(smoke_burst_particles):
+		return
+
+	smoke_burst_particles.reparent(_get_scene_root())
+	smoke_burst_particles.global_position = hit_position
+	smoke_burst_particles.local_coords = false
+	smoke_burst_particles.visible = true
+	smoke_burst_particles.emitting = true
+	smoke_burst_particles.restart()
+
+	VfxUtil.free_after(smoke_burst_particles, smoke_burst_particles.lifetime + 0.1)

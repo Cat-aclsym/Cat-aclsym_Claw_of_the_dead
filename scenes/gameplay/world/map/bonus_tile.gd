@@ -5,18 +5,18 @@
 class_name BonusTile
 extends SpecialTile
 
-const BONUS_PARTICLE_ALPHA: float = 0.8
-const BONUS_GROUND_ALPHA: float = 0.8
-const BONUS_PARTICLE_LAYER_Z_OFFSET: int = 16
 const BONUS_DECORATION_LAYER_Z_OFFSET: int = 10
+const BONUS_GROUND_ALPHA: float = 0.8
 const BONUS_GROUND_LAYER_Z_OFFSET: int = 1
-const BONUS_PARTICLE_TINT_WHITE_BLEND: float = 0.72
 const BONUS_GROUND_TINT_WHITE_BLEND: float = 0.42
+const BONUS_PARTICLE_ALPHA: float = 0.8
+const BONUS_PARTICLE_LAYER_Z_OFFSET: int = 16
+const BONUS_PARTICLE_TINT_WHITE_BLEND: float = 0.72
 
-@onready var _bonus_ground: Sprite2D = $BonusGround
 @onready var _back_particles: GPUParticles2D = $BonusParticlesBehind
-@onready var _front_particles: GPUParticles2D = $BonusParticlesFront
+@onready var _bonus_ground: Sprite2D = $BonusGround
 @onready var _emitting_particle: GPUParticles2D = $EmittingParticle
+@onready var _front_particles: GPUParticles2D = $BonusParticlesFront
 
 func _apply_configuration() -> void:
 	modulate = Color.WHITE

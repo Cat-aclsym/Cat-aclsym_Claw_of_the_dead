@@ -9,24 +9,24 @@ extends Node
 ## Emitted each time a pause source is requested or released, with the resulting [member paused] value.
 signal pause_changed(paused: bool)
 
-## Pause sources that also pause the scene tree, the others only freeze the gameplay.
-const TREE_PAUSING_SOURCES: Array[StringName] = [&"dialogue", &"new_enemy", &"pause_menu"]
 ## Pause sources that play their own animations: they keep the engine time scale running.
 ## [br]Dialogic stops revealing text at a time scale of 0, so [code]&"dialogue"[/code] needs it too.
 const TIME_RUNNING_SOURCES: Array[StringName] = [&"dialogue", &"level_end", &"new_enemy"]
+## Pause sources that also pause the scene tree, the others only freeze the gameplay.
+const TREE_PAUSING_SOURCES: Array[StringName] = [&"dialogue", &"new_enemy", &"pause_menu"]
 
 var camera: Camera = null
 var console: Console = null
 var cursor: BuildPlacement = null
-var hud: HUD = null
-var ui: UI = null
-## True while at least one source requested a pause, see [method request_pause].
-var paused: bool:
-	get: return not _pause_sources.is_empty()
 
 ## Debug-only builds (console, watchers, etc.). Mirrors the Godot export feature `debug`
 ## (true in the editor and debug export templates, false in release exports).
 var debug: bool = OS.has_feature("debug"): set = _set_debug
+var hud: HUD = null
+## True while at least one source requested a pause, see [method request_pause].
+var paused: bool:
+	get: return not _pause_sources.is_empty()
+var ui: UI = null
 
 var _initialized: bool = false: set = _set_initialized
 var _pause_sources: Dictionary[StringName, bool] = {}

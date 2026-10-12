@@ -13,23 +13,23 @@ signal buy_requested(node_id: String)
 ## Fired when the card body is pressed so the parent can show the description panel and selection highlight.
 signal selected(node_id: String)
 
+const BUY_BUTTON_BLUE: Texture2D = preload("res://assets/ui/buttons/bouton_bleu.svg")
+const BUY_BUTTON_GREEN: Texture2D = preload("res://assets/ui/buttons/bouton_vert.svg")
+const CARD_DIM_UNAFFORDABLE: float = 0.82
+const CARD_MODULATE_AFFORDABLE: Color = Color.WHITE
+const CARD_MODULATE_UNAFFORDABLE: Color = Color(CARD_DIM_UNAFFORDABLE, CARD_DIM_UNAFFORDABLE, CARD_DIM_UNAFFORDABLE, 1.0)
 const COLOR_BUY_BLOCKED_MODULATE: Color = Color(0.55, 0.55, 0.55, 1.0)
 const COLOR_BUY_LABEL_DEFAULT: Color = Color(0.137255, 0.215686, 0.223529, 1.0)
 const COLOR_PRICE_AFFORDABLE: Color = Color(1.0, 1.0, 1.0, 1.0)
 const COLOR_PRICE_UNAFFORDABLE: Color = Color(0.92, 0.26, 0.22, 1.0)
-const CARD_DIM_UNAFFORDABLE: float = 0.82
-const CARD_MODULATE_AFFORDABLE: Color = Color.WHITE
-const CARD_MODULATE_UNAFFORDABLE: Color = Color(CARD_DIM_UNAFFORDABLE, CARD_DIM_UNAFFORDABLE, CARD_DIM_UNAFFORDABLE, 1.0)
-const PRICE_LABEL_MODULATE_VS_DIM: Color = Color(1.0 / CARD_DIM_UNAFFORDABLE, 1.0 / CARD_DIM_UNAFFORDABLE, 1.0 / CARD_DIM_UNAFFORDABLE, 1.0)
-const BUY_BUTTON_BLUE: Texture2D = preload("res://assets/ui/buttons/bouton_bleu.svg")
-const BUY_BUTTON_GREEN: Texture2D = preload("res://assets/ui/buttons/bouton_vert.svg")
 const FRAME_BLUE: Texture2D = preload("res://assets/ui/building_cards/blue_frame.svg")
 const FRAME_GREEN: Texture2D = preload("res://assets/ui/building_cards/green_frame.svg")
 const FRAME_GREY: Texture2D = preload("res://assets/ui/building_cards/grey_frame.svg")
+const PRICE_LABEL_MODULATE_VS_DIM: Color = Color(1.0 / CARD_DIM_UNAFFORDABLE, 1.0 / CARD_DIM_UNAFFORDABLE, 1.0 / CARD_DIM_UNAFFORDABLE, 1.0)
 
 @export var cost_stars: int = 0
-@export var icon_texture: Texture2D = null
 @export var icon_modulate: Color = Color.WHITE
+@export var icon_texture: Texture2D = null
 @export var is_affordable: bool = false
 @export var is_legacy_mode: bool = false
 @export var is_prerequisites_met: bool = true
@@ -44,12 +44,12 @@ var _is_card_selected: bool = false
 @onready var frame_texture_rect: TextureRect = %FrameTextureRect
 @onready var preview_texture_rect: TextureRect = %PreviewTextureRect
 @onready var price_label: Label = %PriceLabel
-@onready var stars_icon_texture_rect: TextureRect = %StarsIconTextureRect
 
 @onready var signals: Array[Dictionary] = [
 	{SignalUtil.WHO: buy_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_buy_button_pressed},
 	{SignalUtil.WHO: card_texture_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_card_texture_button_pressed},
 ]
+@onready var stars_icon_texture_rect: TextureRect = %StarsIconTextureRect
 
 
 ## Connects signals and applies the initial layout (buy row stays visible to avoid layout jumps when selecting).

@@ -3,10 +3,10 @@
 class_name SmallZombie
 extends IEnemy
 
-## Visual tint for the small zombie
-const SMALL_TINT: Color = Color(1.0, 0.5, 0.5, 1.0)
 ## Scale for the small zombie
 const SMALL_SCALE: Vector2 = Vector2(0.6, 0.6)
+## Visual tint for the small zombie
+const SMALL_TINT: Color = Color(1.0, 0.5, 0.5, 1.0)
 
 
 func _ready() -> void:

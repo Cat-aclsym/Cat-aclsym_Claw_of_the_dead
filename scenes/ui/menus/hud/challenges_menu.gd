@@ -17,13 +17,13 @@ var _tween: Tween
 @onready var close_button: TextureButton = %CloseButton
 @onready var dimmer: ColorRect = %Dimmer
 @onready var panel: Control = %Panel
-@onready var title_label: Label = %TitleLabel
 
 @onready var signals: Array[Dictionary] = [
 	{SignalUtil.WHO: ChallengeManager, SignalUtil.WHAT: "challenges_loaded", SignalUtil.TO: _populate},
 	{SignalUtil.WHO: close_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_close_pressed},
 	{SignalUtil.WHO: dimmer, SignalUtil.WHAT: "gui_input", SignalUtil.TO: _on_dimmer_input},
 ]
+@onready var title_label: Label = %TitleLabel
 
 
 func _ready() -> void:

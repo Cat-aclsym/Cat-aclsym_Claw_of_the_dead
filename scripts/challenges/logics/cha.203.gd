@@ -16,14 +16,6 @@ var _placed_buildings: Array[int] = []
 
 
 # Public functions
-## Called when the level starts to reset state, and starts following the waves.
-func start_monitoring() -> void:
-	super.start_monitoring()
-	_placed_buildings.clear()
-	if is_instance_valid(ILevel.current_level) and not ILevel.current_level.wave_started.is_connected(_on_wave_started):
-		SignalUtil.connects([{SignalUtil.WHO: ILevel.current_level, SignalUtil.WHAT: "wave_started", SignalUtil.TO: _on_wave_started}])
-
-
 ## Evaluates if the challenge conditions are met at the end of the level, which is the end of the last wave.
 func check_completion() -> bool:
 	return not is_failed and _count_buildings() <= MAX_BUILDINGS
@@ -37,6 +29,14 @@ func on_tower_placed(tower: ITower) -> void:
 ## Notifies the challenge about a trap placement.
 func on_trap_placed(trap: ITrap) -> void:
 	_placed_buildings.append(trap.get_instance_id())
+
+
+## Called when the level starts to reset state, and starts following the waves.
+func start_monitoring() -> void:
+	super.start_monitoring()
+	_placed_buildings.clear()
+	if is_instance_valid(ILevel.current_level) and not ILevel.current_level.wave_started.is_connected(_on_wave_started):
+		SignalUtil.connects([{SignalUtil.WHO: ILevel.current_level, SignalUtil.WHAT: "wave_started", SignalUtil.TO: _on_wave_started}])
 
 
 # Private functions

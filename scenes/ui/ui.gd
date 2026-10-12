@@ -21,15 +21,6 @@ func _ready() -> void:
 	_initialized = true
 
 # public
-## Initializes and displays the HUD for a new level.
-## [br]This function must be called when starting a new level to set up the UI.
-func start_level() -> void:
-	assert(_initialized, "UI not properly initialized")
-	Log.trace(Log.Level.INFO, "HUD : Loading level interface")
-	hud.load_ui()
-	tutorial_manager.on_level_started(ILevel.current_level)
-	_play_ingame_fade_in()
-
 ## Cleans up and hides the HUD when leaving a level.
 ## [br]This function must be called when exiting a level to clean up the UI.
 func end_level() -> void:
@@ -46,6 +37,19 @@ func notify_new_enemy_reveal(enemy_id: String, texture: Texture2D, enemy_scale: 
 	assert(_initialized, "UI not properly initialized")
 	hud.queue_new_enemy_reveal(enemy_id, texture, enemy_scale)
 
+## Initializes and displays the HUD for a new level.
+## [br]This function must be called when starting a new level to set up the UI.
+func start_level() -> void:
+	assert(_initialized, "UI not properly initialized")
+	Log.trace(Log.Level.INFO, "HUD : Loading level interface")
+	hud.load_ui()
+	tutorial_manager.on_level_started(ILevel.current_level)
+	_play_ingame_fade_in()
+
+
+func _on_ingame_fade_finished() -> void:
+	ingame_fade_color_rect.visible = false
+
 
 func _play_ingame_fade_in() -> void:
 	ingame_fade_color_rect.visible = true
@@ -54,7 +58,3 @@ func _play_ingame_fade_in() -> void:
 	var tween: Tween = create_tween()
 	tween.tween_property(ingame_fade_color_rect, "color", Color(1.0, 1.0, 1.0, 0.0), 1.0)
 	tween.tween_callback(_on_ingame_fade_finished)
-
-
-func _on_ingame_fade_finished() -> void:
-	ingame_fade_color_rect.visible = false

@@ -75,7 +75,6 @@ var _page_total_frames: int = 10
 @onready var stats_grid: GridContainer = %StatsGrid
 @onready var stats_scroll: ScrollContainer = $GuiMarginContainer/MenuLayout/ContentLayout/RightPageVBox/StatsScroll
 @onready var towers_button: TextureButton = %TowersButton
-@onready var towers_exclamation: TextureRect = %TowersExclamation
 ## List of signal connections for UI elements, must be last because it uses onready vars.
 @onready var signals: Array[Dictionary] = [
 	{SignalUtil.TO: _on_close_pressed, SignalUtil.WHAT: "pressed", SignalUtil.WHO: close_button},
@@ -84,6 +83,26 @@ var _page_total_frames: int = 10
 	{SignalUtil.TO: _on_prev_pressed, SignalUtil.WHAT: "pressed", SignalUtil.WHO: prev_button},
 	{SignalUtil.TO: _on_category_pressed.bind("TOWERS"), SignalUtil.WHAT: "pressed", SignalUtil.WHO: towers_button},
 ]
+@onready var towers_exclamation: TextureRect = %TowersExclamation
+
+
+## Initializes the ui and entries.
+func _ready() -> void:
+	_initialize_entries()
+	_update_background_texture()
+	_update_display(false)
+	SignalUtil.connects(signals)
+
+	name_label.add_theme_font_override("font", _font)
+	name_label.add_theme_font_size_override("font_size", 48)
+	towers_button.add_theme_font_override("font", _font)
+	enemies_button.add_theme_font_override("font", _font)
+
+	ButtonEffects.apply(close_button)
+	ButtonEffects.apply(enemies_button)
+	ButtonEffects.apply(next_button)
+	ButtonEffects.apply(prev_button)
+	ButtonEffects.apply(towers_button)
 
 
 ## Updates the page turn animation and scroll indicators.
@@ -141,25 +160,6 @@ func _process(_scaled_delta: float) -> void:
 				if count > 0:
 					_anim_frame = (_anim_frame + 1) % count
 					sprite_rect.texture = frames.get_frame_texture(anim, _anim_frame)
-
-
-## Initializes the ui and entries.
-func _ready() -> void:
-	_initialize_entries()
-	_update_background_texture()
-	_update_display(false)
-	SignalUtil.connects(signals)
-
-	name_label.add_theme_font_override("font", _font)
-	name_label.add_theme_font_size_override("font_size", 48)
-	towers_button.add_theme_font_override("font", _font)
-	enemies_button.add_theme_font_override("font", _font)
-
-	ButtonEffects.apply(close_button)
-	ButtonEffects.apply(enemies_button)
-	ButtonEffects.apply(next_button)
-	ButtonEffects.apply(prev_button)
-	ButtonEffects.apply(towers_button)
 
 
 ## Adds an enemy entry to the internal dictionary.
@@ -346,6 +346,25 @@ func _get_entry_sprite(p_entry: Dictionary) -> SpritePreview:
 	if p_entry["sprite"] == null:
 		p_entry["sprite"] = SpritePreview.from_scene(load(p_entry["scene_path"]) as PackedScene)
 	return p_entry["sprite"]
+
+
+## Returns the icon texture for a given encyclopedia stat key, or null if unmapped.
+func _get_icon_for_encyclopedia_stat(p_key: String) -> Texture2D:
+	match p_key:
+		"ENCYCLOPEDIA.STATS.COST", "ENCYCLOPEDIA.STATS.REWARD":
+			return _ICON_COIN
+		"ENCYCLOPEDIA.STATS.DAMAGE":
+			return _ICON_ATTACK
+		"ENCYCLOPEDIA.STATS.FIRERATE":
+			return _ICON_FIRE_RATE
+		"ENCYCLOPEDIA.STATS.HEALTH":
+			return _ICON_HEALTH
+		"ENCYCLOPEDIA.STATS.RANGE":
+			return _ICON_RANGE
+		"ENCYCLOPEDIA.STATS.SPEED":
+			return _ICON_SPEED
+		_:
+			return null
 
 
 ## Loads all tower and enemy entries from StatsDB.
@@ -592,22 +611,3 @@ func _update_ui_elements() -> void:
 	await get_tree().process_frame
 	if is_inside_tree():
 		_check_scroll_indicator()
-
-
-## Returns the icon texture for a given encyclopedia stat key, or null if unmapped.
-func _get_icon_for_encyclopedia_stat(p_key: String) -> Texture2D:
-	match p_key:
-		"ENCYCLOPEDIA.STATS.COST", "ENCYCLOPEDIA.STATS.REWARD":
-			return _ICON_COIN
-		"ENCYCLOPEDIA.STATS.DAMAGE":
-			return _ICON_ATTACK
-		"ENCYCLOPEDIA.STATS.FIRERATE":
-			return _ICON_FIRE_RATE
-		"ENCYCLOPEDIA.STATS.HEALTH":
-			return _ICON_HEALTH
-		"ENCYCLOPEDIA.STATS.RANGE":
-			return _ICON_RANGE
-		"ENCYCLOPEDIA.STATS.SPEED":
-			return _ICON_SPEED
-		_:
-			return null

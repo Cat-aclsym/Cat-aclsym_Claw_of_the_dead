@@ -11,12 +11,6 @@ var _first_tower_type: String = ""
 
 
 # Public functions
-## Called when the level starts to reset state.
-func start_monitoring() -> void:
-	super.start_monitoring()
-	_first_tower_type = ""
-
-
 ## Notifies the challenge about a tower placement.
 func on_tower_placed(tower: ITower) -> void:
 	var t_id: String = tower.scene_file_path
@@ -25,3 +19,9 @@ func on_tower_placed(tower: ITower) -> void:
 		_first_tower_type = t_id
 	elif _first_tower_type != t_id:
 		fail()
+
+
+## Called when the level starts to reset state.
+func start_monitoring() -> void:
+	super.start_monitoring()
+	_first_tower_type = ""

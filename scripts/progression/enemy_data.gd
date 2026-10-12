@@ -9,14 +9,14 @@ var encyclopedia_seen: bool = false
 ## Whether the enemy has been seen by the player.
 var seen: bool = false
 
+## Populates the object from a dictionary.
+func from_dictionary(data: Dictionary) -> void:
+	seen = data.get("seen", false)
+	encyclopedia_seen = data.get("encyclopedia_seen", false)
+
 ## Converts the object to a dictionary for serialization.
 func save() -> Dictionary:
 	return {
 		"encyclopedia_seen": encyclopedia_seen,
 		"seen": seen
 	}
-
-## Populates the object from a dictionary.
-func from_dictionary(data: Dictionary) -> void:
-	seen = data.get("seen", false)
-	encyclopedia_seen = data.get("encyclopedia_seen", false)

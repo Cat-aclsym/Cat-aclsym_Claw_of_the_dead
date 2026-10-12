@@ -22,14 +22,14 @@ var _locked: bool = false
 @onready var background_texture: TextureRect = $CardVBoxContainer/CardAspectRatioContainer/CardTextureButton/BackgroundTextureRect
 @onready var button_texture: TextureButton = $CardVBoxContainer/CardAspectRatioContainer/CardTextureButton
 @onready var container: VBoxContainer = $CardVBoxContainer
+@onready var preview_texture_rect: TextureRect = $CardVBoxContainer/CardAspectRatioContainer/CardTextureButton/BuildPreviewTextureRect
 @onready var price_coin_icon: TextureRect = $CardVBoxContainer/CardAspectRatioContainer/CardTextureButton/PriceRow/CoinIcon
 @onready var price_label: Label = $CardVBoxContainer/CardAspectRatioContainer/CardTextureButton/PriceRow/PriceLabel
-@onready var title_label: Label = $CardVBoxContainer/TitleAspectRatioContainer/TitleTextureRect/TitleLabel
-@onready var preview_texture_rect: TextureRect = $CardVBoxContainer/CardAspectRatioContainer/CardTextureButton/BuildPreviewTextureRect
 
 @onready var signals: Array[Dictionary] = [
 	{SignalUtil.WHO: button_texture, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_button_texture_pressed},
 ]
+@onready var title_label: Label = $CardVBoxContainer/TitleAspectRatioContainer/TitleTextureRect/TitleLabel
 
 # core
 func _ready() -> void:
@@ -111,6 +111,20 @@ func _apply_entity_preview_texture() -> void:
 	if texture:
 		preview_texture_rect.texture = texture
 
+
+func _is_entity_unlocked() -> bool:
+	if _entity is ITower:
+		var tw: ITower = _entity as ITower
+		if tw.tower_id.is_empty():
+			return true
+		return ProgressionManager.is_tower_unlocked(tw.tower_id)
+	if _entity is ITrap:
+		var trap_entity: ITrap = _entity as ITrap
+		if trap_entity.trap_id.is_empty():
+			return true
+		return ProgressionManager.is_trap_unlocked(trap_entity.trap_id)
+	return true
+
 ## Handles the build button press event.
 ## [br]Changes cursor state to build mode and closes the build menu.
 func _on_button_texture_pressed() -> void:
@@ -138,17 +152,3 @@ func _sync_title_from_stats_db() -> void:
 			name_key = StatsDB.name_key("TRAP", trap.trap_id)
 	if not name_key.is_empty():
 		title_label.text = tr(name_key)
-
-
-func _is_entity_unlocked() -> bool:
-	if _entity is ITower:
-		var tw: ITower = _entity as ITower
-		if tw.tower_id.is_empty():
-			return true
-		return ProgressionManager.is_tower_unlocked(tw.tower_id)
-	if _entity is ITrap:
-		var trap_entity: ITrap = _entity as ITrap
-		if trap_entity.trap_id.is_empty():
-			return true
-		return ProgressionManager.is_trap_unlocked(trap_entity.trap_id)
-	return true

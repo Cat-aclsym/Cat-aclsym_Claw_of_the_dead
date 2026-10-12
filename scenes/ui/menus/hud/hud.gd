@@ -34,18 +34,16 @@ var _new_enemy_reveal_running: bool = false
 @onready var build_selection_button: TextureButton = $BuildSelectionMarginContainer/BuildSelectionButton
 @onready var challenges_button: TextureButton = $ChallengesMarginContainer/ChallengesButton
 @onready var coins_rich_text_label: Label = %HUDVBoxContainer/CoinsWavesMarginContainer/CoinsWavesHBoxContainer/CoinsTextureRect/MarginContainer/CoinsLabel
+
+@onready var default_coins_text: String = coins_rich_text_label.text
 @onready var health_ghost_progress_bar: TextureProgressBar = %HealthGhostProgressBar
 @onready var health_rich_text_label: Label = %HUDVBoxContainer/HeartTextureRect/HealthMarginContainer/MarginContainer/HealthTextureProgressBar/HealthLabel
+@onready var default_health_text: String = health_rich_text_label.text
 @onready var health_texture_progress_bar: TextureProgressBar = %HUDVBoxContainer/HeartTextureRect/HealthMarginContainer/MarginContainer/HealthTextureProgressBar
 @onready var low_health_indicator: LowHealthIndicator = $LowHealthIndicator
 @onready var pause_button: TextureButton = $PauseMarginContainer/PauseButton
 @onready var skip_animation_player: AnimationPlayer = $SkipMarginContainer/SkipAnimationPlayer
 @onready var skip_time_scale_button: TextureButton = $SkipMarginContainer/SkipButton
-@onready var waves_rich_text_label: Label = %HUDVBoxContainer/CoinsWavesMarginContainer/CoinsWavesHBoxContainer/WavesTextureRect/MarginContainer/WavesLabel
-
-@onready var default_coins_text: String = coins_rich_text_label.text
-@onready var default_health_text: String = health_rich_text_label.text
-@onready var default_waves_text: String = waves_rich_text_label.text
 
 @onready var signals: Array[Dictionary] = [
 	{SignalUtil.WHO: challenges_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_challenges_button_pressed},
@@ -53,6 +51,8 @@ var _new_enemy_reveal_running: bool = false
 	{SignalUtil.WHO: skip_time_scale_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_skip_time_scale_button_pressed},
 	{SignalUtil.WHO: build_selection_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_build_selection_button_pressed}
 ]
+@onready var waves_rich_text_label: Label = %HUDVBoxContainer/CoinsWavesMarginContainer/CoinsWavesHBoxContainer/WavesTextureRect/MarginContainer/WavesLabel
+@onready var default_waves_text: String = waves_rich_text_label.text
 
 # Built-in functions
 func _ready() -> void:
@@ -103,14 +103,6 @@ func load_ui() -> void:
 	_update()
 
 
-## Cleans up and hides the HUD interface.
-func unload_ui() -> void:
-	_is_ready = false
-	visible = false
-	if ILevel.current_level:
-		ILevel.current_level.disconnect("stats_updated", _update)
-
-
 ## Queues a reveal animation for a newly discovered enemy.
 func queue_new_enemy_reveal(enemy_id: String, texture: Texture2D, enemy_scale: Vector2 = Vector2.ONE) -> void:
 	if enemy_id.is_empty() or texture == null:
@@ -123,6 +115,14 @@ func queue_new_enemy_reveal(enemy_id: String, texture: Texture2D, enemy_scale: V
 	})
 	_try_play_next_enemy_reveal()
 
+
+## Cleans up and hides the HUD interface.
+func unload_ui() -> void:
+	_is_ready = false
+	visible = false
+	if ILevel.current_level:
+		ILevel.current_level.disconnect("stats_updated", _update)
+
 # Private functions
 func _apply_time_scale(time_scale: float, is_fast: bool) -> void:
 	Engine.time_scale = time_scale
@@ -132,6 +132,23 @@ func _apply_time_scale(time_scale: float, is_fast: bool) -> void:
 	else:
 		skip_animation_player.stop()
 		skip_time_scale_button.modulate = SKIP_COLOR_INACTIVE
+
+
+func _on_build_selection_button_pressed() -> void:
+	var existing_menu: BuildSelection = Global.ui.get_node_or_null("BuildSelection") as BuildSelection
+	if existing_menu != null and existing_menu.is_queued_for_deletion():
+		existing_menu = null
+
+	if existing_menu == null:
+		var build_selection_menu_instance: BuildSelection = BUILD_SELECTION_MENU.instantiate() as BuildSelection
+		build_selection_menu_instance.z_index = 4000
+		build_selection_menu_instance.process_mode = Node.PROCESS_MODE_ALWAYS
+		Global.ui.add_child(build_selection_menu_instance)
+		build_menu_opened.emit()
+		return
+
+	existing_menu.queue_free()
+	build_menu_closed.emit()
 
 
 func _on_challenges_button_pressed() -> void:
@@ -163,46 +180,6 @@ func _on_skip_time_scale_button_pressed() -> void:
 	_apply_time_scale(target_scale, is_fast)
 
 
-func _on_build_selection_button_pressed() -> void:
-	var existing_menu: BuildSelection = Global.ui.get_node_or_null("BuildSelection") as BuildSelection
-	if existing_menu != null and existing_menu.is_queued_for_deletion():
-		existing_menu = null
-
-	if existing_menu == null:
-		var build_selection_menu_instance: BuildSelection = BUILD_SELECTION_MENU.instantiate() as BuildSelection
-		build_selection_menu_instance.z_index = 4000
-		build_selection_menu_instance.process_mode = Node.PROCESS_MODE_ALWAYS
-		Global.ui.add_child(build_selection_menu_instance)
-		build_menu_opened.emit()
-		return
-
-	existing_menu.queue_free()
-	build_menu_closed.emit()
-
-
-func _try_play_next_enemy_reveal() -> void:
-	if _new_enemy_reveal_running:
-		return
-	if _new_enemy_reveal_queue.is_empty():
-		return
-	if not is_instance_valid(_new_enemy_challenger):
-		return
-
-	_new_enemy_reveal_running = true
-	_set_reveal_paused(true)
-	var reveal_data: Dictionary = _new_enemy_reveal_queue.pop_front()
-	await _new_enemy_challenger.play_reveal(
-		reveal_data.get("enemy_id", ""),
-		reveal_data.get("texture", null),
-		reveal_data.get("scale", Vector2.ONE)
-	)
-	_set_reveal_paused(false)
-	_new_enemy_reveal_running = false
-	if _new_enemy_reveal_queue.is_empty():
-		_play_enemy_dialogue(reveal_data.get("enemy_id", ""))
-	_try_play_next_enemy_reveal()
-
-
 ## Plays the one-time dialogue of the boss, or of the first new enemy that is not the basic zombie.
 func _play_enemy_dialogue(enemy_id: String) -> void:
 	if enemy_id == "big_daddy":
@@ -211,11 +188,47 @@ func _play_enemy_dialogue(enemy_id: String) -> void:
 		Narrative.play_once(&"first_new_enemy_seen", "first_new_enemy")
 
 
+func _set_health_flash_intensity(value: float) -> void:
+	if health_texture_progress_bar.material is ShaderMaterial:
+		(health_texture_progress_bar.material as ShaderMaterial).set_shader_parameter("flash_intensity", value)
+
+
 func _set_reveal_paused(is_paused: bool) -> void:
 	if is_paused:
 		Global.request_pause(&"new_enemy")
 	else:
 		Global.release_pause(&"new_enemy")
+
+
+func _spawn_coin_explosion(start_pos: Vector2) -> void:
+	if COIN_ICON_TEXTURE == null:
+		return
+	var num_coins: int = randi_range(5, 10)
+	for i in range(num_coins):
+		var coin: Sprite2D = Sprite2D.new()
+		coin.texture = COIN_ICON_TEXTURE
+		coin.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+		coin.scale = Vector2(1, 1)
+		add_child(coin)
+		coin.global_position = start_pos
+
+		# Use angles 10° to 45° (left) and 170° to 135° (right), in radians, but flip direction upward
+		var use_left: bool = randf() < 0.5
+		var angle: float
+		if use_left:
+			# Left arc: 10° to 45° UP (flip y-axis)
+			angle = -deg_to_rad(randf_range(10, 45))
+		else:
+			# Right arc: 170° to 135° UP (flip y-axis)
+			angle = -deg_to_rad(randf_range(135, 170))
+		var distance: float = randf_range(40, 80) # Increased travel distance
+		var target_pos: Vector2 = start_pos + Vector2(cos(angle), sin(angle)) * distance
+
+		var coin_tween: Tween = create_tween().set_parallel(true)
+		coin_tween.tween_property(coin, "global_position", target_pos, 0.5).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		coin_tween.tween_property(coin, "modulate:a", 0.0, 0.5).set_delay(0.2)
+		coin_tween.tween_property(coin, "scale", Vector2.ZERO, 0.5).set_ease(Tween.EASE_IN)
+		SignalUtil.connects([{SignalUtil.WHO: coin_tween, SignalUtil.WHAT: "finished", SignalUtil.TO: coin.queue_free}])
 
 
 func _trigger_coin_effects(amount: int) -> void:
@@ -261,37 +274,6 @@ func _trigger_coin_effects(amount: int) -> void:
 	_spawn_coin_explosion(popup.global_position)
 
 
-func _spawn_coin_explosion(start_pos: Vector2) -> void:
-	if COIN_ICON_TEXTURE == null:
-		return
-	var num_coins: int = randi_range(5, 10)
-	for i in range(num_coins):
-		var coin: Sprite2D = Sprite2D.new()
-		coin.texture = COIN_ICON_TEXTURE
-		coin.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-		coin.scale = Vector2(1, 1)
-		add_child(coin)
-		coin.global_position = start_pos
-
-		# Use angles 10° to 45° (left) and 170° to 135° (right), in radians, but flip direction upward
-		var use_left: bool = randf() < 0.5
-		var angle: float
-		if use_left:
-			# Left arc: 10° to 45° UP (flip y-axis)
-			angle = -deg_to_rad(randf_range(10, 45))
-		else:
-			# Right arc: 170° to 135° UP (flip y-axis)
-			angle = -deg_to_rad(randf_range(135, 170))
-		var distance: float = randf_range(40, 80) # Increased travel distance
-		var target_pos: Vector2 = start_pos + Vector2(cos(angle), sin(angle)) * distance
-
-		var coin_tween: Tween = create_tween().set_parallel(true)
-		coin_tween.tween_property(coin, "global_position", target_pos, 0.5).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-		coin_tween.tween_property(coin, "modulate:a", 0.0, 0.5).set_delay(0.2)
-		coin_tween.tween_property(coin, "scale", Vector2.ZERO, 0.5).set_ease(Tween.EASE_IN)
-		SignalUtil.connects([{SignalUtil.WHO: coin_tween, SignalUtil.WHAT: "finished", SignalUtil.TO: coin.queue_free}])
-
-
 func _trigger_health_damage_effects() -> void:
 	# Camera shake
 	if Global.camera:
@@ -331,6 +313,29 @@ func _trigger_health_damage_effects() -> void:
 	ghost_shake_tween.tween_property(health_ghost_progress_bar, "position", ghost_original_pos, 0.04)
 
 
+func _try_play_next_enemy_reveal() -> void:
+	if _new_enemy_reveal_running:
+		return
+	if _new_enemy_reveal_queue.is_empty():
+		return
+	if not is_instance_valid(_new_enemy_challenger):
+		return
+
+	_new_enemy_reveal_running = true
+	_set_reveal_paused(true)
+	var reveal_data: Dictionary = _new_enemy_reveal_queue.pop_front()
+	await _new_enemy_challenger.play_reveal(
+		reveal_data.get("enemy_id", ""),
+		reveal_data.get("texture", null),
+		reveal_data.get("scale", Vector2.ONE)
+	)
+	_set_reveal_paused(false)
+	_new_enemy_reveal_running = false
+	if _new_enemy_reveal_queue.is_empty():
+		_play_enemy_dialogue(reveal_data.get("enemy_id", ""))
+	_try_play_next_enemy_reveal()
+
+
 func _update() -> void:
 	if !_is_ready:
 		return
@@ -367,8 +372,3 @@ func _update() -> void:
 
 	var current_wave: int = ILevel.current_level.current_wave + 1
 	waves_rich_text_label.text = tr(default_waves_text) % current_wave
-
-
-func _set_health_flash_intensity(value: float) -> void:
-	if health_texture_progress_bar.material is ShaderMaterial:
-		(health_texture_progress_bar.material as ShaderMaterial).set_shader_parameter("flash_intensity", value)

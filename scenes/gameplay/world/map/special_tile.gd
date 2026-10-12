@@ -29,12 +29,6 @@ func configure(_label_text: String, tint: Color) -> void:
 ## Applies [member _tint] to the ground sprite and the particles, then starts the particles.
 @abstract func _apply_configuration() -> void
 
-## Particle emitters whose process material must not be shared between tile instances.
-@abstract func _get_particles() -> Array[GPUParticles2D]
-
-## Sets the z indices of the tile's child nodes.
-@abstract func _setup_layers() -> void
-
 func _ensure_unique_particle_materials() -> void:
 	for particles: GPUParticles2D in _get_particles():
 		if particles.process_material:
@@ -47,6 +41,9 @@ func _find_parent_tilemap() -> TileMapLayer:
 			return current as TileMapLayer
 		current = current.get_parent()
 	return null
+
+## Particle emitters whose process material must not be shared between tile instances.
+@abstract func _get_particles() -> Array[GPUParticles2D]
 
 ## Reads the tint of the modifier generated for this tile's cell by the parent [IMap].
 func _resolve_tint_from_map() -> void:
@@ -65,3 +62,6 @@ func _resolve_tint_from_map() -> void:
 	var modifier: Dictionary = map.special_tiles[tile_pos]
 	if modifier.has("color"):
 		_tint = modifier["color"]
+
+## Sets the z indices of the tile's child nodes.
+@abstract func _setup_layers() -> void

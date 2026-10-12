@@ -16,17 +16,6 @@ var _rats_passed: int = 0
 
 
 # Public functions
-## Called when the level starts to reset state.
-func start_monitoring() -> void:
-	super.start_monitoring()
-	_rats_passed = 0
-
-	if is_instance_valid(ILevel.current_level):
-		var escape_damage: int = int(StatsDB.get_enemy(TARGET_ENEMY_ID).get("escape_damage", 0))
-		if TARGET_PASS * escape_damage >= ILevel.current_level.max_health:
-			Log.trace(Log.Level.WARN, "Challenge [%s] is unachievable: %d rats would empty the %d HP of the base." % [title, TARGET_PASS, ILevel.current_level.max_health])
-
-
 ## Evaluates if the challenge conditions are met at the end of the level.
 func check_completion() -> bool:
 	return not is_failed and _rats_passed == TARGET_PASS
@@ -40,3 +29,14 @@ func on_enemy_escaped(enemy: IEnemy) -> void:
 	_rats_passed += 1
 	if _rats_passed > TARGET_PASS:
 		fail()
+
+
+## Called when the level starts to reset state.
+func start_monitoring() -> void:
+	super.start_monitoring()
+	_rats_passed = 0
+
+	if is_instance_valid(ILevel.current_level):
+		var escape_damage: int = int(StatsDB.get_enemy(TARGET_ENEMY_ID).get("escape_damage", 0))
+		if TARGET_PASS * escape_damage >= ILevel.current_level.max_health:
+			Log.trace(Log.Level.WARN, "Challenge [%s] is unachievable: %d rats would empty the %d HP of the base." % [title, TARGET_PASS, ILevel.current_level.max_health])
