@@ -4,37 +4,23 @@
 class_name Bat04
 extends ITrap
 
-const _SLOW_BASE_SPEED_KEY: StringName = &"bat_04_slow_base_speed"
-const _SLOW_STACK_KEY: StringName = &"bat_04_slow_stack_count"
+## Speed modifier key, the [StatsDB] id of the trap: two slow traps never stack on one enemy.
+const SPEED_KEY: StringName = &"bat_04"
+## Group of every slow trap, set in the scene.
+const TRAPS_GROUP: StringName = &"bat_04_traps"
 
 ## The slow effect percentage (0.5 = 50% slower)
 @export var slow_amount: float = 0.75
 
-func _ready() -> void:
-	super()
-
 func apply_effect(enemy: IEnemy) -> void:
-	var slow_stack_count: int = int(enemy.get_meta(_SLOW_STACK_KEY, 0))
-	if slow_stack_count == 0:
-		enemy.set_meta(_SLOW_BASE_SPEED_KEY, enemy.speed)
-		enemy.speed *= (1.0 - slow_amount)
-		enemy.push_slow_visual()
-	enemy.set_meta(_SLOW_STACK_KEY, slow_stack_count + 1)
+	enemy.set_speed_modifier(SPEED_KEY, 1.0 - slow_amount)
 
 func remove_effect(enemy: IEnemy) -> void:
-	var slow_stack_count: int = int(enemy.get_meta(_SLOW_STACK_KEY, 0))
-	if slow_stack_count <= 0:
-		return
-
-	slow_stack_count -= 1
-	if slow_stack_count == 0:
-		var base_speed: float = float(enemy.get_meta(_SLOW_BASE_SPEED_KEY, enemy.speed))
-		enemy.speed = base_speed
-		enemy.remove_meta(_SLOW_BASE_SPEED_KEY)
-		enemy.pop_slow_visual()
-		enemy.remove_meta(_SLOW_STACK_KEY)
-	else:
-		enemy.set_meta(_SLOW_STACK_KEY, slow_stack_count)
+	# The slow stays while another active slow trap still holds the enemy.
+	for other: Bat04 in get_tree().get_nodes_in_group(TRAPS_GROUP):
+		if other != self and not other.is_temporarily_disabled and enemy in other.enemies_in_area:
+			return
+	enemy.remove_speed_modifier(SPEED_KEY)
 
 func _apply_trap_stats_extension(_base: Dictionary) -> void:
 	if _base.has("slow_amount"):

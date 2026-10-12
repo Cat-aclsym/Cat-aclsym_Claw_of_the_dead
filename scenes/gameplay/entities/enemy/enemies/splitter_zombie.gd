@@ -25,29 +25,27 @@ func _dead_state() -> void:
 func _spawn_small_zombies() -> void:
 	if path == null or path_follow == null:
 		return
-		
+
 	var small_zombie_scene: PackedScene = StatsDB.get_enemy_scene("small_zombie")
 	if small_zombie_scene == null:
 		return
 
-	var current_progress = path_follow.get_progress()
+	var current_progress: float = path_follow.get_progress()
 
 	for i in range(spawn_count):
 		var small_zombie: IEnemy = small_zombie_scene.instantiate()
-		
+
 		# Add a bit of randomness to the progress to avoid overlapping
-		var random_offset = randf_range(-10.0, 10.0)
-		
+		var random_offset: float = randf_range(-10.0, 10.0)
+
 		# We use the EnemySpawner to handle the PathFollow2D creation
 		EnemySpawner.spawn_enemy(path, small_zombie)
-		
+
 		# Adjust the progress of the newly created PathFollow2D
 		if small_zombie.path_follow:
 			small_zombie.path_follow.set_progress(max(0.0, current_progress + random_offset))
 			# Add vertical offset randomness too
 			small_zombie.path_follow.v_offset += randf_range(-5.0, 5.0)
-	
-	# Log.trace(Log.Level.DEBUG, "SplitterZombie spawned %d small zombies at progress %f" % [spawn_count, current_progress])
 
 
 func _apply_stats_override() -> void:
@@ -56,6 +54,5 @@ func _apply_stats_override() -> void:
 		return
 	var data: Dictionary = stats_db.get_enemy(enemy_id)
 	var extra: Dictionary = data.get("extra", {})
-	var count = extra.get("spawn_count", null)
-	if count != null:
-		spawn_count = int(count)
+	if extra.has("spawn_count"):
+		spawn_count = int(extra["spawn_count"])

@@ -114,7 +114,8 @@ func _apply_burn_damage() -> void:
 	for enemy in _burning_enemies:
 		if is_instance_valid(enemy):
 			var burn_damage: int = burn_damage_base + roundi(damage * BURN_DAMAGE_MULTIPLIER)
-			enemy.take_damage(burn_damage, IEnemy.DamageType.FIRE)
+			# The tower is the source because this bullet may be gone when the burn kills
+			enemy.take_damage(burn_damage, IEnemy.DamageType.FIRE, tower_owner)
 
 # Activate the burning area effect
 func _activate_burning_area() -> void:

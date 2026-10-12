@@ -91,10 +91,17 @@ func notify_enemy_hit(enemy: IEnemy, source: Variant) -> void:
 	_emit_changed_status()
 
 
-## Notifies challenges about an enemy death.
+## Notifies challenges about an enemy death. [param source] is the tower that dealt the killing damage, or the trap that did.
 func notify_enemy_died(enemy: IEnemy, damage_type: IEnemy.DamageType, source: Variant = null) -> void:
 	for c in active_challenges:
 		c.on_enemy_died(enemy, damage_type, source)
+	_emit_changed_status()
+
+
+## Notifies challenges that an enemy reached the end of its path alive. An escape is not a death.
+func notify_enemy_escaped(enemy: IEnemy) -> void:
+	for c in active_challenges:
+		c.on_enemy_escaped(enemy)
 	_emit_changed_status()
 
 

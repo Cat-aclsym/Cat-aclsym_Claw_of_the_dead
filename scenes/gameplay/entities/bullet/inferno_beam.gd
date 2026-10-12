@@ -90,12 +90,12 @@ func _exit_tree() -> void:
 
 
 func _apply_visual_effect(apply: bool) -> void:
-	if is_instance_valid(enemy_target) and enemy_target.has_method("push_inferno_visual"):
+	if is_instance_valid(enemy_target):
 		if apply:
-			enemy_target.push_inferno_visual()
+			enemy_target.push_visual(IEnemy.VISUAL_KEY_INFERNO)
 			set_meta("_visual_applied", true)
 		elif get_meta("_visual_applied", false):
-			enemy_target.pop_inferno_visual()
+			enemy_target.pop_visual(IEnemy.VISUAL_KEY_INFERNO)
 			set_meta("_visual_applied", false)
 
 func _process(delta: float) -> void:

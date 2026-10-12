@@ -14,14 +14,6 @@ extends ITrap
 ## Charge-up time before activation.
 @export var charge_time: float = 2.0
 
-## Flag to prevent ITrap from cleaning up during activation
-var is_activating: bool = false
-
-
-# core
-func _ready() -> void:
-	super()
-
 
 # public
 ## Starts the charge-up sequence when an enemy triggers the trap.

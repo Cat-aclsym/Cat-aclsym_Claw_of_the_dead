@@ -15,11 +15,6 @@ extends ITrap
 @export var poison_interval: float = 1.0
 
 
-# core
-func _ready() -> void:
-	super()
-
-
 # public
 ## Applies the poison effect when an enemy enters the trap.
 ## [br]

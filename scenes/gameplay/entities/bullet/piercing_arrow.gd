@@ -176,7 +176,7 @@ func _on_body_entered(body: Node2D) -> void:
 	pierced_enemies.append(enemy)
 
 	# Apply damage
-	enemy.take_damage(damage, IEnemy.DamageType.DEFAULT)
+	enemy.take_damage(damage, IEnemy.DamageType.DEFAULT, self)
 
 	# Handle piercing
 	piercing -= 1

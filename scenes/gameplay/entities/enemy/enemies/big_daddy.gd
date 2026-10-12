@@ -1,6 +1,8 @@
 ## © [2026] A7 Studio. All rights reserved. Trademark.
 ##
 ## Specific implementation for the Big Daddy enemy, adding shooting capabilities.
+## [br]Each attack disables the target tower once: the first projectile of the attack window is the only one that hits.
+## The other projectiles of the window are a visual stream without collision.
 class_name BigDaddy
 extends IEnemy
 
@@ -13,6 +15,10 @@ enum AttackCycleState {
 	POST_ATTACK, # Waiting after attack
 	COOLDOWN     # Waiting before next attack cycle can start
 }
+
+# Constants
+## Time between two visual stream projectiles while attacking (visual only, not a stat).
+const STREAM_INTERVAL: float = 0.02
 
 # Exported variables
 @export_subgroup("Shooting Configuration")
@@ -33,7 +39,6 @@ var towers_in_range: Array[StaticBody2D] = []
 var current_target: StaticBody2D = null
 ## Runtime stats loaded from StatsDB (JSON); defaults kept neutral here
 var shoot_range: float = 0.0
-var fire_rate: float = 0.0
 var tower_disable_duration: float = 0.0
 
 # Onready variables
@@ -41,13 +46,15 @@ var tower_disable_duration: float = 0.0
 @onready var range_area: Area2D = $RangeArea
 ## The collision shape 2D node for the range detection
 @onready var range_collision_shape: CollisionShape2D = $RangeArea/CollisionShape2D
-## The timer for the fire rate of the enemy to shoot projectiles
-@onready var fire_rate_timer: Timer = $FireRateTimer
+## The timer spawning the visual stream projectiles while attacking
+@onready var stream_timer: Timer = $StreamTimer
 
 # Private variables
 var _attack_cooldown_timer: Timer
 var _attack_duration_timer: Timer
 var _current_attack_cycle_state: AttackCycleState = AttackCycleState.NONE
+## Whether the gameplay projectile of the current attack window was already fired
+var _hit_fired: bool = false
 var _post_attack_timer: Timer
 var _pre_attack_timer: Timer
 
@@ -56,46 +63,23 @@ func _ready() -> void:
 	_apply_extra_stats_override()
 	super._ready() # Call the parent class's _ready function
 
-	# Ensure nodes are ready before connecting signals or configuring them
-	await ready
-
 	# Configure Range Area
 	assert(range_area and range_collision_shape and range_collision_shape.shape is CircleShape2D)
 	Log.trace(Log.Level.INFO, "BigDaddy: Setting range to %s" % shoot_range)
 	range_collision_shape.shape.radius = shoot_range
-	# range_area.body_entered.connect(_on_range_area_body_entered) # already connected in big_daddy.tscn via scene connection
-	range_area.body_exited.connect(_on_range_area_body_exited)
+	# body_entered is already connected in big_daddy.tscn via scene connection
+	SignalUtil.connects([{SignalUtil.WHO: range_area, SignalUtil.WHAT: "body_exited", SignalUtil.TO: _on_range_area_body_exited}])
 
-	# Configure Fire Rate Timer (DO NOT START IT HERE. It's controlled by attack cycle)
-	assert(fire_rate_timer)
-	fire_rate_timer.wait_time = 1.0 / max(fire_rate, 0.01) # Avoid division by zero
-	fire_rate_timer.timeout.connect(_shoot)
-	# fire_rate_timer.start() # REMOVED: Controlled by attack cycle state
+	# Configure the stream timer (DO NOT START IT HERE. It's controlled by attack cycle)
+	assert(stream_timer)
+	stream_timer.wait_time = STREAM_INTERVAL
+	SignalUtil.connects([{SignalUtil.WHO: stream_timer, SignalUtil.WHAT: "timeout", SignalUtil.TO: _shoot}])
 
 	# Create and configure Attack Cycle Timers
-	_pre_attack_timer = Timer.new()
-	_pre_attack_timer.name = "PreAttackTimer"
-	_pre_attack_timer.one_shot = true
-	_pre_attack_timer.timeout.connect(_on_pre_attack_timer_timeout)
-	add_child(_pre_attack_timer)
-
-	_attack_duration_timer = Timer.new()
-	_attack_duration_timer.name = "AttackDurationTimer"
-	_attack_duration_timer.one_shot = true
-	_attack_duration_timer.timeout.connect(_on_attack_duration_timer_timeout)
-	add_child(_attack_duration_timer)
-
-	_post_attack_timer = Timer.new()
-	_post_attack_timer.name = "PostAttackTimer"
-	_post_attack_timer.one_shot = true
-	_post_attack_timer.timeout.connect(_on_post_attack_timer_timeout)
-	add_child(_post_attack_timer)
-
-	_attack_cooldown_timer = Timer.new()
-	_attack_cooldown_timer.name = "AttackCooldownTimer"
-	_attack_cooldown_timer.one_shot = true
-	_attack_cooldown_timer.timeout.connect(_on_attack_cooldown_timer_timeout)
-	add_child(_attack_cooldown_timer)
+	_pre_attack_timer = _add_cycle_timer("PreAttackTimer", _on_pre_attack_timer_timeout)
+	_attack_duration_timer = _add_cycle_timer("AttackDurationTimer", _on_attack_duration_timer_timeout)
+	_post_attack_timer = _add_cycle_timer("PostAttackTimer", _on_post_attack_timer_timeout)
+	_attack_cooldown_timer = _add_cycle_timer("AttackCooldownTimer", _on_attack_cooldown_timer_timeout)
 
 	# Initial check for targets already in range
 	_find_new_target()
@@ -103,14 +87,14 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	if is_already_dead or Global.paused:
-		if fire_rate_timer and not fire_rate_timer.is_stopped():
-			fire_rate_timer.stop()
+		if stream_timer and not stream_timer.is_stopped():
+			stream_timer.stop()
 		_stop_all_attack_timers_and_reset_state()
 		return
 
 	# Attack Cycle Logic
 	if current_target and _current_attack_cycle_state == AttackCycleState.NONE:
-		Log.trace(Log.Level.DEBUG, "BigDaddy: Target '%s' in range, starting attack cycle." % current_target.name if current_target else "UNKNOWN")
+		Log.trace(Log.Level.DEBUG, "BigDaddy: Target '%s' in range, starting attack cycle." % current_target.name)
 		_current_attack_cycle_state = AttackCycleState.PRE_ATTACK
 		_pre_attack_timer.start(pre_attack_delay)
 	elif not current_target and \
@@ -131,6 +115,15 @@ func _physics_process(delta: float) -> void:
 		super._physics_process(delta)
 
 # Private functions
+func _add_cycle_timer(timer_name: String, on_timeout: Callable) -> Timer:
+	var timer: Timer = Timer.new()
+	timer.name = timer_name
+	timer.one_shot = true
+	SignalUtil.connects([{SignalUtil.WHO: timer, SignalUtil.WHAT: "timeout", SignalUtil.TO: on_timeout}])
+	add_child(timer)
+	return timer
+
+
 func _apply_extra_stats_override() -> void:
 	if enemy_id.is_empty() or stats_db == null:
 		return
@@ -141,8 +134,6 @@ func _apply_extra_stats_override() -> void:
 	Log.trace(Log.Level.INFO, "Applying big_daddy extra stats from StatsDB: %s" % extra)
 	if extra.has("shoot_range"):
 		shoot_range = float(extra["shoot_range"])
-	if extra.has("fire_rate"):
-		fire_rate = float(extra["fire_rate"])
 	if extra.has("tower_disable_duration"):
 		tower_disable_duration = float(extra["tower_disable_duration"])
 	if extra.has("pre_attack_delay"):
@@ -162,7 +153,6 @@ func _find_new_target() -> void:
 
 	for detected_body in towers_in_range: # detected_body is from range_area
 		if not is_instance_valid(detected_body):
-			# Log.trace(Log.Level.DEBUG, "BigDaddy: Invalid instance in towers_in_range, skipping.")
 			continue
 
 		var tower_script_node: ITower = detected_body.get_parent() as ITower
@@ -190,7 +180,7 @@ func _find_new_target() -> void:
 				parent_tower_name = current_target.get_parent().name
 				parent_tower_state = ITower.TowerState.keys()[current_target.get_parent().state] # Get state name
 			Log.trace(Log.Level.DEBUG, "BigDaddy: New target body acquired: %s (parent ITower: %s, state: %s)" % [current_target.name, parent_tower_name, parent_tower_state])
-		elif old_target_body: # Had a target, but now no active ones
+		elif old_target_body:
 			Log.trace(Log.Level.DEBUG, "BigDaddy: Target body lost or no valid (active) tower bodies in range.")
 
 
@@ -199,7 +189,7 @@ func _interrupt_attack_cycle() -> void:
 	if _pre_attack_timer: _pre_attack_timer.stop()
 	if _attack_duration_timer: _attack_duration_timer.stop()
 	if _post_attack_timer: _post_attack_timer.stop()
-	if fire_rate_timer: fire_rate_timer.stop()
+	if stream_timer: stream_timer.stop()
 
 	_current_attack_cycle_state = AttackCycleState.COOLDOWN
 	if _attack_cooldown_timer: _attack_cooldown_timer.start(attack_cooldown)
@@ -218,8 +208,8 @@ func _on_attack_duration_timer_timeout() -> void:
 	Log.trace(Log.Level.DEBUG, "BigDaddy: Attack duration finished. Starting POST_ATTACK.")
 	_current_attack_cycle_state = AttackCycleState.POST_ATTACK
 	_post_attack_timer.start(post_attack_delay)
-	if fire_rate_timer:
-		fire_rate_timer.stop()
+	if stream_timer:
+		stream_timer.stop()
 
 
 func _on_post_attack_timer_timeout() -> void:
@@ -238,13 +228,15 @@ func _on_pre_attack_timer_timeout() -> void:
 		return
 	Log.trace(Log.Level.DEBUG, "BigDaddy: Pre-attack delay finished. Starting ATTACKING.")
 	_current_attack_cycle_state = AttackCycleState.ATTACKING
+	_hit_fired = false
 	_attack_duration_timer.start(attack_duration)
-	if fire_rate > 0 and fire_rate_timer:
-		fire_rate_timer.start()
+	# The first shot of the window is the gameplay hit, the timer then streams the visual projectiles
+	_shoot()
+	if _current_attack_cycle_state == AttackCycleState.ATTACKING:
+		stream_timer.start()
 
 
 func _on_range_area_body_entered(body: Node2D) -> void:
-	# Log.trace(Log.Level.DEBUG, "BigDaddy: Range area body entered: %s" % body.name) # Can be verbose
 	if body.is_in_group("towers") and body is StaticBody2D:
 		var tower_body := body as StaticBody2D
 		if not tower_body in towers_in_range:
@@ -263,6 +255,7 @@ func _on_range_area_body_exited(body: Node2D) -> void:
 			_find_new_target()
 
 
+## Fires one projectile at the current target. The first one of an attack window hits for real, the next ones are visual only.
 func _shoot() -> void:
 	if is_already_dead or _current_attack_cycle_state != AttackCycleState.ATTACKING:
 		return
@@ -270,41 +263,26 @@ func _shoot() -> void:
 	if not is_instance_valid(current_target): # current_target is the body
 		_find_new_target() # This will now only find bodies of ACTIVE towers
 		if not current_target: # Still no target body
-			# Log.trace(Log.Level.DEBUG, "BigDaddy: No valid target found after _find_new_target in _shoot.")
 			return
 
-	# current_target is a body (e.g. "TowerBody"). Get its parent ITower for state check.
-	var tower_script_node: ITower = current_target.get_parent() as ITower
-
-	if not tower_script_node:
-		Log.trace(Log.Level.ERROR, "BigDaddy: current_target '%s' (body) does not have an ITower parent. Critical issue. Interrupting attack." % current_target.name)
-		_interrupt_attack_cycle() # Stop current attack cycle
-		current_target = null # Clear invalid target
-		# Potentially remove from towers_in_range if it's fundamentally wrong, though body_exited should handle if freed
-		if towers_in_range.has(current_target):
-			towers_in_range.erase(current_target)
-		_find_new_target() # Try to recover by finding a new target
-		return
-
-	if tower_script_node.state != ITower.TowerState.ACTIVE:
-		var current_state_name: String = ITower.TowerState.keys()[tower_script_node.state]
-		Log.trace(Log.Level.DEBUG, "BigDaddy: Tower '%s' (parent of '%s') is no longer ACTIVE (state: %s). Aborting shot." % [tower_script_node.name, current_target.name, current_state_name])
-		_interrupt_attack_cycle()
-		current_target = null # Clear this non-active target
-		# No need to remove from towers_in_range here, _find_new_target will filter it out next time.
-		_find_new_target() # Find a new one.
+	# The visual stream only needs a target position, only the gameplay hit checks that the tower can still be hit
+	if not _hit_fired and not _can_hit_current_target():
 		return
 
 	if not projectile_scene:
 		Log.trace(Log.Level.ERROR, "BigDaddy: Missing projectile scene!")
 		return
 
-	var projectile: Node = projectile_scene.instantiate()
+	var projectile: EnemyProjectile = projectile_scene.instantiate() as EnemyProjectile
+	var direction_to_target: Vector2 = global_position.direction_to(current_target.global_position)
+	var is_visual_only: bool = _hit_fired
+	var travel_time: float = global_position.distance_to(current_target.global_position) / projectile.speed
+	projectile.init(direction_to_target, tower_disable_duration, is_visual_only, travel_time)
 
 	var bullet_container: Node = get_tree().get_first_node_in_group("bullet_container")
 	if bullet_container:
 		bullet_container.add_child(projectile)
-		projectile.set("z_index", 100)
+		projectile.z_index = 100
 	elif get_parent():
 		get_parent().add_child(projectile)
 		Log.trace(Log.Level.WARN, "BigDaddy: 'bullet_container' group not found. Adding projectile to get_parent().")
@@ -313,24 +291,39 @@ func _shoot() -> void:
 		projectile.queue_free()
 		return
 
-	projectile.set("global_position", global_position)
-	if is_instance_valid(current_target):
-		var direction_to_target: Vector2 = global_position.direction_to(current_target.global_position)
-		projectile.set("rotation", direction_to_target.angle())
+	projectile.global_position = global_position
+	_hit_fired = true
 
-		if projectile.has_method("init"):
-			projectile.init(direction_to_target, tower_disable_duration)
-		elif projectile.has_meta("direction"):
-			projectile.set_meta("direction", direction_to_target)
-	else:
-		Log.trace(Log.Level.WARN, "BigDaddy: Target became invalid right before setting projectile direction.")
+
+## Checks that the current target is an active tower, otherwise interrupts the attack and looks for another target.
+func _can_hit_current_target() -> bool:
+	# current_target is a body (e.g. "TowerBody"). Get its parent ITower for state check.
+	var tower_script_node: ITower = current_target.get_parent() as ITower
+
+	if not tower_script_node:
+		Log.trace(Log.Level.ERROR, "BigDaddy: current_target '%s' (body) does not have an ITower parent. Critical issue. Interrupting attack." % current_target.name)
+		_interrupt_attack_cycle() # Stop current attack cycle
+		# Remove the invalid body from the list before forgetting it, otherwise it stays there
+		towers_in_range.erase(current_target)
+		current_target = null
+		_find_new_target() # Try to recover by finding a new target
+		return false
+
+	if tower_script_node.state != ITower.TowerState.ACTIVE:
+		var current_state_name: String = ITower.TowerState.keys()[tower_script_node.state]
+		Log.trace(Log.Level.DEBUG, "BigDaddy: Tower '%s' (parent of '%s') is no longer ACTIVE (state: %s). Aborting shot." % [tower_script_node.name, current_target.name, current_state_name])
+		_interrupt_attack_cycle()
+		current_target = null # Clear this non-active target
+		# No need to remove from towers_in_range here, _find_new_target will filter it out next time.
+		_find_new_target() # Find a new one.
+		return false
+	return true
 
 
 func _stop_all_attack_timers_and_reset_state() -> void:
-	Log.trace(Log.Level.DEBUG, "BigDaddy: Stopping all attack timers and resetting state (death/pause).")
 	if _pre_attack_timer: _pre_attack_timer.stop()
 	if _attack_duration_timer: _attack_duration_timer.stop()
 	if _post_attack_timer: _post_attack_timer.stop()
 	if _attack_cooldown_timer: _attack_cooldown_timer.stop()
-	if fire_rate_timer: fire_rate_timer.stop()
+	if stream_timer: stream_timer.stop()
 	_current_attack_cycle_state = AttackCycleState.NONE

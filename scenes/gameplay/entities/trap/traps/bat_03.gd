@@ -4,29 +4,22 @@
 class_name Bat03
 extends ITrap
 
+## Speed modifier key, the [StatsDB] id of the trap.
+const SPEED_KEY: StringName = &"bat_03"
+
 ## The amount of damage dealt when trap is triggered
 @export var damage: int = 100
-
-## Dictionary to store original speeds
-var original_speeds: Dictionary = {}
-
-func _ready() -> void:
-	super()
 
 func apply_effect(enemy: IEnemy) -> void:
 	# Deal instant damage
 	enemy.take_damage(damage, IEnemy.DamageType.DEFAULT, self)
 
-	# Store original speed and immobilize if not dead
+	# Immobilize the enemy if it survived, [member ITrap.effect_duration] later [method remove_effect] releases it
 	if enemy.state != IEnemy.EnemyState.DEAD:
-		original_speeds[enemy] = enemy.speed
-		enemy.speed = 0
+		enemy.set_speed_modifier(SPEED_KEY, 0.0)
 
 func remove_effect(enemy: IEnemy) -> void:
-	# Restore original speed
-	if enemy in original_speeds:
-		enemy.speed = original_speeds[enemy]
-		original_speeds.erase(enemy)
+	enemy.remove_speed_modifier(SPEED_KEY)
 
 func _apply_trap_stats_extension(_base: Dictionary) -> void:
 	if _base.has("damage"):

@@ -77,7 +77,7 @@ func on_enemy_hit(_enemy: IEnemy, _source: Variant) -> void:
 	pass
 
 
-## Virtual hook called when an enemy dies, [param source] is the bullet or tower that killed it.
+## Virtual hook called when an enemy dies, [param source] is the tower (or the trap) that dealt the killing damage, null for poison.
 func on_enemy_died(_enemy: IEnemy, _damage_type: IEnemy.DamageType, _source: Variant) -> void:
 	pass
 

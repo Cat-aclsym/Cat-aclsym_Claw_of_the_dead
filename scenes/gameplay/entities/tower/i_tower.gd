@@ -140,8 +140,6 @@ var target_lock_time: float = 0.0
 var target_type: TargetType
 ## The pending upgrade to be applied
 var pending_upgrade_id: String = ""
-## The tile position of the tower on the map
-var tile_pos: Vector2i
 var _pulse_tween: Tween = null
 var _scale_tween: Tween = null
 var _range_tween: Tween = null
@@ -462,19 +460,6 @@ func enable_tower() -> void:
 	if is_instance_valid(fire_rate_timer) and fire_rate_timer.is_stopped():
 		fire_rate_timer.start()
 
-func _register_with_cursor() -> void:
-	if not is_inside_tree():
-		return
-
-	# Safe access to Global.cursor to avoid assertion if it's not yet set
-	var placement_system: BuildPlacement = Global.cursor
-	if placement_system:
-		if tile_pos == Vector2i.ZERO:
-			if placement_system.tm_ref:
-				# Use global position to ensure correct map conversion
-				tile_pos = placement_system.tm_ref.local_to_map(placement_system.tm_ref.to_local(global_position))
-		placement_system.add_invalid_cell(tile_pos)
-
 # Private methods
 ## Animates the range display
 func show_range(p_show: bool, smooth: bool = true) -> void:
@@ -773,8 +758,7 @@ func _color_variation() -> void:
 
 ## Function to check the z position of the tower and adapt the z index of the tower.
 func _update_z_index() -> void:
-	var y_position := int(global_position.y)
-	z_index = y_position if y_position else 0
+	z_index = DepthSort.z_from_y(global_position.y)
 	polygon_2d.z_index = z_index
 
 # Signal callbacks

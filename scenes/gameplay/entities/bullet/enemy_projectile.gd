@@ -13,16 +13,20 @@ const DESTROY_TIMEOUT: float = 5.0
 # Public variables
 var direction := Vector2.ZERO
 var disable_duration: float = 3.0
+## True for the stream projectiles that only look like an attack: they never disable a tower.
+var is_visual_only: bool = false
+
+var _lifetime: float = 0.0
 
 
 # Built-in functions
 func _ready() -> void:
 	# Connect the collision signal
 	body_entered.connect(_on_body_entered)
-	# Destroy the projectile after a short lifetime if it misses
-	await get_tree().create_timer(DESTROY_TIMEOUT).timeout
-	if is_instance_valid(self):
-		queue_free()
+	# Destroy the projectile after a short lifetime if it misses, the tween dies with the projectile
+	var lifetime_tween: Tween = create_tween()
+	lifetime_tween.tween_interval(_lifetime if _lifetime > 0.0 else DESTROY_TIMEOUT)
+	lifetime_tween.tween_callback(queue_free)
 
 
 func _physics_process(delta: float) -> void:
@@ -37,9 +41,14 @@ func _physics_process(delta: float) -> void:
 ## [br]
 ## [param _direction] The direction the projectile will travel
 ## [param _disable_duration] How long the tower will be disabled when hit
-func init(_direction: Vector2, _disable_duration: float = 3.0) -> void:
+## [param p_visual_only] A visual-only projectile has no collision and no effect, it only flies for [param p_lifetime] seconds
+func init(_direction: Vector2, _disable_duration: float = 3.0, p_visual_only: bool = false, p_lifetime: float = 0.0) -> void:
 	direction = _direction
 	disable_duration = _disable_duration
+	_lifetime = p_lifetime
+	if p_visual_only:
+		is_visual_only = true
+		set_deferred("monitoring", false)
 	# Adjust sprite rotation based on direction
 	rotation = direction.angle()
 
@@ -81,6 +90,9 @@ func _disable_tower(tower: ITower) -> void:
 
 
 func _on_body_entered(body: Node2D) -> void:
+	if is_visual_only:
+		return
+
 	# Check if the body is a tower
 	if body.is_in_group("towers"): # Assumes towers are in the "towers" group
 		# Create impact particles at collision point

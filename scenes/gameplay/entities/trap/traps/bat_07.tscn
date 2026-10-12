@@ -8,7 +8,6 @@
 script = ExtResource("2_script")
 stun_duration = 4.0
 stun_range = 100.0
-charge_time = 2.0
 trap_id = "bat_07"
 
 [node name="Sprite2D" parent="." index="0"]

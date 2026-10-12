@@ -1,4 +1,4 @@
-## © [2025] A7 Studio. All rights reserved. Trademark.
+## © [2026] A7 Studio. All rights reserved. Trademark.
 ##
 ## Health bar component for enemies.
 ## Displays a color-coded health bar that changes color progressively based on health percentage.
@@ -20,7 +20,12 @@ const FADE_DURATION: float = 1.0
 const MAX_WIDTH: float = 128.0
 const SCALE_FACTOR: float = 0.25
 
+## Background and border styles never change, so every health bar shares them. The fill color changes per enemy, so its style is per bar.
+static var _style_background: StyleBoxFlat = _make_style(COLOR_BACKGROUND)
+static var _style_border: StyleBoxFlat = _make_border_style()
+
 var _fade_timer: Timer
+var _fade_tween: Tween
 var _has_taken_damage: bool = false
 
 @onready var background: Panel = $Background
@@ -63,49 +68,53 @@ func _get_health_color(percentage: float) -> Color:
 	else:
 		return COLOR_LOW.lerp(COLOR_CRITICAL, (0.25 - percentage) * 4.0)
 
+static func _make_border_style() -> StyleBoxFlat:
+	var style: StyleBoxFlat = _make_style(Color(0, 0, 0, 0))  # Transparent background
+	style.set_border_width_all(BORDER_WIDTH)
+	style.border_color = BORDER_COLOR
+	return style
+
+static func _make_style(color: Color) -> StyleBoxFlat:
+	var style: StyleBoxFlat = StyleBoxFlat.new()
+	style.bg_color = color
+	style.set_corner_radius_all(CORNER_RADIUS)
+	return style
+
 func _setup_corner_radius() -> void:
-	var style_bg := StyleBoxFlat.new()
-	style_bg.bg_color = COLOR_BACKGROUND
-	style_bg.set_corner_radius_all(CORNER_RADIUS)
-	background.add_theme_stylebox_override("panel", style_bg)
+	background.add_theme_stylebox_override("panel", _style_background)
 	background.size = Vector2(MAX_WIDTH, BAR_HEIGHT)
 
-	var style_fill := StyleBoxFlat.new()
-	style_fill.bg_color = COLOR_FULL
-	style_fill.set_corner_radius_all(CORNER_RADIUS)
-	fill.add_theme_stylebox_override("panel", style_fill)
+	fill.add_theme_stylebox_override("panel", _make_style(COLOR_FULL))
 	fill.size = Vector2(MAX_WIDTH, BAR_HEIGHT)
 
-	var style_border := StyleBoxFlat.new()
-	style_border.bg_color = Color(0, 0, 0, 0)  # Transparent background
-	style_border.set_corner_radius_all(CORNER_RADIUS)
-	style_border.border_width_left = BORDER_WIDTH
-	style_border.border_width_right = BORDER_WIDTH
-	style_border.border_width_top = BORDER_WIDTH
-	style_border.border_width_bottom = BORDER_WIDTH
-	style_border.border_color = BORDER_COLOR
-	border.add_theme_stylebox_override("panel", style_border)
+	border.add_theme_stylebox_override("panel", _style_border)
 	border.size = Vector2(MAX_WIDTH, BAR_HEIGHT)
 
 func _setup_fade_timer() -> void:
 	_fade_timer = Timer.new()
 	_fade_timer.wait_time = FADE_DELAY
 	_fade_timer.one_shot = true
-	_fade_timer.timeout.connect(_on_fade_timer_timeout)
+	SignalUtil.connects([{SignalUtil.WHO: _fade_timer, SignalUtil.WHAT: "timeout", SignalUtil.TO: _on_fade_timer_timeout}])
 	add_child(_fade_timer)
 
+## Fades the bar in over [param duration] and restarts the delay before it fades out, reusing a single tween.
+func _fade_in(duration: float) -> void:
+	if _fade_tween:
+		_fade_tween.kill()
+	_fade_tween = create_tween()
+	_fade_tween.tween_property(self, "modulate:a", 1.0, duration)
+
 func _show_bar() -> void:
-	var tween := create_tween()
-	tween.tween_property(self, "modulate:a", 1.0, 0.2)
 	_reset_fade_timer()
 
 func _reset_fade_timer() -> void:
 	if _fade_timer:
 		_fade_timer.stop()
 		_fade_timer.start()
-		var tween := create_tween()
-		tween.tween_property(self, "modulate:a", 1.0, 0.1)
+		_fade_in(0.1)
 
 func _on_fade_timer_timeout() -> void:
-	var tween := create_tween()
-	tween.tween_property(self, "modulate:a", FADE_ALPHA, FADE_DURATION)
+	if _fade_tween:
+		_fade_tween.kill()
+	_fade_tween = create_tween()
+	_fade_tween.tween_property(self, "modulate:a", FADE_ALPHA, FADE_DURATION)

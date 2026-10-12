@@ -32,7 +32,10 @@ static func spawn_enemy(path: Path2D, enemy: IEnemy) -> void:
 	enemy.path_follow = pathfollow
 
 	if ILevel.current_level:
-		SignalUtil.connects([{SignalUtil.WHO: enemy, SignalUtil.WHAT: "die", SignalUtil.TO: ILevel.current_level._on_enemy_die}])
+		SignalUtil.connects([
+			{SignalUtil.WHO: enemy, SignalUtil.WHAT: "died", SignalUtil.TO: ILevel.current_level._on_enemy_removed},
+			{SignalUtil.WHO: enemy, SignalUtil.WHAT: "escaped", SignalUtil.TO: ILevel.current_level._on_enemy_removed},
+		])
 		ILevel.current_level._on_enemy_spawn()
 
 	pathfollow.add_child(enemy)

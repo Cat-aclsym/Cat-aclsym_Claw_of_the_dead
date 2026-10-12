@@ -14,16 +14,16 @@ func _ready() -> void:
 	old_modulate = SMALL_TINT
 	sprite.modulate = SMALL_TINT
 	sprite.scale = SMALL_SCALE
-	
+
 	# Adjust collision shape for smaller size
 	if collision_shape:
 		collision_shape.scale = SMALL_SCALE
-	
+
 	# Visual effect on spawn
 	_spawn_effect()
 
 
 func _spawn_effect() -> void:
-	var tween = create_tween()
+	var tween: Tween = create_tween()
 	sprite.scale = Vector2.ZERO
 	tween.tween_property(sprite, "scale", SMALL_SCALE, 0.3).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)

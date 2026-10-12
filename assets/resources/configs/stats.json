@@ -1,24 +1,28 @@
 {
 	"enemies": {
 		"default_zombie": {
+			"escape_damage": 5,
 			"max_health": 50,
 			"reward": 20,
 			"scene": "res://scenes/gameplay/entities/enemy/enemies/ene.01.tscn",
 			"speed": 35
 		},
 		"damage_zombie": {
+			"escape_damage": 5,
 			"max_health": 120,
 			"reward": 40,
 			"scene": "res://scenes/gameplay/entities/enemy/enemies/ene.02.tscn",
 			"speed": 20
 		},
 		"rat": {
+			"escape_damage": 5,
 			"max_health": 25,
 			"reward": 5,
 			"scene": "res://scenes/gameplay/entities/enemy/enemies/ene.03.tscn",
 			"speed": 70
 		},
 		"splitter_zombie": {
+			"escape_damage": 5,
 			"extra": {
 				"spawn_count": 4
 			},
@@ -28,22 +32,24 @@
 			"speed": 35
 		},
 		"small_zombie": {
+			"escape_damage": 5,
 			"max_health": 25,
 			"reward": 10,
 			"scene": "res://scenes/gameplay/entities/enemy/enemies/small_zombie.tscn",
 			"speed": 70
 		},
     	"minesweeper": {
+			"escape_damage": 5,
 			"max_health": 70,
 			"reward": 12,
 			"scene": "res://scenes/gameplay/entities/enemy/enemies/minesweeper.tscn",
 			"speed": 45
 		},
 		"big_daddy": {
+			"escape_damage": 5,
 			"extra": {
 				"attack_cooldown": 5,
 				"attack_duration": 1,
-				"fire_rate": 100,
 				"post_attack_delay": 1,
 				"pre_attack_delay": 1,
 				"shoot_range": 100,
@@ -203,6 +209,8 @@
 			"base": {
 				"cost": 25,
 				"damage": 50,
+				"effect_duration": 2.0,
+				"explosion_delay": 2.0,
 				"explosion_range": 100,
 				"max_durability": 1,
 				"trap_type": 1
@@ -223,6 +231,7 @@
 		},
 		"bat_07": {
 			"base": {
+				"charge_time": 2.0,
 				"cost": 30,
 				"stun_duration": 4.0,
 				"stun_range": 100,

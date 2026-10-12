@@ -276,7 +276,8 @@ func _set_health(new_value: int) -> void:
 		Log.trace(Log.Level.INFO, "Player defeated.")
 
 
-func _on_enemy_die() -> void:
+## Called when an enemy dies or escapes, both take it out of the map.
+func _on_enemy_removed() -> void:
 	_enemies_alive -= 1
 
 

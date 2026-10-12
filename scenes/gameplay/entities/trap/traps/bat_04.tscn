@@ -4,7 +4,7 @@
 [ext_resource type="Script" uid="uid://bisiy35nlbgq4" path="res://scenes/gameplay/entities/trap/traps/bat_04.gd" id="2_script"]
 [ext_resource type="Texture2D" uid="uid://do0ybx58p4dnq" path="res://assets/gameplay/traps/spikes.png" id="3_acsu1"]
 
-[node name="Bat04" instance=ExtResource("1_base")]
+[node name="Bat04" instance=ExtResource("1_base") groups=["bat_04_traps"]]
 script = ExtResource("2_script")
 slow_amount = 0.75
 trap_id = "bat_04"

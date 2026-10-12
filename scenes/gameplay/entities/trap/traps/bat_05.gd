@@ -4,6 +4,9 @@
 class_name Bat05
 extends ITrap
 
+## Seconds the explosion particles need to fade out after the blast, the trap stays alive for them.
+const EXPLOSION_VFX_DURATION: float = 2.0
+
 
 ## The amount of damage dealt by the explosion
 @export var damage: int = 50
@@ -15,14 +18,6 @@ extends ITrap
 ## Delay before explosion after trigger
 @export var explosion_delay: float = 2.0
 
-## Flag to prevent ITrap from cleaning up during activation
-var is_activating: bool = false
-
-
-# core
-func _ready() -> void:
-	super()
-
 
 # public
 ## Starts the explosion sequence when an enemy triggers the trap.
@@ -32,6 +27,11 @@ func apply_effect(_enemy: IEnemy) -> void:
 
 
 # private
+## The trap outlives the delay before the blast and the explosion effects.
+func _get_post_trigger_lifetime() -> float:
+	return explosion_delay + EXPLOSION_VFX_DURATION
+
+
 func _apply_trap_stats_extension(base: Dictionary) -> void:
 	if base.has("damage"):
 		damage = int(base["damage"])
@@ -41,7 +41,7 @@ func _apply_trap_stats_extension(base: Dictionary) -> void:
 		explosion_delay = float(base["explosion_delay"])
 
 
-func _create_explosion_effect(explosion_position: Vector2, is_center: bool = true) -> void:
+func _create_explosion_effect(explosion_position: Vector2) -> void:
 	# 1. Particules de feu (plus nombreuses pour couvrir le cercle)
 	var fire_particles: GPUParticles2D = GPUParticles2D.new()
 	get_tree().root.add_child(fire_particles)
@@ -109,11 +109,6 @@ func _create_explosion_effect(explosion_position: Vector2, is_center: bool = tru
 	smoke_particles.one_shot = true
 	smoke_particles.emitting = true
 	
-	# 3. Flash de lumière (uniquement au centre)
-	if is_center:
-		# Suppression du Polygon2D qui créait un cercle persistant
-		pass
-	
 	# Nettoyage
 	var cleanup_fire: SceneTreeTimer = get_tree().create_timer(1.0)
 	cleanup_fire.timeout.connect(func() -> void: if is_instance_valid(fire_particles): fire_particles.queue_free())
@@ -126,7 +121,7 @@ func _explode() -> void:
 	Log.trace(Log.Level.INFO, "BombTrap exploding at %s" % global_position)
 	
 	# 1. Effet d'explosion circulaire
-	_create_explosion_effect(global_position, true)
+	_create_explosion_effect(global_position)
 	
 	# 2. Infliger les dégâts aux ennemis dans le cercle
 	var enemies: Array[Node] = get_tree().get_nodes_in_group("enemies")
@@ -145,11 +140,8 @@ func _explode() -> void:
 	$Sprite2D.visible = false
 	current_durability = 0
 	is_usable = false
+	# ITrap frees the trap once [method _get_post_trigger_lifetime] is over
 	is_activating = false
-	
-	# Attendre la fin des effets avant de supprimer
-	await get_tree().create_timer(2.0).timeout
-	queue_free()
 
 
 func _start_explosion_sequence() -> void:
@@ -177,11 +169,12 @@ func _start_explosion_sequence() -> void:
 	blink_tween.tween_property(circle, "modulate:a", 0.3, 0.15)
 	
 	# 3. Attendre le délai
-	var timer := get_tree().create_timer(explosion_delay)
-	timer.timeout.connect(func() -> void:
-		if is_instance_valid(blink_tween):
-			blink_tween.kill()
-		if is_instance_valid(circle):
-			circle.queue_free()
-		_explode()
-	)
+	var delay_tween: Tween = create_tween()
+	delay_tween.tween_interval(explosion_delay)
+	delay_tween.tween_callback(_on_explosion_delay_over.bind(blink_tween, circle))
+
+
+func _on_explosion_delay_over(blink_tween: Tween, circle: Polygon2D) -> void:
+	blink_tween.kill()
+	circle.queue_free()
+	_explode()

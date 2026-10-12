@@ -578,7 +578,7 @@ func _on_tree_node_added(node: Node) -> void:
 
 	if node is IEnemy and not _upgrade_triggered and is_instance_valid(_last_placed_tower):
 		var enemy: IEnemy = node as IEnemy
-		SignalUtil.connects([{SignalUtil.WHO: enemy, SignalUtil.WHAT: "die", SignalUtil.TO: _on_enemy_killed}])
+		SignalUtil.connects([{SignalUtil.WHO: enemy, SignalUtil.WHAT: "died", SignalUtil.TO: _on_enemy_killed}])
 
 	if node is BuildPlacement:
 		_connect_cursor_signals_for(node as BuildPlacement)
