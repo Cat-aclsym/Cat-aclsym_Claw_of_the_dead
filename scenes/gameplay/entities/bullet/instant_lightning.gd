@@ -177,7 +177,8 @@ func _hit_enemy(enemy: IEnemy, damage_override: float = -1.0) -> void:
 		electrify_slow_amount,
 		electrify_tick_damage,
 		electrify_tick_interval,
-		self
+		# The tower is the source because this bullet is gone when the ticks kill
+		tower_owner
 	)
 
 
