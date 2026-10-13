@@ -1,7 +1,6 @@
-[gd_scene load_steps=17 format=3 uid="uid://b5630xr4v607r"]
+[gd_scene load_steps=16 format=3 uid="uid://b5630xr4v607r"]
 
 [ext_resource type="Script" uid="uid://cc06prch72skr" path="res://ui/hud/hud.gd" id="1_cuep3"]
-[ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://ui/theme/generic.tres" id="2_jel3x"]
 [ext_resource type="PackedScene" uid="uid://c8gbtn5xq2m4y" path="res://ui/components/game_button/game_button.tscn" id="2_meysh"]
 [ext_resource type="Texture2D" uid="uid://cml3pcp3ixa0k" path="res://assets/ui/hud/heart.png" id="2_neukb"]
 [ext_resource type="Texture2D" uid="uid://bcvoasbjyvuy5" path="res://assets/ui/hud/health_bar.png" id="3_g6v8d"]
@@ -191,7 +190,6 @@ offset_right = -21.0
 offset_bottom = -4.0
 grow_horizontal = 2
 grow_vertical = 2
-theme = ExtResource("2_jel3x")
 theme_type_variation = &"UILabel"
 theme_override_font_sizes/font_size = 24
 text = "INGAMEHUD.HEALTH.LABEL"
@@ -235,7 +233,6 @@ texture_filter = 1
 layout_mode = 2
 size_flags_vertical = 1
 pivot_offset_ratio = Vector2(0.5, 0.5)
-theme = ExtResource("2_jel3x")
 theme_type_variation = &"UILabel"
 text = "INGAMEHUD.COINS.LABEL"
 horizontal_alignment = 1
@@ -265,7 +262,6 @@ theme_override_constants/margin_bottom = 10
 [node name="WavesLabel" type="Label" parent="HUDMarginContainer/HUDHBoxContainer/HUDVBoxContainer/CoinsWavesMarginContainer/CoinsWavesHBoxContainer/WavesTextureRect/MarginContainer"]
 layout_mode = 2
 size_flags_vertical = 1
-theme = ExtResource("2_jel3x")
 theme_type_variation = &"UILabel"
 text = "INGAMEHUD.WAVES.LABEL"
 horizontal_alignment = 1

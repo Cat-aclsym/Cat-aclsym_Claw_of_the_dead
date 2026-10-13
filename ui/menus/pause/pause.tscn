@@ -1,8 +1,7 @@
-[gd_scene load_steps=6 format=3 uid="uid://bumh57lmx1jlc"]
+[gd_scene load_steps=5 format=3 uid="uid://bumh57lmx1jlc"]
 
 [ext_resource type="Script" uid="uid://3ll1mp07j5h1" path="res://ui/menus/pause/pause.gd" id="1_i4s0k"]
 [ext_resource type="Texture2D" uid="uid://c8b8irfugbxdj" path="res://assets/environment/backgrounds/menu_background_02.svg" id="2_70uiq"]
-[ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://ui/theme/generic.tres" id="6_8ptoc"]
 [ext_resource type="Texture2D" uid="uid://c1f4e2f8oknku" path="res://assets/ui/icons/exclamation.png" id="12_excl"]
 [ext_resource type="PackedScene" uid="uid://c8gbtn5xq2m4y" path="res://ui/components/game_button/game_button.tscn" id="13_btn"]
 
@@ -59,7 +58,6 @@ alignment = 1
 
 [node name="TitlePauseMenu" type="Label" parent="Panel/MarginContainer/PanelContainer/CenterContainer/VBoxContainer"]
 layout_mode = 2
-theme = ExtResource("6_8ptoc")
 theme_type_variation = &"HeaderLarge"
 theme_override_font_sizes/font_size = 50
 text = "PAUSE.TITLE"

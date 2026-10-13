@@ -1,8 +1,7 @@
-[gd_scene load_steps=10 format=3 uid="uid://3noiaamd0p84"]
+[gd_scene load_steps=9 format=3 uid="uid://3noiaamd0p84"]
 
 [ext_resource type="Script" uid="uid://e0qqc3xugp8k" path="res://ui/menus/build_selection/cards/build_card.gd" id="1_hl5pg"]
 [ext_resource type="Texture2D" uid="uid://85310xv6g30a" path="res://assets/ui/cards/construction_tower_title.svg" id="2_6d6oa"]
-[ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://ui/theme/generic.tres" id="3_r2ha7"]
 [ext_resource type="Texture2D" uid="uid://wuif5ge6xphw" path="res://assets/ui/cards/card_frame.png" id="4_wyqnw"]
 [ext_resource type="Texture2D" uid="uid://yayv0hygrr3u" path="res://assets/ui/cards/blue_background.svg" id="5_4himi"]
 [ext_resource type="Texture2D" uid="uid://b6lrh02vg30l3" path="res://assets/ui/hud/coin.png" id="8_coin"]
@@ -57,7 +56,6 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme = ExtResource("3_r2ha7")
 theme_override_font_sizes/font_size = 15
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -122,7 +120,6 @@ alignment = 1
 [node name="PriceLabel" type="Label" parent="CardVBoxContainer/CardAspectRatioContainer/CardTextureButton/PriceRow"]
 texture_filter = 5
 layout_mode = 2
-theme = ExtResource("3_r2ha7")
 theme_override_font_sizes/font_size = 15
 horizontal_alignment = 1
 vertical_alignment = 1

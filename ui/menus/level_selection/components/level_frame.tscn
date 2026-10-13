@@ -1,8 +1,7 @@
-[gd_scene load_steps=8 format=3 uid="uid://dx5t3ko8f6o27"]
+[gd_scene load_steps=7 format=3 uid="uid://dx5t3ko8f6o27"]
 
 [ext_resource type="Script" uid="uid://sygwjr1lq6o5" path="res://ui/menus/level_selection/components/level_frame.gd" id="1_2fktc"]
 [ext_resource type="Texture2D" uid="uid://bi5awqgar5hx3" path="res://assets/ui/level_selection/icon_100.svg" id="2_4j8i8"]
-[ext_resource type="FontFile" uid="uid://ddo3rokwsadq0" path="res://assets/fonts/dotgothic/dotgothic16_regular.ttf" id="2_indkb"]
 [ext_resource type="Texture2D" uid="uid://c8b8irfugbxdj" path="res://assets/environment/backgrounds/menu_background_02.svg" id="2_kbiyt"]
 [ext_resource type="Texture2D" uid="uid://c4hs23u8vhbyh" path="res://assets/ui/icons/star_empty.png" id="4_klwmy"]
 [ext_resource type="PackedScene" uid="uid://c8gbtn5xq2m4y" path="res://ui/components/game_button/game_button.tscn" id="5_w1l1s"]
@@ -52,7 +51,6 @@ layout_mode = 2
 [node name="LevelNameLabel" type="Label" parent="LevelPanelContainer/LevelMarginContainer/LevelVBoxContainer/TopVBoxContainer/HeaderHBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_fonts/font = ExtResource("2_indkb")
 theme_override_font_sizes/font_size = 40
 text = ""
 
@@ -65,7 +63,6 @@ stretch_mode = 5
 [node name="DescriptionLabel" type="Label" parent="LevelPanelContainer/LevelMarginContainer/LevelVBoxContainer/TopVBoxContainer"]
 custom_minimum_size = Vector2(300, 20)
 layout_mode = 2
-theme_override_fonts/font = ExtResource("2_indkb")
 theme_override_font_sizes/font_size = 24
 text = ""
 horizontal_alignment = 1
@@ -97,7 +94,6 @@ custom_minimum_size = Vector2(200, 20)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/line_spacing = -8
-theme_override_fonts/font = ExtResource("2_indkb")
 theme_override_font_sizes/font_size = 16
 text = ""
 vertical_alignment = 1
@@ -119,7 +115,6 @@ custom_minimum_size = Vector2(200, 20)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/line_spacing = -8
-theme_override_fonts/font = ExtResource("2_indkb")
 theme_override_font_sizes/font_size = 16
 text = ""
 vertical_alignment = 1
@@ -141,7 +136,6 @@ custom_minimum_size = Vector2(200, 20)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/line_spacing = -8
-theme_override_fonts/font = ExtResource("2_indkb")
 theme_override_font_sizes/font_size = 16
 text = ""
 vertical_alignment = 1

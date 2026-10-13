@@ -1,7 +1,6 @@
-[gd_scene load_steps=3 format=3 uid="uid://dg48m2b1x4p3k"]
+[gd_scene load_steps=2 format=3 uid="uid://dg48m2b1x4p3k"]
 
 [ext_resource type="Script" uid="uid://cpnsulvb2nd6t" path="res://ui/popups/damage_popup.gd" id="1_v3k2n"]
-[ext_resource type="FontFile" uid="uid://ddo3rokwsadq0" path="res://assets/fonts/dotgothic/dotgothic16_regular.ttf" id="2_font"]
 
 [node name="DamagePopup" type="Control"]
 top_level = true
@@ -28,7 +27,6 @@ grow_vertical = 2
 pivot_offset = Vector2(50, 13)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 4
-theme_override_fonts/font = ExtResource("2_font")
 theme_override_font_sizes/font_size = 16
 text = "99"
 horizontal_alignment = 1

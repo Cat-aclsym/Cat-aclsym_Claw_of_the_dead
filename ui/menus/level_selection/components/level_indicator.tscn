@@ -1,8 +1,7 @@
-[gd_scene load_steps=7 format=3 uid="uid://b0nyq2do4mc83"]
+[gd_scene load_steps=6 format=3 uid="uid://b0nyq2do4mc83"]
 
 [ext_resource type="Texture2D" uid="uid://dly5wrb2c7wpd" path="res://assets/ui/level_selection/level_dot.png" id="1_aq3t4"]
 [ext_resource type="Script" uid="uid://bp2ns6xuy1suf" path="res://ui/menus/level_selection/components/level_indicator.gd" id="3_07itj"]
-[ext_resource type="FontFile" uid="uid://ddo3rokwsadq0" path="res://assets/fonts/dotgothic/dotgothic16_regular.ttf" id="4_b47p3"]
 [ext_resource type="Shader" uid="uid://cui214wdhr6a0" path="res://ui/components/game_button/palette_swap.gdshader" id="5_shader"]
 [ext_resource type="Texture2D" uid="uid://cjjpnsafokwnn" path="res://assets/ui/buttons/palette.png" id="6_palette"]
 
@@ -42,7 +41,6 @@ offset_right = 32.0
 offset_bottom = 32.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_fonts/font = ExtResource("4_b47p3")
 theme_override_font_sizes/font_size = 24
 text = "1"
 horizontal_alignment = 1

@@ -1,7 +1,6 @@
-[gd_scene load_steps=3 format=3 uid="uid://bfn5jlmdbqtos"]
+[gd_scene load_steps=2 format=3 uid="uid://bfn5jlmdbqtos"]
 
 [ext_resource type="Script" uid="uid://ciqb5io4hpx6q" path="res://ui/menus/tower_upgrade/stat_bar.gd" id="1_tivcp"]
-[ext_resource type="FontFile" uid="uid://ddo3rokwsadq0" path="res://assets/fonts/dotgothic/dotgothic16_regular.ttf" id="2_53wfa"]
 
 [node name="StatBar" type="HBoxContainer"]
 offset_right = 300.0
@@ -25,7 +24,6 @@ theme_override_constants/separation = 4
 [node name="StatName" type="Label" parent="ContentColumn"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_fonts/font = ExtResource("2_53wfa")
 theme_override_font_sizes/font_size = 20
 
 [node name="TicksContainer" type="HBoxContainer" parent="ContentColumn"]

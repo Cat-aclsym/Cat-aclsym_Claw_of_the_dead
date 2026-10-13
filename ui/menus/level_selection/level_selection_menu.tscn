@@ -1,9 +1,8 @@
-[gd_scene load_steps=9 format=3 uid="uid://dbngb5qll51sg"]
+[gd_scene load_steps=8 format=3 uid="uid://dbngb5qll51sg"]
 
 [ext_resource type="Script" uid="uid://b5tuo5eh0j8iw" path="res://ui/menus/level_selection/level_selection_menu.gd" id="1_3d0bw"]
 [ext_resource type="Texture2D" uid="uid://cuyo3k1ec4f18" path="res://assets/ui/level_selection/arcs/arc.01.png" id="1_hmbw8"]
 [ext_resource type="PackedScene" uid="uid://c8gbtn5xq2m4y" path="res://ui/components/game_button/game_button.tscn" id="3_cju3k"]
-[ext_resource type="FontFile" uid="uid://ddo3rokwsadq0" path="res://assets/fonts/dotgothic/dotgothic16_regular.ttf" id="3_kbg2u"]
 [ext_resource type="PackedScene" uid="uid://dx5t3ko8f6o27" path="res://ui/menus/level_selection/components/level_frame.tscn" id="5_x0b1a"]
 [ext_resource type="Texture2D" uid="uid://b5q25yrnofsly" path="res://assets/ui/level_selection/locked.svg" id="6_miktb"]
 
@@ -107,7 +106,6 @@ size_flags_horizontal = 3
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.4, 1, 0.4, 1)
-theme_override_fonts/font = ExtResource("3_kbg2u")
 theme_override_font_sizes/font_size = 65
 text = ""
 horizontal_alignment = 1
@@ -218,7 +216,6 @@ size_flags_horizontal = 3
 [node name="Label" type="Label" parent="MarginContainer/VBoxContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
-theme_override_fonts/font = ExtResource("3_kbg2u")
 text = "LEVEL_SELECTION.LEVELS"
 horizontal_alignment = 1
 vertical_alignment = 2

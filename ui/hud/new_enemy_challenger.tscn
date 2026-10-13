@@ -1,7 +1,6 @@
-[gd_scene load_steps=7 format=3 uid="uid://c2kvbc6kb1a3t"]
+[gd_scene load_steps=6 format=3 uid="uid://c2kvbc6kb1a3t"]
 
 [ext_resource type="Script" uid="uid://bw630xrotcjl2" path="res://ui/hud/new_enemy_challenger.gd" id="1_1vwxm"]
-[ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://ui/theme/generic.tres" id="2_nrwp8"]
 [ext_resource type="Shader" uid="uid://coojofonbtmn5" path="res://assets/shaders/radial_aura.gdshader" id="3_m5r4k"]
 [ext_resource type="Texture2D" uid="uid://it5nrej70nlf" path="res://assets/sprites/enemies/zombie_lom_base_sheet.png" id="4_zombie_sheet"]
 
@@ -87,7 +86,6 @@ offset_top = -60.0
 offset_right = 500.0
 grow_horizontal = 2
 grow_vertical = 0
-theme = ExtResource("2_nrwp8")
 theme_type_variation = &"HeaderSmall"
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 text = "INGAMEHUD.NEW_ENEMY.TITLE"
@@ -121,7 +119,6 @@ offset_left = -380.0
 offset_right = 380.0
 offset_bottom = 48.0
 grow_horizontal = 2
-theme = ExtResource("2_nrwp8")
 theme_type_variation = &"HeaderSmall"
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 text = "INGAMEHUD.NEW_ENEMY.SUBTITLE"

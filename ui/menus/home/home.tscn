@@ -1,10 +1,9 @@
-[gd_scene load_steps=9 format=3 uid="uid://cqfsr6yjn6hm8"]
+[gd_scene load_steps=8 format=3 uid="uid://cqfsr6yjn6hm8"]
 
 [ext_resource type="Script" uid="uid://cibbgvfpeyya0" path="res://ui/menus/home/home.gd" id="1_dvove"]
 [ext_resource type="PackedScene" uid="uid://c8gbtn5xq2m4y" path="res://ui/components/game_button/game_button.tscn" id="5_btn"]
 [ext_resource type="Texture2D" uid="uid://bsir4xrig5yqd" path="res://assets/ui/branding/logo_cat.png" id="3_gislx"]
 [ext_resource type="Texture2D" uid="uid://c2pj8fxbv5usu" path="res://assets/ui/branding/logo_text_white.png" id="4_aa1tm"]
-[ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://ui/theme/generic.tres" id="4_ay1j5"]
 [ext_resource type="Texture2D" uid="uid://c1f4e2f8oknku" path="res://assets/ui/icons/exclamation.png" id="7_exclamation"]
 
 [sub_resource type="Gradient" id="Gradient_p68sa"]
@@ -69,7 +68,6 @@ offset_bottom = -5.0
 grow_horizontal = 2
 grow_vertical = 0
 size_flags_vertical = 8
-theme = ExtResource("4_ay1j5")
 theme_override_font_sizes/font_size = 15
 text = "HOME.COPYRIGHT"
 vertical_alignment = 2

@@ -1,10 +1,8 @@
-[gd_scene load_steps=11 format=3 uid="uid://divtcu2mbquip"]
+[gd_scene load_steps=9 format=3 uid="uid://divtcu2mbquip"]
 
 [ext_resource type="Script" uid="uid://boqaeq5svhocn" path="res://ui/menus/encyclopedia/encyclopedia.gd" id="1_ency"]
 [ext_resource type="Texture2D" uid="uid://mshwayfrielr" path="res://assets/ui/hud/encyclopedia_enemies.png" id="2_bg_ennemis"]
 [ext_resource type="PackedScene" uid="uid://c8gbtn5xq2m4y" path="res://ui/components/game_button/game_button.tscn" id="3_close"]
-[ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://ui/theme/generic.tres" id="4_theme"]
-[ext_resource type="FontFile" uid="uid://ddo3rokwsadq0" path="res://assets/fonts/dotgothic/dotgothic16_regular.ttf" id="5_font"]
 [ext_resource type="Texture2D" uid="uid://bmtlovs16utgc" path="res://assets/ui/icons/encyclopedia_bottom.png" id="7_scroll_arrow"]
 [ext_resource type="Texture2D" uid="uid://c1f4e2f8oknku" path="res://assets/ui/icons/exclamation.png" id="8_exclamation"]
 
@@ -151,9 +149,7 @@ alignment = 1
 [node name="NameLabel" type="Label" parent="GuiMarginContainer/MenuLayout/ContentLayout/LeftPageVBox"]
 unique_name_in_owner = true
 layout_mode = 2
-theme = ExtResource("4_theme")
 theme_type_variation = &"HeaderMedium"
-theme_override_fonts/font = ExtResource("5_font")
 theme_override_font_sizes/font_size = 48
 text = ""
 horizontal_alignment = 1

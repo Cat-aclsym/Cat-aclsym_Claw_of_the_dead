@@ -1,12 +1,10 @@
-[gd_scene load_steps=11 format=3 uid="uid://dygxxtpara021"]
+[gd_scene load_steps=9 format=3 uid="uid://dygxxtpara021"]
 
 [ext_resource type="Script" uid="uid://6soot5tpvyhx" path="res://ui/menus/armory/armory.gd" id="1_arm"]
 [ext_resource type="PackedScene" uid="uid://c8gbtn5xq2m4y" path="res://ui/components/game_button/game_button.tscn" id="2_close"]
 [ext_resource type="Texture2D" uid="uid://8y5uhgfsgmp8" path="res://assets/ui/icons/star.png" id="3_star"]
-[ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://ui/theme/generic.tres" id="3_theme"]
 [ext_resource type="Texture2D" uid="uid://c8b8irfugbxdj" path="res://assets/environment/backgrounds/menu_background_02.svg" id="6_x4aod"]
 [ext_resource type="Texture2D" uid="uid://c5jwmpccl40pb" path="res://assets/environment/backgrounds/menu_background_01.svg" id="7_fond01"]
-[ext_resource type="FontFile" uid="uid://ddo3rokwsadq0" path="res://assets/fonts/dotgothic/dotgothic16_regular.ttf" id="8_dgfont"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_desc_bg"]
 texture = ExtResource("6_x4aod")
@@ -60,7 +58,6 @@ alignment = 1
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-theme = ExtResource("3_theme")
 theme_override_font_sizes/font_size = 42
 text = "ARMORY.TITLE"
 autowrap_mode = 3
@@ -80,7 +77,6 @@ stretch_mode = 5
 [node name="StarsCountLabel" type="Label" parent="MainMargin/VBox/HeaderHBox/StarsStrip"]
 unique_name_in_owner = true
 layout_mode = 2
-theme = ExtResource("3_theme")
 theme_override_font_sizes/font_size = 22
 text = "0"
 vertical_alignment = 1
@@ -153,7 +149,6 @@ offset_bottom = 608.0
 grow_horizontal = 2
 grow_vertical = 0
 mouse_filter = 2
-theme = ExtResource("3_theme")
 theme_override_styles/panel = SubResource("StyleBoxTexture_desc_bg")
 
 [node name="DescriptionMargin" type="MarginContainer" parent="DescriptionPanel"]
@@ -171,7 +166,6 @@ theme_override_constants/separation = 6
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-theme = ExtResource("3_theme")
 theme_override_font_sizes/font_size = 24
 autowrap_mode = 3
 
@@ -180,7 +174,6 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 0
-theme = ExtResource("3_theme")
 theme_override_font_sizes/font_size = 20
 vertical_alignment = 1
 autowrap_mode = 3
@@ -235,7 +228,6 @@ theme_override_constants/separation = 18
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_fonts/font = ExtResource("8_dgfont")
 theme_override_font_sizes/font_size = 30
 text = "ARMORY.RESET_STARS_CONFIRM"
 horizontal_alignment = 1
