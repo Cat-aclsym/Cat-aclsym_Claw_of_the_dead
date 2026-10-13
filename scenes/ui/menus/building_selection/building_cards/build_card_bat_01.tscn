@@ -1,12 +1,12 @@
 [gd_scene load_steps=9 format=3 uid="uid://3noiaamd0p84"]
 
 [ext_resource type="Script" uid="uid://e0qqc3xugp8k" path="res://scenes/ui/menus/building_selection/building_cards/build_card.gd" id="1_hl5pg"]
-[ext_resource type="Texture2D" uid="uid://85310xv6g30a" path="res://assets/ui/building_cards/construction_tower_title.svg" id="2_6d6oa"]
-[ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="3_r2ha7"]
-[ext_resource type="Texture2D" uid="uid://cdesir3miwmug" path="res://assets/ui/building_cards/green_frame.svg" id="4_wyqnw"]
-[ext_resource type="Texture2D" uid="uid://yayv0hygrr3u" path="res://assets/ui/building_cards/blue_background.svg" id="5_4himi"]
-[ext_resource type="Texture2D" uid="uid://dlsa1m6s2rklo" path="res://assets/gameplay/towers/tower_1_lvl_1.png" id="6_lwhdy"]
-[ext_resource type="Texture2D" uid="uid://b6lrh02vg30l3" path="res://assets/ui/huds/coin.png" id="8_coin"]
+[ext_resource type="Texture2D" uid="uid://85310xv6g30a" path="res://assets/ui/cards/construction_tower_title.svg" id="2_6d6oa"]
+[ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://ui/theme/generic.tres" id="3_r2ha7"]
+[ext_resource type="Texture2D" uid="uid://cdesir3miwmug" path="res://assets/ui/cards/green_frame.svg" id="4_wyqnw"]
+[ext_resource type="Texture2D" uid="uid://yayv0hygrr3u" path="res://assets/ui/cards/blue_background.svg" id="5_4himi"]
+[ext_resource type="Texture2D" uid="uid://dlsa1m6s2rklo" path="res://assets/sprites/towers/tower_1_lvl_1.png" id="6_lwhdy"]
+[ext_resource type="Texture2D" uid="uid://b6lrh02vg30l3" path="res://assets/ui/hud/coin.png" id="8_coin"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_hh3vp"]
 atlas = ExtResource("6_lwhdy")

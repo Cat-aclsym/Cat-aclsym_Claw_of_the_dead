@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://b80oipuymr4oa"]
 
-[ext_resource type="Texture2D" uid="uid://qsdp3h1h2rg" path="res://assets/ui/level_selection/bt_level/line.svg" id="1_el6xv"]
+[ext_resource type="Texture2D" uid="uid://qsdp3h1h2rg" path="res://assets/ui/level_selection/line.svg" id="1_el6xv"]
 
 [node name="Separator" type="TextureRect"]
 z_index = 1

@@ -182,7 +182,7 @@ func _init_map() -> void:
 
 ## Reads the waves, the starting coins and the max health from the level JSON.
 func _load_level_data() -> void:
-	var parsed: Dictionary = JsonUtil.load_dict("res://resources/levels/%s.json" % level_id)
+	var parsed: Dictionary = JsonUtil.load_dict("res://data/levels/%s.json" % level_id)
 	assert(parsed.has("waves") and parsed.has("start_coins") and parsed.has("max_health"), "Missing 'waves', 'start_coins' or 'max_health' key for level %s." % level_id)
 
 	coins = int(parsed.get("start_coins", coins))

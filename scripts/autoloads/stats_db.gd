@@ -4,7 +4,7 @@
 extends Node
 
 # Constants
-const STATS_PATH: String = "res://assets/resources/configs/stats.json"
+const STATS_PATH: String = "res://data/stats.json"
 
 # Private variables
 var _data: Dictionary = {}

@@ -8,7 +8,7 @@ extends RefCounted
 ## When true (migrated old saves), all buildings stay buildable regardless of armory unlocks.
 var armory_legacy_mode: bool = false
 
-## Armurerie: IDs of purchased meta nodes (see [code]resources/armory/armory.json[/code]).
+## Armurerie: IDs of purchased meta nodes (see [code]data/armory/armory.json[/code]).
 var armory_purchased: Array[String] = []
 
 ## Dictionary mapping enemy IDs (String) to EnemyData objects.

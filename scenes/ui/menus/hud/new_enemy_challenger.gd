@@ -11,7 +11,7 @@ signal reveal_finished
 const BACKGROUND_TARGET_ALPHA: float = 0.4
 const BAR_ANIM_DURATION: float = 0.42
 const FLASH_DURATION: float = 0.1
-const FLAT_ALPHA_TINT_SHADER: Shader = preload("res://assets/resources/shaders/flat_alpha_tint.gdshader")
+const FLAT_ALPHA_TINT_SHADER: Shader = preload("res://assets/shaders/flat_alpha_tint.gdshader")
 
 # Discovery boost timing/pace once the silhouette is revealed.
 const PRE_REVEAL_DELAY: float = 1.1

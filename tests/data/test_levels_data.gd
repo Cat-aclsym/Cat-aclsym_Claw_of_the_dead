@@ -1,10 +1,10 @@
 ## © [2026] A7 Studio. All rights reserved. Trademark.
 ##
-## Consistency of the level files ([code]resources/levels[/code]) with [code]stats.json[/code] and the challenge files.
+## Consistency of the level files ([code]data/levels[/code]) with [code]stats.json[/code] and the challenge files.
 extends GdUnitTestSuite
 
-const CHALLENGES_DIR: String = "res://resources/challenges"
-const LEVELS_DIR: String = "res://resources/levels"
+const CHALLENGES_DIR: String = "res://data/challenges"
+const LEVELS_DIR: String = "res://data/levels"
 
 
 func test_every_challenge_script_compiles() -> void:

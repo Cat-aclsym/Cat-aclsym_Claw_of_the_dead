@@ -2,12 +2,12 @@
 
 [ext_resource type="Script" uid="uid://e0qqc3xugp8k" path="res://scenes/ui/menus/building_selection/building_cards/build_card.gd" id="1_script"]
 [ext_resource type="PackedScene" uid="uid://d3qxkgw2yvnxs" path="res://scenes/gameplay/entities/trap/traps/bat_06.tscn" id="2_entity"]
-[ext_resource type="Texture2D" uid="uid://85310xv6g30a" path="res://assets/ui/building_cards/construction_tower_title.svg" id="3_title"]
-[ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="4_theme"]
-[ext_resource type="Texture2D" uid="uid://cdesir3miwmug" path="res://assets/ui/building_cards/green_frame.svg" id="5_frame"]
-[ext_resource type="Texture2D" uid="uid://yayv0hygrr3u" path="res://assets/ui/building_cards/blue_background.svg" id="6_bg"]
-[ext_resource type="Texture2D" uid="uid://do0ybx58p4dnq" path="res://assets/gameplay/traps/spikes.png" id="7_icon"]
-[ext_resource type="Texture2D" uid="uid://b6lrh02vg30l3" path="res://assets/ui/huds/coin.png" id="8_coin"]
+[ext_resource type="Texture2D" uid="uid://85310xv6g30a" path="res://assets/ui/cards/construction_tower_title.svg" id="3_title"]
+[ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://ui/theme/generic.tres" id="4_theme"]
+[ext_resource type="Texture2D" uid="uid://cdesir3miwmug" path="res://assets/ui/cards/green_frame.svg" id="5_frame"]
+[ext_resource type="Texture2D" uid="uid://yayv0hygrr3u" path="res://assets/ui/cards/blue_background.svg" id="6_bg"]
+[ext_resource type="Texture2D" uid="uid://do0ybx58p4dnq" path="res://assets/sprites/traps/spikes.png" id="7_icon"]
+[ext_resource type="Texture2D" uid="uid://b6lrh02vg30l3" path="res://assets/ui/hud/coin.png" id="8_coin"]
 
 [node name="BuildCardBat06" type="Control"]
 z_index = 1

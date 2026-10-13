@@ -475,7 +475,7 @@ func _update_suggestions() -> void:
 
 				match arg_type:
 					ICommand.Types.ARG_CHALLENGE:
-						var challenge_dir := DirAccess.open("res://resources/challenges/")
+						var challenge_dir := DirAccess.open("res://data/challenges/")
 						if challenge_dir:
 							for file_name in challenge_dir.get_files():
 								if file_name.ends_with(".json"):
@@ -502,7 +502,7 @@ func _update_suggestions() -> void:
 								if child is ITower and child.name.to_lower().begins_with(current_input.to_lower()):
 									_current_suggestions.append(String(child.name))
 					ICommand.Types.ARG_LEVEL:
-						var level_dir := DirAccess.open("res://resources/levels/")
+						var level_dir := DirAccess.open("res://data/levels/")
 						if level_dir:
 							for file_name in level_dir.get_files():
 								if file_name.ends_with(".json"):

@@ -1,8 +1,8 @@
 [gd_scene load_steps=15 format=3 uid="uid://dqcjwachbfj5x"]
 
 [ext_resource type="Script" uid="uid://ctll20su80y8y" path="res://scenes/gameplay/entities/bullet/i_bullet.gd" id="1_nj4q4"]
-[ext_resource type="Texture2D" uid="uid://ofigwvpb243k" path="res://assets/gameplay/bullet/smoke.png" id="2_10j3q"]
-[ext_resource type="Texture2D" uid="uid://widlcwph8v11" path="res://assets/gameplay/bullet/trail.png" id="3_0uq0e"]
+[ext_resource type="Texture2D" uid="uid://ofigwvpb243k" path="res://assets/sprites/projectiles/smoke.png" id="2_10j3q"]
+[ext_resource type="Texture2D" uid="uid://widlcwph8v11" path="res://assets/sprites/projectiles/trail.png" id="3_0uq0e"]
 
 [sub_resource type="Curve" id="Curve_ftdv6"]
 _data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.150255), -1.47271, 0.0, 0, 0]

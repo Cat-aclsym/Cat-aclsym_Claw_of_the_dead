@@ -2,9 +2,9 @@
 
 [ext_resource type="Script" uid="uid://cibbgvfpeyya0" path="res://scenes/ui/menus/home/home.gd" id="1_dvove"]
 [ext_resource type="PackedScene" uid="uid://cj6rnvaq8x3mk" path="res://scenes/ui/styled_button.tscn" id="5_styled_btn"]
-[ext_resource type="Texture2D" uid="uid://bsir4xrig5yqd" path="res://assets/ui/icons/logo_chat_vert_fonce.png" id="3_gislx"]
-[ext_resource type="Texture2D" uid="uid://c2pj8fxbv5usu" path="res://assets/ui/icons/logo_typo_blanc_transp.png" id="4_aa1tm"]
-[ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="4_ay1j5"]
+[ext_resource type="Texture2D" uid="uid://bsir4xrig5yqd" path="res://assets/ui/branding/logo_cat.png" id="3_gislx"]
+[ext_resource type="Texture2D" uid="uid://c2pj8fxbv5usu" path="res://assets/ui/branding/logo_text_white.png" id="4_aa1tm"]
+[ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://ui/theme/generic.tres" id="4_ay1j5"]
 [ext_resource type="Texture2D" uid="uid://c1f4e2f8oknku" path="res://assets/ui/icons/exclamation.png" id="7_exclamation"]
 
 [sub_resource type="Gradient" id="Gradient_p68sa"]

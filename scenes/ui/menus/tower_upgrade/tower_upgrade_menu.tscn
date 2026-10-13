@@ -1,10 +1,10 @@
 [gd_scene load_steps=7 format=3 uid="uid://xukck3ogg7bs"]
 
 [ext_resource type="Script" uid="uid://de5b23g7wdtx6" path="res://scenes/ui/menus/tower_upgrade/tower_upgrade_menu.gd" id="1_53bwk"]
-[ext_resource type="Texture2D" uid="uid://c5jwmpccl40pb" path="res://assets/environment/backgrounds/fond_menu_01.svg" id="2_wrblu"]
-[ext_resource type="FontFile" uid="uid://ddo3rokwsadq0" path="res://assets/ui/fonts/dotgothic/dotgothic16_regular.ttf" id="3_uyu61"]
+[ext_resource type="Texture2D" uid="uid://c5jwmpccl40pb" path="res://assets/environment/backgrounds/menu_background_01.svg" id="2_wrblu"]
+[ext_resource type="FontFile" uid="uid://ddo3rokwsadq0" path="res://assets/fonts/dotgothic/dotgothic16_regular.ttf" id="3_uyu61"]
 [ext_resource type="PackedScene" uid="uid://cj6rnvaq8x3mk" path="res://scenes/ui/styled_button.tscn" id="5_styled_btn"]
-[ext_resource type="Texture2D" uid="uid://b6lrh02vg30l3" path="res://assets/ui/huds/coin.png" id="9_28meq"]
+[ext_resource type="Texture2D" uid="uid://b6lrh02vg30l3" path="res://assets/ui/hud/coin.png" id="9_28meq"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_u7ot3"]
 texture = ExtResource("2_wrblu")

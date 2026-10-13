@@ -1,0 +1,229 @@
+[gd_resource type="Theme" load_steps=16 format=3 uid="uid://dr31fy67cgji3"]
+
+[ext_resource type="FontFile" uid="uid://ddo3rokwsadq0" path="res://assets/fonts/dotgothic/dotgothic16_regular.ttf" id="1_dotgothic"]
+[ext_resource type="Texture2D" uid="uid://bwgb811hwxy0" path="res://assets/ui/buttons/button_blue.png" id="2_btn_blue"]
+[ext_resource type="Texture2D" uid="uid://cpb0sxhq4ybw2" path="res://assets/ui/buttons/button_green.png" id="3_btn_green"]
+[ext_resource type="Texture2D" uid="uid://krmj35i3andu" path="res://assets/ui/buttons/button_orange.png" id="4_btn_orange"]
+[ext_resource type="FontVariation" uid="uid://b5t3wfh501ofr" path="res://ui/theme/dotgothic_variation.tres" id="5_variation"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_panel"]
+texture_margin_left = 40.0
+texture_margin_top = 31.0
+texture_margin_right = 6.0
+texture_margin_bottom = 37.0
+axis_stretch_horizontal = 2
+axis_stretch_vertical = 2
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_blue_normal"]
+content_margin_left = 17.0
+content_margin_top = 2.0
+content_margin_right = 11.0
+content_margin_bottom = 8.0
+texture = ExtResource("2_btn_blue")
+texture_margin_left = 22.0
+texture_margin_top = 22.0
+texture_margin_right = 22.0
+texture_margin_bottom = 22.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_blue_hover"]
+content_margin_left = 17.0
+content_margin_top = 2.0
+content_margin_right = 11.0
+content_margin_bottom = 8.0
+texture = ExtResource("2_btn_blue")
+texture_margin_left = 22.0
+texture_margin_top = 22.0
+texture_margin_right = 22.0
+texture_margin_bottom = 22.0
+modulate_color = Color(1.15, 1.15, 1.15, 1)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_blue_pressed"]
+content_margin_left = 17.0
+content_margin_top = 2.0
+content_margin_right = 11.0
+content_margin_bottom = 8.0
+texture = ExtResource("2_btn_blue")
+texture_margin_left = 22.0
+texture_margin_top = 22.0
+texture_margin_right = 22.0
+texture_margin_bottom = 22.0
+modulate_color = Color(0.8, 0.8, 0.8, 1)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_green_normal"]
+content_margin_left = 17.0
+content_margin_top = 2.0
+content_margin_right = 11.0
+content_margin_bottom = 8.0
+texture = ExtResource("3_btn_green")
+texture_margin_left = 22.0
+texture_margin_top = 22.0
+texture_margin_right = 22.0
+texture_margin_bottom = 22.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_green_hover"]
+content_margin_left = 17.0
+content_margin_top = 2.0
+content_margin_right = 11.0
+content_margin_bottom = 8.0
+texture = ExtResource("3_btn_green")
+texture_margin_left = 22.0
+texture_margin_top = 22.0
+texture_margin_right = 22.0
+texture_margin_bottom = 22.0
+modulate_color = Color(1.15, 1.15, 1.15, 1)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_green_pressed"]
+content_margin_left = 17.0
+content_margin_top = 2.0
+content_margin_right = 11.0
+content_margin_bottom = 8.0
+texture = ExtResource("3_btn_green")
+texture_margin_left = 22.0
+texture_margin_top = 22.0
+texture_margin_right = 22.0
+texture_margin_bottom = 22.0
+modulate_color = Color(0.8, 0.8, 0.8, 1)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_orange_normal"]
+content_margin_left = 17.0
+content_margin_top = 2.0
+content_margin_right = 11.0
+content_margin_bottom = 8.0
+texture = ExtResource("4_btn_orange")
+texture_margin_left = 22.0
+texture_margin_top = 22.0
+texture_margin_right = 22.0
+texture_margin_bottom = 22.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_orange_hover"]
+content_margin_left = 17.0
+content_margin_top = 2.0
+content_margin_right = 11.0
+content_margin_bottom = 8.0
+texture = ExtResource("4_btn_orange")
+texture_margin_left = 22.0
+texture_margin_top = 22.0
+texture_margin_right = 22.0
+texture_margin_bottom = 22.0
+modulate_color = Color(1.15, 1.15, 1.15, 1)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_orange_pressed"]
+content_margin_left = 17.0
+content_margin_top = 2.0
+content_margin_right = 11.0
+content_margin_bottom = 8.0
+texture = ExtResource("4_btn_orange")
+texture_margin_left = 22.0
+texture_margin_top = 22.0
+texture_margin_right = 22.0
+texture_margin_bottom = 22.0
+modulate_color = Color(0.8, 0.8, 0.8, 1)
+
+[resource]
+default_font = ExtResource("1_dotgothic")
+default_font_size = 30
+Button/fonts/font = ExtResource("1_dotgothic")
+Fonts/colors/color = Color(0.137255, 0.215686, 0.223529, 1)
+Fonts/fonts/text = ExtResource("1_dotgothic")
+Fonts/fonts/title = ExtResource("1_dotgothic")
+Fonts/styles/test = null
+HeaderLarge/base_type = &"Label"
+HeaderLarge/colors/font_color = Color(1, 1, 1, 1)
+HeaderLarge/colors/font_outline_color = Color(1, 1, 1, 1)
+HeaderLarge/constants/line_spacing = 0
+HeaderLarge/constants/outline_size = 2
+HeaderLarge/font_sizes/font_size = 28
+HeaderLarge/fonts/font = ExtResource("1_dotgothic")
+HeaderMedium/base_type = &"Label"
+HeaderMedium/colors/font_color = Color(1, 1, 1, 1)
+HeaderMedium/colors/font_outline_color = Color(1, 1, 1, 1)
+HeaderMedium/constants/line_spacing = 0
+HeaderMedium/constants/outline_size = 0
+HeaderMedium/font_sizes/font_size = 24
+HeaderMedium/fonts/font = ExtResource("1_dotgothic")
+HeaderSmall/base_type = &"Label"
+HeaderSmall/colors/font_color = Color(1, 1, 1, 1)
+HeaderSmall/colors/font_outline_color = Color(1, 1, 1, 1)
+HeaderSmall/constants/line_spacing = 0
+HeaderSmall/constants/outline_size = 0
+HeaderSmall/font_sizes/font_size = 18
+HeaderSmall/fonts/font = ExtResource("1_dotgothic")
+Label/fonts/font = ExtResource("1_dotgothic")
+LineEdit/fonts/font = ExtResource("1_dotgothic")
+PanelContainer/styles/panel = SubResource("StyleBoxTexture_panel")
+RichTextLabel/fonts/font = ExtResource("1_dotgothic")
+HomeButton/base_type = &"StyledButton"
+HomeButton/colors/font_color = Color(0.137255, 0.215686, 0.223529, 1)
+HomeButton/colors/font_focus_color = Color(0.137255, 0.215686, 0.223529, 1)
+HomeButton/colors/font_hover_color = Color(0.137255, 0.215686, 0.223529, 1)
+HomeButton/colors/font_outline_color = Color(0.137255, 0.215686, 0.223529, 1)
+HomeButton/colors/font_pressed_color = Color(0.137255, 0.215686, 0.223529, 1)
+HomeButton/constants/outline_size = 6
+HomeButton/font_sizes/font_size = 35
+HomeButton/fonts/font = ExtResource("5_variation")
+HomeButtonGreen/base_type = &"StyledButtonGreen"
+HomeButtonGreen/colors/font_color = Color(0.137255, 0.215686, 0.223529, 1)
+HomeButtonGreen/colors/font_focus_color = Color(0.137255, 0.215686, 0.223529, 1)
+HomeButtonGreen/colors/font_hover_color = Color(0.137255, 0.215686, 0.223529, 1)
+HomeButtonGreen/colors/font_outline_color = Color(0.137255, 0.215686, 0.223529, 1)
+HomeButtonGreen/colors/font_pressed_color = Color(0.137255, 0.215686, 0.223529, 1)
+HomeButtonGreen/constants/outline_size = 6
+HomeButtonGreen/font_sizes/font_size = 35
+HomeButtonGreen/fonts/font = ExtResource("5_variation")
+HomeButtonOrange/base_type = &"StyledButtonOrange"
+HomeButtonOrange/colors/font_color = Color(0.137255, 0.215686, 0.223529, 1)
+HomeButtonOrange/colors/font_focus_color = Color(0.137255, 0.215686, 0.223529, 1)
+HomeButtonOrange/colors/font_hover_color = Color(0.137255, 0.215686, 0.223529, 1)
+HomeButtonOrange/colors/font_outline_color = Color(0.137255, 0.215686, 0.223529, 1)
+HomeButtonOrange/colors/font_pressed_color = Color(0.137255, 0.215686, 0.223529, 1)
+HomeButtonOrange/constants/outline_size = 6
+HomeButtonOrange/font_sizes/font_size = 35
+HomeButtonOrange/fonts/font = ExtResource("5_variation")
+StyledButton/base_type = &"Button"
+StyledButton/colors/font_color = Color(1, 1, 1, 1)
+StyledButton/colors/font_disabled_color = Color(0.6, 0.6, 0.6, 1)
+StyledButton/colors/font_focus_color = Color(1, 1, 1, 1)
+StyledButton/colors/font_hover_color = Color(1, 1, 1, 1)
+StyledButton/colors/font_pressed_color = Color(1, 1, 1, 1)
+StyledButton/fonts/font = ExtResource("1_dotgothic")
+StyledButton/styles/disabled = SubResource("StyleBoxTexture_blue_normal")
+StyledButton/styles/focus = SubResource("StyleBoxTexture_blue_normal")
+StyledButton/styles/hover = SubResource("StyleBoxTexture_blue_hover")
+StyledButton/styles/normal = SubResource("StyleBoxTexture_blue_normal")
+StyledButton/styles/pressed = SubResource("StyleBoxTexture_blue_pressed")
+StyledButtonGreen/base_type = &"Button"
+StyledButtonGreen/colors/font_color = Color(1, 1, 1, 1)
+StyledButtonGreen/colors/font_disabled_color = Color(0.6, 0.6, 0.6, 1)
+StyledButtonGreen/colors/font_focus_color = Color(1, 1, 1, 1)
+StyledButtonGreen/colors/font_hover_color = Color(1, 1, 1, 1)
+StyledButtonGreen/colors/font_pressed_color = Color(1, 1, 1, 1)
+StyledButtonGreen/fonts/font = ExtResource("1_dotgothic")
+StyledButtonGreen/styles/disabled = SubResource("StyleBoxTexture_green_normal")
+StyledButtonGreen/styles/focus = SubResource("StyleBoxTexture_green_normal")
+StyledButtonGreen/styles/hover = SubResource("StyleBoxTexture_green_hover")
+StyledButtonGreen/styles/normal = SubResource("StyleBoxTexture_green_normal")
+StyledButtonGreen/styles/pressed = SubResource("StyleBoxTexture_green_pressed")
+StyledButtonOrange/base_type = &"Button"
+StyledButtonOrange/colors/font_color = Color(1, 1, 1, 1)
+StyledButtonOrange/colors/font_disabled_color = Color(0.6, 0.6, 0.6, 1)
+StyledButtonOrange/colors/font_focus_color = Color(1, 1, 1, 1)
+StyledButtonOrange/colors/font_hover_color = Color(1, 1, 1, 1)
+StyledButtonOrange/colors/font_pressed_color = Color(1, 1, 1, 1)
+StyledButtonOrange/fonts/font = ExtResource("1_dotgothic")
+StyledButtonOrange/styles/disabled = SubResource("StyleBoxTexture_orange_normal")
+StyledButtonOrange/styles/focus = SubResource("StyleBoxTexture_orange_normal")
+StyledButtonOrange/styles/hover = SubResource("StyleBoxTexture_orange_hover")
+StyledButtonOrange/styles/normal = SubResource("StyleBoxTexture_orange_normal")
+StyledButtonOrange/styles/pressed = SubResource("StyleBoxTexture_orange_pressed")
+TextEdit/fonts/font = ExtResource("1_dotgothic")
+UILabel/base_type = &"Label"
+UILabel/colors/font_color = Color(0.137255, 0.215686, 0.223529, 1)
+UILabel/colors/font_outline_color = Color(0.137255, 0.215686, 0.223529, 1)
+UILabel/colors/font_shadow_color = Color(0, 0, 0, 1)
+UILabel/constants/line_spacing = 0
+UILabel/constants/outline_size = 2
+UILabel/constants/shadow_offset_x = 0
+UILabel/constants/shadow_offset_y = 0
+UILabel/constants/shadow_outline_size = 0
+UILabel/font_sizes/font_size = 16
+UILabel/fonts/font = ExtResource("1_dotgothic")

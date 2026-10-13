@@ -10,9 +10,9 @@ signal menu_close
 
 
 const _ICON_ATTACK: Texture2D = preload("res://assets/ui/stats/attack.png")
-const _ICON_COIN: Texture2D = preload("res://assets/ui/huds/coin.png")
+const _ICON_COIN: Texture2D = preload("res://assets/ui/hud/coin.png")
 const _ICON_FIRE_RATE: Texture2D = preload("res://assets/ui/stats/fire_rate.png")
-const _ICON_HEALTH: Texture2D = preload("res://assets/ui/huds/coeur.png")
+const _ICON_HEALTH: Texture2D = preload("res://assets/ui/hud/heart.png")
 const _ICON_RANGE: Texture2D = preload("res://assets/ui/stats/range.png")
 const _ICON_SPEED: Texture2D = preload("res://assets/ui/stats/zombie_speed.png")
 
@@ -37,7 +37,7 @@ var _current_index: int = 0
 ## Font size for stat values.
 var _current_stat_font_size: int = 32
 ## Base font used for text.
-var _font: Font = preload("res://assets/ui/fonts/dotgothic/dotgothic16_regular.ttf")
+var _font: Font = preload("res://assets/fonts/dotgothic/dotgothic16_regular.ttf")
 ## Height of a background animation frame.
 var _frame_height: int = 208
 ## Width of a background animation frame.
@@ -418,9 +418,9 @@ func _set_background_frame(p_frame: int) -> void:
 func _update_background_texture() -> void:
 	var texture_path: String = ""
 	if _current_category == "TOWERS":
-		texture_path = "res://assets/ui/huds/encyclopedie_tours.png"
+		texture_path = "res://assets/ui/hud/encyclopedia_towers.png"
 	else:
-		texture_path = "res://assets/ui/huds/encyclopedie_ennemis.png"
+		texture_path = "res://assets/ui/hud/encyclopedia_enemies.png"
 
 	if ResourceLoader.exists(texture_path):
 		var tex: Texture2D = load(texture_path)

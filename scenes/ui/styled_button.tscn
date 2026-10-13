@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://cj6rnvaq8x3mk"]
 
 [ext_resource type="Script" uid="uid://cpqx8n1dy5bmt" path="res://scenes/ui/styled_button.gd" id="1_script"]
-[ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://assets/resources/themes/generic.tres" id="2_theme"]
+[ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://ui/theme/generic.tres" id="2_theme"]
 
 [node name="StyledButton" type="Button"]
 focus_mode = 0

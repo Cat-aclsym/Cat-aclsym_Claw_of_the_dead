@@ -22,9 +22,9 @@ const COLOR_BUY_BLOCKED_MODULATE: Color = Color(0.55, 0.55, 0.55, 1.0)
 const COLOR_BUY_LABEL_DEFAULT: Color = Color(0.137255, 0.215686, 0.223529, 1.0)
 const COLOR_PRICE_AFFORDABLE: Color = Color(1.0, 1.0, 1.0, 1.0)
 const COLOR_PRICE_UNAFFORDABLE: Color = Color(0.92, 0.26, 0.22, 1.0)
-const FRAME_BLUE: Texture2D = preload("res://assets/ui/building_cards/blue_frame.svg")
-const FRAME_GREEN: Texture2D = preload("res://assets/ui/building_cards/green_frame.svg")
-const FRAME_GREY: Texture2D = preload("res://assets/ui/building_cards/grey_frame.svg")
+const FRAME_BLUE: Texture2D = preload("res://assets/ui/cards/blue_frame.svg")
+const FRAME_GREEN: Texture2D = preload("res://assets/ui/cards/green_frame.svg")
+const FRAME_GREY: Texture2D = preload("res://assets/ui/cards/grey_frame.svg")
 const PRICE_LABEL_MODULATE_VS_DIM: Color = Color(1.0 / CARD_DIM_UNAFFORDABLE, 1.0 / CARD_DIM_UNAFFORDABLE, 1.0 / CARD_DIM_UNAFFORDABLE, 1.0)
 
 @export var cost_stars: int = 0

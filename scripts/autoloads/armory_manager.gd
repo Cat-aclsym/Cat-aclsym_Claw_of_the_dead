@@ -7,7 +7,7 @@ extends Node
 signal armory_updated()
 
 # Constants
-const ARMORY_JSON_PATH: String = "res://resources/armory/armory.json"
+const ARMORY_JSON_PATH: String = "res://data/armory/armory.json"
 
 # Private variables
 var _nodes_by_id: Dictionary = {}

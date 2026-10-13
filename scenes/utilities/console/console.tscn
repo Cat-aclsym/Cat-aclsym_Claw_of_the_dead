@@ -1,7 +1,7 @@
 [gd_scene load_steps=9 format=3 uid="uid://wyaikwouv3ik"]
 
 [ext_resource type="Script" uid="uid://d3dqfa8a6ivj7" path="res://scenes/utilities/console/console.gd" id="1_vvhre"]
-[ext_resource type="FontFile" uid="uid://ddo3rokwsadq0" path="res://assets/ui/fonts/dotgothic/dotgothic16_regular.ttf" id="3_ecciw"]
+[ext_resource type="FontFile" uid="uid://ddo3rokwsadq0" path="res://assets/fonts/dotgothic/dotgothic16_regular.ttf" id="3_ecciw"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_eg4vq"]
 content_margin_left = 8.0

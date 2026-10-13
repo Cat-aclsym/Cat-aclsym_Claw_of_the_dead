@@ -7,14 +7,14 @@ extends Control
 signal start_level(level_id: String)
 
 const CHALLENGE_DESCRIPTION_KEY: String = "description"
-const CHALLENGE_JSON_PATH_PATTERN: String = "res://resources/challenges/%s.json"
+const CHALLENGE_JSON_PATH_PATTERN: String = "res://data/challenges/%s.json"
 const CHALLENGE_NAME_KEY: String = "name"
 ## Constants
 const CONDITION_DONE: Texture2D = preload("res://assets/ui/icons/star.png")
 const CONDITION_TODO: Texture2D = preload("res://assets/ui/icons/star_empty.png")
 const DEFAULT_ARC_ID: String = "arc.01"
 const LEVEL_DATA_CHALLENGES_KEY: String = "challenges"
-const LEVEL_JSON_PATH_PATTERN: String = "res://resources/levels/%s.json"
+const LEVEL_JSON_PATH_PATTERN: String = "res://data/levels/%s.json"
 const LEVEL_SCENE_PATH_PATTERN: String = "res://scenes/gameplay/world/level/levels/%s.tscn"
 
 ## Variables
@@ -47,7 +47,7 @@ func configure() -> void:
 
 	level_name_label.text = tr(level_name)
 	description_label.text = tr(level_description)
-	arc_texture = load("res://assets/ui/level_selection/bg_arcs/%s.png" % arc_id)
+	arc_texture = load("res://assets/ui/level_selection/arcs/%s.png" % arc_id)
 
 	_load_challenges()
 

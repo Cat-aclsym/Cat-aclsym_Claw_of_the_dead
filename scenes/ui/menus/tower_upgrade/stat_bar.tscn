@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://bfn5jlmdbqtos"]
 
 [ext_resource type="Script" uid="uid://ciqb5io4hpx6q" path="res://scenes/ui/menus/tower_upgrade/stat_bar.gd" id="1_tivcp"]
-[ext_resource type="FontFile" uid="uid://ddo3rokwsadq0" path="res://assets/ui/fonts/dotgothic/dotgothic16_regular.ttf" id="2_53wfa"]
+[ext_resource type="FontFile" uid="uid://ddo3rokwsadq0" path="res://assets/fonts/dotgothic/dotgothic16_regular.ttf" id="2_53wfa"]
 
 [node name="StatBar" type="HBoxContainer"]
 offset_right = 300.0

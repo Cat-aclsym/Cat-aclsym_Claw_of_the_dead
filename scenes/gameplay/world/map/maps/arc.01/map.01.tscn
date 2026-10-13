@@ -5,7 +5,7 @@
 [ext_resource type="Script" uid="uid://cnuf2o38j23fk" path="res://scenes/gameplay/world/map/map_placement_blocker.gd" id="3_blocker"]
 [ext_resource type="Texture2D" uid="uid://flaepau3golb" path="res://assets/environment/backgrounds/rock.png" id="4_f2xnt"]
 [ext_resource type="Texture2D" uid="uid://bleysjofumt65" path="res://assets/environment/backgrounds/rock_entrance.png" id="4_mrutd"]
-[ext_resource type="Texture2D" uid="uid://cmmi14tmwjokk" path="res://assets/environment/backgrounds/voilier.png" id="4_sailboat"]
+[ext_resource type="Texture2D" uid="uid://cmmi14tmwjokk" path="res://assets/environment/backgrounds/sailboat.png" id="4_sailboat"]
 [ext_resource type="Texture2D" uid="uid://cn648qxrvbcqx" path="res://assets/environment/backgrounds/rock2.png" id="5_rock"]
 [ext_resource type="Texture2D" uid="uid://bnxblksokc6tm" path="res://assets/environment/backgrounds/house.png" id="7_3a7wf"]
 [ext_resource type="PackedScene" uid="uid://bx8f5t1n6rw2e" path="res://scenes/gameplay/world/level/tutorial_placement_hint.tscn" id="8_tph"]

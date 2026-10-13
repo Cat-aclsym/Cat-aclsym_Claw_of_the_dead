@@ -99,7 +99,7 @@ func start_level_challenges(level_id: String) -> void:
 	_last_statuses.clear()
 
 	# Load level config to find challenges
-	var level_path := "res://resources/levels/%s.json" % level_id
+	var level_path := "res://data/levels/%s.json" % level_id
 	if not FileAccess.file_exists(level_path):
 		return
 
@@ -129,7 +129,7 @@ func _emit_changed_status() -> void:
 
 
 func _load_challenge(c_id: String) -> void:
-	var path := "res://resources/challenges/%s.json" % c_id
+	var path := "res://data/challenges/%s.json" % c_id
 	if not FileAccess.file_exists(path):
 		Log.trace(Log.Level.WARN, "Challenge file missing for %s: %s" % [c_id, path])
 		return

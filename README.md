@@ -45,9 +45,9 @@ Exports use the presets in `export_presets.cfg` (`Windows Desktop`, `Android` ar
 
 ### Core loop
 
-- **Levels** are data-driven: `resources/levels/lev.01.json` … `lev.08.json` define the starting coins, the base health, the active challenges and the **waves** (enemy spawns by `stats.json` enemy id, waits, spawner indices).
+- **Levels** are data-driven: `data/levels/lev.01.json` … `lev.08.json` define the starting coins, the base health, the active challenges and the **waves** (enemy spawns by `stats.json` enemy id, waits, spawner indices).
 - **Towers** are placed on valid build tiles; **traps** use their own trap placement rules.
-- In-run economy and building stats come from **`assets/resources/configs/stats.json`** (loaded by the `StatsDB` autoload).
+- In-run economy and building stats come from **`data/stats.json`** (loaded by the `StatsDB` autoload).
 - **Victory / progression**: completing a level unlocks the next (`ProgressionManager`). Challenges can be completed per level and persisted.
 
 ### Story arcs and levels
@@ -61,12 +61,12 @@ Level names and descriptions are the `LEVEL.LEV_0X.NAME` / `LEVEL.LEV_0X.DESC` k
 
 ### Challenges
 
-- **17** challenge definitions under `resources/challenges/` (IDs like `cha.000` … `cha.205`), each pointing at a small GDScript under `scripts/challenges/logics/`.
-- Levels reference which challenges are active via their JSON `challenges` array (see e.g. `resources/levels/lev.01.json`).
+- **17** challenge definitions under `data/challenges/` (IDs like `cha.000` … `cha.205`), each pointing at a small GDScript under `scripts/challenges/logics/`.
+- Levels reference which challenges are active via their JSON `challenges` array (see e.g. `data/levels/lev.01.json`).
 
 ### Armory (meta)
 
-- Unlock graph and costs: `resources/armory/armory.json` (star costs, tower/trap unlocks, upgrade branch gates).
+- Unlock graph and costs: `data/armory/armory.json` (star costs, tower/trap unlocks, upgrade branch gates).
 - **Starter tower** always available without the armory: **`bat_01`** (`ProgressionManager.ARMORY_STARTER_TOWER_IDS`).
 
 ### Towers and traps (from `stats.json`)
@@ -146,7 +146,7 @@ Home, level selection, pause, options, HUD (waves, score popups, challenge UI), 
 | Path | Contents |
 |------|----------|
 | `addons/` | Third-party plugins (Dialogic; ignored for gameplay unless you work on plugins) |
-| `assets/` | Art, audio, themes, translation CSVs, `assets/resources/configs/stats.json` |
+| `assets/` | Art, audio, themes, translation CSVs, `data/stats.json` |
 | `resources/` | Level, challenge, and armory JSON |
 | `scenes/` | `.tscn` scenes (gameplay, UI, maps, entities) |
 | `scripts/` | GDScript (`autoloads`, commands, challenges, narrative, progression, ...) |

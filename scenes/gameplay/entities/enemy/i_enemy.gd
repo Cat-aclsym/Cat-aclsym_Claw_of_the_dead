@@ -84,7 +84,7 @@ const SLOW_VISUAL_TINT: Color = Color(0.58, 0.78, 0.86, 1.0)
 const SPEED_KEY_ELECTRIFY: StringName = &"electrify"
 
 ## Stun star texture cached for performance.
-const STUN_STAR_TEX := preload("res://assets/gameplay/enemies/stunned_star.png")
+const STUN_STAR_TEX := preload("res://assets/sprites/enemies/stunned_star.png")
 
 ## Multiplied with [member old_modulate] while stunned; yellow feel.
 const STUN_VISUAL_TINT: Color = Color(1.0, 1.0, 0.6, 1.0)

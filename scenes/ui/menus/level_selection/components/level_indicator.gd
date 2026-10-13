@@ -16,8 +16,8 @@ enum Status {
 var level: int = 0
 var status: LevelIndicator.Status = LevelIndicator.Status.CURRENT
 var textures: Dictionary[LevelIndicator.Status, Texture2D] = {
-	LevelIndicator.Status.CURRENT: preload("res://assets/ui/level_selection/bt_level/level_number.png"),
-	LevelIndicator.Status.COMPLETED: preload("res://assets/ui/level_selection/bt_level/level_number2.png"),
+	LevelIndicator.Status.CURRENT: preload("res://assets/ui/level_selection/level_dot_orange.png"),
+	LevelIndicator.Status.COMPLETED: preload("res://assets/ui/level_selection/level_dot_green.png"),
 	LevelIndicator.Status.LOCKED: null
 }
 
