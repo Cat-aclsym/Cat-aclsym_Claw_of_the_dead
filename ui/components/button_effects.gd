@@ -47,10 +47,11 @@ static func _on_gui_input(event: InputEvent, button: Control) -> void:
 			_tween_scale(button, NORMAL_SCALE)
 
 static func _tween_scale(button: Control, target_scale: Vector2) -> void:
-	# Kill previous tween if it exists to avoid stacking
-	var old_tween: Tween = button.get_meta(TWEEN_META_KEY, null) as Tween
-	if old_tween != null and old_tween.is_valid():
-		old_tween.kill()
+	# get_meta with a null default still errors on a missing key, so the first click checks has_meta
+	if button.has_meta(TWEEN_META_KEY):
+		var old_tween: Tween = button.get_meta(TWEEN_META_KEY) as Tween
+		if old_tween != null and old_tween.is_valid():
+			old_tween.kill()
 
 	var tween: Tween = button.create_tween()
 	button.set_meta(TWEEN_META_KEY, tween)

@@ -1,6 +1,6 @@
 ## © [2026] A7 Studio. All rights reserved. Trademark.
 ##
-## [ButtonEffects] setup of a button, applied once whatever the number of calls.
+## [ButtonEffects] setup of a button, applied once whatever the number of calls, and its click scale tween.
 extends GdUnitTestSuite
 
 const SIGNALS: Array[String] = ["gui_input"]
@@ -52,6 +52,23 @@ func test_apply_pivots_on_the_center_and_follows_the_size() -> void:
 	button.size = Vector2(120.0, 60.0)
 
 	assert_vector(button.get_combined_pivot_offset()).is_equal(button.size / 2.0)
+
+
+func test_a_click_shrinks_the_button_and_the_next_one_replaces_its_tween() -> void:
+	var button: Button = auto_free(Button.new())
+	add_child(button)
+	ButtonEffects.apply(button)
+	var press: InputEventMouseButton = InputEventMouseButton.new()
+	press.button_index = MOUSE_BUTTON_LEFT
+	press.pressed = true
+
+	button.gui_input.emit(press)
+	var first: Tween = button.get_meta(ButtonEffects.TWEEN_META_KEY) as Tween
+	button.gui_input.emit(press)
+
+	assert_bool(first.is_valid()).is_false()
+	await await_millis(int(ButtonEffects.TWEEN_DURATION * 1000.0) + 100)
+	assert_vector(button.scale).is_equal_approx(ButtonEffects.CLICK_SCALE, Vector2(0.001, 0.001))
 
 
 func _connection_counts(button: Button) -> Array[int]:
