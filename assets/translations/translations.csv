@@ -195,3 +195,30 @@ STAT.PROJECTILE_COUNT,Projectile Count,Nombre de projectiles
 STAT.SHOOT_RANGE,Shoot Range,Portée de tir
 STAT.SPEED,Speed,Vitesse
 STAT.SPREAD_ANGLE,Spread Angle,Angle de dispersion
+BUTTON.HOME,Home,Accueil
+BUTTON.PLAY,Play,Jouer
+BUTTON.RETRY,Retry,Réessayer
+BUTTON.PAUSE,Pause,Pause
+BUTTON.FAST_FORWARD,Fast forward,Avance rapide
+BUTTON.MUSIC,Music,Musique
+BUTTON.MUSIC_OFF,Music off,Musique coupée
+BUTTON.SOUND,Sound,Son
+BUTTON.SOUND_OFF,Sound off,Son coupé
+BUTTON.ENCYCLOPEDIA,Encyclopedia,Encyclopédie
+BUTTON.BUILD,Build,Construire
+BUTTON.CLOSE,Close,Fermer
+BUTTON.TROPHY,Challenges,Défis
+BUTTON.SHIELD,Armory,Armurerie
+BUTTON.REPORT,Report a bug,Signaler un bug
+BUTTON.MAIL,Contact us,Nous contacter
+BUTTON.INSTAGRAM,Instagram,Instagram
+BUTTON.X_SOCIAL,X,X
+BUTTON.DISCORD,Discord,Discord
+BUTTON.FLAG_EN,English,English
+BUTTON.FLAG_FR,Français,Français
+BUTTON.BACK,Back,Retour
+BUTTON.INFO,Info,Infos
+BUTTON.UPGRADE,Upgrade,Améliorer
+BUTTON.SELL,Sell,Vendre
+BUTTON.ARROW_LEFT,Previous,Précédent
+BUTTON.ARROW_RIGHT,Next,Suivant

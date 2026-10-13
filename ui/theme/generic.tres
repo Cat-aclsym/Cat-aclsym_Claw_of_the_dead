@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=16 format=3 uid="uid://dr31fy67cgji3"]
+[gd_resource type="Theme" load_steps=20 format=3 uid="uid://dr31fy67cgji3"]
 
 [ext_resource type="FontFile" uid="uid://ddo3rokwsadq0" path="res://assets/fonts/dotgothic/dotgothic16_regular.ttf" id="1_dotgothic"]
 [ext_resource type="Texture2D" uid="uid://bwgb811hwxy0" path="res://assets/ui/buttons/button_blue.png" id="2_btn_blue"]
@@ -119,6 +119,26 @@ texture_margin_right = 22.0
 texture_margin_bottom = 22.0
 modulate_color = Color(0.8, 0.8, 0.8, 1)
 
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_game_rect"]
+content_margin_left = 8.0
+content_margin_top = 8.0
+content_margin_right = 9.0
+content_margin_bottom = 9.0
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_game_hexa"]
+content_margin_left = 4.0
+content_margin_top = 10.0
+content_margin_right = 4.0
+content_margin_bottom = 13.0
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_game_wide"]
+content_margin_left = 16.0
+content_margin_top = 8.0
+content_margin_right = 16.0
+content_margin_bottom = 12.0
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_game_none"]
+
 [resource]
 default_font = ExtResource("1_dotgothic")
 default_font_size = 30
@@ -127,6 +147,84 @@ Fonts/colors/color = Color(0.137255, 0.215686, 0.223529, 1)
 Fonts/fonts/text = ExtResource("1_dotgothic")
 Fonts/fonts/title = ExtResource("1_dotgothic")
 Fonts/styles/test = null
+GameButtonBanner/base_type = &"Button"
+GameButtonBanner/colors/font_color = Color(0.0235294, 0.156863, 0.168627, 1)
+GameButtonBanner/colors/font_disabled_color = Color(0.0235294, 0.156863, 0.168627, 1)
+GameButtonBanner/colors/font_focus_color = Color(0.0235294, 0.156863, 0.168627, 1)
+GameButtonBanner/colors/font_hover_color = Color(0.0235294, 0.156863, 0.168627, 1)
+GameButtonBanner/colors/font_hover_pressed_color = Color(0.0235294, 0.156863, 0.168627, 1)
+GameButtonBanner/colors/font_pressed_color = Color(0.0235294, 0.156863, 0.168627, 1)
+GameButtonBanner/styles/disabled = SubResource("StyleBoxEmpty_game_wide")
+GameButtonBanner/styles/focus = SubResource("StyleBoxEmpty_game_wide")
+GameButtonBanner/styles/hover = SubResource("StyleBoxEmpty_game_wide")
+GameButtonBanner/styles/hover_pressed = SubResource("StyleBoxEmpty_game_wide")
+GameButtonBanner/styles/normal = SubResource("StyleBoxEmpty_game_wide")
+GameButtonBanner/styles/pressed = SubResource("StyleBoxEmpty_game_wide")
+GameButtonHexa/base_type = &"Button"
+GameButtonHexa/colors/font_color = Color(0.0235294, 0.156863, 0.168627, 1)
+GameButtonHexa/colors/font_disabled_color = Color(0.0235294, 0.156863, 0.168627, 1)
+GameButtonHexa/colors/font_focus_color = Color(0.0235294, 0.156863, 0.168627, 1)
+GameButtonHexa/colors/font_hover_color = Color(0.0235294, 0.156863, 0.168627, 1)
+GameButtonHexa/colors/font_hover_pressed_color = Color(0.0235294, 0.156863, 0.168627, 1)
+GameButtonHexa/colors/font_pressed_color = Color(0.0235294, 0.156863, 0.168627, 1)
+GameButtonHexa/styles/disabled = SubResource("StyleBoxEmpty_game_hexa")
+GameButtonHexa/styles/focus = SubResource("StyleBoxEmpty_game_hexa")
+GameButtonHexa/styles/hover = SubResource("StyleBoxEmpty_game_hexa")
+GameButtonHexa/styles/hover_pressed = SubResource("StyleBoxEmpty_game_hexa")
+GameButtonHexa/styles/normal = SubResource("StyleBoxEmpty_game_hexa")
+GameButtonHexa/styles/pressed = SubResource("StyleBoxEmpty_game_hexa")
+GameButtonNone/base_type = &"Button"
+GameButtonNone/colors/font_color = Color(0.0235294, 0.156863, 0.168627, 1)
+GameButtonNone/colors/font_disabled_color = Color(0.0235294, 0.156863, 0.168627, 1)
+GameButtonNone/colors/font_focus_color = Color(0.0235294, 0.156863, 0.168627, 1)
+GameButtonNone/colors/font_hover_color = Color(0.0235294, 0.156863, 0.168627, 1)
+GameButtonNone/colors/font_hover_pressed_color = Color(0.0235294, 0.156863, 0.168627, 1)
+GameButtonNone/colors/font_pressed_color = Color(0.0235294, 0.156863, 0.168627, 1)
+GameButtonNone/styles/disabled = SubResource("StyleBoxEmpty_game_none")
+GameButtonNone/styles/focus = SubResource("StyleBoxEmpty_game_none")
+GameButtonNone/styles/hover = SubResource("StyleBoxEmpty_game_none")
+GameButtonNone/styles/hover_pressed = SubResource("StyleBoxEmpty_game_none")
+GameButtonNone/styles/normal = SubResource("StyleBoxEmpty_game_none")
+GameButtonNone/styles/pressed = SubResource("StyleBoxEmpty_game_none")
+GameButtonPanel/base_type = &"Button"
+GameButtonPanel/colors/font_color = Color(0.0235294, 0.156863, 0.168627, 1)
+GameButtonPanel/colors/font_disabled_color = Color(0.0235294, 0.156863, 0.168627, 1)
+GameButtonPanel/colors/font_focus_color = Color(0.0235294, 0.156863, 0.168627, 1)
+GameButtonPanel/colors/font_hover_color = Color(0.0235294, 0.156863, 0.168627, 1)
+GameButtonPanel/colors/font_hover_pressed_color = Color(0.0235294, 0.156863, 0.168627, 1)
+GameButtonPanel/colors/font_pressed_color = Color(0.0235294, 0.156863, 0.168627, 1)
+GameButtonPanel/styles/disabled = SubResource("StyleBoxEmpty_game_wide")
+GameButtonPanel/styles/focus = SubResource("StyleBoxEmpty_game_wide")
+GameButtonPanel/styles/hover = SubResource("StyleBoxEmpty_game_wide")
+GameButtonPanel/styles/hover_pressed = SubResource("StyleBoxEmpty_game_wide")
+GameButtonPanel/styles/normal = SubResource("StyleBoxEmpty_game_wide")
+GameButtonPanel/styles/pressed = SubResource("StyleBoxEmpty_game_wide")
+GameButtonRect/base_type = &"Button"
+GameButtonRect/colors/font_color = Color(0.0235294, 0.156863, 0.168627, 1)
+GameButtonRect/colors/font_disabled_color = Color(0.0235294, 0.156863, 0.168627, 1)
+GameButtonRect/colors/font_focus_color = Color(0.0235294, 0.156863, 0.168627, 1)
+GameButtonRect/colors/font_hover_color = Color(0.0235294, 0.156863, 0.168627, 1)
+GameButtonRect/colors/font_hover_pressed_color = Color(0.0235294, 0.156863, 0.168627, 1)
+GameButtonRect/colors/font_pressed_color = Color(0.0235294, 0.156863, 0.168627, 1)
+GameButtonRect/styles/disabled = SubResource("StyleBoxEmpty_game_rect")
+GameButtonRect/styles/focus = SubResource("StyleBoxEmpty_game_rect")
+GameButtonRect/styles/hover = SubResource("StyleBoxEmpty_game_rect")
+GameButtonRect/styles/hover_pressed = SubResource("StyleBoxEmpty_game_rect")
+GameButtonRect/styles/normal = SubResource("StyleBoxEmpty_game_rect")
+GameButtonRect/styles/pressed = SubResource("StyleBoxEmpty_game_rect")
+GameButtonRectShort/base_type = &"Button"
+GameButtonRectShort/colors/font_color = Color(0.0235294, 0.156863, 0.168627, 1)
+GameButtonRectShort/colors/font_disabled_color = Color(0.0235294, 0.156863, 0.168627, 1)
+GameButtonRectShort/colors/font_focus_color = Color(0.0235294, 0.156863, 0.168627, 1)
+GameButtonRectShort/colors/font_hover_color = Color(0.0235294, 0.156863, 0.168627, 1)
+GameButtonRectShort/colors/font_hover_pressed_color = Color(0.0235294, 0.156863, 0.168627, 1)
+GameButtonRectShort/colors/font_pressed_color = Color(0.0235294, 0.156863, 0.168627, 1)
+GameButtonRectShort/styles/disabled = SubResource("StyleBoxEmpty_game_rect")
+GameButtonRectShort/styles/focus = SubResource("StyleBoxEmpty_game_rect")
+GameButtonRectShort/styles/hover = SubResource("StyleBoxEmpty_game_rect")
+GameButtonRectShort/styles/hover_pressed = SubResource("StyleBoxEmpty_game_rect")
+GameButtonRectShort/styles/normal = SubResource("StyleBoxEmpty_game_rect")
+GameButtonRectShort/styles/pressed = SubResource("StyleBoxEmpty_game_rect")
 HeaderLarge/base_type = &"Label"
 HeaderLarge/colors/font_color = Color(1, 1, 1, 1)
 HeaderLarge/colors/font_outline_color = Color(1, 1, 1, 1)
