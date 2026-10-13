@@ -83,10 +83,50 @@ func test_the_price_label_uses_a_variation_per_state() -> void:
 	assert_that(unaffordable.price_label.modulate).is_equal(Color.WHITE)
 
 
-func _card(id: String) -> BuildCard:
+func test_the_price_row_is_centered_inside_the_green_band_of_the_frame() -> void:
+	ProgressionManager.unlock_tower_no_save("bat_02")
+	for id: String in BuildSelection.CARD_IDS:
+		var card: BuildCard = _card(id, Vector2(70.0, 200.0))
+		await await_idle_frame()
+		await await_idle_frame()
+		var band: Rect2 = _band(card.button_texture)
+		var row: Control = card.price_label.get_parent()
+		var content: Rect2 = card.price_label.get_global_rect()
+		if card.price_coin_icon.visible:
+			content = content.merge(card.price_coin_icon.get_global_rect())
+
+		assert_bool(band.grow(0.01).encloses(row.get_global_rect())).override_failure_message("%s: row %s outside band %s" % [id, row.get_global_rect(), band]).is_true()
+		assert_bool(band.grow(0.01).encloses(content)).override_failure_message("%s: content %s outside band %s" % [id, content, band]).is_true()
+		assert_float(content.get_center().x).override_failure_message("%s: content not centered horizontally" % id).is_equal_approx(band.get_center().x, 1.0)
+		assert_float(content.get_center().y).override_failure_message("%s: content not centered vertically" % id).is_equal_approx(band.get_center().y, 1.0)
+
+
+## Returns the rect, in global coordinates, of the filled bottom band of the frame texture drawn in [param button] (inside the border).
+## [br]The band is measured on the texture: it starts at the first opaque row above the bottom at the middle column, and the border is as thick as the left edge.
+func _band(button: TextureButton) -> Rect2:
+	var image: Image = button.texture_normal.get_image()
+	var width: int = image.get_width()
+	var height: int = image.get_height()
+	var border: int = 0
+	while image.get_pixel(border, height / 2).a > 0.8:
+		border += 1
+	var top: int = height - 1
+	while image.get_pixel(width / 2, top - 1).a > 0.8:
+		top -= 1
+	var scale: float = minf(button.size.x / width, button.size.y / height)
+	return Rect2(button.global_position + Vector2(border, top) * scale, Vector2(width - 2 * border, height - border - top) * scale)
+
+
+func _card(id: String, size: Vector2 = Vector2.ZERO) -> BuildCard:
 	var card: BuildCard = auto_free(CARD_SCENE.instantiate())
 	card.entity = _scene(id)
-	add_child(card)
+	if size == Vector2.ZERO:
+		add_child(card)
+		return card
+	var host: Control = auto_free(Control.new())
+	host.size = size
+	host.add_child(card)
+	add_child(host)
 	return card
 
 

@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=17 format=3 uid="uid://dr31fy67cgji3"]
+[gd_resource type="Theme" load_steps=18 format=3 uid="uid://dr31fy67cgji3"]
 
 [ext_resource type="FontFile" uid="uid://ddo3rokwsadq0" path="res://assets/fonts/dotgothic/dotgothic16_regular.ttf" id="1_dotgothic"]
 [ext_resource type="FontVariation" uid="uid://b5t3wfh501ofr" path="res://ui/theme/dotgothic_variation.tres" id="5_variation"]
@@ -11,6 +11,7 @@
 [ext_resource type="StyleBoxFlat" path="res://ui/theme/styles/health_bar_fill.tres" id="12_hb_fill"]
 [ext_resource type="StyleBoxFlat" path="res://ui/theme/styles/health_bar_border.tres" id="13_hb_border"]
 [ext_resource type="StyleBoxFlat" path="res://ui/theme/styles/tooltip_panel.tres" id="14_tooltip"]
+[ext_resource type="FontVariation" path="res://ui/theme/dotgothic_price_variation.tres" id="15_price"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_game_rect"]
 content_margin_left = 8.0
@@ -277,6 +278,7 @@ MenuPanelSliced/base_type = &"PanelContainer"
 MenuPanelSliced/styles/panel = ExtResource("9_menu_panel_sliced")
 PriceLabel/base_type = &"Label"
 PriceLabel/font_sizes/font_size = 16
+PriceLabel/fonts/font = ExtResource("15_price")
 PriceLabelLocked/base_type = &"PriceLabel"
 PriceLabelLocked/colors/font_color = Color(0.75, 0.78, 0.8, 1)
 PriceLabelUnaffordable/base_type = &"PriceLabel"
