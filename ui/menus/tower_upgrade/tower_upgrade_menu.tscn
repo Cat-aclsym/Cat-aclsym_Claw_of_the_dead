@@ -50,6 +50,7 @@ layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 1
 size_flags_stretch_ratio = 0.2
+theme_type_variation = &"TitleText"
 text = ""
 
 [node name="TabsHBoxContainer" type="HBoxContainer" parent="UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer"]

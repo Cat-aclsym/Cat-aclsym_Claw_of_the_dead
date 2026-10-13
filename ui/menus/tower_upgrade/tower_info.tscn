@@ -45,6 +45,7 @@ layout_mode = 2
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_stretch_ratio = 0.3
+theme_type_variation = &"TitleText"
 text = ""
 
 [node name="StatsScrollContainer" type="ScrollContainer" parent="InfoPanel/InfoVBoxContainer"]

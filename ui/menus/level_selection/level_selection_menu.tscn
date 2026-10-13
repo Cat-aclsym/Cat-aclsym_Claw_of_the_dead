@@ -105,8 +105,7 @@ size_flags_horizontal = 3
 [node name="ArcTitleLabel" type="Label" parent="MarginContainer/VBoxContainer/CenterContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0.4, 1, 0.4, 1)
-theme_override_font_sizes/font_size = 65
+theme_type_variation = &"ArcTitle"
 text = ""
 horizontal_alignment = 1
 vertical_alignment = 2
@@ -197,7 +196,7 @@ stretch_mode = 5
 
 [node name="Label" type="Label" parent="MarginContainer/VBoxContainer/BodyContainer/LockedFrame/VBoxContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 32
+theme_type_variation = &"TitleText"
 text = "LEVEL_SELECTION.COMING_SOON"
 uppercase = true
 

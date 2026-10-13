@@ -31,24 +31,19 @@ stretch_mode = 5
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-theme_type_variation = &"UILabel"
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_font_sizes/font_size = 20
+theme_type_variation = &"CardTitle"
 text = ""
 
 [node name="DiffLabel" type="Label" parent="VBox/Row"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_type_variation = &"UILabel"
-theme_override_font_sizes/font_size = 16
+theme_type_variation = &"CardText"
 text = ""
 
 [node name="DescLabel" type="Label" parent="VBox"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-theme_type_variation = &"UILabel"
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_font_sizes/font_size = 17
+theme_type_variation = &"CardText"
 text = ""
 autowrap_mode = 3

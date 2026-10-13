@@ -53,8 +53,7 @@ alignment = 1
 
 [node name="TitleLabel" type="Label" parent="GUIMarginContainer/BackgroundTextureRect/ContentMarginContainer/VBoxContainerMain"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.364706, 0.847059, 0.364706, 1)
-theme_override_font_sizes/font_size = 50
+theme_type_variation = &"VictoryTitle"
 text = "ENDGAMEMENU.TIMESTATISTIC.LABEL"
 horizontal_alignment = 1
 clip_text = true

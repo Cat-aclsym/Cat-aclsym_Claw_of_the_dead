@@ -43,7 +43,7 @@ layout_mode = 2
 [node name="LevelNameLabel" type="Label" parent="LevelPanelContainer/LevelMarginContainer/LevelVBoxContainer/TopVBoxContainer/HeaderHBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 40
+theme_type_variation = &"TitleLargeText"
 text = ""
 
 [node name="CatIconTextureRect" type="TextureRect" parent="LevelPanelContainer/LevelMarginContainer/LevelVBoxContainer/TopVBoxContainer/HeaderHBoxContainer"]
@@ -55,7 +55,7 @@ stretch_mode = 5
 [node name="DescriptionLabel" type="Label" parent="LevelPanelContainer/LevelMarginContainer/LevelVBoxContainer/TopVBoxContainer"]
 custom_minimum_size = Vector2(300, 20)
 layout_mode = 2
-theme_override_font_sizes/font_size = 24
+theme_type_variation = &"BodyLargeText"
 text = ""
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -85,8 +85,7 @@ stretch_mode = 5
 custom_minimum_size = Vector2(200, 20)
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/line_spacing = -8
-theme_override_font_sizes/font_size = 16
+theme_type_variation = &"SmallTight"
 text = ""
 vertical_alignment = 1
 autowrap_mode = 3
@@ -106,8 +105,7 @@ stretch_mode = 5
 custom_minimum_size = Vector2(200, 20)
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/line_spacing = -8
-theme_override_font_sizes/font_size = 16
+theme_type_variation = &"SmallTight"
 text = ""
 vertical_alignment = 1
 autowrap_mode = 3
@@ -127,8 +125,7 @@ stretch_mode = 5
 custom_minimum_size = Vector2(200, 20)
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/line_spacing = -8
-theme_override_font_sizes/font_size = 16
+theme_type_variation = &"SmallTight"
 text = ""
 vertical_alignment = 1
 autowrap_mode = 3

@@ -24,7 +24,7 @@ theme_override_constants/separation = 4
 [node name="StatName" type="Label" parent="ContentColumn"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 20
+theme_type_variation = &"BodyText"
 
 [node name="TicksContainer" type="HBoxContainer" parent="ContentColumn"]
 layout_mode = 2

@@ -56,7 +56,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_font_sizes/font_size = 15
+theme_type_variation = &"SmallText"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -120,7 +120,7 @@ alignment = 1
 [node name="PriceLabel" type="Label" parent="CardVBoxContainer/CardAspectRatioContainer/CardTextureButton/PriceRow"]
 texture_filter = 5
 layout_mode = 2
-theme_override_font_sizes/font_size = 15
+theme_type_variation = &"PriceLabel"
 horizontal_alignment = 1
 vertical_alignment = 1
 

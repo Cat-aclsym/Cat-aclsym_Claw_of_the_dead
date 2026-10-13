@@ -58,8 +58,7 @@ alignment = 1
 
 [node name="TitlePauseMenu" type="Label" parent="Panel/MarginContainer/PanelContainer/CenterContainer/VBoxContainer"]
 layout_mode = 2
-theme_type_variation = &"HeaderLarge"
-theme_override_font_sizes/font_size = 50
+theme_type_variation = &"HeaderDisplay"
 text = "PAUSE.TITLE"
 horizontal_alignment = 1
 vertical_alignment = 1

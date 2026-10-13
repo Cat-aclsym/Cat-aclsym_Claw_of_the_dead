@@ -42,7 +42,7 @@ alignment = 1
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 42
+theme_type_variation = &"TitleLargeText"
 text = "ARMORY.TITLE"
 autowrap_mode = 3
 
@@ -61,7 +61,7 @@ stretch_mode = 5
 [node name="StarsCountLabel" type="Label" parent="MainMargin/VBox/HeaderHBox/StarsStrip"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_font_sizes/font_size = 22
+theme_type_variation = &"BodyText"
 text = "0"
 vertical_alignment = 1
 
@@ -150,7 +150,7 @@ theme_override_constants/separation = 6
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 24
+theme_type_variation = &"SubtitleText"
 autowrap_mode = 3
 
 [node name="DescriptionLabel" type="Label" parent="DescriptionPanel/DescriptionMargin/DescriptionVBox"]
@@ -158,7 +158,7 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 0
-theme_override_font_sizes/font_size = 20
+theme_type_variation = &"BodyText"
 vertical_alignment = 1
 autowrap_mode = 3
 
@@ -212,7 +212,7 @@ theme_override_constants/separation = 18
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 30
+theme_type_variation = &"TitleText"
 text = "ARMORY.RESET_STARS_CONFIRM"
 horizontal_alignment = 1
 autowrap_mode = 3

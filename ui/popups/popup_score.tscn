@@ -109,6 +109,7 @@ alignment = 1
 [node name="Label" type="Label" parent="FloatingNumbers/PriceRow"]
 texture_filter = 1
 layout_mode = 2
+theme_type_variation = &"ScorePopup"
 text = "default_value"
 horizontal_alignment = 1
 vertical_alignment = 1
