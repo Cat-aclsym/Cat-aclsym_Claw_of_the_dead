@@ -16,26 +16,6 @@ const TICK_EMPTY: Texture2D = preload("res://assets/ui/icons/stat_tick_empty.png
 const TICK_FULL: Texture2D = preload("res://assets/ui/icons/stat_tick_full.png")
 const TICK_SIZE: int = 28
 
-const _ICON_AOE_RANGE: Texture2D = preload("res://assets/ui/stats/aoe_range.png")
-const _ICON_ATTACK: Texture2D = preload("res://assets/ui/stats/attack.png")
-const _ICON_ATTACK_MULTIPLIER: Texture2D = preload("res://assets/ui/stats/attack_multiplier.png")
-const _ICON_BULLETS: Texture2D = preload("res://assets/ui/stats/bullets.png")
-const _ICON_BURN_DAMAGE: Texture2D = preload("res://assets/ui/stats/burn_damage.png")
-const _ICON_BURN_DURATION: Texture2D = preload("res://assets/ui/stats/burn_duration.png")
-const _ICON_ELECTRICITY_BASE: Texture2D = preload("res://assets/ui/stats/electricity_base.png")
-const _ICON_ELECTRICITY_CHAIN: Texture2D = preload("res://assets/ui/stats/electricity_chain_bounces.png")
-const _ICON_ELECTRICITY_CHAIN_FALLOFF: Texture2D = preload("res://assets/ui/stats/electricity_chain_falloff.png")
-const _ICON_ELECTRICITY_CHAIN_RANGE: Texture2D = preload("res://assets/ui/stats/electricity_chain_range.png")
-const _ICON_ELECTRICITY_DURATION: Texture2D = preload("res://assets/ui/stats/electricity_duration.png")
-const _ICON_ELECTRICITY_INTERVAL: Texture2D = preload("res://assets/ui/stats/electricity_interval.png")
-const _ICON_ELECTRICITY_SLOW: Texture2D = preload("res://assets/ui/stats/electricity_slow.png")
-const _ICON_FIRE_RATE: Texture2D = preload("res://assets/ui/stats/fire_rate.png")
-const _ICON_PIERCE_COUNT: Texture2D = preload("res://assets/ui/stats/pierce_count.png")
-const _ICON_PIERCE_REDUCTION: Texture2D = preload("res://assets/ui/stats/pierce_reduction.png")
-const _ICON_RANGE: Texture2D = preload("res://assets/ui/stats/range.png")
-const _ICON_SPEED: Texture2D = preload("res://assets/ui/stats/speed.png")
-const _ICON_SPREAD: Texture2D = preload("res://assets/ui/stats/spread.png")
-
 var _blinking_ticks: Array[TextureRect] = []
 
 @onready var _icon: TextureRect = $StatIcon
@@ -62,7 +42,7 @@ func _process(_delta: float) -> void:
 ## [br] [param max_value] The reference ceiling for normalizing tick count.
 ## [br] [param show_change] If true, blinking ticks highlight the changed portion.
 func setup(stat_name: String, current_value: float, new_value: float, max_value: float = MAX_STAT_VALUE, show_change: bool = false) -> void:
-	var icon: Texture2D = _get_icon_for_stat(stat_name)
+	var icon: Texture2D = StatIcon.for_stat(stat_name)
 	if icon != null:
 		_icon.texture = icon
 
@@ -94,50 +74,6 @@ func setup(stat_name: String, current_value: float, new_value: float, max_value:
 			_blinking_ticks.append(fg)
 		else:
 			_ticks_container.add_child(_make_tick(TICK_FULL if is_filled else TICK_EMPTY))
-
-## Returns the icon matching [param stat_name], or null if unmapped.
-func _get_icon_for_stat(stat_name: String) -> Texture2D:
-	match stat_name:
-		"aoe_range":
-			return _ICON_AOE_RANGE
-		"damage":
-			return _ICON_ATTACK
-		"chain_damage_falloff":
-			return _ICON_ELECTRICITY_CHAIN_FALLOFF
-		"damage_multiplier":
-			return _ICON_ATTACK_MULTIPLIER
-		"projectile_count":
-			return _ICON_BULLETS
-		"aoe_tick", "burn_damage_base":
-			return _ICON_BURN_DAMAGE
-		"aoe_duration", "burn_duration":
-			return _ICON_BURN_DURATION
-		"electrify_tick_damage":
-			return _ICON_ELECTRICITY_BASE
-		"chain_bounces":
-			return _ICON_ELECTRICITY_CHAIN
-		"chain_range":
-			return _ICON_ELECTRICITY_CHAIN_RANGE
-		"electrify_duration":
-			return _ICON_ELECTRICITY_DURATION
-		"electrify_tick_interval":
-			return _ICON_ELECTRICITY_INTERVAL
-		"electrify_slow_amount":
-			return _ICON_ELECTRICITY_SLOW
-		"fire_rate":
-			return _ICON_FIRE_RATE
-		"pierce_count":
-			return _ICON_PIERCE_COUNT
-		"pierce_reduction":
-			return _ICON_PIERCE_REDUCTION
-		"shoot_range":
-			return _ICON_RANGE
-		"speed":
-			return _ICON_SPEED
-		"spread_angle":
-			return _ICON_SPREAD
-		_:
-			return null
 
 ## Creates a TextureRect tick with the shared display settings.
 func _make_tick(texture: Texture2D) -> TextureRect:

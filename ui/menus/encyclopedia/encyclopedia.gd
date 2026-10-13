@@ -9,12 +9,8 @@ extends Control
 signal menu_close
 
 
-const _ICON_ATTACK: Texture2D = preload("res://assets/ui/stats/attack.png")
 const _ICON_COIN: Texture2D = preload("res://assets/ui/hud/coin.png")
-const _ICON_FIRE_RATE: Texture2D = preload("res://assets/ui/stats/fire_rate.png")
 const _ICON_HEALTH: Texture2D = preload("res://assets/ui/hud/heart.png")
-const _ICON_RANGE: Texture2D = preload("res://assets/ui/stats/range.png")
-const _ICON_SPEED: Texture2D = preload("res://assets/ui/stats/zombie_speed.png")
 
 
 ## Internal data structure for all entries.
@@ -343,15 +339,15 @@ func _get_icon_for_encyclopedia_stat(p_key: String) -> Texture2D:
 		"ENCYCLOPEDIA.STATS.COST", "ENCYCLOPEDIA.STATS.REWARD":
 			return _ICON_COIN
 		"ENCYCLOPEDIA.STATS.DAMAGE":
-			return _ICON_ATTACK
+			return StatIcon.texture(StatIcon.Id.ATTACK)
 		"ENCYCLOPEDIA.STATS.FIRERATE":
-			return _ICON_FIRE_RATE
+			return StatIcon.texture(StatIcon.Id.FIRE_RATE)
 		"ENCYCLOPEDIA.STATS.HEALTH":
 			return _ICON_HEALTH
 		"ENCYCLOPEDIA.STATS.RANGE":
-			return _ICON_RANGE
+			return StatIcon.texture(StatIcon.Id.RANGE)
 		"ENCYCLOPEDIA.STATS.SPEED":
-			return _ICON_SPEED
+			return StatIcon.texture(StatIcon.Id.ZOMBIE_SPEED)
 		_:
 			return null
 

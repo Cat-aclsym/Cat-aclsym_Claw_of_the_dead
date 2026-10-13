@@ -13,25 +13,25 @@ const _GRID_COLUMNS: int = 8
 
 ## All stat icons with their display label and the stat key(s) they represent.
 const _STATS: Array[Dictionary] = [
-	{"label": "Damage", "keys": "damage", "icon": "res://assets/ui/stats/attack.png"},
-	{"label": "Damage Multiplier", "keys": "damage_multiplier", "icon": "res://assets/ui/stats/attack_multiplier.png"},
-	{"label": "Fire Rate", "keys": "fire_rate", "icon": "res://assets/ui/stats/fire_rate.png"},
-	{"label": "Speed", "keys": "speed", "icon": "res://assets/ui/stats/speed.png"},
-	{"label": "Shoot Range", "keys": "shoot_range", "icon": "res://assets/ui/stats/range.png"},
-	{"label": "Spread Angle", "keys": "spread_angle", "icon": "res://assets/ui/stats/spread.png"},
-	{"label": "Projectile Count", "keys": "projectile_count", "icon": "res://assets/ui/stats/bullets.png"},
-	{"label": "AoE Range", "keys": "aoe_range", "icon": "res://assets/ui/stats/aoe_range.png"},
-	{"label": "Pierce Count", "keys": "pierce_count", "icon": "res://assets/ui/stats/pierce_count.png"},
-	{"label": "Pierce Reduction", "keys": "pierce_reduction", "icon": "res://assets/ui/stats/pierce_reduction.png"},
-	{"label": "Burn Damage", "keys": "aoe_tick · burn_damage_base", "icon": "res://assets/ui/stats/burn_damage.png"},
-	{"label": "Burn Duration", "keys": "aoe_duration · burn_duration", "icon": "res://assets/ui/stats/burn_duration.png"},
-	{"label": "Chain Bounces", "keys": "chain_bounces", "icon": "res://assets/ui/stats/electricity_chain_bounces.png"},
-	{"label": "Chain Range", "keys": "chain_range", "icon": "res://assets/ui/stats/electricity_chain_range.png"},
-	{"label": "Chain Falloff", "keys": "chain_damage_falloff", "icon": "res://assets/ui/stats/electricity_chain_falloff.png"},
-	{"label": "Electricity Damage", "keys": "electrify_tick_damage", "icon": "res://assets/ui/stats/electricity_base.png"},
-	{"label": "Electricity Duration", "keys": "electrify_duration", "icon": "res://assets/ui/stats/electricity_duration.png"},
-	{"label": "Electricity Interval", "keys": "electrify_tick_interval", "icon": "res://assets/ui/stats/electricity_interval.png"},
-	{"label": "Electricity Slow", "keys": "electrify_slow_amount", "icon": "res://assets/ui/stats/electricity_slow.png"},
+	{"label": "Damage", "keys": "damage", "icon": StatIcon.Id.ATTACK},
+	{"label": "Damage Multiplier", "keys": "damage_multiplier", "icon": StatIcon.Id.ATTACK_MULTIPLIER},
+	{"label": "Fire Rate", "keys": "fire_rate", "icon": StatIcon.Id.FIRE_RATE},
+	{"label": "Speed", "keys": "speed", "icon": StatIcon.Id.SPEED},
+	{"label": "Shoot Range", "keys": "shoot_range", "icon": StatIcon.Id.RANGE},
+	{"label": "Spread Angle", "keys": "spread_angle", "icon": StatIcon.Id.SPREAD},
+	{"label": "Projectile Count", "keys": "projectile_count", "icon": StatIcon.Id.BULLETS},
+	{"label": "AoE Range", "keys": "aoe_range", "icon": StatIcon.Id.AOE_RANGE},
+	{"label": "Pierce Count", "keys": "pierce_count", "icon": StatIcon.Id.PIERCE_COUNT},
+	{"label": "Pierce Reduction", "keys": "pierce_reduction", "icon": StatIcon.Id.PIERCE_REDUCTION},
+	{"label": "Burn Damage", "keys": "aoe_tick · burn_damage_base", "icon": StatIcon.Id.BURN_DAMAGE},
+	{"label": "Burn Duration", "keys": "aoe_duration · burn_duration", "icon": StatIcon.Id.BURN_DURATION},
+	{"label": "Chain Bounces", "keys": "chain_bounces", "icon": StatIcon.Id.ELECTRICITY_CHAIN_BOUNCES},
+	{"label": "Chain Range", "keys": "chain_range", "icon": StatIcon.Id.ELECTRICITY_CHAIN_RANGE},
+	{"label": "Chain Falloff", "keys": "chain_damage_falloff", "icon": StatIcon.Id.ELECTRICITY_CHAIN_FALLOFF},
+	{"label": "Electricity Damage", "keys": "electrify_tick_damage", "icon": StatIcon.Id.ELECTRICITY_BASE},
+	{"label": "Electricity Duration", "keys": "electrify_duration", "icon": StatIcon.Id.ELECTRICITY_DURATION},
+	{"label": "Electricity Interval", "keys": "electrify_tick_interval", "icon": StatIcon.Id.ELECTRICITY_INTERVAL},
+	{"label": "Electricity Slow", "keys": "electrify_slow_amount", "icon": StatIcon.Id.ELECTRICITY_SLOW},
 ]
 
 var _mode: DisplayMode = DisplayMode.LIST
@@ -74,7 +74,7 @@ func _populate_grid() -> void:
 	_stats_container.add_child(grid)
 
 	for entry: Dictionary in _STATS:
-		var texture: Texture2D = load(entry["icon"]) as Texture2D
+		var texture: Texture2D = StatIcon.texture(entry["icon"])
 
 		var cell := VBoxContainer.new()
 		cell.custom_minimum_size = Vector2(120.0, 0.0)
@@ -102,7 +102,7 @@ func _populate_grid() -> void:
 
 func _populate_list() -> void:
 	for entry: Dictionary in _STATS:
-		var texture: Texture2D = load(entry["icon"]) as Texture2D
+		var texture: Texture2D = StatIcon.texture(entry["icon"])
 
 		var row := HBoxContainer.new()
 		row.add_theme_constant_override("separation", 16)
