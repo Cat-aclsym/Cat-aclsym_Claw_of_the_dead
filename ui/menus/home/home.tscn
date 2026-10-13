@@ -1,0 +1,178 @@
+[gd_scene load_steps=9 format=3 uid="uid://cqfsr6yjn6hm8"]
+
+[ext_resource type="Script" uid="uid://cibbgvfpeyya0" path="res://ui/menus/home/home.gd" id="1_dvove"]
+[ext_resource type="PackedScene" uid="uid://cj6rnvaq8x3mk" path="res://ui/components/styled_button.tscn" id="5_styled_btn"]
+[ext_resource type="Texture2D" uid="uid://bsir4xrig5yqd" path="res://assets/ui/branding/logo_cat.png" id="3_gislx"]
+[ext_resource type="Texture2D" uid="uid://c2pj8fxbv5usu" path="res://assets/ui/branding/logo_text_white.png" id="4_aa1tm"]
+[ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://ui/theme/generic.tres" id="4_ay1j5"]
+[ext_resource type="Texture2D" uid="uid://c1f4e2f8oknku" path="res://assets/ui/icons/exclamation.png" id="7_exclamation"]
+
+[sub_resource type="Gradient" id="Gradient_p68sa"]
+interpolation_mode = 2
+interpolation_color_space = 2
+offsets = PackedFloat32Array(0.0122449, 1)
+colors = PackedColorArray(0.180392, 0.478431, 0.482353, 1, 0.137255, 0.215686, 0.223529, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_fm0i7"]
+gradient = SubResource("Gradient_p68sa")
+width = 1024
+height = 1024
+use_hdr = true
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(0.8, 0)
+
+[node name="HomeMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_dvove")
+
+[node name="BackgroundTextureRect" type="TextureRect" parent="."]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = SubResource("GradientTexture2D_fm0i7")
+expand_mode = 1
+
+[node name="MonogramTextureRect" type="TextureRect" parent="."]
+modulate = Color(1, 1, 1, 0.352941)
+texture_filter = 6
+layout_mode = 2
+offset_left = -238.0
+offset_top = -214.0
+offset_right = 995.0
+offset_bottom = 713.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_gislx")
+expand_mode = 2
+stretch_mode = 4
+
+[node name="CopyrightLabel" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 30.0
+offset_top = -28.0
+offset_right = 30.0
+offset_bottom = -5.0
+grow_horizontal = 2
+grow_vertical = 0
+size_flags_vertical = 8
+theme = ExtResource("4_ay1j5")
+theme_override_font_sizes/font_size = 15
+text = "HOME.COPYRIGHT"
+vertical_alignment = 2
+
+[node name="GuiMarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 40
+
+[node name="GuiHBoxContainer" type="HBoxContainer" parent="GuiMarginContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="LogoTextureRect" type="TextureRect" parent="GuiMarginContainer/GuiHBoxContainer"]
+texture_filter = 1
+layout_mode = 2
+size_flags_horizontal = 3
+texture = ExtResource("4_aa1tm")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="HomeScreenVBoxContainer" type="VBoxContainer" parent="GuiMarginContainer/GuiHBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 8
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="PlayButton" parent="GuiMarginContainer/GuiHBoxContainer/HomeScreenVBoxContainer" instance=ExtResource("5_styled_btn")]
+unique_name_in_owner = true
+texture_filter = 1
+custom_minimum_size = Vector2(500, 160)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_type_variation = &"HomeButton"
+theme_override_constants/outline_size = 9
+theme_override_font_sizes/font_size = 65
+text = "HOME.PLAY.BUTTON"
+
+[node name="EncyclopediaButton" parent="GuiMarginContainer/GuiHBoxContainer/HomeScreenVBoxContainer" instance=ExtResource("5_styled_btn")]
+unique_name_in_owner = true
+texture_filter = 1
+custom_minimum_size = Vector2(350, 110)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_type_variation = &"HomeButtonOrange"
+text = "HOME.ENCYCLOPEDIA.BUTTON"
+
+[node name="EncyclopediaExclamation" type="TextureRect" parent="GuiMarginContainer/GuiHBoxContainer/HomeScreenVBoxContainer/EncyclopediaButton"]
+unique_name_in_owner = true
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -20.0
+offset_top = -10.0
+offset_right = 10.0
+offset_bottom = 20.0
+grow_horizontal = 0
+texture = ExtResource("7_exclamation")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ArmoryButton" parent="GuiMarginContainer/GuiHBoxContainer/HomeScreenVBoxContainer" instance=ExtResource("5_styled_btn")]
+unique_name_in_owner = true
+texture_filter = 1
+custom_minimum_size = Vector2(350, 110)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_type_variation = &"HomeButton"
+text = "HOME.ARMORY.BUTTON"
+
+[node name="SettingsButton" parent="GuiMarginContainer/GuiHBoxContainer/HomeScreenVBoxContainer" instance=ExtResource("5_styled_btn")]
+unique_name_in_owner = true
+texture_filter = 1
+custom_minimum_size = Vector2(350, 110)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_type_variation = &"HomeButtonGreen"
+text = "HOME.SETTINGS.BUTTON"
+
+[node name="DebugStatsButton" type="Button" parent="."]
+unique_name_in_owner = true
+visible = false
+modulate = Color(1, 1, 1, 0.45)
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -150.0
+offset_top = -32.0
+offset_right = -8.0
+offset_bottom = -8.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 10
+text = "debug: stats icons"

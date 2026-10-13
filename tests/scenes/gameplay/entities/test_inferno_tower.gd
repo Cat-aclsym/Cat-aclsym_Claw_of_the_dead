@@ -3,7 +3,7 @@
 ## The inferno tower keeps the beam that burns its target instead of firing a new one.
 extends GdUnitTestSuite
 
-const BEAM_SCENE: PackedScene = preload("res://scenes/gameplay/entities/bullet/inferno_beam.tscn")
+const BEAM_SCENE: PackedScene = preload("res://game/projectiles/inferno_beam.tscn")
 const ENEMY_ID: String = "default_zombie"
 const INFERNO_TOWER_ID: String = "bat_09"
 

@@ -12,7 +12,7 @@ const DEFAULT_FRAMES: int = 6000
 const DEFAULT_LEVEL_ID: String = "lev.02"
 ## Frames the run goes on once the level ended, to catch what still happens after the end screen.
 const END_GRACE_FRAMES: int = 20
-const MAIN_SCENE_PATH: String = "res://scenes/main.tscn"
+const MAIN_SCENE_PATH: String = "res://main.tscn"
 const RNG_SEED: int = 1234
 ## Tower id, then the upgrades applied in order. Covers every projectile (arrow, aoe, fire, pierce, lightning, beam).
 const TOWERS: Array[Dictionary] = [

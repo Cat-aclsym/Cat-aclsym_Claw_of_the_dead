@@ -4,7 +4,7 @@
 extends GdUnitTestSuite
 
 const ENEMY_ID: String = "default_zombie"
-const LIGHTNING_SCENE: PackedScene = preload("res://scenes/gameplay/entities/bullet/instant_lightning.tscn")
+const LIGHTNING_SCENE: PackedScene = preload("res://game/projectiles/instant_lightning.tscn")
 const PAUSE_SOURCE: StringName = &"test_pause"
 
 

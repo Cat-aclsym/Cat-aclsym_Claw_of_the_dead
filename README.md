@@ -3,7 +3,7 @@
 2D tower defense built in **Godot 4.7** (Forward Plus). You defend a cat city from a zombie horde using cat-themed **towers** and **traps**, wave-based levels, optional **per-level challenges**, and an **armory** meta-progression tree unlocked with stars.
 
 **Application name in the editor:** `Cat'aclsym`
-**Main scene:** `res://scenes/main.tscn` (bootstraps `scenes/ui/ui.tscn`)
+**Main scene:** `res://main.tscn` (bootstraps `ui/ui.tscn`)
 
 ---
 
@@ -35,7 +35,7 @@ godot --headless --path . --quit-after 6000 res://tools/smoke_test.tscn
 godot --headless --path . -s res://addons/gdUnit4/bin/GdUnitCmdTool.gd -a res://tests -c --ignoreHeadlessMode -rd res://reports
 ```
 
-Unit tests use [gdUnit4](https://github.com/godot-gdunit-labs/gdUnit4) 6.2.2 (`addons/gdUnit4`), the suites of `tests/` mirror the layout of the sources (`scripts/autoloads/global.gd` is tested by `tests/autoloads/test_global_pause.gd`). Run one suite or one folder by passing its path to `-a` (`-a res://tests/autoloads`). The exit code is `0` when every test passes, `100` on a failing test, `101` on orphan nodes, `105` on a script error in a suite. `tests/` and `addons/gdUnit4/` are excluded from the exports.
+Unit tests use [gdUnit4](https://github.com/godot-gdunit-labs/gdUnit4) 6.2.2 (`addons/gdUnit4`), the suites of `tests/` mirror the layout of the sources (`autoloads/global.gd` is tested by `tests/autoloads/test_global_pause.gd`). Run one suite or one folder by passing its path to `-a` (`-a res://tests/autoloads`). The exit code is `0` when every test passes, `100` on a failing test, `101` on orphan nodes, `105` on a script error in a suite. `tests/` and `addons/gdUnit4/` are excluded from the exports.
 
 Exports use the presets in `export_presets.cfg` (`Windows Desktop`, `Android` arm64 APK) and write to `exports/`. CI signs the release APK with the `KEYSTORE_BASE64` and `KEYSTORE_PASSWORD` secrets, passed to Godot through the `GODOT_ANDROID_KEYSTORE_RELEASE_*` environment variables, and falls back to the debug keystore when they are missing.
 
@@ -52,7 +52,7 @@ Exports use the presets in `export_presets.cfg` (`Windows Desktop`, `Android` ar
 
 ### Story arcs and levels
 
-Arcs are laid out in `scenes/ui/menus/level_selection/level_selection_menu.tscn`, their titles are the `ARC.0X.TITLE` translation keys:
+Arcs are laid out in `ui/menus/level_selection/level_selection_menu.tscn`, their titles are the `ARC.0X.TITLE` translation keys:
 
 - **Arc 1**: *Chat'lanques de Nyarseille*, levels `lev.01` to `lev.05`.
 - **Arc 2**: *La mer Nyaditerranée*, levels `lev.06` to `lev.08`.
@@ -61,7 +61,7 @@ Level names and descriptions are the `LEVEL.LEV_0X.NAME` / `LEVEL.LEV_0X.DESC` k
 
 ### Challenges
 
-- **17** challenge definitions under `data/challenges/` (IDs like `cha.000` … `cha.205`), each pointing at a small GDScript under `scripts/challenges/logics/`.
+- **17** challenge definitions under `data/challenges/` (IDs like `cha.000` … `cha.205`), each pointing at a small GDScript under `core/challenges/logics/`.
 - Levels reference which challenges are active via their JSON `challenges` array (see e.g. `data/levels/lev.01.json`).
 
 ### Armory (meta)
@@ -97,7 +97,7 @@ Home, level selection, pause, options, HUD (waves, score popups, challenge UI), 
 ### Debug and tooling
 
 - **In-game debug console** (when enabled for the build): bound to **`** (grave / backtick)** to toggle (`toggle_console` input map), **Enter** to submit a line (`console_push`).
-- Console commands live in `scripts/commands/` (e.g. `help`, `load_level`, `set_money`, `set_time_scale`, `progression`, `unlock_armory`, …).
+- Console commands live in `debug/console/commands/` (e.g. `help`, `load_level`, `set_money`, `set_time_scale`, `progression`, `unlock_armory`, …).
 - `Global.debug` follows the `debug` export feature: true in the editor and debug exports, false in release exports.
 
 ### Persistence

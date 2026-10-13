@@ -3,7 +3,7 @@
 ## The music and sound buttons of the pause menu change the same settings as the options menu.
 extends GdUnitTestSuite
 
-const PAUSE_SCENE: PackedScene = preload("res://scenes/ui/menus/pause/pause.tscn")
+const PAUSE_SCENE: PackedScene = preload("res://ui/menus/pause/pause.tscn")
 
 var _data_before: ProgressionData = null
 var _persistence_before: bool = true

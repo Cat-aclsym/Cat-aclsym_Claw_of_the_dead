@@ -14,21 +14,21 @@
 			"escape_damage": 5,
 			"max_health": 50,
 			"reward": 20,
-			"scene": "res://scenes/gameplay/entities/enemy/enemies/ene.01.tscn",
+			"scene": "res://game/enemies/default_zombie.tscn",
 			"speed": 35
 		},
 		"damage_zombie": {
 			"escape_damage": 5,
 			"max_health": 120,
 			"reward": 40,
-			"scene": "res://scenes/gameplay/entities/enemy/enemies/ene.02.tscn",
+			"scene": "res://game/enemies/damage_zombie.tscn",
 			"speed": 20
 		},
 		"rat": {
 			"escape_damage": 5,
 			"max_health": 25,
 			"reward": 5,
-			"scene": "res://scenes/gameplay/entities/enemy/enemies/ene.03.tscn",
+			"scene": "res://game/enemies/rat.tscn",
 			"speed": 70
 		},
 		"splitter_zombie": {
@@ -38,14 +38,14 @@
 			},
 			"max_health": 150,
 			"reward": 5,
-			"scene": "res://scenes/gameplay/entities/enemy/enemies/splitter_zombie.tscn",
+			"scene": "res://game/enemies/splitter_zombie.tscn",
 			"speed": 35
 		},
 		"small_zombie": {
 			"escape_damage": 5,
 			"max_health": 25,
 			"reward": 10,
-			"scene": "res://scenes/gameplay/entities/enemy/enemies/small_zombie.tscn",
+			"scene": "res://game/enemies/small_zombie.tscn",
 			"speed": 70
 		},
     	"minesweeper": {
@@ -55,7 +55,7 @@
 			},
 			"max_health": 70,
 			"reward": 12,
-			"scene": "res://scenes/gameplay/entities/enemy/enemies/minesweeper.tscn",
+			"scene": "res://game/enemies/minesweeper.tscn",
 			"speed": 45
 		},
 		"big_daddy": {
@@ -70,7 +70,7 @@
 			},
 			"max_health": 700,
 			"reward": 400,
-			"scene": "res://scenes/gameplay/entities/enemy/enemies/big_daddy.tscn",
+			"scene": "res://game/enemies/big_daddy.tscn",
 			"speed": 20
 		}
 	},
@@ -108,7 +108,7 @@
 				"spread_angle": 15
 			},
 			"level": 1,
-			"scene": "res://scenes/gameplay/entities/tower/towers/bat_01.tscn",
+			"scene": "res://game/buildings/towers/bat_01.tscn",
 			"upgrades": [
 				"bat_01_02"
 			]
@@ -134,7 +134,7 @@
 				"spread_angle": 15
 			},
 			"level": 1,
-			"scene": "res://scenes/gameplay/entities/tower/towers/bat_02.tscn",
+			"scene": "res://game/buildings/towers/bat_02.tscn",
 			"upgrades": [
 				"bat_02_02"
 			]
@@ -169,7 +169,7 @@
 				"spread_angle": 0
 			},
 			"level": 1,
-			"scene": "res://scenes/gameplay/entities/tower/towers/bat_08.tscn",
+			"scene": "res://game/buildings/towers/bat_08.tscn",
 			"upgrades": [
 				"bat_08_02"
 			]
@@ -187,7 +187,7 @@
 				"spread_angle": 0
 			},
 			"level": 1,
-			"scene": "res://scenes/gameplay/entities/tower/towers/bat_09.tscn",
+			"scene": "res://game/buildings/towers/bat_09.tscn",
 			"upgrades": [
 				"bat_09_02"
 			]
@@ -202,7 +202,7 @@
 				"max_durability": 1,
 				"trap_type": 1
 			},
-			"scene": "res://scenes/gameplay/entities/trap/traps/bat_03.tscn"
+			"scene": "res://game/buildings/traps/bat_03.tscn"
 		},
 		"bat_04": {
 			"base": {
@@ -210,7 +210,7 @@
 				"slow_amount": 0.3,
 				"trap_type": 0
 			},
-			"scene": "res://scenes/gameplay/entities/trap/traps/bat_04.tscn"
+			"scene": "res://game/buildings/traps/bat_04.tscn"
 		},
 		"bat_05": {
 			"base": {
@@ -222,7 +222,7 @@
 				"max_durability": 1,
 				"trap_type": 1
 			},
-			"scene": "res://scenes/gameplay/entities/trap/traps/bat_05.tscn"
+			"scene": "res://game/buildings/traps/bat_05.tscn"
 		},
 		"bat_06": {
 			"base": {
@@ -232,7 +232,7 @@
 				"poison_interval": 1.0,
 				"trap_type": 0
 			},
-			"scene": "res://scenes/gameplay/entities/trap/traps/bat_06.tscn"
+			"scene": "res://game/buildings/traps/bat_06.tscn"
 		},
 		"bat_07": {
 			"base": {
@@ -243,7 +243,7 @@
 				"max_durability": 1,
 				"trap_type": 1
 			},
-			"scene": "res://scenes/gameplay/entities/trap/traps/bat_07.tscn"
+			"scene": "res://game/buildings/traps/bat_07.tscn"
 		}
 	},
 	"upgrades": {
@@ -373,7 +373,7 @@
 			}
 		},
 		"bat_01_a_04": {
-			"bullet_scene_path": "res://scenes/gameplay/entities/bullet/piercing_arrow.tscn",
+			"bullet_scene_path": "res://game/projectiles/piercing_arrow.tscn",
 			"bullet_stats": {
 				"aoe_duration": 0,
 				"aoe_range": 0,
@@ -545,7 +545,7 @@
 			}
 		},
 		"bat_02_a_04": {
-			"bullet_scene_path": "res://scenes/gameplay/entities/bullet/fire_arrow.tscn",
+			"bullet_scene_path": "res://game/projectiles/fire_arrow.tscn",
 			"bullet_stats": {
 				"aoe_duration": 0,
 				"aoe_range": -5,

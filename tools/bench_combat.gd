@@ -12,7 +12,7 @@ extends Node
 const ENEMY_ID: String = "default_zombie"
 const ENEMY_HEALTH: float = 1.0e9
 const LEVEL_ID: String = "lev.02"
-const MAIN_SCENE_PATH: String = "res://scenes/main.tscn"
+const MAIN_SCENE_PATH: String = "res://main.tscn"
 const RNG_SEED: int = 4321
 const SAMPLE_FRAMES: int = 600
 ## Towers by scenario: tower id, then the upgrades applied in order.

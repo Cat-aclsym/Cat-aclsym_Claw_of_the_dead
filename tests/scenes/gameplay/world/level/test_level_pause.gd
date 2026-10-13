@@ -4,7 +4,7 @@
 extends GdUnitTestSuite
 
 const LEVEL_ID: String = "lev.02"
-const MAIN_SCENE_PATH: String = "res://scenes/main.tscn"
+const MAIN_SCENE_PATH: String = "res://main.tscn"
 const PAUSE_SOURCE: StringName = &"test_pause"
 const WAVE_START_TIME_SCALE: float = 8.0
 const WAVE_START_TIMEOUT_MS: int = 10000

@@ -4,7 +4,7 @@
 ## [br]The fade tween is stepped by hand, so that the test does not wait for the real delays.
 extends GdUnitTestSuite
 
-const BAR_SCENE: PackedScene = preload("res://scenes/gameplay/entities/enemy/health_bar.tscn")
+const BAR_SCENE: PackedScene = preload("res://game/enemies/health_bar.tscn")
 
 
 func test_a_hit_fades_the_bar_in_then_out_after_the_delay() -> void:

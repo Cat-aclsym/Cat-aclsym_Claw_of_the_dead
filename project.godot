@@ -16,20 +16,20 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 
 config/name="Cat'aclsym"
 config/version="0.1.0"
-run/main_scene="res://scenes/main.tscn"
+run/main_scene="res://main.tscn"
 config/features=PackedStringArray("4.7", "Forward Plus")
 config/icon="res://assets/ui/branding/app_icon.jpg"
 
 [autoload]
 
-Global="*res://scripts/autoloads/global.gd"
-SoundManager="*res://scripts/autoloads/sound_manager.gd"
-ScenesLoader="*res://scripts/autoloads/scenes_loader.gd"
+Global="*res://autoloads/global.gd"
+SoundManager="*res://autoloads/sound_manager.gd"
+ScenesLoader="*res://autoloads/scenes_loader.gd"
 Dialogic="*uid://ds2q0uclmolvu"
-StatsDB="*res://scripts/autoloads/stats_db.gd"
-ProgressionManager="*res://scripts/autoloads/progression_manager.gd"
-ArmoryManager="*res://scripts/autoloads/armory_manager.gd"
-ChallengeManager="*res://scripts/autoloads/challenge_manager.gd"
+StatsDB="*res://autoloads/stats_db.gd"
+ProgressionManager="*res://autoloads/progression_manager.gd"
+ArmoryManager="*res://autoloads/armory_manager.gd"
+ChallengeManager="*res://autoloads/challenge_manager.gd"
 
 [debug]
 

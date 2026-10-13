@@ -13,10 +13,10 @@ const HEADLESS_ONLY_ERROR: String = "not supported in Dummy renderer"
 ## Process frames each level runs (the frame rate is capped, so this is a fixed real duration).
 const LEVEL_FRAMES: int = 240
 const LEVEL_TIME_SCALE: float = 8.0
-const LEVELS_DIR: String = "res://scenes/gameplay/world/level/levels"
+const LEVELS_DIR: String = "res://game/level/levels"
 ## Process frames the main scene idles before the levels start.
 const MAIN_SCENE_FRAMES: int = 120
-const MAIN_SCENE_PATH: String = "res://scenes/main.tscn"
+const MAIN_SCENE_PATH: String = "res://main.tscn"
 const MAX_REPORTED_ERRORS: int = 20
 
 

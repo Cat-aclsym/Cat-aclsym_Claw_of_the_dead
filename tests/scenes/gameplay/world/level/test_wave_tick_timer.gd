@@ -5,7 +5,7 @@ extends GdUnitTestSuite
 
 const FLOW_START_TIMEOUT_MS: int = 10000
 const INTRO_TIME_SCALE: float = 8.0
-const MAIN_SCENE_PATH: String = "res://scenes/main.tscn"
+const MAIN_SCENE_PATH: String = "res://main.tscn"
 const LEVEL_ID: String = "lev.02"
 ## Game time between two ticks.
 const TICK_INTERVAL_S: float = 0.5

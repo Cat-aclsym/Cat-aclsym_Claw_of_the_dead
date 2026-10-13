@@ -3,7 +3,7 @@
 ## The level end pauses the gameplay without pausing the scene tree: beams and traps must stop dealing damage meanwhile.
 extends GdUnitTestSuite
 
-const BEAM_SCENE: PackedScene = preload("res://scenes/gameplay/entities/bullet/inferno_beam.tscn")
+const BEAM_SCENE: PackedScene = preload("res://game/projectiles/inferno_beam.tscn")
 const BOMB_ID: String = "bat_05"
 const ENEMY_ID: String = "default_zombie"
 const FRAME_DELTA: float = 1.0
