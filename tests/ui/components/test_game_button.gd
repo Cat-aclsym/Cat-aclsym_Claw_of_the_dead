@@ -277,11 +277,41 @@ func test_an_override_set_on_the_instance_survives_the_red_round_trip() -> void:
 
 	button.palette = GameButton.Palette.RED
 	await await_idle_frame()
+	await await_idle_frame()
+	assert_str(button.theme_type_variation).is_equal(&"GameButtonRectInverse")
 	button.palette = GameButton.Palette.BLUE
 	await await_idle_frame()
+	await await_idle_frame()
 
+	assert_str(button.theme_type_variation).is_equal(&"GameButtonRect")
 	assert_bool(button.has_theme_color_override(&"font_color")).is_true()
 	assert_that(button.get_theme_color(&"font_color")).is_equal(Color.HOT_PINK)
+
+
+func test_a_red_palette_switches_to_the_white_text_variation_in_the_same_frame() -> void:
+	var button: GameButton = _add(_button(GameButton.Shape.RECT, GameButton.Palette.BLUE))
+	await await_idle_frame()
+
+	button.palette = GameButton.Palette.RED
+	assert_str(button.theme_type_variation).is_equal(&"GameButtonRectInverse")
+	await await_idle_frame()
+
+	assert_str(button.theme_type_variation).is_equal(&"GameButtonRectInverse")
+	assert_that(button.get_theme_color(&"font_color")).is_equal(Color.WHITE)
+
+
+func test_a_toggle_to_a_red_pressed_palette_switches_the_text_variation_with_the_signal() -> void:
+	var button: GameButton = _add(_button(GameButton.Shape.RECT, GameButton.Palette.GREEN))
+	button.toggle_mode = true
+	button.palette_pressed = GameButton.Palette.RED
+	await await_idle_frame()
+	assert_str(button.theme_type_variation).is_equal(&"GameButtonRect")
+
+	button.button_pressed = true
+	assert_str(button.theme_type_variation).is_equal(&"GameButtonRectInverse")
+	button.button_pressed = false
+
+	assert_str(button.theme_type_variation).is_equal(&"GameButtonRect")
 
 
 func test_a_text_style_takes_the_size_of_its_theme_type_and_keeps_the_font_of_the_variation() -> void:

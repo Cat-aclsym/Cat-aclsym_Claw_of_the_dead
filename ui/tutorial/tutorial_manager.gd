@@ -231,11 +231,11 @@ func _find_first_build_card_button() -> Control:
 	var build_selection: Node = get_tree().get_root().find_child("BuildSelection", true, false)
 	if build_selection == null:
 		return null
-	# Target the first non-disabled BuildCard. The card node itself gives a reliable rect;
+	# Target the first visible, non-disabled BuildCard (the cards of the hidden tab are not). The card node itself gives a reliable rect;
 	# targeting the whole panel puts the arrow far right due to the panel's wide center-x.
 	for node: Node in build_selection.find_children("*", "BuildCard", true, false):
 		var card: BuildCard = node as BuildCard
-		if card != null and card.button_texture != null and not card.button_texture.disabled:
+		if card != null and card.is_visible_in_tree() and card.button_texture != null and not card.button_texture.disabled:
 			return card
 	return build_selection as Control
 

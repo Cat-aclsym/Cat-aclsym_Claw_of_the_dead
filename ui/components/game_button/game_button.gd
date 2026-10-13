@@ -85,11 +85,13 @@ const VARIATIONS: Array[StringName] = [
 @export var palette: Palette = Palette.BLUE:
 	set(value):
 		palette = value
+		_sync_white_text()
 		queue_redraw()
 ## Palette shown instead of [member palette] while the button is pressed, [constant NO_PALETTE] (the default) keeps [member palette].
 @export var palette_pressed: Palette = NO_PALETTE as Palette:
 	set(value):
 		palette_pressed = value
+		_sync_white_text()
 		queue_redraw()
 ## Keeps the button clickable while the tree is paused ([constant Node.PROCESS_MODE_ALWAYS]): leave it on for buttons used while the tree is paused,
 ## such as the pause menu and the HUD during the tutorial, turn it off for the others so they stop with the game.
@@ -143,6 +145,10 @@ func _draw() -> void:
 
 func _get_tooltip(_at_position: Vector2) -> String:
 	return tr(tooltip_text) if not tooltip_text.is_empty() else _icon_label()
+
+
+func _toggled(_toggled_on: bool) -> void:
+	_sync_white_text()
 
 
 ## Returns the glyph drawn now: [member game_icon_pressed] while pressed (if set), else [member game_icon].
@@ -243,16 +249,6 @@ func _refresh_look() -> void:
 	_set_white_text(current_palette == Palette.RED)
 
 
-## Returns [code]true[/code] for a latched toggle whose pressed look is another glyph or palette: that look is its resting state, so it is not darkened.
-func _shows_latched_swap() -> bool:
-	return toggle_mode and (palette_pressed != NO_PALETTE or game_icon_pressed != GameIcon.Id.NONE)
-
-
-## Returns the theme variation of the shape: the [code]Inverse[/code] one (white text) while the palette is RED.
-func _variation() -> StringName:
-	return (INVERSE_VARIATIONS if _white_text else VARIATIONS)[shape]
-
-
 ## Switches the text of the button to white (RED palette) or back to the dark ink through the theme variation, only in game: the editor never saves it.
 func _set_white_text(white: bool) -> void:
 	if white == _white_text or Engine.is_editor_hint():
@@ -261,3 +257,19 @@ func _set_white_text(white: bool) -> void:
 	theme_type_variation = _variation()
 	# Button draws its text before _draw and a redraw queued while drawing is dropped, so the new color needs the next frame
 	queue_redraw.call_deferred()
+
+
+## Returns [code]true[/code] for a latched toggle whose pressed look is another glyph or palette: that look is its resting state, so it is not darkened.
+func _shows_latched_swap() -> bool:
+	return toggle_mode and (palette_pressed != NO_PALETTE or game_icon_pressed != GameIcon.Id.NONE)
+
+
+## Applies the text color of the palette drawn now at once, so that the first frame with a RED palette already has white text.
+## [br]A state change that no setter or [method _toggled] sees (such as [method BaseButton.set_pressed_no_signal]) is caught by [method _refresh_look] in [method _draw].
+func _sync_white_text() -> void:
+	_set_white_text(get_effective_palette() == Palette.RED)
+
+
+## Returns the theme variation of the shape: the [code]Inverse[/code] one (white text) while the palette is RED.
+func _variation() -> StringName:
+	return (INVERSE_VARIATIONS if _white_text else VARIATIONS)[shape]
