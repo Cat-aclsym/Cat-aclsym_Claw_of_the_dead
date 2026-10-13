@@ -39,6 +39,29 @@ func test_a_new_hit_restarts_the_sequence() -> void:
 	assert_float(bar.modulate.a).is_equal_approx(1.0, 0.001)
 
 
+func test_the_panels_take_their_style_from_the_theme_variations() -> void:
+	var bar: EnemyHealthBar = _add_bar()
+
+	assert_str(bar.background.theme_type_variation).is_equal(&"HealthBarBackground")
+	assert_str(bar.fill.theme_type_variation).is_equal(&"HealthBarFill")
+	assert_str(bar.border.theme_type_variation).is_equal(&"HealthBarBorder")
+	assert_bool(bar.fill.has_theme_stylebox_override(&"panel")).is_false()
+	assert_that(bar.fill.self_modulate).is_equal(EnemyHealthBar.COLOR_FULL)
+
+
+func test_the_fill_is_tinted_by_the_health_without_a_style_per_bar() -> void:
+	var bar: EnemyHealthBar = _add_bar()
+	var other: EnemyHealthBar = _add_bar()
+
+	bar.update_health(10.0, 100.0)
+	other.update_health(100.0, 100.0)
+
+	assert_that(bar.fill.self_modulate).is_equal(bar._get_health_color(0.1))
+	assert_that(other.fill.self_modulate).is_equal(EnemyHealthBar.COLOR_FULL)
+	assert_float(bar.fill.size.x).is_equal_approx(EnemyHealthBar.MAX_WIDTH * 0.1, 0.001)
+	assert_bool(bar.fill.has_theme_stylebox_override(&"panel")).is_false()
+
+
 func _add_bar() -> EnemyHealthBar:
 	var bar: EnemyHealthBar = auto_free(BAR_SCENE.instantiate())
 	add_child(bar)

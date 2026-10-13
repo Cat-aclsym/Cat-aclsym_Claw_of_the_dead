@@ -6,18 +6,21 @@
 script = ExtResource("1_k2qve")
 
 [node name="Background" type="Panel" parent="."]
+theme_type_variation = &"HealthBarBackground"
 offset_left = -16.0
 offset_top = -1.5
 offset_right = 16.0
 offset_bottom = 1.5
 
 [node name="Fill" type="Panel" parent="."]
+theme_type_variation = &"HealthBarFill"
 offset_left = -16.0
 offset_top = -1.5
 offset_right = 16.0
 offset_bottom = 1.5
 
 [node name="Border" type="Panel" parent="."]
+theme_type_variation = &"HealthBarBorder"
 offset_left = -16.0
 offset_top = -1.5
 offset_right = 16.0
