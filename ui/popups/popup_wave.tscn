@@ -1,7 +1,6 @@
-[gd_scene load_steps=6 format=3 uid="uid://cqe6sjyhnpfci"]
+[gd_scene load_steps=5 format=3 uid="uid://cqe6sjyhnpfci"]
 
 [ext_resource type="PackedScene" uid="uid://c8gbtn5xq2m4y" path="res://ui/components/game_button/game_button.tscn" id="2_banner"]
-[ext_resource type="FontVariation" uid="uid://fxosgbx511m0" path="res://ui/theme/dotgothic_bold_variation.tres" id="3_variation"]
 
 [sub_resource type="Animation" id="Animation_bagxy"]
 length = 0.001
@@ -103,9 +102,8 @@ custom_minimum_size = Vector2(370, 117)
 layout_mode = 2
 mouse_filter = 2
 pivot_offset_ratio = Vector2(0.5, 0.5)
-theme_override_fonts/font = ExtResource("3_variation")
-theme_override_font_sizes/font_size = 57
 shape = 4
+text_style = 5
 process_when_paused = false
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]

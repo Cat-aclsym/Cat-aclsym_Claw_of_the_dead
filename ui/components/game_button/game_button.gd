@@ -8,6 +8,8 @@
 ## [br]An icon-only button of a fixed-proportion shape ([constant SCALED_SHAPES]) larger than its base draws the base and the glyph scaled up
 ## ([member art_scale]), centered and with the base proportions, instead of stretching its 9-slice. The scale is the largest factor that fits the button
 ## (at least 1, not always a whole number), so the pixels of the art are not all the same size on screen.
+## [br]The text is dark ink, white on the [constant Palette.RED] palette: the button switches to the [code]<Shape>Inverse[/code] theme variation. The text size
+## comes from [member text_style] ([code]ButtonText*[/code] types of [code]generic.tres[/code], a [code]TypeScale[/code] value), never from an override on the instance.
 ## [br]The tooltip is the [code]BUTTON.<ID>[/code] translation of the glyph unless [member Control.tooltip_text] is set. Instance [code]game_button.tscn[/code]:
 ## [codeblock]
 ## var button: GameButton = preload("res://ui/components/game_button/game_button.tscn").instantiate()
@@ -17,6 +19,7 @@
 ## button.palette_pressed = GameButton.Palette.RED
 ## button.game_icon_pressed = GameIcon.Id.CLOSE
 ## button.toggle_mode = true
+## button.text_style = GameButton.TextStyle.LARGE
 ## [/codeblock]
 @tool
 class_name GameButton
@@ -26,6 +29,8 @@ extends Button
 enum Palette { BLUE, GREEN, ORANGE, RED, SAND, GREY }
 ## Base of the button, in the order of [constant BASES]. [code]NONE[/code] draws no base (glyph and text only).
 enum Shape { RECT, RECT_SHORT, HEXA, PANEL, BANNER, NONE }
+## Text size of the button, in the order of [constant TEXT_STYLES]. [code]DEFAULT[/code] keeps the size of the theme variation of the [enum Shape].
+enum TextStyle { DEFAULT, SMALL, MEDIUM, LARGE, HERO, WAVE }
 
 ## Grey base of each [enum Shape], [code]null[/code] for [code]NONE[/code].
 const BASES: Array[Texture2D] = [
@@ -38,12 +43,13 @@ const BASES: Array[Texture2D] = [
 ]
 const BRIGHTNESS_HOVER: float = 1.15
 const BRIGHTNESS_PRESSED: float = 0.8
-const FONT_COLORS: Array[StringName] = [
-	&"font_color", &"font_disabled_color", &"font_focus_color", &"font_hover_color", &"font_hover_pressed_color", &"font_pressed_color",
-]
 const GLYPH_BRIGHTNESS_DISABLED: float = 0.6
-## Tint of the single-color glyphs and of the text, on every palette but [constant Palette.RED] (white).
+## Tint of the single-color glyphs, on every palette but [constant Palette.RED] (white). The text uses the same color from the theme variations.
 const INK: Color = Color(6.0 / 255.0, 40.0 / 255.0, 43.0 / 255.0)
+## Theme variation (white text) of each [enum Shape] while the palette is [constant Palette.RED], same order as [constant VARIATIONS].
+const INVERSE_VARIATIONS: Array[StringName] = [
+	&"GameButtonRectInverse", &"GameButtonRectShortInverse", &"GameButtonHexaInverse", &"GameButtonPanelInverse", &"GameButtonBannerInverse", &"GameButtonNoneInverse",
+]
 ## Left, top, right and bottom 9-slice margins of each [enum Shape] base, in pixels.
 const MARGINS: Array[Vector4i] = [
 	Vector4i(8, 8, 9, 9),
@@ -57,6 +63,10 @@ const MARGINS: Array[Vector4i] = [
 const NO_PALETTE: int = -1
 ## Shapes that keep their proportions when an icon-only button is larger than the base.
 const SCALED_SHAPES: Array[Shape] = [Shape.RECT, Shape.RECT_SHORT, Shape.HEXA]
+## Data-only theme type (in [code]generic.tres[/code]) of each [enum TextStyle]: its [code]font_size[/code], and its [code]font[/code] when it has one.
+const TEXT_STYLES: Array[StringName] = [
+	&"", &"ButtonTextSmall", &"ButtonTextMedium", &"ButtonTextLarge", &"ButtonTextHero", &"ButtonTextWave",
+]
 ## Theme variation (in [code]generic.tres[/code]) of each [enum Shape].
 const VARIATIONS: Array[StringName] = [
 	&"GameButtonRect", &"GameButtonRectShort", &"GameButtonHexa", &"GameButtonPanel", &"GameButtonBanner", &"GameButtonNone",
@@ -88,9 +98,15 @@ const VARIATIONS: Array[StringName] = [
 @export var shape: Shape = Shape.RECT:
 	set(value):
 		shape = value
-		theme_type_variation = VARIATIONS[value]
+		theme_type_variation = _variation()
 		if is_node_ready():
 			_apply_shape()
+## Text size ([code]ButtonText*[/code] theme type), applied in game as font overrides: the editor never applies them, so that a scene save does not store them.
+## A type with a font (WAVE) swaps the font, the others keep the font of the theme variation.
+@export var text_style: TextStyle = TextStyle.DEFAULT:
+	set(value):
+		text_style = value
+		_apply_text_style()
 
 ## Factor the base and the glyph are drawn at: the largest one that fits the button (at least [code]1.0[/code], fractional) for an icon-only
 ## [constant SCALED_SHAPES] button larger than its base, else [code]1.0[/code].
@@ -153,6 +169,26 @@ func _apply_shape() -> void:
 	_background.patch_margin_bottom = margins.w
 
 
+## Copies the font size (and the font, when the type has one) of the [member text_style] theme type into the font overrides, [code]DEFAULT[/code] removes them.
+func _apply_text_style() -> void:
+	if Engine.is_editor_hint():
+		return
+	begin_bulk_theme_override()
+	if text_style == TextStyle.DEFAULT:
+		remove_theme_font_size_override(&"font_size")
+		remove_theme_font_override(&"font")
+	else:
+		var theme: Theme = ThemeDB.get_project_theme()
+		var type: StringName = TEXT_STYLES[text_style]
+		add_theme_font_size_override(&"font_size", theme.get_font_size(&"font_size", type))
+		# Theme.has_font is true for any type when the theme has a default font
+		if &"font" in theme.get_font_list(type):
+			add_theme_font_override(&"font", theme.get_font(&"font", type))
+		else:
+			remove_theme_font_override(&"font")
+	end_bulk_theme_override()
+
+
 ## Sets [member art_scale] and places the base: filling the button, or at native size scaled up and centered.
 func _fit_art() -> void:
 	var base: Texture2D = BASES[shape]
@@ -212,16 +248,16 @@ func _shows_latched_swap() -> bool:
 	return toggle_mode and (palette_pressed != NO_PALETTE or game_icon_pressed != GameIcon.Id.NONE)
 
 
-## Switches the text of the button to white (RED palette) or back to the theme color, only in game: the editor never saves the overrides.
-## [br]Going back removes all six font color overrides, so overrides authored on an instance are lost once the button has been white.
+## Returns the theme variation of the shape: the [code]Inverse[/code] one (white text) while the palette is RED.
+func _variation() -> StringName:
+	return (INVERSE_VARIATIONS if _white_text else VARIATIONS)[shape]
+
+
+## Switches the text of the button to white (RED palette) or back to the dark ink through the theme variation, only in game: the editor never saves it.
 func _set_white_text(white: bool) -> void:
 	if white == _white_text or Engine.is_editor_hint():
 		return
 	_white_text = white
-	for color_name: StringName in FONT_COLORS:
-		if white:
-			add_theme_color_override(color_name, Color.WHITE)
-		else:
-			remove_theme_color_override(color_name)
+	theme_type_variation = _variation()
 	# Button draws its text before _draw and a redraw queued while drawing is dropped, so the new color needs the next frame
 	queue_redraw.call_deferred()

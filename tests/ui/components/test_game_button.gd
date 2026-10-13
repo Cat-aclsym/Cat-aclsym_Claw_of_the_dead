@@ -241,6 +241,90 @@ func test_the_button_processes_while_the_tree_is_paused_unless_told_otherwise() 
 	assert_bool(stopping.has_meta(ButtonEffects.APPLIED_META_KEY)).is_true()
 
 
+func test_the_red_palette_switches_to_the_inverse_variation_and_back() -> void:
+	var button: GameButton = _add(_button(GameButton.Shape.PANEL, GameButton.Palette.BLUE))
+	await await_idle_frame()
+	assert_str(button.theme_type_variation).is_equal(&"GameButtonPanel")
+	assert_str(button.get_theme_color(&"font_color").to_html()).is_equal(GameButton.INK.to_html())
+
+	button.palette = GameButton.Palette.RED
+	await await_idle_frame()
+	await await_idle_frame()
+	assert_str(button.theme_type_variation).is_equal(&"GameButtonPanelInverse")
+	assert_that(button.get_theme_color(&"font_color")).is_equal(Color.WHITE)
+	assert_that(button.get_theme_color(&"font_hover_pressed_color")).is_equal(Color.WHITE)
+	assert_str(button.get_theme_color(&"font_outline_color").to_html()).is_equal(GameButton.INK.to_html())
+
+	button.palette = GameButton.Palette.GREEN
+	await await_idle_frame()
+	await await_idle_frame()
+	assert_str(button.theme_type_variation).is_equal(&"GameButtonPanel")
+	assert_str(button.get_theme_color(&"font_color").to_html()).is_equal(GameButton.INK.to_html())
+
+
+func test_changing_the_shape_keeps_the_inverse_variation_while_red() -> void:
+	var button: GameButton = _add(_button(GameButton.Shape.RECT, GameButton.Palette.RED))
+	await await_idle_frame()
+
+	button.shape = GameButton.Shape.HEXA
+
+	assert_str(button.theme_type_variation).is_equal(&"GameButtonHexaInverse")
+
+
+func test_an_override_set_on_the_instance_survives_the_red_round_trip() -> void:
+	var button: GameButton = _add(_button(GameButton.Shape.RECT, GameButton.Palette.BLUE))
+	button.add_theme_color_override(&"font_color", Color.HOT_PINK)
+
+	button.palette = GameButton.Palette.RED
+	await await_idle_frame()
+	button.palette = GameButton.Palette.BLUE
+	await await_idle_frame()
+
+	assert_bool(button.has_theme_color_override(&"font_color")).is_true()
+	assert_that(button.get_theme_color(&"font_color")).is_equal(Color.HOT_PINK)
+
+
+func test_a_text_style_takes_the_size_of_its_theme_type_and_keeps_the_font_of_the_variation() -> void:
+	var theme: Theme = ThemeDB.get_project_theme()
+	var button: GameButton = _add(_button(GameButton.Shape.PANEL, GameButton.Palette.BLUE))
+
+	button.text_style = GameButton.TextStyle.HERO
+	await await_idle_frame()
+
+	assert_int(button.get_theme_font_size(&"font_size")).is_equal(theme.get_font_size(&"font_size", &"ButtonTextHero"))
+	assert_int(button.get_theme_font_size(&"font_size")).is_equal(64)
+	assert_object(button.get_theme_font(&"font")).is_same(theme.get_font(&"font", &"GameButtonPanel"))
+	assert_object(button.get_theme_font(&"font")).is_not_same(theme.get_default_font())
+
+
+func test_the_wave_text_style_swaps_in_the_bold_font() -> void:
+	var theme: Theme = ThemeDB.get_project_theme()
+	var button: GameButton = _add(_button(GameButton.Shape.BANNER, GameButton.Palette.BLUE))
+
+	button.text_style = GameButton.TextStyle.WAVE
+
+	assert_int(button.get_theme_font_size(&"font_size")).is_equal(56)
+	assert_object(button.get_theme_font(&"font")).is_same(theme.get_font(&"font", &"ButtonTextWave"))
+
+
+func test_the_default_text_style_clears_the_overrides() -> void:
+	var button: GameButton = _add(_button(GameButton.Shape.BANNER, GameButton.Palette.BLUE))
+	button.text_style = GameButton.TextStyle.WAVE
+	assert_bool(button.has_theme_font_size_override(&"font_size")).is_true()
+	assert_bool(button.has_theme_font_override(&"font")).is_true()
+
+	button.text_style = GameButton.TextStyle.DEFAULT
+
+	assert_bool(button.has_theme_font_size_override(&"font_size")).is_false()
+	assert_bool(button.has_theme_font_override(&"font")).is_false()
+
+
+func test_the_glyph_ink_is_the_font_color_of_the_dark_variations() -> void:
+	var theme: Theme = ThemeDB.get_project_theme()
+	for variation: StringName in GameButton.VARIATIONS:
+		assert_str(theme.get_color(&"font_color", variation).to_html()).is_equal(GameButton.INK.to_html())
+
+
 func _add(button: GameButton) -> GameButton:
 	add_child(auto_free(button))
 	return button
@@ -248,7 +332,8 @@ func _add(button: GameButton) -> GameButton:
 
 func _assert_built(button: GameButton, shape: GameButton.Shape, palette: GameButton.Palette) -> void:
 	var background: NinePatchRect = _background(button)
-	assert_str(button.theme_type_variation).is_equal(GameButton.VARIATIONS[shape])
+	var expected_variation: StringName = (GameButton.INVERSE_VARIATIONS if palette == GameButton.Palette.RED else GameButton.VARIATIONS)[shape]
+	assert_str(button.theme_type_variation).is_equal(expected_variation)
 	assert_object(button.get_theme_stylebox(&"normal")).is_instanceof(StyleBoxEmpty)
 	assert_str(ThemeDB.get_project_theme().get_type_variation_base(GameButton.VARIATIONS[shape])).is_equal("Button")
 	assert_bool(background.visible).is_equal(shape != GameButton.Shape.NONE)
