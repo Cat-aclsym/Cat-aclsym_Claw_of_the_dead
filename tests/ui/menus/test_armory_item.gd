@@ -74,6 +74,36 @@ func test_pressing_the_banner_requests_the_purchase_only_when_it_can_be_bought()
 	assert_array(requested).contains_exactly(["some_node"])
 
 
+func test_the_frame_is_green_when_owned_grey_when_blocked_and_blue_otherwise() -> void:
+	assert_int(_frame_row(await _item(true, true, true, false))).is_equal(GameButton.Palette.GREEN)
+	assert_int(_frame_row(await _item(true, true, false, false))).is_equal(GameButton.Palette.BLUE)
+	assert_int(_frame_row(await _item(false, true, false, false))).is_equal(GameButton.Palette.BLUE)
+	assert_int(_frame_row(await _item(true, false, false, false))).is_equal(GameButton.Palette.GREY)
+	assert_int(_frame_row(await _item(true, true, false, true))).is_equal(GameButton.Palette.BLUE)
+
+
+func test_the_frame_follows_the_state_of_the_card() -> void:
+	var item: ArmoryItem = await _item(true, true, false, false)
+
+	item.refresh_state(true, true, true, false)
+	assert_int(_frame_row(item)).is_equal(GameButton.Palette.GREEN)
+
+	item.refresh_state(true, false, false, false)
+	assert_int(_frame_row(item)).is_equal(GameButton.Palette.GREY)
+
+
+func test_every_card_has_its_own_frame_material() -> void:
+	var first: ArmoryItem = await _item(true, true, true, false)
+	var second: ArmoryItem = await _item(true, false, false, false)
+
+	assert_object(first.frame_texture_rect.material).is_not_same(second.frame_texture_rect.material)
+	assert_int(_frame_row(first)).is_equal(GameButton.Palette.GREEN)
+
+
+func _frame_row(item: ArmoryItem) -> int:
+	return item.frame_texture_rect.material.get_shader_parameter(&"palette_row")
+
+
 ## Returns a selected card in the given state, drawn once.
 func _item(affordable: bool, prerequisites_met: bool, purchased: bool, legacy_mode: bool) -> ArmoryItem:
 	var item: ArmoryItem = auto_free(ITEM_SCENE.instantiate())

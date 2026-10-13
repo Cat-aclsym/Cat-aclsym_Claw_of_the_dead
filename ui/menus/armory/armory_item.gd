@@ -16,9 +16,6 @@ signal selected(node_id: String)
 const CARD_DIM_UNAFFORDABLE: float = 0.82
 const CARD_MODULATE_AFFORDABLE: Color = Color.WHITE
 const CARD_MODULATE_UNAFFORDABLE: Color = Color(CARD_DIM_UNAFFORDABLE, CARD_DIM_UNAFFORDABLE, CARD_DIM_UNAFFORDABLE, 1.0)
-const FRAME_BLUE: Texture2D = preload("res://assets/ui/cards/blue_frame.svg")
-const FRAME_GREEN: Texture2D = preload("res://assets/ui/cards/green_frame.svg")
-const FRAME_GREY: Texture2D = preload("res://assets/ui/cards/grey_frame.svg")
 const STAR_ICON: Texture2D = preload("res://assets/ui/icons/star.png")
 
 @export var cost_stars: int = 0
@@ -36,6 +33,8 @@ var _is_card_selected: bool = false
 @onready var card_texture_button: TextureButton = %CardTextureButton
 @onready var frame_texture_rect: TextureRect = %FrameTextureRect
 @onready var preview_texture_rect: TextureRect = %PreviewTextureRect
+## Palette swap material of the frame: its row recolors the grey card frame by state.
+@onready var _frame_material: ShaderMaterial = frame_texture_rect.material as ShaderMaterial
 
 @onready var signals: Array[Dictionary] = [
 	{SignalUtil.WHO: buy_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_buy_button_pressed},
@@ -49,6 +48,7 @@ func _ready() -> void:
 	assert(card_texture_button != null, "card_texture_button node not found")
 	assert(frame_texture_rect != null, "frame_texture_rect node not found")
 	assert(preview_texture_rect != null, "preview_texture_rect node not found")
+	assert(_frame_material != null, "The frame of an ArmoryItem needs the palette ShaderMaterial.")
 	SignalUtil.connects(signals)
 	# Keep button layout space at all times to avoid vertical jumps on selection.
 	buy_button.visible = true
@@ -95,22 +95,22 @@ func _update_visuals() -> void:
 
 	var buy_text: String = ""
 	var buy_palette: GameButton.Palette = GameButton.Palette.BLUE
+	var frame_palette: GameButton.Palette = GameButton.Palette.BLUE
 	if is_purchased:
 		buy_palette = GameButton.Palette.GREEN
-		frame_texture_rect.texture = FRAME_GREEN
+		frame_palette = GameButton.Palette.GREEN
 		buy_text = tr("ARMORY.OWNED")
 	elif is_legacy_mode:
-		frame_texture_rect.texture = FRAME_BLUE
 		buy_text = tr("ARMORY.LEGACY_SKIP")
 	elif not is_prerequisites_met:
-		frame_texture_rect.texture = FRAME_GREY
+		frame_palette = GameButton.Palette.GREY
 		buy_text = tr("ARMORY.BUY_BLOCKED")
 	else:
-		frame_texture_rect.texture = FRAME_BLUE
 		buy_text = tr("ARMORY.BUY")
 		if only_blocked_by_stars:
 			buy_palette = GameButton.Palette.RED
 
+	_frame_material.set_shader_parameter(&"palette_row", frame_palette)
 	buy_button.text = ("%s  %d" % [buy_text, cost_stars] if not is_purchased else buy_text).to_upper()
 	buy_button.icon = null if is_purchased else STAR_ICON
 	buy_button.palette = buy_palette

@@ -45,7 +45,7 @@ func test_none_shape_hides_the_background() -> void:
 
 func test_palette_png_has_one_row_per_palette() -> void:
 	assert_int(PALETTE_TEXTURE.get_height()).is_equal(GameButton.Palette.size())
-	assert_int(PALETTE_TEXTURE.get_width()).is_equal(7)
+	assert_int(PALETTE_TEXTURE.get_width()).is_equal(13)
 
 
 func test_every_button_has_its_own_material() -> void:

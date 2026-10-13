@@ -1,9 +1,19 @@
-[gd_scene load_steps=6 format=3 uid="uid://6mhjyovq8wdc"]
+[gd_scene load_steps=8 format=3 uid="uid://6mhjyovq8wdc"]
 
 [ext_resource type="Script" uid="uid://yn0xr1v34u6y" path="res://ui/menus/armory/armory_item.gd" id="1_armory_item_script"]
 [ext_resource type="PackedScene" uid="uid://c8gbtn5xq2m4y" path="res://ui/components/game_button/game_button.tscn" id="2_buy_button"]
-[ext_resource type="Texture2D" uid="uid://cdesir3miwmug" path="res://assets/ui/cards/green_frame.svg" id="3_green_frame"]
+[ext_resource type="Texture2D" uid="uid://wuif5ge6xphw" path="res://assets/ui/cards/card_frame.png" id="3_card_frame"]
 [ext_resource type="Texture2D" uid="uid://yayv0hygrr3u" path="res://assets/ui/cards/blue_background.svg" id="5_blue_background"]
+[ext_resource type="Shader" uid="uid://cui214wdhr6a0" path="res://ui/components/game_button/palette_swap.gdshader" id="6_shader"]
+[ext_resource type="Texture2D" uid="uid://cjjpnsafokwnn" path="res://assets/ui/buttons/palette.png" id="7_palette"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_frame"]
+resource_local_to_scene = true
+shader = ExtResource("6_shader")
+shader_parameter/palette = ExtResource("7_palette")
+shader_parameter/palette_row = 1
+shader_parameter/brightness = 1.0
+shader_parameter/saturation = 1.0
 
 [node name="ArmoryItem" type="VBoxContainer"]
 custom_minimum_size = Vector2(180, 200)
@@ -24,13 +34,14 @@ stretch_mode = 4
 
 [node name="FrameTextureRect" type="TextureRect" parent="CardAspectRatioContainer/CardTextureButton"]
 unique_name_in_owner = true
+material = SubResource("ShaderMaterial_frame")
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("3_green_frame")
+texture = ExtResource("3_card_frame")
 expand_mode = 1
 stretch_mode = 4
 

@@ -1,20 +1,30 @@
-[gd_scene load_steps=5 format=3 uid="uid://b0nyq2do4mc83"]
+[gd_scene load_steps=7 format=3 uid="uid://b0nyq2do4mc83"]
 
-[ext_resource type="Texture2D" path="res://assets/ui/level_selection/level_dot_orange.png" id="1_aq3t4"]
-[ext_resource type="Texture2D" path="res://assets/ui/level_selection/level_dot_teal.png" id="2_yn7g2"]
+[ext_resource type="Texture2D" uid="uid://dly5wrb2c7wpd" path="res://assets/ui/level_selection/level_dot.png" id="1_aq3t4"]
 [ext_resource type="Script" uid="uid://bp2ns6xuy1suf" path="res://ui/menus/level_selection/components/level_indicator.gd" id="3_07itj"]
 [ext_resource type="FontFile" uid="uid://ddo3rokwsadq0" path="res://assets/fonts/dotgothic/dotgothic16_regular.ttf" id="4_b47p3"]
+[ext_resource type="Shader" uid="uid://cui214wdhr6a0" path="res://ui/components/game_button/palette_swap.gdshader" id="5_shader"]
+[ext_resource type="Texture2D" uid="uid://cjjpnsafokwnn" path="res://assets/ui/buttons/palette.png" id="6_palette"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_dot"]
+resource_local_to_scene = true
+shader = ExtResource("5_shader")
+shader_parameter/palette = ExtResource("6_palette")
+shader_parameter/palette_row = 2
+shader_parameter/brightness = 1.0
+shader_parameter/saturation = 1.0
 
 [node name="LevelIndicator" type="TextureButton"]
 z_index = 2
 texture_filter = 1
+material = SubResource("ShaderMaterial_dot")
 custom_minimum_size = Vector2(64, 64)
 layout_mode = 3
 anchors_preset = 0
 offset_right = 64.0
 offset_bottom = 64.0
 texture_normal = ExtResource("1_aq3t4")
-texture_disabled = ExtResource("2_yn7g2")
+texture_disabled = ExtResource("1_aq3t4")
 ignore_texture_size = true
 stretch_mode = 5
 script = ExtResource("3_07itj")

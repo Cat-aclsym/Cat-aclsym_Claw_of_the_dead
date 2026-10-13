@@ -1,11 +1,21 @@
-[gd_scene load_steps=7 format=3 uid="uid://3noiaamd0p84"]
+[gd_scene load_steps=10 format=3 uid="uid://3noiaamd0p84"]
 
 [ext_resource type="Script" uid="uid://e0qqc3xugp8k" path="res://ui/menus/build_selection/cards/build_card.gd" id="1_hl5pg"]
 [ext_resource type="Texture2D" uid="uid://85310xv6g30a" path="res://assets/ui/cards/construction_tower_title.svg" id="2_6d6oa"]
 [ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://ui/theme/generic.tres" id="3_r2ha7"]
-[ext_resource type="Texture2D" uid="uid://cdesir3miwmug" path="res://assets/ui/cards/green_frame.svg" id="4_wyqnw"]
+[ext_resource type="Texture2D" uid="uid://wuif5ge6xphw" path="res://assets/ui/cards/card_frame.png" id="4_wyqnw"]
 [ext_resource type="Texture2D" uid="uid://yayv0hygrr3u" path="res://assets/ui/cards/blue_background.svg" id="5_4himi"]
 [ext_resource type="Texture2D" uid="uid://b6lrh02vg30l3" path="res://assets/ui/hud/coin.png" id="8_coin"]
+[ext_resource type="Shader" uid="uid://cui214wdhr6a0" path="res://ui/components/game_button/palette_swap.gdshader" id="9_shader"]
+[ext_resource type="Texture2D" uid="uid://cjjpnsafokwnn" path="res://assets/ui/buttons/palette.png" id="10_palette"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_frame"]
+resource_local_to_scene = true
+shader = ExtResource("9_shader")
+shader_parameter/palette = ExtResource("10_palette")
+shader_parameter/palette_row = 1
+shader_parameter/brightness = 1.0
+shader_parameter/saturation = 1.0
 
 [node name="BuildCard" type="Control"]
 z_index = 1
@@ -59,6 +69,7 @@ size_flags_vertical = 3
 size_flags_stretch_ratio = 0.7
 
 [node name="CardTextureButton" type="TextureButton" parent="CardVBoxContainer/CardAspectRatioContainer"]
+material = SubResource("ShaderMaterial_frame")
 layout_mode = 2
 texture_normal = ExtResource("4_wyqnw")
 ignore_texture_size = true
