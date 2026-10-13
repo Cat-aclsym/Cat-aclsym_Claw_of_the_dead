@@ -1,17 +1,13 @@
-[gd_scene load_steps=20 format=3 uid="uid://b5630xr4v607r"]
+[gd_scene load_steps=17 format=3 uid="uid://b5630xr4v607r"]
 
 [ext_resource type="Script" uid="uid://cc06prch72skr" path="res://ui/hud/hud.gd" id="1_cuep3"]
 [ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://ui/theme/generic.tres" id="2_jel3x"]
-[ext_resource type="Texture2D" uid="uid://bnlogkwjp75g2" path="res://assets/ui/icons/pause_button_1.png" id="2_meysh"]
+[ext_resource type="PackedScene" uid="uid://c8gbtn5xq2m4y" path="res://ui/components/game_button/game_button.tscn" id="2_meysh"]
 [ext_resource type="Texture2D" uid="uid://cml3pcp3ixa0k" path="res://assets/ui/hud/heart.png" id="2_neukb"]
 [ext_resource type="Texture2D" uid="uid://bcvoasbjyvuy5" path="res://assets/ui/hud/health_bar.png" id="3_g6v8d"]
 [ext_resource type="Texture2D" uid="uid://cf3qgahrw8xo1" path="res://assets/ui/hud/life_2x.png" id="5_hukgj"]
 [ext_resource type="Texture2D" uid="uid://mx73uy3s3lsk" path="res://assets/ui/icons/coin_button.png" id="7_1sk4j"]
 [ext_resource type="Texture2D" uid="uid://c8tt36yijwktt" path="res://assets/ui/icons/cat_button.png" id="8_ewojn"]
-[ext_resource type="Texture2D" uid="uid://c3eyakb4oxqkc" path="res://assets/ui/icons/build_button.png" id="10_sc2vu"]
-[ext_resource type="Texture2D" uid="uid://ccis5avg2eshj" path="res://assets/ui/icons/trophy_button.png" id="11_5r146"]
-[ext_resource type="Texture2D" uid="uid://ba7c0nq31uw2c" path="res://assets/ui/icons/red_button.png" id="12_5jyti"]
-[ext_resource type="Texture2D" uid="uid://85fepmd06xnd" path="res://assets/ui/icons/fast_forward_button.png" id="13_hn23h"]
 [ext_resource type="Shader" uid="uid://7k322cmfkfh1" path="res://assets/shaders/health_bar_scaling.gdshader" id="15_shader"]
 [ext_resource type="Script" uid="uid://bobwx2yvj4bf4" path="res://ui/hud/low_health_indicator.gd" id="16_indicator"]
 [ext_resource type="Shader" uid="uid://cjvdx1cpa3hct" path="res://assets/shaders/low_health_vignette.gdshader" id="17_vignette"]
@@ -83,13 +79,12 @@ mouse_filter = 2
 theme_override_constants/margin_top = 20
 theme_override_constants/margin_right = 20
 
-[node name="PauseButton" type="TextureButton" parent="PauseMarginContainer"]
-texture_filter = 1
+[node name="PauseButton" parent="PauseMarginContainer" instance=ExtResource("2_meysh")]
 custom_minimum_size = Vector2(80, 65)
 layout_mode = 2
-texture_normal = ExtResource("2_meysh")
-ignore_texture_size = true
-stretch_mode = 5
+shape = 1
+palette = 2
+game_icon = 4
 
 [node name="HUDMarginContainer" type="MarginContainer" parent="."]
 custom_minimum_size = Vector2(0, 135)
@@ -290,13 +285,11 @@ grow_horizontal = 0
 grow_vertical = 0
 theme_override_constants/margin_right = 20
 
-[node name="ChallengesButton" type="TextureButton" parent="ChallengesMarginContainer"]
-texture_filter = 1
+[node name="ChallengesButton" parent="ChallengesMarginContainer" instance=ExtResource("2_meysh")]
 custom_minimum_size = Vector2(110, 90)
 layout_mode = 2
-texture_normal = ExtResource("11_5r146")
-ignore_texture_size = true
-stretch_mode = 5
+palette = 1
+game_icon = 13
 
 [node name="BuildSelectionMarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1
@@ -312,15 +305,14 @@ grow_horizontal = 0
 grow_vertical = 0
 theme_override_constants/margin_right = 20
 
-[node name="BuildSelectionButton" type="TextureButton" parent="BuildSelectionMarginContainer"]
-texture_filter = 1
+[node name="BuildSelectionButton" parent="BuildSelectionMarginContainer" instance=ExtResource("2_meysh")]
 custom_minimum_size = Vector2(110, 90)
 layout_mode = 2
 toggle_mode = true
-texture_normal = ExtResource("10_sc2vu")
-texture_pressed = ExtResource("12_5jyti")
-ignore_texture_size = true
-stretch_mode = 5
+palette = 1
+palette_pressed = 3
+game_icon = 11
+game_icon_pressed = 12
 
 [node name="SkipMarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1
@@ -336,14 +328,14 @@ grow_vertical = 0
 theme_override_constants/margin_left = 20
 theme_override_constants/margin_bottom = 10
 
-[node name="SkipButton" type="TextureButton" parent="SkipMarginContainer"]
+[node name="SkipButton" parent="SkipMarginContainer" instance=ExtResource("2_meysh")]
 modulate = Color(1, 0.4, 0.4, 1)
 custom_minimum_size = Vector2(110, 90)
 layout_mode = 2
 toggle_mode = true
-texture_normal = ExtResource("13_hn23h")
-ignore_texture_size = true
-stretch_mode = 5
+shape = 1
+palette = 1
+game_icon = 5
 
 [node name="SkipAnimationPlayer" type="AnimationPlayer" parent="SkipMarginContainer"]
 libraries = {

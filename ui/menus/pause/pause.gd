@@ -10,14 +10,14 @@ signal resumed
 const ENCYCLOPEDIA_MENU: PackedScene = preload("res://ui/menus/encyclopedia/encyclopedia.tscn")
 
 # Onready Variables
-@onready var encyclopedia_button: TextureButton = %EncyclopediaButton
+@onready var encyclopedia_button: GameButton = %EncyclopediaButton
 @onready var encyclopedia_exclamation: TextureRect = %EncyclopediaExclamation
-@onready var home_button: TextureButton = $Panel/MarginContainer/PanelContainer/CenterContainer/VBoxContainer/ButtonLayer/HomeButton
+@onready var home_button: GameButton = $Panel/MarginContainer/PanelContainer/CenterContainer/VBoxContainer/ButtonLayer/HomeButton
 @onready var margin_container: MarginContainer = $Panel/MarginContainer
-@onready var music_button: TextureButton = $Panel/MarginContainer/PanelContainer/CenterContainer/VBoxContainer/TopLeftIcon/MusicButton
-@onready var play_button: TextureButton = $Panel/MarginContainer/PanelContainer/CenterContainer/VBoxContainer/ButtonLayer/PlayButton
-@onready var restart_button: TextureButton = $Panel/MarginContainer/PanelContainer/CenterContainer/VBoxContainer/ButtonLayer/RestartButton
-@onready var sound_button: TextureButton = $Panel/MarginContainer/PanelContainer/CenterContainer/VBoxContainer/TopLeftIcon/SoundButton
+@onready var music_button: GameButton = $Panel/MarginContainer/PanelContainer/CenterContainer/VBoxContainer/TopLeftIcon/MusicButton
+@onready var play_button: GameButton = $Panel/MarginContainer/PanelContainer/CenterContainer/VBoxContainer/ButtonLayer/PlayButton
+@onready var restart_button: GameButton = $Panel/MarginContainer/PanelContainer/CenterContainer/VBoxContainer/ButtonLayer/RestartButton
+@onready var sound_button: GameButton = $Panel/MarginContainer/PanelContainer/CenterContainer/VBoxContainer/TopLeftIcon/SoundButton
 
 @onready var signals: Array[Dictionary] = [
 	{SignalUtil.WHO: encyclopedia_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_encyclopedia_button_pressed},
@@ -38,20 +38,13 @@ func _ready() -> void:
 	assert(play_button != null, "play_button node not found")
 	assert(sound_button != null, "sound_button node not found")
 
-	# The pressed texture of both buttons is the "off" icon, the same settings as the options menu
+	# The pressed look of both buttons is the "off" icon, the same settings as the options menu
 	music_button.set_pressed_no_signal(not ProgressionManager.data.parameters.music_enabled)
 	sound_button.set_pressed_no_signal(not ProgressionManager.data.parameters.sound_enabled)
 	SignalUtil.connects(signals)
 
 	# Force process mode to Always so tweens run even when tree is paused
 	process_mode = Node.PROCESS_MODE_ALWAYS
-
-	# Fix for button animations in pause menu
-	for btn: TextureButton in [music_button, sound_button, encyclopedia_button, home_button, play_button, restart_button]:
-		if btn:
-			btn.process_mode = Node.PROCESS_MODE_ALWAYS
-			btn.mouse_filter = Control.MOUSE_FILTER_STOP
-			ButtonEffects.apply(btn)
 
 	# Update notification after everything is set up
 	_update_encyclopedia_notification()

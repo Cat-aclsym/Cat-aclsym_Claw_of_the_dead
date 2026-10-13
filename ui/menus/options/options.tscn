@@ -1,21 +1,9 @@
-[gd_scene load_steps=17 format=3 uid="uid://doml7biiq8g2o"]
+[gd_scene load_steps=5 format=3 uid="uid://doml7biiq8g2o"]
 
 [ext_resource type="Script" uid="uid://cogncjegfywp4" path="res://ui/menus/options/options.gd" id="1_rumc7"]
 [ext_resource type="Texture2D" uid="uid://c8b8irfugbxdj" path="res://assets/environment/backgrounds/menu_background_02.svg" id="2_h87ds"]
-[ext_resource type="Texture2D" uid="uid://0lgpu16nkbho" path="res://assets/ui/icons/button_close.svg" id="2_vd677"]
 [ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://ui/theme/generic.tres" id="3_mxk3u"]
-[ext_resource type="Texture2D" uid="uid://lyhp13rlx7r1" path="res://assets/ui/icons/music_button.png" id="4_jywym"]
-[ext_resource type="Texture2D" uid="uid://bomhxmoxwsuiu" path="res://assets/ui/icons/music_off_button.png" id="6_2o3v8"]
-[ext_resource type="Texture2D" uid="uid://5vx07x57xqmc" path="res://assets/ui/icons/sound_button.png" id="6_168q2"]
-[ext_resource type="Texture2D" uid="uid://dnqjm4l5ol2c8" path="res://assets/ui/icons/sound_off_button.png" id="8_0pr6m"]
-[ext_resource type="Texture2D" uid="uid://dpa7u6bojjqvn" path="res://assets/ui/icons/english_button.png" id="8_iii62"]
-[ext_resource type="Texture2D" uid="uid://lseoebwf3mgg" path="res://assets/ui/icons/insta_button.png" id="9_vb5lp"]
-[ext_resource type="Texture2D" uid="uid://okkqp50is0im" path="res://assets/ui/icons/x_button.png" id="10_droxh"]
-[ext_resource type="Texture2D" uid="uid://dfv62c4uf2jdw" path="res://assets/ui/icons/french_button.png" id="11_3w6fj"]
-[ext_resource type="Texture2D" uid="uid://bdggwdxr5c810" path="res://assets/ui/icons/discord_button.png" id="11_ioidm"]
-[ext_resource type="Texture2D" uid="uid://chnjmnn6vuygx" path="res://assets/ui/icons/report_button.png" id="12_esjhy"]
-[ext_resource type="Texture2D" uid="uid://bbq17gtg7gqky" path="res://assets/ui/icons/shield_button.png" id="13_gyr4v"]
-[ext_resource type="Texture2D" uid="uid://yo1kyblhvyb3" path="res://assets/ui/icons/mail_button.png" id="14_ib5pc"]
+[ext_resource type="PackedScene" uid="uid://c8gbtn5xq2m4y" path="res://ui/components/game_button/game_button.tscn" id="15_btn"]
 
 [node name="OptionMenu" type="Control"]
 texture_filter = 1
@@ -70,15 +58,15 @@ text = "SETTINGS.TEXT.LABEL"
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+ratio = 1.5
 alignment_horizontal = 2
 alignment_vertical = 2
 
-[node name="CloseTextureButton" type="TextureButton" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/TopLineHBoxContainer/AspectRatioContainer"]
-texture_filter = 1
+[node name="CloseTextureButton" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/TopLineHBoxContainer/AspectRatioContainer" instance=ExtResource("15_btn")]
 layout_mode = 2
-texture_normal = ExtResource("2_vd677")
-ignore_texture_size = true
-stretch_mode = 4
+shape = 1
+palette = 3
+game_icon = 12
 
 [node name="SettingsHBoxContainer" type="HBoxContainer" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer"]
 layout_mode = 2
@@ -88,37 +76,31 @@ size_flags_vertical = 3
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="MusicTextureButton" type="TextureButton" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/SettingsHBoxContainer/MusicAspectRatioContainer"]
-texture_filter = 1
+[node name="MusicTextureButton" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/SettingsHBoxContainer/MusicAspectRatioContainer" instance=ExtResource("15_btn")]
 layout_mode = 2
-texture_normal = ExtResource("4_jywym")
-texture_pressed = ExtResource("6_2o3v8")
-ignore_texture_size = true
-stretch_mode = 5
+toggle_mode = true
+palette = 2
+game_icon = 6
+game_icon_pressed = 7
 
 [node name="SoundAspectRatioContainer" type="AspectRatioContainer" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/SettingsHBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="SoundTextureButton" type="TextureButton" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/SettingsHBoxContainer/SoundAspectRatioContainer"]
-texture_filter = 1
+[node name="SoundTextureButton" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/SettingsHBoxContainer/SoundAspectRatioContainer" instance=ExtResource("15_btn")]
 layout_mode = 2
-texture_normal = ExtResource("6_168q2")
-texture_pressed = ExtResource("8_0pr6m")
-ignore_texture_size = true
-stretch_mode = 5
+toggle_mode = true
+palette = 2
+game_icon = 8
+game_icon_pressed = 9
 
 [node name="LanguageAspectRatioContainer" type="AspectRatioContainer" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/SettingsHBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="LanguageTextureButton" type="TextureButton" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/SettingsHBoxContainer/LanguageAspectRatioContainer"]
-texture_filter = 1
+[node name="LanguageTextureButton" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/SettingsHBoxContainer/LanguageAspectRatioContainer" instance=ExtResource("15_btn")]
 layout_mode = 2
-texture_normal = ExtResource("11_3w6fj")
-texture_pressed = ExtResource("8_iii62")
-ignore_texture_size = true
-stretch_mode = 5
+game_icon = 21
 
 [node name="SocialsLabel" type="Label" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer"]
 texture_filter = 5
@@ -136,36 +118,25 @@ size_flags_vertical = 3
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="InstagramTextureButton" type="TextureButton" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/SocialsHBoxContainer/InstagramAspectRatioContainer"]
-texture_filter = 1
+[node name="InstagramTextureButton" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/SocialsHBoxContainer/InstagramAspectRatioContainer" instance=ExtResource("15_btn")]
 layout_mode = 2
-texture_normal = ExtResource("9_vb5lp")
-ignore_texture_size = true
-stretch_mode = 5
+game_icon = 17
 
 [node name="XAspectRatioContainer" type="AspectRatioContainer" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/SocialsHBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="XTextureButton" type="TextureButton" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/SocialsHBoxContainer/XAspectRatioContainer"]
-texture_filter = 1
+[node name="XTextureButton" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/SocialsHBoxContainer/XAspectRatioContainer" instance=ExtResource("15_btn")]
 layout_mode = 2
-size_flags_horizontal = 3
-texture_normal = ExtResource("10_droxh")
-ignore_texture_size = true
-stretch_mode = 5
+game_icon = 18
 
 [node name="DiscordAspectRatioContainer" type="AspectRatioContainer" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/SocialsHBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="DiscordTextureButton" type="TextureButton" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/SocialsHBoxContainer/DiscordAspectRatioContainer"]
-texture_filter = 1
+[node name="DiscordTextureButton" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/SocialsHBoxContainer/DiscordAspectRatioContainer" instance=ExtResource("15_btn")]
 layout_mode = 2
-size_flags_horizontal = 3
-texture_normal = ExtResource("11_ioidm")
-ignore_texture_size = true
-stretch_mode = 5
+game_icon = 19
 
 [node name="MiscLabel" type="Label" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer"]
 texture_filter = 5
@@ -183,38 +154,27 @@ size_flags_vertical = 3
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="NewsTextureButton" type="TextureButton" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/MiscHBoxContainer/NewsAspectRatioContainer"]
-modulate = Color(1, 1, 1, 0.313726)
-texture_filter = 1
+[node name="NewsTextureButton" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/MiscHBoxContainer/NewsAspectRatioContainer" instance=ExtResource("15_btn")]
 layout_mode = 2
-size_flags_horizontal = 3
 disabled = true
-texture_normal = ExtResource("12_esjhy")
-ignore_texture_size = true
-stretch_mode = 5
+palette = 1
+game_icon = 15
 
 [node name="InformationAspectRatioContainer" type="AspectRatioContainer" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/MiscHBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="InformationTextureButton" type="TextureButton" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/MiscHBoxContainer/InformationAspectRatioContainer"]
-modulate = Color(1, 1, 1, 0.313726)
-texture_filter = 1
+[node name="InformationTextureButton" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/MiscHBoxContainer/InformationAspectRatioContainer" instance=ExtResource("15_btn")]
 layout_mode = 2
-size_flags_horizontal = 3
 disabled = true
-texture_normal = ExtResource("13_gyr4v")
-ignore_texture_size = true
-stretch_mode = 5
+palette = 1
+game_icon = 14
 
 [node name="ContactAspectRatioContainer" type="AspectRatioContainer" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/MiscHBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="ContactTextureButton" type="TextureButton" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/MiscHBoxContainer/ContactAspectRatioContainer"]
-texture_filter = 1
+[node name="ContactTextureButton" parent="GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/MiscHBoxContainer/ContactAspectRatioContainer" instance=ExtResource("15_btn")]
 layout_mode = 2
-size_flags_horizontal = 3
-texture_normal = ExtResource("14_ib5pc")
-ignore_texture_size = true
-stretch_mode = 5
+palette = 1
+game_icon = 16

@@ -31,8 +31,8 @@ var _new_enemy_challenger: NewEnemyChallenger = null
 var _new_enemy_reveal_queue: Array[Dictionary] = []
 var _new_enemy_reveal_running: bool = false
 
-@onready var build_selection_button: TextureButton = $BuildSelectionMarginContainer/BuildSelectionButton
-@onready var challenges_button: TextureButton = $ChallengesMarginContainer/ChallengesButton
+@onready var build_selection_button: GameButton = $BuildSelectionMarginContainer/BuildSelectionButton
+@onready var challenges_button: GameButton = $ChallengesMarginContainer/ChallengesButton
 @onready var coins_rich_text_label: Label = %HUDVBoxContainer/CoinsWavesMarginContainer/CoinsWavesHBoxContainer/CoinsTextureRect/MarginContainer/CoinsLabel
 
 @onready var default_coins_text: String = coins_rich_text_label.text
@@ -41,9 +41,9 @@ var _new_enemy_reveal_running: bool = false
 @onready var default_health_text: String = health_rich_text_label.text
 @onready var health_texture_progress_bar: TextureProgressBar = %HUDVBoxContainer/HeartTextureRect/HealthMarginContainer/MarginContainer/HealthTextureProgressBar
 @onready var low_health_indicator: LowHealthIndicator = $LowHealthIndicator
-@onready var pause_button: TextureButton = $PauseMarginContainer/PauseButton
+@onready var pause_button: GameButton = $PauseMarginContainer/PauseButton
 @onready var skip_animation_player: AnimationPlayer = $SkipMarginContainer/SkipAnimationPlayer
-@onready var skip_time_scale_button: TextureButton = $SkipMarginContainer/SkipButton
+@onready var skip_time_scale_button: GameButton = $SkipMarginContainer/SkipButton
 
 @onready var signals: Array[Dictionary] = [
 	{SignalUtil.WHO: challenges_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_challenges_button_pressed},
@@ -70,11 +70,6 @@ func _ready() -> void:
 
 	SignalUtil.connects(signals)
 	_apply_time_scale(DEFAULT_TIME_SCALE, false)
-
-	ButtonEffects.apply(challenges_button)
-	ButtonEffects.apply(pause_button)
-	ButtonEffects.apply(skip_time_scale_button)
-	ButtonEffects.apply(build_selection_button)
 
 	_new_enemy_challenger = NEW_ENEMY_CHALLENGER_SCENE.instantiate() as NewEnemyChallenger
 	add_child(_new_enemy_challenger)

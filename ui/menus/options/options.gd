@@ -8,24 +8,17 @@ extends Control
 # signals
 signal menu_close
 
-## Flag textures for language toggle button
-const FLAG_EN: Texture2D = preload("res://assets/ui/icons/english_button.png")
-const FLAG_FR: Texture2D = preload("res://assets/ui/icons/french_button.png")
-
-# private variables
-var _actual_texture: Texture2D
-
 ## Options buttons
-@onready var close_button: TextureButton = $GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/TopLineHBoxContainer/AspectRatioContainer/CloseTextureButton
-@onready var contact_button: TextureButton = $GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/MiscHBoxContainer/ContactAspectRatioContainer/ContactTextureButton
-@onready var discord_button: TextureButton = $GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/SocialsHBoxContainer/DiscordAspectRatioContainer/DiscordTextureButton
-@onready var instagram_button: TextureButton = $GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/SocialsHBoxContainer/InstagramAspectRatioContainer/InstagramTextureButton
-@onready var language_toggle_button: TextureButton = $GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/SettingsHBoxContainer/LanguageAspectRatioContainer/LanguageTextureButton
-@onready var music_toggle_button: TextureButton = $GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/SettingsHBoxContainer/MusicAspectRatioContainer/MusicTextureButton
-@onready var news_button: TextureButton = $GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/MiscHBoxContainer/NewsAspectRatioContainer/NewsTextureButton
-@onready var rgpd_button: TextureButton = $GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/MiscHBoxContainer/InformationAspectRatioContainer/InformationTextureButton
-@onready var sound_toggle_button: TextureButton = $GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/SettingsHBoxContainer/SoundAspectRatioContainer/SoundTextureButton
-@onready var x_button: TextureButton = $GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/SocialsHBoxContainer/XAspectRatioContainer/XTextureButton
+@onready var close_button: GameButton = $GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/TopLineHBoxContainer/AspectRatioContainer/CloseTextureButton
+@onready var contact_button: GameButton = $GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/MiscHBoxContainer/ContactAspectRatioContainer/ContactTextureButton
+@onready var discord_button: GameButton = $GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/SocialsHBoxContainer/DiscordAspectRatioContainer/DiscordTextureButton
+@onready var instagram_button: GameButton = $GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/SocialsHBoxContainer/InstagramAspectRatioContainer/InstagramTextureButton
+@onready var language_toggle_button: GameButton = $GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/SettingsHBoxContainer/LanguageAspectRatioContainer/LanguageTextureButton
+@onready var music_toggle_button: GameButton = $GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/SettingsHBoxContainer/MusicAspectRatioContainer/MusicTextureButton
+@onready var news_button: GameButton = $GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/MiscHBoxContainer/NewsAspectRatioContainer/NewsTextureButton
+@onready var rgpd_button: GameButton = $GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/MiscHBoxContainer/InformationAspectRatioContainer/InformationTextureButton
+@onready var sound_toggle_button: GameButton = $GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/SettingsHBoxContainer/SoundAspectRatioContainer/SoundTextureButton
+@onready var x_button: GameButton = $GuiMarginContainer/MenuMarginContainer/MenuRowVBoxContainer/SocialsHBoxContainer/XAspectRatioContainer/XTextureButton
 
 @onready var signals: Array[Dictionary] = [
 	{SignalUtil.WHO: close_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_close_texture_button_pressed},
@@ -33,10 +26,10 @@ var _actual_texture: Texture2D
 	{SignalUtil.WHO: discord_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_discord_texture_button_pressed},
 	{SignalUtil.WHO: instagram_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_instagram_texture_button_pressed},
 	{SignalUtil.WHO: language_toggle_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_language_texture_button_pressed},
-	{SignalUtil.WHO: music_toggle_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_music_texture_button_pressed},
+	{SignalUtil.WHO: music_toggle_button, SignalUtil.WHAT: "toggled", SignalUtil.TO: _on_music_texture_button_toggled},
 	{SignalUtil.WHO: news_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_update_texture_button_pressed},
 	{SignalUtil.WHO: rgpd_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_rgpd_texture_button_pressed},
-	{SignalUtil.WHO: sound_toggle_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_sound_texture_button_pressed},
+	{SignalUtil.WHO: sound_toggle_button, SignalUtil.WHAT: "toggled", SignalUtil.TO: _on_sound_texture_button_toggled},
 	{SignalUtil.WHO: x_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_x_texture_button_pressed},
 ]
 
@@ -49,17 +42,6 @@ func _ready() -> void:
 
 	# Set initial button states based on current settings
 	_update_button_states()
-
-	ButtonEffects.apply(close_button)
-	ButtonEffects.apply(contact_button)
-	ButtonEffects.apply(discord_button)
-	ButtonEffects.apply(instagram_button)
-	ButtonEffects.apply(language_toggle_button)
-	ButtonEffects.apply(music_toggle_button)
-	ButtonEffects.apply(news_button)
-	ButtonEffects.apply(rgpd_button)
-	ButtonEffects.apply(sound_toggle_button)
-	ButtonEffects.apply(x_button)
 
 # private
 ## Emits the menu close signal.
@@ -92,14 +74,9 @@ func _on_language_texture_button_pressed() -> void:
 	# Update the button to show the other available language (not the current one).
 	_update_language_button_display()
 
-## Toggles the music state and updates the button texture.
-func _on_music_texture_button_pressed() -> void:
-	_actual_texture = music_toggle_button.get_texture_normal()
-	music_toggle_button.set_texture_normal(music_toggle_button.get_texture_pressed())
-	music_toggle_button.set_texture_pressed(_actual_texture)
-	# Update progression parameter and persist it
-	var current_music: bool = ProgressionManager.data.parameters.music_enabled
-	ProgressionManager.data.parameters.music_enabled = not current_music
+## Saves the music setting and applies it, the pressed look of the button is the "off" one.
+func _on_music_texture_button_toggled(is_off: bool) -> void:
+	ProgressionManager.data.parameters.music_enabled = not is_off
 	ProgressionManager.save_game()
 	ProgressionManager.apply_settings()
 
@@ -107,14 +84,9 @@ func _on_music_texture_button_pressed() -> void:
 func _on_rgpd_texture_button_pressed() -> void:
 	pass
 
-## Toggles the sound state and updates the button texture.
-func _on_sound_texture_button_pressed() -> void:
-	_actual_texture = sound_toggle_button.get_texture_normal()
-	sound_toggle_button.set_texture_normal(sound_toggle_button.get_texture_pressed())
-	sound_toggle_button.set_texture_pressed(_actual_texture)
-	# Update progression parameter and persist it
-	var current_sound: bool = ProgressionManager.data.parameters.sound_enabled
-	ProgressionManager.data.parameters.sound_enabled = not current_sound
+## Saves the sound setting and applies it, the pressed look of the button is the "off" one.
+func _on_sound_texture_button_toggled(is_off: bool) -> void:
+	ProgressionManager.data.parameters.sound_enabled = not is_off
 	ProgressionManager.save_game()
 	ProgressionManager.apply_settings()
 
@@ -128,29 +100,14 @@ func _on_x_texture_button_pressed() -> void:
 
 ## Updates the button textures to reflect the current settings.
 func _update_button_states() -> void:
-	# For music button: if music_enabled is true, normal should be "on" texture
-	# Assuming normal is on, pressed is off
-	if not ProgressionManager.data.parameters.music_enabled:
-		# Swap to show off
-		var temp: Texture2D = music_toggle_button.get_texture_normal()
-		music_toggle_button.set_texture_normal(music_toggle_button.get_texture_pressed())
-		music_toggle_button.set_texture_pressed(temp)
-
-	# Same for sound
-	if not ProgressionManager.data.parameters.sound_enabled:
-		var temp: Texture2D = sound_toggle_button.get_texture_normal()
-		sound_toggle_button.set_texture_normal(sound_toggle_button.get_texture_pressed())
-		sound_toggle_button.set_texture_pressed(temp)
+	# The pressed look of both toggles is the "off" icon
+	music_toggle_button.set_pressed_no_signal(not ProgressionManager.data.parameters.music_enabled)
+	sound_toggle_button.set_pressed_no_signal(not ProgressionManager.data.parameters.sound_enabled)
 
 	# Show the other available language on the button (not the current one).
 	_update_language_button_display()
 
-## Sets the language toggle button texture so it shows the other available language.
+## Sets the language toggle button flag so it shows the other available language.
 func _update_language_button_display() -> void:
 	var current_locale: String = ProgressionManager.data.parameters.language if ProgressionManager.data.parameters.language != "" else TranslationServer.get_locale()
-	if current_locale == "fr":
-		language_toggle_button.texture_normal = FLAG_EN
-		language_toggle_button.texture_pressed = FLAG_FR
-	else:
-		language_toggle_button.texture_normal = FLAG_FR
-		language_toggle_button.texture_pressed = FLAG_EN
+	language_toggle_button.game_icon = GameIcon.Id.FLAG_EN if current_locale == "fr" else GameIcon.Id.FLAG_FR
