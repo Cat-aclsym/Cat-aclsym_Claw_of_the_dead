@@ -1,10 +1,12 @@
 ## © [2026] A7 Studio. All rights reserved. Trademark.
 ##
-## [GameIcon] atlas: one distinct glyph per id, the single-color and multicolor lists match the pixels.
+## [GameIcon] atlas: one distinct glyph per id, horizontally centered in its cell, the single-color and multicolor lists match the pixels.
 extends GdUnitTestSuite
 
 const WHITE: Color = Color(1.0, 1.0, 1.0, 1.0)
 const LIGHT_GREY: Color = Color(191.0 / 255.0, 191.0 / 255.0, 191.0 / 255.0, 1.0)
+## Triangle glyphs centered on their mass (optical centering) instead of their bounding box.
+const OPTICALLY_CENTERED: Array[GameIcon.Id] = [GameIcon.Id.PLAY, GameIcon.Id.FAST_FORWARD]
 ## Single-color glyphs drawn with the light grey second tone besides the white.
 const SHADED: Array[GameIcon.Id] = [GameIcon.Id.PLAY, GameIcon.Id.PAUSE, GameIcon.Id.FAST_FORWARD, GameIcon.Id.CLOSE, GameIcon.Id.BACK]
 
@@ -74,6 +76,27 @@ func test_the_single_color_icons_are_white_and_the_shaded_ones_add_a_light_grey(
 		assert_bool(opaque.all(func(pixel: Color) -> bool: return pixel.is_equal_approx(WHITE) or pixel.is_equal_approx(LIGHT_GREY))).override_failure_message("%s: only white and light grey expected" % GameIcon.key(id)).is_true()
 		var has_grey: bool = opaque.any(func(pixel: Color) -> bool: return pixel.is_equal_approx(LIGHT_GREY))
 		assert_bool(has_grey).override_failure_message("%s: SHADED must match the light grey pixels" % GameIcon.key(id)).is_equal(id in SHADED)
+
+
+func test_every_glyph_is_horizontally_centered_in_its_cell() -> void:
+	for id: GameIcon.Id in _icons():
+		var cell: Image = _cell(id)
+		var columns: Array[float] = []
+		for x: int in cell.get_width():
+			var column: float = 0.0
+			for y: int in cell.get_height():
+				column += cell.get_pixel(x, y).a
+			columns.append(column)
+		var drawn: Array = range(columns.size()).filter(func(x: int) -> bool: return columns[x] > 0.0)
+		var center: float = (drawn.front() + drawn.back() + 1) / 2.0
+		if id in OPTICALLY_CENTERED:
+			var mass: float = 0.0
+			var moment: float = 0.0
+			for x: int in columns.size():
+				mass += columns[x]
+				moment += columns[x] * (x + 0.5)
+			center = moment / mass
+		assert_float(center).override_failure_message("%s is centered at x %.2f" % [GameIcon.key(id), center]).is_between(GameIcon.CELL_SIZE / 2.0 - 0.5, GameIcon.CELL_SIZE / 2.0 + 0.5)
 
 
 func test_key_is_the_name_of_the_id() -> void:
