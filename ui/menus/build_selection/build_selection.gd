@@ -6,10 +6,14 @@ extends Control
 
 enum Tab { TOWERS, TRAPS }
 
+const BUILD_CARD_SCENE: PackedScene = preload("res://ui/menus/build_selection/cards/build_card.tscn")
+## Entities of the menu, in display order (the [StatsDB] order is not the menu order: bat_09 comes before bat_08).
+const CARD_IDS: Array[String] = ["bat_01", "bat_02", "bat_09", "bat_08", "bat_03", "bat_04", "bat_05", "bat_06", "bat_07"]
+
 var _current_tab: Tab = Tab.TOWERS
 
 @onready var construction_anim_player: AnimationPlayer = $AnimationPlayer
-## Row of [BuildCard] instances.
+## Row of [AspectRatioContainer]s, each holding one [BuildCard] (created by [method _build_cards]).
 @onready var construction_menu: HBoxContainer = $MarginContainer/VBoxContainer/BackgroundTextureRect/BuildListMarginContainer/HBoxContainer
 @onready var tower_tab_button: GameButton = $MarginContainer/VBoxContainer/TabsHBox/TowerTabButton
 @onready var trap_tab_button: GameButton = $MarginContainer/VBoxContainer/TabsHBox/TrapTabButton
@@ -30,6 +34,7 @@ func _ready() -> void:
 	if ILevel.current_level:
 		SignalUtil.connects([{SignalUtil.WHO: ILevel.current_level, SignalUtil.WHAT: "stats_updated", SignalUtil.TO: _on_level_stats_updated}])
 
+	_build_cards()
 	_update_tab_visuals()
 	_refresh_construction_cards()
 
@@ -61,6 +66,26 @@ func toggle_build_menu() -> void:
 
 
 # Private functions
+
+## Creates one [BuildCard] per id of [constant CARD_IDS], the entity scene comes from the [code]scene[/code] field of [StatsDB] (tower or trap).
+## [br]An id without a scene is skipped with a warning.
+func _build_cards() -> void:
+	for id: String in CARD_IDS:
+		var stats: Dictionary = StatsDB.get_tower(id) if StatsDB.has_tower(id) else StatsDB.get_trap(id)
+		var scene: PackedScene = StatsDB.load_packed_scene(str(stats.get("scene", "")))
+		if scene == null:
+			Log.trace(Log.Level.WARN, "No entity scene for build card '%s'" % id)
+			continue
+
+		var aspect: AspectRatioContainer = AspectRatioContainer.new()
+		aspect.name = "%sAspectRatioContainer" % id.to_pascal_case()
+		aspect.stretch_mode = AspectRatioContainer.STRETCH_HEIGHT_CONTROLS_WIDTH
+		var card: BuildCard = BUILD_CARD_SCENE.instantiate()
+		card.name = "BuildCard%s" % id.to_pascal_case()
+		card.entity = scene
+		aspect.add_child(card)
+		construction_menu.add_child(aspect)
+
 
 func _on_animation_finished(animation_name: StringName) -> void:
 	if animation_name == &"RESET" and construction_menu.visible:

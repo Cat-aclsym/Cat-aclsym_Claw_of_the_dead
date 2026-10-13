@@ -1,7 +1,8 @@
 ## © [2026] A7 Studio. All rights reserved. Trademark.
 ##
-## Generic build-card used in the construction menu.
-## Can represent any buildable entity (tower or trap) that exposes a `cost` property.
+## The only build-card scene of the construction menu, configured by its [member entity].
+## [br]Can represent any buildable entity (tower or trap) that exposes a `cost` property: title, price and icon (texture and tint) come from the entity and [StatsDB].
+## [br][BuildSelection] creates one card per entity listed in [constant BuildSelection.CARD_IDS] and sets [member entity] before adding the card to the tree.
 class_name BuildCard
 extends Control
 
@@ -94,22 +95,11 @@ func update() -> void:
 
 
 # private
-## Fills the card icon from the entity. 
-## Traps often use [Sprite2D], while Towers use [AnimatedSprite2D] (named 'Sprite').
+## Fills the card icon (texture and tint) from the sprite of the entity, read through [SpritePreview].
 func _apply_entity_preview_texture() -> void:
-	var sprite_node: Node = _entity.get_node_or_null("Sprite")
-	if sprite_node == null:
-		sprite_node = _entity.get_node_or_null("Sprite2D")
-	
-	var texture: Texture2D = null
-	if sprite_node is Sprite2D:
-		texture = sprite_node.texture
-	elif sprite_node is AnimatedSprite2D:
-		if sprite_node.sprite_frames and sprite_node.sprite_frames.has_animation("idle"):
-			texture = sprite_node.sprite_frames.get_frame_texture("idle", 0)
-	
-	if texture:
-		preview_texture_rect.texture = texture
+	var preview: SpritePreview = SpritePreview.from_node(_entity)
+	preview_texture_rect.texture = preview.texture
+	preview_texture_rect.modulate = preview.modulate
 
 
 func _is_entity_unlocked() -> bool:

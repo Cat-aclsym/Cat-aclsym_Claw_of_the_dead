@@ -1,6 +1,6 @@
 ## © [2026] A7 Studio. All rights reserved. Trademark.
 ##
-## Preview of the sprite of a tower, trap or enemy scene, shared by the armory and the encyclopedia.
+## Preview of the sprite of a tower, trap or enemy scene, shared by the armory, the encyclopedia and the build cards.
 class_name SpritePreview
 extends RefCounted
 
@@ -18,15 +18,21 @@ var scale: Vector2 = Vector2.ONE
 var texture: Texture2D = null
 
 
+## Reads the sprite of the instantiated scene [param root], which is left untouched. Returns an empty preview when it has no sprite.
+static func from_node(root: Node) -> SpritePreview:
+	var preview: SpritePreview = SpritePreview.new()
+	preview._read_sprite(_find_sprite(root))
+	return preview
+
+
 ## Instantiates [param scene] and reads its sprite, returns an empty preview when the scene is null or has no sprite.
 static func from_scene(scene: PackedScene) -> SpritePreview:
-	var preview: SpritePreview = SpritePreview.new()
 	if scene == null:
-		return preview
+		return SpritePreview.new()
 
 	var root: Node = scene.instantiate()
-	preview._read_sprite(_find_sprite(root))
-	root.queue_free()
+	var preview: SpritePreview = from_node(root)
+	root.free()
 	return preview
 
 

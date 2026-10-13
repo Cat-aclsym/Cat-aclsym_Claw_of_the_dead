@@ -1,15 +1,13 @@
-[gd_scene load_steps=9 format=3 uid="uid://b2qklmpagmiaq"]
+[gd_scene load_steps=7 format=3 uid="uid://3noiaamd0p84"]
 
-[ext_resource type="Script" uid="uid://e0qqc3xugp8k" path="res://ui/menus/build_selection/cards/build_card.gd" id="1_script"]
-[ext_resource type="PackedScene" uid="uid://x1jes7w2solx" path="res://game/buildings/traps/bat_07.tscn" id="2_entity"]
-[ext_resource type="Texture2D" uid="uid://85310xv6g30a" path="res://assets/ui/cards/construction_tower_title.svg" id="3_title"]
-[ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://ui/theme/generic.tres" id="4_theme"]
-[ext_resource type="Texture2D" uid="uid://cdesir3miwmug" path="res://assets/ui/cards/green_frame.svg" id="5_frame"]
-[ext_resource type="Texture2D" uid="uid://yayv0hygrr3u" path="res://assets/ui/cards/blue_background.svg" id="6_bg"]
-[ext_resource type="Texture2D" uid="uid://do0ybx58p4dnq" path="res://assets/sprites/traps/spikes.png" id="7_icon"]
+[ext_resource type="Script" uid="uid://e0qqc3xugp8k" path="res://ui/menus/build_selection/cards/build_card.gd" id="1_hl5pg"]
+[ext_resource type="Texture2D" uid="uid://85310xv6g30a" path="res://assets/ui/cards/construction_tower_title.svg" id="2_6d6oa"]
+[ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://ui/theme/generic.tres" id="3_r2ha7"]
+[ext_resource type="Texture2D" uid="uid://cdesir3miwmug" path="res://assets/ui/cards/green_frame.svg" id="4_wyqnw"]
+[ext_resource type="Texture2D" uid="uid://yayv0hygrr3u" path="res://assets/ui/cards/blue_background.svg" id="5_4himi"]
 [ext_resource type="Texture2D" uid="uid://b6lrh02vg30l3" path="res://assets/ui/hud/coin.png" id="8_coin"]
 
-[node name="BuildCardBat07" type="Control"]
+[node name="BuildCard" type="Control"]
 z_index = 1
 layout_mode = 3
 anchors_preset = 15
@@ -19,8 +17,7 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-script = ExtResource("1_script")
-entity = ExtResource("2_entity")
+script = ExtResource("1_hl5pg")
 
 [node name="CardVBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 1
@@ -39,7 +36,7 @@ ratio = 3.0
 
 [node name="TitleTextureRect" type="TextureButton" parent="CardVBoxContainer/TitleAspectRatioContainer"]
 layout_mode = 2
-texture_normal = ExtResource("3_title")
+texture_normal = ExtResource("2_6d6oa")
 ignore_texture_size = true
 stretch_mode = 5
 
@@ -50,9 +47,8 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme = ExtResource("4_theme")
+theme = ExtResource("3_r2ha7")
 theme_override_font_sizes/font_size = 15
-text = "TRAP.BAT_07.NAME"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -64,7 +60,7 @@ size_flags_stretch_ratio = 0.7
 
 [node name="CardTextureButton" type="TextureButton" parent="CardVBoxContainer/CardAspectRatioContainer"]
 layout_mode = 2
-texture_normal = ExtResource("5_frame")
+texture_normal = ExtResource("4_wyqnw")
 ignore_texture_size = true
 stretch_mode = 4
 
@@ -82,12 +78,12 @@ offset_right = 0.51001
 offset_bottom = -0.48999
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("6_bg")
+texture = ExtResource("5_4himi")
 expand_mode = 1
 stretch_mode = 4
 
 [node name="BuildPreviewTextureRect" type="TextureRect" parent="CardVBoxContainer/CardAspectRatioContainer/CardTextureButton"]
-modulate = Color(1, 1, 0, 1)
+z_index = -1
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -95,7 +91,6 @@ anchor_bottom = 1.0
 offset_bottom = -5.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("7_icon")
 expand_mode = 1
 stretch_mode = 4
 
@@ -116,9 +111,8 @@ alignment = 1
 [node name="PriceLabel" type="Label" parent="CardVBoxContainer/CardAspectRatioContainer/CardTextureButton/PriceRow"]
 texture_filter = 5
 layout_mode = 2
-theme = ExtResource("4_theme")
+theme = ExtResource("3_r2ha7")
 theme_override_font_sizes/font_size = 15
-text = "60"
 horizontal_alignment = 1
 vertical_alignment = 1
 
