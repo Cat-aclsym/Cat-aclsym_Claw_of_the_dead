@@ -8,7 +8,7 @@ const UPGRADE_IDS: Array[String] = ["bat_01_02", "bat_02_02"]
 
 
 func after_test() -> void:
-	Global.clear_pauses()
+	Global.release_pause(&"upgrade_menu")
 
 
 func test_the_first_option_tab_is_green_when_the_menu_opens() -> void:
