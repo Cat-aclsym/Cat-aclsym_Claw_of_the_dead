@@ -1,6 +1,6 @@
 ## © [2026] A7 Studio. All rights reserved. Trademark.
 ##
-## [Narrative] timeline lookup by locale and the one-time playback guard.
+## [Narrative] timeline lookup by locale, the one-time playback guard and a layout that ignores the camera.
 extends GdUnitTestSuite
 
 const BASE: String = "armory_intro"
@@ -25,6 +25,16 @@ func after_test() -> void:
 	ProgressionManager.data = _data_before
 	ProgressionManager.persistence_enabled = _persistence_before
 	TranslationServer.set_locale(_locale_before)
+
+
+func test_the_dialogue_layout_stays_fixed_on_screen_whatever_the_camera() -> void:
+	assert_bool(Narrative.play_once(FLAG, BASE)).is_true()
+	await await_idle_frame()
+	# The default layout base is a CanvasLayer at runtime while its script class only extends Node
+	var layout: Node = Dialogic.Styles.get_layout_node()
+
+	assert_object(layout).is_instanceof(CanvasLayer)
+	assert_bool(layout.get(&"follow_viewport_enabled")).is_false()
 
 
 func test_play_once_is_refused_when_the_flag_is_already_set() -> void:

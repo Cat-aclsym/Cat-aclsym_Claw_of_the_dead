@@ -13,7 +13,6 @@
 [sub_resource type="Resource" id="Resource_iksck"]
 script = ExtResource("1_2nmgi")
 overrides = {
-"follow_viewport": "true",
 "global_font": "\"res://assets/fonts/dotgothic/dotgothic16_regular.ttf\""
 }
 
