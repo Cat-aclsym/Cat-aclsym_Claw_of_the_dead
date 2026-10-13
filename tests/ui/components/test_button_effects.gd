@@ -31,6 +31,16 @@ func test_apply_keeps_the_button_processing_while_the_tree_is_paused() -> void:
 	assert_bool(button.has_meta(ButtonEffects.APPLIED_META_KEY)).is_true()
 
 
+func test_apply_without_process_when_paused_leaves_the_process_mode() -> void:
+	var button: Button = auto_free(Button.new())
+
+	ButtonEffects.apply(button, false)
+
+	assert_int(button.process_mode).is_equal(Node.PROCESS_MODE_INHERIT)
+	assert_bool(button.has_meta(ButtonEffects.APPLIED_META_KEY)).is_true()
+	assert_vector(button.pivot_offset_ratio).is_equal(ButtonEffects.PIVOT_RATIO)
+
+
 func test_apply_pivots_on_the_center_and_follows_the_size() -> void:
 	var button: Button = auto_free(Button.new())
 	button.size = Vector2(80.0, 40.0)

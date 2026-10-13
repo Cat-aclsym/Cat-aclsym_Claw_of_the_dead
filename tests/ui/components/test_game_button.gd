@@ -230,6 +230,17 @@ func test_icon_only_button_is_named_for_accessibility() -> void:
 	assert_str(button.accessibility_name).is_equal(tr("BUTTON.SELL"))
 
 
+func test_the_button_processes_while_the_tree_is_paused_unless_told_otherwise() -> void:
+	var always: GameButton = _add(_button(GameButton.Shape.RECT, GameButton.Palette.BLUE))
+	var stopping: GameButton = _button(GameButton.Shape.RECT, GameButton.Palette.BLUE)
+	stopping.process_when_paused = false
+	_add(stopping)
+
+	assert_int(always.process_mode).is_equal(Node.PROCESS_MODE_ALWAYS)
+	assert_int(stopping.process_mode).is_equal(Node.PROCESS_MODE_INHERIT)
+	assert_bool(stopping.has_meta(ButtonEffects.APPLIED_META_KEY)).is_true()
+
+
 func _add(button: GameButton) -> GameButton:
 	add_child(auto_free(button))
 	return button

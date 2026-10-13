@@ -6,7 +6,8 @@
 ## [member palette_pressed] in while [member BaseButton.button_pressed] is on, also after [method BaseButton.set_pressed_no_signal].
 ## A latched toggle with such a swap keeps full brightness (hover still brightens it): the swap is its pressed look.
 ## [br]An icon-only button of a fixed-proportion shape ([constant SCALED_SHAPES]) larger than its base draws the base and the glyph scaled up
-## ([member art_scale]), centered and with the base proportions, so a big button keeps the pixel grain of the art instead of stretching its 9-slice.
+## ([member art_scale]), centered and with the base proportions, instead of stretching its 9-slice. The scale is the largest factor that fits the button
+## (at least 1, not always a whole number), so the pixels of the art are not all the same size on screen.
 ## [br]The tooltip is the [code]BUTTON.<ID>[/code] translation of the glyph unless [member Control.tooltip_text] is set. Instance [code]game_button.tscn[/code]:
 ## [codeblock]
 ## var button: GameButton = preload("res://ui/components/game_button/game_button.tscn").instantiate()
@@ -80,6 +81,9 @@ const VARIATIONS: Array[StringName] = [
 	set(value):
 		palette_pressed = value
 		queue_redraw()
+## Keeps the button clickable while the tree is paused ([constant Node.PROCESS_MODE_ALWAYS]): leave it on for buttons used while the tree is paused,
+## such as the pause menu and the HUD during the tutorial, turn it off for the others so they stop with the game.
+@export var process_when_paused: bool = true
 ## Sets the base and the matching theme variation.
 @export var shape: Shape = Shape.RECT:
 	set(value):
@@ -88,7 +92,8 @@ const VARIATIONS: Array[StringName] = [
 		if is_node_ready():
 			_apply_shape()
 
-## Factor the base and the glyph are drawn at, [code]1.0[/code] unless an icon-only [constant SCALED_SHAPES] button is larger than its base.
+## Factor the base and the glyph are drawn at: the largest one that fits the button (at least [code]1.0[/code], fractional) for an icon-only
+## [constant SCALED_SHAPES] button larger than its base, else [code]1.0[/code].
 var art_scale: float = 1.0
 
 var _glyph_color: Color = INK
@@ -103,7 +108,7 @@ func _ready() -> void:
 	assert(_material != null, "The %Background of a GameButton needs the palette ShaderMaterial.")
 	_apply_shape()
 	if not Engine.is_editor_hint():
-		ButtonEffects.apply(self)
+		ButtonEffects.apply(self, process_when_paused)
 
 
 func _draw() -> void:
@@ -195,8 +200,9 @@ func _refresh_look() -> void:
 	var glyph_scale: float = brightness * glyph_brightness
 	_glyph_color = Color(tint.r * glyph_scale, tint.g * glyph_scale, tint.b * glyph_scale)
 
+	# accessibility_name is a stored property: assigned in the editor, the next scene save would write it into every instance
 	var label: String = _icon_label()
-	if text.is_empty() and accessibility_name != label:
+	if not Engine.is_editor_hint() and text.is_empty() and accessibility_name != label:
 		accessibility_name = label
 	_set_white_text(current_palette == Palette.RED)
 
@@ -207,6 +213,7 @@ func _shows_latched_swap() -> bool:
 
 
 ## Switches the text of the button to white (RED palette) or back to the theme color, only in game: the editor never saves the overrides.
+## [br]Going back removes all six font color overrides, so overrides authored on an instance are lost once the button has been white.
 func _set_white_text(white: bool) -> void:
 	if white == _white_text or Engine.is_editor_hint():
 		return

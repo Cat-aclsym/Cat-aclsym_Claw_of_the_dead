@@ -16,13 +16,14 @@ const TWEEN_META_KEY: StringName = &"active_button_tween"
 # Static Methods
 ## Applies button effects to a given button, applying them again to the same button does nothing.
 ## [br][param button] The button to apply effects to, [GameButton] applies them on its own.
-static func apply(button: Control) -> void:
+## [br][param process_when_paused] Forces the button to ALWAYS process, so it works while the tree is paused, else its process mode is left as is.
+static func apply(button: Control, process_when_paused: bool = true) -> void:
 	if button == null or button.has_meta(APPLIED_META_KEY):
 		return
 	button.set_meta(APPLIED_META_KEY, true)
 
-	# Force the button to ALWAYS process, even when the tree is paused
-	button.process_mode = Node.PROCESS_MODE_ALWAYS
+	if process_when_paused:
+		button.process_mode = Node.PROCESS_MODE_ALWAYS
 
 	# The pivot stays centered for the scaling effects whatever the size
 	button.pivot_offset_ratio = PIVOT_RATIO

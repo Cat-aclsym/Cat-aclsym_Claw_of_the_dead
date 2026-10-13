@@ -30,6 +30,7 @@ offset_right = 34.0
 offset_bottom = 39.0
 shape = 2
 palette = 3
+process_when_paused = false
 game_icon = 12
 
 [node name="InfoTextureButton" parent="Buttons" instance=ExtResource("2_v84gu")]
@@ -40,6 +41,7 @@ offset_right = 34.0
 offset_bottom = 39.0
 shape = 2
 palette = 1
+process_when_paused = false
 game_icon = 23
 
 [node name="UpgradeTextureButton" parent="Buttons" instance=ExtResource("2_v84gu")]
@@ -50,6 +52,7 @@ offset_right = 34.0
 offset_bottom = 39.0
 shape = 2
 palette = 1
+process_when_paused = false
 game_icon = 24
 
 [node name="PriceRow" type="HBoxContainer" parent="Buttons/UpgradeTextureButton"]
@@ -95,6 +98,7 @@ offset_right = 34.0
 offset_bottom = 39.0
 shape = 2
 palette = 4
+process_when_paused = false
 game_icon = 25
 
 [node name="PriceRow" type="HBoxContainer" parent="Buttons/SellTextureButton"]
