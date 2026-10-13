@@ -6,6 +6,7 @@ extends GdUnitTestSuite
 const END_GAME_SCENE: PackedScene = preload("res://ui/menus/end_game/end_game.tscn")
 const UI_SCENE: PackedScene = preload("res://ui/ui.tscn")
 
+var _challenges_before: Array[Challenge] = []
 var _data_before: ProgressionData = null
 var _hud_before: HUD = null
 var _level_before: ILevel = null
@@ -14,6 +15,9 @@ var _ui_before: UI = null
 
 
 func before_test() -> void:
+	# The pause sources can't be read back, so the clean-up below only clears them when nothing was paused
+	assert_bool(Global.paused).override_failure_message("a pause source is active before the test").is_false()
+	_challenges_before = ChallengeManager.active_challenges.duplicate()
 	_data_before = ProgressionManager.data
 	_hud_before = Global.hud
 	_level_before = ILevel.current_level
@@ -26,6 +30,7 @@ func before_test() -> void:
 
 
 func after_test() -> void:
+	ChallengeManager.active_challenges.assign(_challenges_before)
 	ProgressionManager.data = _data_before
 	ProgressionManager.persistence_enabled = _persistence_before
 	Global.hud = _hud_before if is_instance_valid(_hud_before) else null
@@ -54,9 +59,10 @@ func test_the_challenge_lines_use_the_challenge_line_and_body_variations() -> vo
 	ChallengeManager.active_challenges.append(challenge)
 
 	end_game._display_challenges()
-	ChallengeManager.active_challenges.erase(challenge)
 
-	var line: HBoxContainer = end_game.challenges_vbox.get_child(0)
+	var lines: Array[Node] = end_game.challenges_vbox.get_children().filter(func(node: Node) -> bool: return not node.is_queued_for_deletion())
+	assert_int(lines.size()).is_equal(ChallengeManager.active_challenges.size())
+	var line: HBoxContainer = lines.back()
 	assert_str(line.theme_type_variation).is_equal(&"ChallengeLine")
 	assert_str(line.get_child(1).theme_type_variation).is_equal(&"BodyText")
 

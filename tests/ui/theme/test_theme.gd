@@ -29,6 +29,8 @@ const SCENE_FORBIDDEN_PREFIXES: Array[String] = [
 	"theme_override_styles/",
 ]
 const SCANNED_DIRS: Array[String] = ["res://game", "res://ui"]
+## Script calls and property names that override the theme: fonts, sizes, colors and styles, and the outline, line spacing and shadow constants.
+const SCRIPT_FORBIDDEN_PATTERN: String = r'add_theme_(font|font_size|color|stylebox)_override|add_theme_constant_override\(\s*&?"(outline_size|line_spacing|shadow_\w+)"|theme_override_(colors|fonts|font_sizes|styles)/|theme_override_constants/(outline_size|line_spacing|shadow_)'
 const STYLES_DIR: String = "res://ui/theme/styles"
 
 var _theme: Theme = ThemeDB.get_project_theme()
@@ -36,20 +38,14 @@ var _theme: Theme = ThemeDB.get_project_theme()
 
 func test_every_variation_picked_by_a_scene_or_a_script_exists() -> void:
 	var used: Dictionary[String, String] = {}
-	var scene_regex: RegEx = RegEx.create_from_string(r'theme_type_variation = &"(\w+)"')
-	for path: String in _files(".tscn"):
-		for match: RegExMatch in scene_regex.search_all(FileAccess.get_file_as_string(path)):
-			used[match.get_string(1)] = path
-	var token_regex: RegEx = RegEx.create_from_string(r'&"(\w+)"')
-	for path: String in _files(".gd"):
-		for line: String in FileAccess.get_file_as_string(path).split("\n"):
-			if line.to_lower().contains("variation") and not line.contains("get_theme"):
-				for match: RegExMatch in token_regex.search_all(line):
-					used[match.get_string(1)] = path
-	for name: StringName in GameButton.VARIATIONS + GameButton.INVERSE_VARIATIONS + ChallengeCard.DIFFICULTY_VARIATIONS.values():
-		used[name] = "constant"
+	for extension: String in [".tscn", ".tres", ".gd"]:
+		for path: String in _files(extension):
+			for variation: String in _variations_in(FileAccess.get_file_as_string(path), extension == ".gd"):
+				used[variation] = path
 
 	assert_int(used.size()).is_greater(30)
+	for name: StringName in GameButton.VARIATIONS + GameButton.INVERSE_VARIATIONS + ChallengeCard.DIFFICULTY_VARIATIONS.values():
+		assert_bool(used.has(name)).override_failure_message("%s is not found by the variation scan" % name).is_true()
 	for variation: String in used:
 		assert_bool(_theme.get_type_variation_base(variation) != &"").override_failure_message("%s (%s) is not a variation of the project theme" % [variation, used[variation]]).is_true()
 	for style: StringName in GameButton.TEXT_STYLES.slice(1):
@@ -115,11 +111,37 @@ func test_no_scene_overrides_fonts_sizes_colors_or_styles() -> void:
 
 
 func test_no_script_overrides_fonts_sizes_colors_or_styles_but_the_game_button() -> void:
-	var regex: RegEx = RegEx.create_from_string(r"add_theme_(font|font_size|color|stylebox)_override")
 	for path: String in _files(".gd"):
 		if path in OVERRIDE_SCRIPTS:
 			continue
-		assert_bool(regex.search(FileAccess.get_file_as_string(path)) != null).override_failure_message("%s overrides the theme" % path).is_false()
+		assert_bool(_overrides_theme(FileAccess.get_file_as_string(path))).override_failure_message("%s overrides the theme" % path).is_false()
+
+
+func test_the_script_guard_catches_every_override_form() -> void:
+	var forbidden: Array[String] = [
+		'label.add_theme_font_override(&"font", font)',
+		'label.add_theme_font_size_override(&"font_size", 12)',
+		'label.add_theme_color_override(&"font_color", Color.RED)',
+		'panel.add_theme_stylebox_override(&"panel", style)',
+		'label.add_theme_constant_override(&"outline_size", 4)',
+		'label.add_theme_constant_override("line_spacing", 4)',
+		'label.add_theme_constant_override(&"shadow_offset_x", 2)',
+		'label.set("theme_override_colors/font_color", Color.RED)',
+		'label.set("theme_override_fonts/font", font)',
+		'label.set("theme_override_font_sizes/font_size", 12)',
+		'panel.set("theme_override_styles/panel", style)',
+		'label.set("theme_override_constants/outline_size", 4)',
+	]
+	for source: String in forbidden:
+		assert_bool(_overrides_theme(source)).override_failure_message(source).is_true()
+	assert_bool(_overrides_theme('box.add_theme_constant_override(&"separation", 4)\nlabel.theme_type_variation = &"BodyText"')).is_false()
+
+
+func test_the_variation_scan_reads_inline_and_multiline_names() -> void:
+	var script: String = 'const A_VARIATIONS: Array[StringName] = [\n\t&"First",\n\t&"Second",\n]\nconst B_VARIATION: Dictionary[int, StringName] = {\n\t0: &"Third",\n}\nlabel.theme_type_variation = &"Fourth" if x else &"Fifth"\nvar other: Array[StringName] = [&"Ignored"]'
+
+	assert_array(_variations_in(script, true)).contains_exactly_in_any_order(["First", "Second", "Third", "Fourth", "Fifth"])
+	assert_array(_variations_in('theme_type_variation = &"Sixth"', false)).contains_exactly(["Sixth"])
 
 
 func test_the_style_resources_load_with_their_textures() -> void:
@@ -148,6 +170,33 @@ func _expected_native(variation: String) -> String:
 	if variation in ["CardTitleTag", "LevelPanel", "MenuPanel", "MenuPanelDark", "MenuPanelSliced"]:
 		return "PanelContainer"
 	return "Label"
+
+
+## Returns true when [param source] overrides a font, size, color, style, outline, line spacing or shadow of the theme, with a call or a [code]theme_override_*[/code] property name.
+func _overrides_theme(source: String) -> bool:
+	return RegEx.create_from_string(SCRIPT_FORBIDDEN_PATTERN).search(source) != null
+
+
+## Returns the variation names set in [param source]: [code]theme_type_variation = &"Name"[/code] in scenes and resources, and in scripts the names of
+## every line mentioning a variation plus the whole body of every [code]const[/code] whose name contains [code]VARIATION[/code] (multiline arrays and dictionaries).
+func _variations_in(source: String, is_script: bool) -> Array[String]:
+	var found: Array[String] = []
+	var token_regex: RegEx = RegEx.create_from_string(r'&"(\w+)"')
+	if not is_script:
+		for match: RegExMatch in RegEx.create_from_string(r'theme_type_variation = &"(\w+)"').search_all(source):
+			found.append(match.get_string(1))
+		return found
+	var blocks: Array[String] = []
+	for match: RegExMatch in RegEx.create_from_string(r"const\s+\w*VARIATION\w*[^=\n]*=\s*(\[[^\]]*\]|\{[^}]*\})").search_all(source):
+		blocks.append(match.get_string(1))
+	for line: String in source.split("\n"):
+		if line.to_lower().contains("variation") and not line.contains("get_theme") and not line.begins_with("const"):
+			blocks.append(line)
+	for block: String in blocks:
+		for match: RegExMatch in token_regex.search_all(block):
+			if match.get_string(1) not in found:
+				found.append(match.get_string(1))
+	return found
 
 
 ## Returns every file with the extension [param extension] under [constant SCANNED_DIRS].
