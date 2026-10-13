@@ -216,3 +216,5 @@ func _set_white_text(white: bool) -> void:
 			add_theme_color_override(color_name, Color.WHITE)
 		else:
 			remove_theme_color_override(color_name)
+	# Button draws its text before _draw and a redraw queued while drawing is dropped, so the new color needs the next frame
+	queue_redraw.call_deferred()
