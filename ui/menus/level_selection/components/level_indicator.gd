@@ -10,7 +10,6 @@ enum Status {
 	CURRENT,
 	COMPLETED,
 	LOCKED,
-	ERROR
 }
 
 ## Palette row of the grey dot ([code]level_dot.png[/code]) for each status, the base is recolored by the palette swap shader.

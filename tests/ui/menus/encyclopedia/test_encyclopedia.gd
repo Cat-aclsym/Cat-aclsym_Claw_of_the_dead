@@ -81,6 +81,22 @@ func test_a_long_stats_page_uses_the_compact_variations() -> void:
 	assert_int(encyclopedia.stats_grid.get_theme_constant(&"v_separation")).is_equal(8)
 
 
+func test_an_undiscovered_entry_after_a_compact_one_uses_the_regular_variations() -> void:
+	var encyclopedia: Encyclopedia = _open()
+	var stats: Dictionary[String, String] = {}
+	for key: String in COMPACT_STATS:
+		stats[key] = "1"
+	encyclopedia._all_entries["TOWERS"][0]["stats"] = stats
+	encyclopedia._update_ui_elements()
+	encyclopedia._current_index = 1
+
+	encyclopedia._update_ui_elements()
+	await await_idle_frame()
+
+	assert_str(encyclopedia.stats_grid.theme_type_variation).is_equal(&"BookStatsGrid")
+	assert_str(_live_label_variations(encyclopedia)).is_equal("BookHeading")
+
+
 func _live_label_variations(encyclopedia: Encyclopedia) -> String:
 	var found: Array[String] = []
 	var labels: Array[Node] = encyclopedia.stats_grid.find_children("*", "Label", true, false)

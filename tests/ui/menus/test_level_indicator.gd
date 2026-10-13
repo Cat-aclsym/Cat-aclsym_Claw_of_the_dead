@@ -13,6 +13,11 @@ func test_every_status_picks_its_palette_row() -> void:
 		assert_int(_row(indicator)).override_failure_message(str(status)).is_equal(LevelIndicator.ROWS[status])
 
 
+func test_every_status_has_a_palette_row() -> void:
+	for status: int in LevelIndicator.Status.values():
+		assert_bool(LevelIndicator.ROWS.has(status)).override_failure_message(str(status)).is_true()
+
+
 func test_the_rows_are_orange_green_and_blue() -> void:
 	assert_int(LevelIndicator.ROWS[LevelIndicator.Status.CURRENT]).is_equal(GameButton.Palette.ORANGE)
 	assert_int(LevelIndicator.ROWS[LevelIndicator.Status.COMPLETED]).is_equal(GameButton.Palette.GREEN)

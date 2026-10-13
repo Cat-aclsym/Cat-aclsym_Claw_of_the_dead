@@ -485,6 +485,8 @@ func _update_ui_elements() -> void:
 			sprite_rect.custom_minimum_size = Vector2.ZERO
 			sprite_rect.modulate = Color.WHITE
 
+		_compact = false
+		stats_grid.theme_type_variation = &"BookStatsGrid"
 		_add_stat_category_header("ENCYCLOPEDIA.NOT_DISCOVERED")
 
 		prev_button.modulate.a = 1.0 if _current_index > 0 else 0.0
