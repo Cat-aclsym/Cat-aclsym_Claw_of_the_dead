@@ -32,12 +32,22 @@ func test_every_trap_name_is_translated() -> void:
 	assert_array(_missing_names("TRAP", StatsDB.get_trap_ids())).is_empty()
 
 
+func test_every_button_glyph_has_a_tooltip() -> void:
+	var keys: Array[String] = []
+	keys.assign(GameIcon.Id.values().slice(1).map(func(id: GameIcon.Id) -> String: return "BUTTON." + GameIcon.key(id)))
+
+	assert_array(_missing(keys)).is_empty()
+
+
 ## Returns the name keys of [param ids] that lack a non-empty English or French text.
 func _missing_names(category: String, ids: Array) -> Array[String]:
-	var missing: Array[String] = []
-	for id: String in ids:
-		var key: String = StatsDB.name_key(category, id)
+	var keys: Array[String] = []
+	keys.assign(ids.map(func(id: String) -> String: return StatsDB.name_key(category, id)))
+	return _missing(keys)
+
+
+## Returns the [param keys] that lack a non-empty English or French text.
+func _missing(keys: Array[String]) -> Array[String]:
+	return keys.filter(func(key: String) -> bool:
 		var texts: PackedStringArray = _rows.get(key, PackedStringArray(["", ""]))
-		if texts[0].strip_edges().is_empty() or texts[1].strip_edges().is_empty():
-			missing.append(key)
-	return missing
+		return texts[0].strip_edges().is_empty() or texts[1].strip_edges().is_empty())
