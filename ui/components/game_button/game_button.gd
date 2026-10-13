@@ -4,7 +4,7 @@
 ## [code]palette.png[/code] ([enum Palette]), plus an optional glyph ([GameIcon]) centered on the button.
 ## [br]Hover brightens the button, press darkens it and disabled removes its saturation. A toggle button swaps [member game_icon_pressed] and
 ## [member palette_pressed] in while [member BaseButton.button_pressed] is on, also after [method BaseButton.set_pressed_no_signal].
-## A latched toggle with such a swap keeps full brightness (hover still brightens it): the swap is its pressed look.
+## A latched toggle with such a swap keeps full brightness (hover still brightens it): the swap is its pressed look. [member rainbow] animates the base.
 ## [br]An icon-only button of a fixed-proportion shape ([constant SCALED_SHAPES]) larger than its base draws the base and the glyph scaled up
 ## ([member art_scale]), centered and with the base proportions, instead of stretching its 9-slice. The scale is the largest factor that fits the button
 ## (at least 1, not always a whole number), so the pixels of the art are not all the same size on screen.
@@ -96,6 +96,13 @@ const VARIATIONS: Array[StringName] = [
 ## Keeps the button clickable while the tree is paused ([constant Node.PROCESS_MODE_ALWAYS]): leave it on for buttons used while the tree is paused,
 ## such as the pause menu and the HUD during the tutorial, turn it off for the others so they stop with the game.
 @export var process_when_paused: bool = true
+## Runs a rainbow wave and a white shine over the base (the glyph keeps its tint), for a mode the player turned on such as fast forward.
+## Tuned for icon buttons: on a wide unscaled base the hue repeats and the shine does not reach the far corner.
+## [br]The animation follows [member Engine.time_scale]: it runs faster at a higher scale and stops at [code]0[/code].
+@export var rainbow: bool = false:
+	set(value):
+		rainbow = value
+		queue_redraw()
 ## Sets the base and the matching theme variation.
 @export var shape: Shape = Shape.RECT:
 	set(value):
@@ -217,7 +224,7 @@ func _icon_label() -> String:
 	return "" if icon == GameIcon.Id.NONE else tr("BUTTON." + GameIcon.key(icon))
 
 
-## Pushes the palette row, brightness, saturation and glyph tint matching the state to the base material and to [method _draw].
+## Pushes the palette row, brightness, saturation, rainbow and glyph tint matching the state to the base material and to [method _draw].
 func _refresh_look() -> void:
 	var brightness: float = 1.0
 	var glyph_brightness: float = 1.0
@@ -236,6 +243,7 @@ func _refresh_look() -> void:
 	_material.set_shader_parameter(&"palette_row", current_palette)
 	_material.set_shader_parameter(&"brightness", brightness)
 	_material.set_shader_parameter(&"saturation", saturation)
+	_material.set_shader_parameter(&"rainbow", rainbow)
 
 	var is_white: bool = current_palette == Palette.RED or GameIcon.is_multicolor(get_effective_icon())
 	var tint: Color = Color.WHITE if is_white else INK
@@ -259,9 +267,10 @@ func _set_white_text(white: bool) -> void:
 	queue_redraw.call_deferred()
 
 
-## Returns [code]true[/code] for a latched toggle whose pressed look is another glyph or palette: that look is its resting state, so it is not darkened.
+## Returns [code]true[/code] for a latched toggle whose pressed look is another glyph or palette, or the [member rainbow]: that look is its resting state,
+## so it is not darkened.
 func _shows_latched_swap() -> bool:
-	return toggle_mode and (palette_pressed != NO_PALETTE or game_icon_pressed != GameIcon.Id.NONE)
+	return toggle_mode and (palette_pressed != NO_PALETTE or game_icon_pressed != GameIcon.Id.NONE or rainbow)
 
 
 ## Applies the text color of the palette drawn now at once, so that the first frame with a RED palette already has white text.

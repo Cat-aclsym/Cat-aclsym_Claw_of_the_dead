@@ -153,6 +153,25 @@ func test_latched_toggle_with_a_swap_is_not_dimmed() -> void:
 	assert_float(_parameter(button, &"brightness")).is_equal(GameButton.BRIGHTNESS_HOVER)
 
 
+func test_rainbow_reaches_the_shader_and_is_the_undimmed_pressed_look_of_a_toggle() -> void:
+	var button: GameButton = _add(_button(GameButton.Shape.RECT_SHORT, GameButton.Palette.GREEN))
+	button.toggle_mode = true
+
+	await await_idle_frame()
+	assert_bool(_parameter(button, &"rainbow")).is_false()
+
+	button.rainbow = true
+	button.set_pressed_no_signal(true)
+	await await_idle_frame()
+	assert_bool(_parameter(button, &"rainbow")).is_true()
+	assert_float(_parameter(button, &"brightness")).is_equal(1.0)
+
+	button.rainbow = false
+	await await_idle_frame()
+	assert_bool(_parameter(button, &"rainbow")).is_false()
+	assert_float(_parameter(button, &"brightness")).is_equal(GameButton.BRIGHTNESS_PRESSED)
+
+
 func test_icon_only_button_larger_than_its_base_scales_the_art_and_keeps_its_proportions() -> void:
 	var button: GameButton = _add(_button(GameButton.Shape.RECT, GameButton.Palette.GREEN))
 	button.game_icon = GameIcon.Id.HOME
