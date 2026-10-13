@@ -17,13 +17,13 @@ var _encyclopedia_menu_instance: Encyclopedia
 var _levels_menu_instance: LevelSelectionMenu
 var _option_menu_instance: Options
 
-@onready var armory_button: Button = %ArmoryButton
+@onready var armory_button: GameButton = %ArmoryButton
 @onready var debug_stats_button: Button = %DebugStatsButton
-@onready var encyclopedia_button: Button = %EncyclopediaButton
+@onready var encyclopedia_button: GameButton = %EncyclopediaButton
 @onready var encyclopedia_exclamation: TextureRect = %EncyclopediaExclamation
 @onready var gui_margin_container: MarginContainer = $GuiMarginContainer
-@onready var play_button: Button = %PlayButton
-@onready var settings_button: Button = %SettingsButton
+@onready var play_button: GameButton = %PlayButton
+@onready var settings_button: GameButton = %SettingsButton
 
 @onready var signals: Array[Dictionary] = [
 	{SignalUtil.WHO: debug_stats_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_debug_stats_button_pressed},
@@ -122,9 +122,8 @@ func _on_play_button_pressed() -> void:
 	])
 
 
-func _set_button_locked(button: Button, is_locked: bool, unlocked_text: String) -> void:
+func _set_button_locked(button: GameButton, is_locked: bool, unlocked_text: String) -> void:
 	button.disabled = is_locked
-	button.modulate = Color(0.45, 0.45, 0.45, 1.0) if is_locked else Color.WHITE
 	button.text = "?" if is_locked else unlocked_text
 
 

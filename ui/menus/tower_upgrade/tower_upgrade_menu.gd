@@ -16,10 +16,10 @@ var tower: ITower
 var _current_upgrade_index: int = 0
 var _upgrade_ids: Array[String] = []
 
-@onready var _cancel_button: Button = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/ButtonsHBoxContainer/CancelButton
-@onready var _confirm_button: Button = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/ButtonsHBoxContainer/ConfirmButton
-@onready var _option1_button: Button = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/TabsHBoxContainer/UpgradeOption1Button
-@onready var _option2_button: Button = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/TabsHBoxContainer/UpgradeOption2Button
+@onready var _cancel_button: GameButton = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/ButtonsHBoxContainer/CancelButton
+@onready var _confirm_button: GameButton = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/ButtonsHBoxContainer/ConfirmButton
+@onready var _option1_button: GameButton = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/TabsHBoxContainer/UpgradeOption1Button
+@onready var _option2_button: GameButton = $UpgradeDescriptionTextureRect/UpgradeDescriptionVBoxContainer/TabsHBoxContainer/UpgradeOption2Button
 
 @onready var signals: Array[Dictionary] = [
 	{SignalUtil.WHO: _cancel_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_cancel_button_pressed},
@@ -123,12 +123,7 @@ func _refresh_upgrade_view() -> void:
 	_set_active_tab_button(_current_upgrade_index)
 
 	# Check if player has enough money
-	if ILevel.current_level != null and ILevel.current_level.coins < upgrade_price:
-		_confirm_button.disabled = true
-		_confirm_button.modulate = Color(0.5, 0.5, 0.5)  # Gray out the button
-	else:
-		_confirm_button.disabled = false
-		_confirm_button.modulate = Color(1.0, 1.0, 1.0)  # Normal color
+	_confirm_button.disabled = ILevel.current_level != null and ILevel.current_level.coins < upgrade_price
 
 	# Clear existing stat displays
 	for child in _stats_container.get_children():
@@ -169,10 +164,6 @@ func _refresh_upgrade_view() -> void:
 	_update_scroll_mode(displayed_stats)
 
 # Signal handlers
-func _apply_option_button_style(button: Button, is_active: bool) -> void:
-	button.theme_type_variation = &"StyledButtonGreen" if is_active else &"StyledButton"
-
-
 func _on_cancel_button_pressed() -> void:
 	queue_free()
 
@@ -198,10 +189,8 @@ func _on_option2_button_pressed() -> void:
 func _set_active_tab_button(index: int) -> void:
 	if _tabs_container == null:
 		return
-	_option1_button.button_pressed = index == 0
-	_option2_button.button_pressed = index == 1
-	_apply_option_button_style(_option1_button, index == 0)
-	_apply_option_button_style(_option2_button, index == 1)
+	_option1_button.palette = GameButton.Palette.GREEN if index == 0 else GameButton.Palette.BLUE
+	_option2_button.palette = GameButton.Palette.GREEN if index == 1 else GameButton.Palette.BLUE
 
 
 func _update_scroll_mode(displayed_stats: int) -> void:

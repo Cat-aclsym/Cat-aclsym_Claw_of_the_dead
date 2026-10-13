@@ -1,7 +1,7 @@
 [gd_scene load_steps=9 format=3 uid="uid://cqfsr6yjn6hm8"]
 
 [ext_resource type="Script" uid="uid://cibbgvfpeyya0" path="res://ui/menus/home/home.gd" id="1_dvove"]
-[ext_resource type="PackedScene" uid="uid://cj6rnvaq8x3mk" path="res://ui/components/styled_button.tscn" id="5_styled_btn"]
+[ext_resource type="PackedScene" uid="uid://c8gbtn5xq2m4y" path="res://ui/components/game_button/game_button.tscn" id="5_btn"]
 [ext_resource type="Texture2D" uid="uid://bsir4xrig5yqd" path="res://assets/ui/branding/logo_cat.png" id="3_gislx"]
 [ext_resource type="Texture2D" uid="uid://c2pj8fxbv5usu" path="res://assets/ui/branding/logo_text_white.png" id="4_aa1tm"]
 [ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://ui/theme/generic.tres" id="4_ay1j5"]
@@ -104,25 +104,26 @@ size_flags_horizontal = 8
 theme_override_constants/separation = 20
 alignment = 1
 
-[node name="PlayButton" parent="GuiMarginContainer/GuiHBoxContainer/HomeScreenVBoxContainer" instance=ExtResource("5_styled_btn")]
+[node name="PlayButton" parent="GuiMarginContainer/GuiHBoxContainer/HomeScreenVBoxContainer" instance=ExtResource("5_btn")]
 unique_name_in_owner = true
 texture_filter = 1
 custom_minimum_size = Vector2(500, 160)
 layout_mode = 2
 size_flags_horizontal = 4
-theme_type_variation = &"HomeButton"
-theme_override_constants/outline_size = 9
 theme_override_font_sizes/font_size = 65
 text = "HOME.PLAY.BUTTON"
+shape = 3
 
-[node name="EncyclopediaButton" parent="GuiMarginContainer/GuiHBoxContainer/HomeScreenVBoxContainer" instance=ExtResource("5_styled_btn")]
+[node name="EncyclopediaButton" parent="GuiMarginContainer/GuiHBoxContainer/HomeScreenVBoxContainer" instance=ExtResource("5_btn")]
 unique_name_in_owner = true
 texture_filter = 1
 custom_minimum_size = Vector2(350, 110)
 layout_mode = 2
 size_flags_horizontal = 4
-theme_type_variation = &"HomeButtonOrange"
+theme_override_font_sizes/font_size = 35
 text = "HOME.ENCYCLOPEDIA.BUTTON"
+shape = 3
+palette = 2
 
 [node name="EncyclopediaExclamation" type="TextureRect" parent="GuiMarginContainer/GuiHBoxContainer/HomeScreenVBoxContainer/EncyclopediaButton"]
 unique_name_in_owner = true
@@ -140,23 +141,26 @@ texture = ExtResource("7_exclamation")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="ArmoryButton" parent="GuiMarginContainer/GuiHBoxContainer/HomeScreenVBoxContainer" instance=ExtResource("5_styled_btn")]
+[node name="ArmoryButton" parent="GuiMarginContainer/GuiHBoxContainer/HomeScreenVBoxContainer" instance=ExtResource("5_btn")]
 unique_name_in_owner = true
 texture_filter = 1
 custom_minimum_size = Vector2(350, 110)
 layout_mode = 2
 size_flags_horizontal = 4
-theme_type_variation = &"HomeButton"
+theme_override_font_sizes/font_size = 35
 text = "HOME.ARMORY.BUTTON"
+shape = 3
 
-[node name="SettingsButton" parent="GuiMarginContainer/GuiHBoxContainer/HomeScreenVBoxContainer" instance=ExtResource("5_styled_btn")]
+[node name="SettingsButton" parent="GuiMarginContainer/GuiHBoxContainer/HomeScreenVBoxContainer" instance=ExtResource("5_btn")]
 unique_name_in_owner = true
 texture_filter = 1
 custom_minimum_size = Vector2(350, 110)
 layout_mode = 2
 size_flags_horizontal = 4
-theme_type_variation = &"HomeButtonGreen"
+theme_override_font_sizes/font_size = 35
 text = "HOME.SETTINGS.BUTTON"
+shape = 3
+palette = 1
 
 [node name="DebugStatsButton" type="Button" parent="."]
 unique_name_in_owner = true

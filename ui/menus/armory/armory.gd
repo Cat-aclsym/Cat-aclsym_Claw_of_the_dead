@@ -16,8 +16,6 @@ const _ARMORY_SCROLL_DRAG_THRESHOLD_PX: float = 12.0
 ## [member ArmoryManager.get_armory_node] category of the nodes that unlock a tower or a trap.
 const _BUILDING_CATEGORY: String = "periphery_building"
 const _FALLBACK_ICON: Texture2D = preload("res://assets/ui/icons/star.png")
-const _RESET_BUTTON_DISABLED_MODULATE: Color = Color(0.55, 0.55, 0.55, 1.0)
-const _RESET_BUTTON_ENABLED_MODULATE: Color = Color(1.0, 1.0, 1.0, 1.0)
 
 var _armory_items: Dictionary[String, ArmoryItem] = {}
 var _armory_scroll_dragging: bool = false
@@ -30,13 +28,13 @@ var _selected_node_id: String = ""
 @onready var description_label: Label = %DescriptionLabel
 @onready var description_panel: PanelContainer = %DescriptionPanel
 @onready var description_title_label: Label = %DescriptionTitleLabel
-@onready var help_button: Button = %HelpButton
+@onready var help_button: GameButton = %HelpButton
 @onready var items_hbox: HBoxContainer = %ItemsHBox
-@onready var reset_cancel_button: Button = %ResetCancelButton
-@onready var reset_confirm_button: Button = %ResetConfirmButton
+@onready var reset_cancel_button: GameButton = %ResetCancelButton
+@onready var reset_confirm_button: GameButton = %ResetConfirmButton
 @onready var reset_confirm_root: Control = %ResetConfirmRoot
 @onready var reset_message_label: Label = %ResetMessageLabel
-@onready var reset_spent_stars_button: Button = %ResetSpentStarsButton
+@onready var reset_spent_stars_button: GameButton = %ResetSpentStarsButton
 @onready var scroll_buildings: ScrollContainer = %ScrollBuildings
 @onready var signals: Array[Dictionary] = [
 	{SignalUtil.WHO: close_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_close_pressed},
@@ -248,7 +246,6 @@ func _refresh() -> void:
 	var avail: int = ArmoryManager.get_available_stars()
 	stars_count_label.text = str(avail)
 	reset_spent_stars_button.disabled = ProgressionManager.data.armory_purchased.is_empty()
-	_update_reset_button_visual()
 
 	for nid in ArmoryManager.get_node_ids_ordered():
 		var armory_item: ArmoryItem = _create_armory_item(nid)
@@ -315,9 +312,3 @@ func _sync_armory_item_state(item: ArmoryItem, node_id: String) -> void:
 		ArmoryManager.is_node_purchased(node_id),
 		ProgressionManager.data.armory_legacy_mode
 	)
-
-
-## Dims the reset control and its label when there is nothing to reset ([member BaseButton.disabled]).
-func _update_reset_button_visual() -> void:
-	var is_disabled: bool = reset_spent_stars_button.disabled
-	reset_spent_stars_button.modulate = _RESET_BUTTON_DISABLED_MODULATE if is_disabled else _RESET_BUTTON_ENABLED_MODULATE

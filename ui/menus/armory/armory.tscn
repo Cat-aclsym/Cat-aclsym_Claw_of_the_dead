@@ -7,7 +7,6 @@
 [ext_resource type="Texture2D" uid="uid://c8b8irfugbxdj" path="res://assets/environment/backgrounds/menu_background_02.svg" id="6_x4aod"]
 [ext_resource type="Texture2D" uid="uid://c5jwmpccl40pb" path="res://assets/environment/backgrounds/menu_background_01.svg" id="7_fond01"]
 [ext_resource type="FontFile" uid="uid://ddo3rokwsadq0" path="res://assets/fonts/dotgothic/dotgothic16_regular.ttf" id="8_dgfont"]
-[ext_resource type="PackedScene" uid="uid://cj6rnvaq8x3mk" path="res://ui/components/styled_button.tscn" id="11_styled_btn"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_desc_bg"]
 texture = ExtResource("6_x4aod")
@@ -86,15 +85,15 @@ theme_override_font_sizes/font_size = 22
 text = "0"
 vertical_alignment = 1
 
-[node name="ResetSpentStarsButton" parent="MainMargin/VBox/HeaderHBox" instance=ExtResource("11_styled_btn")]
+[node name="ResetSpentStarsButton" parent="MainMargin/VBox/HeaderHBox" instance=ExtResource("2_close")]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(220, 56)
 layout_mode = 2
-theme_type_variation = &"StyledButtonOrange"
 theme_override_font_sizes/font_size = 24
 text = "ARMORY.RESET_SPENT_STARS"
+palette = 2
 
-[node name="HelpButton" parent="MainMargin/VBox/HeaderHBox" instance=ExtResource("11_styled_btn")]
+[node name="HelpButton" parent="MainMargin/VBox/HeaderHBox" instance=ExtResource("2_close")]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(56, 56)
 layout_mode = 2
@@ -248,16 +247,16 @@ size_flags_horizontal = 4
 theme_override_constants/separation = 20
 alignment = 1
 
-[node name="ResetConfirmButton" parent="ResetConfirmRoot/ResetPanel/ResetMargin/ResetVBox/ResetButtonsHBox" instance=ExtResource("11_styled_btn")]
+[node name="ResetConfirmButton" parent="ResetConfirmRoot/ResetPanel/ResetMargin/ResetVBox/ResetButtonsHBox" instance=ExtResource("2_close")]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(200, 65)
 layout_mode = 2
-theme_type_variation = &"StyledButtonGreen"
 text = "ARMORY.RESET_CONFIRM_OK"
+palette = 1
 
-[node name="ResetCancelButton" parent="ResetConfirmRoot/ResetPanel/ResetMargin/ResetVBox/ResetButtonsHBox" instance=ExtResource("11_styled_btn")]
+[node name="ResetCancelButton" parent="ResetConfirmRoot/ResetPanel/ResetMargin/ResetVBox/ResetButtonsHBox" instance=ExtResource("2_close")]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(200, 65)
 layout_mode = 2
-theme_type_variation = &"StyledButtonOrange"
 text = "ARMORY.RESET_CANCEL"
+palette = 2

@@ -11,8 +11,8 @@ var _current_tab: Tab = Tab.TOWERS
 @onready var construction_anim_player: AnimationPlayer = $AnimationPlayer
 ## Row of [BuildCard] instances.
 @onready var construction_menu: HBoxContainer = $MarginContainer/VBoxContainer/BackgroundTextureRect/BuildListMarginContainer/HBoxContainer
-@onready var tower_tab_button: Button = $MarginContainer/VBoxContainer/TabsHBox/TowerTabButton
-@onready var trap_tab_button: Button = $MarginContainer/VBoxContainer/TabsHBox/TrapTabButton
+@onready var tower_tab_button: GameButton = $MarginContainer/VBoxContainer/TabsHBox/TowerTabButton
+@onready var trap_tab_button: GameButton = $MarginContainer/VBoxContainer/TabsHBox/TrapTabButton
 
 func _ready() -> void:
 	assert(construction_menu != null, "construction_menu node not found")
@@ -72,8 +72,6 @@ func _on_level_stats_updated() -> void:
 
 
 func _on_tab_pressed(tab: Tab) -> void:
-	if _current_tab == tab:
-		return
 	_current_tab = tab
 	_update_tab_visuals()
 	_refresh_construction_cards()
@@ -98,6 +96,7 @@ func _refresh_construction_cards() -> void:
 				card.update()
 
 
+## Latches the button of the current tab (a click on the active tab would otherwise release it).
 func _update_tab_visuals() -> void:
-	tower_tab_button.modulate = Color.WHITE if _current_tab == Tab.TOWERS else Color(0.5, 0.5, 0.5, 1.0)
-	trap_tab_button.modulate = Color.WHITE if _current_tab == Tab.TRAPS else Color(0.5, 0.5, 0.5, 1.0)
+	tower_tab_button.set_pressed_no_signal(_current_tab == Tab.TOWERS)
+	trap_tab_button.set_pressed_no_signal(_current_tab == Tab.TRAPS)

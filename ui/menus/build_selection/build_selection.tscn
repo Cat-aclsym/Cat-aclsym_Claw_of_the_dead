@@ -13,7 +13,7 @@
 [ext_resource type="PackedScene" uid="uid://b2qklmpagmiaq" path="res://ui/menus/build_selection/cards/build_card_bat_07.tscn" id="14_bat_07_card"]
 [ext_resource type="PackedScene" uid="uid://c8v8y8y8y8y80" path="res://ui/menus/build_selection/cards/build_card_bat_09.tscn" id="15_bat_09_card"]
 [ext_resource type="PackedScene" uid="uid://b3yjruvh66oak" path="res://game/buildings/towers/bat_09.tscn" id="16_bat09"]
-[ext_resource type="PackedScene" uid="uid://cj6rnvaq8x3mk" path="res://ui/components/styled_button.tscn" id="18_styled_btn"]
+[ext_resource type="PackedScene" uid="uid://c8gbtn5xq2m4y" path="res://ui/components/game_button/game_button.tscn" id="18_btn"]
 
 [sub_resource type="Animation" id="Animation_fpn5b"]
 length = 0.35
@@ -61,19 +61,25 @@ layout_mode = 2
 size_flags_horizontal = 0
 theme_override_constants/separation = 10
 
-[node name="TowerTabButton" parent="MarginContainer/VBoxContainer/TabsHBox" instance=ExtResource("18_styled_btn")]
+[node name="TowerTabButton" parent="MarginContainer/VBoxContainer/TabsHBox" instance=ExtResource("18_btn")]
 custom_minimum_size = Vector2(120, 35)
 layout_mode = 2
 size_flags_vertical = 4
 theme_override_font_sizes/font_size = 16
+toggle_mode = true
 text = "BUILD.TAB.TOWERS"
+palette = 5
+palette_pressed = 0
 
-[node name="TrapTabButton" parent="MarginContainer/VBoxContainer/TabsHBox" instance=ExtResource("18_styled_btn")]
+[node name="TrapTabButton" parent="MarginContainer/VBoxContainer/TabsHBox" instance=ExtResource("18_btn")]
 custom_minimum_size = Vector2(120, 35)
 layout_mode = 2
 size_flags_vertical = 4
 theme_override_font_sizes/font_size = 16
+toggle_mode = true
 text = "BUILD.TAB.TRAPS"
+palette = 5
+palette_pressed = 0
 
 [node name="BackgroundTextureRect" type="TextureRect" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2

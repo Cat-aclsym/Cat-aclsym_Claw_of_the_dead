@@ -15,7 +15,7 @@ const TWEEN_META_KEY: StringName = &"active_button_tween"
 
 # Static Methods
 ## Applies button effects to a given button, applying them again to the same button does nothing.
-## [br][param button] The button to apply effects to, [StyledButton] applies them on its own.
+## [br][param button] The button to apply effects to, [GameButton] applies them on its own.
 static func apply(button: Control) -> void:
 	if button == null or button.has_meta(APPLIED_META_KEY):
 		return
