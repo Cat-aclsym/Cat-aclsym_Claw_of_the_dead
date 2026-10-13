@@ -5,8 +5,6 @@
 [ext_resource type="PackedScene" uid="uid://c8gbtn5xq2m4y" path="res://ui/components/game_button/game_button.tscn" id="3_close"]
 [ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://ui/theme/generic.tres" id="4_theme"]
 [ext_resource type="FontFile" uid="uid://ddo3rokwsadq0" path="res://assets/fonts/dotgothic/dotgothic16_regular.ttf" id="5_font"]
-[ext_resource type="Texture2D" uid="uid://sdmr73qrumef" path="res://assets/ui/icons/encyclopedia_left.png" id="5_fwnpo"]
-[ext_resource type="Texture2D" uid="uid://bdi8iy6d6hp61" path="res://assets/ui/icons/encyclopedia_right.png" id="6_5dtmo"]
 [ext_resource type="Texture2D" uid="uid://bmtlovs16utgc" path="res://assets/ui/icons/encyclopedia_bottom.png" id="7_scroll_arrow"]
 [ext_resource type="Texture2D" uid="uid://c1f4e2f8oknku" path="res://assets/ui/icons/exclamation.png" id="8_exclamation"]
 
@@ -248,7 +246,7 @@ expand_mode = 1
 stretch_mode = 5
 flip_v = true
 
-[node name="PrevButton" type="TextureButton" parent="GuiMarginContainer/MenuLayout"]
+[node name="PrevButton" parent="GuiMarginContainer/MenuLayout" instance=ExtResource("3_close")]
 unique_name_in_owner = true
 texture_filter = 1
 custom_minimum_size = Vector2(45, 50)
@@ -264,11 +262,10 @@ offset_right = -265.0
 offset_bottom = -95.0
 grow_horizontal = 2
 grow_vertical = 0
-texture_normal = ExtResource("5_fwnpo")
-ignore_texture_size = true
-stretch_mode = 4
+shape = 5
+game_icon = 26
 
-[node name="NextButton" type="TextureButton" parent="GuiMarginContainer/MenuLayout"]
+[node name="NextButton" parent="GuiMarginContainer/MenuLayout" instance=ExtResource("3_close")]
 unique_name_in_owner = true
 texture_filter = 1
 custom_minimum_size = Vector2(45, 50)
@@ -284,6 +281,5 @@ offset_right = 310.0
 offset_bottom = -95.0
 grow_horizontal = 2
 grow_vertical = 0
-texture_normal = ExtResource("6_5dtmo")
-ignore_texture_size = true
-stretch_mode = 4
+shape = 5
+game_icon = 27

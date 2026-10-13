@@ -1,10 +1,9 @@
 [gd_scene load_steps=7 format=3 uid="uid://6mhjyovq8wdc"]
 
 [ext_resource type="Script" uid="uid://yn0xr1v34u6y" path="res://ui/menus/armory/armory_item.gd" id="1_armory_item_script"]
-[ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://ui/theme/generic.tres" id="2_theme"]
+[ext_resource type="PackedScene" uid="uid://c8gbtn5xq2m4y" path="res://ui/components/game_button/game_button.tscn" id="2_buy_button"]
 [ext_resource type="Texture2D" uid="uid://cdesir3miwmug" path="res://assets/ui/cards/green_frame.svg" id="3_green_frame"]
 [ext_resource type="Texture2D" uid="uid://yayv0hygrr3u" path="res://assets/ui/cards/blue_background.svg" id="5_blue_background"]
-[ext_resource type="Texture2D" uid="uid://deifsvtkdkqo1" path="res://assets/ui/buttons/bouton_bleu.svg" id="6_blue_button"]
 [ext_resource type="Texture2D" uid="uid://8y5uhgfsgmp8" path="res://assets/ui/icons/star.png" id="7_star"]
 
 [node name="ArmoryItem" type="VBoxContainer"]
@@ -66,57 +65,15 @@ grow_vertical = 2
 expand_mode = 1
 stretch_mode = 5
 
-[node name="BuyButton" type="TextureButton" parent="."]
+[node name="BuyButton" parent="." instance=ExtResource("2_buy_button")]
 unique_name_in_owner = true
 visible = false
 custom_minimum_size = Vector2(170, 52)
 layout_mode = 2
-texture_normal = ExtResource("6_blue_button")
-ignore_texture_size = true
-stretch_mode = 5
-
-[node name="BuyHBoxContainer" type="HBoxContainer" parent="BuyButton"]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -78.0
-offset_top = -13.0
-offset_right = 78.0
-offset_bottom = 13.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_constants/separation = 6
-alignment = 1
-
-[node name="BuyLabel" type="Label" parent="BuyButton/BuyHBoxContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-theme = ExtResource("2_theme")
-theme_override_colors/font_color = Color(0.137255, 0.215686, 0.223529, 1)
-theme_override_colors/font_outline_color = Color(0.137255, 0.215686, 0.223529, 1)
-theme_override_constants/outline_size = 3
+theme_override_constants/icon_max_width = 20
 theme_override_font_sizes/font_size = 18
 text = "ARMORY.BUY"
-vertical_alignment = 1
-uppercase = true
-
-[node name="StarsIconTextureRect" type="TextureRect" parent="BuyButton/BuyHBoxContainer"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(20, 20)
-layout_mode = 2
-texture = ExtResource("7_star")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="PriceLabel" type="Label" parent="BuyButton/BuyHBoxContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-theme = ExtResource("2_theme")
-theme_override_colors/font_outline_color = Color(0.137255, 0.215686, 0.223529, 1)
-theme_override_constants/outline_size = 3
-theme_override_font_sizes/font_size = 18
-text = "x 0"
-vertical_alignment = 1
+icon = ExtResource("7_star")
+icon_alignment = 2
+expand_icon = true
+shape = 4

@@ -67,8 +67,8 @@ var _page_total_frames: int = 10
 @onready var enemies_exclamation: TextureRect = %EnemiesExclamation
 @onready var item_exclamation: TextureRect = %ItemExclamation
 @onready var name_label: Label = %NameLabel
-@onready var next_button: TextureButton = %NextButton
-@onready var prev_button: TextureButton = %PrevButton
+@onready var next_button: GameButton = %NextButton
+@onready var prev_button: GameButton = %PrevButton
 @onready var scroll_indicator: TextureRect = %ScrollIndicator
 @onready var scroll_indicator_top: TextureRect = %ScrollIndicatorTop
 @onready var sprite_rect: TextureRect = %SpriteRect
@@ -99,8 +99,6 @@ func _ready() -> void:
 	enemies_button.add_theme_font_override("font", _font)
 
 	ButtonEffects.apply(enemies_button)
-	ButtonEffects.apply(next_button)
-	ButtonEffects.apply(prev_button)
 	ButtonEffects.apply(towers_button)
 
 

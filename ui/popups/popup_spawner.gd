@@ -83,8 +83,8 @@ func score(text: String) -> void:
 ## [param text] The wave text to display
 func wave(text: String) -> void:
 	var wave_popup: Control = popup_node.instantiate()
-	var label: Label = wave_popup.get_node("CenterContainer/TextureRect/Label")
+	var banner: GameButton = wave_popup.get_node("CenterContainer/Banner")
 
 	# Add to UI instead of current scene
 	Global.ui.add_child(wave_popup)
-	label.text = text
+	banner.text = text.to_upper()
