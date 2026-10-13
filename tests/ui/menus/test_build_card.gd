@@ -62,6 +62,27 @@ func test_a_locked_entity_shows_locked_instead_of_the_price() -> void:
 	assert_bool(card.button_texture.disabled).is_true()
 
 
+func test_the_price_label_uses_a_variation_per_state() -> void:
+	ProgressionManager.unlock_tower_no_save("bat_02")
+	var unaffordable: BuildCard = _card("bat_02")
+	var locked: BuildCard = _card("bat_08")
+
+	assert_str(unaffordable.price_label.theme_type_variation).is_equal(&"PriceLabelUnaffordable")
+	assert_that(unaffordable.price_label.modulate).is_equal(BuildCard.PRICE_LABEL_MODULATE_VS_DIM)
+	assert_str(locked.price_label.theme_type_variation).is_equal(&"PriceLabelLocked")
+	assert_that(locked.price_label.modulate).is_equal(Color.WHITE)
+	assert_bool(unaffordable.price_label.has_theme_color_override(&"font_color")).is_false()
+
+	var level: ILevel = auto_free(ILevel.new())
+	level.coins = 100000
+	ILevel.current_level = level
+	unaffordable.update()
+	ILevel.current_level = null
+
+	assert_str(unaffordable.price_label.theme_type_variation).is_equal(&"PriceLabel")
+	assert_that(unaffordable.price_label.modulate).is_equal(Color.WHITE)
+
+
 func _card(id: String) -> BuildCard:
 	var card: BuildCard = auto_free(CARD_SCENE.instantiate())
 	card.entity = _scene(id)
