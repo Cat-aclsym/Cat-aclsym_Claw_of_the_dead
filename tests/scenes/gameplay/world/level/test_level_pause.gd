@@ -24,7 +24,7 @@ func before_test() -> void:
 
 func after_test() -> void:
 	Engine.time_scale = 1.0
-	Global.clear_pauses()
+	await TestDialogic.reset()
 	if is_instance_valid(_level):
 		_level.queue_free()
 		await _level.tree_exited

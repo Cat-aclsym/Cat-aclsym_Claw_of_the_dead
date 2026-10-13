@@ -21,10 +21,7 @@ func before_test() -> void:
 
 
 func after_test() -> void:
-	Dialogic.current_timeline = null
-	if Dialogic.Styles.has_active_layout_node():
-		Dialogic.clear(Dialogic.ClearFlags.FULL_CLEAR)
-	Global.clear_pauses()
+	await TestDialogic.reset()
 	ProgressionManager.data = _data_before
 	ProgressionManager.persistence_enabled = _persistence_before
 	TranslationServer.set_locale(_locale_before)

@@ -40,7 +40,8 @@ func before_test() -> void:
 
 func after_test() -> void:
 	Engine.time_scale = 1.0
-	Global.clear_pauses()
+	# The end screen starts a one-time dialogue, it would still run in the next suite
+	await TestDialogic.reset()
 	if is_instance_valid(_level):
 		_level.queue_free()
 		await _level.tree_exited
