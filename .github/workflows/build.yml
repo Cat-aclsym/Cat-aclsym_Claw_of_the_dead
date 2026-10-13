@@ -48,8 +48,13 @@ jobs:
           restore-keys: |
             godot-import-${{ runner.os }}-${{ env.GODOT_VERSION }}-
 
+      # The first import of a fresh .godot empties dialogic/directories in project.godot (the .dch and .dtl loaders are not registered yet),
+      # the second one fills it back. Without it no character is found and the portraits are lost, in the tests and in the exports.
       - name: Import project
-        run: godot --headless --path . --import
+        run: |
+          godot --headless --path . --import
+          godot --headless --path . --import
+          git diff --exit-code -- project.godot
 
       - name: Check scripts compile
         run: godot --headless --path . --quit-after 3000 res://tools/check_scripts.tscn
@@ -104,8 +109,12 @@ jobs:
           restore-keys: |
             godot-import-${{ runner.os }}-${{ env.GODOT_VERSION }}-
 
+      # Twice, see the import of the check job: the export reads the Dialogic directories of project.godot
       - name: Import project
-        run: godot --headless --path . --import
+        run: |
+          godot --headless --path . --import
+          godot --headless --path . --import
+          git diff --exit-code -- project.godot
 
       - name: Export Windows
         run: |
