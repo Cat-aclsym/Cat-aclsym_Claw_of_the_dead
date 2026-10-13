@@ -149,8 +149,7 @@ alignment = 1
 [node name="NameLabel" type="Label" parent="GuiMarginContainer/MenuLayout/ContentLayout/LeftPageVBox"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_type_variation = &"HeaderMedium"
-theme_override_font_sizes/font_size = 48
+theme_type_variation = &"BookName"
 text = ""
 horizontal_alignment = 1
 
@@ -210,8 +209,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 4
 mouse_filter = 2
 mouse_behavior_recursive = 1
-theme_override_constants/h_separation = 40
-theme_override_constants/v_separation = 20
+theme_type_variation = &"BookStatsGrid"
 columns = 2
 
 [node name="ScrollIndicator" type="TextureRect" parent="GuiMarginContainer/MenuLayout/ContentLayout/RightPageVBox"]

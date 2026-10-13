@@ -15,7 +15,6 @@ const BUILD_SELECTION_MENU: PackedScene = preload("res://ui/menus/build_selectio
 const CHALLENGES_MENU: PackedScene = preload("res://ui/menus/challenges/challenges_menu.tscn")
 const COIN_ICON_TEXTURE: Texture2D = preload("res://assets/ui/hud/coin.png")
 const DEFAULT_TIME_SCALE: float = 1.0
-const DOTGOTHIC_FONT: Font = preload("res://assets/fonts/dotgothic/dotgothic16_regular.ttf")
 const NEW_ENEMY_CHALLENGER_SCENE: PackedScene = preload("res://ui/hud/new_enemy_challenger.tscn")
 const PAUSE_MENU: PackedScene = preload("res://ui/menus/pause/pause.tscn")
 const POPUP_SCORE_SCENE: PackedScene = preload("res://ui/popups/popup_score.tscn")
@@ -240,13 +239,7 @@ func _trigger_coin_effects(amount: int) -> void:
 	var popup: Node = POPUP_SCORE_SCENE.instantiate()
 	var label: Label = popup.get_node("FloatingNumbers/PriceRow/Label") as Label
 
-	# Configure label with requested style
-	label.add_theme_font_override("font", DOTGOTHIC_FONT)
-	label.add_theme_font_size_override("font_size", 24)
-	label.add_theme_color_override("font_outline_color", Color.BLACK)
-	label.add_theme_constant_override("outline_size", 6)
 	label.text = "+%d" % amount
-	label.self_modulate = Color(1, 1, 1, 1)
 
 	# Add to HUD to keep it in screen space
 	add_child(popup)

@@ -3,16 +3,15 @@
 class_name ChallengeCard
 extends MarginContainer
 
-const DIFFICULTY_COLORS: Dictionary = {
-	"Easy": Color(0.45, 0.85, 0.4),
-	"Hard": Color(0.9, 0.3, 0.3),
-	"Impossible": Color(0.75, 0.25, 0.85),
-	"Medium": Color(0.9, 0.7, 0.2),
+## Theme variation of the difficulty label per difficulty, [code]CardText[/code] for an unknown one.
+const DIFFICULTY_VARIATIONS: Dictionary[String, StringName] = {
+	"Easy": &"DifficultyEasy",
+	"Hard": &"DifficultyHard",
+	"Impossible": &"DifficultyImpossible",
+	"Medium": &"DifficultyMedium",
 }
 const ICON_DONE: Texture2D = preload("res://assets/ui/icons/star.png")
 const ICON_TODO: Texture2D = preload("res://assets/ui/icons/star_empty.png")
-const TEXT_DEFAULT: Color = Color.WHITE
-const TEXT_FAILED: Color = Color(1.0, 0.35, 0.35, 1.0)
 const TINT_DEFAULT: Color = Color.WHITE
 const TINT_FAILED: Color = Color(1.0, 0.35, 0.35, 1.0)
 
@@ -39,15 +38,15 @@ func setup(c: Challenge, is_done: bool) -> void:
 
 func _apply_failed_visual(is_failed: bool) -> void:
 	if is_failed:
-		title_label.add_theme_color_override("font_color", TEXT_FAILED)
-		desc_label.add_theme_color_override("font_color", TEXT_FAILED)
-		diff_label.add_theme_color_override("font_color", TEXT_FAILED)
+		title_label.theme_type_variation = &"CardTitleFailed"
+		desc_label.theme_type_variation = &"CardTextFailed"
+		diff_label.theme_type_variation = &"CardTextFailed"
 		diff_label.text = tr("CHALLENGE.STATUS.FAILED")
 		return
 
-	title_label.add_theme_color_override("font_color", TEXT_DEFAULT)
-	desc_label.add_theme_color_override("font_color", TEXT_DEFAULT)
-	diff_label.add_theme_color_override("font_color", DIFFICULTY_COLORS.get(_difficulty, Color.WHITE))
+	title_label.theme_type_variation = &"CardTitle"
+	desc_label.theme_type_variation = &"CardText"
+	diff_label.theme_type_variation = DIFFICULTY_VARIATIONS.get(_difficulty, &"CardText")
 	diff_label.text = tr("CHALLENGE.DIFFICULTY.%s" % _difficulty.to_upper())
 
 

@@ -9,7 +9,6 @@ extends Control
 const CARD_DIM_UNAFFORDABLE: float = 0.82
 const CARD_MODULATE_AFFORDABLE: Color = Color.WHITE
 const CARD_MODULATE_UNAFFORDABLE: Color = Color(CARD_DIM_UNAFFORDABLE, CARD_DIM_UNAFFORDABLE, CARD_DIM_UNAFFORDABLE, 1.0)
-const PRICE_LABEL_COLOR_UNAFFORDABLE: Color = Color(0.92, 0.26, 0.22, 1.0)
 const PRICE_LABEL_MODULATE_VS_DIM: Color = Color(1.0 / CARD_DIM_UNAFFORDABLE, 1.0 / CARD_DIM_UNAFFORDABLE, 1.0 / CARD_DIM_UNAFFORDABLE, 1.0)
 
 ## The entity scene to instantiate when building (tower or trap).
@@ -82,16 +81,16 @@ func update() -> void:
 	
 	if _locked:
 		price_label.text = tr("BUILD.CARD.LOCKED")
-		price_label.modulate = Color(0.75, 0.78, 0.8, 1.0)
-		price_label.remove_theme_color_override("font_color")
+		price_label.theme_type_variation = &"PriceLabelLocked"
+		price_label.modulate = Color.WHITE
 	else:
 		price_label.text = str(_cost)
 		if can_afford:
+			price_label.theme_type_variation = &"PriceLabel"
 			price_label.modulate = Color.WHITE
-			price_label.remove_theme_color_override("font_color")
 		else:
+			price_label.theme_type_variation = &"PriceLabelUnaffordable"
 			price_label.modulate = PRICE_LABEL_MODULATE_VS_DIM
-			price_label.add_theme_color_override("font_color", PRICE_LABEL_COLOR_UNAFFORDABLE)
 
 
 # private

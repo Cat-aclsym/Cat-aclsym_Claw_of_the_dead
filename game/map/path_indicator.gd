@@ -55,8 +55,6 @@ func _setup_visuals() -> void:
 	label.text = tr("MAP.PATH.SPAWN") if type == PointType.START else tr("MAP.PATH.BASE")
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	label.add_theme_font_size_override("font_size", 10)
-	label.add_theme_color_override("font_outline_color", Color.BLACK)
-	label.add_theme_constant_override("outline_size", 2)
+	label.theme_type_variation = &"MapCaption"
 	label.position = Vector2(-20, -25)
 	add_child(label)

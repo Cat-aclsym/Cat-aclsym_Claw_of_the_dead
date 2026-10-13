@@ -11,13 +11,9 @@ extends Control
 const CONDITION_DONE: Texture2D = preload("res://assets/ui/icons/star.png")
 const CONDITION_TODO: Texture2D = preload("res://assets/ui/icons/star_empty.png")
 const DEFEAT_ICON: Texture2D = preload("res://assets/ui/icons/defeat.svg")
-const DEFEAT_TITLE_COLOR: Color = Color(0.85, 0.2, 0.2, 1.0)
-const DOTGOTHIC_FONT: Font = preload("res://assets/fonts/dotgothic/dotgothic16_regular.ttf")
-const NORMAL_CHALLENGE_COLOR: Color = Color.WHITE
 const TINT_DEFAULT: Color = Color.WHITE
 const TINT_FAILED: Color = Color(1.0, 0.35, 0.35, 1.0)
 const VICTORY_ICON: Texture2D = preload("res://assets/ui/icons/victory_gold.svg")
-const VICTORY_TITLE_COLOR: Color = Color(0.364706, 0.847059, 0.364706, 1)
 
 
 # Variables
@@ -83,13 +79,13 @@ func init(victory: bool) -> void:
 
 	if victory:
 		title_label.text = tr("ENDGAMEMENU.LEVEL.TITLE.WIN")
-		title_label.add_theme_color_override("font_color", VICTORY_TITLE_COLOR)
+		title_label.theme_type_variation = &"VictoryTitle"
 		end_game_image.texture = VICTORY_ICON
 		ProgressionManager.complete_level(ILevel.current_level.level_id)
 		Narrative.play_once(&"first_victory_seen", "first_victory")
 	else:
 		title_label.text = tr("ENDGAMEMENU.LEVEL.TITLE.LOSE")
-		title_label.add_theme_color_override("font_color", DEFEAT_TITLE_COLOR)
+		title_label.theme_type_variation = &"DefeatTitle"
 		end_game_image.texture = DEFEAT_ICON
 		next_button.get_parent().visible = false
 		Narrative.play_once(&"first_defeat_seen", "first_defeat")
@@ -106,7 +102,7 @@ func _display_challenges() -> void:
 	for challenge in active_challenges:
 		var hbox := HBoxContainer.new()
 		hbox.alignment = BoxContainer.ALIGNMENT_CENTER
-		hbox.add_theme_constant_override("separation", 15)
+		hbox.theme_type_variation = &"ChallengeLine"
 
 		var icon_rect := TextureRect.new()
 		icon_rect.custom_minimum_size = Vector2(30, 30)
@@ -123,9 +119,7 @@ func _display_challenges() -> void:
 
 		var label := Label.new()
 		label.text = tr(challenge.title) + ": " + tr(challenge.description)
-		label.add_theme_font_override("font", DOTGOTHIC_FONT)
-		label.add_theme_font_size_override("font_size", 20)
-		label.add_theme_color_override("font_color", NORMAL_CHALLENGE_COLOR)
+		label.theme_type_variation = &"BodyText"
 
 		hbox.add_child(icon_rect)
 		hbox.add_child(label)
