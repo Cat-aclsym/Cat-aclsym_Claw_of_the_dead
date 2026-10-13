@@ -11,7 +11,7 @@ func after() -> void:
 
 
 func test_load_dict_of_a_missing_file_is_empty() -> void:
-	assert_dict(JsonUtil.load_dict("res://tests/utilities/missing.json")).is_empty()
+	assert_dict(JsonUtil.load_dict("res://tests/core/utilities/missing.json")).is_empty()
 
 
 func test_load_dict_of_a_valid_object() -> void:

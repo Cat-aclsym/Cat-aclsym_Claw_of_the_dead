@@ -78,7 +78,7 @@ Level names and descriptions are the `LEVEL.LEV_0X.NAME` / `LEVEL.LEV_0X.DESC` k
 
 ### Enemies
 
-- Waves and `stats.json` share the same enemy ids: `default_zombie`, `damage_zombie`, `rat`, `small_zombie`, `splitter_zombie`, `minesweeper`, `big_daddy`. `StatsDB.get_enemy_scene(id)` returns the matching scene under `scenes/gameplay/entities/enemy/enemies/`.
+- Waves and `stats.json` share the same enemy ids: `default_zombie`, `damage_zombie`, `rat`, `small_zombie`, `splitter_zombie`, `minesweeper`, `big_daddy`. `StatsDB.get_enemy_scene(id)` returns the matching scene under `game/enemies/` (the scene file name is the stats id, e.g. `default_zombie.tscn`).
 - Stats also carry each enemy's kill reward and escape damage. A `big_daddy` reaching the base ends the level in defeat.
 
 ### Narrative and text
@@ -146,10 +146,15 @@ Home, level selection, pause, options, HUD (waves, score popups, challenge UI), 
 | Path | Contents |
 |------|----------|
 | `addons/` | Third-party plugins (Dialogic; ignored for gameplay unless you work on plugins) |
-| `assets/` | Art, audio, themes, translation CSVs, `data/stats.json` |
-| `resources/` | Level, challenge, and armory JSON |
-| `scenes/` | `.tscn` scenes (gameplay, UI, maps, entities) |
-| `scripts/` | GDScript (`autoloads`, commands, challenges, narrative, progression, ...) |
+| `main.tscn` | Main scene |
+| `autoloads/` | Autoload singletons (`Global`, `StatsDB`, `ProgressionManager`, ...) |
+| `core/` | Logic without a scene (challenges, log, narrative, progression, state machine, utilities) |
+| `game/` | Gameplay, scene and script side by side (camera, buildings, enemies, projectiles, level and waves, map, sound entity) |
+| `ui/` | UI scenes (`ui.tscn`, theme, components, HUD, menus, popups, tutorial) |
+| `debug/` | Debug console and its commands, watcher, stats icons debug scene |
+| `data/` | `stats.json` plus level, challenge and armory JSON |
+| `assets/` | Art, audio, fonts, shaders, narrative timelines, translation CSVs |
+| `tests/` | gdUnit4 suites, mirroring the source tree, excluded from exports |
 | `tools/` | Headless checks (`check_scripts`, `smoke_test`), excluded from exports |
 | `log/` | Runtime log output directory (when used) |
 
