@@ -1,14 +1,6 @@
-[gd_scene load_steps=4 format=3 uid="uid://ds0xkohs1fv3w"]
+[gd_scene load_steps=2 format=3 uid="uid://ds0xkohs1fv3w"]
 
 [ext_resource type="Script" uid="uid://dfdt3ady1wp2a" path="res://ui/menus/tower_upgrade/tower_info.gd" id="0_script"]
-[ext_resource type="Texture2D" uid="uid://c5jwmpccl40pb" path="res://assets/environment/backgrounds/menu_background_01.svg" id="2_mxka5"]
-
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_j0qm1"]
-texture = ExtResource("2_mxka5")
-texture_margin_left = 20.0
-texture_margin_top = 30.0
-texture_margin_right = 20.0
-texture_margin_bottom = 30.0
 
 [node name="TowerInfo" type="Control"]
 layout_mode = 3
@@ -44,7 +36,7 @@ offset_bottom = 200.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-theme_override_styles/panel = SubResource("StyleBoxTexture_j0qm1")
+theme_type_variation = &"MenuPanelSliced"
 
 [node name="InfoVBoxContainer" type="VBoxContainer" parent="InfoPanel"]
 layout_mode = 2

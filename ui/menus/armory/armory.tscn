@@ -1,24 +1,8 @@
-[gd_scene load_steps=9 format=3 uid="uid://dygxxtpara021"]
+[gd_scene load_steps=5 format=3 uid="uid://dygxxtpara021"]
 
 [ext_resource type="Script" uid="uid://6soot5tpvyhx" path="res://ui/menus/armory/armory.gd" id="1_arm"]
 [ext_resource type="PackedScene" uid="uid://c8gbtn5xq2m4y" path="res://ui/components/game_button/game_button.tscn" id="2_close"]
 [ext_resource type="Texture2D" uid="uid://8y5uhgfsgmp8" path="res://assets/ui/icons/star.png" id="3_star"]
-[ext_resource type="Texture2D" uid="uid://c8b8irfugbxdj" path="res://assets/environment/backgrounds/menu_background_02.svg" id="6_x4aod"]
-[ext_resource type="Texture2D" uid="uid://c5jwmpccl40pb" path="res://assets/environment/backgrounds/menu_background_01.svg" id="7_fond01"]
-
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_desc_bg"]
-texture = ExtResource("6_x4aod")
-expand_margin_left = 20.0
-expand_margin_top = 30.0
-expand_margin_right = 20.0
-expand_margin_bottom = 30.0
-
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_reset_panel"]
-texture = ExtResource("7_fond01")
-expand_margin_left = 20.0
-expand_margin_top = 30.0
-expand_margin_right = 20.0
-expand_margin_bottom = 30.0
 
 [node name="Armory" type="Control"]
 clip_contents = true
@@ -149,7 +133,7 @@ offset_bottom = 608.0
 grow_horizontal = 2
 grow_vertical = 0
 mouse_filter = 2
-theme_override_styles/panel = SubResource("StyleBoxTexture_desc_bg")
+theme_type_variation = &"MenuPanelDark"
 
 [node name="DescriptionMargin" type="MarginContainer" parent="DescriptionPanel"]
 layout_mode = 2
@@ -211,7 +195,7 @@ offset_right = 327.0
 offset_bottom = 79.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxTexture_reset_panel")
+theme_type_variation = &"MenuPanel"
 
 [node name="ResetMargin" type="MarginContainer" parent="ResetConfirmRoot/ResetPanel"]
 layout_mode = 2
