@@ -2,7 +2,7 @@
 ##
 ## Glyph atlas of the [GameButton]s: one [AtlasTexture] per [enum Id], cut from [code]icons.png[/code] (8 columns of [constant CELL_SIZE] px cells).
 ## [br]The cells are drawn centered on the button. Single-color glyphs are stored white (shaded ones white and light grey) and tinted by the button,
-## the [constant MULTICOLOR] ones keep their own colors.
+## the [constant MULTICOLOR] ones keep their own colors. Some single-color glyphs add a light grey (191) second tone, the tint multiplies both.
 ## [codeblock]
 ## var home: AtlasTexture = GameIcon.texture(GameIcon.Id.HOME)
 ## [/codeblock]
@@ -47,8 +47,6 @@ const CELL_SIZE: int = 64
 const COLUMNS: int = 8
 ## Glyphs that keep their own colors: the button never tints them.
 const MULTICOLOR: Array[Id] = [Id.FLAG_EN, Id.FLAG_FR, Id.ARROW_LEFT, Id.ARROW_RIGHT]
-## Single-color glyphs drawn with a light grey (191) second tone besides the white: the tint multiplies both.
-const SHADED: Array[Id] = [Id.PLAY, Id.PAUSE, Id.FAST_FORWARD, Id.CLOSE, Id.BACK]
 
 static var _cache: Dictionary[int, AtlasTexture] = {}
 

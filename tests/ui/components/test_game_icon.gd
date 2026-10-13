@@ -5,6 +5,8 @@ extends GdUnitTestSuite
 
 const WHITE: Color = Color(1.0, 1.0, 1.0, 1.0)
 const LIGHT_GREY: Color = Color(191.0 / 255.0, 191.0 / 255.0, 191.0 / 255.0, 1.0)
+## Single-color glyphs drawn with the light grey second tone besides the white.
+const SHADED: Array[GameIcon.Id] = [GameIcon.Id.PLAY, GameIcon.Id.PAUSE, GameIcon.Id.FAST_FORWARD, GameIcon.Id.CLOSE, GameIcon.Id.BACK]
 
 var _atlas_image: Image
 
@@ -71,7 +73,7 @@ func test_the_single_color_icons_are_white_and_the_shaded_ones_add_a_light_grey(
 		var opaque: Array[Color] = _pixels(_cell(id)).filter(func(pixel: Color) -> bool: return pixel.a > 0.0)
 		assert_bool(opaque.all(func(pixel: Color) -> bool: return pixel.is_equal_approx(WHITE) or pixel.is_equal_approx(LIGHT_GREY))).override_failure_message("%s: only white and light grey expected" % GameIcon.key(id)).is_true()
 		var has_grey: bool = opaque.any(func(pixel: Color) -> bool: return pixel.is_equal_approx(LIGHT_GREY))
-		assert_bool(has_grey).override_failure_message("%s: SHADED must match the light grey pixels" % GameIcon.key(id)).is_equal(id in GameIcon.SHADED)
+		assert_bool(has_grey).override_failure_message("%s: SHADED must match the light grey pixels" % GameIcon.key(id)).is_equal(id in SHADED)
 
 
 func test_key_is_the_name_of_the_id() -> void:
