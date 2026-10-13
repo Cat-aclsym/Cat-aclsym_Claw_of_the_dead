@@ -4,7 +4,7 @@ class_name RadialTowerUpgradeMenu
 extends Control
 
 var active: bool = false
-var bt_scale: Vector2 = Vector2(0.6, 0.6)
+var bt_scale: Vector2 = Vector2.ONE
 var color_outline: Color = Color8(0xEC, 0x8C, 0x3C)
 var outline_line_width: int = 8
 var radius: int = 120
@@ -18,12 +18,12 @@ var tower: ITower
 var upgrade_price: int
 
 @onready var buttons: Control = $Buttons
-@onready var close_button: TextureButton = $Buttons/CloseTextureButton
-@onready var info_button: TextureButton = $Buttons/InfoTextureButton
-@onready var sell_button: TextureButton = $Buttons/SellTextureButton
+@onready var close_button: GameButton = $Buttons/CloseTextureButton
+@onready var info_button: GameButton = $Buttons/InfoTextureButton
+@onready var sell_button: GameButton = $Buttons/SellTextureButton
 @onready var sell_label: Label = $Buttons/SellTextureButton/PriceRow/ValueLabel
 @onready var sell_price_row: HBoxContainer = $Buttons/SellTextureButton/PriceRow
-@onready var upgrade_button: TextureButton = $Buttons/UpgradeTextureButton
+@onready var upgrade_button: GameButton =$Buttons/UpgradeTextureButton
 
 @onready var signals: Array[Dictionary] = [
 	{SignalUtil.WHO: close_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_close_button_pressed},
@@ -59,8 +59,6 @@ func _ready() -> void:
 		upgrade_coin_icon.visible = true
 	else:
 		upgrade_button.disabled = true
-		# Change upgrade button to gray rbg #525252
-		upgrade_button.modulate = Color(0.325, 0.325, 0.325)  # Gray color
 		upgrade_label.text = tr("TOWER.UPGRADE.MAX")
 		upgrade_coin_icon.visible = false
 	SignalUtil.connects(signals)

@@ -1,10 +1,8 @@
-[gd_scene load_steps=12 format=3 uid="uid://ddcvda2tcbdq8"]
+[gd_scene load_steps=10 format=3 uid="uid://ddcvda2tcbdq8"]
 
 [ext_resource type="Script" uid="uid://du3smf4s8h4d2" path="res://game/buildings/placement/build_placement.gd" id="1_3aclw"]
 [ext_resource type="Texture2D" uid="uid://dn7sa2jf2kvor" path="res://assets/environment/grid_placement/moving_arrow.png" id="2_8yjt0"]
-[ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://ui/theme/generic.tres" id="3_bj1wi"]
-[ext_resource type="Texture2D" uid="uid://c3eyakb4oxqkc" path="res://assets/ui/icons/build_button.png" id="4_updrk"]
-[ext_resource type="Texture2D" uid="uid://ba7c0nq31uw2c" path="res://assets/ui/icons/red_button.png" id="5_4oww3"]
+[ext_resource type="PackedScene" uid="uid://c8gbtn5xq2m4y" path="res://ui/components/game_button/game_button.tscn" id="4_updrk"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_xhnpy"]
 atlas = ExtResource("2_8yjt0")
@@ -79,26 +77,21 @@ size_flags_vertical = 4
 theme_override_constants/separation = 8
 alignment = 1
 
-[node name="PlaceButton" type="TextureButton" parent="PlaceHUD/HBoxContainer"]
+[node name="PlaceButton" parent="PlaceHUD/HBoxContainer" instance=ExtResource("4_updrk")]
 z_index = 1
-texture_filter = 1
 custom_minimum_size = Vector2(80, 70)
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 8
-theme = ExtResource("3_bj1wi")
-texture_normal = ExtResource("4_updrk")
-ignore_texture_size = true
-stretch_mode = 4
+palette = 1
+game_icon = 11
 
-[node name="CancelPlaceButton" type="TextureButton" parent="PlaceHUD/HBoxContainer"]
+[node name="CancelPlaceButton" parent="PlaceHUD/HBoxContainer" instance=ExtResource("4_updrk")]
 z_index = 1
-texture_filter = 1
-custom_minimum_size = Vector2(80, 70)
+custom_minimum_size = Vector2(80, 54)
 layout_mode = 2
 size_flags_horizontal = 0
-size_flags_vertical = 8
-theme = ExtResource("3_bj1wi")
-texture_normal = ExtResource("5_4oww3")
-ignore_texture_size = true
-stretch_mode = 4
+size_flags_vertical = 0
+shape = 1
+palette = 3
+game_icon = 12

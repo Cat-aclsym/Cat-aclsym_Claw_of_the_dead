@@ -16,8 +16,6 @@ enum CursorState {
 	BUILD  ## Placing a new [IBuilding] preview
 }
 
-const BUTTON_COLOR_DISABLED := Color(0.5, 0.5, 0.5, 0.6)
-const BUTTON_COLOR_ENABLED := Color(1, 1, 1, 1)
 const COLOR_KO := Color(1, 0.5, 0.5, 0.5)
 const COLOR_OK := Color(1, 1, 1, 0.5)
 
@@ -35,9 +33,9 @@ var _last_tm_pos: Vector2i = Vector2i(-1, -1)
 var _preview_building: IBuilding = null
 var _state: CursorState = CursorState.IDLE
 
-@onready var cancel_place_button: TextureButton = $PlaceHUD/HBoxContainer/CancelPlaceButton
+@onready var cancel_place_button: GameButton =$PlaceHUD/HBoxContainer/CancelPlaceButton
 @onready var cursor: AnimatedSprite2D = $cursor
-@onready var place_button: TextureButton = $PlaceHUD/HBoxContainer/PlaceButton
+@onready var place_button: GameButton =$PlaceHUD/HBoxContainer/PlaceButton
 @onready var place_hud: Control = $PlaceHUD
 @onready var placement_area: Area2D = $Area2D
 
@@ -61,9 +59,6 @@ func _ready() -> void:
 	visible = false
 	place_hud.visible = false
 	SignalUtil.connects(signals)
-
-	ButtonEffects.apply(place_button)
-	ButtonEffects.apply(cancel_place_button)
 
 	if ILevel.current_level:
 		var level_signals: Array[Dictionary] = [
@@ -439,9 +434,4 @@ func _state_build_input(event: InputEvent) -> void:
 			_cancel_build()
 
 func _update_place_button_state(can_build: bool) -> void:
-	if can_build:
-		place_button.modulate = BUTTON_COLOR_ENABLED
-		place_button.disabled = false
-	else:
-		place_button.modulate = BUTTON_COLOR_DISABLED
-		place_button.disabled = true
+	place_button.disabled = not can_build
