@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=16 format=3 uid="uid://dr31fy67cgji3"]
+[gd_resource type="Theme" load_steps=17 format=3 uid="uid://dr31fy67cgji3"]
 
 [ext_resource type="FontFile" uid="uid://ddo3rokwsadq0" path="res://assets/fonts/dotgothic/dotgothic16_regular.ttf" id="1_dotgothic"]
 [ext_resource type="FontVariation" uid="uid://b5t3wfh501ofr" path="res://ui/theme/dotgothic_variation.tres" id="5_variation"]
@@ -10,6 +10,7 @@
 [ext_resource type="StyleBoxFlat" path="res://ui/theme/styles/health_bar_background.tres" id="11_hb_background"]
 [ext_resource type="StyleBoxFlat" path="res://ui/theme/styles/health_bar_fill.tres" id="12_hb_fill"]
 [ext_resource type="StyleBoxFlat" path="res://ui/theme/styles/health_bar_border.tres" id="13_hb_border"]
+[ext_resource type="StyleBoxFlat" path="res://ui/theme/styles/tooltip_panel.tres" id="14_tooltip"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_game_rect"]
 content_margin_left = 8.0
@@ -294,6 +295,10 @@ TitleLargeText/base_type = &"Label"
 TitleLargeText/font_sizes/font_size = 40
 TitleText/base_type = &"Label"
 TitleText/font_sizes/font_size = 32
+TooltipLabel/colors/font_color = Color(1, 1, 1, 1)
+TooltipLabel/constants/outline_size = 0
+TooltipLabel/font_sizes/font_size = 16
+TooltipPanel/styles/panel = ExtResource("14_tooltip")
 TypeScale/font_sizes/body = 20
 TypeScale/font_sizes/body_large = 24
 TypeScale/font_sizes/caption = 11
