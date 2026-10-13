@@ -15,11 +15,10 @@ const BUILD_SELECTION_MENU: PackedScene = preload("res://ui/menus/build_selectio
 const CHALLENGES_MENU: PackedScene = preload("res://ui/menus/challenges/challenges_menu.tscn")
 const COIN_ICON_TEXTURE: Texture2D = preload("res://assets/ui/hud/coin.png")
 const DEFAULT_TIME_SCALE: float = 1.0
+const FAST_FORWARD_TIME_SCALE: float = 3.0
 const NEW_ENEMY_CHALLENGER_SCENE: PackedScene = preload("res://ui/hud/new_enemy_challenger.tscn")
 const PAUSE_MENU: PackedScene = preload("res://ui/menus/pause/pause.tscn")
 const POPUP_SCORE_SCENE: PackedScene = preload("res://ui/popups/popup_score.tscn")
-const SKIP_COLOR_INACTIVE: Color = Color(1.0, 1.0, 1.0, 1.0)
-const SKIP_TIME_SCALE: float = 3.0
 
 # Variables
 var _ghost_tween: Tween
@@ -35,19 +34,18 @@ var _new_enemy_reveal_running: bool = false
 @onready var coins_rich_text_label: Label = %HUDVBoxContainer/CoinsWavesMarginContainer/CoinsWavesHBoxContainer/CoinsTextureRect/MarginContainer/CoinsLabel
 
 @onready var default_coins_text: String = coins_rich_text_label.text
+@onready var fast_forward_button: GameButton = $FastForwardMarginContainer/FastForwardButton
 @onready var health_ghost_progress_bar: TextureProgressBar = %HealthGhostProgressBar
 @onready var health_rich_text_label: Label = %HUDVBoxContainer/HeartTextureRect/HealthMarginContainer/MarginContainer/HealthTextureProgressBar/HealthLabel
 @onready var default_health_text: String = health_rich_text_label.text
 @onready var health_texture_progress_bar: TextureProgressBar = %HUDVBoxContainer/HeartTextureRect/HealthMarginContainer/MarginContainer/HealthTextureProgressBar
 @onready var low_health_indicator: LowHealthIndicator = $LowHealthIndicator
 @onready var pause_button: GameButton = $PauseMarginContainer/PauseButton
-@onready var skip_animation_player: AnimationPlayer = $SkipMarginContainer/SkipAnimationPlayer
-@onready var skip_time_scale_button: GameButton = $SkipMarginContainer/SkipButton
 
 @onready var signals: Array[Dictionary] = [
 	{SignalUtil.WHO: challenges_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_challenges_button_pressed},
 	{SignalUtil.WHO: pause_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_pause_button_pressed},
-	{SignalUtil.WHO: skip_time_scale_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_skip_time_scale_button_pressed},
+	{SignalUtil.WHO: fast_forward_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_fast_forward_button_pressed},
 	{SignalUtil.WHO: build_selection_button, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_build_selection_button_pressed}
 ]
 @onready var waves_rich_text_label: Label = %HUDVBoxContainer/CoinsWavesMarginContainer/CoinsWavesHBoxContainer/WavesTextureRect/MarginContainer/WavesLabel
@@ -62,19 +60,20 @@ func _ready() -> void:
 	assert(health_ghost_progress_bar != null, "health_ghost_progress_bar node not found")
 	assert(health_texture_progress_bar != null, "health_texture_progress_bar node not found")
 	assert(build_selection_button != null, "build_selection_button node not found")
-	assert(skip_time_scale_button != null, "skip_time_scale_button node not found")
+	assert(fast_forward_button != null, "fast_forward_button node not found")
 
 	Global.hud = self
 	hide()
 
 	SignalUtil.connects(signals)
-	_apply_time_scale(DEFAULT_TIME_SCALE, false)
+	_apply_time_scale(DEFAULT_TIME_SCALE)
 
 	_new_enemy_challenger = NEW_ENEMY_CHALLENGER_SCENE.instantiate() as NewEnemyChallenger
 	add_child(_new_enemy_challenger)
 
 
 func _process(_delta: float) -> void:
+	_sync_fast_forward_button()
 	if not _is_ready:
 		return
 	if not visible:
@@ -118,14 +117,9 @@ func unload_ui() -> void:
 		ILevel.current_level.disconnect("stats_updated", _update)
 
 # Private functions
-func _apply_time_scale(time_scale: float, is_fast: bool) -> void:
+func _apply_time_scale(time_scale: float) -> void:
 	Engine.time_scale = time_scale
-	skip_time_scale_button.button_pressed = is_fast
-	if is_fast:
-		skip_animation_player.play("skip_active")
-	else:
-		skip_animation_player.stop()
-		skip_time_scale_button.modulate = SKIP_COLOR_INACTIVE
+	_sync_fast_forward_button()
 
 
 func _on_build_selection_button_pressed() -> void:
@@ -168,14 +162,13 @@ func _on_pause_button_pressed() -> void:
 		Global.ui.add_child(pause_menu_instance)
 
 
-func _on_skip_time_scale_button_pressed() -> void:
-	var is_fast: bool = skip_time_scale_button.button_pressed
+func _on_fast_forward_button_pressed() -> void:
+	var is_fast: bool = fast_forward_button.button_pressed
 	# ILevel restores the time scale it froze on resume, so a change made while frozen would be lost
 	if Global.is_time_frozen():
-		skip_time_scale_button.set_pressed_no_signal(not is_fast)
+		fast_forward_button.set_pressed_no_signal(not is_fast)
 		return
-	var target_scale: float = SKIP_TIME_SCALE if is_fast else DEFAULT_TIME_SCALE
-	_apply_time_scale(target_scale, is_fast)
+	_apply_time_scale(FAST_FORWARD_TIME_SCALE if is_fast else DEFAULT_TIME_SCALE)
 
 
 ## Plays the one-time dialogue of the boss, or of the first new enemy that is not the basic zombie.
@@ -227,6 +220,17 @@ func _spawn_coin_explosion(start_pos: Vector2) -> void:
 		coin_tween.tween_property(coin, "modulate:a", 0.0, 0.5).set_delay(0.2)
 		coin_tween.tween_property(coin, "scale", Vector2.ZERO, 0.5).set_ease(Tween.EASE_IN)
 		SignalUtil.connects([{SignalUtil.WHO: coin_tween, SignalUtil.WHAT: "finished", SignalUtil.TO: coin.queue_free}])
+
+
+## Shows the real speed on the fast forward button (pressed and rainbow above x1): the level resets the time scale when its waves start, the console
+## can change it. Skipped while the time is frozen, the scale is 0 then and comes back on resume.
+func _sync_fast_forward_button() -> void:
+	if Global.is_time_frozen():
+		return
+	var is_fast: bool = Engine.time_scale > DEFAULT_TIME_SCALE
+	if fast_forward_button.rainbow != is_fast or fast_forward_button.button_pressed != is_fast:
+		fast_forward_button.set_pressed_no_signal(is_fast)
+		fast_forward_button.rainbow = is_fast
 
 
 func _trigger_coin_effects(amount: int) -> void:

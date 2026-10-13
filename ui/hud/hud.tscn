@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://b5630xr4v607r"]
+[gd_scene load_steps=13 format=3 uid="uid://b5630xr4v607r"]
 
 [ext_resource type="Script" uid="uid://cc06prch72skr" path="res://ui/hud/hud.gd" id="1_cuep3"]
 [ext_resource type="PackedScene" uid="uid://c8gbtn5xq2m4y" path="res://ui/components/game_button/game_button.tscn" id="2_meysh"]
@@ -22,28 +22,6 @@ shader_parameter/base_color = Color(0.8, 0.1, 0.1, 1)
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_health"]
 render_priority = 0
 shader = ExtResource("15_shader")
-
-[sub_resource type="Animation" id="1"]
-resource_name = "skip_active"
-loop_mode = 1
-step = 0.0
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("SkipButton:modulate")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.16, 0.33, 0.5, 0.66, 0.83, 1),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1),
-"update": 0,
-"values": [Color(1, 0.4, 0.4, 1), Color(1, 1, 0.4, 1), Color(0.5, 1, 0.5, 1), Color(0.4, 1, 1, 1), Color(0.4, 0.6, 1, 1), Color(0.8, 0.4, 1, 1), Color(1, 0.4, 0.8, 1)]
-}
-
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_0gj16"]
-_data = {
-&"skip_active": SubResource("1")
-}
 
 [node name="HUD" type="Control"]
 layout_mode = 3
@@ -309,7 +287,7 @@ palette_pressed = 3
 game_icon = 11
 game_icon_pressed = 12
 
-[node name="SkipMarginContainer" type="MarginContainer" parent="."]
+[node name="FastForwardMarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
@@ -323,16 +301,10 @@ grow_vertical = 0
 theme_override_constants/margin_left = 20
 theme_override_constants/margin_bottom = 10
 
-[node name="SkipButton" parent="SkipMarginContainer" instance=ExtResource("2_meysh")]
-modulate = Color(1, 0.4, 0.4, 1)
+[node name="FastForwardButton" parent="FastForwardMarginContainer" instance=ExtResource("2_meysh")]
 custom_minimum_size = Vector2(110, 90)
 layout_mode = 2
 toggle_mode = true
 shape = 1
 palette = 1
 game_icon = 5
-
-[node name="SkipAnimationPlayer" type="AnimationPlayer" parent="SkipMarginContainer"]
-libraries = {
-&"": SubResource("AnimationLibrary_0gj16")
-}
