@@ -26,7 +26,7 @@ var _armory_scroll_press_global: Vector2 = Vector2.ZERO
 var _armory_scroll_press_valid: bool = false
 var _selected_node_id: String = ""
 
-@onready var close_button: TextureButton = %CloseTextureButton
+@onready var close_button: GameButton =%CloseTextureButton
 @onready var description_label: Label = %DescriptionLabel
 @onready var description_panel: PanelContainer = %DescriptionPanel
 @onready var description_title_label: Label = %DescriptionTitleLabel

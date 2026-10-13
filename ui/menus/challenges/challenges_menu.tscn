@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://dq74xn2mjabp3" path="res://ui/menus/challenges/challenges_menu.gd" id="1_chal0"]
 [ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://ui/theme/generic.tres" id="2_theme"]
 [ext_resource type="Texture2D" uid="uid://c8b8irfugbxdj" path="res://assets/environment/backgrounds/menu_background_02.svg" id="3_bg"]
-[ext_resource type="Texture2D" uid="uid://0lgpu16nkbho" path="res://assets/ui/icons/button_close.svg" id="4_close"]
+[ext_resource type="PackedScene" uid="uid://c8gbtn5xq2m4y" path="res://ui/components/game_button/game_button.tscn" id="4_close"]
 
 [node name="ChallengesMenu" type="Control"]
 layout_mode = 3
@@ -78,13 +78,13 @@ theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 28
 text = "CHALLENGES.PANEL.TITLE"
 
-[node name="CloseButton" type="TextureButton" parent="Panel/OuterMargin/RootVBox/Header"]
+[node name="CloseButton" parent="Panel/OuterMargin/RootVBox/Header" instance=ExtResource("4_close")]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(38, 38)
+custom_minimum_size = Vector2(60, 40)
 layout_mode = 2
-texture_normal = ExtResource("4_close")
-ignore_texture_size = true
-stretch_mode = 5
+shape = 1
+palette = 3
+game_icon = 12
 
 [node name="Separator" type="HSeparator" parent="Panel/OuterMargin/RootVBox"]
 layout_mode = 2

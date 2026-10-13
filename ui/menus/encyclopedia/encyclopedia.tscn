@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://boqaeq5svhocn" path="res://ui/menus/encyclopedia/encyclopedia.gd" id="1_ency"]
 [ext_resource type="Texture2D" uid="uid://mshwayfrielr" path="res://assets/ui/hud/encyclopedia_enemies.png" id="2_bg_ennemis"]
-[ext_resource type="Texture2D" uid="uid://0lgpu16nkbho" path="res://assets/ui/icons/button_close.svg" id="3_close"]
+[ext_resource type="PackedScene" uid="uid://c8gbtn5xq2m4y" path="res://ui/components/game_button/game_button.tscn" id="3_close"]
 [ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://ui/theme/generic.tres" id="4_theme"]
 [ext_resource type="FontFile" uid="uid://ddo3rokwsadq0" path="res://assets/fonts/dotgothic/dotgothic16_regular.ttf" id="5_font"]
 [ext_resource type="Texture2D" uid="uid://sdmr73qrumef" path="res://assets/ui/icons/encyclopedia_left.png" id="5_fwnpo"]
@@ -109,22 +109,21 @@ mouse_filter = 2
 layout_mode = 2
 mouse_filter = 2
 
-[node name="CloseTextureButton" type="TextureButton" parent="GuiMarginContainer/MenuLayout"]
+[node name="CloseTextureButton" parent="GuiMarginContainer/MenuLayout" instance=ExtResource("3_close")]
 unique_name_in_owner = true
-texture_filter = 6
-custom_minimum_size = Vector2(40, 40)
+custom_minimum_size = Vector2(60, 40)
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -100.0
+offset_left = -120.0
 offset_top = 20.0
 offset_right = -60.0
 offset_bottom = 60.0
 grow_horizontal = 0
-texture_normal = ExtResource("3_close")
-ignore_texture_size = true
-stretch_mode = 4
+shape = 1
+palette = 3
+game_icon = 12
 
 [node name="ContentLayout" type="Control" parent="GuiMarginContainer/MenuLayout"]
 unique_name_in_owner = true

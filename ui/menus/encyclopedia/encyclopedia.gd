@@ -61,7 +61,7 @@ var _page_total_frames: int = 10
 
 ## Background texture used for the encyclopedia pages.
 @onready var background_texture: TextureRect = %BackgroundTexture
-@onready var close_button: TextureButton = %CloseTextureButton
+@onready var close_button: GameButton =%CloseTextureButton
 @onready var content_layout: Control = %ContentLayout
 @onready var enemies_button: TextureButton = %EnemiesButton
 @onready var enemies_exclamation: TextureRect = %EnemiesExclamation
@@ -98,7 +98,6 @@ func _ready() -> void:
 	towers_button.add_theme_font_override("font", _font)
 	enemies_button.add_theme_font_override("font", _font)
 
-	ButtonEffects.apply(close_button)
 	ButtonEffects.apply(enemies_button)
 	ButtonEffects.apply(next_button)
 	ButtonEffects.apply(prev_button)

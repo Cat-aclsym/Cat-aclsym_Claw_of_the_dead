@@ -18,9 +18,9 @@ var level_statuses: Dictionary[String, LevelIndicator.Status] = {}
 @onready var indicators_container: HBoxContainer = $MarginContainer/VBoxContainer/VBoxContainer/IndicatorsContainer
 @onready var locked_frame: CenterContainer = $MarginContainer/VBoxContainer/BodyContainer/LockedFrame
 
-@onready var main_menu_button: TextureButton = $MarginContainer/MainMenuButton
-@onready var next_button: TextureButton = $MarginContainer/VBoxContainer/BodyContainer/NextButton
-@onready var previous_button: TextureButton = $MarginContainer/VBoxContainer/BodyContainer/PreviousButton
+@onready var main_menu_button: GameButton = $MarginContainer/MainMenuButton
+@onready var next_button: GameButton = $MarginContainer/VBoxContainer/BodyContainer/NextButton
+@onready var previous_button: GameButton =$MarginContainer/VBoxContainer/BodyContainer/PreviousButton
 
 @onready var separator_scene: PackedScene = preload("res://ui/menus/level_selection/components/separator.tscn")
 @onready var signals: Array[Dictionary] = [
@@ -41,10 +41,6 @@ func configure() -> void:
 	SignalUtil.connects(signals)
 	_load_levels()
 	_update()
-
-	ButtonEffects.apply(previous_button)
-	ButtonEffects.apply(next_button)
-	ButtonEffects.apply(main_menu_button)
 
 
 func _load_levels() -> void:

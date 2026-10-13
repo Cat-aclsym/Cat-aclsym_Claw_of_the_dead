@@ -14,7 +14,7 @@ var _is_closing: bool = false
 var _tween: Tween
 
 @onready var challenges_container: VBoxContainer = %ChallengesContainer
-@onready var close_button: TextureButton = %CloseButton
+@onready var close_button: GameButton =%CloseButton
 @onready var dimmer: ColorRect = %Dimmer
 @onready var panel: Control = %Panel
 

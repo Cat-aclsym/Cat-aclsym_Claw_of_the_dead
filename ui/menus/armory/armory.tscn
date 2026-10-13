@@ -1,7 +1,7 @@
 [gd_scene load_steps=11 format=3 uid="uid://dygxxtpara021"]
 
 [ext_resource type="Script" uid="uid://6soot5tpvyhx" path="res://ui/menus/armory/armory.gd" id="1_arm"]
-[ext_resource type="Texture2D" uid="uid://0lgpu16nkbho" path="res://assets/ui/icons/button_close.svg" id="2_close"]
+[ext_resource type="PackedScene" uid="uid://c8gbtn5xq2m4y" path="res://ui/components/game_button/game_button.tscn" id="2_close"]
 [ext_resource type="Texture2D" uid="uid://8y5uhgfsgmp8" path="res://assets/ui/icons/star.png" id="3_star"]
 [ext_resource type="Theme" uid="uid://dr31fy67cgji3" path="res://ui/theme/generic.tres" id="3_theme"]
 [ext_resource type="Texture2D" uid="uid://c8b8irfugbxdj" path="res://assets/environment/backgrounds/menu_background_02.svg" id="6_x4aod"]
@@ -101,13 +101,13 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 32
 text = "?"
 
-[node name="CloseTextureButton" type="TextureButton" parent="MainMargin/VBox/HeaderHBox"]
+[node name="CloseTextureButton" parent="MainMargin/VBox/HeaderHBox" instance=ExtResource("2_close")]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(48, 48)
+custom_minimum_size = Vector2(60, 40)
 layout_mode = 2
-texture_normal = ExtResource("2_close")
-ignore_texture_size = true
-stretch_mode = 5
+shape = 1
+palette = 3
+game_icon = 12
 
 [node name="ScrollBuildings" type="ScrollContainer" parent="MainMargin/VBox"]
 unique_name_in_owner = true
