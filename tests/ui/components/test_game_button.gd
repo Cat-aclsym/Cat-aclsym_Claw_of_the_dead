@@ -141,6 +141,56 @@ func test_hover_brightens_and_pressed_darkens() -> void:
 	assert_float(_parameter(button, &"brightness")).is_equal(GameButton.BRIGHTNESS_PRESSED)
 
 
+func test_latched_toggle_with_a_swap_is_not_dimmed() -> void:
+	var button: GameButton = _toggle()
+
+	button.set_pressed_no_signal(true)
+	await await_idle_frame()
+	assert_float(_parameter(button, &"brightness")).is_equal(1.0)
+
+	button.notification(Control.NOTIFICATION_MOUSE_ENTER)
+	await await_idle_frame()
+	assert_float(_parameter(button, &"brightness")).is_equal(GameButton.BRIGHTNESS_HOVER)
+
+
+func test_icon_only_button_larger_than_its_base_scales_the_art_and_keeps_its_proportions() -> void:
+	var button: GameButton = _add(_button(GameButton.Shape.RECT, GameButton.Palette.GREEN))
+	button.game_icon = GameIcon.Id.HOME
+	button.custom_minimum_size = Vector2(138, 117)
+	button.size = Vector2(138, 117)
+
+	await await_idle_frame()
+
+	assert_float(button.art_scale).is_equal(3.0)
+	assert_that(_background(button).scale).is_equal(Vector2(3, 3))
+	assert_that(_background(button).size).is_equal(Vector2(46, 39))
+	assert_that(_background(button).position).is_equal(Vector2.ZERO)
+
+	button.size = Vector2(200, 117)
+	await await_idle_frame()
+	assert_float(button.art_scale).is_equal(3.0)
+	assert_that(_background(button).position).is_equal(Vector2(31, 0))
+
+
+func test_native_size_text_and_unscaled_shapes_stretch_their_base() -> void:
+	var button: GameButton = _add(_button(GameButton.Shape.RECT, GameButton.Palette.GREEN))
+	await await_idle_frame()
+	assert_float(button.art_scale).is_equal(1.0)
+
+	button.custom_minimum_size = Vector2(138, 117)
+	button.size = Vector2(138, 117)
+	button.text = "OK"
+	await await_idle_frame()
+	assert_float(button.art_scale).is_equal(1.0)
+	assert_that(_background(button).size).is_equal(Vector2(138, 117))
+
+	button.text = ""
+	button.shape = GameButton.Shape.PANEL
+	await await_idle_frame()
+	assert_float(button.art_scale).is_equal(1.0)
+	assert_that(_background(button).scale).is_equal(Vector2.ONE)
+
+
 func test_glyph_is_dark_ink_except_on_red_and_for_multicolor_icons() -> void:
 	var button: GameButton = _add(_button(GameButton.Shape.RECT, GameButton.Palette.BLUE))
 	button.game_icon = GameIcon.Id.HOME

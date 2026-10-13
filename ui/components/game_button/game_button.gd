@@ -4,6 +4,9 @@
 ## [code]palette.png[/code] ([enum Palette]), plus an optional glyph ([GameIcon]) centered on the button.
 ## [br]Hover brightens the button, press darkens it and disabled removes its saturation. A toggle button swaps [member game_icon_pressed] and
 ## [member palette_pressed] in while [member BaseButton.button_pressed] is on, also after [method BaseButton.set_pressed_no_signal].
+## A latched toggle with such a swap keeps full brightness (hover still brightens it): the swap is its pressed look.
+## [br]An icon-only button of a fixed-proportion shape ([constant SCALED_SHAPES]) larger than its base draws the base and the glyph scaled up
+## ([member art_scale]), centered and with the base proportions, so a big button keeps the pixel grain of the art instead of stretching its 9-slice.
 ## [br]The tooltip is the [code]BUTTON.<ID>[/code] translation of the glyph unless [member Control.tooltip_text] is set. Instance [code]game_button.tscn[/code]:
 ## [codeblock]
 ## var button: GameButton = preload("res://ui/components/game_button/game_button.tscn").instantiate()
@@ -51,6 +54,8 @@ const MARGINS: Array[Vector4i] = [
 ]
 ## Value of [member palette_pressed] that keeps [member palette] while pressed.
 const NO_PALETTE: int = -1
+## Shapes that keep their proportions when an icon-only button is larger than the base.
+const SCALED_SHAPES: Array[Shape] = [Shape.RECT, Shape.RECT_SHORT, Shape.HEXA]
 ## Theme variation (in [code]generic.tres[/code]) of each [enum Shape].
 const VARIATIONS: Array[StringName] = [
 	&"GameButtonRect", &"GameButtonRectShort", &"GameButtonHexa", &"GameButtonPanel", &"GameButtonBanner", &"GameButtonNone",
@@ -83,6 +88,9 @@ const VARIATIONS: Array[StringName] = [
 		if is_node_ready():
 			_apply_shape()
 
+## Factor the base and the glyph are drawn at, [code]1.0[/code] unless an icon-only [constant SCALED_SHAPES] button is larger than its base.
+var art_scale: float = 1.0
+
 var _glyph_color: Color = INK
 var _white_text: bool = false
 
@@ -99,11 +107,17 @@ func _ready() -> void:
 
 
 func _draw() -> void:
+	_fit_art()
 	_refresh_look()
 	var glyph: AtlasTexture = GameIcon.texture(get_effective_icon())
 	if glyph != null:
+		var cell: Vector2 = Vector2.ONE * GameIcon.CELL_SIZE
 		# The cell is centered on whole pixels, the same way the bases were cut
-		draw_texture(glyph, ((size - Vector2.ONE * GameIcon.CELL_SIZE) / 2.0).ceil(), _glyph_color)
+		var origin: Vector2 = ((size - cell) / 2.0).ceil()
+		if art_scale > 1.0:
+			var base_size: Vector2 = BASES[shape].get_size()
+			origin = (size - base_size * art_scale) / 2.0 + ((base_size - cell) / 2.0).ceil() * art_scale
+		draw_texture_rect(glyph, Rect2(origin, cell * art_scale), false, _glyph_color)
 
 
 func _get_tooltip(_at_position: Vector2) -> String:
@@ -123,6 +137,7 @@ func get_effective_palette() -> Palette:
 func _apply_shape() -> void:
 	var base: Texture2D = BASES[shape]
 	_background.visible = base != null
+	queue_redraw()
 	if base == null:
 		return
 	var margins: Vector4i = MARGINS[shape]
@@ -131,6 +146,22 @@ func _apply_shape() -> void:
 	_background.patch_margin_top = margins.y
 	_background.patch_margin_right = margins.z
 	_background.patch_margin_bottom = margins.w
+
+
+## Sets [member art_scale] and places the base: filling the button, or at native size scaled up and centered.
+func _fit_art() -> void:
+	var base: Texture2D = BASES[shape]
+	art_scale = 1.0
+	if base != null and text.is_empty() and shape in SCALED_SHAPES:
+		art_scale = maxf(1.0, minf(size.x / base.get_width(), size.y / base.get_height()))
+	if art_scale > 1.0:
+		_background.scale = Vector2.ONE * art_scale
+		_background.size = base.get_size()
+		_background.position = (size - _background.size * art_scale) / 2.0
+	else:
+		_background.scale = Vector2.ONE
+		_background.size = size
+		_background.position = Vector2.ZERO
 
 
 ## Returns the [code]BUTTON.<ID>[/code] translation of the drawn glyph, empty without glyph.
@@ -147,8 +178,10 @@ func _refresh_look() -> void:
 	match get_draw_mode():
 		DRAW_HOVER:
 			brightness = BRIGHTNESS_HOVER
-		DRAW_PRESSED, DRAW_HOVER_PRESSED:
-			brightness = BRIGHTNESS_PRESSED
+		DRAW_PRESSED:
+			brightness = 1.0 if _shows_latched_swap() else BRIGHTNESS_PRESSED
+		DRAW_HOVER_PRESSED:
+			brightness = BRIGHTNESS_HOVER if _shows_latched_swap() else BRIGHTNESS_PRESSED
 		DRAW_DISABLED:
 			saturation = 0.0
 			glyph_brightness = GLYPH_BRIGHTNESS_DISABLED
@@ -166,6 +199,11 @@ func _refresh_look() -> void:
 	if text.is_empty() and accessibility_name != label:
 		accessibility_name = label
 	_set_white_text(current_palette == Palette.RED)
+
+
+## Returns [code]true[/code] for a latched toggle whose pressed look is another glyph or palette: that look is its resting state, so it is not darkened.
+func _shows_latched_swap() -> bool:
+	return toggle_mode and (palette_pressed != NO_PALETTE or game_icon_pressed != GameIcon.Id.NONE)
 
 
 ## Switches the text of the button to white (RED palette) or back to the theme color, only in game: the editor never saves the overrides.
