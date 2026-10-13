@@ -29,7 +29,9 @@ var _locked: bool = false
 @onready var signals: Array[Dictionary] = [
 	{SignalUtil.WHO: button_texture, SignalUtil.WHAT: "pressed", SignalUtil.TO: _on_button_texture_pressed},
 ]
-@onready var title_label: Label = $CardVBoxContainer/TitleAspectRatioContainer/TitleTextureRect/TitleLabel
+@onready var title_label: Label = $CardVBoxContainer/TitleCenterContainer/TitleTag/TitleLabel
+## The green tag behind the title, it hugs the title and stays centered over the card.
+@onready var title_tag: PanelContainer = $CardVBoxContainer/TitleCenterContainer/TitleTag
 
 # core
 func _ready() -> void:
@@ -40,6 +42,7 @@ func _ready() -> void:
 	assert(price_label != null, "price_label node not found")
 	assert(price_coin_icon != null, "price_coin_icon node not found")
 	assert(title_label != null, "title_label node not found")
+	assert(title_tag != null, "title_tag node not found")
 	assert(preview_texture_rect != null, "preview_texture_rect node not found")
 
 	_entity = entity.instantiate() as Node2D

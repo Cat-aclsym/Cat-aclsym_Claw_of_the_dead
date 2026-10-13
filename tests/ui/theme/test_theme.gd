@@ -132,7 +132,7 @@ func test_the_style_resources_load_with_their_textures() -> void:
 		assert_object(style).override_failure_message("%s does not load" % file).is_not_null()
 		if style is StyleBoxTexture:
 			assert_object((style as StyleBoxTexture).texture).override_failure_message("%s has no texture" % file).is_not_null()
-	assert_int(count).is_equal(8)
+	assert_int(count).is_equal(9)
 
 
 ## Returns the native type a variation of the theme must end on.
@@ -145,7 +145,7 @@ func _expected_native(variation: String) -> String:
 		return "GridContainer"
 	if variation in ["BookStatRow", "ChallengeLine"]:
 		return "HBoxContainer"
-	if variation in ["LevelPanel", "MenuPanel", "MenuPanelDark", "MenuPanelSliced"]:
+	if variation in ["CardTitleTag", "LevelPanel", "MenuPanel", "MenuPanelDark", "MenuPanelSliced"]:
 		return "PanelContainer"
 	return "Label"
 

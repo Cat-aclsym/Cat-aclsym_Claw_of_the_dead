@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=18 format=3 uid="uid://dr31fy67cgji3"]
+[gd_resource type="Theme" load_steps=19 format=3 uid="uid://dr31fy67cgji3"]
 
 [ext_resource type="FontFile" uid="uid://ddo3rokwsadq0" path="res://assets/fonts/dotgothic/dotgothic16_regular.ttf" id="1_dotgothic"]
 [ext_resource type="FontVariation" uid="uid://b5t3wfh501ofr" path="res://ui/theme/dotgothic_variation.tres" id="5_variation"]
@@ -12,6 +12,7 @@
 [ext_resource type="StyleBoxFlat" path="res://ui/theme/styles/health_bar_border.tres" id="13_hb_border"]
 [ext_resource type="StyleBoxFlat" path="res://ui/theme/styles/tooltip_panel.tres" id="14_tooltip"]
 [ext_resource type="FontVariation" path="res://ui/theme/dotgothic_price_variation.tres" id="15_price"]
+[ext_resource type="StyleBoxTexture" path="res://ui/theme/styles/card_title_tag.tres" id="16_card_title_tag"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_game_rect"]
 content_margin_left = 8.0
@@ -94,6 +95,8 @@ CardTitle/colors/font_color = Color(1, 1, 1, 1)
 CardTitle/font_sizes/font_size = 20
 CardTitleFailed/base_type = &"CardTitle"
 CardTitleFailed/colors/font_color = Color(1, 0.35, 0.35, 1)
+CardTitleTag/base_type = &"PanelContainer"
+CardTitleTag/styles/panel = ExtResource("16_card_title_tag")
 Caption/base_type = &"Label"
 Caption/font_sizes/font_size = 11
 ChallengeLine/base_type = &"HBoxContainer"
