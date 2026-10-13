@@ -93,22 +93,24 @@ func test_the_price_label_uses_a_variation_per_state() -> void:
 
 func test_the_price_row_is_centered_inside_the_green_band_of_the_frame() -> void:
 	ProgressionManager.unlock_tower_no_save("bat_02")
-	for host_size: Vector2 in HOST_SIZES:
-		for id: String in BuildSelection.CARD_IDS:
-			var card: BuildCard = _card(id, host_size)
-			await await_idle_frame()
-			await await_idle_frame()
-			var band: Rect2 = _band(card.button_texture)
-			var row: Control = card.price_label.get_parent()
-			var content: Rect2 = card.price_label.get_global_rect()
-			if card.price_coin_icon.visible:
-				content = content.merge(card.price_coin_icon.get_global_rect())
-			var where: String = "%s in %s" % [id, host_size]
+	for locale: String in ["en", "fr"]:
+		TranslationServer.set_locale(locale)
+		for host_size: Vector2 in HOST_SIZES:
+			for id: String in BuildSelection.CARD_IDS:
+				var card: BuildCard = _card(id, host_size)
+				await await_idle_frame()
+				await await_idle_frame()
+				var band: Rect2 = _band(card.button_texture)
+				var row: Control = card.price_label.get_parent()
+				var content: Rect2 = card.price_label.get_global_rect()
+				if card.price_coin_icon.visible:
+					content = content.merge(card.price_coin_icon.get_global_rect())
+				var where: String = "%s %s in %s" % [locale, id, host_size]
 
-			assert_bool(band.grow(0.01).encloses(row.get_global_rect())).override_failure_message("%s: row %s outside band %s" % [where, row.get_global_rect(), band]).is_true()
-			assert_bool(band.grow(0.01).encloses(content)).override_failure_message("%s: content %s outside band %s" % [where, content, band]).is_true()
-			assert_float(content.get_center().x).override_failure_message("%s: content not centered horizontally" % where).is_equal_approx(band.get_center().x, 1.0)
-			assert_float(content.get_center().y).override_failure_message("%s: content not centered vertically" % where).is_equal_approx(band.get_center().y, 1.0)
+				assert_bool(band.grow(0.01).encloses(row.get_global_rect())).override_failure_message("%s: row %s outside band %s" % [where, row.get_global_rect(), band]).is_true()
+				assert_bool(band.grow(0.01).encloses(content)).override_failure_message("%s: content %s outside band %s" % [where, content, band]).is_true()
+				assert_float(content.get_center().x).override_failure_message("%s: content not centered horizontally" % where).is_equal_approx(band.get_center().x, 1.0)
+				assert_float(content.get_center().y).override_failure_message("%s: content not centered vertically" % where).is_equal_approx(band.get_center().y, 1.0)
 
 
 func test_the_title_tag_hugs_the_title_and_is_centered_on_the_card() -> void:
