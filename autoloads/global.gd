@@ -19,7 +19,7 @@ var camera: Camera = null
 var console: Console = null
 var cursor: BuildPlacement = null
 
-## Debug-only builds (console, watchers, etc.). Mirrors the Godot export feature `debug`
+## Debug-only builds (console, debug scenes). Mirrors the Godot export feature `debug`
 ## (true in the editor and debug export templates, false in release exports).
 var debug: bool = OS.has_feature("debug"): set = _set_debug
 var hud: HUD = null

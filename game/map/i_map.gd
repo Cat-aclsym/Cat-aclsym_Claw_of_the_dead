@@ -1,7 +1,7 @@
 ## © [2026] A7 Studio. All rights reserved. Trademark.
 ##
 ## Base class for game maps. Manages tile-based map layout.
-## @tutorial: See map_1.tscn for implementation example
+## @tutorial: See maps/map_01.tscn for implementation example
 class_name IMap
 extends Node2D
 

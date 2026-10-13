@@ -151,7 +151,7 @@ Home, level selection, pause, options, HUD (waves, score popups, challenge UI), 
 | `core/` | Logic without a scene (challenges, log, narrative, progression, state machine, utilities) |
 | `game/` | Gameplay, scene and script side by side (camera, buildings, enemies, projectiles, level and waves, map, sound entity) |
 | `ui/` | UI scenes (`ui.tscn`, theme, components, HUD, menus, popups, tutorial) |
-| `debug/` | Debug console and its commands, watcher, stats icons debug scene |
+| `debug/` | Debug console and its commands, stats icons and GameButton gallery debug scenes |
 | `data/` | `stats.json` plus level, challenge and armory JSON |
 | `assets/` | Art, audio, fonts, shaders, narrative timelines, translation CSVs |
 | `tests/` | gdUnit4 suites, mirroring the source tree, excluded from exports |
