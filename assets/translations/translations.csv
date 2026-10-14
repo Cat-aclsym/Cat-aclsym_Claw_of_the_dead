@@ -4,31 +4,65 @@ SOCIALS.TEXT.LABEL,Socials,Réseaux sociaux
 MISC.TEXT.LABEL,Misc.,Divers
 PAUSE.TITLE,Pause,Pause
 LEVEL.MENU.TITLE,Choose level:,Choisissez un niveau :
-FIRST.LEVEL.NAME,First level,Premier niveau
-SECOND.LEVEL.NAME,Second level,Deuxième niveau
-THIRD.LEVEL.NAME,Third level,Troisième niveau
-BUILD.CARD.LOCKED,Locked,Verrouillé
-HOME.PLAY.BUTTON,Play,Jouer
-HOME.SETTINGS.BUTTON,Settings,Paramètres
+LEVEL.WAVE,Wave %d,Vague %d
+LEVEL_SELECTION.LEVELS,Levels,Niveaux
+LEVEL_SELECTION.COMING_SOON,More in the next update,suite à la prochaine mise à jour
+ARC.01.TITLE,Nyarseille Cat'lanques,Chat'lanques de Nyarseille
+ARC.02.TITLE,The Nyaditerranean Sea,La mer Nyaditerranée
+LEVEL.LEV_01.NAME,1. First level,1. Premier niveau
+LEVEL.LEV_01.DESC,"Welcome to Nyarseille. A few zombies, a few rats and one very big surprise at the end.","Bienvenue à Nyarseille. Quelques zombies, quelques rats et une très grosse surprise à la fin."
+LEVEL.LEV_02.NAME,2. Coink coink,2. Coink coink
+LEVEL.LEV_02.DESC,"Rats are pouring in. Good thing cats love a good chase.","Les rats déferlent. Heureusement, les chats adorent la chasse."
+LEVEL.LEV_03.NAME,3. Level three,3. Niveau trois
+LEVEL.LEV_03.DESC,"A zombie that defuses traps joins the party. Keep your claws sharp and your traps close.","Un zombie qui désamorce les pièges se joint à la fête. Garde les griffes aiguisées et les pièges à portée de patte."
+LEVEL.LEV_04.NAME,4. Nine lives and a thousand paths,4. Neuf vies et mille chemins
+LEVEL.LEV_04.DESC,"The zombies keep switching streets mid-rush. A cat always lands on its feet: adapt your defenses every time the paths shift.","Les zombies changent de rue en pleine ruée. Un chat retombe toujours sur ses pattes : adapte tes défenses à chaque changement de chemin."
+LEVEL.LEV_05.NAME,5. The boss,5. Le boss
+LEVEL.LEV_05.DESC,"The end of the first arc. Hold the line and keep every tower purring.","La fin du premier arc. Tiens la ligne et garde chaque tour en train de ronronner."
+LEVEL.LEV_06.NAME,6. A new arc,6. Nouvel arc
+LEVEL.LEV_06.DESC,"The Nyaditerranean welcomes you with salty air and soggy zombies.","La Nyaditerranée t'accueille avec de l'air salin et des zombies détrempés."
+LEVEL.LEV_07.NAME,7. Cat overboard,7. Un chat à la mer
+LEVEL.LEV_07.DESC,"Cats hate water and zombies do not care. Keep your paws dry and your base standing.","Les chats détestent l'eau et les zombies s'en moquent. Garde les pattes au sec et la base debout."
+LEVEL.LEV_08.NAME,8. Purr-fect storm,8. Tempête de ronrons
+LEVEL.LEV_08.DESC,"The end of the Nyaditerranean. The sea is rough, the clock is ticking and the zombies want your base. Show them who the top cat is.","Le bout de la Nyaditerranée : la mer est agitée, le temps file et les zombies lorgnent ta base. Montre-leur qui est le chat alpha."
+MAP.PATH.SPAWN,Spawn,Départ
+MAP.PATH.BASE,Base,Base
+TILE.BONUS.FIRE_RATE,Fire rate +,Cadence +
+TILE.BONUS.DAMAGE,Damage +,Dégâts +
+TILE.BONUS.REWARD_MULTIPLIER,Gold +,Or +
+TILE.MALUS.FIRE_RATE,Fire rate -,Cadence -
+TILE.MALUS.DAMAGE,Damage -,Dégâts -
+TILE.MALUS.SHOOT_RANGE,Range -,Portée -
+BUILD.CARD.LOCKED,Locked,Bloqué
+HOME.PLAY.BUTTON,PLAY,JOUER
+HOME.SETTINGS.BUTTON,SETTINGS,PARAMÈTRES
 INGAMEHUD.COINS.LABEL,%s,%s
 INGAMEHUD.HEALTH.LABEL,%s,%s
 INGAMEHUD.NEW_ENEMY.SUBTITLE,Discovered: %s,Découvert : %s
 INGAMEHUD.NEW_ENEMY.TITLE,A new challenger approaches!,Un nouvel adversaire approche !
-INGAMEHUD.NEW_ENEMY.CONTINUE,Click to continue,Cliquez pour continuer
 INGAMEHUD.WAVES.LABEL,%s,%s
 ENDGAMEMENU.LIFESTATISTIC.LABEL,%s,%s
 ENDGAMEMENU.TIMESTATISTIC.LABEL,%s,%s
 ENDGAMEMENU.LEVEL.TITLE.WIN,Victory,Victoire
-ENDGAMEMENU.LEVEL.TITLE.LOOSE,Defeat,Défaite
-HOME.COPYRIGHT,© [2024] A7 Studio. All rights reserved. Trademark.,© [2024] A7 Studio. Tous droits réservés. Marque déposée.
+ENDGAMEMENU.LEVEL.TITLE.LOSE,Defeat,Défaite
+HOME.COPYRIGHT,© [2026] A7 Studio. All rights reserved. Trademark.,© [2026] A7 Studio. Tous droits réservés. Marque déposée.
 TOWER.BAT_01.NAME,Cat Tree,Arbre à Chat'rchés
 TOWER.BAT_02.NAME,Cataboom Tower,Tour Cataboom
+TOWER.BAT_08.NAME,Tesla Tower,Tour Tesla
+TOWER.BAT_09.NAME,Inferno Tower,Tour de l'enfer
+TRAP.BAT_03.NAME,Blade trap,Piège à lames
+TRAP.BAT_04.NAME,Slow trap,Piège ralentissant
+TRAP.BAT_05.NAME,Bomb trap,Bombe
+TRAP.BAT_06.NAME,Poison trap,Piège empoisonné
+TRAP.BAT_07.NAME,Stun trap,Piège étourdissant
 TOWER.LEVEL.DISPLAY,%s - lvl %d,%s - niv %d
 TOWER.UPGRADE.PRICE,%d,%d
 TOWER.UPGRADE.MAX,MAX,MAX
 TOWER.UPGRADE.TITLE,Upgrade to level %d,Améliorer au niveau %d
-HOME.ENCYCLOPEDIA.BUTTON,Encyclopedia,Encyclopédie
-ENCYCLOPEDIA.TITLE,Encyclopedia,Encyclopédie
+TOWER.UPGRADE.CANCEL,Cancel,Annuler
+TOWER.UPGRADE.OPTION_1,Option 1,Option 1
+TOWER.UPGRADE.OPTION_2,Option 2,Option 2
+HOME.ENCYCLOPEDIA.BUTTON,ENCYCLOPEDIA,ENCYCLOPÉDIE
 ENCYCLOPEDIA.STATS.HEALTH,Health,Vie
 ENCYCLOPEDIA.STATS.SPEED,Speed,Vitesse
 ENCYCLOPEDIA.STATS.DAMAGE,Damage,Dégâts
@@ -41,20 +75,21 @@ ENCYCLOPEDIA.STATS.PRE_ATTACK,Pre-attack,Pré-attaque
 ENCYCLOPEDIA.STATS.ATTACK_DURATION,Attack Duration,Durée d'attaque
 ENCYCLOPEDIA.STATS.POST_ATTACK,Post-attack,Post-attaque
 ENCYCLOPEDIA.STATS.COOLDOWN,Cooldown,Récupération
-ENCYCLOPEDIA.SECTION.TOWERS,Towers,Tours
-ENCYCLOPEDIA.SECTION.ENEMIES,Enemies,Ennemis
 ENCYCLOPEDIA.CATEGORY.COMBAT,Combat,Combat
 ENCYCLOPEDIA.CATEGORY.ECONOMY,Economy,Économie
 ENCYCLOPEDIA.NOT_DISCOVERED,NOT DISCOVERED,NON DÉCOUVERT
 ENEMY.RAT.NAME,Rat,Rat
-ENEMY.DEFAULT.NAME,Zombie,Zombie
-ENEMY.FAT.NAME,Fat Zombie,Zombie Gras
-ENEMY.BIGDADDY.NAME,Big Daddy,Big Daddy
+ENEMY.DEFAULT_ZOMBIE.NAME,Zombie,Zombie
+ENEMY.DAMAGE_ZOMBIE.NAME,Brute Zombie,Zombie costaud
+ENEMY.SPLITTER_ZOMBIE.NAME,Splitter Zombie,Zombie diviseur
+ENEMY.SMALL_ZOMBIE.NAME,Small Zombie,Petit zombie
+ENEMY.MINESWEEPER.NAME,Minesweeper,Démineur
+ENEMY.BIG_DADDY.NAME,Big Daddy,Big Daddy
 CHALLENGE.CHA.000.NAME,Victory,Vaincre
 CHALLENGE.CHA.000.DESC,Finish the level.,Finir le niveau.
 CHALLENGE.CHA.001.NAME,Untouchable,Intouchable
 CHALLENGE.CHA.001.DESC,Finish the level without taking damage.,Finir le niveau sans prendre de dégâts.
-CHALLENGE.CHA.002.NAME,No trap,No trap
+CHALLENGE.CHA.002.NAME,No trap,Sans piège
 CHALLENGE.CHA.002.DESC,Do not use traps.,Ne pas utiliser de pièges.
 CHALLENGE.CHA.003.NAME,Unique Tower,Tour unique
 CHALLENGE.CHA.003.DESC,Use only one type of tower.,Utilisez un seul même type de tour.
@@ -69,7 +104,7 @@ CHALLENGE.CHA.102.DESC,No tower should be in range of another.,Aucune tour ne do
 CHALLENGE.CHA.103.NAME,Half-Half,Moitié moitié
 CHALLENGE.CHA.103.DESC,No enemy must reach halfway.,Ne laisser aucun ennemi atteindre plus de la moitié du chemin.
 CHALLENGE.CHA.104.NAME,Some Rats,Quelques rats
-CHALLENGE.CHA.104.DESC,Let exactly N rats pass.,Laisser passer exactement N rats jusqu'à la base.
+CHALLENGE.CHA.104.DESC,Let exactly 3 rats reach the base.,Laisser passer exactement 3 rats jusqu'à la base.
 CHALLENGE.CHA.105.NAME,Three in One,Trois dans un
 CHALLENGE.CHA.105.DESC,Boss must be hit by every trap type (passive and limited).,"Le boss doit subir au moins une fois chaque type de piège (passif et limité)."
 CHALLENGE.CHA.106.NAME,Survive,Survivre
@@ -79,36 +114,29 @@ CHALLENGE.CHA.201.DESC,Let one of each enemy type pass.,Laissez passer un unique
 CHALLENGE.CHA.202.NAME,On the Edge,Sur le fil
 CHALLENGE.CHA.202.DESC,Finish with 1 HP.,Finir le niveau avec un unique PV.
 CHALLENGE.CHA.203.NAME,Not One More,Pas un de plus
-CHALLENGE.CHA.203.DESC,Max N buildings per wave.,Finir chaque vague avec un maximum de N bâtiments.
+CHALLENGE.CHA.203.DESC,Finish each wave with 4 buildings at most.,Finir chaque vague avec un maximum de 4 bâtiments.
 CHALLENGE.CHA.204.NAME,I love traps,J'adore les pièges
 CHALLENGE.CHA.204.DESC,Use only traps.,Finir le niveau en utilisant uniquement des pièges.
 CHALLENGE.CHA.205.NAME,Fast and Furious,Fast and Furious
-CHALLENGE.CHA.205.DESC,Finish in less than N seconds.,Finir le niveau en moins de N secondes.
+CHALLENGE.CHA.205.DESC,Finish the level in less than 3 minutes.,Finir le niveau en moins de 3 minutes.
 CHALLENGES.PANEL.TITLE,Challenges,Défis
 CHALLENGE.STATUS.FAILED,Failed,Échoué
 CHALLENGE.DIFFICULTY.EASY,Easy,Facile
 CHALLENGE.DIFFICULTY.HARD,Hard,Difficile
 CHALLENGE.DIFFICULTY.IMPOSSIBLE,Impossible,Impossible
 CHALLENGE.DIFFICULTY.MEDIUM,Medium,Moyen
-HOME.ARMORY.BUTTON,Armory,Armurerie
+HOME.ARMORY.BUTTON,ARMORY,ARMURERIE
 ARMORY.TITLE,Armory,Armurerie
-ARMORY.TAB.BUILDINGS,Buildings,Bâtiments
-ARMORY.TAB.BUFFS,Buffs,Bonus
-ARMORY.STARS_LINE,Available: %d | Earned: %d,Disponibles : %d | Gagnées : %d
 ARMORY.RESET_SPENT_STARS,Reset,Réinitialiser
 ARMORY.RESET_STARS_CONFIRM,Are you sure you want to reset the armory?,Êtes-vous sûr de vouloir réinitialiser l'armurerie ?
 ARMORY.RESET_CONFIRM_OK,OK,Confirmer
 ARMORY.RESET_CANCEL,Cancel,Annuler
 BUILD.TAB.TOWERS,Towers,Tours
 BUILD.TAB.TRAPS,Traps,Pièges
-ARMORY.STAR_COST,%d stars,%d étoiles
 ARMORY.BUY,Buy,Acheter
 ARMORY.BUY_BLOCKED,BLOCKED,BLOQUÉ
 ARMORY.OWNED,Owned,Obtenu
-ARMORY.CANT_AFFORD,Not enough stars,Pas assez d'étoiles
 ARMORY.PREREQ_BLOCK_DETAIL,"Unlock first: %s","Débloquer d'abord : %s"
-ARMORY.LOCKED_PREREQ,Requirements missing,Prérequis manquants
-ARMORY.LEGACY_NOTICE,Legacy save: all buildings stay unlocked. Armory purchases are optional.,Sauvegarde antérieure : tous les bâtiments restent débloqués. L'armurerie est optionnelle.
 ARMORY.LEGACY_SKIP,-,-
 ARMORY.NODE.UNLOCK_BAT_02.NAME,Cataboom Tower,Tour Cataboom
 ARMORY.NODE.UNLOCK_BAT_02.DESC,"Adds the Cataboom to the build menu. It lobs explosive shots that deal area damage to every enemy caught in the blast.","La Cataboom arrive au menu : elle balance des trucs qui pètent en zone : tout ce qui traîne dans le rayon, ça prend cher. Simple et efficace."
@@ -117,7 +145,7 @@ ARMORY.NODE.UNLOCK_BAT_03.DESC,"Adds the blade trap to the build menu. Enemies t
 ARMORY.NODE.UNLOCK_BAT_04.NAME,Slow trap,Piège ralentissant
 ARMORY.NODE.UNLOCK_BAT_04.DESC,"Adds the slow trap to the build menu. Enemies crossing it are slowed so your towers have more time to finish them off.","Le piège ralentissant : les zombies passent au ralenti, histoire que tes tours aient le temps de leur dire bonjour."
 ARMORY.NODE.UNLOCK_BAT_05.NAME,Bomb trap,Bombe
-ARMORY.NODE.UNLOCK_BAT_05.DESC,"Adds the bomb trap to the build menu. It detonates when an enemy steps on it, dealing heavy area damage.","Ajoute la bombe au menu de construction. Elle explose lorsqu'un zombie passe dessus, infligeant des dégats de zones élevés."
+ARMORY.NODE.UNLOCK_BAT_05.DESC,"Adds the bomb trap to the build menu. It detonates when an enemy steps on it, dealing heavy area damage.","Ajoute la bombe au menu de construction. Elle explose lorsqu'un zombie passe dessus, infligeant des dégâts de zone élevés."
 ARMORY.NODE.UNLOCK_BAT_06.NAME,Poison trap,Piège empoisonné
 ARMORY.NODE.UNLOCK_BAT_06.DESC,"Adds the poison trap to the build menu. Enemies crossing it take poison damage over time.","Ajoute le piège empoisonné au menu de construction. Les ennemis qui le traversent subissent des dégâts de poison sur la durée."
 ARMORY.NODE.UNLOCK_BAT_07.NAME,Stun trap,Piège étourdissant
@@ -133,7 +161,7 @@ ARMORY.NODE.UNLOCK_BAT_02_BRANCH_B.DESC,"Unlocks the B upgrade line: larger expl
 ARMORY.NODE.UNLOCK_BAT_08.NAME,Tesla Tower,Tour Tesla
 ARMORY.NODE.UNLOCK_BAT_08.DESC,"Adds the Tesla Tower to the build menu. It fires electric shots with fast cadence to pressure enemies continuously.","Ajoute la Tour Tesla au menu de construction. Elle tire des projectiles électriques à cadence rapide pour maintenir une pression constante."
 ARMORY.NODE.UNLOCK_BAT_08_BRANCH_A.NAME,Branch A (Tesla),Branche A (Tesla)
-ARMORY.NODE.UNLOCK_BAT_08_BRANCH_A.DESC,"Unlocks the A upgrade line for the Tesla Tower: chain lightning that jumps between enemies to spread damage.","Débloque la branche A de la Tour Tesla : des chaines d'éclairs qui rebondissent entre les ennemis pour répartir les dégâts."
+ARMORY.NODE.UNLOCK_BAT_08_BRANCH_A.DESC,"Unlocks the A upgrade line for the Tesla Tower: chain lightning that jumps between enemies to spread damage.","Débloque la branche A de la Tour Tesla : des chaînes d'éclairs qui rebondissent entre les ennemis pour répartir les dégâts."
 ARMORY.NODE.UNLOCK_BAT_08_BRANCH_B.NAME,Branch B (Tesla),Branche B (Tesla)
 ARMORY.NODE.UNLOCK_BAT_08_BRANCH_B.DESC,"Unlocks the B upgrade line for the Tesla Tower: electrify effects that add damage over time and slow targets.","Débloque la branche B de la Tour Tesla : des effets d'électrisation qui ajoutent des dégâts dans le temps et ralentissent les cibles."
 ARMORY.NODE.UNLOCK_BAT_09.NAME,Inferno Tower,Tour de l'enfer
@@ -142,3 +170,55 @@ ARMORY.NODE.UNLOCK_BAT_09_BRANCH_A.NAME,Branch A (Inferno),Branche A (Tour de l'
 ARMORY.NODE.UNLOCK_BAT_09_BRANCH_A.DESC,"Unlocks the A upgrade line for the Inferno Tower: a charging mode that greatly increases damage over time.","Débloque la branche A de la Tour de l'enfer : un mode de charge qui augmente fortement les dégâts dans le temps."
 ARMORY.NODE.UNLOCK_BAT_09_BRANCH_B.NAME,Branch B (Inferno),Branche B (Tour de l'enfer)
 ARMORY.NODE.UNLOCK_BAT_09_BRANCH_B.DESC,"Unlocks the B upgrade line for the Inferno Tower: a multi-beam mode that can hit several enemies at once.","Débloque la branche B de la Tour de l'enfer : un mode multi-rayons qui peut toucher plusieurs ennemis à la fois."
+STAT.AOE_DURATION,Aoe Duration,Durée de zone
+STAT.AOE_RANGE,Aoe Range,Portée de zone
+STAT.AOE_TICK,Aoe Tick,Intervalle de zone
+STAT.BURN_DAMAGE_BASE,Burn Damage Base,Dégâts de brûlure
+STAT.BURN_DURATION,Burn Duration,Durée de brûlure
+STAT.CHAIN_BOUNCES,Chain Bounces,Rebonds de chaîne
+STAT.CHAIN_DAMAGE_FALLOFF,Chain Damage Falloff,Atténuation des chaînes
+STAT.CHAIN_RANGE,Chain Range,Portée des chaînes
+STAT.CHARGE_SPEED,Charge Speed,Vitesse de charge
+STAT.DAMAGE,Damage,Dégâts
+STAT.DAMAGE_MULTIPLIER,Damage Multiplier,Multiplicateur de dégâts
+STAT.ELECTRIFY_DURATION,Electrify Duration,Durée d'électrisation
+STAT.ELECTRIFY_SLOW_AMOUNT,Electrify Slow Amount,Ralentissement électrique
+STAT.ELECTRIFY_TICK_DAMAGE,Electrify Tick Damage,Dégâts d'électrisation
+STAT.ELECTRIFY_TICK_INTERVAL,Electrify Tick Interval,Intervalle d'électrisation
+STAT.FIRE_RATE,Fire Rate,Cadence de tir
+STAT.LEVEL,Level,Niveau
+STAT.MAX_DAMAGE_MULTIPLIER,Max Damage Multiplier,Multiplicateur de dégâts max
+STAT.PIERCE_COUNT,Pierce Count,Nombre de perforations
+STAT.PIERCE_REDUCTION,Pierce Reduction,Réduction de perforation
+STAT.PREFER_NON_ELECTRIFIED_TARGETS,Prefer Non Electrified Targets,Cibles non électrisées en priorité
+STAT.PROJECTILE_COUNT,Projectile Count,Nombre de projectiles
+STAT.SHOOT_RANGE,Shoot Range,Portée de tir
+STAT.SPEED,Speed,Vitesse
+STAT.SPREAD_ANGLE,Spread Angle,Angle de dispersion
+BUTTON.HOME,Home,Accueil
+BUTTON.PLAY,Play,Jouer
+BUTTON.RETRY,Retry,Réessayer
+BUTTON.PAUSE,Pause,Pause
+BUTTON.FAST_FORWARD,Fast forward,Avance rapide
+BUTTON.MUSIC,Music,Musique
+BUTTON.MUSIC_OFF,Music off,Musique coupée
+BUTTON.SOUND,Sound,Son
+BUTTON.SOUND_OFF,Sound off,Son coupé
+BUTTON.ENCYCLOPEDIA,Encyclopedia,Encyclopédie
+BUTTON.BUILD,Build,Construire
+BUTTON.CLOSE,Close,Fermer
+BUTTON.TROPHY,Challenges,Défis
+BUTTON.SHIELD,Armory,Armurerie
+BUTTON.REPORT,Report a bug,Signaler un bug
+BUTTON.MAIL,Contact us,Nous contacter
+BUTTON.INSTAGRAM,Instagram,Instagram
+BUTTON.X_SOCIAL,X,X
+BUTTON.DISCORD,Discord,Discord
+BUTTON.FLAG_EN,English,English
+BUTTON.FLAG_FR,Français,Français
+BUTTON.BACK,Back,Retour
+BUTTON.INFO,Info,Infos
+BUTTON.UPGRADE,Upgrade,Améliorer
+BUTTON.SELL,Sell,Vendre
+BUTTON.ARROW_LEFT,Previous,Précédent
+BUTTON.ARROW_RIGHT,Next,Suivant

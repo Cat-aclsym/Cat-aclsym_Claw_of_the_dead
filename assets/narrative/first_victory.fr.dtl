@@ -1,0 +1,6 @@
+join character1 (Amazed) center
+character1 (Amazed): On l'a fait ! Les zombies sont rentrés chez eux la queue entre les jambes. Enfin, s'ils avaient une queue.
+character1 (Neutral): Regarde tes défis, chaque étoile gagnée peut être dépensée à l'Armurerie.
+character1 (Neutral): Et maintenant, qui veut une sieste ?
+leave character1 [animation="Fade Out" wait="true"]
+[end_timeline]

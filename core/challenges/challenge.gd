@@ -1,0 +1,87 @@
+## © [2026] A7 Studio. All rights reserved. Trademark.
+
+class_name Challenge
+extends Node
+## Base class for all level challenges.
+##
+## Challenges monitor specific conditions during gameplay and can be completed or failed.
+
+# Signals
+signal completed(challenge_id: String)
+signal failed(challenge_id: String)
+
+# Public variables
+var description: String
+var difficulty: String
+var id: String
+var is_completed: bool = false
+var is_failed: bool = false
+var title: String
+
+
+# Built-in functions
+func _init(p_id: String, p_title: String, p_desc: String, p_diff: String) -> void:
+	id = p_id
+	title = p_title
+	description = p_desc
+	difficulty = p_diff
+
+
+# Public functions
+## Evaluates if the challenge conditions are met at the end of the level.
+func check_completion() -> bool:
+	return not is_failed
+
+
+## Marks the challenge as completed and saves progression.
+func complete() -> void:
+	if is_completed or is_failed:
+		return
+	is_completed = true
+	completed.emit(id)
+	if ILevel.current_level:
+		ProgressionManager.complete_challenge(ILevel.current_level.level_id, id)
+
+
+## Marks the challenge as failed.
+func fail() -> void:
+	if is_completed or is_failed:
+		return
+	is_failed = true
+	failed.emit(id)
+
+
+## Virtual hook called when the base takes damage.
+func on_damage_taken(_amount: int) -> void:
+	pass
+
+
+## Virtual hook called when an enemy dies, [param source] is the tower (or the trap) that dealt the killing damage, null for poison.
+func on_enemy_died(_enemy: IEnemy, _damage_type: IEnemy.DamageType, _source: Variant) -> void:
+	pass
+
+
+## Virtual hook called when an enemy reaches the end of its path alive.
+func on_enemy_escaped(_enemy: IEnemy) -> void:
+	pass
+
+
+## Virtual hook called when an enemy is hit, [param source] is the bullet or tower that hit it.
+func on_enemy_hit(_enemy: IEnemy, _source: Variant) -> void:
+	pass
+
+
+## Virtual hook called when a tower is placed.
+func on_tower_placed(_tower: ITower) -> void:
+	pass
+
+
+## Virtual hook called when a trap is placed.
+func on_trap_placed(_trap: ITrap) -> void:
+	pass
+
+
+## Called when the level starts to reset state.
+func start_monitoring() -> void:
+	is_completed = false
+	is_failed = false

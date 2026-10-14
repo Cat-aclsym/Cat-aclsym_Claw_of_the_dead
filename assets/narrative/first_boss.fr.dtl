@@ -1,0 +1,6 @@
+join character1 (Amazed) center
+character1 (Amazed): Bon, celui-là est ÉNORME. Qui est-ce qui le nourrit ?
+character1 (Worry): S'il atteint la base, c'est la défaite immédiate, donc aucune pression.
+character1 (Neutral): Ralentis-le, étourdis-le, mets-le en flammes, et surtout ne le laisse pas passer.
+leave character1 [animation="Fade Out" wait="true"]
+[end_timeline]

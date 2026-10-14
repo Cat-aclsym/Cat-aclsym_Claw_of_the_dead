@@ -1,0 +1,6 @@
+join character1 (Worry) center
+character1 (Worry): Aïe. Les zombies ont dévoré la base. Ça arrive aux meilleurs chats.
+character1 (Neutral): Un chat a neuf vies, et toi aussi, alors réessaie.
+character1 (Neutral): Place peut-être tes tours autrement, ou va chercher quelques pièges à l'Armurerie.
+leave character1 [animation="Fade Out" wait="true"]
+[end_timeline]

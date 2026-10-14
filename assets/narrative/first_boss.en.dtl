@@ -1,0 +1,6 @@
+join character1 (Amazed) center
+character1 (Amazed): Okay, that one is HUGE. Who has been feeding him?
+character1 (Worry): If he reaches the base, it is game over, so no pressure.
+character1 (Neutral): Slow him down, stun him, set him on fire, and please do not let him through.
+leave character1 [animation="Fade Out" wait="true"]
+[end_timeline]

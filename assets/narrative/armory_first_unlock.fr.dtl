@@ -1,0 +1,6 @@
+join character1 (Amazed) center
+character1 (Amazed): Ça brille ! Ton premier déblocage t'attend dans le menu de construction.
+character1 (Neutral): Les tours et les pièges restent débloqués pour toujours, alors dépense tes étoiles avec sagesse.
+character1 (Neutral): Ou n'importe comment, je ne juge pas.
+leave character1 [animation="Fade Out" wait="true"]
+[end_timeline]

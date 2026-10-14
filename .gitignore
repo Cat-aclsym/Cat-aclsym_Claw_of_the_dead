@@ -3,13 +3,26 @@
 .idea
 *.tmp
 *.translation
+.DS_Store
+Thumbs.db
 
 # Exports
-exports/
+/exports/
 
 .vscode/
 
-log/
-android/build/*
-!android/build/AndroidManifest.xml
-android/.build_version
+/log/
+
+# gdUnit4 test reports
+/reports/
+
+# Signing keys and secrets
+*.keystore
+*.jks
+*.p12
+*.idsig
+google-services.json
+
+# Android build outputs
+*.apk
+*.aab

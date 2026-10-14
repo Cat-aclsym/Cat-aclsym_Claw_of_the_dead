@@ -1,0 +1,238 @@
+[gd_scene load_steps=5 format=3 uid="uid://dygxxtpara021"]
+
+[ext_resource type="Script" uid="uid://6soot5tpvyhx" path="res://ui/menus/armory/armory.gd" id="1_arm"]
+[ext_resource type="PackedScene" uid="uid://c8gbtn5xq2m4y" path="res://ui/components/game_button/game_button.tscn" id="2_close"]
+[ext_resource type="Texture2D" uid="uid://8y5uhgfsgmp8" path="res://assets/ui/icons/star.png" id="3_star"]
+
+[node name="Armory" type="Control"]
+clip_contents = true
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_arm")
+
+[node name="MainMargin" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 24
+
+[node name="VBox" type="VBoxContainer" parent="MainMargin"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="HeaderHBox" type="HBoxContainer" parent="MainMargin/VBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="TitleLabel" type="Label" parent="MainMargin/VBox/HeaderHBox"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"TitleLargeText"
+text = "ARMORY.TITLE"
+autowrap_mode = 3
+
+[node name="StarsStrip" type="HBoxContainer" parent="MainMargin/VBox/HeaderHBox"]
+layout_mode = 2
+theme_override_constants/separation = 6
+alignment = 1
+
+[node name="StarsIconTextureRect" type="TextureRect" parent="MainMargin/VBox/HeaderHBox/StarsStrip"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+texture = ExtResource("3_star")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="StarsCountLabel" type="Label" parent="MainMargin/VBox/HeaderHBox/StarsStrip"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"BodyText"
+text = "0"
+vertical_alignment = 1
+
+[node name="ResetSpentStarsButton" parent="MainMargin/VBox/HeaderHBox" instance=ExtResource("2_close")]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(220, 56)
+layout_mode = 2
+text_style = 2
+text = "ARMORY.RESET_SPENT_STARS"
+palette = 2
+
+[node name="HelpButton" parent="MainMargin/VBox/HeaderHBox" instance=ExtResource("2_close")]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(56, 56)
+layout_mode = 2
+text_style = 3
+text = "?"
+
+[node name="CloseTextureButton" parent="MainMargin/VBox/HeaderHBox" instance=ExtResource("2_close")]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(60, 40)
+layout_mode = 2
+shape = 1
+palette = 3
+game_icon = 12
+
+[node name="ScrollBuildings" type="ScrollContainer" parent="MainMargin/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+follow_focus = true
+horizontal_scroll_mode = 3
+vertical_scroll_mode = 0
+
+[node name="ScrollContentVBox" type="VBoxContainer" parent="MainMargin/VBox/ScrollBuildings"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 0
+
+[node name="ScrollTopSpacer" type="Control" parent="MainMargin/VBox/ScrollBuildings/ScrollContentVBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 2
+
+[node name="ItemsHBox" type="HBoxContainer" parent="MainMargin/VBox/ScrollBuildings/ScrollContentVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_override_constants/separation = 24
+
+[node name="ScrollBottomSpacer" type="Control" parent="MainMargin/VBox/ScrollBuildings/ScrollContentVBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 3.0
+mouse_filter = 2
+
+[node name="DescriptionPanel" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+offset_left = 24.0
+offset_top = 511.0
+offset_right = 1128.0
+offset_bottom = 608.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+theme_type_variation = &"MenuPanelDark"
+
+[node name="DescriptionMargin" type="MarginContainer" parent="DescriptionPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 10
+
+[node name="DescriptionVBox" type="VBoxContainer" parent="DescriptionPanel/DescriptionMargin"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="DescriptionTitleLabel" type="Label" parent="DescriptionPanel/DescriptionMargin/DescriptionVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"SubtitleText"
+autowrap_mode = 3
+
+[node name="DescriptionLabel" type="Label" parent="DescriptionPanel/DescriptionMargin/DescriptionVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+theme_type_variation = &"BodyText"
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="ResetConfirmRoot" type="Control" parent="."]
+unique_name_in_owner = true
+visible = false
+z_index = 50
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="DimOverlay" type="ColorRect" parent="ResetConfirmRoot"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.5)
+
+[node name="ResetPanel" type="PanelContainer" parent="ResetConfirmRoot"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -313.0
+offset_top = -101.0
+offset_right = 327.0
+offset_bottom = 79.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_type_variation = &"MenuPanel"
+
+[node name="ResetMargin" type="MarginContainer" parent="ResetConfirmRoot/ResetPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="ResetVBox" type="VBoxContainer" parent="ResetConfirmRoot/ResetPanel/ResetMargin"]
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="ResetMessageLabel" type="Label" parent="ResetConfirmRoot/ResetPanel/ResetMargin/ResetVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"TitleText"
+text = "ARMORY.RESET_STARS_CONFIRM"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="ResetButtonsHBox" type="HBoxContainer" parent="ResetConfirmRoot/ResetPanel/ResetMargin/ResetVBox"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="ResetConfirmButton" parent="ResetConfirmRoot/ResetPanel/ResetMargin/ResetVBox/ResetButtonsHBox" instance=ExtResource("2_close")]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 65)
+layout_mode = 2
+text = "ARMORY.RESET_CONFIRM_OK"
+palette = 1
+
+[node name="ResetCancelButton" parent="ResetConfirmRoot/ResetPanel/ResetMargin/ResetVBox/ResetButtonsHBox" instance=ExtResource("2_close")]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 65)
+layout_mode = 2
+text = "ARMORY.RESET_CANCEL"
+palette = 2

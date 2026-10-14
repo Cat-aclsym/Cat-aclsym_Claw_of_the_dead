@@ -1,0 +1,105 @@
+[gd_scene load_steps=7 format=3 uid="uid://n3whw75fypkc"]
+
+[ext_resource type="Script" uid="uid://b4kvii87dw7yj" path="res://ui/menus/build_selection/build_selection.gd" id="1_1guy3"]
+[ext_resource type="Texture2D" uid="uid://c8eh0l6o5swnq" path="res://assets/ui/backgrounds/construction_background.svg" id="2_tcv0b"]
+[ext_resource type="PackedScene" uid="uid://c8gbtn5xq2m4y" path="res://ui/components/game_button/game_button.tscn" id="18_btn"]
+
+[sub_resource type="Animation" id="Animation_fpn5b"]
+length = 0.35
+step = 0.05
+
+[sub_resource type="Animation" id="Animation_wc0kk"]
+resource_name = "show_build_list"
+length = 0.35
+step = 0.05
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_omyie"]
+_data = {
+&"RESET": SubResource("Animation_fpn5b"),
+&"show_build_list": SubResource("Animation_wc0kk")
+}
+
+[node name="BuildSelection" type="Control"]
+layout_mode = 3
+anchor_top = 0.747
+anchor_right = 0.877
+anchor_bottom = 1.0
+offset_top = -0.0560303
+offset_right = -0.304016
+grow_horizontal = 2
+grow_vertical = 0
+script = ExtResource("1_1guy3")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 0
+theme_override_constants/margin_bottom = 4
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="TabsHBox" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_constants/separation = 10
+
+[node name="TowerTabButton" parent="MarginContainer/VBoxContainer/TabsHBox" instance=ExtResource("18_btn")]
+custom_minimum_size = Vector2(120, 35)
+layout_mode = 2
+size_flags_vertical = 4
+text_style = 1
+toggle_mode = true
+text = "BUILD.TAB.TOWERS"
+palette = 5
+palette_pressed = 0
+
+[node name="TrapTabButton" parent="MarginContainer/VBoxContainer/TabsHBox" instance=ExtResource("18_btn")]
+custom_minimum_size = Vector2(120, 35)
+layout_mode = 2
+size_flags_vertical = 4
+text_style = 1
+toggle_mode = true
+text = "BUILD.TAB.TRAPS"
+palette = 5
+palette_pressed = 0
+
+[node name="BackgroundTextureRect" type="TextureRect" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+texture = ExtResource("2_tcv0b")
+expand_mode = 1
+flip_h = true
+
+[node name="BuildListMarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/BackgroundTextureRect"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 3
+theme_override_constants/margin_left = 90
+theme_override_constants/margin_top = 7
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_bottom = 7
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/BackgroundTextureRect/BuildListMarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 3
+theme_override_constants/separation = 150
+alignment = 1
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+root_node = NodePath("../MarginContainer")
+libraries = {
+&"": SubResource("AnimationLibrary_omyie")
+}
+autoplay = "show_build_list"

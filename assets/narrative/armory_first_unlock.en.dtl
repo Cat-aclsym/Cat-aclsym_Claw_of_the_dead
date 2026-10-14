@@ -1,0 +1,6 @@
+join character1 (Amazed) center
+character1 (Amazed): Shiny! Your first unlock is waiting in the build menu.
+character1 (Neutral): Towers and traps stay unlocked forever, so spend your stars wisely.
+character1 (Neutral): Or foolishly, I will not judge.
+leave character1 [animation="Fade Out" wait="true"]
+[end_timeline]

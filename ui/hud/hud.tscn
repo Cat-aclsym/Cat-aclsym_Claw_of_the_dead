@@ -1,0 +1,310 @@
+[gd_scene load_steps=13 format=3 uid="uid://b5630xr4v607r"]
+
+[ext_resource type="Script" uid="uid://cc06prch72skr" path="res://ui/hud/hud.gd" id="1_cuep3"]
+[ext_resource type="PackedScene" uid="uid://c8gbtn5xq2m4y" path="res://ui/components/game_button/game_button.tscn" id="2_meysh"]
+[ext_resource type="Texture2D" uid="uid://cml3pcp3ixa0k" path="res://assets/ui/hud/heart.png" id="2_neukb"]
+[ext_resource type="Texture2D" uid="uid://bcvoasbjyvuy5" path="res://assets/ui/hud/health_bar.png" id="3_g6v8d"]
+[ext_resource type="Texture2D" uid="uid://cf3qgahrw8xo1" path="res://assets/ui/hud/life_2x.png" id="5_hukgj"]
+[ext_resource type="Texture2D" uid="uid://mx73uy3s3lsk" path="res://assets/ui/icons/coin_button.png" id="7_1sk4j"]
+[ext_resource type="Texture2D" uid="uid://c8tt36yijwktt" path="res://assets/ui/icons/cat_button.png" id="8_ewojn"]
+[ext_resource type="Shader" uid="uid://7k322cmfkfh1" path="res://assets/shaders/health_bar_scaling.gdshader" id="15_shader"]
+[ext_resource type="Script" uid="uid://bobwx2yvj4bf4" path="res://ui/hud/low_health_indicator.gd" id="16_indicator"]
+[ext_resource type="Shader" uid="uid://cjvdx1cpa3hct" path="res://assets/shaders/low_health_vignette.gdshader" id="17_vignette"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_vignette"]
+shader = ExtResource("17_vignette")
+shader_parameter/intensity = 0.0
+shader_parameter/pulse_speed = 2.0
+shader_parameter/noise_speed = 5.0
+shader_parameter/edge_width = 0.15
+shader_parameter/base_color = Color(0.8, 0.1, 0.1, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_health"]
+render_priority = 0
+shader = ExtResource("15_shader")
+
+[node name="HUD" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_cuep3")
+
+[node name="LowHealthIndicator" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_vignette")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("16_indicator")
+
+[node name="PauseMarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -40.0
+offset_bottom = 40.0
+grow_horizontal = 0
+mouse_filter = 2
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+
+[node name="PauseButton" parent="PauseMarginContainer" instance=ExtResource("2_meysh")]
+custom_minimum_size = Vector2(80, 65)
+layout_mode = 2
+shape = 1
+palette = 2
+game_icon = 4
+
+[node name="HUDMarginContainer" type="MarginContainer" parent="."]
+custom_minimum_size = Vector2(0, 135)
+layout_mode = 2
+offset_right = 489.0
+offset_bottom = 217.0
+size_flags_horizontal = 3
+mouse_filter = 2
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 15
+
+[node name="HUDHBoxContainer" type="HBoxContainer" parent="HUDMarginContainer"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 30
+
+[node name="HUDVBoxContainer" type="VBoxContainer" parent="HUDMarginContainer/HUDHBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+theme_override_constants/separation = 10
+alignment = 2
+
+[node name="HeartTextureRect" type="TextureRect" parent="HUDMarginContainer/HUDHBoxContainer/HUDVBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+texture = ExtResource("2_neukb")
+expand_mode = 3
+stretch_mode = 4
+
+[node name="HealthMarginContainer" type="Control" parent="HUDMarginContainer/HUDHBoxContainer/HUDVBoxContainer/HeartTextureRect"]
+layout_mode = 1
+anchor_top = 0.05
+anchor_right = 1.0
+anchor_bottom = 0.95
+offset_top = 6.2
+offset_right = 5.0
+offset_bottom = -0.199997
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="BottomHealthTextureRect" type="TextureRect" parent="HUDMarginContainer/HUDHBoxContainer/HUDVBoxContainer/HeartTextureRect/HealthMarginContainer"]
+z_index = -1
+z_as_relative = false
+texture_filter = 1
+layout_mode = 2
+offset_left = 48.0
+offset_top = -31.0
+offset_right = 467.0
+offset_bottom = 89.0
+texture = ExtResource("3_g6v8d")
+expand_mode = 2
+
+[node name="MarginContainer" type="Control" parent="HUDMarginContainer/HUDHBoxContainer/HUDVBoxContainer/HeartTextureRect/HealthMarginContainer"]
+layout_mode = 2
+anchors_preset = 0
+offset_left = 30.0
+offset_right = 474.0
+offset_bottom = 61.0
+
+[node name="HealthGhostProgressBar" type="TextureProgressBar" parent="HUDMarginContainer/HUDHBoxContainer/HUDVBoxContainer/HeartTextureRect/HealthMarginContainer/MarginContainer"]
+unique_name_in_owner = true
+z_index = -1
+z_as_relative = false
+texture_filter = 1
+layout_mode = 2
+offset_left = 42.0
+offset_top = 14.0
+offset_right = 424.0
+offset_bottom = 55.0
+max_value = 20.0
+value = 20.0
+rounded = true
+nine_patch_stretch = true
+texture_progress = ExtResource("5_hukgj")
+tint_progress = Color(1, 1, 1, 0.5)
+
+[node name="HealthTextureProgressBar" type="TextureProgressBar" parent="HUDMarginContainer/HUDHBoxContainer/HUDVBoxContainer/HeartTextureRect/HealthMarginContainer/MarginContainer"]
+unique_name_in_owner = true
+z_index = -1
+z_as_relative = false
+texture_filter = 1
+material = SubResource("ShaderMaterial_health")
+layout_mode = 2
+offset_left = 42.0
+offset_top = 14.0
+offset_right = 424.0
+offset_bottom = 55.0
+max_value = 20.0
+value = 20.0
+rounded = true
+nine_patch_stretch = true
+texture_progress = ExtResource("5_hukgj")
+
+[node name="HealthLabel" type="Label" parent="HUDMarginContainer/HUDHBoxContainer/HUDVBoxContainer/HeartTextureRect/HealthMarginContainer/MarginContainer/HealthTextureProgressBar"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 26.0
+offset_top = 3.0
+offset_right = -21.0
+offset_bottom = -4.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_type_variation = &"UILabelLarge"
+text = "INGAMEHUD.HEALTH.LABEL"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CoinsWavesMarginContainer" type="MarginContainer" parent="HUDMarginContainer/HUDHBoxContainer/HUDVBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+
+[node name="CoinsWavesHBoxContainer" type="HBoxContainer" parent="HUDMarginContainer/HUDHBoxContainer/HUDVBoxContainer/CoinsWavesMarginContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+theme_override_constants/separation = 10
+
+[node name="CoinsTextureRect" type="TextureRect" parent="HUDMarginContainer/HUDHBoxContainer/HUDVBoxContainer/CoinsWavesMarginContainer/CoinsWavesHBoxContainer"]
+texture_filter = 1
+layout_mode = 2
+texture = ExtResource("7_1sk4j")
+expand_mode = 3
+stretch_mode = 4
+
+[node name="MarginContainer" type="MarginContainer" parent="HUDMarginContainer/HUDHBoxContainer/HUDVBoxContainer/CoinsWavesMarginContainer/CoinsWavesHBoxContainer/CoinsTextureRect"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -89.5
+offset_top = -25.0
+offset_right = 89.5
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/margin_bottom = 10
+
+[node name="CoinsLabel" type="Label" parent="HUDMarginContainer/HUDHBoxContainer/HUDVBoxContainer/CoinsWavesMarginContainer/CoinsWavesHBoxContainer/CoinsTextureRect/MarginContainer"]
+texture_filter = 1
+layout_mode = 2
+size_flags_vertical = 1
+pivot_offset_ratio = Vector2(0.5, 0.5)
+theme_type_variation = &"UILabel"
+text = "INGAMEHUD.COINS.LABEL"
+horizontal_alignment = 1
+vertical_alignment = 2
+
+[node name="WavesTextureRect" type="TextureRect" parent="HUDMarginContainer/HUDHBoxContainer/HUDVBoxContainer/CoinsWavesMarginContainer/CoinsWavesHBoxContainer"]
+texture_filter = 1
+layout_mode = 2
+texture = ExtResource("8_ewojn")
+expand_mode = 3
+stretch_mode = 4
+
+[node name="MarginContainer" type="MarginContainer" parent="HUDMarginContainer/HUDHBoxContainer/HUDVBoxContainer/CoinsWavesMarginContainer/CoinsWavesHBoxContainer/WavesTextureRect"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -89.5
+offset_top = -25.0
+offset_right = 89.5
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/margin_bottom = 10
+
+[node name="WavesLabel" type="Label" parent="HUDMarginContainer/HUDHBoxContainer/HUDVBoxContainer/CoinsWavesMarginContainer/CoinsWavesHBoxContainer/WavesTextureRect/MarginContainer"]
+layout_mode = 2
+size_flags_vertical = 1
+theme_type_variation = &"UILabel"
+text = "INGAMEHUD.WAVES.LABEL"
+horizontal_alignment = 1
+vertical_alignment = 2
+
+[node name="ChallengesMarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -130.0
+offset_top = -212.0
+offset_bottom = -122.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_constants/margin_right = 20
+
+[node name="ChallengesButton" parent="ChallengesMarginContainer" instance=ExtResource("2_meysh")]
+custom_minimum_size = Vector2(110, 90)
+layout_mode = 2
+palette = 1
+game_icon = 13
+
+[node name="BuildSelectionMarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -130.0
+offset_top = -112.0
+offset_bottom = -22.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_constants/margin_right = 20
+
+[node name="BuildSelectionButton" parent="BuildSelectionMarginContainer" instance=ExtResource("2_meysh")]
+custom_minimum_size = Vector2(110, 90)
+layout_mode = 2
+toggle_mode = true
+palette = 1
+palette_pressed = 3
+game_icon = 11
+game_icon_pressed = 12
+
+[node name="FastForwardMarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = -112.0
+offset_right = 130.0
+offset_bottom = -22.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_bottom = 10
+
+[node name="FastForwardButton" parent="FastForwardMarginContainer" instance=ExtResource("2_meysh")]
+custom_minimum_size = Vector2(110, 90)
+layout_mode = 2
+toggle_mode = true
+shape = 1
+palette = 1
+game_icon = 5

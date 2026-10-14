@@ -1,0 +1,6 @@
+join character1 (Worry) center
+character1 (Worry): Ouch. The zombies ate the base. It happens to the best of cats.
+character1 (Neutral): A cat has nine lives, and so do you, so try again.
+character1 (Neutral): Maybe place your towers a little differently, or pick up a few traps in the Armory.
+leave character1 [animation="Fade Out" wait="true"]
+[end_timeline]

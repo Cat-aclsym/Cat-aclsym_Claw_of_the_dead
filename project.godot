@@ -8,24 +8,32 @@
 
 config_version=5
 
+[animation]
+
+compatibility/default_parent_skeleton_in_mesh_instance_3d=true
+
 [application]
 
 config/name="Cat'aclsym"
-run/main_scene="res://scenes/main.tscn"
-config/features=PackedStringArray("4.4", "Forward Plus")
-config/icon="res://assets/ui/icons/LogoChatVertClairFondFonce-100.jpg"
+config/version="0.1.0"
+run/main_scene="res://main.tscn"
+config/features=PackedStringArray("4.7", "Forward Plus")
+config/icon="res://assets/ui/branding/app_icon.jpg"
 
 [autoload]
 
-Global="*res://scripts/autoloads/global.gd"
-SoundManager="*res://scripts/autoloads/sound_manager.gd"
-ScenesLoader="*res://scripts/autoloads/scenes_loader.gd"
-Dialogic="*res://addons/dialogic/Core/DialogicGameHandler.gd"
-ProgressionManager="*res://scripts/autoloads/progression_manager.gd"
-StatsDB="*res://scripts/autoloads/stats_db.gd"
-ChallengeManager="*res://scripts/autoloads/challenge_manager.gd"
-ArmoryManager="*res://scripts/autoloads/armory_manager.gd"
-FirebaseTestLab="*res://scripts/autoloads/firebase_test_lab.gd"
+Global="*res://autoloads/global.gd"
+SoundManager="*res://autoloads/sound_manager.gd"
+ScenesLoader="*res://autoloads/scenes_loader.gd"
+Dialogic="*uid://ds2q0uclmolvu"
+StatsDB="*res://autoloads/stats_db.gd"
+ProgressionManager="*res://autoloads/progression_manager.gd"
+ArmoryManager="*res://autoloads/armory_manager.gd"
+ChallengeManager="*res://autoloads/challenge_manager.gd"
+
+[debug]
+
+gdscript/warnings/untyped_declaration=1
 
 [dialogic]
 
@@ -33,8 +41,18 @@ directories/dch_directory={
 "character1": "res://assets/narrative/character1.dch"
 }
 directories/dtl_directory={
+"armory_first_unlock.en": "res://assets/narrative/armory_first_unlock.en.dtl",
+"armory_first_unlock.fr": "res://assets/narrative/armory_first_unlock.fr.dtl",
 "armory_intro.en": "res://assets/narrative/armory_intro.en.dtl",
 "armory_intro.fr": "res://assets/narrative/armory_intro.fr.dtl",
+"first_boss.en": "res://assets/narrative/first_boss.en.dtl",
+"first_boss.fr": "res://assets/narrative/first_boss.fr.dtl",
+"first_defeat.en": "res://assets/narrative/first_defeat.en.dtl",
+"first_defeat.fr": "res://assets/narrative/first_defeat.fr.dtl",
+"first_new_enemy.en": "res://assets/narrative/first_new_enemy.en.dtl",
+"first_new_enemy.fr": "res://assets/narrative/first_new_enemy.fr.dtl",
+"first_victory.en": "res://assets/narrative/first_victory.en.dtl",
+"first_victory.fr": "res://assets/narrative/first_victory.fr.dtl",
 "tutorial_level_01.en": "res://assets/narrative/tutorial_level_01.en.dtl",
 "tutorial_level_01.fr": "res://assets/narrative/tutorial_level_01.fr.dtl"
 }
@@ -67,7 +85,7 @@ history/simple_history_enabled=false
 history/simple_history_save=false
 history/full_history_enabled=false
 history/full_history_save=false
-translation/enabled=true
+translation/enabled=false
 translation/original_locale="fr"
 translation/file_mode=1
 translation/translation_folder="res://assets/translations"
@@ -116,11 +134,11 @@ naming/script_name_casing=2
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/dialogic/plugin.cfg")
+enabled=PackedStringArray("res://addons/dialogic/plugin.cfg", "res://addons/gdUnit4/plugin.cfg")
 
 [gui]
 
-theme/custom="res://assets/resources/themes/generic.tres"
+theme/custom="res://ui/theme/generic.tres"
 
 [input]
 
@@ -171,10 +189,7 @@ pointing/emulate_touch_from_mouse=true
 
 [internationalization]
 
-locale/translations=PackedStringArray("res://assets/translations/translations.en.translation", "res://assets/translations/translations.fr.translation", "res://dialogic_translations.en.translation", "res://dialogic_translations.fr.translation")
-locale/translations_pot_files=PackedStringArray("res://scenes/narrative/lore_scene/main.dialogue")
-locale/test="fr"
-pseudolocalization/use_pseudolocalization=true
+locale/translations=PackedStringArray("res://assets/translations/translations.en.translation", "res://assets/translations/translations.fr.translation")
 pseudolocalization/replace_with_accents=false
 pseudolocalization/prefix=""
 pseudolocalization/suffix=""
